@@ -7,7 +7,6 @@
     <include app:graph="@navigation/nav_graph_jetpack_install" />
     <include app:graph="@navigation/nav_graph_domain_change" />
     <include app:graph="@navigation/nav_graph_themes" />
-    <include app:graph="@navigation/nav_graph_api_faker" />
 
     <fragment
         android:id="@+id/mainSettingsFragment"
@@ -174,7 +173,7 @@
         android:label="DeveloperOptionsFragment">
         <action
             android:id="@+id/action_developerOptionsFragment_to_ApiFaker"
-            app:destination="@id/nav_graph_api_faker" />
+            app:destination="@id/apiFakerHostFragment" />
     </fragment>
     <fragment
         android:id="@+id/accountSettingsFragment"
@@ -205,4 +204,8 @@
         android:id="@+id/pluginsFragment"
         android:name="com.woocommerce.android.ui.prefs.plugins.PluginsFragment"
         android:label="PluginsFragment" />
+    <fragment
+        android:id="@+id/apiFakerHostFragment"
+        android:name="com.woocommerce.android.apifaker.ApiFakerHostFragment"
+        android:label="ApiFakerHostFragment" />
 </navigation>
