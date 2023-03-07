@@ -69,6 +69,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.google.dagger.hilt.android.main)
+    implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.google.dagger.hilt.compiler)
 
     testImplementation(libs.junit)
