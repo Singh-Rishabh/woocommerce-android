@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
@@ -44,7 +45,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.woocommerce.android.apifaker.models.ApiType
-import com.woocommerce.android.apifaker.models.MockedEndpoint
 import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.ui.DropDownMenu
@@ -55,9 +55,14 @@ internal fun EndpointDetailsScreen(
     viewModel: EndpointDetailsViewModel,
     navController: NavController
 ) {
+    if (viewModel.state.isEndpointSaved) {
+        navController.navigateUp()
+    }
+
     EndpointDetailsScreen(
         state = viewModel.state,
         navController = navController,
+        onSaveClicked = viewModel::onSaveClicked,
         onEndpointTypeChanged = viewModel::onEndpointTypeChanged,
         onRequestPathChanged = viewModel::onRequestPathChanged,
         onRequestBodyChanged = viewModel::onRequestBodyChanged,
@@ -68,8 +73,9 @@ internal fun EndpointDetailsScreen(
 
 @Composable
 private fun EndpointDetailsScreen(
-    state: MockedEndpoint,
+    state: EndpointDetailsViewModel.UiState,
     navController: NavController,
+    onSaveClicked: () -> Unit = {},
     onEndpointTypeChanged: (ApiType) -> Unit = {},
     onRequestPathChanged: (String) -> Unit = {},
     onRequestBodyChanged: (String) -> Unit = {},
@@ -89,8 +95,14 @@ private fun EndpointDetailsScreen(
                     }
                 },
                 actions = {
-                    TextButton(onClick = { /*TODO*/ }) {
-                        Text(text = "Save")
+                    TextButton(
+                        onClick = onSaveClicked,
+                        enabled = state.isEndpointValid,
+                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colors.onPrimary)
+                    ) {
+                        Text(
+                            text = "Save"
+                        )
                     }
                 }
             )
@@ -422,7 +434,7 @@ private fun ResponseBodyField(
 private fun EndpointDetailsScreenPreview() {
     Surface(color = MaterialTheme.colors.background) {
         EndpointDetailsScreen(
-            state = MockedEndpoint(
+            state = EndpointDetailsViewModel.UiState(
                 request = Request(
                     type = ApiType.Custom("https://example.com"),
                     path = "/wc/v3/products",

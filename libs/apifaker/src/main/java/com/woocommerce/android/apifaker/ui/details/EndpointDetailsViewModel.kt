@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.ApiType
-import com.woocommerce.android.apifaker.models.MockedEndpoint
 import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.ui.Screen
@@ -26,7 +25,7 @@ internal class EndpointDetailsViewModel @Inject constructor(
 ) : ViewModel() {
     private val id = savedStateHandle.get<Long>(Screen.EndpointDetails.endpointIdArgumentName)!!
 
-    var state: MockedEndpoint by mutableStateOf(defaultEndpoint())
+    var state: UiState by mutableStateOf(defaultEndpoint())
         private set
 
     init {
@@ -65,11 +64,32 @@ internal class EndpointDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun loadEndpoint() = viewModelScope.launch {
-        state = endpointDao.getEndpoint(id)!!
+    fun onSaveClicked() {
+        viewModelScope.launch {
+            endpointDao.insertEndpoint(state.request, state.response)
+            state = state.copy(isEndpointSaved = true)
+        }
     }
 
-    private fun defaultEndpoint() = MockedEndpoint(
+    private fun loadEndpoint() = viewModelScope.launch {
+        state = endpointDao.getEndpoint(id)!!.let {
+            UiState(
+                it.request,
+                it.response
+            )
+        }
+    }
+
+    data class UiState(
+        val request: Request,
+        val response: Response,
+        val isEndpointSaved: Boolean = false
+    ) {
+        val isEndpointValid: Boolean
+            get() = request.path.isNotBlank()
+    }
+
+    private fun defaultEndpoint() = UiState(
         Request(
             id = MISSING_ENDPOINT_ID,
             type = ApiType.WPApi,
