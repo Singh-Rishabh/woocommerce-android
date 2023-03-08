@@ -41,6 +41,30 @@ internal class EndpointDetailsViewModel @Inject constructor(
         }
     }
 
+    fun onRequestPathChanged(path: String) {
+        withMutableSnapshot {
+            state = state.copy(request = state.request.copy(path = path))
+        }
+    }
+
+    fun onRequestBodyChanged(body: String) {
+        withMutableSnapshot {
+            state = state.copy(request = state.request.copy(body = body.ifEmpty { null }))
+        }
+    }
+
+    fun onResponseStatusCodeChanged(statusCode: Int) {
+        withMutableSnapshot {
+            state = state.copy(response = state.response.copy(statusCode = statusCode))
+        }
+    }
+
+    fun onResponseBodyChanged(body: String) {
+        withMutableSnapshot {
+            state = state.copy(response = state.response.copy(body = body))
+        }
+    }
+
     private fun loadEndpoint() = viewModelScope.launch {
         state = endpointDao.getEndpoint(id)!!
     }
