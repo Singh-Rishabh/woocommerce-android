@@ -1,8 +1,12 @@
 package com.woocommerce.android.apifaker.ui.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,7 +34,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
+import com.woocommerce.android.apifaker.models.MockedEndpoint
 import com.woocommerce.android.apifaker.models.Request
+import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.ui.Screen
 
 @Composable
@@ -48,7 +54,7 @@ internal fun HomeScreen(
 
 @Composable
 private fun HomeScreen(
-    endpoints: List<Request>,
+    endpoints: List<MockedEndpoint>,
     isEnabled: Boolean,
     onMockingToggleChanged: (Boolean) -> Unit = {},
     navController: NavController
@@ -101,28 +107,42 @@ private fun HomeScreen(
 
 @Composable
 private fun EndpointItem(
-    request: Request,
+    endpoint: MockedEndpoint,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = { navController.navigate(Screen.EndpointDetails.route(request.id)) }),
+            .clickable(onClick = { navController.navigate(Screen.EndpointDetails.route(endpoint.request.id)) }),
         elevation = 4.dp
     ) {
-        Column(Modifier.padding(8.dp)) {
-            Text(
-                text = when (request.type) {
-                    ApiType.WPApi -> "WordPress API"
-                    ApiType.WPCom -> "WordPress.com API"
-                    is ApiType.Custom -> "Host: ${request.type.host}"
-                },
-                style = MaterialTheme.typography.subtitle1
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = when (endpoint.request.type) {
+                        ApiType.WPApi -> "WordPress API"
+                        ApiType.WPCom -> "WordPress.com API"
+                        is ApiType.Custom -> "Host: ${endpoint.request.type.host}"
+                    },
+                    style = MaterialTheme.typography.subtitle1
+                )
+                Text(
+                    text = endpoint.request.path,
+                    style = MaterialTheme.typography.body1
+                )
+            }
+            Spacer(
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minWidth = 16.dp)
             )
             Text(
-                text = request.path,
-                style = MaterialTheme.typography.subtitle2
+                text = endpoint.response.statusCode.toString(),
+                style = MaterialTheme.typography.subtitle1
             )
         }
     }
@@ -133,18 +153,24 @@ private fun EndpointItem(
 private fun HomeScreenPreview() {
     HomeScreen(
         endpoints = listOf(
-            Request(
-                type = ApiType.WPApi,
-                httpMethod = HttpMethod.GET,
-                path = "/wc/v3/products",
-                body = "",
+            MockedEndpoint(
+                Request(
+                    type = ApiType.WPApi,
+                    httpMethod = HttpMethod.GET,
+                    path = "/wc/v3/products",
+                    body = ""
+                ),
+                Response(statusCode = 200, body = "")
             ),
-            Request(
-                type = ApiType.WPCom,
-                httpMethod = HttpMethod.POST,
-                path = "/v1.1/me/sites",
-                body = ""
-            ),
+            MockedEndpoint(
+                Request(
+                    type = ApiType.WPCom,
+                    httpMethod = HttpMethod.GET,
+                    path = "/v1.1/me/sites",
+                    body = ""
+                ),
+                Response(statusCode = 404, body = "")
+            )
         ),
         isEnabled = true,
         navController = rememberNavController()

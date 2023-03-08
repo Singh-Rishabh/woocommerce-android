@@ -6,7 +6,6 @@ import com.woocommerce.android.apifaker.ApiFakerConfig
 import com.woocommerce.android.apifaker.db.EndpointDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -16,7 +15,6 @@ internal class HomeViewModel @Inject constructor(
     private val config: ApiFakerConfig
 ) : ViewModel() {
     val endpoints = endpointDao.observeEndpoints()
-        .map { list -> list.map { it.request } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val isEnabled = config.enabled
