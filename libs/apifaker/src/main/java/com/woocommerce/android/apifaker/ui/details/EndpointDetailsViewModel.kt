@@ -16,7 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-const val MISSING_ENDPOINT_ID = -1L
+const val MISSING_ENDPOINT_ID = 0L
 
 @HiltViewModel
 internal class EndpointDetailsViewModel @Inject constructor(
