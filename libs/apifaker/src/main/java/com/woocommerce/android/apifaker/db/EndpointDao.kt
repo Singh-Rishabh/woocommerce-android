@@ -1,6 +1,7 @@
 package com.woocommerce.android.apifaker.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,6 +17,9 @@ internal interface EndpointDao {
     @Transaction
     @Query("Select * FROM Request")
     fun observeEndpoints(): Flow<List<MockedEndpoint>>
+
+    @Query("Select COUNT(*) FROM Request")
+    suspend fun endpointsCount(): Int
 
     @Transaction
     @Query("""Select * FROM Request WHERE
@@ -35,9 +39,14 @@ internal interface EndpointDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertResponse(response: Response)
 
+    @Delete
+    suspend fun deleteRequest(request: Request)
+
     @Transaction
     suspend fun insertEndpoint(request: Request, response: Response) {
         val id = insertRequest(request)
         insertResponse(response.copy(endpointId = id))
     }
+
+    suspend fun isEmpty() = endpointsCount() == 0
 }
