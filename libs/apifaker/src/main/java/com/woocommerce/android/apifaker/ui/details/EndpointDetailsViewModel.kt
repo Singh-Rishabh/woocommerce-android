@@ -20,7 +20,7 @@ const val MISSING_ENDPOINT_ID = 0L
 
 @HiltViewModel
 internal class EndpointDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val endpointDao: EndpointDao
 ) : ViewModel() {
     private val id = savedStateHandle.get<Long>(Screen.EndpointDetails.endpointIdArgumentName)!!
@@ -34,9 +34,9 @@ internal class EndpointDetailsViewModel @Inject constructor(
         }
     }
 
-    fun onEndpointTypeChanged(endpointType: ApiType) {
+    fun onApiTypeChanged(apiType: ApiType) {
         withMutableSnapshot {
-            state = state.copy(request = state.request.copy(type = endpointType))
+            state = state.copy(request = state.request.copy(type = apiType))
         }
     }
 

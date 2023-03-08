@@ -63,7 +63,7 @@ internal fun EndpointDetailsScreen(
         state = viewModel.state,
         navController = navController,
         onSaveClicked = viewModel::onSaveClicked,
-        onEndpointTypeChanged = viewModel::onEndpointTypeChanged,
+        onApiTypeChanged = viewModel::onApiTypeChanged,
         onRequestPathChanged = viewModel::onRequestPathChanged,
         onRequestBodyChanged = viewModel::onRequestBodyChanged,
         onResponseStatusCodeChanged = viewModel::onResponseStatusCodeChanged,
@@ -76,7 +76,7 @@ private fun EndpointDetailsScreen(
     state: EndpointDetailsViewModel.UiState,
     navController: NavController,
     onSaveClicked: () -> Unit = {},
-    onEndpointTypeChanged: (ApiType) -> Unit = {},
+    onApiTypeChanged: (ApiType) -> Unit = {},
     onRequestPathChanged: (String) -> Unit = {},
     onRequestBodyChanged: (String) -> Unit = {},
     onResponseStatusCodeChanged: (Int) -> Unit = {},
@@ -116,7 +116,7 @@ private fun EndpointDetailsScreen(
         ) {
             RequestDefinitionSection(
                 request = state.request,
-                onEndpointTypeChanged = onEndpointTypeChanged,
+                onApiTypeChanged = onApiTypeChanged,
                 onPathChanged = onRequestPathChanged,
                 onBodyChanged = onRequestBodyChanged,
                 modifier = Modifier
@@ -143,7 +143,7 @@ private fun EndpointDetailsScreen(
 @Composable
 private fun RequestDefinitionSection(
     request: Request,
-    onEndpointTypeChanged: (ApiType) -> Unit,
+    onApiTypeChanged: (ApiType) -> Unit,
     onPathChanged: (String) -> Unit,
     onBodyChanged: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -157,14 +157,14 @@ private fun RequestDefinitionSection(
             style = MaterialTheme.typography.h6
         )
         EndpointTypeField(
-            endpointType = request.type,
-            onEndpointTypeChanged = onEndpointTypeChanged,
+            apiType = request.type,
+            onApiTypeChanged = onApiTypeChanged,
             modifier = Modifier.fillMaxWidth()
         )
 
         PathField(
             path = request.path,
-            endpointType = request.type,
+            apiType = request.type,
             onPathChanged = onPathChanged,
             modifier = Modifier.fillMaxWidth()
         )
@@ -207,8 +207,8 @@ private fun ResponseSection(
 
 @Composable
 private fun EndpointTypeField(
-    endpointType: ApiType,
-    onEndpointTypeChanged: (ApiType) -> Unit,
+    apiType: ApiType,
+    onApiTypeChanged: (ApiType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     fun ApiType.label() = when (this) {
@@ -219,17 +219,17 @@ private fun EndpointTypeField(
 
     DropDownMenu(
         label = "Type",
-        currentValue = endpointType,
+        currentValue = apiType,
         values = ApiType.defaultValues(),
-        onValueChange = onEndpointTypeChanged,
+        onValueChange = onApiTypeChanged,
         formatter = ApiType::label,
         modifier = modifier.fillMaxWidth()
     )
-    if (endpointType is ApiType.Custom) {
+    if (apiType is ApiType.Custom) {
         TextField(
             label = { Text(text = "Host (without scheme)") },
-            value = endpointType.host,
-            onValueChange = { onEndpointTypeChanged(endpointType.copy(host = it)) },
+            value = apiType.host,
+            onValueChange = { onApiTypeChanged(apiType.copy(host = it)) },
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -238,7 +238,7 @@ private fun EndpointTypeField(
 @Composable
 private fun PathField(
     path: String,
-    endpointType: ApiType,
+    apiType: ApiType,
     onPathChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -249,7 +249,7 @@ private fun PathField(
             onValueChange = onPathChanged,
             modifier = Modifier.fillMaxWidth()
         )
-        val prefix = when (endpointType) {
+        val prefix = when (apiType) {
             ApiType.WPApi -> "/wp-json"
             ApiType.WPCom -> "/rest"
             is ApiType.Custom -> "host"
