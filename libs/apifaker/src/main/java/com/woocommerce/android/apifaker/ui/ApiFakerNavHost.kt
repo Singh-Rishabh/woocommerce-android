@@ -1,6 +1,8 @@
 package com.woocommerce.android.apifaker.ui
 
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,6 +19,9 @@ fun ApiFakerNavHost(
     onExit: () -> Unit
 ) {
     val navController = rememberNavController()
+
+    // This might not be very safe, but since it's just for development purposes, it should be fine
+    val activity = LocalContext.current as ComponentActivity
 
     NavHost(
         navController = navController,
