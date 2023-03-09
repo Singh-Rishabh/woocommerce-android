@@ -10,7 +10,8 @@ import com.woocommerce.android.apifaker.models.Response
 
 @Database(
     entities = [
-        Request::class, Response::class
+        Request::class,
+        Response::class
     ],
     version = 1,
     exportSchema = false
@@ -18,11 +19,14 @@ import com.woocommerce.android.apifaker.models.Response
 @TypeConverters(EndpointTypeConverter::class)
 internal abstract class ApiFakerDatabase : RoomDatabase() {
     companion object {
-        fun buildDb(applicationContext: Context) = Room.databaseBuilder(
-            applicationContext,
-            ApiFakerDatabase::class.java,
-            "api-faker-db"
-        ).build()
+        fun buildDb(applicationContext: Context) = Room
+            .databaseBuilder(
+                context = applicationContext,
+                klass = ApiFakerDatabase::class.java,
+                name = "api-faker-db"
+            )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     abstract val endpointDao: EndpointDao
