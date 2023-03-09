@@ -1,22 +1,47 @@
 package com.woocommerce.android.apifaker
 
+import android.content.Context
+import android.content.SharedPreferences
 import com.woocommerce.android.apifaker.db.EndpointDao
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val PREF_FILE_NAME = "api_faker"
+private const val PREFERENCE_KEY = "api_faker_enabled"
+
 @Singleton
-class ApiFakerConfig @Inject constructor() {
-    @Inject
-    internal lateinit var endpointDao: EndpointDao
+internal class ApiFakerConfig @Inject constructor(
+    context: Context,
+    private val endpointDao: EndpointDao
+) {
+    private val configScope = CoroutineScope(Dispatchers.Main)
+    private val preferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE)
 
-    private val _enabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val enabled = _enabled.asStateFlow()
-        .map { it && endpointDao.endpointsCount() > 0 }
+    private val prefFlow = preferences.prefFlow(PREFERENCE_KEY, false)
 
-    internal fun setStatus(enabled: Boolean) {
-        _enabled.value = enabled
+    val enabled = prefFlow.map {
+        it && !endpointDao.isEmpty()
+    }.stateIn(configScope, SharingStarted.WhileSubscribed(), false)
+
+    fun setStatus(enabled: Boolean) {
+        preferences.edit().putBoolean(PREFERENCE_KEY, enabled).apply()
+    }
+
+    private fun SharedPreferences.prefFlow(key: String, defaultValue: Boolean) = callbackFlow<Boolean> {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, listenerKey ->
+            if (listenerKey == key) {
+                trySend(getBoolean(key, defaultValue))
+            }
+        }
+        registerOnSharedPreferenceChangeListener(listener)
+        trySend(getBoolean(key, defaultValue))
+        awaitClose { unregisterOnSharedPreferenceChangeListener(listener) }
     }
 }
