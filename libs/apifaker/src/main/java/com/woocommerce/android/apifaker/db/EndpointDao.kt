@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.woocommerce.android.apifaker.models.ApiType
+import com.woocommerce.android.apifaker.models.HttpMethod
 import com.woocommerce.android.apifaker.models.MockedEndpoint
 import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
@@ -22,12 +23,15 @@ internal interface EndpointDao {
     suspend fun endpointsCount(): Int
 
     @Transaction
-    @Query("""Select * FROM Request WHERE
+    @Query(
+        """Select * FROM Request WHERE
         type = :type AND
+        (httpMethod is NULL OR httpMethod = :httpMethod) AND
         :path LIKE path AND
         :body LIKE COALESCE(body, '%')
-        """)
-    fun queryEndpoint(type: ApiType, path: String, body: String): MockedEndpoint?
+        """
+    )
+    fun queryEndpoint(type: ApiType, httpMethod: HttpMethod, path: String, body: String): MockedEndpoint?
 
     @Transaction
     @Query("Select * FROM Request WHERE id = :id")
