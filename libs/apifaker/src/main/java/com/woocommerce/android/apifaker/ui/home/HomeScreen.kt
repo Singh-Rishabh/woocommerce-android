@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
-import androidx.compose.material.DismissDirection.EndToStart
+import androidx.compose.material.DismissDirection
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.FractionalThreshold
@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -46,7 +47,6 @@ import com.woocommerce.android.apifaker.models.MockedEndpoint
 import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.ui.Screen
-import com.woocommerce.android.apifaker.ui.Screen.EndpointDetails
 
 @Composable
 internal fun HomeScreen(
@@ -133,13 +133,14 @@ private fun EndpointItem(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    val dismissState = rememberDismissState {
+    val dismissState = rememberDismissState()
+
+    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
         onRemoveRequest(endpoint.request)
-        true
     }
     SwipeToDismiss(
         state = dismissState,
-        directions = setOf(EndToStart),
+        directions = setOf(DismissDirection.EndToStart),
         dismissThresholds = {
             FractionalThreshold(0.3f)
         },
@@ -162,7 +163,7 @@ private fun EndpointItem(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = { navController.navigate(EndpointDetails.route(endpoint.request.id)) }),
+                    .clickable(onClick = { navController.navigate(Screen.EndpointDetails.route(endpoint.request.id)) }),
                 elevation = 4.dp
             ) {
                 Row(
@@ -176,10 +177,13 @@ private fun EndpointItem(
                                 ApiType.WPCom -> "WordPress.com API"
                                 is ApiType.Custom -> "Host: ${endpoint.request.type.host}"
                             },
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.subtitle1,
+                            fontWeight = FontWeight.SemiBold
                         )
+                        val pathLine = endpoint.request.httpMethod?.let { "$it " }.orEmpty() +
+                            endpoint.request.path
                         Text(
-                            text = endpoint.request.path,
+                            text = pathLine,
                             style = MaterialTheme.typography.body1
                         )
                     }
