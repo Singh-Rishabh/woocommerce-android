@@ -8,19 +8,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.woocommerce.android.apifaker.ui.Screen.EndpointDetails
-import com.woocommerce.android.apifaker.ui.Screen.Home
 import com.woocommerce.android.apifaker.ui.home.HomeScreen
 
 @Composable
-fun ApiFakerNavHost() {
+fun ApiFakerNavHost(
+    onExit: () -> Unit
+) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = Home.route()
+        startDestination = Screen.Home.route()
     ) {
-        composable(Home.route()) {
-            HomeScreen(hiltViewModel(), navController)
+        composable(Screen.Home.route()) {
+            HomeScreen(viewModel = hiltViewModel(), navController = navController, onExit = onExit)
         }
         composable(
             EndpointDetails.baseRoute,

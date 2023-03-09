@@ -42,13 +42,15 @@ import com.woocommerce.android.apifaker.ui.Screen
 @Composable
 internal fun HomeScreen(
     viewModel: HomeViewModel,
-    navController: NavController
+    navController: NavController,
+    onExit: () -> Unit
 ) {
     HomeScreen(
         endpoints = viewModel.endpoints.collectAsState().value,
         isEnabled = viewModel.isEnabled.collectAsState(initial = false).value,
+        navController = navController,
         onMockingToggleChanged = viewModel::onMockingToggleChanged,
-        navController = navController
+        onExit = onExit
     )
 }
 
@@ -56,15 +58,16 @@ internal fun HomeScreen(
 private fun HomeScreen(
     endpoints: List<MockedEndpoint>,
     isEnabled: Boolean,
-    onMockingToggleChanged: (Boolean) -> Unit = {},
-    navController: NavController
+    navController: NavController,
+    onMockingToggleChanged: (Boolean) -> Unit,
+    onExit: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "API Faker") },
                 navigationIcon = {
-                    IconButton(onClick = navController::navigateUp) {
+                    IconButton(onClick = onExit) {
                         Icon(
                             Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = "Back"
@@ -173,6 +176,8 @@ private fun HomeScreenPreview() {
             )
         ),
         isEnabled = true,
-        navController = rememberNavController()
+        navController = rememberNavController(),
+        onMockingToggleChanged = {},
+        onExit = {}
     )
 }
