@@ -3,6 +3,7 @@ package com.woocommerce.android.apifaker
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
+import com.woocommerce.android.apifaker.models.QueryParameter
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.util.JSONObjectProvider
 import okhttp3.HttpUrl
@@ -18,7 +19,6 @@ internal class EndpointProcessor @Inject constructor(
     private val jsonObjectProvider: JSONObjectProvider
 ) {
     fun fakeRequestIfNeeded(request: Request): Response? {
-        // TODO match against method and query parameters too
         val endpointData = when {
             request.url.host == WPCOM_HOST -> request.extractDataFromWPComEndpoint()
             request.url.encodedPath.startsWith("/wp-json") -> request.extractDataFromWPApiEndpoint()
@@ -27,6 +27,8 @@ internal class EndpointProcessor @Inject constructor(
 
         return with(endpointData) {
             endpointDao.queryEndpoint(apiType, endpointData.httpMethod, path.trimEnd('/'), body.orEmpty())
+        }.firstOrNull {
+            request.url.checkQueryParameters(it.request.queryParameters)
         }?.response?.let {
             it.copy(body = it.body?.wrapBodyIfNecessary(request.url))
         }
@@ -85,6 +87,14 @@ internal class EndpointProcessor @Inject constructor(
             path = url.encodedPath,
             body = readBody()
         )
+    }
+
+    private fun HttpUrl.checkQueryParameters(queryParameters: List<QueryParameter>): Boolean {
+        if (queryParameters.isEmpty()) return true
+
+        return queryParameters.all { queryParameter ->
+            queryParameter(queryParameter.name) == queryParameter.value
+        }
     }
 
     private fun Request.readBody(): String {
