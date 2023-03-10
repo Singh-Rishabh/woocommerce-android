@@ -1,8 +1,6 @@
 package com.woocommerce.android.apifaker
 
 import android.util.Log
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Interceptor.Chain
 import okhttp3.MediaType.Companion.toMediaType
@@ -10,6 +8,8 @@ import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import javax.inject.Inject
+
+private const val ARTIFICIAL_DELAY_MS = 500L
 
 internal class ApiFakerInterceptor @Inject constructor(
     private val apiFakerConfig: ApiFakerConfig,
@@ -32,6 +32,7 @@ internal class ApiFakerInterceptor @Inject constructor(
 
         return if (fakeResponse != null) {
             Log.d(LOG_TAG, "Matched request: ${chain.request().url}:\nSending Mocked Response: $fakeResponse")
+            Thread.sleep(ARTIFICIAL_DELAY_MS)
             Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
