@@ -311,7 +311,8 @@ private fun ShippingProductDetails(
             if (weight.isNotEmpty()) {
                 ShippingProductInfo(
                     summary = weight,
-                    modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_50)))
+                    modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_50))
+                )
             }
         }
     }
