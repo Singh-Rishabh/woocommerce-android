@@ -435,7 +435,6 @@ private fun ShipmentCostSection(
                 width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
                 height = dimensionResource(id = R.dimen.major_100)
             )
-
         }
         Row(modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))) {
             Text(
@@ -455,7 +454,6 @@ private fun ShipmentCostSection(
                 width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
                 height = dimensionResource(id = R.dimen.major_100)
             )
-
         }
     }
 }
