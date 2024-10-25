@@ -389,7 +389,7 @@ internal fun QuantityBadgePreview() {
 }
 
 @Composable
-private fun RoundedCornerBoxWithBorder(
+fun RoundedCornerBoxWithBorder(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit = {},
 ) {
