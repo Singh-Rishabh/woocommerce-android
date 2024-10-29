@@ -227,20 +227,20 @@ platform :android do
     check_for_toolkit_updates unless is_ci || ENV['FASTLANE_SKIP_TOOLKIT_UPDATE_CHECK']
 
     ensure_git_status_clean
-    ensure_git_branch_is_release_branch!
+    # ensure_git_branch_is_release_branch!
 
     UI.important("Completing code freeze for: #{release_version_current}")
     UI.user_error!("Terminating as requested. Don't forget to run the remainder of this automation manually.") unless skip_confirm || UI.confirm('Do you want to continue?')
 
-    update_play_store_strings
-    localize_libs
-    freeze_strings_for_translation
+    # update_play_store_strings
+    # localize_libs
+    # freeze_strings_for_translation
 
-    push_to_git_remote(tags: false)
+    # push_to_git_remote(tags: false)
 
     trigger_release_build(branch_to_build: "release/#{release_version_current}", include_wear_app: include_wear_app)
 
-    create_backmerge_pr
+    # create_backmerge_pr
   end
 
   # Updates the `PlayStoreStrings.pot` file with the latest content from the `release_notes.txt` files and the other text sources.
