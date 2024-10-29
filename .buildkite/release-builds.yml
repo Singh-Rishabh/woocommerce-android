@@ -19,25 +19,25 @@ steps:
 
   - label: "🛠 Release Build (Mobile App)"
     command: |
-      echo "INCLUDE_WEAR_APP: $INCLUDE_WEAR_APP"
+      ".buildkite/commands/release-build.sh" "WooCommerce"
     priority: 1
     plugins: [$CI_TOOLKIT]
-    # notify:
-    #   - slack: "#build-and-ship"
-    # retry:
-    #   manual:
-    #     # If those jobs fail, one should always prefer re-triggering a new build from ReleaseV2 rather than retrying the individual job from Buildkite
-    #     allowed: false
+    notify:
+      - slack: "#build-and-ship"
+    retry:
+      manual:
+        # If those jobs fail, one should always prefer re-triggering a new build from ReleaseV2 rather than retrying the individual job from Buildkite
+        allowed: false
 
   - label: "🛠 Release Build (Wear App)"
     command: |
-      echo "INCLUDE_WEAR_APP: $INCLUDE_WEAR_APP"
+      ".buildkite/commands/release-build.sh" "WooCommerce-Wear"
     priority: 1
     plugins: [$CI_TOOLKIT]
     if: build.env('INCLUDE_WEAR_APP') == "true"
-    # notify:
-    #   - slack: "#build-and-ship"
-    # retry:
-    #   manual:
-    #     # If those jobs fail, one should always prefer re-triggering a new build from ReleaseV2 rather than retrying the individual job from Buildkite
-    #     allowed: false
+    notify:
+      - slack: "#build-and-ship"
+    retry:
+      manual:
+        # If those jobs fail, one should always prefer re-triggering a new build from ReleaseV2 rather than retrying the individual job from Buildkite
+        allowed: false
