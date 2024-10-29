@@ -5,6 +5,7 @@
 -----
 - [*] Fixed text formatting in the "Collect Payment has moved" rationale bottom sheet [https://github.com/woocommerce/woocommerce-android/pull/12815]
 - [*] We added support for loading Products containing AVIF images.
+- [*] Added support for loading Product images using the AVIF format.
 
 20.9
 -----
