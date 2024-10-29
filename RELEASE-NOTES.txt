@@ -3,11 +3,11 @@
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
 21.0
 -----
-
+- [*] Fixed text formatting in the "Collect Payment has moved" rationale bottom sheet [https://github.com/woocommerce/woocommerce-android/pull/12815]
 
 20.9
 -----
-
+- [*][Payments]Fixed UI glitch in change due calculation screen [https://github.com/woocommerce/woocommerce-android/pull/12808]
 
 20.8
 -----

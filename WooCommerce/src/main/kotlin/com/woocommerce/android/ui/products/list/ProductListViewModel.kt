@@ -93,6 +93,12 @@ class ProductListViewModel @Inject constructor(
         get() = savedState[KEY_PRODUCT_SELECTED_ON_BIG_SCREEN]
         set(value) = savedState.set(KEY_PRODUCT_SELECTED_ON_BIG_SCREEN, value)
 
+    private val isLoading
+        get() = viewState.isLoading == true
+
+    private val isTrashing
+        get() = viewState.isTrashing == true
+
     init {
         EventBus.getDefault().register(this)
         if (_productList.value == null) {
@@ -119,8 +125,6 @@ class ProductListViewModel @Inject constructor(
     fun isSelecting() = viewState.productListState == ProductListViewState.ProductListState.Selecting
 
     fun isSkuSearch() = isSearching() && viewState.isSkuSearch
-
-    private fun isLoading() = viewState.isLoading == true
 
     fun getSearchQuery() = viewState.query
 
@@ -299,7 +303,7 @@ class ProductListViewModel @Inject constructor(
         scrollToTop: Boolean = false,
         isRefreshing: Boolean = false
     ) {
-        if (isLoading()) {
+        if (isLoading) {
             WooLog.d(WooLog.T.PRODUCTS, "already loading products")
             return
         }
@@ -342,7 +346,7 @@ class ProductListViewModel @Inject constructor(
 
             loadJob = launch {
                 val showSkeleton: Boolean
-                if (loadMore) {
+                if (loadMore || isTrashing) {
                     showSkeleton = false
                 } else {
                     // if this is the initial load, first get the products from the db and show them immediately
@@ -590,8 +594,13 @@ class ProductListViewModel @Inject constructor(
 
     fun trashProduct(remoteProductId: Long) {
         if (checkConnection()) {
-            launch {
-                if (!productRepository.trashProduct(remoteProductId)) {
+            loadJob = launch {
+                viewState = viewState.copy(isTrashing = true)
+                val successfullyTrashed = productRepository.trashProduct(remoteProductId)
+                if (successfullyTrashed) {
+                    fetchProductList(loadMore = false, scrollToTop = false)
+                    viewState = viewState.copy(isTrashing = false)
+                } else {
                     triggerEvent(MultiLiveEvent.Event.ShowSnackbar(R.string.product_trash_error))
                 }
             }
