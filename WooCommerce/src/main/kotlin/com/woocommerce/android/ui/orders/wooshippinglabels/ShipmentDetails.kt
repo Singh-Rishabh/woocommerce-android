@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -42,6 +43,8 @@ import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.component.BottomSheetHandle
+import com.woocommerce.android.ui.compose.component.WCColoredButton
+import com.woocommerce.android.ui.compose.component.WCSwitch
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
@@ -50,6 +53,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
+    markOrderComplete: Boolean,
+    onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -83,22 +88,91 @@ fun ShipmentDetails(
             )
         }
     }
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(top = dimensionResource(R.dimen.major_200))
-    ) {
-        OrderDetailsSection(
-            shipFrom = getShipFrom(),
-            shipTo = getShipTo(),
-            totalItems = 5,
-            totalItemsCost = "$120.99",
-            shippingLines = getShippingLines(3)
-        )
-        Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
-        ShipmentCostSection(
-            subTotal = null,
+    Column {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = dimensionResource(R.dimen.major_200))
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+
+        ) {
+            OrderDetailsSection(
+                shipFrom = getShipFrom(),
+                shipTo = getShipTo(),
+                totalItems = 5,
+                totalItemsCost = "$120.99",
+                shippingLines = getShippingLines(3)
+            )
+            Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
+            ShipmentCostSection(
+                subTotal = "$100.00",
+                total = "$120.99",
+                modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
+            )
+        }
+        PurchasesSection(
             total = "$120.99",
+            markOrderComplete = markOrderComplete,
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
+        )
+    }
+}
+
+@Composable
+private fun PurchasesSection(
+    total: String?,
+    markOrderComplete: Boolean,
+    onMarkOrderCompleteChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier) {
+        Divider()
+        Row(
+            modifier = Modifier
+                .clickable { onMarkOrderCompleteChange(!markOrderComplete) }
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.major_100)),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(id = R.string.shipping_label_shipment_details_mark_order_complete),
+                modifier.weight(1f)
+            )
+            WCSwitch(
+                checked = markOrderComplete,
+                onCheckedChange = onMarkOrderCompleteChange,
+                modifier = Modifier
+                    .padding(end = dimensionResource(R.dimen.minor_100))
+            )
+        }
+        val buttonText = total?.let {
+            stringResource(id = R.string.shipping_label_shipment_details_purchase_label, it)
+        } ?: stringResource(id = R.string.shipping_label_shipment_details_purchase_label_disabled)
+        WCColoredButton(
+            onClick = { },
+            enabled = total != null,
+            text = buttonText,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    top = dimensionResource(R.dimen.minor_100),
+                    bottom = dimensionResource(R.dimen.major_100),
+                    start = dimensionResource(R.dimen.major_100),
+                    end = dimensionResource(R.dimen.major_100)
+                )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PurchasesSectionPreview() {
+    WooThemeWithBackground {
+        PurchasesSection(
+            total = null,
+            markOrderComplete = true,
+            onMarkOrderCompleteChange = {},
             modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
         )
     }
