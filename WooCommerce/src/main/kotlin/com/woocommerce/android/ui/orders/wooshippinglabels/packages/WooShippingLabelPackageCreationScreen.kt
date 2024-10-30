@@ -23,27 +23,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelsPackageCreationViewModel.PageTab
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelsPackageCreationViewModel.PageType.CARRIER
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelsPackageCreationViewModel.PageType.CUSTOM
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelsPackageCreationViewModel.PageType.SAVED
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageTab
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CARRIER
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CUSTOM
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.SAVED
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingCarrierPackageScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingCustomPackageCreationScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingSavedPackageScreen
 
 @Composable
-fun WooShippingLabelsPackageCreationScreen(
-    viewModel: WooShippingLabelsPackageCreationViewModel
+fun WooShippingLabelPackageCreationScreen(
+    viewModel: WooShippingLabelPackageCreationViewModel
 ) {
     val viewState = viewModel.viewState.observeAsState()
-    WooShippingLabelsPackageCreationScreen(
+    WooShippingLabelPackageCreationScreen(
         tabs = viewState.value?.pageTabs.orEmpty()
     )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun WooShippingLabelsPackageCreationScreen(
+fun WooShippingLabelPackageCreationScreen(
     modifier: Modifier = Modifier,
     tabs: List<PageTab>
 ) {
@@ -93,7 +93,7 @@ fun WooShippingLabelsPackageCreationScreen(
 @Composable
 fun WooShippingLabelsPackageCreationScreenPreview() {
     WooThemeWithBackground {
-        WooShippingLabelsPackageCreationScreen(
+        WooShippingLabelPackageCreationScreen(
             tabs = listOf(
                 PageTab("Custom", CUSTOM),
                 PageTab("Carrier", CARRIER),

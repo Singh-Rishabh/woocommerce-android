@@ -13,7 +13,7 @@ import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
-class WooShippingLabelsPackageCreationViewModel @Inject constructor(
+class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val resourceProvider: ResourceProvider
 ) : ScopedViewModel(savedState) {

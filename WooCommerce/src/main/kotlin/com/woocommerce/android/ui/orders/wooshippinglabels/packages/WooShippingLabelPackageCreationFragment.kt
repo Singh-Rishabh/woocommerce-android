@@ -12,15 +12,15 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WooShippingLabelsPackageCreationFragment : BaseFragment() {
-    val viewModel: WooShippingLabelsPackageCreationViewModel by viewModels()
+class WooShippingLabelPackageCreationFragment : BaseFragment() {
+    val viewModel: WooShippingLabelPackageCreationViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 WooThemeWithBackground {
-                    WooShippingLabelsPackageCreationScreen(viewModel = viewModel)
+                    WooShippingLabelPackageCreationScreen(viewModel = viewModel)
                 }
             }
         }
