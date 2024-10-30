@@ -90,7 +90,7 @@ wordpress-fluxc = '2.99.1'
 wordpress-login = '1.19.0'
 wordpress-libaddressinput = '0.0.2'
 wordpress-mediapicker = '0.3.1'
-wordpress-utils = '154-67cff9cc68be6b058c59e6180120750a088cb36a'
+wordpress-utils = '3.15.0'
 zendesk = '5.0.8'
 
 [libraries]
