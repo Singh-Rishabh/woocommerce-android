@@ -162,6 +162,7 @@
     <string name="last_update_with_frequency">Last update %s (Updates every 30 minutes)</string>
     <string name="receipt_fetching_error">Sorry, we couldn\'t load a receipt for this order</string>
     <string name="store_name_default">Store name</string>
+    <string name="sorted_by">Sorted by 1%s</string>
 
     <!--
         Date/Time Labels
@@ -1267,6 +1268,10 @@
     <string name="shipping_label_shipment_details_mark_order_complete">Mark this order as complete and notify the customer</string>
     <string name="shipping_label_shipment_details_purchase_label">Purchase Label · %1$s </string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">Purchase Label</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Cheapest</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Fastest</string>
+    <string name="shipping_label_shipping_service_title">Shipping service</string>
+
     <!--
     Shipping label package creation labels
     -->
