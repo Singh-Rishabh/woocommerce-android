@@ -38,5 +38,7 @@ class CardReaderPaymentController(
     private val cardReaderConfigProvider: CardReaderCountryConfigProvider,
     private val paymentReceiptShare: PaymentReceiptShare,
     private val paymentOrRefund: CardReaderFlowParam.PaymentOrRefund,
+    private val isTTPPaymentInProgress: Boolean,
 ) {
+
 }
