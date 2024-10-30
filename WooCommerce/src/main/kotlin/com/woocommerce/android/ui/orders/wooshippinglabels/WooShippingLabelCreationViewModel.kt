@@ -8,8 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 @HiltViewModel
 class WooShippingLabelCreationViewModel(
     savedState: SavedStateHandle
-): ScopedViewModel(savedState) {
+) : ScopedViewModel(savedState) {
     fun onSelectPackageClicked() { triggerEvent(StartPackageSelection) }
 
-    data object StartPackageSelection: Event()
+    data object StartPackageSelection : Event()
 }

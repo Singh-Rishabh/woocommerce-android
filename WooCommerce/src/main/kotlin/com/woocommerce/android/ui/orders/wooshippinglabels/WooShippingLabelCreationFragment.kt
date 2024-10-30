@@ -43,9 +43,10 @@ class WooShippingLabelCreationFragment : BaseFragment() {
     private fun setupObservers() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is StartPackageSelection -> WooShippingLabelCreationFragmentDirections
-                    .actionWooShippingLabelCreationFragmentToWooShippingLabelPackageCreationFragment()
-                    .let { findNavController().navigateSafely(it) }
+                is StartPackageSelection ->
+                    WooShippingLabelCreationFragmentDirections
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelPackageCreationFragment()
+                        .let { findNavController().navigateSafely(it) }
             }
         }
     }
