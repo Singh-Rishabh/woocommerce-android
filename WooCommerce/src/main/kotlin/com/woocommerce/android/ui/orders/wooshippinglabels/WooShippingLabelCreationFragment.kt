@@ -8,6 +8,8 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
@@ -41,7 +43,9 @@ class WooShippingLabelCreationFragment : BaseFragment() {
     private fun setupObservers() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is StartPackageSelection -> {}
+                is StartPackageSelection -> WooShippingLabelCreationFragmentDirections
+                    .actionWooShippingLabelCreationFragmentToWooShippingLabelPackageCreationFragment()
+                    .let { findNavController().navigateSafely(it) }
             }
         }
     }
