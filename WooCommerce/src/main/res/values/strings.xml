@@ -32,6 +32,7 @@
     <string name="payment">Payment</string>
     <string name="taxes">Taxes</string>
     <string name="tax">Tax</string>
+    <string name="total">Total</string>
     <string name="subtotal">Subtotal</string>
     <string name="products_total">Products total</string>
     <string name="discount">Discount</string>
@@ -161,6 +162,7 @@
     <string name="last_update_with_frequency">Last update %s (Updates every 30 minutes)</string>
     <string name="receipt_fetching_error">Sorry, we couldn\'t load a receipt for this order</string>
     <string name="store_name_default">Store name</string>
+    <string name="sorted_by">Sorted by 1%s</string>
 
     <!--
         Date/Time Labels
@@ -785,8 +787,8 @@
     <string name="order_creation_expand_collapse_order_totals">Expand collapse order totals</string>
     <string name="order_creation_payment_shipping_tax_label">Shipping Tax</string>
     <string name="order_creation_simple_payment_migration_title">Collect Payment \nhas moved</string>
-    <string name="order_creation_simple_payment_migration_message_one">We’ve combined payment collection with\norder creation, making it more accessible\nand more powerful.</string>
-    <string name="order_creation_simple_payment_migration_message_two">To set a payment amount, add\na custom amount to your new order.</string>
+    <string name="order_creation_simple_payment_migration_message_one">We’ve combined payment collection with order creation, making it more accessible and more powerful.</string>
+    <string name="order_creation_simple_payment_migration_message_two">To set a payment amount, add a custom amount to your new order.</string>
     <string name="order_creation_simple_payment_migration_button">Add a Custom Amount</string>
     <string name="customer_picker_guest_customer_not_allowed_message">This user is a guest, and guests can\'t be used for filtering orders.</string>
     <string name="customer_picker_guest">Guest</string>
@@ -1260,6 +1262,15 @@
     <string name="shipping_label_select_package_button">Select a Package</string>
     <string name="shipping_label_select_package_title">Select a package to get shipping rates</string>
     <string name="shipping_label_select_package_description">Enter your package\'s dimensions or pick a carrier package option to see the available shipping rates.</string>
+    <string name="shipping_label_shipment_details_title">Shipment details</string>
+    <string name="shipping_label_shipment_details_order_details">Order details</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Shipment cost</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Mark this order as complete and notify the customer</string>
+    <string name="shipping_label_shipment_details_purchase_label">Purchase Label · %1$s </string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Purchase Label</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Cheapest</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Fastest</string>
+    <string name="shipping_label_shipping_service_title">Shipping service</string>
 
     <!--
     Shipping label package creation labels
