@@ -41,10 +41,18 @@ import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
+@Composable
+fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
+    WooShippingLabelCreationScreen(
+        onSelectPackageClick = viewModel::onSelectPackageClicked
+    )
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooShippingLabelCreationScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSelectPackageClick: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
@@ -98,7 +106,10 @@ fun WooShippingLabelCreationScreen(
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)
                 )
-                PackageCard(modifier = Modifier.padding(16.dp))
+                PackageCard(
+                    modifier = Modifier.padding(16.dp),
+                    onSelectPackageClick = onSelectPackageClick
+                )
                 ShippingRatesCard(modifier = Modifier.padding(start = dimensionResource(id = R.dimen.major_100)))
             }
         }
@@ -110,7 +121,10 @@ fun WooShippingLabelCreationScreen(
 @Composable
 private fun WooShippingLabelCreationScreenPreview() {
     WooThemeWithBackground {
-        WooShippingLabelCreationScreen(modifier = Modifier.fillMaxSize())
+        WooShippingLabelCreationScreen(
+            modifier = Modifier.fillMaxSize(),
+            onSelectPackageClick = {}
+        )
     }
 }
 
@@ -159,7 +173,10 @@ private fun HazmatCardPreview() {
 }
 
 @Composable
-private fun PackageCard(modifier: Modifier = Modifier) {
+private fun PackageCard(
+    modifier: Modifier = Modifier,
+    onSelectPackageClick: () -> Unit
+) {
     Column(
         modifier = modifier
             .background(
@@ -176,7 +193,7 @@ private fun PackageCard(modifier: Modifier = Modifier) {
             .padding(dimensionResource(id = R.dimen.major_200))
     ) {
         WCColoredButton(
-            onClick = {},
+            onClick = onSelectPackageClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
@@ -209,7 +226,10 @@ private fun PackageCard(modifier: Modifier = Modifier) {
 @Composable
 private fun PackageCardPreview() {
     WooThemeWithBackground {
-        PackageCard(modifier = Modifier.padding(16.dp))
+        PackageCard(
+            modifier = Modifier.padding(16.dp),
+            onSelectPackageClick = {}
+        )
     }
 }
 
