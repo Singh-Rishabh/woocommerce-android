@@ -37,7 +37,10 @@ fun WooShippingLabelPackageCreationScreen(
 ) {
     val viewState = viewModel.viewState.observeAsState()
     WooShippingLabelPackageCreationScreen(
-        tabs = viewState.value?.pageTabs.orEmpty()
+        tabs = viewState.value?.pageTabs.orEmpty(),
+        createCustomPackageScreen = { WooShippingCustomPackageCreationScreen(viewModel) },
+        createCarrierPackageScreen = { WooShippingCarrierPackageScreen() },
+        createSavedPackageScreen = { WooShippingSavedPackageScreen() }
     )
 }
 
@@ -45,7 +48,10 @@ fun WooShippingLabelPackageCreationScreen(
 @Composable
 fun WooShippingLabelPackageCreationScreen(
     modifier: Modifier = Modifier,
-    tabs: List<PageTab>
+    tabs: List<PageTab>,
+    createCustomPackageScreen: @Composable () -> Unit,
+    createCarrierPackageScreen: @Composable () -> Unit,
+    createSavedPackageScreen: @Composable () -> Unit
 ) {
     var tabIndex by remember { mutableIntStateOf(0) }
     val pagerState = rememberPagerState { tabs.size }
@@ -80,9 +86,9 @@ fun WooShippingLabelPackageCreationScreen(
                     .verticalScroll(rememberScrollState())
             ) { currentPageIndex ->
                 when (tabs[currentPageIndex].type) {
-                    CUSTOM -> WooShippingCustomPackageCreationScreen()
-                    CARRIER -> WooShippingCarrierPackageScreen()
-                    SAVED -> WooShippingSavedPackageScreen()
+                    CUSTOM -> createCustomPackageScreen()
+                    CARRIER -> createCarrierPackageScreen()
+                    SAVED -> createSavedPackageScreen()
                 }
             }
         }
@@ -98,7 +104,14 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                 PageTab("Custom", CUSTOM),
                 PageTab("Carrier", CARRIER),
                 PageTab("Saved", SAVED)
-            )
+            ),
+            createCustomPackageScreen = {
+                WooShippingCustomPackageCreationScreen(
+                    onAddPackageClick = {}
+                )
+            },
+            createCarrierPackageScreen = { },
+            createSavedPackageScreen = { }
         )
     }
 }
