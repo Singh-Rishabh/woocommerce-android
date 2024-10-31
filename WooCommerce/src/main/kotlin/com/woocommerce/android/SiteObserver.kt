@@ -8,7 +8,7 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
 import com.woocommerce.android.tools.connectionType
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
-import com.woocommerce.android.util.PackageUtils
+import com.woocommerce.android.util.GetAppVersionName
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T.UTILS
 import com.woocommerce.android.util.dispatchAndAwait
@@ -37,12 +37,11 @@ class SiteObserver @Inject constructor(
     private val environmentRepository: EnvironmentRepository,
     private val wearableConnectionRepository: WearableConnectionRepository,
     private val featureFlagRepository: WPComRemoteFeatureFlagRepository,
-    private val application: Application,
     private val siteStore: SiteStore,
     private val appPrefs: AppPrefsWrapper,
     private val analyticsTracker: AnalyticsTrackerWrapper,
     private val dispatcher: Dispatcher,
-    private val appVersionName: String = PackageUtils.getVersionName(application),
+    private val appVersionName: GetAppVersionName,
 ) {
     suspend fun observeAndUpdateSelectedSiteData() {
         selectedSite.observe()
@@ -97,7 +96,7 @@ class SiteObserver @Inject constructor(
 
     private suspend fun fetchRemoteFeatureFlags() {
         WooLog.d(UTILS, "Fetching remote feature flags")
-        featureFlagRepository.fetchAndCacheFeatureFlags(appVersionName)
+        featureFlagRepository.fetchAndCacheFeatureFlags(appVersionName())
     }
 
     private suspend fun checkIfSiteIsWPComSuspended(site: SiteModel) {

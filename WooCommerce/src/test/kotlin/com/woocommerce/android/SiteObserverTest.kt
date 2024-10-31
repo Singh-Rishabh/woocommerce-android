@@ -4,6 +4,7 @@ import android.app.Application
 import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
+import com.woocommerce.android.util.GetAppVersionName
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.wear.WearableConnectionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,11 +32,10 @@ class SiteObserverTest : BaseUnitTest() {
     }
     private val wearableConnectionRepository: WearableConnectionRepository = mock()
     private val featureFlagRepository: WPComRemoteFeatureFlagRepository = mock()
-    private val application: Application = mock()
     private val siteStore: SiteStore = mock()
     private val appPrefs: AppPrefsWrapper = mock()
     private val dispatcher: FakeDispatcher = FakeDispatcher()
-    private val appVersionName = "1.0.0"
+    private val appVersionName: GetAppVersionName = mock()
 
     private val siteObserver = SiteObserver(
         selectedSite = selectedSite,
@@ -43,7 +43,6 @@ class SiteObserverTest : BaseUnitTest() {
         environmentRepository = environmentRepository,
         wearableConnectionRepository = wearableConnectionRepository,
         featureFlagRepository = featureFlagRepository,
-        application = application,
         siteStore = siteStore,
         appPrefs = appPrefs,
         analyticsTracker = mock(),
@@ -134,6 +133,7 @@ class SiteObserverTest : BaseUnitTest() {
         }
         whenever(selectedSite.observe()).thenReturn(flowOf(site))
         whenever(siteStore.fetchConnectSiteInfoSync(site.url)).thenReturn(mock())
+        whenever(appVersionName()).thenReturn("1.0.0")
 
         // WHEN
         val job = launch {
@@ -142,7 +142,7 @@ class SiteObserverTest : BaseUnitTest() {
         advanceUntilIdle()
 
         // THEN
-        verify(featureFlagRepository).fetchAndCacheFeatureFlags(appVersionName)
+        verify(featureFlagRepository).fetchAndCacheFeatureFlags(appVersionName())
 
         job.cancel()
     }
