@@ -1,12 +1,16 @@
 package com.woocommerce.android
 
+import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
+import com.woocommerce.android.util.GetAppVersionName
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.wear.WearableConnectionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceUntilIdle
+import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -17,7 +21,6 @@ import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 import org.wordpress.android.fluxc.store.SiteStore
 import org.wordpress.android.fluxc.store.WooCommerceStore
-import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SiteObserverTest : BaseUnitTest() {
@@ -27,19 +30,23 @@ class SiteObserverTest : BaseUnitTest() {
         onBlocking { fetchOrGetStoreID(any()) } doReturn WooResult("storeID")
     }
     private val wearableConnectionRepository: WearableConnectionRepository = mock()
+    private val featureFlagRepository: WPComRemoteFeatureFlagRepository = mock()
     private val siteStore: SiteStore = mock()
     private val appPrefs: AppPrefsWrapper = mock()
     private val dispatcher: FakeDispatcher = FakeDispatcher()
+    private val appVersionName: GetAppVersionName = mock()
 
     private val siteObserver = SiteObserver(
         selectedSite = selectedSite,
         wooCommerceStore = wooCommerceStore,
         environmentRepository = environmentRepository,
         wearableConnectionRepository = wearableConnectionRepository,
+        featureFlagRepository = featureFlagRepository,
         siteStore = siteStore,
         appPrefs = appPrefs,
         analyticsTracker = mock(),
-        dispatcher = dispatcher
+        dispatcher = dispatcher,
+        appVersionName = appVersionName
     )
 
     @Test
@@ -115,4 +122,27 @@ class SiteObserverTest : BaseUnitTest() {
             // Cancel the observer job
             job.cancel()
         }
+
+    @Test
+    fun `when observeAndUpdateSelectedSiteData is called, fetchRemoteFeatureFlags is called`() = testBlocking {
+        // GIVEN
+        val site = SiteModel().apply {
+            url = "https://example.com"
+            origin = SiteModel.ORIGIN_WPAPI
+        }
+        whenever(selectedSite.observe()).thenReturn(flowOf(site))
+        whenever(siteStore.fetchConnectSiteInfoSync(site.url)).thenReturn(mock())
+        whenever(appVersionName()).thenReturn("1.0.0")
+
+        // WHEN
+        val job = launch {
+            siteObserver.observeAndUpdateSelectedSiteData()
+        }
+        advanceUntilIdle()
+
+        // THEN
+        verify(featureFlagRepository).fetchAndCacheFeatureFlags(appVersionName())
+
+        job.cancel()
+    }
 }
