@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.cardreader.payment
+package com.woocommerce.android.ui.payments.cardreader.payment.controller
 
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
@@ -54,6 +54,17 @@ import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigPro
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundErrorMapper
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundableChecker
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentReaderTypeStateProvider
+import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlow
+import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowError
+import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlow
+import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderCollectPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.CollectRefundState

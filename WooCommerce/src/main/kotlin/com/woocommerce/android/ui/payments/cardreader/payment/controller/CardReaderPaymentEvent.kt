@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.cardreader.payment
+package com.woocommerce.android.ui.payments.cardreader.payment.controller
 
 import androidx.annotation.StringRes
 
