@@ -126,7 +126,6 @@ class CardReaderPaymentController(
     private val isTTPPaymentInProgress: Boolean,
     private val onTTPPaymentStateChanged: (Boolean) -> Unit,
 ) {
-    // The app shouldn't store the state as payment flow gets canceled when the vm dies
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
     val viewStateData: LiveData<ViewState> = viewState
 
@@ -219,7 +218,6 @@ class CardReaderPaymentController(
                     return@launch
                 }
                 launch {
-//                    isTTPPaymentInProgress = cardReaderType == CardReaderType.BUILT_IN
                     onTTPPaymentStateChanged(cardReaderType == CardReaderType.BUILT_IN)
                     collectPaymentFlow(cardReaderManager, order)
                 }
