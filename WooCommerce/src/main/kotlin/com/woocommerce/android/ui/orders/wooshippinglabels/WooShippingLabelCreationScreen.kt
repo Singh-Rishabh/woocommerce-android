@@ -99,7 +99,10 @@ fun WooShippingLabelCreationScreen(
                         .padding(start = 4.dp, end = 8.dp)
                 )
                 PackageCard(modifier = Modifier.padding(16.dp))
-                ShippingRatesCard(modifier = Modifier.padding(start = dimensionResource(id = R.dimen.major_100)))
+                ShippingRatesCard(
+                    shippingRates = generateShippingRates(),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
