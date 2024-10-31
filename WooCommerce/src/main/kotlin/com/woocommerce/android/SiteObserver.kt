@@ -41,7 +41,8 @@ class SiteObserver @Inject constructor(
     private val siteStore: SiteStore,
     private val appPrefs: AppPrefsWrapper,
     private val analyticsTracker: AnalyticsTrackerWrapper,
-    private val dispatcher: Dispatcher
+    private val dispatcher: Dispatcher,
+    private val appVersionName: String = PackageUtils.getVersionName(application),
 ) {
     suspend fun observeAndUpdateSelectedSiteData() {
         selectedSite.observe()
@@ -96,7 +97,7 @@ class SiteObserver @Inject constructor(
 
     private suspend fun fetchRemoteFeatureFlags() {
         WooLog.d(UTILS, "Fetching remote feature flags")
-        featureFlagRepository.fetchAndCacheFeatureFlags(PackageUtils.getVersionName(application))
+        featureFlagRepository.fetchAndCacheFeatureFlags(appVersionName)
     }
 
     private suspend fun checkIfSiteIsWPComSuspended(site: SiteModel) {
