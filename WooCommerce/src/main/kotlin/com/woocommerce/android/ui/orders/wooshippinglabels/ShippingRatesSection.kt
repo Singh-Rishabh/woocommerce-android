@@ -132,3 +132,67 @@ enum class ShippingSortOption(@StringRes val stringResource: Int) {
     CHEAPEST(R.string.shipping_label_shipping_rates_sort_option_cheapest),
     FASTEST(R.string.shipping_label_shipping_rates_sort_option_fastest)
 }
+
+data class Carrier(
+    val id: String,
+    val name: String,
+    val logoRes: Int? = null,
+)
+
+data class ShippingRate(
+    val rate: String,
+    val currency: String,
+    val deliveryDays: Int,
+    val insurance: String?,
+    val tracking: Boolean,
+    val freePickup: Boolean,
+    val signatureRequired: String?,
+    val adultSignatureRequired: String?,
+)
+
+fun generateShippingRates(): Map<Carrier, List<ShippingRate>> {
+    val carriers = listOf(
+        Carrier(
+            id = "dhl",
+            name = "DHL Express",
+            logoRes = R.drawable.dhl_logo
+        ),
+        Carrier(
+            id = "usps",
+            name = "USPS",
+            logoRes = R.drawable.usps_logo
+        ),
+        Carrier(
+            id = "ups",
+            name = "UPS",
+            logoRes = R.drawable.ups_logo
+        ),
+        Carrier(
+            id = "fedex",
+            name = "Fed Ex",
+            logoRes = R.drawable.fedex_logo
+        ),
+        Carrier(
+            id = "canadapost",
+            name = "Canada Post",
+            logoRes = null
+        )
+    )
+
+    return carriers.associateWith { generateRates(Random(0).nextInt(from = 3, until = 10)) }
+}
+
+fun generateRates(number: Int): List<ShippingRate> {
+    return List(number) {
+        ShippingRate(
+            rate = "${(it + 1) * 2}",
+            currency = "USD",
+            deliveryDays = it,
+            insurance = null,
+            tracking = false,
+            freePickup = false,
+            adultSignatureRequired = if (it % 2 == 0) null else "$3.00",
+            signatureRequired = "$2.00"
+        )
+    }
+}
