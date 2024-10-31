@@ -40,6 +40,10 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             )
         )
 
+    fun onAddPackageClick() {
+
+    }
+
     @Parcelize
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList()

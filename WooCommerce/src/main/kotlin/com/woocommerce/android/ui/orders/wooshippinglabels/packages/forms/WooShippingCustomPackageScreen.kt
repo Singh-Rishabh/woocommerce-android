@@ -8,6 +8,13 @@ import androidx.compose.ui.Modifier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
 
 @Composable
+fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
+    WooShippingCustomPackageCreationScreen(
+        onAddPackageClick = viewModel::onAddPackageClick
+    )
+}
+
+@Composable
 fun WooShippingCustomPackageCreationScreen(
     modifier: Modifier = Modifier,
     onAddPackageClick: () -> Unit
