@@ -99,6 +99,7 @@ import org.wordpress.android.fluxc.store.WooCommerceStore
 private const val ARTIFICIAL_RETRY_DELAY = 500L
 private const val CANADA_FEE_FLAT_IN_CENTS = 15L
 
+@Suppress("LongParameterList", "LargeClass")
 class CardReaderPaymentController(
     private val scope: CoroutineScope,
     private val cardReaderManager: CardReaderManager,
@@ -137,7 +138,7 @@ class CardReaderPaymentController(
 
     private val CardReaderFlowParam.PaymentOrRefund.isPOS: Boolean
         get() = this is CardReaderFlowParam.PaymentOrRefund.Payment &&
-                this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
+            this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
 
     private val _event = MutableSharedFlow<CardReaderPaymentEvent>()
     val event: Flow<CardReaderPaymentEvent> = _event
@@ -483,7 +484,9 @@ class CardReaderPaymentController(
     @VisibleForTesting
     fun reFetchOrder() {
         refetchOrderJob = scope.launch {
-            fetchOrder() ?: _event.emit(CardReaderPaymentEvent.ShowPaymentErrorMessage(R.string.card_reader_refetching_order_failed))
+            fetchOrder() ?: _event.emit(
+                CardReaderPaymentEvent.ShowPaymentErrorMessage(R.string.card_reader_refetching_order_failed)
+            )
             if (viewState.value == ReFetchingOrderState) {
                 _event.emit(CardReaderPaymentEvent.Exit)
             }
@@ -622,7 +625,8 @@ class CardReaderPaymentController(
 
     private fun showPaymentSuccessfulState() {
         scope.launch {
-            val order = requireNotNull(orderRepository.getOrderById(paymentOrRefund.orderId)) { "Order URL not available." }
+            val order =
+                requireNotNull(orderRepository.getOrderById(paymentOrRefund.orderId)) { "Order URL not available." }
             val amountLabel = cardReaderPaymentOrderHelper.getAmountLabel(order)
             val onPrintReceiptClicked = {
                 onPrintReceiptClicked(amountLabel)
@@ -755,15 +759,27 @@ class CardReaderPaymentController(
                 when (val sharingResult = paymentReceiptShare(receiptResult.getOrThrow(), paymentOrRefund.orderId)) {
                     is PaymentReceiptShare.ReceiptShareResult.Error.FileCreation -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
-                        _event.emit(CardReaderPaymentEvent.ShowPaymentErrorMessage(R.string.card_reader_payment_receipt_can_not_be_stored))
+                        _event.emit(
+                            CardReaderPaymentEvent.ShowPaymentErrorMessage(
+                                R.string.card_reader_payment_receipt_can_not_be_stored
+                            )
+                        )
                     }
                     is PaymentReceiptShare.ReceiptShareResult.Error.FileDownload -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
-                        _event.emit(CardReaderPaymentEvent.ShowPaymentErrorMessage(R.string.card_reader_payment_receipt_can_not_be_downloaded))
+                        _event.emit(
+                            CardReaderPaymentEvent.ShowPaymentErrorMessage(
+                                R.string.card_reader_payment_receipt_can_not_be_downloaded
+                            )
+                        )
                     }
                     is PaymentReceiptShare.ReceiptShareResult.Error.Sharing -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
-                        _event.emit(CardReaderPaymentEvent.ShowPaymentErrorMessage(R.string.card_reader_payment_email_client_not_found))
+                        _event.emit(
+                            CardReaderPaymentEvent.ShowPaymentErrorMessage(
+                                R.string.card_reader_payment_email_client_not_found
+                            )
+                        )
                     }
                     PaymentReceiptShare.ReceiptShareResult.Success -> {
                         // no-op
