@@ -1,6 +1,5 @@
 package com.woocommerce.android
 
-import android.app.Application
 import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository

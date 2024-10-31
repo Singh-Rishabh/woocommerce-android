@@ -1,6 +1,5 @@
 package com.woocommerce.android
 
-import android.app.Application
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
