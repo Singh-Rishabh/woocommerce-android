@@ -1,9 +1,9 @@
 package com.woocommerce.android
 
 import android.app.Application
-import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
 import com.woocommerce.android.tools.connectionType

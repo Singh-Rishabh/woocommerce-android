@@ -3,7 +3,6 @@ package com.woocommerce.android
 import android.app.Application
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import com.woocommerce.android.SiteObserver
 import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
@@ -22,7 +21,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 import org.wordpress.android.fluxc.store.SiteStore
@@ -38,7 +36,6 @@ class SiteObserverTest : BaseUnitTest() {
     private val wearableConnectionRepository: WearableConnectionRepository = mock()
     private val featureFlagRepository: WPComRemoteFeatureFlagRepository = mock()
     private val application: Application = mock()
-//    private val dispatcher: Dispatcher = mock()
     private val siteStore: SiteStore = mock()
     private val appPrefs: AppPrefsWrapper = mock()
     private val dispatcher: FakeDispatcher = FakeDispatcher()
