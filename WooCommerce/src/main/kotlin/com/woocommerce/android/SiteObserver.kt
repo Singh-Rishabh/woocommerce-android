@@ -2,7 +2,11 @@ package com.woocommerce.android
 
 import android.app.Application
 import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
+import com.woocommerce.android.analytics.AnalyticsEvent
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.tools.SiteConnectionType
+import com.woocommerce.android.tools.connectionType
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
 import com.woocommerce.android.util.PackageUtils
 import com.woocommerce.android.util.WooLog
@@ -17,6 +21,7 @@ import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.generated.WCOrderActionBuilder
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.store.SiteStore
 import org.wordpress.android.fluxc.store.WCOrderStore.FetchOrderStatusOptionsPayload
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderStatusOptionsChanged
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -25,10 +30,7 @@ import javax.inject.Inject
 /**
  * A utility class that can be used to force fetching data specific to current site,
  * the fetching will occur on app launch, and on each site switching
- *
- * TODO: check and move other relevant pieces to this class, currently it's used only for fetching plugins
  */
-@Suppress("ForbiddenComment")
 class SiteObserver @Inject constructor(
     private val selectedSite: SelectedSite,
     private val wooCommerceStore: WooCommerceStore,
@@ -36,6 +38,9 @@ class SiteObserver @Inject constructor(
     private val wearableConnectionRepository: WearableConnectionRepository,
     private val featureFlagRepository: WPComRemoteFeatureFlagRepository,
     private val application: Application,
+    private val siteStore: SiteStore,
+    private val appPrefs: AppPrefsWrapper,
+    private val analyticsTracker: AnalyticsTrackerWrapper,
     private val dispatcher: Dispatcher
 ) {
     suspend fun observeAndUpdateSelectedSiteData() {
@@ -53,6 +58,10 @@ class SiteObserver @Inject constructor(
                     launch { sendSiteDataToWearable(site) }
 
                     launch { fetchRemoteFeatureFlags() }
+
+                    if (site.connectionType == SiteConnectionType.ApplicationPasswords) {
+                        launch { checkIfSiteIsWPComSuspended(site) }
+                    }
                 }
             }
     }
@@ -88,5 +97,27 @@ class SiteObserver @Inject constructor(
     private suspend fun fetchRemoteFeatureFlags() {
         WooLog.d(UTILS, "Fetching remote feature flags")
         featureFlagRepository.fetchAndCacheFeatureFlags(PackageUtils.getVersionName(application))
+    }
+
+    private suspend fun checkIfSiteIsWPComSuspended(site: SiteModel) {
+        val isSiteSuspended = siteStore.fetchConnectSiteInfoSync(site.url).let {
+            when {
+                !it.isError -> false
+                it.error.type == SiteStore.SiteErrorType.WPCOM_SITE_SUSPENDED -> true
+                else -> {
+                    WooLog.e(WooLog.T.LOGIN, "Error fetching site info for ${site.name}: ${it.error}")
+                    null
+                }
+            }
+        } ?: return
+
+        WooLog.d(WooLog.T.LOGIN, "Site ${site.url} is WPCom suspended: $isSiteSuspended")
+        appPrefs.isSiteWPComSuspended = isSiteSuspended
+        if (isSiteSuspended) {
+            analyticsTracker.track(
+                stat = AnalyticsEvent.BLACK_FLAGGED_WEBSITE_DETECTED,
+                properties = mapOf("event" to "app_launch")
+            )
+        }
     }
 }

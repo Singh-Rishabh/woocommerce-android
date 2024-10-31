@@ -322,6 +322,7 @@ dependencies {
     implementation(libs.bumptech.glide.main)
     ksp(libs.bumptech.glide.compiler)
     implementation(libs.bumptech.glide.volley.integration)
+    implementation(libs.bumptech.glide.avif.integration)
     implementation(libs.google.play.app.update)
     implementation(libs.google.play.review)
 

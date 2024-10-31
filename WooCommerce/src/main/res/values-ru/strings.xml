@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-02 16:54:03+0000
+Translation-Revision-Date: 2024-10-22 11:54:04+0000
 Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
 Generator: GlotPress/2.4.0-alpha
 Language: ru
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="blaze_campaign_objective_save_selection_switch_label">Сохранить выбор для будущих кампаний</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;Подходит для:&lt;/b&gt; %s</string>
+    <string name="blaze_campaign_objective_select_objective_label">Выбрать цель %s</string>
+    <string name="custom_fields_empty_view_title">Пользовательские поля не найдены</string>
+    <string name="custom_fields_empty_view_message">Пользовательские поля предназначены для отображения произвольных метаданных, содержащих дополнительную информацию или персонализирующих покупки в магазине.</string>
+    <string name="blaze_campaign_created_success_feedback_request">Вам понравилось работать с Blaze?</string>
+    <string name="blaze_campaign_preview_missing_objective_dialog_positive_button">Выбрать цель</string>
+    <string name="blaze_campaign_preview_missing_objective_dialog_text">Выберите цель кампании Blaze</string>
+    <string name="blaze_campaign_preview_details_choose_objective">Выбрать цель кампании</string>
+    <string name="blaze_campaign_preview_details_objective">Цель кампании</string>
+    <string name="more_menu_button_woo_pos_description">Принимать платежи в офлайн-магазине</string>
+    <string name="card_reader_tap_to_pay_about_how_works_4">4. Покупатель прикладывает карту к задней поверхности вашего телефона.</string>
     <string name="custom_fields_editor_html_toggle">HTML</string>
     <string name="custom_fields_editor_text_toggle">Текст</string>
     <string name="custom_fields_editor_toggle_accessibility_description">Переключайтесь между текстовым и HTML-редакторами</string>
@@ -218,7 +230,6 @@ Language: ru
     <string name="dashboard_product_stock_wcanalytics_inactive_title">Не удалось загрузить отчёты о запасах товаров</string>
     <string name="dashboard_product_stock_no_sales_last_30_days">За последние 30 дней не продано ни одного товара</string>
     <string name="dashboard_product_stock_sales_last_30_days">Продано товаров за последние 30 дней: %d</string>
-    <string name="more_menu_button_woo_pos_description">Пользуйтесь приложением как кассовым аппаратом</string>
     <string name="more_menu_button_woo_pos">Режим «Пункт продажи»</string>
     <string name="product_stock_status_low_stock">Малый запас</string>
     <string name="order_detail_shipping_header">ДОСТАВКА</string>
@@ -729,7 +740,6 @@ Language: ru
     <string name="blaze_campaign_title">Кампания Blaze</string>
     <string name="card_reader_tap_to_pay_about_copyright">Символ бесконтактной оплаты (Contactless Symbol) — торговая марка, принадлежащая компании EMVCo, LLC и используемая с её разрешения.</string>
     <string name="card_reader_tap_to_pay_about_how_works_5">5. Если вы видите значок «Выполнено» в виде галочки, значит, магазин обрабатывает ваш платёж, а транзакция завершена.</string>
-    <string name="card_reader_tap_to_pay_about_how_works_4">4. Покупатель прикладывает свою карту горизонтально к верхней части вашего смартфона, к символу бесконтактной оплаты.</string>
     <string name="card_reader_tap_to_pay_about_how_works_3">3. Покажите покупателю ваш смартфон.</string>
     <string name="card_reader_tap_to_pay_about_how_works_2">2. Нажмите «Принять платёж» и выберите Tap to Pay.</string>
     <string name="card_reader_tap_to_pay_about_how_works_1_updated">1. Создайте заказ</string>
