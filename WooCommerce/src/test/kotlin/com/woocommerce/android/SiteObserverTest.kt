@@ -1,19 +1,15 @@
 package com.woocommerce.android
 
 import android.app.Application
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import com.woocommerce.android.config.WPComRemoteFeatureFlagRepository
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.wear.WearableConnectionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -39,6 +35,7 @@ class SiteObserverTest : BaseUnitTest() {
     private val siteStore: SiteStore = mock()
     private val appPrefs: AppPrefsWrapper = mock()
     private val dispatcher: FakeDispatcher = FakeDispatcher()
+    private val appVersionName = "1.0.0"
 
     private val siteObserver = SiteObserver(
         selectedSite = selectedSite,
@@ -51,41 +48,8 @@ class SiteObserverTest : BaseUnitTest() {
         appPrefs = appPrefs,
         analyticsTracker = mock(),
         dispatcher = dispatcher,
+        appVersionName = appVersionName
     )
-
-    @Test
-    fun `when observeAndUpdateSelectedSiteData is called, fetchRemoteFeatureFlags is called`() = runTest {
-        // GIVEN
-        val versionName = "1.0.0"
-        val packageName = "com.woocommerce.android"
-        val packageManager: PackageManager = mock()
-        val packageInfo = PackageInfo().apply { this.versionName = versionName }
-
-        whenever(application.packageName).thenReturn(packageName)
-        whenever(application.packageManager).thenReturn(packageManager)
-        whenever(packageManager.getPackageInfo(packageName, 0)).thenReturn(packageInfo)
-
-        val siteModel = mock<SiteModel> {
-            on { id }.thenReturn(1)
-        }
-
-        val wooResult: WooResult<String?> = mock()
-        whenever(wooResult.isError).thenReturn(false)
-
-        whenever(environmentRepository.fetchOrGetStoreID(siteModel)).thenReturn(wooResult)
-        whenever(selectedSite.observe()).thenReturn(MutableStateFlow(siteModel))
-
-        // WHEN
-        val job = launch {
-            siteObserver.observeAndUpdateSelectedSiteData()
-        }
-        advanceUntilIdle()
-
-        // THEN
-        verify(featureFlagRepository).fetchAndCacheFeatureFlags(versionName)
-
-        job.cancel()
-    }
 
     @Test
     fun `given app password connection, when starting observing, then fetch WPCom connect site info`() = testBlocking {
@@ -160,4 +124,26 @@ class SiteObserverTest : BaseUnitTest() {
             // Cancel the observer job
             job.cancel()
         }
+
+    @Test
+    fun `when observeAndUpdateSelectedSiteData is called, fetchRemoteFeatureFlags is called`() = testBlocking {
+        // GIVEN
+        val site = SiteModel().apply {
+            url = "https://example.com"
+            origin = SiteModel.ORIGIN_WPAPI
+        }
+        whenever(selectedSite.observe()).thenReturn(flowOf(site))
+        whenever(siteStore.fetchConnectSiteInfoSync(site.url)).thenReturn(mock())
+
+        // WHEN
+        val job = launch {
+            siteObserver.observeAndUpdateSelectedSiteData()
+        }
+        advanceUntilIdle()
+
+        // THEN
+        verify(featureFlagRepository).fetchAndCacheFeatureFlags(appVersionName)
+
+        job.cancel()
+    }
 }
