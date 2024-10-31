@@ -62,6 +62,14 @@ internal fun ShippingRatesCard(
     }
 }
 
+@Preview
+@Composable
+private fun ShippingRatesCardPreview() {
+    WooThemeWithBackground {
+        ShippingRatesCard(shippingRates = generateShippingRates())
+    }
+}
+
 @Composable
 private fun ShippingRatesHeader(
     selectedSortOption: ShippingSortOption,
