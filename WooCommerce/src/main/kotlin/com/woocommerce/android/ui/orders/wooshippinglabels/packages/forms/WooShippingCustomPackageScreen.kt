@@ -55,7 +55,7 @@ fun WooShippingCustomPackageCreationScreen(
         ) {
             Column(modifier = modifier) {
                 WCOutlinedSpinner(
-                    onClick = {  },
+                    onClick = { },
                     value = "Box",
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_type),
                     modifier = modifier.fillMaxWidth()
@@ -67,7 +67,7 @@ fun WooShippingCustomPackageCreationScreen(
             ) {
                 WCOutlinedTextField(
                     value = packageLength,
-                    onValueChange = {  },
+                    onValueChange = { },
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_length),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
@@ -75,7 +75,7 @@ fun WooShippingCustomPackageCreationScreen(
 
                 WCOutlinedTextField(
                     value = packageWidth,
-                    onValueChange = {  },
+                    onValueChange = { },
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_width),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
@@ -83,14 +83,14 @@ fun WooShippingCustomPackageCreationScreen(
 
                 WCOutlinedTextField(
                     value = packageHeight,
-                    onValueChange = {  },
+                    onValueChange = { },
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_height),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
             }
             Row {
-                Text("Save this as a new package template")
+                Text(stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option))
             }
         }
         Button(
