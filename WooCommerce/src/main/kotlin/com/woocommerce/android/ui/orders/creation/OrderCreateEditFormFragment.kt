@@ -766,6 +766,16 @@ class OrderCreateEditFormFragment :
         } else {
             additionalInfoCollectionSection.addCouponButtonGroup.show()
         }
+
+        // Hide the whole section when all children are invisible
+        if (!additionalInfoCollectionSection.addGiftCardButtonGroup.isVisible &&
+            !additionalInfoCollectionSection.addCouponButtonGroup.isVisible &&
+            !additionalInfoCollectionSection.addShippingButtonGroup.isVisible
+        ) {
+            additionalInfoCollectionSection.root.isVisible = false
+        } else {
+            additionalInfoCollectionSection.root.isVisible = true
+        }
     }
 
     private fun OrderCreationAdditionalInfoCollectionSectionBinding.bindGiftCardSubSection(newOrderData: Order) {
