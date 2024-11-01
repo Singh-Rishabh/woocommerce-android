@@ -59,13 +59,13 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     @Parcelize
     data class CustomPackageCreationData(
         val type: String,
-        val weight: String,
         val length: String,
         val width: String,
+        val height: String,
         val saveAsTemplate: Boolean
     ) : Parcelable {
         val isValid: Boolean
-            get() = weight.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
+            get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
     }
 
     enum class PageType {
