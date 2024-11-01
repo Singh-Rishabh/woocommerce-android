@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
@@ -41,7 +42,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         )
 
     fun onAddPackageClick() {
-
+        triggerEvent(PackageSelected)
     }
 
     @Parcelize
@@ -73,4 +74,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         CARRIER,
         SAVED
     }
+
+    data object PackageSelected : MultiLiveEvent.Event()
 }
