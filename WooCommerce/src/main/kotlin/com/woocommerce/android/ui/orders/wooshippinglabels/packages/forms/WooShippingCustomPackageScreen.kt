@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -89,8 +91,15 @@ fun WooShippingCustomPackageCreationScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
             }
-            Row {
-                Text(stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option))
+            Row(
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option),
+                    modifier = modifier.align(Alignment.CenterVertically)
+                )
+                Checkbox(checked = false, onCheckedChange = {})
             }
         }
         Button(
@@ -98,7 +107,7 @@ fun WooShippingCustomPackageCreationScreen(
             enabled = isAddPackageEnabled,
             onClick = onAddPackageClick
         ) {
-            Text("Add package")
+            Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
         }
     }
 }
