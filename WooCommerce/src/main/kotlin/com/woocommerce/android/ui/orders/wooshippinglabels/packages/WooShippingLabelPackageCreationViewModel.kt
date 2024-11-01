@@ -59,7 +59,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     @Parcelize
     data class CustomPackageCreationData(
-        val type: String,
+        val type: PackageType,
         val length: String,
         val width: String,
         val height: String,
@@ -73,6 +73,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         CUSTOM,
         CARRIER,
         SAVED
+    }
+
+    enum class PackageType(val resourceId: Int) {
+        BOX(R.string.woo_shipping_labels_package_creation_box_type),
+        ENVELOPE(R.string.woo_shipping_labels_package_creation_envelope_type)
     }
 
     data object PackageSelected : MultiLiveEvent.Event()

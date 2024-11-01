@@ -4355,4 +4355,6 @@
     <string name="woo_shipping_labels_package_creation_height">Height</string>
     <string name="woo_shipping_labels_package_creation_save_package_option">Save this as a new package template</string>
     <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Box</string>
+    <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
 </resources>
