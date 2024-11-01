@@ -107,6 +107,10 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
             ),
             createCustomPackageScreen = {
                 WooShippingCustomPackageCreationScreen(
+                    packageLength = "10",
+                    packageWidth = "10",
+                    packageHeight = "10",
+                    isAddPackageEnabled = true,
                     onAddPackageClick = {}
                 )
             },
