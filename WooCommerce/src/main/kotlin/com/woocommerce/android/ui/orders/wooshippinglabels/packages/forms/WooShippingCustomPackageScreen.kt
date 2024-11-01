@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
@@ -26,6 +27,9 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingCustomPackageCreationScreen(
+        packageHeight = viewState?.customPackageCreationData?.height.orEmpty(),
+        packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
+        packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
         isAddPackageEnabled = viewState?.customPackageCreationData?.isValid ?: false,
         onAddPackageClick = viewModel::onAddPackageClick
     )
@@ -34,6 +38,9 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
 @Composable
 fun WooShippingCustomPackageCreationScreen(
     modifier: Modifier = Modifier,
+    packageLength: String,
+    packageWidth: String,
+    packageHeight: String,
     isAddPackageEnabled: Boolean,
     onAddPackageClick: () -> Unit
 ) {
@@ -42,7 +49,10 @@ fun WooShippingCustomPackageCreationScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Column(modifier = modifier.weight(1f)) {
+        Column(
+            modifier = modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             Column(modifier = modifier) {
                 Text("Package type")
             }
@@ -50,12 +60,32 @@ fun WooShippingCustomPackageCreationScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = modifier.fillMaxWidth()
             ) {
-                Text("Length")
-                Text("Width")
-                Text("Height")
+                WCOutlinedTextField(
+                    value = packageLength,
+                    onValueChange = {  },
+                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_length),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                )
+
+                WCOutlinedTextField(
+                    value = packageWidth,
+                    onValueChange = {  },
+                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_width),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                )
+
+                WCOutlinedTextField(
+                    value = packageHeight,
+                    onValueChange = {  },
+                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_height),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                )
             }
             Row {
-                Text("Package Saving options")
+                Text("Save this as a new package template")
             }
         }
         Button(
@@ -73,6 +103,9 @@ fun WooShippingCustomPackageCreationScreen(
 fun PreviewWooShippingCustomPackageCreationScreen() {
     WooThemeWithBackground {
         WooShippingCustomPackageCreationScreen(
+            packageLength = "10",
+            packageWidth = "10",
+            packageHeight = "10",
             isAddPackageEnabled = true,
             onAddPackageClick = {}
         )
