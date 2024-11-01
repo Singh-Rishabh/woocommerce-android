@@ -67,6 +67,7 @@ import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel.Mode.
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel.Mode.Edit
 import com.woocommerce.android.ui.orders.creation.configuration.EditProductConfigurationResult
 import com.woocommerce.android.ui.orders.creation.configuration.ProductConfigurationFragment
+import com.woocommerce.android.ui.orders.creation.coupon.CouponLineFormSection
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponEditFragment.Companion.KEY_COUPON_EDIT_RESULT
 import com.woocommerce.android.ui.orders.creation.customerlist.OrderCustomerListFragment
@@ -410,6 +411,8 @@ class OrderCreateEditFormFragment :
 
         bindShippingLinesSection(binding)
 
+        bindCouponsLinesSection(binding)
+
         bindFeedbackSection(binding)
 
         observeViewStateChanges(binding)
@@ -428,6 +431,24 @@ class OrderCreateEditFormFragment :
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAdd = { viewModel.onAddOrEditShipping() },
                             onEdit = { id -> viewModel.onAddOrEditShipping(id) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun bindCouponsLinesSection(binding: FragmentOrderCreateEditFormBinding) {
+        binding.couponLines.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                viewModel.couponLinesLiveData.observeAsState().value?.let { couponLines ->
+                    WooThemeWithBackground {
+                        CouponLineFormSection(
+                            couponLineDetails = couponLines,
+                            modifier = Modifier.padding(bottom = 1.dp),
+                            onAdd = { viewModel.onAddCouponButtonClicked() },
+                            onRemove = { code -> viewModel.onCouponRemoved(code) }
                         )
                     }
                 }
@@ -737,6 +758,12 @@ class OrderCreateEditFormFragment :
             additionalInfoCollectionSection.addShippingButtonGroup.hide()
         } else {
             additionalInfoCollectionSection.addShippingButtonGroup.show()
+        }
+
+        if (newOrderData.couponLines.isNotEmpty()) {
+            additionalInfoCollectionSection.addCouponButtonGroup.hide()
+        } else {
+            additionalInfoCollectionSection.addCouponButtonGroup.show()
         }
     }
 
