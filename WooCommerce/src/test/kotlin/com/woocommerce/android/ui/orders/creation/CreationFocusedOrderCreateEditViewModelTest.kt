@@ -1888,7 +1888,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                 )
             ).thenReturn(totalsSectionsState)
 
@@ -1919,7 +1918,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                 )
             ).thenReturn(totalsSectionsState)
             var totalsData: TotalsSectionsState? = null
@@ -1941,7 +1939,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
             val onExpandCollapseClickedCaptor = argumentCaptor<() -> Unit>()
             whenever(
                 totalsHelper.mapToPaymentTotalsState(
-                    any(),
                     any(),
                     any(),
                     any(),
@@ -1995,7 +1992,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                     onHeightChangedCaptor.capture(),
                 )
             ).thenReturn(totalsSectionsState)
@@ -2028,7 +2024,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     onMainButtonClickedCaptor.capture(),
-                    any(),
                     any(),
                     any(),
                 )
