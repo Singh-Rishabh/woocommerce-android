@@ -46,7 +46,8 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     @Parcelize
     data class ViewState(
-        val pageTabs: List<PageTab> = emptyList()
+        val pageTabs: List<PageTab> = emptyList(),
+        val customPackageCreationData: CustomPackageCreationData? = null
     ) : Parcelable
 
     @Parcelize
@@ -54,6 +55,18 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         val title: String,
         val type: PageType
     ) : Parcelable
+
+    @Parcelize
+    data class CustomPackageCreationData(
+        val type: String,
+        val weight: String,
+        val length: String,
+        val width: String,
+        val saveAsTemplate: Boolean
+    ) : Parcelable {
+        val isValid: Boolean
+            get() = weight.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
+    }
 
     enum class PageType {
         CUSTOM,
