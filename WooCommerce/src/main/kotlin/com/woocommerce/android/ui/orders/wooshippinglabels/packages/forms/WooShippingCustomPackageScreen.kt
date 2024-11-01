@@ -28,7 +28,11 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 @Composable
 fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
+    val packageType = viewState?.customPackageCreationData?.type?.resourceId
+        ?.let { stringResource(id = it) }.orEmpty()
+
     WooShippingCustomPackageCreationScreen(
+        packageType = packageType,
         packageHeight = viewState?.customPackageCreationData?.height.orEmpty(),
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
@@ -40,6 +44,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
 @Composable
 fun WooShippingCustomPackageCreationScreen(
     modifier: Modifier = Modifier,
+    packageType: String,
     packageLength: String,
     packageWidth: String,
     packageHeight: String,
@@ -58,13 +63,13 @@ fun WooShippingCustomPackageCreationScreen(
             Column(modifier = modifier) {
                 WCOutlinedSpinner(
                     onClick = { },
-                    value = "Box",
+                    value = packageType,
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_type),
                     modifier = modifier.fillMaxWidth()
                 )
             }
             Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = modifier.fillMaxWidth()
             ) {
                 WCOutlinedTextField(
@@ -72,7 +77,8 @@ fun WooShippingCustomPackageCreationScreen(
                     onValueChange = { },
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_length),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.weight(1f)
                 )
 
                 WCOutlinedTextField(
@@ -80,7 +86,8 @@ fun WooShippingCustomPackageCreationScreen(
                     onValueChange = { },
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_width),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.weight(1f)
                 )
 
                 WCOutlinedTextField(
@@ -88,7 +95,8 @@ fun WooShippingCustomPackageCreationScreen(
                     onValueChange = { },
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_height),
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.weight(1f)
                 )
             }
             Row(
@@ -117,6 +125,7 @@ fun WooShippingCustomPackageCreationScreen(
 fun PreviewWooShippingCustomPackageCreationScreen() {
     WooThemeWithBackground {
         WooShippingCustomPackageCreationScreen(
+            packageType = "Box",
             packageLength = "10",
             packageWidth = "10",
             packageHeight = "10",
