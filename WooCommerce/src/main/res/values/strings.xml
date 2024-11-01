@@ -4349,4 +4349,7 @@
     <string name="woo_shipping_labels_package_creation_tab_custom">Custom</string>
     <string name="woo_shipping_labels_package_creation_tab_carrier">Carrier</string>
     <string name="woo_shipping_labels_package_creation_tab_saved">Saved</string>
+    <string name="woo_shipping_labels_package_creation_length">Length</string>
+    <string name="woo_shipping_labels_package_creation_width">Width</string>
+    <string name="woo_shipping_labels_package_creation_height">Height</string>
 </resources>
