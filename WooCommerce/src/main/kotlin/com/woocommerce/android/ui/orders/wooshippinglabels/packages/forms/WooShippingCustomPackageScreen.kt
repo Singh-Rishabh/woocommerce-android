@@ -54,7 +54,12 @@ fun WooShippingCustomPackageCreationScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(modifier = modifier) {
-                Text("Package type")
+                WCOutlinedSpinner(
+                    onClick = {  },
+                    value = "Box",
+                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_type),
+                    modifier = modifier.fillMaxWidth()
+                )
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
