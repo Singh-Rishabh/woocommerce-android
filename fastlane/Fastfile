@@ -712,7 +712,10 @@ platform :android do
   #          bundle exec fastlane trigger_release_build branch_to_build:main include_wear_app:true
   #
   lane :trigger_release_build do |branch_to_build: git_branch, include_wear_app: false|
-    environment = { INCLUDE_WEAR_APP: include_wear_app }
+    environment = {
+      INCLUDE_WEAR_APP: include_wear_app,
+      RELEASE_VERSION: release_version_current
+    }
 
     # If we're running on CI, we can directly start the release pipeline jobs within the same build
     if is_ci

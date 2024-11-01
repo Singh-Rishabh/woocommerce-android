@@ -9,7 +9,7 @@ steps:
       source use-bot-for-git
 
       echo '--- :git: Checkout Release Branch'
-      .buildkite/commands/checkout-release-branch.sh
+      .buildkite/commands/checkout-release-branch.sh "$RELEASE_VERSION"
 
       echo '--- :ruby: Setup Ruby Tools'
       install_gems
