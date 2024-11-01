@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.creation.coupon
 
-
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
