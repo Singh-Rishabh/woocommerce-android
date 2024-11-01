@@ -98,6 +98,7 @@ import com.woocommerce.android.ui.orders.creation.CreateUpdateOrder.OrderUpdateS
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper.BarcodeFormat
 import com.woocommerce.android.ui.orders.creation.configuration.ConfigurationType
 import com.woocommerce.android.ui.orders.creation.configuration.ProductConfiguration
+import com.woocommerce.android.ui.orders.creation.coupon.CouponLineDetails
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget.AddCustomer
@@ -403,9 +404,15 @@ class OrderCreateEditViewModel @Inject constructor(
             }
         }.asLiveData()
 
+    val couponLinesLiveData = MediatorLiveData<List<CouponLineDetails>>()
+
     init {
         monitorPluginAvailabilityChanges()
         shouldDisplayShippingFeedback()
+
+        couponLinesLiveData.addSource(orderDraft) { order ->
+            couponLinesLiveData.value = order.couponLines.map { CouponLineDetails(it.code) }
+        }
 
         when (mode) {
             is Mode.Creation -> {
@@ -1803,7 +1810,7 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
-    private fun onCouponRemoved(couponCode: String) {
+    fun onCouponRemoved(couponCode: String) {
         trackCouponRemoved()
         _orderDraft.update { draft ->
             val updatedCouponLines = draft.couponLines.filter { it.code != couponCode }
