@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,11 +17,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.colorResource
@@ -40,6 +39,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 @Composable
 fun CouponLineFormSection(
     couponLineDetails: List<CouponLineDetails>,
+    isEnabled: Boolean,
     onAdd: () -> Unit,
     onRemove: (code: String) -> Unit,
     modifier: Modifier = Modifier
@@ -53,17 +53,15 @@ fun CouponLineFormSection(
                         style = MaterialTheme.typography.h6,
                         modifier = modifier
                             .weight(2f, true)
-                            .align(Alignment.CenterVertically)
+                            .align(Alignment.CenterVertically),
                     )
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = stringResource(id = R.string.order_creation_add_coupon),
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { onAdd() },
+                            .alpha(if (isEnabled) 1f else 0.4f)
+                            .clickable(enabled = isEnabled) { onAdd() },
                         tint = MaterialTheme.colors.primary
                     )
                 }
@@ -72,8 +70,9 @@ fun CouponLineFormSection(
                     val itemModifier = if (i == 0) Modifier else Modifier.padding(top = 8.dp)
                     CouponLineEditCard(
                         couponLine = couponDetails,
-                        onEdit = onRemove,
                         modifier = itemModifier
+                            .alpha(if (isEnabled) 1f else 0.4f)
+                            .clickable(enabled = isEnabled) { onRemove(couponDetails.code) }
                     )
                 }
             }
@@ -84,7 +83,6 @@ fun CouponLineFormSection(
 @Composable
 fun CouponLineEditCard(
     couponLine: CouponLineDetails,
-    onEdit: (code: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -96,9 +94,7 @@ fun CouponLineEditCard(
                 width = 1.dp,
                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.corner_radius_large))
             )
-            .clickable { onEdit(couponLine.code) }
             .padding(dimensionResource(id = R.dimen.major_100))
-
     ) {
         Column(
             modifier = Modifier
@@ -118,7 +114,7 @@ fun CouponLineEditCard(
         }
         Spacer(modifier = Modifier.weight(1f))
         Icon(
-            imageVector = Icons.Outlined.Edit,
+            imageVector = Icons.Outlined.DeleteOutline,
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -149,6 +145,7 @@ fun CouponLineFormSectionPreview() {
     WooThemeWithBackground {
         CouponLineFormSection(
             couponLineDetails = couponLine,
+            isEnabled = true,
             onAdd = { },
             onRemove = { }
         )

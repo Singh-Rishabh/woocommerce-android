@@ -1,5 +1,10 @@
 package com.woocommerce.android.ui.orders.creation.coupon
 
-class CouponLineDetails(
+data class CouponLineDetails(
     val code: String
+)
+
+data class CouponSection(
+    val couponLines: List<CouponLineDetails>,
+    val isEnabled: Boolean,
 )

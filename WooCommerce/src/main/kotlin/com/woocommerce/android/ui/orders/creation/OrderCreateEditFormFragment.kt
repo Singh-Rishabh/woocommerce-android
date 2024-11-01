@@ -442,10 +442,11 @@ class OrderCreateEditFormFragment :
         binding.couponLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                viewModel.couponLinesLiveData.observeAsState().value?.let { couponLines ->
+                viewModel.couponLinesLiveData.observeAsState().value?.let { couponSection ->
                     WooThemeWithBackground {
                         CouponLineFormSection(
-                            couponLineDetails = couponLines,
+                            couponLineDetails = couponSection.couponLines,
+                            isEnabled = couponSection.isEnabled,
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAdd = { viewModel.onAddCouponButtonClicked() },
                             onRemove = { code -> viewModel.onCouponRemoved(code) }

@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R.string
@@ -99,6 +100,7 @@ import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper.Barc
 import com.woocommerce.android.ui.orders.creation.configuration.ConfigurationType
 import com.woocommerce.android.ui.orders.creation.configuration.ProductConfiguration
 import com.woocommerce.android.ui.orders.creation.coupon.CouponLineDetails
+import com.woocommerce.android.ui.orders.creation.coupon.CouponSection
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget.AddCustomer
@@ -404,14 +406,22 @@ class OrderCreateEditViewModel @Inject constructor(
             }
         }.asLiveData()
 
-    val couponLinesLiveData = MediatorLiveData<List<CouponLineDetails>>()
+    private val _couponLinesLiveData = MediatorLiveData(CouponSection(emptyList(), true))
+    val couponLinesLiveData = _couponLinesLiveData.distinctUntilChanged()
 
     init {
         monitorPluginAvailabilityChanges()
         shouldDisplayShippingFeedback()
 
-        couponLinesLiveData.addSource(orderDraft) { order ->
-            couponLinesLiveData.value = order.couponLines.map { CouponLineDetails(it.code) }
+        _couponLinesLiveData.addSource(orderDraft) { newOrderDraft ->
+            _couponLinesLiveData.value =
+                _couponLinesLiveData.value
+                    ?.copy(couponLines = newOrderDraft.couponLines.map { CouponLineDetails(it.code) })
+        }
+
+        _couponLinesLiveData.addSource(viewStateData.liveData) { newViewState ->
+            _couponLinesLiveData.value = _couponLinesLiveData.value
+                ?.copy(isEnabled = newViewState.isIdle && viewState.isEditable)
         }
 
         when (mode) {
