@@ -6,6 +6,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
 
 @Composable
@@ -33,5 +36,15 @@ fun WooShippingCustomPackageCreationScreen(
         Button(onClick = onAddPackageClick) {
             Text("Add package")
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewWooShippingCustomPackageCreationScreen() {
+    WooThemeWithBackground {
+        WooShippingCustomPackageCreationScreen(
+            onAddPackageClick = {}
+        )
     }
 }
