@@ -37,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -394,20 +395,25 @@ internal fun QuantityBadgePreview() {
 fun RoundedCornerBoxWithBorder(
     modifier: Modifier = Modifier,
     innerModifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colors.surface,
+    borderColor: Color = colorResource(R.color.divider_color),
+    borderWidth: Dp = dimensionResource(R.dimen.minor_10),
     content: @Composable BoxScope.() -> Unit = {},
 ) {
     Box(
         modifier = modifier
             .background(
-                color = MaterialTheme.colors.surface,
+                color = backgroundColor,
                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
             )
             .border(
-                width = dimensionResource(R.dimen.minor_10),
-                color = colorResource(R.color.divider_color),
+                width = borderWidth,
+                color = borderColor,
                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
             )
+            .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large)))
             .then(innerModifier)
+
     ) {
         content()
     }
