@@ -64,7 +64,7 @@ internal fun ShippingRatesCard(
     onSelectedChange: (ShippingRate) -> Unit = {},
     shippingRates: Map<Carrier, List<ShippingRate>>,
     signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired) -> Unit,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier
 ) {
@@ -197,7 +197,7 @@ fun ShippingRates(
     onSelectedChange: (ShippingRate) -> Unit = {},
     shippingRates: Map<Carrier, List<ShippingRate>>,
     signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired) -> Unit,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier,
     tabModifier: Modifier = Modifier
@@ -284,7 +284,7 @@ private fun ShippingRateItem(
     shippingRate: ShippingRate,
     isSelected: Boolean,
     signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired) -> Unit,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier
 ) {
@@ -378,7 +378,7 @@ private fun getShippingRateFormattedDescription(
 private fun ShippingRateItemExpandedDescription(
     shippingRate: ShippingRate,
     signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired) -> Unit,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier
 ) {
@@ -417,7 +417,7 @@ private fun ShippingRateItemExpandedDescription(
 @Composable
 private fun SelectSignatureRequired(
     signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired) -> Unit,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier
 ) {
@@ -426,7 +426,11 @@ private fun SelectSignatureRequired(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
-                    .clickable { onSelectedSignatureChange(option) }
+                    .clickable {
+                        val isSelected = signatureRequired == option
+                        val value = if (isSelected) null else option
+                        onSelectedSignatureChange(value)
+                    }
                     .padding(vertical = 8.dp)
                     .fillMaxWidth()
             ) {
