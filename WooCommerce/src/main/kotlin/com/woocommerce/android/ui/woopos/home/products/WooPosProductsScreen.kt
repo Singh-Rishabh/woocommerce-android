@@ -139,7 +139,7 @@ private fun WooPosItemsScreen(
 
                 is WooPosItemsViewState.Content -> MaterialTheme.colors.onSurface
             }
-            ProductsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
+            ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
 
             Spacer(modifier = Modifier.height(24.dp))
 
@@ -175,7 +175,7 @@ private fun WooPosItemsScreen(
 }
 
 @Composable
-private fun ProductsToolbar(
+private fun ItemsToolbar(
     productViewState: WooPosItemsViewState,
     titleColor: Color,
     onToolbarInfoIconClicked: () -> Unit,
