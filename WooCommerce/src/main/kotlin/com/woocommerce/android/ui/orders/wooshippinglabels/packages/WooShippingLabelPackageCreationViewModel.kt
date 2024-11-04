@@ -49,7 +49,17 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     fun onPackageTypeSpinnerClick() {
+        viewState.value?.let { viewState ->
+            triggerEvent(ShowPackageTypeDialog(viewState.customPackageCreationData.type))
+        }
 
+    }
+
+    fun onPackageTypeSelected(type: PackageType) {
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(type = type)
+            it.copy(customPackageCreationData = newPackageData)
+        }
     }
 
     fun onLengthChange(length: String) {
@@ -74,6 +84,10 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     fun onSavePackageChanged(checked: Boolean) {
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(saveAsTemplate = checked)
+            it.copy(customPackageCreationData = newPackageData)
+        }
     }
 
     @Parcelize
@@ -122,4 +136,5 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     data class PackageSelected(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
+    data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
 }
