@@ -7,7 +7,7 @@ sealed class WooPosProductsViewState(
     open val reloadingProductsWithPullToRefresh: Boolean,
 ) {
     data class Content(
-        val products: List<WooPosProductsListItem>,
+        val products: List<WooPosItem>,
         val loadingMore: Boolean,
         val bannerState: BannerState,
         override val reloadingProductsWithPullToRefresh: Boolean = false,
@@ -32,10 +32,3 @@ sealed class WooPosProductsViewState(
     data class Empty(override val reloadingProductsWithPullToRefresh: Boolean = false) :
         WooPosProductsViewState(reloadingProductsWithPullToRefresh)
 }
-
-data class WooPosProductsListItem(
-    val id: Long,
-    val name: String,
-    val price: String,
-    val imageUrl: String?,
-)
