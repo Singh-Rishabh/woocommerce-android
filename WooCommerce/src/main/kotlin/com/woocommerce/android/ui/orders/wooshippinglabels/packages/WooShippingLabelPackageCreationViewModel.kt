@@ -12,6 +12,7 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
@@ -21,7 +22,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
-        initialValue = ViewState(pageTabs)
+        initialValue = ViewState(pageTabs, CustomPackageCreationData.EMPTY)
     )
     val viewState = _viewState.asLiveData()
 
@@ -50,7 +51,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     fun onLengthChange(length: String) {
-
     }
 
     fun onWidthChange(width: String) {
@@ -68,7 +68,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList(),
-        val customPackageCreationData: CustomPackageCreationData? = null
+        val customPackageCreationData: CustomPackageCreationData
     ) : Parcelable
 
     @Parcelize
@@ -87,6 +87,16 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     ) : Parcelable {
         val isValid: Boolean
             get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
+
+        companion object {
+            val EMPTY = CustomPackageCreationData(
+                type = PackageType.BOX,
+                length = "",
+                width = "",
+                height = "",
+                saveAsTemplate = false
+            )
+        }
     }
 
     enum class PageType {
