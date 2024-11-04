@@ -2,6 +2,11 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreationData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -9,7 +14,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -39,91 +43,85 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         var lastEvent: MultiLiveEvent.Event? = null
         sut.event.observeForever { lastEvent = it }
 
-        val customPackageData = WooShippingLabelPackageCreationViewModel.CustomPackageCreationData(
-            type = WooShippingLabelPackageCreationViewModel.PackageType.BOX,
+        val customPackageData = CustomPackageCreationData(
+            type = PackageType.ENVELOPE,
             length = "10",
             width = "10",
             height = "10",
-            saveAsTemplate = false
+            saveAsTemplate = true
         )
-        val viewState = WooShippingLabelPackageCreationViewModel.ViewState(
-            pageTabs = emptyList(),
-            customPackageCreationData = customPackageData
-        )
-        whenever(savedStateHandle.get<WooShippingLabelPackageCreationViewModel.ViewState>(any())).thenReturn(viewState)
+
+        sut.onLengthChange("10")
+        sut.onWidthChange("10")
+        sut.onHeightChange("10")
+        sut.onSavePackageChanged(true)
+        sut.onPackageTypeSelected(PackageType.ENVELOPE)
 
         sut.onAddPackageClick()
 
-        assertThat(lastEvent).isEqualTo(WooShippingLabelPackageCreationViewModel.PackageSelected(customPackageData))
+        assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData))
     }
 
     @Test
     fun `onPackageTypeSpinnerClick triggers ShowPackageTypeDialog event`() = testBlocking {
         var lastEvent: MultiLiveEvent.Event? = null
         sut.event.observeForever { lastEvent = it }
-
-        val customPackageData = WooShippingLabelPackageCreationViewModel.CustomPackageCreationData(
-            type = WooShippingLabelPackageCreationViewModel.PackageType.BOX,
-            length = "10",
-            width = "10",
-            height = "10",
-            saveAsTemplate = false
-        )
-        val viewState = WooShippingLabelPackageCreationViewModel.ViewState(
-            pageTabs = emptyList(),
-            customPackageCreationData = customPackageData
-        )
-        whenever(savedStateHandle.get<WooShippingLabelPackageCreationViewModel.ViewState>(any())).thenReturn(viewState)
+        sut.onPackageTypeSelected(PackageType.ENVELOPE)
 
         sut.onPackageTypeSpinnerClick()
 
         assertThat(
             lastEvent
-        ).isEqualTo(WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog(customPackageData.type))
+        ).isEqualTo(ShowPackageTypeDialog(PackageType.ENVELOPE))
     }
 
     @Test
     fun `onPackageTypeSelected updates viewState with new type`() = testBlocking {
-        val newType = WooShippingLabelPackageCreationViewModel.PackageType.ENVELOPE
+        var lastViewState: ViewState? = null
+        sut.viewState.observeForever { lastViewState = it }
+        val newType = PackageType.ENVELOPE
         sut.onPackageTypeSelected(newType)
 
-        val updatedState = sut.viewState.value
-        assert(updatedState?.customPackageCreationData?.type == newType)
+        assertThat(lastViewState?.customPackageCreationData?.type).isEqualTo(newType)
     }
 
     @Test
     fun `onLengthChange updates viewState with new length`() = testBlocking {
+        var lastViewState: ViewState? = null
+        sut.viewState.observeForever { lastViewState = it }
         val newLength = "20"
         sut.onLengthChange(newLength)
 
-        val updatedState = sut.viewState.value
-        assertThat(updatedState?.customPackageCreationData?.length).isEqualTo(newLength)
+        assertThat(lastViewState?.customPackageCreationData?.length).isEqualTo(newLength)
     }
 
     @Test
     fun `onWidthChange updates viewState with new width`() = testBlocking {
+        var lastViewState: ViewState? = null
+        sut.viewState.observeForever { lastViewState = it }
         val newWidth = "20"
         sut.onWidthChange(newWidth)
 
-        val updatedState = sut.viewState.value
-        assertThat(updatedState?.customPackageCreationData?.width).isEqualTo(newWidth)
+        assertThat(lastViewState?.customPackageCreationData?.width).isEqualTo(newWidth)
     }
 
     @Test
     fun `onHeightChange updates viewState with new height`() = testBlocking {
+        var lastViewState: ViewState? = null
+        sut.viewState.observeForever { lastViewState = it }
         val newHeight = "20"
         sut.onHeightChange(newHeight)
 
-        val updatedState = sut.viewState.value
-        assertThat(updatedState?.customPackageCreationData?.height).isEqualTo(newHeight)
+        assertThat(lastViewState?.customPackageCreationData?.height).isEqualTo(newHeight)
     }
 
     @Test
     fun `onSavePackageChanged updates viewState with new saveAsTemplate value`() = testBlocking {
+        var lastViewState: ViewState? = null
+        sut.viewState.observeForever { lastViewState = it }
         val newSaveAsTemplate = true
         sut.onSavePackageChanged(newSaveAsTemplate)
 
-        val updatedState = sut.viewState.value
-        assertThat(updatedState?.customPackageCreationData?.saveAsTemplate).isEqualTo(newSaveAsTemplate)
+        assertThat(lastViewState?.customPackageCreationData?.saveAsTemplate).isEqualTo(newSaveAsTemplate)
     }
 }
