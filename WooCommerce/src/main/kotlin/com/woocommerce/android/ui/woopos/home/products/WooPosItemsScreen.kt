@@ -83,12 +83,12 @@ import kotlinx.coroutines.flow.filter
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooPosItemsScreen(modifier: Modifier = Modifier) {
-    val productsViewModel: WooPosProductsViewModel = hiltViewModel()
+    val productsViewModel: WooPosItemsViewModel = hiltViewModel()
     WooPosItemsScreen(
         modifier = modifier,
-        productsStateFlow = productsViewModel.viewState,
+        itemsStateFlow = productsViewModel.viewState,
         onItemClicked = { productsViewModel.onUIEvent(ItemClicked(it)) },
-        onEndOfProductListReached = { productsViewModel.onUIEvent(EndOfProductListReached) },
+        onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfProductListReached) },
         onPullToRefresh = { productsViewModel.onUIEvent(PullToRefreshTriggered) },
         onRetryClicked = { productsViewModel.onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
         onSimpleProductsBannerClosed = {
@@ -107,16 +107,16 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
-    productsStateFlow: StateFlow<WooPosItemsViewState>,
+    itemsStateFlow: StateFlow<WooPosItemsViewState>,
     onItemClicked: (item: WooPosItem) -> Unit,
-    onEndOfProductListReached: () -> Unit,
+    onEndOfItemListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
     onRetryClicked: () -> Unit,
     onSimpleProductsBannerClosed: () -> Unit,
     onSimpleProductsBannerLearnMoreClicked: () -> Unit,
     onToolbarInfoIconClicked: () -> Unit,
 ) {
-    val state = productsStateFlow.collectAsState()
+    val state = itemsStateFlow.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(state.value.reloadingProductsWithPullToRefresh, onPullToRefresh)
     Box(
         modifier = modifier
@@ -143,18 +143,18 @@ private fun WooPosItemsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            when (val productsState = state.value) {
+            when (val itemsState = state.value) {
                 is WooPosItemsViewState.Content -> {
                     Column {
                         SimpleProductsBanner(
-                            productsState.bannerState,
+                            itemsState.bannerState,
                             onSimpleProductsBannerLearnMoreClicked,
                             onSimpleProductsBannerClosed
                         )
                         ItemsList(
-                            productsState,
+                            itemsState,
                             onItemClicked,
-                            onEndOfProductListReached,
+                            onEndOfItemListReached,
                         )
                     }
                 }
@@ -532,9 +532,9 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
     WooPosTheme {
         WooPosItemsScreen(
             modifier = modifier,
-            productsStateFlow = productState,
+            itemsStateFlow = productState,
             onItemClicked = {},
-            onEndOfProductListReached = {},
+            onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
             onSimpleProductsBannerClosed = {},
@@ -556,9 +556,9 @@ fun WooPosItemsScreenLoadingPreview() {
     )
     WooPosTheme {
         WooPosItemsScreen(
-            productsStateFlow = productState,
+            itemsStateFlow = productState,
             onItemClicked = {},
-            onEndOfProductListReached = {},
+            onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
             onSimpleProductsBannerClosed = {},
@@ -575,9 +575,9 @@ fun WooPosProductsScreenEmptyListPreview() {
     val productState = MutableStateFlow(WooPosItemsViewState.Empty(true))
     WooPosTheme {
         WooPosItemsScreen(
-            productsStateFlow = productState,
+            itemsStateFlow = productState,
             onItemClicked = {},
-            onEndOfProductListReached = {},
+            onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
             onSimpleProductsBannerClosed = {},
@@ -594,9 +594,9 @@ fun WooPosProductsScreenErrorPreview() {
     val productState = MutableStateFlow(WooPosItemsViewState.Error())
     WooPosTheme {
         WooPosItemsScreen(
-            productsStateFlow = productState,
+            itemsStateFlow = productState,
             onItemClicked = {},
-            onEndOfProductListReached = {},
+            onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
             onSimpleProductsBannerClosed = {},
@@ -646,9 +646,9 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
     )
     WooPosTheme {
         WooPosItemsScreen(
-            productsStateFlow = productState,
+            itemsStateFlow = productState,
             onItemClicked = {},
-            onEndOfProductListReached = {},
+            onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
             onSimpleProductsBannerClosed = {},
@@ -698,9 +698,9 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
     )
     WooPosTheme {
         WooPosItemsScreen(
-            productsStateFlow = productState,
+            itemsStateFlow = productState,
             onItemClicked = {},
-            onEndOfProductListReached = {},
+            onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
             onSimpleProductsBannerClosed = {},

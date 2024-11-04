@@ -789,7 +789,7 @@ class WooPosProductsViewModelTest {
     }
 
     private fun createViewModel() =
-        WooPosProductsViewModel(
+        WooPosItemsViewModel(
             productsDataSource,
             fromChildToParentEventSender,
             priceFormat,
