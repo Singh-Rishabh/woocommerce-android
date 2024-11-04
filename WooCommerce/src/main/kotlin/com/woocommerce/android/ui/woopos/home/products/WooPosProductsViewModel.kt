@@ -6,6 +6,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.products.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,7 +54,7 @@ class WooPosProductsViewModel @Inject constructor(
             }
 
             is WooPosProductsUIEvent.ItemClicked -> {
-                onItemClicked(event.item)
+                handleItemClick(event)
             }
 
             WooPosProductsUIEvent.PullToRefreshTriggered -> {
@@ -82,6 +83,18 @@ class WooPosProductsViewModel @Inject constructor(
 
             WooPosProductsUIEvent.SimpleProductsDialogInfoIconClicked -> {
                 onSimpleProductsDialogInfoClicked()
+            }
+        }
+    }
+
+    private fun handleItemClick(event: WooPosProductsUIEvent.ItemClicked) {
+        when (event.item) {
+            is SimpleProduct -> {
+                onItemClicked(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = event.item.id
+                    )
+                )
             }
         }
     }
@@ -157,7 +170,7 @@ class WooPosProductsViewModel @Inject constructor(
 
     private suspend fun List<Product>.toContentState() = WooPosProductsViewState.Content(
         products = map { product ->
-            WooPosProductsListItem(
+            SimpleProduct(
                 id = product.remoteId,
                 name = product.name,
                 price = priceFormat(product.price),
@@ -215,8 +228,8 @@ class WooPosProductsViewModel @Inject constructor(
         )
     }
 
-    private fun onItemClicked(item: WooPosProductsListItem) {
-        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(item.id))
+    private fun onItemClicked(itemData: WooPosItemNavigationData.SimpleProductData) {
+        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData.id))
     }
 
     private fun sendEventToParent(event: ChildToParentEvent) {
