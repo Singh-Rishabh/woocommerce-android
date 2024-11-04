@@ -10,9 +10,9 @@ import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
-import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
@@ -52,7 +52,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         viewState.value?.let { viewState ->
             triggerEvent(ShowPackageTypeDialog(viewState.customPackageCreationData.type))
         }
-
     }
 
     fun onPackageTypeSelected(type: PackageType) {

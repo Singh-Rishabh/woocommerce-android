@@ -22,9 +22,15 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
     @Before
     fun setUp() {
-        whenever(resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_custom)).thenReturn("Custom")
-        whenever(resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_carrier)).thenReturn("Carrier")
-        whenever(resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_saved)).thenReturn("Saved")
+        whenever(
+            resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_custom)
+        ).thenReturn("Custom")
+        whenever(
+            resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_carrier)
+        ).thenReturn("Carrier")
+        whenever(
+            resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_saved)
+        ).thenReturn("Saved")
         sut = WooShippingLabelPackageCreationViewModel(savedStateHandle, resourceProvider)
     }
 
@@ -71,7 +77,9 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut.onPackageTypeSpinnerClick()
 
-        assertThat(lastEvent).isEqualTo(WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog(customPackageData.type))
+        assertThat(
+            lastEvent
+        ).isEqualTo(WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog(customPackageData.type))
     }
 
     @Test
