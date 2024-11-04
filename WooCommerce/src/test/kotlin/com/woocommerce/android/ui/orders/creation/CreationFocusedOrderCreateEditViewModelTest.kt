@@ -2022,8 +2022,8 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                     onMainButtonClickedCaptor.capture(),
+                    any(),
                     any(),
                     any(),
                 )

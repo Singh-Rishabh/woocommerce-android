@@ -161,10 +161,8 @@ class OrderCreateEditTotalsHelperTest {
         assertThat((actual.lines[2] as TotalsSectionsState.Line.Simple).label).isEqualTo("Shipping")
         assertThat((actual.lines[2] as TotalsSectionsState.Line.Simple).value).isEqualTo("13.00$")
 
-        assertThat((actual.lines[3] as TotalsSectionsState.Line.Button).text).isEqualTo("Coupons")
-        assertThat((actual.lines[3] as TotalsSectionsState.Line.Button).value).isEqualTo("-14.00$")
-        assertThat((actual.lines[3] as TotalsSectionsState.Line.Button).enabled).isFalse()
-        assertThat((actual.lines[3] as TotalsSectionsState.Line.Button).extraValue).isEqualTo("20OFF")
+        assertThat((actual.lines[3] as TotalsSectionsState.Line.Simple).label).isEqualTo("Coupons")
+        assertThat((actual.lines[3] as TotalsSectionsState.Line.Simple).value).isEqualTo("-14.00$")
 
         assertThat((actual.lines[4] as TotalsSectionsState.Line.Button).text).isEqualTo("Gift Cards")
         assertThat((actual.lines[4] as TotalsSectionsState.Line.Button).value).isEqualTo("-15.00$")
