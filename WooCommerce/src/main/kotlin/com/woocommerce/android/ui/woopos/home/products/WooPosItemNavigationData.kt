@@ -5,5 +5,3 @@ sealed class WooPosItemNavigationData(open val id: Long) {
         override val id: Long
     ) : WooPosItemNavigationData(id)
 }
-
-

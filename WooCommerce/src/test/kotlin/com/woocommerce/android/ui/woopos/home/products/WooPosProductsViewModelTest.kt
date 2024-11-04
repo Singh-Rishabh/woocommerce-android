@@ -78,6 +78,7 @@ class WooPosProductsViewModelTest {
         viewModel.viewState.test {
             // THEN
             val value = awaitItem() as WooPosItemsViewState.Content
+
             @Suppress("UNCHECKED_CAST")
             val items = value.items as List<WooPosItem.SimpleProduct>
             assertThat(items).hasSize(2)
