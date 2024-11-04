@@ -110,7 +110,23 @@ fun WooShippingLabelCreationScreen(
                     modifier = Modifier.padding(16.dp),
                     onSelectPackageClick = onSelectPackageClick
                 )
-                ShippingRatesCard(modifier = Modifier.padding(start = dimensionResource(id = R.dimen.major_100)))
+                val selected = remember { mutableStateOf<ShippingRate?>(null) }
+                val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
+                ShippingRatesCard(
+                    selected = selected.value,
+                    onSelectedChange = {
+                        selected.value = it
+                        signatureRequired.value = null
+                    },
+                    shippingRates = generateShippingRates(),
+                    signatureRequired = signatureRequired.value,
+                    onSelectedSignatureChange = { signatureRequired.value = it },
+                    signatureRequiredOptions = listOf(
+                        SignatureRequired("Signature Required", "$10.00"),
+                        SignatureRequired("Adult Signature Required", "$15.00")
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }
