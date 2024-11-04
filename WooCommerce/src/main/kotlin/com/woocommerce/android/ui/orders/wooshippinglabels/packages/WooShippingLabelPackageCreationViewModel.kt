@@ -43,7 +43,9 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         )
 
     fun onAddPackageClick() {
-        triggerEvent(PackageSelected)
+        viewState.value?.let { viewState ->
+            triggerEvent(PackageSelected(viewState.customPackageCreationData))
+        }
     }
 
     fun onPackageTypeSpinnerClick() {
@@ -72,7 +74,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     fun onSavePackageChanged(checked: Boolean) {
-
     }
 
     @Parcelize
@@ -120,5 +121,5 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         ENVELOPE(R.string.woo_shipping_labels_package_creation_envelope_type)
     }
 
-    data object PackageSelected : MultiLiveEvent.Event()
+    data class PackageSelected(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
 }
