@@ -3,20 +3,21 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
     private lateinit var sut: WooShippingLabelPackageCreationViewModel
-    private val savedStateHandle: SavedStateHandle = mock()
+    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
     private val resourceProvider: ResourceProvider = mock()
 
     @Before
@@ -25,6 +26,52 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         whenever(resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_carrier)).thenReturn("Carrier")
         whenever(resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_saved)).thenReturn("Saved")
         sut = WooShippingLabelPackageCreationViewModel(savedStateHandle, resourceProvider)
+    }
+
+    @Test
+    fun `onAddPackageClick triggers PackageSelected event`() = testBlocking {
+        var lastEvent: MultiLiveEvent.Event? = null
+        sut.event.observeForever { lastEvent = it }
+
+        val customPackageData = WooShippingLabelPackageCreationViewModel.CustomPackageCreationData(
+            type = WooShippingLabelPackageCreationViewModel.PackageType.BOX,
+            length = "10",
+            width = "10",
+            height = "10",
+            saveAsTemplate = false
+        )
+        val viewState = WooShippingLabelPackageCreationViewModel.ViewState(
+            pageTabs = emptyList(),
+            customPackageCreationData = customPackageData
+        )
+        whenever(savedStateHandle.get<WooShippingLabelPackageCreationViewModel.ViewState>(any())).thenReturn(viewState)
+
+        sut.onAddPackageClick()
+
+        assertThat(lastEvent).isEqualTo(WooShippingLabelPackageCreationViewModel.PackageSelected(customPackageData))
+    }
+
+    @Test
+    fun `onPackageTypeSpinnerClick triggers ShowPackageTypeDialog event`() = testBlocking {
+        var lastEvent: MultiLiveEvent.Event? = null
+        sut.event.observeForever { lastEvent = it }
+
+        val customPackageData = WooShippingLabelPackageCreationViewModel.CustomPackageCreationData(
+            type = WooShippingLabelPackageCreationViewModel.PackageType.BOX,
+            length = "10",
+            width = "10",
+            height = "10",
+            saveAsTemplate = false
+        )
+        val viewState = WooShippingLabelPackageCreationViewModel.ViewState(
+            pageTabs = emptyList(),
+            customPackageCreationData = customPackageData
+        )
+        whenever(savedStateHandle.get<WooShippingLabelPackageCreationViewModel.ViewState>(any())).thenReturn(viewState)
+
+        sut.onPackageTypeSpinnerClick()
+
+        assertThat(lastEvent).isEqualTo(WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog(customPackageData.type))
     }
 
     @Test
@@ -42,7 +89,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onLengthChange(newLength)
 
         val updatedState = sut.viewState.value
-        assert(updatedState?.customPackageCreationData?.length == newLength)
+        assertThat(updatedState?.customPackageCreationData?.length).isEqualTo(newLength)
     }
 
     @Test
@@ -51,7 +98,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onWidthChange(newWidth)
 
         val updatedState = sut.viewState.value
-        assert(updatedState?.customPackageCreationData?.width == newWidth)
+        assertThat(updatedState?.customPackageCreationData?.width).isEqualTo(newWidth)
     }
 
     @Test
@@ -60,7 +107,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onHeightChange(newHeight)
 
         val updatedState = sut.viewState.value
-        assert(updatedState?.customPackageCreationData?.height == newHeight)
+        assertThat(updatedState?.customPackageCreationData?.height).isEqualTo(newHeight)
     }
 
     @Test
@@ -69,6 +116,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onSavePackageChanged(newSaveAsTemplate)
 
         val updatedState = sut.viewState.value
-        assert(updatedState?.customPackageCreationData?.saveAsTemplate == newSaveAsTemplate)
+        assertThat(updatedState?.customPackageCreationData?.saveAsTemplate).isEqualTo(newSaveAsTemplate)
     }
 }

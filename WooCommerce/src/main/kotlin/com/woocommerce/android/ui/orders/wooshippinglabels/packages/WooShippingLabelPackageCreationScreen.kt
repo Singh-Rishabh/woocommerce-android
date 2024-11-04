@@ -112,7 +112,12 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     packageWidth = "10",
                     packageHeight = "10",
                     isAddPackageEnabled = true,
-                    onAddPackageClick = {}
+                    onAddPackageClick = {},
+                    onPackageTypeClick = {},
+                    onLengthChange = {},
+                    onWidthChange = {},
+                    onHeightChange = {},
+                    onSavePackageChanged = { }
                 )
             },
             createCarrierPackageScreen = { },
