@@ -151,7 +151,7 @@ private fun WooPosItemsScreen(
                             onSimpleProductsBannerLearnMoreClicked,
                             onSimpleProductsBannerClosed
                         )
-                        ProductsList(
+                        ItemsList(
                             productsState,
                             onItemClicked,
                             onEndOfProductListReached,
@@ -244,7 +244,7 @@ private fun SimpleProductsBanner(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ProductsList(
+private fun ItemsList(
     state: WooPosItemsViewState.Content,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
