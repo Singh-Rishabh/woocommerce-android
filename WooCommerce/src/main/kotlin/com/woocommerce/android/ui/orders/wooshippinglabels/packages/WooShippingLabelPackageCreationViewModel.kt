@@ -45,6 +45,26 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         triggerEvent(PackageSelected)
     }
 
+    fun onPackageTypeSpinnerClick() {
+
+    }
+
+    fun onLengthChange(length: String) {
+
+    }
+
+    fun onWidthChange(width: String) {
+
+    }
+
+    fun onHeightChange(height: String) {
+
+    }
+
+    fun onSavePackageChanged(checked: Boolean) {
+
+    }
+
     @Parcelize
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList(),
