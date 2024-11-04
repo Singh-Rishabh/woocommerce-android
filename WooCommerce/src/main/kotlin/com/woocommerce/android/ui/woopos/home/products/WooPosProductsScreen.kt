@@ -70,6 +70,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorS
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.products.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.EndOfProductListReached
 import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.ItemClicked
 import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.ProductsLoadingErrorRetryButtonClicked
@@ -107,7 +108,7 @@ fun WooPosProductsScreen(modifier: Modifier = Modifier) {
 private fun WooPosProductsScreen(
     modifier: Modifier = Modifier,
     productsStateFlow: StateFlow<WooPosProductsViewState>,
-    onItemClicked: (item: WooPosProductsListItem) -> Unit,
+    onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
     onRetryClicked: () -> Unit,
@@ -245,7 +246,7 @@ private fun SimpleProductsBanner(
 @Composable
 private fun ProductsList(
     state: WooPosProductsViewState.Content,
-    onItemClicked: (item: WooPosProductsListItem) -> Unit,
+    onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -258,11 +259,15 @@ private fun ProductsList(
             state.products,
             key = { product -> product.id }
         ) { product ->
-            ProductItem(
-                modifier = Modifier.animateItemPlacement(),
-                item = product,
-                onItemClicked = onItemClicked
-            )
+            when (product) {
+                is SimpleProduct -> {
+                    ProductItem(
+                        modifier = Modifier.animateItemPlacement(),
+                        item = product,
+                        onItemClicked = onItemClicked
+                    )
+                }
+            }
         }
 
         if (state.loadingMore) {
@@ -341,8 +346,8 @@ private fun ProductLoadingItem() {
 @Composable
 private fun ProductItem(
     modifier: Modifier = Modifier,
-    item: WooPosProductsListItem,
-    onItemClicked: (item: WooPosProductsListItem) -> Unit
+    item: SimpleProduct,
+    onItemClicked: (item: SimpleProduct) -> Unit
 ) {
     val itemContentDescription = stringResource(
         id = R.string.woopos_cart_item_content_description,
@@ -493,7 +498,7 @@ fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
     val productState = MutableStateFlow(
         WooPosProductsViewState.Content(
             products = listOf(
-                WooPosProductsListItem(
+                SimpleProduct(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -501,13 +506,13 @@ fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                WooPosProductsListItem(
+                SimpleProduct(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                WooPosProductsListItem(
+                SimpleProduct(
                     3,
                     name = "Product 3",
                     price = "1.0$",
@@ -608,7 +613,7 @@ fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
     val productState = MutableStateFlow(
         WooPosProductsViewState.Content(
             products = listOf(
-                WooPosProductsListItem(
+                SimpleProduct(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -616,13 +621,13 @@ fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                WooPosProductsListItem(
+                SimpleProduct(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                WooPosProductsListItem(
+                SimpleProduct(
                     3,
                     name = "Product 3",
                     price = "1.0$",
@@ -660,7 +665,7 @@ fun WooPosHomeScreenProductsWithInfoIconInToolbarPreview() {
     val productState = MutableStateFlow(
         WooPosProductsViewState.Content(
             products = listOf(
-                WooPosProductsListItem(
+                SimpleProduct(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -668,13 +673,13 @@ fun WooPosHomeScreenProductsWithInfoIconInToolbarPreview() {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                WooPosProductsListItem(
+                SimpleProduct(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                WooPosProductsListItem(
+                SimpleProduct(
                     3,
                     name = "Product 3",
                     price = "1.0$",
