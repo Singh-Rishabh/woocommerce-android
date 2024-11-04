@@ -37,7 +37,12 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
         isAddPackageEnabled = viewState?.customPackageCreationData?.isValid ?: false,
-        onAddPackageClick = viewModel::onAddPackageClick
+        onAddPackageClick = viewModel::onAddPackageClick,
+        onPackageTypeClick = viewModel::onPackageTypeSpinnerClick,
+        onLengthChange = viewModel::onLengthChange,
+        onWidthChange = viewModel::onWidthChange,
+        onHeightChange = viewModel::onHeightChange,
+        onSavePackageChanged = viewModel::onSavePackageChanged
     )
 }
 
@@ -49,7 +54,12 @@ fun WooShippingCustomPackageCreationScreen(
     packageWidth: String,
     packageHeight: String,
     isAddPackageEnabled: Boolean,
-    onAddPackageClick: () -> Unit
+    onAddPackageClick: () -> Unit,
+    onPackageTypeClick: () -> Unit,
+    onLengthChange: (String) -> Unit,
+    onWidthChange: (String) -> Unit,
+    onHeightChange: (String) -> Unit,
+    onSavePackageChanged: (Boolean) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -62,7 +72,7 @@ fun WooShippingCustomPackageCreationScreen(
         ) {
             Column(modifier = modifier) {
                 WCOutlinedSpinner(
-                    onClick = { },
+                    onClick = onPackageTypeClick,
                     value = packageType,
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_type),
                     modifier = modifier.fillMaxWidth()
@@ -74,7 +84,7 @@ fun WooShippingCustomPackageCreationScreen(
             ) {
                 WCOutlinedTextField(
                     value = packageLength,
-                    onValueChange = { },
+                    onValueChange = onLengthChange,
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_length),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -83,7 +93,7 @@ fun WooShippingCustomPackageCreationScreen(
 
                 WCOutlinedTextField(
                     value = packageWidth,
-                    onValueChange = { },
+                    onValueChange = onWidthChange,
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_width),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -92,7 +102,7 @@ fun WooShippingCustomPackageCreationScreen(
 
                 WCOutlinedTextField(
                     value = packageHeight,
-                    onValueChange = { },
+                    onValueChange = onHeightChange,
                     label = stringResource(id = R.string.woo_shipping_labels_package_creation_height),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
@@ -107,7 +117,7 @@ fun WooShippingCustomPackageCreationScreen(
                     text = stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option),
                     modifier = modifier.align(Alignment.CenterVertically)
                 )
-                Checkbox(checked = false, onCheckedChange = {})
+                Checkbox(checked = false, onCheckedChange = onSavePackageChanged)
             }
         }
         Button(
@@ -130,7 +140,12 @@ fun PreviewWooShippingCustomPackageCreationScreen() {
             packageWidth = "10",
             packageHeight = "10",
             isAddPackageEnabled = true,
-            onAddPackageClick = {}
+            onAddPackageClick = {},
+            onPackageTypeClick = {},
+            onLengthChange = {},
+            onWidthChange = {},
+            onHeightChange = {},
+            onSavePackageChanged = {}
         )
     }
 }
