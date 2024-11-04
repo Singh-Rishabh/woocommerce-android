@@ -10,7 +10,6 @@ agents:
 steps:
   - label: "Gradle Wrapper Validation"
     command: |
-      echo '--- :git: Checkout Release Branch'
       .buildkite/commands/checkout-release-branch.sh "$RELEASE_VERSION"
 
       validate_gradle_wrapper
@@ -22,7 +21,6 @@ steps:
 
   - label: "🛠 Release Build (Mobile App)"
     command: |
-      echo '--- :git: Checkout Release Branch'
       .buildkite/commands/checkout-release-branch.sh "$RELEASE_VERSION"
 
       .buildkite/commands/release-build.sh "WooCommerce"
@@ -37,7 +35,6 @@ steps:
 
   - label: "🛠 Release Build (Wear App)"
     command: |
-      echo '--- :git: Checkout Release Branch'
       .buildkite/commands/checkout-release-branch.sh "$RELEASE_VERSION"
 
       .buildkite/commands/release-build.sh "WooCommerce-Wear"
