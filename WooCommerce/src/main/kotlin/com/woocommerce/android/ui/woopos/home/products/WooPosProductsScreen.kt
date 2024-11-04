@@ -494,7 +494,7 @@ private fun InfiniteListHandler(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @WooPosPreview
-fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
+fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
@@ -547,7 +547,7 @@ fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @WooPosPreview
-fun WooPosProductsScreenLoadingPreview() {
+fun WooPosItemsScreenLoadingPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Loading(
             reloadingProductsWithPullToRefresh = true,
@@ -609,7 +609,7 @@ fun WooPosProductsScreenErrorPreview() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @WooPosPreview
-fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
+fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
@@ -661,7 +661,7 @@ fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @WooPosPreview
-fun WooPosHomeScreenProductsWithInfoIconInToolbarPreview() {
+fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
