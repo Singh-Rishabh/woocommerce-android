@@ -47,17 +47,17 @@ class WooPosItemsViewModel @Inject constructor(
         )
     }
 
-    fun onUIEvent(event: WooPosProductsUIEvent) {
+    fun onUIEvent(event: WooPosItemsUIEvent) {
         when (event) {
-            is WooPosProductsUIEvent.EndOfProductListReached -> {
+            is WooPosItemsUIEvent.EndOfItemsListReached -> {
                 onEndOfProductsListReached()
             }
 
-            is WooPosProductsUIEvent.ItemClicked -> {
+            is WooPosItemsUIEvent.ItemClicked -> {
                 handleItemClick(event)
             }
 
-            WooPosProductsUIEvent.PullToRefreshTriggered -> {
+            WooPosItemsUIEvent.PullToRefreshTriggered -> {
                 loadProducts(
                     forceRefreshProducts = true,
                     withPullToRefresh = true,
@@ -65,7 +65,7 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
 
-            WooPosProductsUIEvent.ProductsLoadingErrorRetryButtonClicked -> {
+            WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked -> {
                 loadProducts(
                     forceRefreshProducts = false,
                     withPullToRefresh = false,
@@ -73,21 +73,21 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
 
-            WooPosProductsUIEvent.SimpleProductsBannerClosed -> {
+            WooPosItemsUIEvent.SimpleProductsBannerClosed -> {
                 onSimpleProductsOnlyBannerClosed()
             }
 
-            WooPosProductsUIEvent.SimpleProductsBannerLearnMoreClicked -> {
+            WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked -> {
                 onSimpleProductsOnlyBannerLearnMoreClicked()
             }
 
-            WooPosProductsUIEvent.SimpleProductsDialogInfoIconClicked -> {
+            WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked -> {
                 onSimpleProductsDialogInfoClicked()
             }
         }
     }
 
-    private fun handleItemClick(event: WooPosProductsUIEvent.ItemClicked) {
+    private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
         when (event.item) {
             is SimpleProduct -> {
                 onItemClicked(

@@ -71,10 +71,10 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyCo
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.products.WooPosItem.SimpleProduct
-import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.EndOfProductListReached
-import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.ItemClicked
-import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.ProductsLoadingErrorRetryButtonClicked
-import com.woocommerce.android.ui.woopos.home.products.WooPosProductsUIEvent.PullToRefreshTriggered
+import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.EndOfItemsListReached
+import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.ItemClicked
+import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
+import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.PullToRefreshTriggered
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -88,17 +88,17 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
         onItemClicked = { productsViewModel.onUIEvent(ItemClicked(it)) },
-        onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfProductListReached) },
+        onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfItemsListReached) },
         onPullToRefresh = { productsViewModel.onUIEvent(PullToRefreshTriggered) },
         onRetryClicked = { productsViewModel.onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
         onSimpleProductsBannerClosed = {
-            productsViewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerClosed)
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
         },
         onSimpleProductsBannerLearnMoreClicked = {
-            productsViewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerLearnMoreClicked)
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
         },
         onToolbarInfoIconClicked = {
-            productsViewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsDialogInfoIconClicked)
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
         },
     )
 }

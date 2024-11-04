@@ -161,7 +161,7 @@ class WooPosProductsViewModelTest {
 
             // WHEN
             val viewModel = createViewModel()
-            viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+            viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
             viewModel.viewState.test {
                 // THEN
                 verify(productsDataSource).loadSimpleProducts(forceRefreshProducts = true)
@@ -198,7 +198,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // WHEN
-        viewModel.onUIEvent(WooPosProductsUIEvent.EndOfProductListReached)
+        viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
         viewModel.viewState.test {
             // THEN
             val value = awaitItem() as WooPosItemsViewState.Content
@@ -240,7 +240,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // WHEN
-        viewModel.onUIEvent(WooPosProductsUIEvent.ItemClicked(product))
+        viewModel.onUIEvent(WooPosItemsUIEvent.ItemClicked(product))
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
@@ -277,7 +277,7 @@ class WooPosProductsViewModelTest {
             )
 
             val viewModel = createViewModel()
-            viewModel.onUIEvent(WooPosProductsUIEvent.EndOfProductListReached)
+            viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
             viewModel.viewState.test {
                 // THEN
                 val value = awaitItem() as WooPosItemsViewState.Content
@@ -363,7 +363,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // WHEN
-        viewModel.onUIEvent(WooPosProductsUIEvent.EndOfProductListReached)
+        viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
         viewModel.viewState.test {
             // THEN
             val value = awaitItem()
@@ -384,7 +384,7 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+        viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
 
         // THEN
         viewModel.viewState.test {
@@ -405,7 +405,7 @@ class WooPosProductsViewModelTest {
         )
 
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+        viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsStatusChanged.FullScreen)
@@ -432,7 +432,7 @@ class WooPosProductsViewModelTest {
             )
         )
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+        viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsStatusChanged.WithCart)
@@ -473,7 +473,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
         viewModel.viewState.test {
             val contentState = awaitItem() as WooPosItemsViewState.Content
-            viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerClosed)
+            viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
 
             // THEN
             assertTrue(contentState.bannerState.isBannerHiddenByUser)
@@ -511,7 +511,7 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerClosed)
+        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
 
         // THEN
         verify(posPreferencesRepository).setSimpleProductsOnlyBannerWasHiddenByUser(true)
@@ -746,7 +746,7 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsDialogInfoIconClicked)
+        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
 
         // THEN
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
@@ -783,7 +783,7 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerLearnMoreClicked)
+        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
 
         // THEN
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
