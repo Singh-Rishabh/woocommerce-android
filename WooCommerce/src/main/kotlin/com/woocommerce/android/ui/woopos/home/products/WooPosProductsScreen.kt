@@ -159,7 +159,7 @@ private fun WooPosItemsScreen(
                     }
                 }
 
-                is WooPosItemsViewState.Loading -> ProductsLoadingIndicator()
+                is WooPosItemsViewState.Loading -> ItemsLoadingIndicator()
 
                 is WooPosItemsViewState.Empty -> ProductsEmptyList()
 
@@ -272,7 +272,7 @@ private fun ItemsList(
 
         if (state.loadingMore) {
             item {
-                ProductLoadingItem()
+                ItemsLoadingItem()
             }
         }
         item {
@@ -285,13 +285,13 @@ private fun ItemsList(
 }
 
 @Composable
-fun ProductsLoadingIndicator() {
+fun ItemsLoadingIndicator() {
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(2.dp),
     ) {
         items(10) {
-            ProductLoadingItem()
+            ItemsLoadingItem()
         }
 
         item {
@@ -301,7 +301,7 @@ fun ProductsLoadingIndicator() {
 }
 
 @Composable
-private fun ProductLoadingItem() {
+private fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
