@@ -35,8 +35,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreen
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreenProductsPreview
-import com.woocommerce.android.ui.woopos.home.products.WooPosItemsScreen
-import com.woocommerce.android.ui.woopos.home.products.WooPosItemsScreenPreview
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsScreen
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsScreenPreview
 import com.woocommerce.android.ui.woopos.home.toolbar.PreviewWooPosFloatingToolbarStatusConnectedWithMenu
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosFloatingToolbar
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreen

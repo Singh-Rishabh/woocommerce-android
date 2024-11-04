@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 sealed class WooPosItemsUIEvent {
     data class ItemClicked(val item: WooPosItem) : WooPosItemsUIEvent()

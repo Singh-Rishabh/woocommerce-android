@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

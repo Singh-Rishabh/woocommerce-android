@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductStatus

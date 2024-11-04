@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.shrinkVertically
@@ -70,11 +70,11 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorS
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.products.WooPosItem.SimpleProduct
-import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.EndOfItemsListReached
-import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.ItemClicked
-import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
-import com.woocommerce.android.ui.woopos.home.products.WooPosItemsUIEvent.PullToRefreshTriggered
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ItemClicked
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
