@@ -49,7 +49,12 @@ fun WooShippingLabelCreationScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         sheetContent = {
-            ShipmentDetails(scaffoldState)
+            val markOrderComplete = remember { mutableStateOf(false) }
+            ShipmentDetails(
+                scaffoldState = scaffoldState,
+                markOrderComplete = markOrderComplete.value,
+                onMarkOrderCompleteChange = { markOrderComplete.value = it }
+            )
         },
         sheetPeekHeight = 64.dp,
         scaffoldState = scaffoldState,
@@ -94,6 +99,23 @@ fun WooShippingLabelCreationScreen(
                         .padding(start = 4.dp, end = 8.dp)
                 )
                 PackageCard(modifier = Modifier.padding(16.dp))
+                val selected = remember { mutableStateOf<ShippingRate?>(null) }
+                val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
+                ShippingRatesCard(
+                    selected = selected.value,
+                    onSelectedChange = {
+                        selected.value = it
+                        signatureRequired.value = null
+                    },
+                    shippingRates = generateShippingRates(),
+                    signatureRequired = signatureRequired.value,
+                    onSelectedSignatureChange = { signatureRequired.value = it },
+                    signatureRequiredOptions = listOf(
+                        SignatureRequired("Signature Required", "$10.00"),
+                        SignatureRequired("Adult Signature Required", "$15.00")
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

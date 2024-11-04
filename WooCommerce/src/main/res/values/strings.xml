@@ -162,6 +162,7 @@
     <string name="last_update_with_frequency">Last update %s (Updates every 30 minutes)</string>
     <string name="receipt_fetching_error">Sorry, we couldn\'t load a receipt for this order</string>
     <string name="store_name_default">Store name</string>
+    <string name="sorted_by">Sorted by 1%s</string>
 
     <!--
         Date/Time Labels
@@ -1255,7 +1256,7 @@
     <string name="shipping_label_hazmat_option_limited_quantity">LTD QTY Ground Package - Aerosols, spray disinfectants, spray paint, hair spray, propane, butane, cleaning products, etc. - Fragrances, nail polish, nail polish remover, solvents, hand sanitizer, rubbing alcohol, ethanol base products, etc. - Other limited quantity surface materials (cosmetics, cleaning products, paints, etc.)</string>
     <string name="shipping_label_hazmat_option_small_quantity_provision">Small Quantity Provision Package (markings required)</string>
 
-    <string name="shipping_label_package_details_items_weight_price">%1$s&#160;&#160;·&#160;&#160;%2$s</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
     <string name="shipping_label_package_details_items_expand_content_description">Collapse/expand items card</string>
     <string name="shipping_label_hazmat_title">Are you shipping dangerous goods or hazardous materials?</string>
     <string name="shipping_label_select_package_button">Select a Package</string>
@@ -1264,6 +1265,12 @@
     <string name="shipping_label_shipment_details_title">Shipment details</string>
     <string name="shipping_label_shipment_details_order_details">Order details</string>
     <string name="shipping_label_shipment_details_shipment_cost">Shipment cost</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Mark this order as complete and notify the customer</string>
+    <string name="shipping_label_shipment_details_purchase_label">Purchase Label · %1$s </string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Purchase Label</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Cheapest</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Fastest</string>
+    <string name="shipping_label_shipping_service_title">Shipping service</string>
 
     <!--
     Shipping label package creation labels
