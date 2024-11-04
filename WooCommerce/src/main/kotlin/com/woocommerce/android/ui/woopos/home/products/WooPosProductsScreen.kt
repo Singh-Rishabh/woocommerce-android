@@ -82,9 +82,9 @@ import kotlinx.coroutines.flow.filter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WooPosProductsScreen(modifier: Modifier = Modifier) {
+fun WooPosItemsScreen(modifier: Modifier = Modifier) {
     val productsViewModel: WooPosProductsViewModel = hiltViewModel()
-    WooPosProductsScreen(
+    WooPosItemsScreen(
         modifier = modifier,
         productsStateFlow = productsViewModel.viewState,
         onItemClicked = { productsViewModel.onUIEvent(ItemClicked(it)) },
@@ -105,7 +105,7 @@ fun WooPosProductsScreen(modifier: Modifier = Modifier) {
 
 @ExperimentalMaterialApi
 @Composable
-private fun WooPosProductsScreen(
+private fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     productsStateFlow: StateFlow<WooPosItemsViewState>,
     onItemClicked: (item: WooPosItem) -> Unit,
@@ -530,7 +530,7 @@ fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
         )
     )
     WooPosTheme {
-        WooPosProductsScreen(
+        WooPosItemsScreen(
             modifier = modifier,
             productsStateFlow = productState,
             onItemClicked = {},
@@ -555,7 +555,7 @@ fun WooPosProductsScreenLoadingPreview() {
         )
     )
     WooPosTheme {
-        WooPosProductsScreen(
+        WooPosItemsScreen(
             productsStateFlow = productState,
             onItemClicked = {},
             onEndOfProductListReached = {},
@@ -574,7 +574,7 @@ fun WooPosProductsScreenLoadingPreview() {
 fun WooPosProductsScreenEmptyListPreview() {
     val productState = MutableStateFlow(WooPosItemsViewState.Empty(true))
     WooPosTheme {
-        WooPosProductsScreen(
+        WooPosItemsScreen(
             productsStateFlow = productState,
             onItemClicked = {},
             onEndOfProductListReached = {},
@@ -593,7 +593,7 @@ fun WooPosProductsScreenEmptyListPreview() {
 fun WooPosProductsScreenErrorPreview() {
     val productState = MutableStateFlow(WooPosItemsViewState.Error())
     WooPosTheme {
-        WooPosProductsScreen(
+        WooPosItemsScreen(
             productsStateFlow = productState,
             onItemClicked = {},
             onEndOfProductListReached = {},
@@ -645,7 +645,7 @@ fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
         )
     )
     WooPosTheme {
-        WooPosProductsScreen(
+        WooPosItemsScreen(
             productsStateFlow = productState,
             onItemClicked = {},
             onEndOfProductListReached = {},
@@ -697,7 +697,7 @@ fun WooPosHomeScreenProductsWithInfoIconInToolbarPreview() {
         )
     )
     WooPosTheme {
-        WooPosProductsScreen(
+        WooPosItemsScreen(
             productsStateFlow = productState,
             onItemClicked = {},
             onEndOfProductListReached = {},
