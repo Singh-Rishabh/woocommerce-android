@@ -51,14 +51,24 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     fun onLengthChange(length: String) {
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(length = length)
+            it.copy(customPackageCreationData = newPackageData)
+        }
     }
 
     fun onWidthChange(width: String) {
-
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(width = width)
+            it.copy(customPackageCreationData = newPackageData)
+        }
     }
 
     fun onHeightChange(height: String) {
-
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(height = height)
+            it.copy(customPackageCreationData = newPackageData)
+        }
     }
 
     fun onSavePackageChanged(checked: Boolean) {
