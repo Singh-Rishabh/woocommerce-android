@@ -107,7 +107,7 @@ fun WooPosProductsScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun WooPosProductsScreen(
     modifier: Modifier = Modifier,
-    productsStateFlow: StateFlow<WooPosProductsViewState>,
+    productsStateFlow: StateFlow<WooPosItemsViewState>,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
@@ -133,18 +133,18 @@ private fun WooPosProductsScreen(
             modifier.fillMaxHeight()
         ) {
             val titleColor = when (state.value) {
-                is WooPosProductsViewState.Loading,
-                is WooPosProductsViewState.Empty,
-                is WooPosProductsViewState.Error -> MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                is WooPosItemsViewState.Loading,
+                is WooPosItemsViewState.Empty,
+                is WooPosItemsViewState.Error -> MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
 
-                is WooPosProductsViewState.Content -> MaterialTheme.colors.onSurface
+                is WooPosItemsViewState.Content -> MaterialTheme.colors.onSurface
             }
             ProductsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
 
             Spacer(modifier = Modifier.height(24.dp))
 
             when (val productsState = state.value) {
-                is WooPosProductsViewState.Content -> {
+                is WooPosItemsViewState.Content -> {
                     Column {
                         SimpleProductsBanner(
                             productsState.bannerState,
@@ -159,11 +159,11 @@ private fun WooPosProductsScreen(
                     }
                 }
 
-                is WooPosProductsViewState.Loading -> ProductsLoadingIndicator()
+                is WooPosItemsViewState.Loading -> ProductsLoadingIndicator()
 
-                is WooPosProductsViewState.Empty -> ProductsEmptyList()
+                is WooPosItemsViewState.Empty -> ProductsEmptyList()
 
-                is WooPosProductsViewState.Error -> ProductsError { onRetryClicked() }
+                is WooPosItemsViewState.Error -> ProductsError { onRetryClicked() }
             }
         }
         PullRefreshIndicator(
@@ -176,7 +176,7 @@ private fun WooPosProductsScreen(
 
 @Composable
 private fun ProductsToolbar(
-    productViewState: WooPosProductsViewState,
+    productViewState: WooPosItemsViewState,
     titleColor: Color,
     onToolbarInfoIconClicked: () -> Unit,
 ) {
@@ -192,7 +192,7 @@ private fun ProductsToolbar(
             color = titleColor,
         )
         when (productViewState) {
-            is WooPosProductsViewState.Content -> {
+            is WooPosItemsViewState.Content -> {
                 if (productViewState.bannerState.isBannerHiddenByUser) {
                     IconButton(
                         modifier = Modifier.size(40.dp),
@@ -220,7 +220,7 @@ private fun ProductsToolbar(
 
 @Composable
 private fun SimpleProductsBanner(
-    bannerState: WooPosProductsViewState.Content.BannerState,
+    bannerState: WooPosItemsViewState.Content.BannerState,
     onSimpleProductsBannerLearnMoreClicked: () -> Unit,
     onSimpleProductsBannerClosed: () -> Unit
 ) {
@@ -245,7 +245,7 @@ private fun SimpleProductsBanner(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ProductsList(
-    state: WooPosProductsViewState.Content,
+    state: WooPosItemsViewState.Content,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
 ) {
@@ -256,7 +256,7 @@ private fun ProductsList(
         state = listState,
     ) {
         items(
-            state.products,
+            state.items,
             key = { product -> product.id }
         ) { product ->
             when (product) {
@@ -467,7 +467,7 @@ fun ProductsError(onRetryClicked: () -> Unit) {
 @Composable
 private fun InfiniteListHandler(
     listState: LazyListState,
-    state: WooPosProductsViewState.Content,
+    state: WooPosItemsViewState.Content,
     onEndOfProductsListReached: () -> Unit
 ) {
     val buffer = 5
@@ -496,8 +496,8 @@ private fun InfiniteListHandler(
 @WooPosPreview
 fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
     val productState = MutableStateFlow(
-        WooPosProductsViewState.Content(
-            products = listOf(
+        WooPosItemsViewState.Content(
+            items = listOf(
                 SimpleProduct(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
@@ -521,7 +521,7 @@ fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
             ),
             loadingMore = true,
             reloadingProductsWithPullToRefresh = true,
-            bannerState = WooPosProductsViewState.Content.BannerState(
+            bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
                 message = R.string.woopos_banner_simple_products_only_message,
@@ -549,7 +549,7 @@ fun WooPosProductsScreenPreview(modifier: Modifier = Modifier) {
 @WooPosPreview
 fun WooPosProductsScreenLoadingPreview() {
     val productState = MutableStateFlow(
-        WooPosProductsViewState.Loading(
+        WooPosItemsViewState.Loading(
             reloadingProductsWithPullToRefresh = true,
             withCart = false
         )
@@ -572,7 +572,7 @@ fun WooPosProductsScreenLoadingPreview() {
 @Composable
 @WooPosPreview
 fun WooPosProductsScreenEmptyListPreview() {
-    val productState = MutableStateFlow(WooPosProductsViewState.Empty(true))
+    val productState = MutableStateFlow(WooPosItemsViewState.Empty(true))
     WooPosTheme {
         WooPosProductsScreen(
             productsStateFlow = productState,
@@ -591,7 +591,7 @@ fun WooPosProductsScreenEmptyListPreview() {
 @Composable
 @WooPosPreview
 fun WooPosProductsScreenErrorPreview() {
-    val productState = MutableStateFlow(WooPosProductsViewState.Error())
+    val productState = MutableStateFlow(WooPosItemsViewState.Error())
     WooPosTheme {
         WooPosProductsScreen(
             productsStateFlow = productState,
@@ -611,8 +611,8 @@ fun WooPosProductsScreenErrorPreview() {
 @WooPosPreview
 fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
     val productState = MutableStateFlow(
-        WooPosProductsViewState.Content(
-            products = listOf(
+        WooPosItemsViewState.Content(
+            items = listOf(
                 SimpleProduct(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
@@ -636,7 +636,7 @@ fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
             ),
             loadingMore = false,
             reloadingProductsWithPullToRefresh = true,
-            bannerState = WooPosProductsViewState.Content.BannerState(
+            bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = false,
                 title = R.string.woopos_banner_simple_products_only_title,
                 message = R.string.woopos_banner_simple_products_only_message,
@@ -663,8 +663,8 @@ fun WooPosHomeScreenProductsWithSimpleProductsOnlyBannerPreview() {
 @WooPosPreview
 fun WooPosHomeScreenProductsWithInfoIconInToolbarPreview() {
     val productState = MutableStateFlow(
-        WooPosProductsViewState.Content(
-            products = listOf(
+        WooPosItemsViewState.Content(
+            items = listOf(
                 SimpleProduct(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
@@ -688,7 +688,7 @@ fun WooPosHomeScreenProductsWithInfoIconInToolbarPreview() {
             ),
             loadingMore = false,
             reloadingProductsWithPullToRefresh = false,
-            bannerState = WooPosProductsViewState.Content.BannerState(
+            bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
                 message = R.string.woopos_banner_simple_products_only_message,

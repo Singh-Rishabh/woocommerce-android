@@ -30,8 +30,8 @@ class WooPosProductsViewModel @Inject constructor(
     private var loadMoreProductsJob: Job? = null
 
     private val _viewState =
-        MutableStateFlow<WooPosProductsViewState>(WooPosProductsViewState.Loading(withCart = true))
-    val viewState: StateFlow<WooPosProductsViewState> = _viewState
+        MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
+    val viewState: StateFlow<WooPosItemsViewState> = _viewState
         .onEach { notifyParentAboutStatusChange(it) }
         .stateIn(
             viewModelScope,
@@ -111,7 +111,7 @@ class WooPosProductsViewModel @Inject constructor(
 
     private fun onSimpleProductsOnlyBannerClosed() {
         viewModelScope.launch {
-            val currentState = _viewState.value as WooPosProductsViewState.Content
+            val currentState = _viewState.value as WooPosItemsViewState.Content
             preferencesRepository.setSimpleProductsOnlyBannerWasHiddenByUser(true)
             _viewState.value = currentState.copy(
                 bannerState = currentState.bannerState.copy(
@@ -130,7 +130,7 @@ class WooPosProductsViewModel @Inject constructor(
             _viewState.value = if (withPullToRefresh) {
                 buildProductsReloadingState()
             } else {
-                WooPosProductsViewState.Loading(withCart = withCart)
+                WooPosItemsViewState.Loading(withCart = withCart)
             }
 
             productsDataSource.loadSimpleProducts(forceRefreshProducts = forceRefreshProducts).collect { result ->
@@ -148,11 +148,11 @@ class WooPosProductsViewModel @Inject constructor(
                                 if (products.isNotEmpty()) {
                                     products.toContentState()
                                 } else {
-                                    WooPosProductsViewState.Empty()
+                                    WooPosItemsViewState.Empty()
                                 }
                             }
 
-                            else -> WooPosProductsViewState.Error()
+                            else -> WooPosItemsViewState.Error()
                         }
                     }
                 }
@@ -162,14 +162,14 @@ class WooPosProductsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosProductsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosProductsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosProductsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosProductsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
         }
 
-    private suspend fun List<Product>.toContentState() = WooPosProductsViewState.Content(
-        products = map { product ->
+    private suspend fun List<Product>.toContentState() = WooPosItemsViewState.Content(
+        items = map { product ->
             SimpleProduct(
                 id = product.remoteId,
                 name = product.name,
@@ -179,7 +179,7 @@ class WooPosProductsViewModel @Inject constructor(
         },
         loadingMore = false,
         reloadingProductsWithPullToRefresh = false,
-        bannerState = WooPosProductsViewState.Content.BannerState(
+        bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
             title = R.string.woopos_banner_simple_products_only_title,
             message = R.string.woopos_banner_simple_products_only_message,
@@ -189,7 +189,7 @@ class WooPosProductsViewModel @Inject constructor(
 
     private fun onEndOfProductsListReached() {
         val currentState = _viewState.value
-        if (currentState !is WooPosProductsViewState.Content) {
+        if (currentState !is WooPosItemsViewState.Content) {
             return
         }
 
@@ -205,19 +205,19 @@ class WooPosProductsViewModel @Inject constructor(
             _viewState.value = if (result.isSuccess) {
                 result.getOrThrow().toContentState()
             } else {
-                WooPosProductsViewState.Error()
+                WooPosItemsViewState.Error()
             }
         }
     }
 
-    private fun notifyParentAboutStatusChange(newState: WooPosProductsViewState) {
+    private fun notifyParentAboutStatusChange(newState: WooPosItemsViewState) {
         sendEventToParent(
             when (newState) {
-                is WooPosProductsViewState.Content -> ChildToParentEvent.ProductsStatusChanged.WithCart
+                is WooPosItemsViewState.Content -> ChildToParentEvent.ProductsStatusChanged.WithCart
 
-                is WooPosProductsViewState.Empty,
-                is WooPosProductsViewState.Error -> ChildToParentEvent.ProductsStatusChanged.FullScreen
-                is WooPosProductsViewState.Loading -> {
+                is WooPosItemsViewState.Empty,
+                is WooPosItemsViewState.Error -> ChildToParentEvent.ProductsStatusChanged.FullScreen
+                is WooPosItemsViewState.Loading -> {
                     if (newState.withCart) {
                         ChildToParentEvent.ProductsStatusChanged.WithCart
                     } else {
