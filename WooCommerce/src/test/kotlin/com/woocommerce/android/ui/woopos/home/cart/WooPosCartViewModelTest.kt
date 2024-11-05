@@ -214,6 +214,7 @@ class WooPosCartViewModelTest {
             assertThat(toolbar.isClearAllButtonVisible).isFalse()
         }
 
+    @Suppress("LongMethod")
     @Test
     fun `given non empty cart in process, when 2 items added and the first removed and third item added, then third will have item number 2`() =
         runTest {

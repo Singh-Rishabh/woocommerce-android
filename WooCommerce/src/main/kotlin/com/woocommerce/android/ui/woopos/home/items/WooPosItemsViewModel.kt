@@ -101,7 +101,6 @@ class WooPosItemsViewModel @Inject constructor(
             }
 
             is VariableProduct -> {
-
             }
         }
     }
