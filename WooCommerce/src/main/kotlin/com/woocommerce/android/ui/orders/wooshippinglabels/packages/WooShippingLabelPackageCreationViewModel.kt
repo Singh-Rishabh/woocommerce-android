@@ -98,6 +98,15 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     ) : Parcelable
 
     @Parcelize
+    data class PackageData(
+        val type: PackageType,
+        val name: String,
+        val length: String,
+        val width: String,
+        val height: String
+    ) : Parcelable
+
+    @Parcelize
     data class CustomPackageCreationData(
         val type: PackageType,
         val length: String,
