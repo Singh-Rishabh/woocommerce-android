@@ -8,22 +8,35 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
 
 @Composable
 fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState = viewModel.viewState.observeAsState()
-    WooShippingSavedPackageScreen()
+    WooShippingSavedPackageScreen(
+        savedPackages = viewState.value?.savedPackages.orEmpty()
+    )
 }
 
 @Composable
 fun WooShippingSavedPackageScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    savedPackages: List<PackageData>
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        savedPackages.forEach { packageData ->
+            WooShippingSavedPackageItem(packageData)
+        }
+    }
+}
+
+@Composable
+fun WooShippingSavedPackageItem(packageData: PackageData) {
+    Column {
 
     }
 }
