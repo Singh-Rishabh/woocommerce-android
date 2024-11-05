@@ -488,7 +488,11 @@ class CardReaderPaymentController(
     @VisibleForTesting
     fun reFetchOrder() {
         refetchOrderJob = scope.launch {
-            fetchOrder() ?: triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.card_reader_refetching_order_failed))
+            fetchOrder() ?: triggerEvent(
+                CardReaderPaymentEvent.ShowErrorMessage(
+                    R.string.card_reader_refetching_order_failed
+                )
+            )
             if (viewState.value == ReFetchingOrderState) {
                 triggerEvent(CardReaderPaymentEvent.Exit)
             }
