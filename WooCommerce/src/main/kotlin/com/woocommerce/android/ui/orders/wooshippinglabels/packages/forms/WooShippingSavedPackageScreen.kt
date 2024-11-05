@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 
 @Composable
 fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
@@ -39,4 +41,34 @@ fun WooShippingSavedPackageItem(packageData: PackageData) {
     Column {
 
     }
+}
+
+@Preview
+@Composable
+fun WooShippingSavedPackageScreenPreview() {
+    WooShippingSavedPackageScreen(
+        savedPackages = listOf(
+            PackageData(
+                type = PackageType.ENVELOPE,
+                name = "Package 1",
+                length = "10",
+                width = "10",
+                height = "10"
+            ),
+            PackageData(
+                type = PackageType.BOX,
+                name = "Package 2",
+                length = "20",
+                width = "20",
+                height = "20"
+            ),
+            PackageData(
+                type = PackageType.BOX,
+                name = "Package 3",
+                length = "30",
+                width = "30",
+                height = "30"
+            )
+        )
+    )
 }
