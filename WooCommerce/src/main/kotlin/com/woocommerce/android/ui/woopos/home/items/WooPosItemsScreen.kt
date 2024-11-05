@@ -356,6 +356,16 @@ private fun ProductItem(
         item.name,
         item.price
     )
+    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+}
+
+@Composable
+private fun ItemCard(
+    modifier: Modifier,
+    itemContentDescription: String,
+    onItemClicked: (item: SimpleProduct) -> Unit,
+    item: SimpleProduct
+) {
     WooPosCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
