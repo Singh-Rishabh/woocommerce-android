@@ -4,7 +4,6 @@ import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.AppUrls
 import com.woocommerce.android.R
@@ -101,8 +100,6 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -148,7 +145,7 @@ class CardReaderPaymentController(
 
     private val CardReaderFlowParam.PaymentOrRefund.isPOS: Boolean
         get() = this is CardReaderFlowParam.PaymentOrRefund.Payment &&
-                this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
+            this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
 
     private val _event: MutableLiveData<Event> = MultiLiveEvent()
     val event: LiveData<Event> = _event
@@ -398,8 +395,9 @@ class CardReaderPaymentController(
         cardReaderManager: CardReaderManager,
         order: Order
     ) {
-        val refund: CardReaderFlowParam.PaymentOrRefund.Refund = paymentOrRefund as? CardReaderFlowParam.PaymentOrRefund.Refund
-            ?: throw IllegalArgumentException("Refund flow started with non-refund payment type")
+        val refund: CardReaderFlowParam.PaymentOrRefund.Refund =
+            paymentOrRefund as? CardReaderFlowParam.PaymentOrRefund.Refund
+                ?: throw IllegalArgumentException("Refund flow started with non-refund payment type")
         val refundAmount = refund.refundAmount
         order.chargeId?.let { chargeId ->
 
@@ -773,8 +771,10 @@ class CardReaderPaymentController(
             val receiptResult = paymentReceiptHelper.getReceiptUrl(paymentOrRefund.orderId)
 
             if (receiptResult.isSuccess) {
-                when (val sharingResult =
-                    paymentReceiptShare(receiptResult.getOrThrow(), paymentOrRefund.orderId)) {
+                when (
+                    val sharingResult =
+                        paymentReceiptShare(receiptResult.getOrThrow(), paymentOrRefund.orderId)
+                ) {
                     is PaymentReceiptShare.ReceiptShareResult.Error.FileCreation -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
                         triggerEvent(ShowSnackbar(R.string.card_reader_payment_receipt_can_not_be_stored))
