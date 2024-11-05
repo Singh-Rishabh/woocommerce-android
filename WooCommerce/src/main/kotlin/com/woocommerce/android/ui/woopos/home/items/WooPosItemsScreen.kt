@@ -404,39 +404,45 @@ private fun ItemCard(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            when (item) {
-                is SimpleProduct -> ProductImage(item.imageUrl)
-                is VariableProduct -> ProductImage(item.imageUrl)
-            }
+            ProductImage(item)
 
             Spacer(modifier = Modifier.width(32.dp))
 
-            Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(vertical = 8.dp),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.h5,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                when (item) {
-                    is SimpleProduct -> SimpleProductDetails(item = item)
-                    is VariableProduct -> VariableProductDetails(item = item)
-                }
-            }
-
+            ProductInfo(item)
         }
     }
 }
 
 @Composable
-private fun ProductImage(imageUrl: String?) {
+private fun ProductInfo(item: WooPosItem) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(vertical = 8.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = item.name,
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        when (item) {
+            is SimpleProduct -> SimpleProductDetails(item = item)
+            is VariableProduct -> VariableProductDetails(item = item)
+        }
+    }
+}
+
+@Composable
+private fun ProductImage(item: WooPosItem) {
+    val imageUrl = when (item) {
+        is SimpleProduct -> item.imageUrl
+        is VariableProduct -> item.imageUrl
+    }
+
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(imageUrl)
