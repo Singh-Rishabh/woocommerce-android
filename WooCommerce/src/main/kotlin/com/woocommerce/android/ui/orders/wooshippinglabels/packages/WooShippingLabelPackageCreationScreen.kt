@@ -40,7 +40,7 @@ fun WooShippingLabelPackageCreationScreen(
         tabs = viewState.value?.pageTabs.orEmpty(),
         createCustomPackageScreen = { WooShippingCustomPackageCreationScreen(viewModel) },
         createCarrierPackageScreen = { WooShippingCarrierPackageScreen() },
-        createSavedPackageScreen = { WooShippingSavedPackageScreen() }
+        createSavedPackageScreen = { WooShippingSavedPackageScreen(viewModel) }
     )
 }
 
