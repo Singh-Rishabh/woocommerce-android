@@ -4341,4 +4341,20 @@
     <string name="custom_fields_editor_toggle_accessibility_description">Toggle between text and HTML editors</string>
     <string name="custom_fields_editor_text_toggle">Text</string>
     <string name="custom_fields_editor_html_toggle">HTML</string>
+
+    <!--
+    New Shipping Label creation
+    -->
+
+    <string name="woo_shipping_labels_package_creation_tab_custom">Custom</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Carrier</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Saved</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Package type</string>
+    <string name="woo_shipping_labels_package_creation_length">Length</string>
+    <string name="woo_shipping_labels_package_creation_width">Width</string>
+    <string name="woo_shipping_labels_package_creation_height">Height</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Save this as a new package template</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Box</string>
+    <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
 </resources>
