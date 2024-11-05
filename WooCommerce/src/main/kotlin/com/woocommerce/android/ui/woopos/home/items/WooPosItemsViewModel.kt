@@ -246,8 +246,8 @@ class WooPosItemsViewModel @Inject constructor(
         )
     }
 
-    private fun onItemClicked(itemData: WooPosItemNavigationData.SimpleProductData) {
-        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData.id))
+    private fun onItemClicked(itemData: WooPosItemNavigationData) {
+        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData))
     }
 
     private fun sendEventToParent(event: ChildToParentEvent) {

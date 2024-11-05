@@ -6,6 +6,7 @@ import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
@@ -249,7 +250,11 @@ class WooPosProductsViewModelTest {
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
-                ChildToParentEvent.ItemClickedInProductSelector(product.id)
+                ChildToParentEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product.id
+                    )
+                )
             )
             cancelAndConsumeRemainingEvents()
         }

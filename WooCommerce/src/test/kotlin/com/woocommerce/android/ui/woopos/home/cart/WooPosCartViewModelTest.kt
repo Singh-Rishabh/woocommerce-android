@@ -8,6 +8,7 @@ import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -76,7 +77,11 @@ class WooPosCartViewModelTest {
 
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemNavigationData.SimpleProductData(
+                    id = product.remoteId
+                )
+            )
         )
 
         // THEN
@@ -101,7 +106,11 @@ class WooPosCartViewModelTest {
         val states = sut.state.captureValues()
 
         parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemNavigationData.SimpleProductData(
+                    id = product.remoteId
+                )
+            )
         )
 
         // WHEN
@@ -156,7 +165,11 @@ class WooPosCartViewModelTest {
             val states = sut.state.captureValues()
 
             parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product.remoteId
+                    )
+                )
             )
 
             // THEN
@@ -185,7 +198,11 @@ class WooPosCartViewModelTest {
             val states = sut.state.captureValues()
 
             parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product.remoteId
+                    )
+                )
             )
 
             sut.onUIEvent(WooPosCartUIEvent.CheckoutClicked)
@@ -228,10 +245,18 @@ class WooPosCartViewModelTest {
 
             // WHEN
             parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(product1.remoteId)
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product1.remoteId
+                    )
+                )
             )
             parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(product2.remoteId)
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product2.remoteId
+                    )
+                )
             )
 
             sut.onUIEvent(
@@ -247,7 +272,11 @@ class WooPosCartViewModelTest {
             )
 
             parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(product3.remoteId)
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product3.remoteId
+                    )
+                )
             )
 
             // THEN
@@ -285,7 +314,11 @@ class WooPosCartViewModelTest {
         val states = sut.state.captureValues()
 
         parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemNavigationData.SimpleProductData(
+                    id = product.remoteId
+                )
+            )
         )
 
         // WHEN
@@ -314,7 +347,11 @@ class WooPosCartViewModelTest {
         val states = sut.state.captureValues()
 
         parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemNavigationData.SimpleProductData(
+                    id = product.remoteId
+                )
+            )
         )
 
         // WHEN
@@ -354,7 +391,11 @@ class WooPosCartViewModelTest {
             val states = sut.state.captureValues()
 
             parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product.remoteId
+                    )
+                )
             )
 
             // WHEN
@@ -384,7 +425,11 @@ class WooPosCartViewModelTest {
 
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemNavigationData.SimpleProductData(
+                    id = product.remoteId
+                )
+            )
         )
 
         // THEN
@@ -407,7 +452,11 @@ class WooPosCartViewModelTest {
         val states = sut.state.captureValues()
 
         parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(product.remoteId)
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemNavigationData.SimpleProductData(
+                    id = product.remoteId
+                )
+            )
         )
 
         // WHEN

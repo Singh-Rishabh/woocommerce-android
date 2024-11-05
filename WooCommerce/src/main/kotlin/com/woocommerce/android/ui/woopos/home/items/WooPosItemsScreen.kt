@@ -267,6 +267,8 @@ private fun ItemsList(
                         onItemClicked = onItemClicked
                     )
                 }
+
+                is WooPosItem.VariableProduct -> TODO()
             }
         }
 
