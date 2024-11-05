@@ -88,7 +88,20 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
     WooPosItemsScreen(
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
-        onItemClicked = { productsViewModel.onUIEvent(ItemClicked(it)) },
+        onItemClicked = {
+            when (it) {
+                is SimpleProduct -> productsViewModel.onUIEvent(ItemClicked(it))
+                is VariableProduct -> productsViewModel.onUIEvent(
+                    WooPosItemsUIEvent.NavigateToVariationsScreen(
+                        WooPosItemNavigationData.VariableProductData(
+                            id = it.id,
+                            numOfVariations = it.numOfVariations,
+                            variationIds = it.variationIds
+                        )
+                    )
+                )
+            }
+        },
         onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfItemsListReached) },
         onPullToRefresh = { productsViewModel.onUIEvent(PullToRefreshTriggered) },
         onRetryClicked = { productsViewModel.onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
