@@ -22,7 +22,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
-        initialValue = ViewState(pageTabs, CustomPackageCreationData.EMPTY)
+        initialValue = ViewState(pageTabs)
     )
     val viewState = _viewState.asLiveData()
 
@@ -88,7 +88,8 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList(),
-        val customPackageCreationData: CustomPackageCreationData
+        val customPackageCreationData: CustomPackageCreationData = CustomPackageCreationData.EMPTY,
+        val savedPackages: List<PackageData> = emptyList()
     ) : Parcelable
 
     @Parcelize
