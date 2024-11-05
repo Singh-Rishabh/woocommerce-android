@@ -87,6 +87,10 @@ class WooPosItemsViewModel @Inject constructor(
             WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked -> {
                 onSimpleProductsDialogInfoClicked()
             }
+
+            is WooPosItemsUIEvent.NavigateToVariationsScreen -> {
+
+            }
         }
     }
 
@@ -101,6 +105,7 @@ class WooPosItemsViewModel @Inject constructor(
             }
 
             is VariableProduct -> {
+
             }
         }
     }
