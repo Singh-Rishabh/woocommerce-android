@@ -92,6 +92,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -127,7 +128,12 @@ class CardReaderPaymentController(
     private val onTTPPaymentStateChanged: (Boolean) -> Unit,
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
+    // TODO: samiuelson Remove that property and map paymentState to ViewState in the target [ViewModel]
+    @Deprecated("Use paymentState and map to ViewState in the target [ViewModel]")
     val viewStateData: LiveData<ViewState> = viewState
+
+    private val _paymentState = MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
+    val paymentState = MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
 
     private var paymentFlowJob: Job? = null
     private var refundFlowJob: Job? = null
