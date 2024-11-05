@@ -71,6 +71,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyCo
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ItemClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
@@ -181,7 +182,9 @@ private fun ItemsToolbar(
     onToolbarInfoIconClicked: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(40.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
     ) {
@@ -268,7 +271,13 @@ private fun ItemsList(
                     )
                 }
 
-                is WooPosItem.VariableProduct -> TODO()
+                is VariableProduct -> {
+                    VariableProductItem(
+                        modifier = Modifier.animateItemPlacement(),
+                        item = product,
+                        onItemClicked = onItemClicked
+                    )
+                }
             }
         }
 
@@ -349,7 +358,21 @@ private fun ItemsLoadingItem() {
 private fun ProductItem(
     modifier: Modifier = Modifier,
     item: SimpleProduct,
-    onItemClicked: (item: SimpleProduct) -> Unit
+    onItemClicked: (item: WooPosItem) -> Unit
+) {
+    val itemContentDescription = stringResource(
+        id = R.string.woopos_cart_item_content_description,
+        item.name,
+        item.price
+    )
+    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+}
+
+@Composable
+private fun VariableProductItem(
+    modifier: Modifier = Modifier,
+    item: VariableProduct,
+    onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
         id = R.string.woopos_cart_item_content_description,
@@ -363,8 +386,8 @@ private fun ProductItem(
 private fun ItemCard(
     modifier: Modifier,
     itemContentDescription: String,
-    onItemClicked: (item: SimpleProduct) -> Unit,
-    item: SimpleProduct
+    onItemClicked: (item: WooPosItem) -> Unit,
+    item: WooPosItem
 ) {
     WooPosCard(
         modifier = modifier
@@ -381,40 +404,67 @@ private fun ItemCard(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(112.dp)
-            )
+            when (item) {
+                is SimpleProduct -> ProductImage(item.imageUrl)
+                is VariableProduct -> ProductImage(item.imageUrl)
+            }
 
             Spacer(modifier = Modifier.width(32.dp))
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = item.name,
-                style = MaterialTheme.typography.h5,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(vertical = 8.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.h5,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                when (item) {
+                    is SimpleProduct -> SimpleProductDetails(item = item)
+                    is VariableProduct -> VariableProductDetails(item = item)
+                }
+            }
 
-            Spacer(modifier = Modifier.width(32.dp))
-
-            Text(
-                text = item.price,
-                style = MaterialTheme.typography.h5,
-            )
-
-            Spacer(modifier = Modifier.width(24.dp))
         }
     }
+}
+
+@Composable
+private fun ProductImage(imageUrl: String?) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(true)
+            .build(),
+        fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
+        error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
+        placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.size(112.dp)
+    )
+}
+
+@Composable
+private fun SimpleProductDetails(item: SimpleProduct) {
+    Text(
+        text = item.price,
+        style = MaterialTheme.typography.body1,
+    )
+}
+
+@Composable
+private fun VariableProductDetails(item: VariableProduct) {
+    Text(
+        text = "${item.numOfVariations} Variations",
+        style = MaterialTheme.typography.body1,
+    )
 }
 
 @Composable
@@ -524,9 +574,17 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                VariableProduct(
                     3,
                     name = "Product 3",
+                    price = "2000.00$",
+                    imageUrl = null,
+                    numOfVariations = 20,
+                    variationIds = listOf()
+                ),
+                SimpleProduct(
+                    4,
+                    name = "Product 4",
                     price = "1.0$",
                     imageUrl = null,
                 ),
