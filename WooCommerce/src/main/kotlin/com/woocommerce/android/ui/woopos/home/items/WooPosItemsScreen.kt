@@ -428,7 +428,7 @@ private fun ProductInfo(item: WooPosItem) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(8.dp))
         when (item) {
             is SimpleProduct -> SimpleProductDetails(item = item)
             is VariableProduct -> VariableProductDetails(item = item)
@@ -461,7 +461,8 @@ private fun ProductImage(item: WooPosItem) {
 private fun SimpleProductDetails(item: SimpleProduct) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.body1,
+        style = MaterialTheme.typography.h6,
+        fontWeight = FontWeight.Normal
     )
 }
 
@@ -469,7 +470,8 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 private fun VariableProductDetails(item: VariableProduct) {
     Text(
         text = "${item.numOfVariations} Variations",
-        style = MaterialTheme.typography.body1,
+        style = MaterialTheme.typography.h6,
+        fontWeight = FontWeight.Normal
     )
 }
 
