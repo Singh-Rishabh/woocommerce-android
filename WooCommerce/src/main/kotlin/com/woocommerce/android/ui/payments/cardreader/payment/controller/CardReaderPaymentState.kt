@@ -37,7 +37,7 @@ sealed class CardReaderPaymentOrRefundState {
 
         data object PrintingReceipt
 
-        sealed class PaymentCapturing(open val amountWithCurrencyLabel: String): CardReaderPaymentState() {
+        sealed class PaymentCapturing(open val amountWithCurrencyLabel: String) : CardReaderPaymentState() {
             data class BuiltInReaderPaymentCapturing(override val amountWithCurrencyLabel: String) :
                 PaymentCapturing(amountWithCurrencyLabel)
 

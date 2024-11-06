@@ -132,6 +132,7 @@ class CardReaderPaymentController(
     private val onTTPPaymentStateChanged: (Boolean) -> Unit,
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
+
     // TODO: samiuelson Remove that property and map paymentState to ViewState in the target [ViewModel]
     @Deprecated("Use paymentState and map to ViewState in the target [ViewModel]")
     val viewStateData: LiveData<ViewState> = viewState
