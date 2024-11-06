@@ -1,8 +1,10 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +12,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.woocommerce.android.ui.compose.component.SelectionCheck
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
@@ -40,13 +43,23 @@ fun WooShippingSavedPackageScreen(
 }
 
 @Composable
-fun WooShippingSavedPackageItem(packageData: PackageData) {
+fun WooShippingSavedPackageItem(
+    packageData: PackageData
+) {
     Column {
-        Text(text = packageData.name)
-        Text(text = "Type: ${packageData.type}")
-        Text(text = "Length: ${packageData.length}")
-        Text(text = "Width: ${packageData.width}")
-        Text(text = "Height: ${packageData.height}")
+        Row {
+            SelectionCheck(
+                isSelected = true,
+                onSelectionChange = {}
+            )
+            Column {
+                Text(text = packageData.name)
+                Text(text = "Type: ${packageData.type}")
+                Text(text = "Length: ${packageData.length}")
+                Text(text = "Width: ${packageData.width}")
+                Text(text = "Height: ${packageData.height}")
+            }
+        }
         Divider()
     }
 }
