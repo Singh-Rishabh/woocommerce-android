@@ -45,25 +45,28 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     init {
         _viewState.update { viewState ->
-            viewState.copy(savedPackages = fetchSavedPackages())
+            viewState.copy(savedPackageSelection = SavedPackageSelection(fetchSavedPackages()))
         }
     }
 
     fun onSavedPackageSelected(packageData: PackageData) {
         _viewState.update { viewState ->
-            viewState.savedPackages
+            viewState.savedPackageSelection.packages
                 .filter { it != packageData }
                 .map { it.copy(isSelected = false) }
-                .let { it + packageData.copy(isSelected = true) }
-                .let { viewState.copy(savedPackages = it) }
+                .let { SavedPackageSelection(it + packageData.copy(isSelected = true)) }
+                .let { viewState.copy(savedPackageSelection = it) }
         }
     }
 
-    fun onAddCustomPackageClick() {
-        triggerEvent(PackageSelected(_viewState.value.customPackageCreationData))
+    fun onAddSavedPackageClick() {
+        _viewState.value.savedPackageSelection.packages.find { it.isSelected }
+            ?.let { triggerEvent(SavedPackageSelected(it)) }
     }
 
-
+    fun onAddCustomPackageClick() {
+        triggerEvent(CustomPackageCreated(_viewState.value.customPackageCreationData))
+    }
 
     fun onPackageTypeSpinnerClick() {
         triggerEvent(ShowPackageTypeDialog(_viewState.value.customPackageCreationData.type))
@@ -108,7 +111,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList(),
         val customPackageCreationData: CustomPackageCreationData = CustomPackageCreationData.EMPTY,
-        val savedPackages: List<PackageData> = emptyList()
+        val savedPackageSelection: SavedPackageSelection = SavedPackageSelection(emptyList())
     ) : Parcelable
 
     @Parcelize
@@ -129,6 +132,14 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     ) : Parcelable {
         val dimensionsForDisplay: String
             get() = "$length x $width x $height cm"
+    }
+
+    @Parcelize
+    data class SavedPackageSelection(
+        val packages: List<PackageData>
+    ): Parcelable {
+        val hasSelection: Boolean
+            get() = packages.find { it.isSelected } != null
     }
 
     @Parcelize
@@ -164,6 +175,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         ENVELOPE(R.string.woo_shipping_labels_package_creation_envelope_type)
     }
 
-    data class PackageSelected(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
+    data class SavedPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
+    data class CustomPackageCreated(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
 }
