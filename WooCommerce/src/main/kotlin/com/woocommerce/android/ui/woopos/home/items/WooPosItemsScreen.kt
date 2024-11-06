@@ -94,19 +94,9 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
         navigationState = productsViewModel.navigationState,
-        onItemClicked = {
-            when (it) {
-                is SimpleProduct -> productsViewModel.onUIEvent(ItemClicked(it))
-                is VariableProduct -> productsViewModel.onUIEvent(
-                    WooPosItemsUIEvent.NavigateToVariationsScreen(
-                        VariableProductData(
-                            id = it.id,
-                            name = it.name,
-                            numOfVariations = it.numOfVariations,
-                            variationIds = it.variationIds
-                        )
-                    )
-                )
+        onItemClicked = { item ->
+            (item as? ClickableItem)?.onItemClick { event ->
+                productsViewModel.onUIEvent(event)
             }
         },
         onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfItemsListReached) },
