@@ -6,7 +6,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 sealed class CardReaderPaymentOrRefundState {
     sealed class CardReaderPaymentState: CardReaderPaymentOrRefundState() {
         data class LoadingData(
-            val onCancelPaymentCollection: () -> Unit,
+            val onCancel: () -> Unit,
         ) : CardReaderPaymentState()
 
         data object ReFetchingOrder : CardReaderPaymentState()

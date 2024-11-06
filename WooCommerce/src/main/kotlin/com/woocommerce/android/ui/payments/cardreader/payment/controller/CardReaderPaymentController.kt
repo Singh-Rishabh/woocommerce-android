@@ -226,6 +226,7 @@ class CardReaderPaymentController(
     private fun initPaymentFlow(isRetry: Boolean) {
         paymentFlowJob = scope.launch {
             viewState.postValue((LoadingDataState(::onCancelPaymentFlow)))
+            _paymentState.value = CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             if (isRetry) {
                 delay(ARTIFICIAL_RETRY_DELAY)
             }
@@ -299,6 +300,7 @@ class CardReaderPaymentController(
     fun retry(orderId: Long, billingEmail: String, paymentData: PaymentData, amountLabel: String) {
         paymentFlowJob = scope.launch {
             viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
+            _paymentState.value = CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             delay(ARTIFICIAL_RETRY_DELAY)
             cardReaderManager.retryCollectPayment(orderId, paymentData).collect { paymentStatus ->
                 onPaymentStatusChanged(orderId, billingEmail, paymentStatus, amountLabel)
@@ -353,7 +355,11 @@ class CardReaderPaymentController(
     ) {
         paymentDataForRetry = null
         when (paymentStatus) {
-            InitializingPayment -> viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
+            InitializingPayment -> {
+                viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
+                _paymentState.value =
+                    CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
+            }
             CollectingPayment -> viewState.postValue(
                 cardReaderPaymentReaderTypeStateProvider.provideCollectPaymentState(
                     cardReaderType,
