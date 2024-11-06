@@ -14,9 +14,12 @@ import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesReposit
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -29,8 +32,11 @@ class WooPosItemsViewModel @Inject constructor(
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val priceFormat: WooPosFormatPrice,
     private val preferencesRepository: WooPosPreferencesRepository,
+    private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
+
+    val navigationState = navigator.navigationState
 
     private val _viewState =
         MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
@@ -89,9 +95,13 @@ class WooPosItemsViewModel @Inject constructor(
             }
 
             is WooPosItemsUIEvent.NavigateToVariationsScreen -> {
-
+                navigator.navigateToVariationsScreen(event.itemNavigationData)
             }
         }
+    }
+
+    fun navigateBackToItemListScreen() {
+        navigator.navigateBackToItemListScreen()
     }
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
