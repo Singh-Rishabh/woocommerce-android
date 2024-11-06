@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,17 +47,15 @@ fun WooShippingSavedPackageItem(
     packageData: PackageData
 ) {
     Column {
-        Row {
+        Row (verticalAlignment = Alignment.CenterVertically) {
             SelectionCheck(
                 isSelected = true,
                 onSelectionChange = {}
             )
             Column {
+                Text(text = packageData.description)
                 Text(text = packageData.name)
-                Text(text = "Type: ${packageData.type}")
-                Text(text = "Length: ${packageData.length}")
-                Text(text = "Width: ${packageData.width}")
-                Text(text = "Height: ${packageData.height}")
+                Text(text = packageData.dimensionsForDisplay)
             }
         }
         Divider()
@@ -72,21 +70,24 @@ fun WooShippingSavedPackageScreenPreview() {
             savedPackages = listOf(
                 PackageData(
                     type = PackageType.ENVELOPE,
-                    name = "Package 1",
+                    name = "Small Flat Rate Box",
+                    description = "USPS Priority Mail Flat Rate Boxes",
                     length = "10",
                     width = "10",
                     height = "10"
                 ),
                 PackageData(
                     type = PackageType.BOX,
-                    name = "Package 2",
+                    name = "Small Flat Rate Box",
+                    description = "Custom package",
                     length = "20",
                     width = "20",
                     height = "20"
                 ),
                 PackageData(
                     type = PackageType.BOX,
-                    name = "Package 3",
+                    name = "Small Flat Rate Box",
+                    description = "DHL Express",
                     length = "30",
                     width = "30",
                     height = "30"
