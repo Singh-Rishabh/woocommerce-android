@@ -42,6 +42,16 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             )
         )
 
+    fun onSavedPackageSelected(packageData: PackageData) {
+        _viewState.update { viewState ->
+            viewState.savedPackages
+                .filter { it != packageData }
+                .map { it.copy(isSelected = false) }
+                .let { it + packageData.copy(isSelected = true) }
+                .let { viewState.copy(savedPackages = it) }
+        }
+    }
+
     fun onAddPackageClick() {
         triggerEvent(PackageSelected(_viewState.value.customPackageCreationData))
     }
