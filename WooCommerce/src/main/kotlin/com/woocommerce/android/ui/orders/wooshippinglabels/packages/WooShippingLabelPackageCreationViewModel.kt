@@ -17,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val fetchSavedPackages: FetchSavedPackagesFromStore
 ) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
@@ -41,6 +42,12 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                 title = resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_saved)
             )
         )
+
+    init {
+        _viewState.update { viewState ->
+            viewState.copy(savedPackages = fetchSavedPackages())
+        }
+    }
 
     fun onSavedPackageSelected(packageData: PackageData) {
         _viewState.update { viewState ->
