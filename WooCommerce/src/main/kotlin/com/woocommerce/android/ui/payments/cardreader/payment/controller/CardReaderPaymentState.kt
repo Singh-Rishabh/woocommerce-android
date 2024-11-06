@@ -11,9 +11,14 @@ sealed class CardReaderPaymentOrRefundState {
 
         data object ReFetchingOrder : CardReaderPaymentState()
 
-        sealed class CollectingPayment {
-            data object BuiltInReaderCollectPaymentState
-            data object ExternalReaderCollectPaymentState
+        sealed class CollectingPayment(
+            open val amountWithCurrencyLabel: String,
+        ): CardReaderPaymentOrRefundState() {
+            data class BuiltInReaderCollectPaymentState(override val amountWithCurrencyLabel: String): CollectingPayment(amountWithCurrencyLabel)
+            data class ExternalReaderCollectPaymentState(
+                override val amountWithCurrencyLabel: String,
+                val onCancel: (() -> Unit)
+            ): CollectingPayment(amountWithCurrencyLabel)
         }
 
         sealed class ProcessingPayment {

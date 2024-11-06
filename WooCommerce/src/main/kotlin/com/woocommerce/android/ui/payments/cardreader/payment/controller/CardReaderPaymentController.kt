@@ -360,13 +360,20 @@ class CardReaderPaymentController(
                 _paymentState.value =
                     CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             }
-            CollectingPayment -> viewState.postValue(
-                cardReaderPaymentReaderTypeStateProvider.provideCollectPaymentState(
+            CollectingPayment -> {
+                viewState.postValue(
+                    cardReaderPaymentReaderTypeStateProvider.provideCollectPaymentState(
+                        cardReaderType,
+                        amountLabel,
+                        ::onCancelPaymentFlow
+                    )
+                )
+                _paymentState.value = paymentStateProvider.provideCollectingPaymentState(
                     cardReaderType,
                     amountLabel,
                     ::onCancelPaymentFlow
                 )
-            )
+            }
 
             ProcessingPayment -> viewState.postValue(
                 cardReaderPaymentReaderTypeStateProvider.provideProcessingPaymentState(
