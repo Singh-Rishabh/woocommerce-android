@@ -61,11 +61,11 @@ class PaymentReceiptShare @Inject constructor(
     }
 
     sealed class ReceiptShareResult {
-        object Success : ReceiptShareResult()
+        data object Success : ReceiptShareResult()
         sealed class Error : ReceiptShareResult() {
             data class Sharing(val exception: Exception) : Error()
-            object FileCreation : Error()
-            object FileDownload : Error()
+            data object FileCreation : Error()
+            data object FileDownload : Error()
         }
     }
 }
