@@ -13,7 +13,6 @@ sealed class WooPosItem(
         override fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit) {
             onUIEvent(WooPosItemsUIEvent.ItemClicked(this))
         }
-
     }
 
     data class VariableProduct(
@@ -42,4 +41,3 @@ sealed class WooPosItem(
 interface ClickableItem {
     fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit)
 }
-
