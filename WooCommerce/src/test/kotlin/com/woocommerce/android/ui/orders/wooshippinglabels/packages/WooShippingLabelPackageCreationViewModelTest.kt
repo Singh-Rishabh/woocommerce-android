@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreated
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
@@ -62,7 +62,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut.onAddCustomPackageClick()
 
-        assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData))
+        assertThat(lastEvent).isEqualTo(CustomPackageCreated(customPackageData))
     }
 
     @Test
@@ -131,8 +131,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `onSavedPackageSelected selects only one package at a time`() = testBlocking {
         var lastViewState: ViewState? = null
-        sut.viewState.observeForever { lastViewState = it }
-
         val package1 = PackageData(
             type = PackageType.BOX,
             name = "Package 1",
@@ -153,10 +151,11 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchSavedPackages()).thenReturn(listOf(package1, package2))
 
+        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
+        sut.viewState.observeForever { lastViewState = it }
         sut.onSavedPackageSelected(package1)
 
-        val selectedPackages = lastViewState?.savedPackages?.filter { it.isSelected }
-
+        val selectedPackages = lastViewState?.savedPackageSelection?.packages?.filter { it.isSelected }
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
