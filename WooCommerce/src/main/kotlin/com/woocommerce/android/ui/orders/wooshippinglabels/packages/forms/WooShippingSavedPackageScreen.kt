@@ -1,10 +1,12 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -47,15 +49,27 @@ fun WooShippingSavedPackageItem(
     packageData: PackageData
 ) {
     Column {
-        Row (verticalAlignment = Alignment.CenterVertically) {
+        Row (
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             SelectionCheck(
                 isSelected = true,
                 onSelectionChange = {}
             )
             Column {
-                Text(text = packageData.description)
-                Text(text = packageData.name)
-                Text(text = packageData.dimensionsForDisplay)
+                Text(
+                    text = packageData.description,
+                    style = MaterialTheme.typography.caption
+                )
+                Text(
+                    text = packageData.name,
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = packageData.dimensionsForDisplay,
+                    style = MaterialTheme.typography.body2
+                )
             }
         }
         Divider()
