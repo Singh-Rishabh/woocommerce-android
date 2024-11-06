@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -13,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
@@ -26,22 +29,36 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState = viewModel.viewState.observeAsState()
     WooShippingSavedPackageScreen(
-        savedPackages = viewState.value?.savedPackages.orEmpty()
+        savedPackages = viewState.value?.savedPackageSelection?.packages.orEmpty(),
+        isAddPackageEnabled = viewState.value?.savedPackageSelection?.hasSelection ?: false,
+        onAddPackageClick = viewModel::onAddSavedPackageClick
+
     )
 }
 
 @Composable
 fun WooShippingSavedPackageScreen(
     modifier: Modifier = Modifier,
-    savedPackages: List<PackageData>
+    savedPackages: List<PackageData>,
+    isAddPackageEnabled: Boolean,
+    onAddPackageClick: () -> Unit
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        savedPackages.forEach { packageData ->
-            WooShippingSavedPackageItem(modifier, packageData)
+        Column(modifier = modifier.weight(1f)) {
+            savedPackages.forEach { packageData ->
+                WooShippingSavedPackageItem(modifier, packageData)
+            }
+        }
+        Button(
+            modifier = modifier.fillMaxWidth(),
+            enabled = isAddPackageEnabled,
+            onClick = onAddPackageClick
+        ) {
+            Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
         }
     }
 }
@@ -116,7 +133,9 @@ fun WooShippingSavedPackageScreenPreview() {
                     height = "30",
                     isSelected = false
                 )
-            )
+            ),
+            isAddPackageEnabled = true,
+            onAddPackageClick = {}
         )
     }
 }
