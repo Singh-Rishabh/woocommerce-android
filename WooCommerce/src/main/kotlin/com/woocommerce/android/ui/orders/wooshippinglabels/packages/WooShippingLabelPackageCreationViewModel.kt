@@ -137,7 +137,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     @Parcelize
     data class SavedPackageSelection(
         val packages: List<PackageData>
-    ): Parcelable {
+    ) : Parcelable {
         val hasSelection: Boolean
             get() = packages.find { it.isSelected } != null
     }

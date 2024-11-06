@@ -68,11 +68,11 @@ fun WooShippingSavedPackageItem(
     modifier: Modifier,
     packageData: PackageData
 ) {
-    Column (
+    Column(
         modifier = modifier.padding(top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Row (
+        Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -80,7 +80,7 @@ fun WooShippingSavedPackageItem(
                 isSelected = packageData.isSelected,
                 onSelectionChange = {}
             )
-            Column (verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = packageData.description,
                     style = MaterialTheme.typography.caption,
