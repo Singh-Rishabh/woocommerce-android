@@ -145,7 +145,7 @@ private fun WooShippingLabelCreationScreenPreview() {
 }
 
 @Composable
-private fun HazmatCard(
+internal fun HazmatCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {}
 ) {
