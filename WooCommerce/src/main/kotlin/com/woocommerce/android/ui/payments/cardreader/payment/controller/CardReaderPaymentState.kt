@@ -40,15 +40,15 @@ sealed class CardReaderPaymentOrRefundState {
 
         sealed class PaymentFailed(
             open val errorType: PaymentFlowError,
-            open val amountWithCurrencyLabel: String,
-            open val onCancel: () -> Unit,
+            open val amountWithCurrencyLabel: String?,
+            open val onCancel: (() -> Unit)? = null,
             open val onRetry: (() -> Unit)?,
             open val cta: CallToAction? = null,
         ): CardReaderPaymentState() {
             data class BuiltInReaderFailedPayment(
                 override val errorType: PaymentFlowError,
-                override val amountWithCurrencyLabel: String,
-                override val onCancel: () -> Unit,
+                override val amountWithCurrencyLabel: String?,
+                override val onCancel: (() -> Unit)? = null,
                 override val onRetry: (() -> Unit)? = null,
                 override val cta: CallToAction? = null,
             ): PaymentFailed(
@@ -60,8 +60,8 @@ sealed class CardReaderPaymentOrRefundState {
             )
             data class ExternalReaderFailedPayment(
                 override val errorType: PaymentFlowError,
-                override val amountWithCurrencyLabel: String,
-                override val onCancel: () -> Unit,
+                override val amountWithCurrencyLabel: String?,
+                override val onCancel: (() -> Unit)? = null,
                 override val onRetry: (() -> Unit)? = null,
                 override val cta: CallToAction? = null,
             ): PaymentFailed(

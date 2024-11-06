@@ -13,21 +13,21 @@ class CardReaderPaymentStateProvider @Inject constructor() {
     fun provideFailedPaymentState(
         cardReaderType: CardReaderType,
         errorType: PaymentFlowError,
-        amountLabel: String,
-        onCancel: () -> Unit,
+        amountWithCurrencyLabel: String?,
+        onCancel: (() -> Unit)? = null,
         onRetry: (() -> Unit)? = null,
         cta: CallToAction? = null,
     ) = when (cardReaderType) {
         BUILT_IN -> BuiltInReaderFailedPayment(
             errorType = errorType,
-            amountWithCurrencyLabel = amountLabel,
+            amountWithCurrencyLabel = amountWithCurrencyLabel,
             onCancel = onCancel,
             onRetry = onRetry,
             cta = cta
         )
         EXTERNAL -> ExternalReaderFailedPayment(
             errorType = errorType,
-            amountWithCurrencyLabel = amountLabel,
+            amountWithCurrencyLabel = amountWithCurrencyLabel,
             onCancel = onCancel,
             onRetry = onRetry,
             cta = cta
