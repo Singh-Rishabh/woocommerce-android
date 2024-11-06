@@ -44,7 +44,8 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
     WooShippingLabelCreationScreen(
-        onSelectPackageClick = viewModel::onSelectPackageClicked
+        onSelectPackageClick = viewModel::onSelectPackageClicked,
+        onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel
     )
 }
 
@@ -52,7 +53,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
 @Composable
 fun WooShippingLabelCreationScreen(
     modifier: Modifier = Modifier,
-    onSelectPackageClick: () -> Unit
+    onSelectPackageClick: () -> Unit,
+    onPurchaseShippingLabel: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
@@ -61,7 +63,8 @@ fun WooShippingLabelCreationScreen(
             ShipmentDetails(
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it }
+                onMarkOrderCompleteChange = { markOrderComplete.value = it },
+                onPurchaseShippingLabel = onPurchaseShippingLabel
             )
         },
         sheetPeekHeight = 64.dp,
@@ -139,7 +142,8 @@ private fun WooShippingLabelCreationScreenPreview() {
     WooThemeWithBackground {
         WooShippingLabelCreationScreen(
             modifier = Modifier.fillMaxSize(),
-            onSelectPackageClick = {}
+            onSelectPackageClick = {},
+            onPurchaseShippingLabel = {}
         )
     }
 }
