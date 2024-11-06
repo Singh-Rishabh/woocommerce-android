@@ -58,8 +58,12 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.Test
@@ -1592,6 +1596,76 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
 
         // The first state will be triggered for updating the progress, second state for disabling the custom amount. Hence we need to verify the third state
         assertTrue(viewState[2].isEditable)
+    }
+
+    @Test
+    fun `when coupon added, then coupons viewState gets updated`() = testBlocking {
+        val dummyCouponCode = "Dummy Coupon 1"
+        createSut()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isEmpty()
+
+        sut.onCouponAdded(dummyCouponCode)
+
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+    }
+
+    @Test
+    fun `when coupon removed, then coupons viewState gets updated`() = testBlocking {
+        val dummyCouponCode = "Dummy Coupon 1"
+        createSut()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        sut.onCouponAdded(dummyCouponCode)
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+
+        sut.onCouponRemoved(dummyCouponCode)
+
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isEmpty()
+    }
+
+    @Test
+    fun `given coupons applied, when order is being updated, then coupons list is disabled`() = testBlocking {
+        // Ensure we have full control of coroutine execution
+        Dispatchers.setMain(StandardTestDispatcher())
+        createSut()
+        advanceUntilIdle()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        sut.onCouponAdded("123")
+        advanceUntilIdle()
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+
+        sut.onProductsSelected(listOf(ProductSelectorViewModel.SelectedItem.Product(1L)))
+
+        assertThat(sut.couponLinesLiveData.value!!.isEnabled).isFalse()
+    }
+
+    @Test
+    fun `given order is being updated, when update finished, then coupons list is enabled`() = testBlocking {
+        // Ensure we have full control of coroutine execution
+        Dispatchers.setMain(StandardTestDispatcher())
+        createSut()
+        advanceUntilIdle()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        sut.onCouponAdded("123")
+        advanceUntilIdle()
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+        sut.onProductsSelected(listOf(ProductSelectorViewModel.SelectedItem.Product(1L)))
+
+        advanceUntilIdle()
+
+        assertThat(sut.couponLinesLiveData.value!!.isEnabled).isTrue()
     }
 
     @Test

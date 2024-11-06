@@ -539,6 +539,47 @@ class EditFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTest() 
     }
 
     @Test
+    fun `given order is editable, when screen loaded, then listed coupons are enabled`() = testBlocking {
+        val order = defaultOrderValue.copy(
+            isEditable = true,
+            datePaid = null,
+            couponLines = listOf(Order.CouponLine("Dummy coupon 1"))
+        )
+        orderDetailRepository.stub {
+            onBlocking { getOrderById(defaultOrderValue.id) }.doReturn(order)
+        }
+        createUpdateOrderUseCase = mock {
+            onBlocking { invoke(any(), any()) } doReturn flowOf(Succeeded(order))
+        }
+
+        createSut()
+        sut.couponLinesLiveData.observeForever {
+        }
+
+        assertThat(sut.couponLinesLiveData.value!!.isEnabled).isTrue()
+    }
+
+    @Test
+    fun `given order is not editable, when screen loaded, then listed coupons are disabled`() = testBlocking {
+        val order = defaultOrderValue.copy(
+            isEditable = false,
+            couponLines = listOf(Order.CouponLine("Dummy coupon 1"))
+        )
+        orderDetailRepository.stub {
+            onBlocking { getOrderById(defaultOrderValue.id) }.doReturn(order)
+        }
+        createUpdateOrderUseCase = mock {
+            onBlocking { invoke(any(), any()) } doReturn flowOf(Succeeded(order))
+        }
+
+        createSut()
+        sut.couponLinesLiveData.observeForever {
+        }
+
+        assertThat(sut.couponLinesLiveData.value!!.isEnabled).isFalse()
+    }
+
+    @Test
     fun `given editable order and order paid, then set tax rate button should be disabled`() {
         testBlocking {
             initMocksForAnalyticsWithOrder(defaultOrderValue)
