@@ -8,6 +8,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardRea
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.CallToAction
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.ProcessingPayment
 import javax.inject.Inject
 
 class CardReaderPaymentStateProvider @Inject constructor() {
@@ -46,6 +47,20 @@ class CardReaderPaymentStateProvider @Inject constructor() {
 
         EXTERNAL -> CollectingPayment.ExternalReaderCollectPaymentState(
             amountWithCurrencyLabel = amountWithCurrencyLabel,
+            onCancel = onCancel,
+        )
+    }
+
+    fun provideProcessingPaymentState(
+        cardReaderType: CardReaderType,
+        amountLabel: String,
+        onCancel: () -> Unit
+    ): ProcessingPayment = when (cardReaderType) {
+        BUILT_IN -> ProcessingPayment.BuiltInReaderProcessingPayment(
+            amountWithCurrencyLabel = amountLabel,
+        )
+        EXTERNAL -> ProcessingPayment.ExternalReaderProcessingPayment(
+            amountWithCurrencyLabel = amountLabel,
             onCancel = onCancel,
         )
     }

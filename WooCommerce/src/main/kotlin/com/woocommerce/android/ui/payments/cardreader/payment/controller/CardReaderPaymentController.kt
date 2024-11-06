@@ -375,13 +375,20 @@ class CardReaderPaymentController(
                 )
             }
 
-            ProcessingPayment -> viewState.postValue(
-                cardReaderPaymentReaderTypeStateProvider.provideProcessingPaymentState(
+            ProcessingPayment -> {
+                viewState.postValue(
+                    cardReaderPaymentReaderTypeStateProvider.provideProcessingPaymentState(
+                        cardReaderType,
+                        amountLabel,
+                        ::onCancelPaymentFlow
+                    )
+                )
+                _paymentState.value = paymentStateProvider.provideProcessingPaymentState(
                     cardReaderType,
                     amountLabel,
                     ::onCancelPaymentFlow
                 )
-            )
+            }
 
             is ProcessingPaymentCompleted -> {
                 cardReaderTrackingInfoKeeper.setPaymentMethodType(paymentStatus.paymentMethodType.stringRepresentation)

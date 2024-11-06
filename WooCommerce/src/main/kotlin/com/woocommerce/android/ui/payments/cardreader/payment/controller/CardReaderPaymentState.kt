@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 
 sealed class CardReaderPaymentOrRefundState {
-    sealed class CardReaderPaymentState: CardReaderPaymentOrRefundState() {
+    sealed class CardReaderPaymentState : CardReaderPaymentOrRefundState() {
         data class LoadingData(
             val onCancel: () -> Unit,
         ) : CardReaderPaymentState()
@@ -13,17 +13,26 @@ sealed class CardReaderPaymentOrRefundState {
 
         sealed class CollectingPayment(
             open val amountWithCurrencyLabel: String,
-        ): CardReaderPaymentOrRefundState() {
-            data class BuiltInReaderCollectPaymentState(override val amountWithCurrencyLabel: String): CollectingPayment(amountWithCurrencyLabel)
+        ) : CardReaderPaymentOrRefundState() {
+            data class BuiltInReaderCollectPaymentState(override val amountWithCurrencyLabel: String) :
+                CollectingPayment(amountWithCurrencyLabel)
+
             data class ExternalReaderCollectPaymentState(
                 override val amountWithCurrencyLabel: String,
                 val onCancel: (() -> Unit)
-            ): CollectingPayment(amountWithCurrencyLabel)
+            ) : CollectingPayment(amountWithCurrencyLabel)
         }
 
-        sealed class ProcessingPayment {
-            data object BuiltInReaderProcessingPaymentState
-            data object ExternalReaderProcessingPaymentState
+        sealed class ProcessingPayment(
+            open val amountWithCurrencyLabel: String,
+        ) : CardReaderPaymentState() {
+            data class BuiltInReaderProcessingPayment(override val amountWithCurrencyLabel: String) :
+                ProcessingPayment(amountWithCurrencyLabel)
+
+            data class ExternalReaderProcessingPayment(
+                override val amountWithCurrencyLabel: String,
+                val onCancel: () -> Unit
+            ) : ProcessingPayment(amountWithCurrencyLabel)
         }
 
         data object PrintingReceipt
@@ -36,7 +45,7 @@ sealed class CardReaderPaymentOrRefundState {
                 PaymentCapturing(amountWithCurrencyLabel)
         }
 
-        sealed class PaymentSuccessful: CardReaderPaymentState() {
+        sealed class PaymentSuccessful : CardReaderPaymentState() {
             data object BuiltInReaderPaymentSuccessful
             data object ExternalReaderPaymentSuccessful
             data object BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
@@ -49,27 +58,28 @@ sealed class CardReaderPaymentOrRefundState {
             open val onCancel: (() -> Unit)? = null,
             open val onRetry: (() -> Unit)?,
             open val cta: CallToAction? = null,
-        ): CardReaderPaymentState() {
+        ) : CardReaderPaymentState() {
             data class BuiltInReaderFailedPayment(
                 override val errorType: PaymentFlowError,
                 override val amountWithCurrencyLabel: String?,
                 override val onCancel: (() -> Unit)? = null,
                 override val onRetry: (() -> Unit)? = null,
                 override val cta: CallToAction? = null,
-            ): PaymentFailed(
+            ) : PaymentFailed(
                 errorType,
                 amountWithCurrencyLabel,
                 onCancel,
                 onRetry,
                 cta,
             )
+
             data class ExternalReaderFailedPayment(
                 override val errorType: PaymentFlowError,
                 override val amountWithCurrencyLabel: String?,
                 override val onCancel: (() -> Unit)? = null,
                 override val onRetry: (() -> Unit)? = null,
                 override val cta: CallToAction? = null,
-            ): PaymentFailed(
+            ) : PaymentFailed(
                 errorType,
                 amountWithCurrencyLabel,
                 onCancel,
