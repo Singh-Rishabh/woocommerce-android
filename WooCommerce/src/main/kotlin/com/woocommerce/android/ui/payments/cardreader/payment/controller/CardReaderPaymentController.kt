@@ -76,6 +76,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.Processi
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.CallToAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -93,6 +94,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -117,6 +119,7 @@ class CardReaderPaymentController(
     private val dispatchers: CoroutineDispatchers,
     private val cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper,
     private val cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
+    private val paymentStateProvider: CardReaderPaymentStateProvider,
     private val cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper,
     private val paymentReceiptHelper: PaymentReceiptHelper,
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker,
@@ -132,8 +135,9 @@ class CardReaderPaymentController(
     @Deprecated("Use paymentState and map to ViewState in the target [ViewModel]")
     val viewStateData: LiveData<ViewState> = viewState
 
-    private val _paymentState = MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
-    val paymentState = MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
+    private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
+        MutableStateFlow(CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
+    val paymentState: StateFlow<CardReaderPaymentOrRefundState> = _paymentState
 
     private var paymentFlowJob: Job? = null
     private var refundFlowJob: Job? = null
@@ -169,11 +173,16 @@ class CardReaderPaymentController(
         if (isVMKilledWhenTTPActivityInForeground) {
             tracker.trackPaymentFailed("VM killed when TTP activity in foreground")
             viewState.postValue(
-                buildFailedPaymentState(
+                buildFailedPaymentViewState(
                     PaymentFlowError.BuiltInReader.AppKilledWhileInBackground,
                     "",
                     {}
                 )
+            )
+            _paymentState.value = buildFailedPaymentState(
+                PaymentFlowError.BuiltInReader.AppKilledWhileInBackground,
+                "",
+                {}
             )
         } else {
             when (paymentOrRefund) {
@@ -577,10 +586,61 @@ class CardReaderPaymentController(
             config,
             cardReaderType == CardReaderType.BUILT_IN
         )
-        viewState.postValue(buildFailedPaymentState(errorType, amountLabel, onRetryClicked))
+        viewState.postValue(buildFailedPaymentViewState(errorType, amountLabel, onRetryClicked))
+        _paymentState.value = buildFailedPaymentState(errorType, amountLabel, onRetryClicked)
     }
 
     private fun buildFailedPaymentState(
+        errorType: PaymentFlowError,
+        amountLabel: String,
+        onRetryClicked: () -> Unit
+    ): CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed = when (errorType) {
+        is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountLabel = amountLabel,
+            cta = CallToAction(
+                label = R.string.support_contact,
+                onCallToActionTapped = { onContactSupportClicked() }
+            ),
+            onCancel = ::onBackPressed
+        )
+        is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountLabel = amountLabel,
+            onCancel = ::onBackPressed,
+            cta = CallToAction(
+                label = R.string.card_reader_payment_failed_nfc_disabled_enable_nfc,
+                onCallToActionTapped = { onEnableNfcClicked() }
+            )
+        )
+        is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountLabel = amountLabel,
+            onCancel = ::onBackPressed,
+        )
+        is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            cta = CallToAction(
+                label = R.string.card_reader_payment_payment_failed_purchase_hardware_reader,
+                onCallToActionTapped = { onPurchaseCardReaderClicked() }
+            ),
+            errorType = errorType,
+            amountLabel = amountLabel,
+            onCancel = ::onBackPressed,
+        )
+        else -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountLabel = amountLabel,
+            onRetry = onRetryClicked,
+            onCancel = ::onBackPressed,
+        )
+    }
+
+    private fun buildFailedPaymentViewState(
         errorType: PaymentFlowError,
         amountLabel: String,
         onRetryClicked: () -> Unit
