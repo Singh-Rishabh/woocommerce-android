@@ -7,6 +7,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
@@ -39,6 +40,7 @@ class WooPosProductsViewModelTest {
     private val productsDataSource: WooPosProductsDataSource = mock()
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val posPreferencesRepository: WooPosPreferencesRepository = mock()
+    private val wooPosItemsNavigator: WooPosItemsNavigator = mock()
     private val priceFormat: WooPosFormatPrice = mock {
         onBlocking { invoke(BigDecimal("10.0")) }.thenReturn("$10.0")
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
@@ -805,5 +807,6 @@ class WooPosProductsViewModelTest {
             fromChildToParentEventSender,
             priceFormat,
             posPreferencesRepository,
+            wooPosItemsNavigator,
         )
 }
