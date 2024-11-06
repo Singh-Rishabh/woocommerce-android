@@ -60,7 +60,7 @@ fun WooShippingSavedPackageItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             SelectionCheck(
-                isSelected = true,
+                isSelected = packageData.isSelected,
                 onSelectionChange = {}
             )
             Column (verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -95,7 +95,8 @@ fun WooShippingSavedPackageScreenPreview() {
                     description = "USPS Priority Mail Flat Rate Boxes",
                     length = "10",
                     width = "10",
-                    height = "10"
+                    height = "10",
+                    isSelected = true
                 ),
                 PackageData(
                     type = PackageType.BOX,
@@ -103,7 +104,8 @@ fun WooShippingSavedPackageScreenPreview() {
                     description = "Custom package",
                     length = "20",
                     width = "20",
-                    height = "20"
+                    height = "20",
+                    isSelected = false
                 ),
                 PackageData(
                     type = PackageType.BOX,
@@ -111,7 +113,8 @@ fun WooShippingSavedPackageScreenPreview() {
                     description = "DHL Express",
                     length = "30",
                     width = "30",
-                    height = "30"
+                    height = "30",
+                    isSelected = false
                 )
             )
         )

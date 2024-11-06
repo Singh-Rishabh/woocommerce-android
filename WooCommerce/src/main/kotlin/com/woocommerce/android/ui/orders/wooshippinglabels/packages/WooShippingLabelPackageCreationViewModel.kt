@@ -105,7 +105,8 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         val description: String,
         val length: String,
         val width: String,
-        val height: String
+        val height: String,
+        val isSelected: Boolean
     ) : Parcelable {
         val dimensionsForDisplay: String
             get() = "$length x $width x $height cm"
