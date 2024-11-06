@@ -76,6 +76,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.Processi
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.CallToAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
@@ -136,7 +137,7 @@ class CardReaderPaymentController(
     val viewStateData: LiveData<ViewState> = viewState
 
     private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
-        MutableStateFlow(CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
+        MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
     val paymentState: StateFlow<CardReaderPaymentOrRefundState> = _paymentState
 
     private var paymentFlowJob: Job? = null
@@ -226,7 +227,7 @@ class CardReaderPaymentController(
     private fun initPaymentFlow(isRetry: Boolean) {
         paymentFlowJob = scope.launch {
             viewState.postValue((LoadingDataState(::onCancelPaymentFlow)))
-            _paymentState.value = CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
+            _paymentState.value = CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             if (isRetry) {
                 delay(ARTIFICIAL_RETRY_DELAY)
             }
@@ -300,7 +301,7 @@ class CardReaderPaymentController(
     fun retry(orderId: Long, billingEmail: String, paymentData: PaymentData, amountLabel: String) {
         paymentFlowJob = scope.launch {
             viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
-            _paymentState.value = CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
+            _paymentState.value = CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             delay(ARTIFICIAL_RETRY_DELAY)
             cardReaderManager.retryCollectPayment(orderId, paymentData).collect { paymentStatus ->
                 onPaymentStatusChanged(orderId, billingEmail, paymentStatus, amountLabel)
@@ -358,7 +359,7 @@ class CardReaderPaymentController(
             InitializingPayment -> {
                 viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
                 _paymentState.value =
-                    CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
+                    CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             }
             CollectingPayment -> {
                 viewState.postValue(
@@ -399,12 +400,18 @@ class CardReaderPaymentController(
                 }
             }
 
-            CapturingPayment -> viewState.postValue(
-                cardReaderPaymentReaderTypeStateProvider.provideCapturingPaymentState(
-                    cardReaderType,
-                    amountLabel,
+            CapturingPayment -> {
+                viewState.postValue(
+                    cardReaderPaymentReaderTypeStateProvider.provideCapturingPaymentState(
+                        cardReaderType,
+                        amountLabel,
+                    )
                 )
-            )
+                _paymentState.value = paymentStateProvider.provideCapturingPaymentState(
+                    cardReaderType,
+                    amountLabel
+                )
+            }
 
             is PaymentCompleted -> {
                 tracker.trackPaymentSucceeded()
@@ -620,7 +627,7 @@ class CardReaderPaymentController(
         errorType: PaymentFlowError,
         amountLabel: String,
         onRetryClicked: () -> Unit
-    ): CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed = when (errorType) {
+    ): CardReaderPaymentState.PaymentFailed = when (errorType) {
         is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
