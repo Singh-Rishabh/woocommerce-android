@@ -37,7 +37,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
         isAddPackageEnabled = viewState?.customPackageCreationData?.isValid ?: false,
-        onAddPackageClick = viewModel::onAddPackageClick,
+        onAddPackageClick = viewModel::onAddCustomPackageClick,
         onPackageTypeClick = viewModel::onPackageTypeSpinnerClick,
         onLengthChange = viewModel::onLengthChange,
         onWidthChange = viewModel::onWidthChange,

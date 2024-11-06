@@ -59,9 +59,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
-    fun onAddPackageClick() {
+    fun onAddCustomPackageClick() {
         triggerEvent(PackageSelected(_viewState.value.customPackageCreationData))
     }
+
+
 
     fun onPackageTypeSpinnerClick() {
         triggerEvent(ShowPackageTypeDialog(_viewState.value.customPackageCreationData.type))
