@@ -469,7 +469,10 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 @Composable
 private fun VariableProductDetails(item: VariableProduct) {
     Text(
-        text = "${item.numOfVariations} Variations",
+        text =  stringResource(
+            id = R.string.woopos_items_list_variable_product_variations,
+            item.numOfVariations
+        ),
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal
     )
