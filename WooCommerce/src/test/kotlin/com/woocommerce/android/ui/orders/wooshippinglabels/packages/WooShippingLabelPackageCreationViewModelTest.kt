@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreationData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
@@ -14,6 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -21,8 +23,8 @@ import org.mockito.kotlin.whenever
 class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
     private lateinit var sut: WooShippingLabelPackageCreationViewModel
-    private val savedStateHandle: SavedStateHandle = SavedStateHandle()
     private val resourceProvider: ResourceProvider = mock()
+    private val fetchSavedPackages: FetchSavedPackagesFromStore = mock()
 
     @Before
     fun setUp() {
@@ -35,7 +37,9 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         whenever(
             resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_saved)
         ).thenReturn("Saved")
-        sut = WooShippingLabelPackageCreationViewModel(savedStateHandle, resourceProvider)
+
+        whenever(fetchSavedPackages()).thenReturn(emptyList())
+        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
     }
 
     @Test
@@ -123,5 +127,39 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onSavePackageChanged(newSaveAsTemplate)
 
         assertThat(lastViewState?.customPackageCreationData?.saveAsTemplate).isEqualTo(newSaveAsTemplate)
+    }
+
+    @Test
+    fun `onSavedPackageSelected selects only one package at a time`() = testBlocking {
+        var lastViewState: ViewState? = null
+        sut.viewState.observeForever { lastViewState = it }
+
+        val package1 = PackageData(
+            type = PackageType.BOX,
+            name = "Package 1",
+            description = "Description 1",
+            length = "10",
+            width = "10",
+            height = "10",
+            isSelected = false
+        )
+        val package2 = PackageData(
+            type = PackageType.ENVELOPE,
+            name = "Package 2",
+            description = "Description 2",
+            length = "20",
+            width = "20",
+            height = "20",
+            isSelected = false
+        )
+        whenever(fetchSavedPackages()).thenReturn(listOf(package1, package2))
+
+        sut.onSavedPackageSelected(package1)
+
+        val selectedPackages = lastViewState?.savedPackages?.filter { it.isSelected }
+
+        assertThat(selectedPackages).isNotNull
+        assertThat(selectedPackages).size().isEqualTo(1)
+        assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
     }
 }
