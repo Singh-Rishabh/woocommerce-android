@@ -44,7 +44,7 @@ class PaymentReceiptShare @Inject constructor(
             selectedSite.get().name.orEmpty()
         )
         val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/*"
+            type = "text/plain"
             putExtra(Intent.EXTRA_STREAM, uri)
             putExtra(Intent.EXTRA_TEXT, text)
         }
