@@ -52,7 +52,6 @@ fun WooPosVariationsScreen(
                 onBackClicked = onBackClicked
             )
         }
-
     }
 }
 
@@ -109,7 +108,6 @@ fun WooPosVariationsScreenPreview() {
                 variationIds = emptyList()
             )
         ) {
-
         }
     }
 }

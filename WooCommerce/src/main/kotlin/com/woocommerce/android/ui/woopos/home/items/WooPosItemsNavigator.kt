@@ -21,4 +21,3 @@ class WooPosItemsNavigator {
         data class VariationsScreen(val product: VariableProductData) : NavigationState()
     }
 }
-
