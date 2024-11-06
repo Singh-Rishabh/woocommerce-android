@@ -9,6 +9,6 @@ sealed class WooPosItemsUIEvent {
     data object SimpleProductsBannerLearnMoreClicked : WooPosItemsUIEvent()
     data object SimpleProductsDialogInfoIconClicked : WooPosItemsUIEvent()
     data class NavigateToVariationsScreen(
-        val itemNavigationData: WooPosItemNavigationData
+        val itemNavigationData: WooPosItemNavigationData.VariableProductData
     ) : WooPosItemsUIEvent()
 }
