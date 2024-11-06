@@ -3,14 +3,10 @@ package com.woocommerce.android.ui.woopos.home.items.variations
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -18,10 +14,10 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -39,7 +35,7 @@ fun WooPosVariationsScreen(
             .padding(
                 start = 16.dp.toAdaptivePadding(),
                 end = 16.dp.toAdaptivePadding(),
-                top = 40.dp.toAdaptivePadding(),
+                top = 30.dp.toAdaptivePadding(),
                 bottom = 0.dp.toAdaptivePadding(),
             )
     ) {
@@ -60,13 +56,20 @@ private fun VariationsToolbar(
     variableProductData: VariableProductData,
     onBackClicked: () -> Unit,
 ) {
-    Row(
+    ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onBackClicked) {
+        val (backButton, productName, variationsCount) = createRefs()
+
+        IconButton(
+            onClick = onBackClicked,
+            modifier = Modifier.constrainAs(backButton) {
+                start.linkTo(parent.start)
+                top.linkTo(productName.top)
+                bottom.linkTo(productName.bottom)
+            }
+        ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = "Back",
@@ -74,24 +77,27 @@ private fun VariationsToolbar(
             )
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = variableProductData.name,
+            style = MaterialTheme.typography.h4.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            color = MaterialTheme.colors.onSurface,
+            modifier = Modifier.constrainAs(productName) {
+                start.linkTo(backButton.end, margin = 8.dp)
+                top.linkTo(parent.top, margin = 8.dp)
+            }
+        )
 
-        Column {
-            Text(
-                text = variableProductData.name,
-                style = MaterialTheme.typography.h4.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                color = MaterialTheme.colors.onSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${variableProductData.numOfVariations} variations",
-                style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
-            )
-        }
+        Text(
+            text = "${variableProductData.numOfVariations} variations",
+            style = MaterialTheme.typography.h6,
+            color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+            modifier = Modifier.constrainAs(variationsCount) {
+                start.linkTo(productName.start)
+                top.linkTo(productName.bottom, margin = 4.dp)
+            }
+        )
     }
 }
 
