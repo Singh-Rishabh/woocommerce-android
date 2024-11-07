@@ -93,7 +93,7 @@ sealed class CardReaderPaymentOrRefundState {
             )
         }
 
-        data object SharingReceipt
+        data object SharingReceipt: CardReaderPaymentState()
     }
 
     sealed class CardReaderRefundState {

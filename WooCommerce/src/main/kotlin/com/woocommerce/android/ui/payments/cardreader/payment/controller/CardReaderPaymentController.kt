@@ -2,8 +2,6 @@ package com.woocommerce.android.ui.payments.cardreader.payment.controller
 
 import androidx.annotation.StringRes
 import androidx.annotation.VisibleForTesting
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.AppUrls
 import com.woocommerce.android.R
@@ -861,8 +859,10 @@ class CardReaderPaymentController(
     private fun onSendReceiptClicked() {
         scope.launch {
             tracker.trackEmailReceiptTapped()
-            val stateBeforeLoading = viewState.value!!
+            val viewStateBeforeLoading = viewState.value!!
+            val paymentStateBeforeLoading = _paymentState.value
             viewState.postValue(ViewState.SharingReceiptState)
+            _paymentState.value = CardReaderPaymentState.SharingReceipt
             val receiptResult = paymentReceiptHelper.getReceiptUrl(paymentOrRefund.orderId)
 
             if (receiptResult.isSuccess) {
@@ -906,7 +906,8 @@ class CardReaderPaymentController(
                 triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
             }
 
-            viewState.postValue(stateBeforeLoading)
+            viewState.postValue(viewStateBeforeLoading)
+            _paymentState.value = paymentStateBeforeLoading
         }
     }
 
