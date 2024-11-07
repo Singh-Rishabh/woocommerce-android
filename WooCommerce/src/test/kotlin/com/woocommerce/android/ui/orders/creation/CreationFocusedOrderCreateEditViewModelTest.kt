@@ -1223,7 +1223,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
         initMocksForAnalyticsWithOrder(defaultOrderValue)
         createSut()
 
-        sut.onCouponAdded("abc")
+        sut.addCoupon("abc")
 
         verify(tracker).track(
             AnalyticsEvent.ORDER_COUPON_ADD,
@@ -1266,7 +1266,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
             lastReceivedEvent = it
         }
 
-        sut.onCouponAdded("abc")
+        sut.addCoupon("abc")
 
         with(lastReceivedEvent) {
             this == OnCouponRejectedByBackend
@@ -1608,7 +1608,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
         }
         assertThat(sut.couponLinesLiveData.value!!.couponLines).isEmpty()
 
-        sut.onCouponAdded(dummyCouponCode)
+        sut.addCoupon(dummyCouponCode)
 
         assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
     }
@@ -1621,10 +1621,10 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
         }
         sut.couponLinesLiveData.observeForever {
         }
-        sut.onCouponAdded(dummyCouponCode)
+        sut.addCoupon(dummyCouponCode)
         assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
 
-        sut.onCouponRemoved(dummyCouponCode)
+        sut.removeCoupon(dummyCouponCode)
 
         assertThat(sut.couponLinesLiveData.value!!.couponLines).isEmpty()
     }
@@ -1639,7 +1639,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
         }
         sut.couponLinesLiveData.observeForever {
         }
-        sut.onCouponAdded("123")
+        sut.addCoupon("123")
         advanceUntilIdle()
         assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
 
@@ -1658,7 +1658,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
         }
         sut.couponLinesLiveData.observeForever {
         }
-        sut.onCouponAdded("123")
+        sut.addCoupon("123")
         advanceUntilIdle()
         assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
         sut.onProductsSelected(listOf(ProductSelectorViewModel.SelectedItem.Product(1L)))

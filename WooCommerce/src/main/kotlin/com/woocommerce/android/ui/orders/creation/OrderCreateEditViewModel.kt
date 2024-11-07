@@ -572,7 +572,7 @@ class OrderCreateEditViewModel @Inject constructor(
     private fun handleCouponEditResult(couponEditResult: OrderCreateCouponDetailsViewModel.CouponEditResult) {
         when (couponEditResult) {
             is OrderCreateCouponDetailsViewModel.CouponEditResult.RemoveCoupon -> {
-                onCouponRemoved(couponEditResult.couponCode)
+                removeCoupon(couponEditResult.couponCode)
             }
         }
     }
@@ -1809,7 +1809,7 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
-    fun onCouponAdded(couponCode: String) {
+    fun addCoupon(couponCode: String) {
         if (_orderDraft.value.couponLines.any { it.code == couponCode }) return
         _orderDraft.update { draft ->
             val couponLines = draft.couponLines
@@ -1819,7 +1819,7 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
-    fun onCouponRemoved(couponCode: String) {
+    fun removeCoupon(couponCode: String) {
         trackCouponRemoved()
         _orderDraft.update { draft ->
             val updatedCouponLines = draft.couponLines.filter { it.code != couponCode }

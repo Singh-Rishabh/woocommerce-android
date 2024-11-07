@@ -168,7 +168,7 @@ class OrderCreateEditFormFragment :
         handleCouponEditResult()
         handleProductDetailsEditResult()
         handleResult<String>(KEY_COUPON_SELECTOR_RESULT) {
-            viewModel.onCouponAdded(it)
+            viewModel.addCoupon(it)
         }
         handleTaxRateSelectionResult()
         viewModel.onDeviceConfigurationChanged(requireContext().windowSizeClass)
@@ -449,7 +449,7 @@ class OrderCreateEditFormFragment :
                             isEnabled = couponSection.isEnabled,
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAdd = { viewModel.onAddCouponButtonClicked() },
-                            onRemove = { code -> viewModel.onCouponRemoved(code) }
+                            onRemove = { code -> viewModel.removeCoupon(code) }
                         )
                     }
                 }
