@@ -47,8 +47,8 @@ import java.math.BigDecimal
 fun ShippingLineFormSection(
     shippingLineDetails: List<ShippingLineDetails>,
     isEnabled: Boolean,
-    onAdd: () -> Unit,
-    onEdit: (id: Long) -> Unit,
+    onAddClicked: () -> Unit,
+    onEditClicked: (id: Long) -> Unit,
     formatCurrency: (amount: BigDecimal) -> String,
     modifier: Modifier = Modifier
 ) {
@@ -72,7 +72,7 @@ fun ShippingLineFormSection(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = null
                                 ) {
-                                    onAdd()
+                                    onAddClicked()
                                 }
                                 .align(Alignment.CenterVertically),
                             tint = MaterialTheme.colors.primary
@@ -94,7 +94,7 @@ fun ShippingLineFormSection(
                     ShippingLineEditCard(
                         shippingLine = shippingDetails,
                         isEnabled = isEnabled,
-                        onEdit = onEdit,
+                        onEdit = onEditClicked,
                         formatCurrency = formatCurrency,
                         modifier = itemModifier
                     )
@@ -210,8 +210,8 @@ fun ShippingLineFormSectionPreview() {
             shippingLineDetails = shippingDetails,
             formatCurrency = { it.toString() },
             isEnabled = false,
-            onAdd = { },
-            onEdit = { }
+            onAddClicked = { },
+            onEditClicked = { }
         )
     }
 }

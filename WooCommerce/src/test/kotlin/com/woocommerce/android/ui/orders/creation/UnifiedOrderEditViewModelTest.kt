@@ -1855,7 +1855,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
 
     @Test
     fun `when shipping button tapped, send tracks event`() {
-        sut.onAddOrEditShipping()
+        sut.onAddOrEditShippingClicked()
 
         verify(tracker).track(AnalyticsEvent.ORDER_ADD_SHIPPING_TAPPED)
     }

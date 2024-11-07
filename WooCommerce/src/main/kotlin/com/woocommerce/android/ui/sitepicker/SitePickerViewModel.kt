@@ -339,7 +339,7 @@ class SitePickerViewModel @Inject constructor(
         )
         sitePickerViewState = sitePickerViewState.copy(
             isSkeletonViewVisible = false,
-            isPrimaryBtnVisible = sites.value!!.any { it is WooSiteUiModel }
+            isPrimaryBtnVisible = sites.value?.any { it is WooSiteUiModel } ?: false
         )
     }
 
