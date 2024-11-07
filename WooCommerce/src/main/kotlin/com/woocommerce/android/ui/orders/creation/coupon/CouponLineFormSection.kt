@@ -116,7 +116,7 @@ fun CouponLineEditCard(
 }
 
 @Preview
-@Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@PreviewLightDark
 @Composable
 fun CouponLineDetailsPreview() {
     WooThemeWithBackground {
