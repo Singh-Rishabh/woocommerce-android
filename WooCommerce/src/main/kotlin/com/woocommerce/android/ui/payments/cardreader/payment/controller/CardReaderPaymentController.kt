@@ -826,6 +826,7 @@ class CardReaderPaymentController(
     private fun onPrintReceiptClicked(amountWithCurrencyLabel: String) {
         scope.launch {
             viewState.value = PrintingReceiptState(amountWithCurrencyLabel)
+            _paymentState.value = CardReaderPaymentState.PrintingReceipt(amountWithCurrencyLabel)
             tracker.trackPrintReceiptTapped()
             startPrintingFlow()
         }
