@@ -88,8 +88,8 @@ fun WooShippingSavedPackageItem(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 8.dp)
-            .clickable { onPackageSelected(packageData, packageData.isSelected.not()) },
+            .clickable { onPackageSelected(packageData, packageData.isSelected.not()) }
+            .padding(top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
