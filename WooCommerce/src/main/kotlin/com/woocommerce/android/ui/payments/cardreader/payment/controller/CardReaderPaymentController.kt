@@ -75,6 +75,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLo
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -351,6 +352,7 @@ class CardReaderPaymentController(
         }
     }
 
+    @Suppress("LongMethod")
     private suspend fun onPaymentStatusChanged(
         orderId: Long,
         billingEmail: String,
@@ -1056,7 +1058,10 @@ class CardReaderPaymentController(
         val readerStatus = cardReaderManager.readerStatus.value
         if (readerStatus is CardReaderStatus.Connected) {
             if (ReaderType.isBuiltInReaderType(readerStatus.cardReader.type) &&
-                (_paymentState.value is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment || _paymentState.value is CardReaderInteracRefundState.InteracRefundFailure)
+                (
+                    _paymentState.value is BuiltInReaderFailedPayment ||
+                        _paymentState.value is CardReaderInteracRefundState.InteracRefundFailure
+                    )
             ) {
                 scope.launch { cardReaderManager.disconnectReader() }
             }
