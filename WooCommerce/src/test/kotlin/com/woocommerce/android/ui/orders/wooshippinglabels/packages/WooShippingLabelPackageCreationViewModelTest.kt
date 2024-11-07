@@ -153,7 +153,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
         sut.viewState.observeForever { lastViewState = it }
-        sut.onSavedPackageSelected(package1)
+        sut.onSavedPackageSelected(package1, true)
 
         val selectedPackages = lastViewState?.savedPackageSelection?.packages?.filter { it.isSelected }
         assertThat(selectedPackages).isNotNull
