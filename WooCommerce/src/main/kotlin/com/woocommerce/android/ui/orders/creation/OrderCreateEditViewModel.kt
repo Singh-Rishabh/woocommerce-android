@@ -10,6 +10,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R.string
@@ -117,6 +118,7 @@ import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavi
 import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWithOtherValue
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineDetails
+import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineSection
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingMethodsRepository
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingUpdateResult
 import com.woocommerce.android.ui.orders.creation.shipping.getMethodIdOrDefault
@@ -380,15 +382,17 @@ class OrderCreateEditViewModel @Inject constructor(
     private val giftCardWasEnabledAtLeastOnce: MutableStateFlow<Boolean> =
         savedState.getStateFlow(viewModelScope, false)
 
-    val shippingLineList =
-        combine(
+    val shippingLineSection =
+        viewStateData.liveData.map { it.isIdle && it.isEditable }.combineWith(
             _orderDraft.filter { it.shippingLines.isNotEmpty() }
-                .map { it.shippingLines.filter { line -> line.methodId != null } },
-            getShippingMethodsWithOtherValue().withIndex()
-        ) { shippingLines, shippingMethods ->
+                .map { it.shippingLines.filter { line -> line.methodId != null } }.asLiveData(),
+            getShippingMethodsWithOtherValue().withIndex().asLiveData()
+        ) { isIdle, shippingLines, shippingMethods ->
+            if (isIdle == null || shippingLines == null || shippingMethods == null) return@combineWith null
+
             val shippingMethodsMap = shippingMethods.value.associateBy { it.id }
 
-            shippingLines.map { shippingLine ->
+            val shippingLineDetails = shippingLines.map { shippingLine ->
                 val method = shippingLine.methodId?.let {
                     if (it == " ") {
                         shippingMethodsMap[ShippingMethodsRepository.NA_ID]
@@ -403,7 +407,11 @@ class OrderCreateEditViewModel @Inject constructor(
                     amount = shippingLine.total
                 )
             }
-        }.asLiveData()
+            ShippingLineSection(
+                shippingLines = shippingLineDetails,
+                isEnabled = isIdle
+            )
+        }
 
     private val _couponLinesLiveData = MediatorLiveData(CouponSection(emptyList(), true))
     val couponLinesLiveData = _couponLinesLiveData.distinctUntilChanged()
@@ -482,7 +490,7 @@ class OrderCreateEditViewModel @Inject constructor(
 
     private fun shouldDisplayShippingFeedback() {
         launch {
-            shippingLineList
+            shippingLineSection
                 .asFlow()
                 .drop(1)
                 .take(1)
@@ -1310,6 +1318,7 @@ class OrderCreateEditViewModel @Inject constructor(
             triggerEvent(ShippingLinesFeedback)
         }
     }
+
     fun onCloseShippingFeedback() {
         launch {
             feedbackRepository.saveFeatureFeedback(

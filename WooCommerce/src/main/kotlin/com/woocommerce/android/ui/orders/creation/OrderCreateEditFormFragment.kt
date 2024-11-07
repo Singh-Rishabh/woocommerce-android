@@ -225,6 +225,7 @@ class OrderCreateEditFormFragment :
         initAdditionalInfoCollectionSection()
         initTaxRateSelectorSection()
         initTotalsSection()
+        initShippingLinesSection()
         adjustUIForScreenSize()
     }
 
@@ -409,8 +410,6 @@ class OrderCreateEditFormFragment :
             bindCustomAmountsSection(binding.customAmountsSection, it)
         }
 
-        bindShippingLinesSection(binding)
-
         bindCouponsLinesSection(binding)
 
         bindFeedbackSection(binding)
@@ -419,14 +418,16 @@ class OrderCreateEditFormFragment :
 
         viewModel.event.observe(viewLifecycleOwner) { handleViewModelEvents(it, binding) }
     }
-    private fun bindShippingLinesSection(binding: FragmentOrderCreateEditFormBinding) {
-        binding.shippingLines.apply {
+
+    private fun FragmentOrderCreateEditFormBinding.initShippingLinesSection() {
+        shippingLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                viewModel.shippingLineList.observeAsState().value?.let { shippingLines ->
+                viewModel.shippingLineSection.observeAsState().value?.let { shippingLineSection ->
                     WooThemeWithBackground {
                         ShippingLineFormSection(
-                            shippingLineDetails = shippingLines,
+                            shippingLineDetails = shippingLineSection.shippingLines,
+                            isEnabled = shippingLineSection.isEnabled,
                             formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAddClicked = { viewModel.onAddOrEditShippingClicked() },
