@@ -1891,7 +1891,8 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
 
         assertThat(shippingLineSection).isNotNull
         assertThat(shippingLineSection!!.shippingLines.size).isEqualTo(shippingLines.size)
-        val shippingMethod = shippingLineSection!!.shippingLines.firstOrNull { it.shippingMethod?.id == shippingMethodId }
+        val shippingMethod = shippingLineSection!!.shippingLines
+            .firstOrNull { it.shippingMethod?.id == shippingMethodId }
         assertThat(shippingMethod).isNotNull
         assertThat(shippingMethod!!.shippingMethod!!.title).isEqualTo(shippingMethodTitle)
     }

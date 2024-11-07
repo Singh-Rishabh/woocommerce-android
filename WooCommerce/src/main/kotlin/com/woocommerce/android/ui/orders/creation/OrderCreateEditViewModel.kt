@@ -386,7 +386,7 @@ class OrderCreateEditViewModel @Inject constructor(
                 .map { it.shippingLines.filter { line -> line.methodId != null } }.asLiveData(),
             getShippingMethodsWithOtherValue().withIndex().asLiveData()
         ) { isIdle, shippingLines, shippingMethods ->
-            if(isIdle == null || shippingLines == null || shippingMethods == null) return@combineWith null
+            if (isIdle == null || shippingLines == null || shippingMethods == null) return@combineWith null
 
             val shippingMethodsMap = shippingMethods.value.associateBy { it.id }
 
