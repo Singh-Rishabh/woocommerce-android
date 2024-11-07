@@ -45,11 +45,34 @@ sealed class CardReaderPaymentOrRefundState {
                 PaymentCapturing(amountWithCurrencyLabel)
         }
 
-        sealed class PaymentSuccessful : CardReaderPaymentState() {
-            data object BuiltInReaderPaymentSuccessful
-            data object ExternalReaderPaymentSuccessful
-            data object BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
-            data object ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+        sealed class PaymentSuccessful(
+            open val amountWithCurrencyLabel: String,
+        ) : CardReaderPaymentState() {
+            data class BuiltInReaderPaymentSuccessful(
+                override val amountWithCurrencyLabel: String,
+                val onPrintReceiptClicked: () -> Unit,
+                val onSendReceiptClicked: () -> Unit,
+                val onSaveUserClicked: () -> Unit
+            ) : PaymentSuccessful(amountWithCurrencyLabel)
+
+            data class ExternalReaderPaymentSuccessful(
+                override val amountWithCurrencyLabel: String,
+                val onPrintReceiptClicked: () -> Unit,
+                val onSendReceiptClicked: () -> Unit,
+                val onSaveUserClicked: () -> Unit
+            ) : PaymentSuccessful(amountWithCurrencyLabel)
+            data class BuiltInReaderPaymentSuccessfulReceiptSentAutomatically(
+                override val amountWithCurrencyLabel: String,
+                val recipientEmail: String,
+                val onPrintReceiptClicked: () -> Unit,
+                val onSaveUserClicked: () -> Unit
+            ): PaymentSuccessful(amountWithCurrencyLabel)
+            data class ExternalReaderPaymentSuccessfulReceiptSentAutomatically(
+                override val amountWithCurrencyLabel: String
+                val recipientEmail: String,
+                val onPrintReceiptClicked: () -> Unit,
+                val onSaveUserClicked: () -> Unit
+            ): PaymentSuccessful(amountWithCurrencyLabel)
         }
 
         sealed class PaymentFailed(

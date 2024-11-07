@@ -754,6 +754,13 @@ class CardReaderPaymentController(
                         onSaveUserClicked
                     )
                 )
+                _paymentState.value = paymentStateProvider.providePaymentSuccessState(
+                    cardReaderType = cardReaderType,
+                    amountLabel = amountLabel,
+                    onPrintReceiptClicked = onPrintReceiptClicked,
+                    onSendReceiptClicked = onSendReceiptClicked,
+                    onSaveUserClicked = onSaveUserClicked
+                )
             } else {
                 val receiptSentHint = UiStringRes(
                     R.string.card_reader_payment_reader_receipt_sent,
@@ -768,6 +775,13 @@ class CardReaderPaymentController(
                         onPrintReceiptClicked,
                         onSaveUserClicked
                     )
+                )
+                _paymentState.value = paymentStateProvider.providePaymentSuccessfulReceiptSentAutomaticallyState(
+                    cardReaderType = cardReaderType,
+                    amountLabel = amountLabel,
+                    recipientEmail = order.billingAddress.email,
+                    onPrintReceiptClicked = onPrintReceiptClicked,
+                    onSaveUserClicked = onSaveUserClicked
                 )
             }
         }
