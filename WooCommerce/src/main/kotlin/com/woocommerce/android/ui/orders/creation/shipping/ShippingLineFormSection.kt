@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -22,11 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +46,7 @@ import java.math.BigDecimal
 @Composable
 fun ShippingLineFormSection(
     shippingLineDetails: List<ShippingLineDetails>,
+    isEnabled: Boolean,
     onAdd: () -> Unit,
     onEdit: (id: Long) -> Unit,
     formatCurrency: (amount: BigDecimal) -> String,
@@ -58,23 +63,37 @@ fun ShippingLineFormSection(
                             .weight(2f, true)
                             .align(Alignment.CenterVertically)
                     )
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(id = R.string.order_creation_add_shipping),
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null
-                            ) { onAdd() },
-                        tint = MaterialTheme.colors.primary
-                    )
+                    if (isEnabled) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = stringResource(id = R.string.order_creation_add_shipping),
+                            modifier = Modifier
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    onAdd()
+                                }
+                                .align(Alignment.CenterVertically),
+                            tint = MaterialTheme.colors.primary
+                        )
+                    } else {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_lock),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .size(dimensionResource(id = R.dimen.image_minor_40)),
+                            tint = MaterialTheme.colors.primary
+                        )
+                    }
                 }
 
                 shippingLineDetails.forEachIndexed { i, shippingDetails ->
                     val itemModifier = if (i == 0) Modifier else Modifier.padding(top = 8.dp)
                     ShippingLineEditCard(
                         shippingLine = shippingDetails,
+                        isEnabled = isEnabled,
                         onEdit = onEdit,
                         formatCurrency = formatCurrency,
                         modifier = itemModifier
@@ -88,20 +107,28 @@ fun ShippingLineFormSection(
 @Composable
 fun ShippingLineEditCard(
     shippingLine: ShippingLineDetails,
+    isEnabled: Boolean,
     formatCurrency: (amount: BigDecimal) -> String,
     onEdit: (id: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val rowModifier = if (isEnabled) {
+        modifier
+            .clip(RoundedCornerShape(dimensionResource(id = R.dimen.corner_radius_large)))
+            .clickable { onEdit(shippingLine.id) }
+    } else {
+        modifier.alpha(0.5f)
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = rowModifier
             .fillMaxWidth()
             .border(
                 brush = SolidColor(MaterialTheme.colors.onSurface.copy(alpha = 0.12f)),
                 width = 1.dp,
                 shape = RoundedCornerShape(dimensionResource(id = R.dimen.corner_radius_large))
             )
-            .clickable { onEdit(shippingLine.id) }
             .padding(dimensionResource(id = R.dimen.major_100))
 
     ) {
@@ -182,6 +209,7 @@ fun ShippingLineFormSectionPreview() {
         ShippingLineFormSection(
             shippingLineDetails = shippingDetails,
             formatCurrency = { it.toString() },
+            isEnabled = false,
             onAdd = { },
             onEdit = { }
         )
