@@ -29,11 +29,11 @@ class WooPosItemsViewModel @Inject constructor(
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val priceFormat: WooPosFormatPrice,
     private val preferencesRepository: WooPosPreferencesRepository,
-    private val navigator: WooPosItemsNavigator,
+    private val navigator: LeftPaneNavigator,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
 
-    val navigationState = navigator.navigationState
+    val leftPaneScreen = navigator.leftPaneScreen
 
     private val _viewState =
         MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))

@@ -92,7 +92,7 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
     WooPosItemsScreen(
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
-        navigationState = productsViewModel.navigationState,
+        leftPaneScreen = productsViewModel.leftPaneScreen,
         onItemClicked = { item ->
             (item as? ClickableItem)?.onItemClick { event ->
                 productsViewModel.onUIEvent(event)
@@ -121,7 +121,7 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
 private fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     itemsStateFlow: StateFlow<WooPosItemsViewState>,
-    navigationState: StateFlow<WooPosItemsNavigator.NavigationState>,
+    leftPaneScreen: StateFlow<LeftPaneNavigator.LeftPaneScreen>,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfItemListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
@@ -132,13 +132,13 @@ private fun WooPosItemsScreen(
     onNavigateBackClicked: () -> Unit,
 ) {
     val state = itemsStateFlow.collectAsState()
-    val currentNavigationState = navigationState.collectAsState()
+    val currentNavigationState = leftPaneScreen.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(state.value.reloadingProductsWithPullToRefresh, onPullToRefresh)
 
     Box(modifier = modifier.fillMaxSize()) {
         Crossfade(targetState = currentNavigationState.value, label = "") { navigationState ->
             when (navigationState) {
-                is WooPosItemsNavigator.NavigationState.ItemListScreen -> {
+                is LeftPaneNavigator.LeftPaneScreen.ItemListScreen -> {
                     MainItemsList(
                         modifier = modifier,
                         pullToRefreshState = pullToRefreshState,
@@ -152,7 +152,7 @@ private fun WooPosItemsScreen(
                     )
                 }
 
-                is WooPosItemsNavigator.NavigationState.VariationsScreen -> {
+                is LeftPaneNavigator.LeftPaneScreen.VariationsScreen -> {
                     NavigateToVariationsScreen(
                         variableProductData = navigationState.product,
                         modifier = modifier,
@@ -682,7 +682,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
         WooPosItemsScreen(
             modifier = modifier,
             itemsStateFlow = productState,
-            navigationState = MutableStateFlow(WooPosItemsNavigator.NavigationState.ItemListScreen),
+            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -708,7 +708,7 @@ fun WooPosItemsScreenLoadingPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            navigationState = MutableStateFlow(WooPosItemsNavigator.NavigationState.ItemListScreen),
+            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -729,7 +729,7 @@ fun WooPosProductsScreenEmptyListPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            navigationState = MutableStateFlow(WooPosItemsNavigator.NavigationState.ItemListScreen),
+            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -750,7 +750,7 @@ fun WooPosProductsScreenErrorPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            navigationState = MutableStateFlow(WooPosItemsNavigator.NavigationState.ItemListScreen),
+            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -804,7 +804,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            navigationState = MutableStateFlow(WooPosItemsNavigator.NavigationState.ItemListScreen),
+            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -858,7 +858,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            navigationState = MutableStateFlow(WooPosItemsNavigator.NavigationState.ItemListScreen),
+            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
