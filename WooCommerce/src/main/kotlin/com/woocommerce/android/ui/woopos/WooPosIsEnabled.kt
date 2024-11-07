@@ -5,6 +5,7 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState
 import com.woocommerce.android.ui.payments.cardreader.onboarding.PluginType
+import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
 import com.woocommerce.android.util.IsRemoteFeatureFlagEnabled
 import com.woocommerce.android.util.RemoteFeatureFlag.WOO_POS
@@ -27,6 +28,7 @@ class WooPosIsEnabled @Inject constructor(
     private val getWooCoreVersion: GetWooCorePluginCachedVersion,
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker,
     private val isRemoteFeatureFlagEnabled: IsRemoteFeatureFlagEnabled,
+    private val isWooPosPaymentsOnboardingSupportedInternally: WooPosIsPaymentsOnboardingSupportedInternally,
 ) {
     private var paymentAccountCache: HashMap<LocalSiteId, WCPaymentAccountResult> = hashMapOf()
 
@@ -43,7 +45,10 @@ class WooPosIsEnabled @Inject constructor(
 
         val onboardingStatus = onboardingStatusDeferred.await()
         if (onboardingStatus.preferredPlugin != PluginType.WOOCOMMERCE_PAYMENTS) return@coroutineScope false
-        if (!isIPPOnboardingCompleted(onboardingStatus)) return@coroutineScope false
+
+        if (!isWooPosPaymentsOnboardingSupportedInternally()) {
+            if (!isIPPOnboardingCompleted(onboardingStatus)) return@coroutineScope false
+        }
 
         val paymentAccount = paymentAccountDeferred.await() ?: return@coroutineScope false
         if (paymentAccount.country.lowercase() != "us") return@coroutineScope false
@@ -96,4 +101,8 @@ class WooPosIsEnabled @Inject constructor(
     private companion object {
         const val WC_VERSION_SUPPORTS_ORDER_AUTO_DRAFTS_AND_EXTRA_PAYMENTS_PROPS = "6.6.0"
     }
+}
+
+class WooPosIsPaymentsOnboardingSupportedInternally @Inject constructor() {
+    operator fun invoke(): Boolean = FeatureFlag.WOO_POS_PAYMENTS_ONBOARDING.isEnabled()
 }
