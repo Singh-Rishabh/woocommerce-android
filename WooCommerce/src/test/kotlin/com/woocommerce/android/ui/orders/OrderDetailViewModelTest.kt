@@ -96,6 +96,7 @@ import java.math.BigDecimal
 import java.util.Date
 import java.util.concurrent.CancellationException
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class OrderDetailViewModelTest : BaseUnitTest() {
@@ -2461,5 +2462,35 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.isOrderCurrencySameAsStore()
 
         assertFalse(viewModel.isOrderCurrencySameAsStore())
+    }
+
+    @Test
+    fun `when order currency is same as store, then enable edit menu in order creation` () = testBlocking {
+        val nonRefundedOrder = order.copy(refundTotal = BigDecimal.ZERO)
+
+        doReturn(false).whenever(paymentCollectibilityChecker).isCollectable(any())
+
+        doReturn(nonRefundedOrder).whenever(orderDetailRepository).getOrderById(any())
+
+        doReturn(true).whenever(orderDetailRepository).fetchOrderNotes(any())
+
+        doReturn(testOrderNotes).whenever(orderDetailRepository).getOrderNotes(any())
+
+        doReturn(testOrderShipmentTrackings).whenever(orderDetailRepository).getOrderShipmentTrackings(any())
+
+        doReturn(emptyList<Refund>()).whenever(orderDetailRepository).getOrderRefunds(any())
+
+        doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).getOrderShippingLabels(any())
+        doReturn(false).whenever(addonsRepository).containsAddonsFrom(any())
+        val parameterResultMock = mock<SiteParameters> {
+            on { currencyCode } doReturn "USD"
+        }
+        doReturn(parameterResultMock).whenever(parameterRepository).getParameters("parameters_key", savedState)
+
+        createViewModel()
+        viewModel.start()
+        viewModel.isOrderCurrencySameAsStore()
+
+        assertTrue(viewModel.isOrderCurrencySameAsStore())
     }
 }
