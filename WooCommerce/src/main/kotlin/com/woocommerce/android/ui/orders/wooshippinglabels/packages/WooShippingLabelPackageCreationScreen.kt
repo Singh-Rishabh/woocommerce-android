@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
@@ -23,6 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageTab
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CARRIER
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CUSTOM
@@ -83,7 +83,6 @@ fun WooShippingLabelPackageCreationScreen(
                     .background(MaterialTheme.colors.surface)
                     .padding(paddingValues)
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
             ) { currentPageIndex ->
                 when (tabs[currentPageIndex].type) {
                     CUSTOM -> createCustomPackageScreen()
@@ -120,8 +119,42 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     onSavePackageChanged = { }
                 )
             },
-            createCarrierPackageScreen = { },
-            createSavedPackageScreen = { }
+            createSavedPackageScreen = {
+                WooShippingSavedPackageScreen(
+                    savedPackages = listOf(
+                        PackageData(
+                            type = PackageType.ENVELOPE,
+                            name = "Small Flat Rate Box",
+                            description = "USPS Priority Mail Flat Rate Boxes",
+                            length = "10",
+                            width = "10",
+                            height = "10",
+                            isSelected = true
+                        ),
+                        PackageData(
+                            type = PackageType.BOX,
+                            name = "Small Flat Rate Box",
+                            description = "Custom package",
+                            length = "20",
+                            width = "20",
+                            height = "20",
+                            isSelected = false
+                        ),
+                        PackageData(
+                            type = PackageType.BOX,
+                            name = "Small Flat Rate Box",
+                            description = "DHL Express",
+                            length = "30",
+                            width = "30",
+                            height = "30",
+                            isSelected = false
+                        )
+                    ),
+                    isAddPackageEnabled = true,
+                    onAddPackageClick = { }
+                )
+            },
+            createCarrierPackageScreen = { }
         )
     }
 }
