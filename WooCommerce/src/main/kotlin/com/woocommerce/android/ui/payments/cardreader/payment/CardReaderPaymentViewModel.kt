@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigPro
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -48,6 +49,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     dispatchers: CoroutineDispatchers,
     cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper,
     cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
+    paymentStateProvider: CardReaderPaymentStateProvider,
     cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper,
     paymentReceiptHelper: PaymentReceiptHelper,
     cardReaderOnboardingChecker: CardReaderOnboardingChecker,
@@ -78,6 +80,7 @@ class CardReaderPaymentViewModel @Inject constructor(
         dispatchers = dispatchers,
         cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
         cardReaderPaymentReaderTypeStateProvider = cardReaderPaymentReaderTypeStateProvider,
+        paymentStateProvider = paymentStateProvider,
         cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
         paymentReceiptHelper = paymentReceiptHelper,
         cardReaderOnboardingChecker = cardReaderOnboardingChecker,

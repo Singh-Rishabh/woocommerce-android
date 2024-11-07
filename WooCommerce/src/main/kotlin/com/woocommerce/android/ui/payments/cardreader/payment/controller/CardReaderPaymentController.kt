@@ -131,11 +131,11 @@ class CardReaderPaymentController(
     private val isTTPPaymentInProgress: Boolean,
     private val onTTPPaymentStateChanged: (Boolean) -> Unit,
 ) {
-    private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
+//    private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
 
     // TODO: samiuelson Remove that property and map paymentState to ViewState in the target [ViewModel]
-    @Deprecated("Use paymentState and map to ViewState in the target [ViewModel]")
-    val viewStateData: LiveData<ViewState> = viewState
+//    @Deprecated("Use paymentState and map to ViewState in the target [ViewModel]")
+//    val viewStateData: LiveData<ViewState> = viewState
 
     private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
         MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
@@ -959,6 +959,7 @@ class CardReaderPaymentController(
         if (refetchOrderJob?.isActive == true) {
             if (viewState.value != ReFetchingOrderState) {
                 viewState.value = ReFetchingOrderState
+                _paymentState.value = CardReaderPaymentState.ReFetchingOrder
             } else {
                 // show "data might be outdated" and exit the flow when the user presses back on FetchingOrder screen
                 exitWithSnackbar(R.string.card_reader_refetching_order_failed)
