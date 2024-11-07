@@ -259,7 +259,6 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                 .fold(
                     onSuccess = { suggestions ->
                         aiSuggestions = suggestions
-                        adDetailsState.value = AdDetailsUiState.LOADED
                         campaignDetails.update {
                             it?.copy(
                                 tagLine = suggestions.firstOrNull()?.tagLine.orEmpty(),
@@ -275,7 +274,9 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                             )
                         )
                     }
-                )
+                ).also {
+                    adDetailsState.value = AdDetailsUiState.LOADED
+                }
             blazeRepository.fetchObjectives()
         }
     }
