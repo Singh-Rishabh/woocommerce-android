@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
@@ -19,6 +21,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
@@ -31,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
@@ -69,7 +73,7 @@ internal fun WooShippingLabelPurchasedScreen(
     onLearnMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
+    Column(modifier.verticalScroll(rememberScrollState())) {
         Text(
             text = stringResource(id = R.string.shipping_label_purchased_title),
             style = MaterialTheme.typography.subtitle1,
@@ -109,8 +113,15 @@ internal fun WooShippingLabelPurchasedScreen(
             iconColor = MaterialTheme.colors.onSurface,
             modifier = Modifier.padding(top = 24.dp)
         )
+        Spacer(modifier = Modifier.padding(top = 16.dp))
         HazmatCard(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colors.background,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+                .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))),
         )
     }
 }
