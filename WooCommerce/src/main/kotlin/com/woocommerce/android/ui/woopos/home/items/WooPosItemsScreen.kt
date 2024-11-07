@@ -469,7 +469,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 @Composable
 private fun VariableProductDetails(item: VariableProduct) {
     Text(
-        text =  stringResource(
+        text = stringResource(
             id = R.string.woopos_items_list_variable_product_variations,
             item.numOfVariations
         ),
