@@ -5,7 +5,7 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState
 import com.woocommerce.android.ui.payments.cardreader.onboarding.PluginType
-import com.woocommerce.android.util.FeatureFlag
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsPaymentsOnboardingSupportedInternally
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
 import com.woocommerce.android.util.IsRemoteFeatureFlagEnabled
 import com.woocommerce.android.util.RemoteFeatureFlag.WOO_POS
@@ -101,8 +101,4 @@ class WooPosIsEnabled @Inject constructor(
     private companion object {
         const val WC_VERSION_SUPPORTS_ORDER_AUTO_DRAFTS_AND_EXTRA_PAYMENTS_PROPS = "6.6.0"
     }
-}
-
-class WooPosIsPaymentsOnboardingSupportedInternally @Inject constructor() {
-    operator fun invoke(): Boolean = FeatureFlag.WOO_POS_PAYMENTS_ONBOARDING.isEnabled()
 }
