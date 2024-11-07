@@ -30,6 +30,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.woocommerce.android.R
@@ -108,14 +109,13 @@ fun CouponLineEditCard(
         )
         Icon(
             imageVector = Icons.Outlined.DeleteOutline,
-            contentDescription = null,
+            contentDescription = stringResource(id = R.string.order_creation_remove_coupon),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp)
         )
 }
 
-@Preview
 @PreviewLightDark
 @Composable
 fun CouponLineDetailsPreview() {
