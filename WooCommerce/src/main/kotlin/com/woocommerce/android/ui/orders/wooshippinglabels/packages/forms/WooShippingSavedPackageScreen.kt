@@ -52,10 +52,11 @@ fun WooShippingSavedPackageScreen(
         modifier = modifier
             .fillMaxSize()
     ) {
-        Column(modifier = modifier
-            .weight(1f)
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
+        Column(
+            modifier = modifier
+                .weight(1f)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             savedPackages.forEach { packageData ->
                 WooShippingSavedPackageItem(
