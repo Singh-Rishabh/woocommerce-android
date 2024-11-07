@@ -265,7 +265,7 @@ class OrderDetailViewModel @Inject constructor(
 
     private fun getStoreCurrency(): String {
         return parameterRepository.getParameters(
-            "parameters_key",
+            PARAMETERS_KEY,
             savedState
         ).currencyCode.orEmpty()
     }
@@ -996,4 +996,8 @@ class OrderDetailViewModel @Inject constructor(
 
     data class ListInfo<T>(val isVisible: Boolean = true, val list: List<T> = emptyList())
     data class TrashOrder(val orderId: Long) : MultiLiveEvent.Event()
+
+    companion object {
+        private const val PARAMETERS_KEY = "parameters_key"
+    }
 }
