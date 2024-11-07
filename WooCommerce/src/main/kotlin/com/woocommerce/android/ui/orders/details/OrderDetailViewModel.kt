@@ -62,6 +62,7 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowP
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
+import com.woocommerce.android.ui.products.ParameterRepository
 import com.woocommerce.android.ui.products.addons.AddonRepository
 import com.woocommerce.android.ui.products.details.ProductDetailRepository
 import com.woocommerce.android.ui.shipping.InstallWCShippingViewModel
@@ -116,6 +117,7 @@ class OrderDetailViewModel @Inject constructor(
     private val paymentReceiptHelper: PaymentReceiptHelper,
     private val analyticsTracker: AnalyticsTrackerWrapper,
     private val refreshShippingMethods: RefreshShippingMethods,
+    private val parameterRepository: ParameterRepository,
     getShippingMethodsWithOtherValue: GetShippingMethodsWithOtherValue
 ) : ScopedViewModel(savedState), OnProductFetchedListener {
     private val navArgs: OrderDetailFragmentArgs by savedState.navArgs()
@@ -261,6 +263,13 @@ class OrderDetailViewModel @Inject constructor(
 
     fun hasOrder() = viewState.orderInfo?.order != null
 
+    private fun getStoreCurrency(): String {
+        return parameterRepository.getParameters(
+            "parameters_key",
+            savedState
+        ).currencyCode.orEmpty()
+    }
+
     private suspend fun displayOrderDetails() {
         updateOrderState()
         loadOrderNotes()
@@ -315,6 +324,14 @@ class OrderDetailViewModel @Inject constructor(
             isCustomFieldsButtonShown = FeatureFlag.CUSTOM_FIELDS.isEnabled() ||
                 orderDetailRepository.orderHasMetadata(navArgs.orderId)
         )
+    }
+
+    fun isOrderCurrencySameAsStore(): Boolean {
+        return if (hasOrder()) {
+            getStoreCurrency().equals(order.currency, ignoreCase = true)
+        } else {
+            true
+        }
     }
 
     /**
