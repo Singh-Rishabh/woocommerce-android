@@ -63,6 +63,10 @@ internal fun WooShippingLabelPurchasedScreen(
     selectedLabelPaperSizeOption: WooShippingLabelPaperSize,
     onLabelPaperSizeOptionSelected: (WooShippingLabelPaperSize) -> Unit,
     onPrintShippingLabelClicked: () -> Unit,
+    onTrackShipmentClicked: () -> Unit,
+    onSchedulePickUpClicked: () -> Unit,
+    onRefundClicked: () -> Unit,
+    onLearnMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -81,6 +85,10 @@ internal fun WooShippingLabelPurchasedScreen(
             selectedLabelPaperSizeOption = selectedLabelPaperSizeOption,
             onLabelPaperSizeOptionSelected = onLabelPaperSizeOptionSelected,
             onPrintShippingLabelClicked = onPrintShippingLabelClicked,
+            onTrackShipmentClicked = onTrackShipmentClicked,
+            onSchedulePickUpClicked = onSchedulePickUpClicked,
+            onRefundClicked = onRefundClicked,
+            onLearnMoreClicked = onLearnMoreClicked,
         )
         Text(
             text = stringResource(id = R.string.shipping_label_purchased_note),
@@ -111,13 +119,19 @@ internal fun WooShippingLabelPurchasedScreen(
 @Composable
 internal fun WooShippingLabelPurchasedScreenPreview() {
     WooThemeWithBackground {
-        val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
-        WooShippingLabelPurchasedScreen(
-            selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
-            onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
-            onPrintShippingLabelClicked = {},
-            modifier = Modifier.padding(16.dp)
-        )
+        Surface {
+            val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
+            WooShippingLabelPurchasedScreen(
+                selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
+                onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
+                onPrintShippingLabelClicked = {},
+                modifier = Modifier.padding(16.dp),
+                onTrackShipmentClicked = {},
+                onSchedulePickUpClicked = {},
+                onRefundClicked = {},
+                onLearnMoreClicked = {}
+            )
+        }
     }
 }
 
@@ -126,10 +140,10 @@ private fun PrintShippingLabelCard(
     selectedLabelPaperSizeOption: WooShippingLabelPaperSize,
     onLabelPaperSizeOptionSelected: (WooShippingLabelPaperSize) -> Unit,
     onPrintShippingLabelClicked: () -> Unit,
-    onTrackShipmentClicked: () -> Unit = {},
-    onSchedulePickUpClicked: () -> Unit = {},
-    onRefundClicked: () -> Unit = {},
-    onLearnMoreClicked: () -> Unit = {},
+    onTrackShipmentClicked: () -> Unit,
+    onSchedulePickUpClicked: () -> Unit,
+    onRefundClicked: () -> Unit,
+    onLearnMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -265,8 +279,8 @@ private fun LabelPaperSizeDropdownMenu(
 private fun ShippingLabelLink(
     text: String,
     onClick: () -> Unit,
-    showIcon: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showIcon: Boolean = false
 ) {
     Row(
         modifier = Modifier

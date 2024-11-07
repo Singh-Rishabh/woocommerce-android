@@ -29,7 +29,11 @@ class WooShippingLabelPurchasedFragment : BaseFragment() {
                             selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
                             onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
                             onPrintShippingLabelClicked = { },
-                            modifier = Modifier.padding(16.dp)
+                            modifier = Modifier.padding(16.dp),
+                            onTrackShipmentClicked = { },
+                            onSchedulePickUpClicked = { },
+                            onRefundClicked = { },
+                            onLearnMoreClicked = { }
                         )
                     }
                 }
