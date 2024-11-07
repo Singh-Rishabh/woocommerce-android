@@ -114,6 +114,7 @@ fun CouponLineEditCard(
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp)
         )
+    }
 }
 
 @PreviewLightDark
@@ -126,12 +127,12 @@ fun CouponLineDetailsPreview() {
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 fun CouponLineFormSectionPreview() {
     val couponLine = List(3) { i ->
         CouponLineDetails(
-            code = "abcdefg_$i",
+            code = "abcdefg_abcdefg_abcdefg_abcdefg_$i",
         )
     }
     WooThemeWithBackground {
