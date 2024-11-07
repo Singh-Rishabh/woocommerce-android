@@ -2435,7 +2435,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when order currency is different than store, then disable edit menu in order creation` () = testBlocking {
+    fun `when order currency is different than store, then disable edit menu in order creation`() = testBlocking {
         val nonRefundedOrder = order.copy(refundTotal = BigDecimal.ZERO)
 
         doReturn(false).whenever(paymentCollectibilityChecker).isCollectable(any())
@@ -2465,7 +2465,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when order currency is same as store, then enable edit menu in order creation` () = testBlocking {
+    fun `when order currency is same as store, then enable edit menu in order creation`() = testBlocking {
         val nonRefundedOrder = order.copy(refundTotal = BigDecimal.ZERO)
 
         doReturn(false).whenever(paymentCollectibilityChecker).isCollectable(any())
