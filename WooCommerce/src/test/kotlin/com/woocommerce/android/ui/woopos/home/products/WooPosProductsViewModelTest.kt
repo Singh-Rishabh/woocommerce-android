@@ -5,6 +5,11 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
+import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
@@ -77,15 +82,18 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
         viewModel.viewState.test {
             // THEN
-            val value = awaitItem() as WooPosProductsViewState.Content
-            assertThat(value.products).hasSize(2)
-            assertThat(value.products[0].id).isEqualTo(1)
-            assertThat(value.products[0].name).isEqualTo("Product 1")
-            assertThat(value.products[0].price).isEqualTo("$10.0")
-            assertThat(value.products[1].id).isEqualTo(2)
-            assertThat(value.products[1].name).isEqualTo("Product 2")
-            assertThat(value.products[1].price).isEqualTo("$20.0")
-            assertThat(value.products[1].imageUrl).isEqualTo("https://test.com")
+            val value = awaitItem() as WooPosItemsViewState.Content
+
+            @Suppress("UNCHECKED_CAST")
+            val items = value.items as List<WooPosItem.SimpleProduct>
+            assertThat(items).hasSize(2)
+            assertThat(items[0].id).isEqualTo(1)
+            assertThat(items[0].name).isEqualTo("Product 1")
+            assertThat(items[0].price).isEqualTo("$10.0")
+            assertThat(items[1].id).isEqualTo(2)
+            assertThat(items[1].name).isEqualTo("Product 2")
+            assertThat(items[1].price).isEqualTo("$20.0")
+            assertThat(items[1].imageUrl).isEqualTo("https://test.com")
         }
     }
 
@@ -105,7 +113,7 @@ class WooPosProductsViewModelTest {
         viewModel.viewState.test {
             // THEN
             val value = awaitItem()
-            assertThat(value).isEqualTo(WooPosProductsViewState.Empty())
+            assertThat(value).isEqualTo(WooPosItemsViewState.Empty())
         }
     }
 
@@ -125,7 +133,7 @@ class WooPosProductsViewModelTest {
         viewModel.viewState.test {
             // THEN
             val value = awaitItem()
-            assertThat(value).isEqualTo(WooPosProductsViewState.Error())
+            assertThat(value).isEqualTo(WooPosItemsViewState.Error())
         }
     }
 
@@ -158,7 +166,7 @@ class WooPosProductsViewModelTest {
 
             // WHEN
             val viewModel = createViewModel()
-            viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+            viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
             viewModel.viewState.test {
                 // THEN
                 verify(productsDataSource).loadSimpleProducts(forceRefreshProducts = true)
@@ -195,10 +203,10 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // WHEN
-        viewModel.onUIEvent(WooPosProductsUIEvent.EndOfProductListReached)
+        viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
         viewModel.viewState.test {
             // THEN
-            val value = awaitItem() as WooPosProductsViewState.Content
+            val value = awaitItem() as WooPosItemsViewState.Content
             assertThat(value.loadingMore).isFalse()
         }
     }
@@ -228,7 +236,7 @@ class WooPosProductsViewModelTest {
             )
         )
 
-        val product = WooPosProductsListItem(
+        val product = WooPosItem.SimpleProduct(
             id = 1,
             name = "Product 1",
             price = "$10.0",
@@ -237,7 +245,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // WHEN
-        viewModel.onUIEvent(WooPosProductsUIEvent.ItemClicked(product))
+        viewModel.onUIEvent(WooPosItemsUIEvent.ItemClicked(product))
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
@@ -274,10 +282,10 @@ class WooPosProductsViewModelTest {
             )
 
             val viewModel = createViewModel()
-            viewModel.onUIEvent(WooPosProductsUIEvent.EndOfProductListReached)
+            viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
             viewModel.viewState.test {
                 // THEN
-                val value = awaitItem() as WooPosProductsViewState.Content
+                val value = awaitItem() as WooPosItemsViewState.Content
                 assertThat(value.loadingMore).isFalse()
             }
         }
@@ -333,7 +341,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // THEN
-        assertThat(viewModel.viewState.value).isInstanceOf(WooPosProductsViewState.Loading::class.java)
+        assertThat(viewModel.viewState.value).isInstanceOf(WooPosItemsViewState.Loading::class.java)
     }
 
     @Test
@@ -360,11 +368,11 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
 
         // WHEN
-        viewModel.onUIEvent(WooPosProductsUIEvent.EndOfProductListReached)
+        viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
         viewModel.viewState.test {
             // THEN
             val value = awaitItem()
-            assertThat(value).isInstanceOf(WooPosProductsViewState.Error::class.java)
+            assertThat(value).isInstanceOf(WooPosItemsViewState.Error::class.java)
         }
     }
 
@@ -381,12 +389,12 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+        viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
 
         // THEN
         viewModel.viewState.test {
             val value = awaitItem()
-            assertThat(value).isInstanceOf(WooPosProductsViewState.Empty::class.java)
+            assertThat(value).isInstanceOf(WooPosItemsViewState.Empty::class.java)
         }
     }
 
@@ -402,7 +410,7 @@ class WooPosProductsViewModelTest {
         )
 
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+        viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsStatusChanged.FullScreen)
@@ -429,7 +437,7 @@ class WooPosProductsViewModelTest {
             )
         )
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.PullToRefreshTriggered)
+        viewModel.onUIEvent(WooPosItemsUIEvent.PullToRefreshTriggered)
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsStatusChanged.WithCart)
@@ -469,8 +477,8 @@ class WooPosProductsViewModelTest {
         // WHEN
         val viewModel = createViewModel()
         viewModel.viewState.test {
-            val contentState = awaitItem() as WooPosProductsViewState.Content
-            viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerClosed)
+            val contentState = awaitItem() as WooPosItemsViewState.Content
+            viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
 
             // THEN
             assertTrue(contentState.bannerState.isBannerHiddenByUser)
@@ -508,7 +516,7 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerClosed)
+        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
 
         // THEN
         verify(posPreferencesRepository).setSimpleProductsOnlyBannerWasHiddenByUser(true)
@@ -547,7 +555,7 @@ class WooPosProductsViewModelTest {
             // WHEN
             val viewModel = createViewModel()
             viewModel.viewState.test {
-                val contentState = awaitItem() as WooPosProductsViewState.Content
+                val contentState = awaitItem() as WooPosItemsViewState.Content
 
                 // THEN
                 assertThat(contentState.bannerState.isBannerHiddenByUser).isFalse()
@@ -587,7 +595,7 @@ class WooPosProductsViewModelTest {
             // WHEN
             val viewModel = createViewModel()
             viewModel.viewState.test {
-                val contentState = awaitItem() as WooPosProductsViewState.Content
+                val contentState = awaitItem() as WooPosItemsViewState.Content
 
                 // THEN
                 assertTrue(contentState.bannerState.isBannerHiddenByUser)
@@ -626,7 +634,7 @@ class WooPosProductsViewModelTest {
         // WHEN
         val viewModel = createViewModel()
         viewModel.viewState.test {
-            val contentState = awaitItem() as WooPosProductsViewState.Content
+            val contentState = awaitItem() as WooPosItemsViewState.Content
 
             // THEN
             assertThat(contentState.bannerState.title).isEqualTo(R.string.woopos_banner_simple_products_only_title)
@@ -665,7 +673,7 @@ class WooPosProductsViewModelTest {
         // WHEN
         val viewModel = createViewModel()
         viewModel.viewState.test {
-            val contentState = awaitItem() as WooPosProductsViewState.Content
+            val contentState = awaitItem() as WooPosItemsViewState.Content
 
             // THEN
             assertThat(contentState.bannerState.message).isEqualTo(R.string.woopos_banner_simple_products_only_message)
@@ -705,7 +713,7 @@ class WooPosProductsViewModelTest {
         val viewModel = createViewModel()
         viewModel.viewState.test {
             // THEN
-            val contentState = awaitItem() as WooPosProductsViewState.Content
+            val contentState = awaitItem() as WooPosItemsViewState.Content
 
             // THEN
             assertThat(contentState.bannerState.icon).isEqualTo(R.drawable.info)
@@ -743,7 +751,7 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsDialogInfoIconClicked)
+        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
 
         // THEN
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
@@ -780,14 +788,14 @@ class WooPosProductsViewModelTest {
 
         // WHEN
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosProductsUIEvent.SimpleProductsBannerLearnMoreClicked)
+        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
 
         // THEN
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
     }
 
     private fun createViewModel() =
-        WooPosProductsViewModel(
+        WooPosItemsViewModel(
             productsDataSource,
             fromChildToParentEventSender,
             priceFormat,

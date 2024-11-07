@@ -1,17 +1,17 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
-sealed class WooPosProductsViewState(
+sealed class WooPosItemsViewState(
     open val reloadingProductsWithPullToRefresh: Boolean,
 ) {
     data class Content(
-        val products: List<WooPosProductsListItem>,
+        val items: List<WooPosItem>,
         val loadingMore: Boolean,
         val bannerState: BannerState,
         override val reloadingProductsWithPullToRefresh: Boolean = false,
-    ) : WooPosProductsViewState(reloadingProductsWithPullToRefresh) {
+    ) : WooPosItemsViewState(reloadingProductsWithPullToRefresh) {
         data class BannerState(
             val isBannerHiddenByUser: Boolean,
             @StringRes val title: Int,
@@ -24,18 +24,11 @@ sealed class WooPosProductsViewState(
         override val reloadingProductsWithPullToRefresh: Boolean = false,
         val withCart: Boolean,
     ) :
-        WooPosProductsViewState(reloadingProductsWithPullToRefresh)
+        WooPosItemsViewState(reloadingProductsWithPullToRefresh)
 
     data class Error(override val reloadingProductsWithPullToRefresh: Boolean = false) :
-        WooPosProductsViewState(reloadingProductsWithPullToRefresh)
+        WooPosItemsViewState(reloadingProductsWithPullToRefresh)
 
     data class Empty(override val reloadingProductsWithPullToRefresh: Boolean = false) :
-        WooPosProductsViewState(reloadingProductsWithPullToRefresh)
+        WooPosItemsViewState(reloadingProductsWithPullToRefresh)
 }
-
-data class WooPosProductsListItem(
-    val id: Long,
-    val name: String,
-    val price: String,
-    val imageUrl: String?,
-)
