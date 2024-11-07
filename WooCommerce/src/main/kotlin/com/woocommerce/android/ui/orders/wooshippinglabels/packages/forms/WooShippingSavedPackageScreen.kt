@@ -46,19 +46,26 @@ fun WooShippingSavedPackageScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
-        Column(modifier = modifier.weight(1f)) {
+        Column(modifier = modifier
+            .weight(1f)
+            .padding(16.dp)
+        ) {
             savedPackages.forEach { packageData ->
                 WooShippingSavedPackageItem(modifier, packageData)
             }
         }
-        Button(
-            modifier = modifier.fillMaxWidth(),
-            enabled = isAddPackageEnabled,
-            onClick = onAddPackageClick
-        ) {
-            Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
+        Column {
+            Divider()
+            Button(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                enabled = isAddPackageEnabled,
+                onClick = onAddPackageClick
+            ) {
+                Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
+            }
         }
     }
 }
