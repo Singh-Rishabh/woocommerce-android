@@ -164,6 +164,7 @@ class OrderDetailFragment :
 
     override fun onResume() {
         super.onResume()
+        onPrepareMenu(binding.toolbar.menu)
         AnalyticsTracker.trackViewShown(this)
     }
 
@@ -316,7 +317,7 @@ class OrderDetailFragment :
 
     fun onPrepareMenu(menu: Menu) {
         menu.findItem(R.id.menu_edit_order)?.let {
-            it.isEnabled = viewModel.hasOrder()
+            it.isEnabled = viewModel.hasOrder() && viewModel.isOrderCurrencySameAsStore()
         }
 
         menu.findItem(R.id.menu_arrow_up)?.let {
