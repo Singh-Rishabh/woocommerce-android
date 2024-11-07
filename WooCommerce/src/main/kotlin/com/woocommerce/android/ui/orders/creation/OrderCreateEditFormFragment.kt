@@ -378,7 +378,7 @@ class OrderCreateEditFormFragment :
 
     private fun FragmentOrderCreateEditFormBinding.initAdditionalInfoCollectionSection() {
         additionalInfoCollectionSection.addShippingButton.setOnClickListener {
-            viewModel.onAddOrEditShipping()
+            viewModel.onAddOrEditShippingClicked()
         }
     }
 
@@ -429,8 +429,8 @@ class OrderCreateEditFormFragment :
                             shippingLineDetails = shippingLines,
                             formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
                             modifier = Modifier.padding(bottom = 1.dp),
-                            onAdd = { viewModel.onAddOrEditShipping() },
-                            onEdit = { id -> viewModel.onAddOrEditShipping(id) }
+                            onAddClicked = { viewModel.onAddOrEditShippingClicked() },
+                            onEditClicked = { id -> viewModel.onAddOrEditShippingClicked(id) }
                         )
                     }
                 }
@@ -448,8 +448,8 @@ class OrderCreateEditFormFragment :
                             couponLineDetails = couponSection.couponLines,
                             isEnabled = couponSection.isEnabled,
                             modifier = Modifier.padding(bottom = 1.dp),
-                            onAdd = { viewModel.onAddCouponButtonClicked() },
-                            onRemove = { code -> viewModel.removeCoupon(code) }
+                            onAddClicked = { viewModel.onAddCouponButtonClicked() },
+                            onRemoveClicked = { code -> viewModel.removeCoupon(code) }
                         )
                     }
                 }

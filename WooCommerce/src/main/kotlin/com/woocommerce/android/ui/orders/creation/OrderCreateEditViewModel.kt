@@ -1269,7 +1269,7 @@ class OrderCreateEditViewModel @Inject constructor(
         _selectedGiftCard.update { selectedGiftCard }
     }
 
-    fun onAddOrEditShipping(itemId: Long? = null) {
+    fun onAddOrEditShippingClicked(itemId: Long? = null) {
         tracker.track(AnalyticsEvent.ORDER_ADD_SHIPPING_TAPPED)
         val shippingLine = itemId?.let { id -> currentDraft.shippingLines.firstOrNull { it.itemId == id } }
         triggerEvent(EditShipping(shippingLine))

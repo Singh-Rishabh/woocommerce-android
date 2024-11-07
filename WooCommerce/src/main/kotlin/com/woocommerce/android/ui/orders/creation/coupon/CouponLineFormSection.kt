@@ -39,8 +39,8 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 fun CouponLineFormSection(
     couponLineDetails: List<CouponLineDetails>,
     isEnabled: Boolean,
-    onAdd: () -> Unit,
-    onRemove: (code: String) -> Unit,
+    onAddClicked: () -> Unit,
+    onRemoveClicked: (code: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(couponLineDetails.isNotEmpty()) {
@@ -60,7 +60,7 @@ fun CouponLineFormSection(
                         modifier = Modifier
                             .align(Alignment.CenterVertically)
                             .alpha(if (isEnabled) 1f else 0.4f)
-                            .clickable(enabled = isEnabled) { onAdd() },
+                            .clickable(enabled = isEnabled) { onAddClicked() },
                         tint = MaterialTheme.colors.primary
                     )
                 }
@@ -71,7 +71,7 @@ fun CouponLineFormSection(
                         couponLine = couponDetails,
                         modifier = itemModifier
                             .alpha(if (isEnabled) 1f else 0.4f)
-                            .clickable(enabled = isEnabled) { onRemove(couponDetails.code) }
+                            .clickable(enabled = isEnabled) { onRemoveClicked(couponDetails.code) }
                     )
                 }
             }
@@ -145,8 +145,8 @@ fun CouponLineFormSectionPreview() {
         CouponLineFormSection(
             couponLineDetails = couponLine,
             isEnabled = true,
-            onAdd = { },
-            onRemove = { }
+            onAddClicked = { },
+            onRemoveClicked = { }
         )
     }
 }
