@@ -157,7 +157,7 @@ class BlazeRepository @Inject constructor(
         return when {
             result.isError -> {
                 WooLog.w(WooLog.T.BLAZE, "Failed to fetch ad suggestions: ${result.error}")
-                Result.failure(OnChangedException(result.error))
+                Result.failure(OnChangedException(result.error, result.error.message))
             }
 
             else -> Result.success(result.model?.mapToUiModel() ?: emptyList())

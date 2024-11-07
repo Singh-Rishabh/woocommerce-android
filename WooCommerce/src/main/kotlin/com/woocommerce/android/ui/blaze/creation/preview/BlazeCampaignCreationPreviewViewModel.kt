@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsEvent.BLAZE_CREATION_CONFIRM_DETAILS_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.BLAZE_CREATION_EDIT_AD_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.BLAZE_CREATION_FORM_DISPLAYED
@@ -254,16 +255,27 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
             blazeRepository.fetchDevices()
             blazeRepository.fetchInterests()
 
-            blazeRepository.fetchAdSuggestions(productId = navArgs.productId).getOrNull().let { suggestions ->
-                aiSuggestions = suggestions.orEmpty()
-                adDetailsState.value = AdDetailsUiState.LOADED
-                campaignDetails.update {
-                    it?.copy(
-                        tagLine = suggestions?.firstOrNull()?.tagLine.orEmpty(),
-                        description = suggestions?.firstOrNull()?.description.orEmpty(),
-                    )
-                }
-            }
+            blazeRepository.fetchAdSuggestions(productId = navArgs.productId)
+                .fold(
+                    onSuccess = { suggestions ->
+                        aiSuggestions = suggestions
+                        adDetailsState.value = AdDetailsUiState.LOADED
+                        campaignDetails.update {
+                            it?.copy(
+                                tagLine = suggestions.firstOrNull()?.tagLine.orEmpty(),
+                                description = suggestions.firstOrNull()?.description.orEmpty(),
+                            )
+                        }
+                    },
+                    onFailure = { error ->
+                        analyticsTrackerWrapper.track(
+                            stat = AnalyticsEvent.BLAZE_SUGGESTIONS_LOADING_FAILED,
+                            properties = mapOf(
+                                AnalyticsTracker.KEY_ERROR to error.message
+                            )
+                        )
+                    }
+                )
             blazeRepository.fetchObjectives()
         }
     }

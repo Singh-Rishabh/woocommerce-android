@@ -1032,6 +1032,7 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     BLAZE_CREATION_EDIT_DESTINATION_SAVE_TAPPED,
     BLAZE_CAMPAIGN_CREATION_FEEDBACK,
     BLAZE_CAMPAIGN_OBJECTIVE_SAVED,
+    BLAZE_SUGGESTIONS_LOADING_FAILED,
 
     // Hazmat Shipping Declaration
     CONTAINS_HAZMAT_CHECKED,
