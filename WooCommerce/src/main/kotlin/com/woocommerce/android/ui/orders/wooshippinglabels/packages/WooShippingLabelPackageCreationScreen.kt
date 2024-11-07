@@ -66,9 +66,13 @@ fun WooShippingLabelPackageCreationScreen(
 
     Scaffold(
         topBar = {
-            TabRow(selectedTabIndex = tabIndex) {
+            TabRow(
+                selectedTabIndex = tabIndex,
+                backgroundColor = MaterialTheme.colors.surface,
+            ) {
                 tabs.forEachIndexed { index, pageTab ->
                     Tab(
+                        selectedContentColor = MaterialTheme.colors.onSurface,
                         text = { Text(text = pageTab.title) },
                         selected = tabIndex == index,
                         onClick = { tabIndex = index }
