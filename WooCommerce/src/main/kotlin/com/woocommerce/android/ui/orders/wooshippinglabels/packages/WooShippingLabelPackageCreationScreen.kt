@@ -151,7 +151,8 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                         )
                     ),
                     isAddPackageEnabled = true,
-                    onAddPackageClick = { }
+                    onAddPackageClick = { },
+                    onSavedPackageSelected = { _, _ -> }
                 )
             },
             createCarrierPackageScreen = { }

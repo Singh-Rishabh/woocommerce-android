@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,8 @@ fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationView
     WooShippingSavedPackageScreen(
         savedPackages = viewState.value?.savedPackageSelection?.packages.orEmpty(),
         isAddPackageEnabled = viewState.value?.savedPackageSelection?.hasSelection ?: false,
-        onAddPackageClick = viewModel::onAddSavedPackageClick
+        onAddPackageClick = viewModel::onAddSavedPackageClick,
+        onSavedPackageSelected = viewModel::onSavedPackageSelected
 
     )
 }
@@ -43,7 +45,8 @@ fun WooShippingSavedPackageScreen(
     modifier: Modifier = Modifier,
     savedPackages: List<PackageData>,
     isAddPackageEnabled: Boolean,
-    onAddPackageClick: () -> Unit
+    onAddPackageClick: () -> Unit,
+    onSavedPackageSelected: (PackageData, Boolean) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -55,7 +58,11 @@ fun WooShippingSavedPackageScreen(
             .verticalScroll(rememberScrollState())
         ) {
             savedPackages.forEach { packageData ->
-                WooShippingSavedPackageItem(modifier, packageData)
+                WooShippingSavedPackageItem(
+                    modifier,
+                    packageData,
+                    onSavedPackageSelected
+                )
             }
         }
         Column {
@@ -76,10 +83,13 @@ fun WooShippingSavedPackageScreen(
 @Composable
 fun WooShippingSavedPackageItem(
     modifier: Modifier,
-    packageData: PackageData
+    packageData: PackageData,
+    onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
     Column(
-        modifier = modifier.padding(top = 8.dp),
+        modifier = modifier
+            .padding(top = 8.dp)
+            .clickable { onPackageSelected(packageData, packageData.isSelected.not()) },
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
@@ -88,7 +98,7 @@ fun WooShippingSavedPackageItem(
         ) {
             SelectionCheck(
                 isSelected = packageData.isSelected,
-                onSelectionChange = {}
+                onSelectionChange = { onPackageSelected(packageData, it) }
             )
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -145,7 +155,8 @@ fun WooShippingSavedPackageScreenPreview() {
                 )
             ),
             isAddPackageEnabled = true,
-            onAddPackageClick = {}
+            onAddPackageClick = {},
+            onSavedPackageSelected = { _, _ -> }
         )
     }
 }
