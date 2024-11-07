@@ -95,23 +95,17 @@ fun CouponLineEditCard(
             )
             .padding(dimensionResource(id = R.dimen.major_100))
     ) {
-        Column(
-            modifier = Modifier
-                .weight(2f)
-                .align(Alignment.CenterVertically)
-        ) {
-            Text(
-                text = couponLine.code,
-                style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 18.sp
-                ),
-                color = colorResource(id = R.color.color_on_surface),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            modifier = Modifier.weight(1f),
+            text = couponLine.code,
+            style = TextStyle(
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp
+            ),
+            color = colorResource(id = R.color.color_on_surface),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
         Icon(
             imageVector = Icons.Outlined.DeleteOutline,
             contentDescription = null,
@@ -119,7 +113,6 @@ fun CouponLineEditCard(
                 .align(Alignment.CenterVertically)
                 .padding(start = 16.dp)
         )
-    }
 }
 
 @Preview
