@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.creation.shipping
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -39,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.woocommerce.android.R
-import com.woocommerce.android.model.ShippingMethod
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import java.math.BigDecimal
 
@@ -117,7 +114,7 @@ fun ShippingLineEditCard(
             .clip(RoundedCornerShape(dimensionResource(id = R.dimen.corner_radius_large)))
             .clickable { onEdit(shippingLine.id) }
     } else {
-        modifier.alpha(0.5f)
+        modifier
     }
 
     Row(
@@ -170,26 +167,36 @@ fun ShippingLineEditCard(
             color = colorResource(id = R.color.color_on_surface),
             modifier = Modifier.align(Alignment.CenterVertically)
         )
-        Icon(
-            imageVector = Icons.Outlined.Edit,
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(start = 16.dp)
-        )
+        if (isEnabled) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = null,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 16.dp)
+            )
+        }
     }
 }
 
 @Preview
-@Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun ShippingLineDetailsPreview() {
-    WooThemeWithBackground {
+fun ShippingLineFormSectionLockedPreview() {
+    val shippingDetails = List(3) { i ->
         ShippingLineDetails(
-            id = 1L,
-            name = "UPS Shipping",
-            shippingMethod = ShippingMethod(id = "ups", title = "UPS"),
-            amount = BigDecimal.TEN,
+            id = i * 1L,
+            shippingMethod = null,
+            amount = BigDecimal.TEN * i.toBigDecimal(),
+            name = "Shipping $i"
+        )
+    }
+    WooThemeWithBackground {
+        ShippingLineFormSection(
+            shippingLineDetails = shippingDetails,
+            formatCurrency = { it.toString() },
+            isEnabled = false,
+            onAddClicked = { },
+            onEditClicked = { }
         )
     }
 }
@@ -209,7 +216,7 @@ fun ShippingLineFormSectionPreview() {
         ShippingLineFormSection(
             shippingLineDetails = shippingDetails,
             formatCurrency = { it.toString() },
-            isEnabled = false,
+            isEnabled = true,
             onAddClicked = { },
             onEditClicked = { }
         )
