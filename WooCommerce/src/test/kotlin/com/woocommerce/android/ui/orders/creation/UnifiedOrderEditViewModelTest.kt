@@ -31,7 +31,7 @@ import com.woocommerce.android.ui.orders.creation.configuration.ProductRules
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget
 import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWithOtherValue
-import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineDetails
+import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineSection
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingUpdateResult
 import com.woocommerce.android.ui.orders.creation.taxes.GetAddressFromTaxRate
 import com.woocommerce.android.ui.orders.creation.taxes.GetTaxRatesInfoDialogViewState
@@ -66,7 +66,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.network.BaseRequest
@@ -1885,14 +1884,14 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         whenever(getShippingMethodsWithOtherValue.invoke()).doReturn(getShippingMethodsResult)
         createSut()
 
-        var shippingDetails: List<ShippingLineDetails>? = null
-        sut.shippingLineList.observeForever {
-            shippingDetails = it
+        var shippingLineSection: ShippingLineSection? = null
+        sut.shippingLineSection.observeForever {
+            shippingLineSection = it
         }
 
-        assertThat(shippingDetails).isNotNull
-        assertThat(shippingDetails!!.size).isEqualTo(shippingLines.size)
-        val shippingMethod = shippingDetails!!.firstOrNull { it.shippingMethod?.id == shippingMethodId }
+        assertThat(shippingLineSection).isNotNull
+        assertThat(shippingLineSection!!.shippingLines.size).isEqualTo(shippingLines.size)
+        val shippingMethod = shippingLineSection!!.shippingLines.firstOrNull { it.shippingMethod?.id == shippingMethodId }
         assertThat(shippingMethod).isNotNull
         assertThat(shippingMethod!!.shippingMethod!!.title).isEqualTo(shippingMethodTitle)
     }
@@ -1922,14 +1921,14 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         whenever(getShippingMethodsWithOtherValue.invoke()).doReturn(getShippingMethodsResult)
         createSut()
 
-        var shippingDetails: List<ShippingLineDetails>? = null
-        sut.shippingLineList.observeForever {
+        var shippingDetails: ShippingLineSection? = null
+        sut.shippingLineSection.observeForever {
             shippingDetails = it
         }
 
         assertThat(shippingDetails).isNotNull
-        assertThat(shippingDetails!!.size).isEqualTo(shippingLines.size)
-        val shippingMethod = shippingDetails!!.firstOrNull { it.shippingMethod?.id == shippingMethodId }
+        assertThat(shippingDetails!!.shippingLines.size).isEqualTo(shippingLines.size)
+        val shippingMethod = shippingDetails!!.shippingLines.firstOrNull { it.shippingMethod?.id == shippingMethodId }
         assertThat(shippingMethod).isNull()
     }
 
