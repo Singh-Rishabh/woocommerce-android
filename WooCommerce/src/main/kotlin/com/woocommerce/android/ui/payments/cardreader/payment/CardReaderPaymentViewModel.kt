@@ -92,6 +92,7 @@ class CardReaderPaymentViewModel @Inject constructor(
         onTTPPaymentStateChanged = { isTTPPaymentInProgress = it }
     )
 
+    @Suppress("DEPRECATION")
     val viewStateData: LiveData<ViewState> = paymentController.viewStateData
 
     override val event: LiveData<MultiLiveEvent.Event> =

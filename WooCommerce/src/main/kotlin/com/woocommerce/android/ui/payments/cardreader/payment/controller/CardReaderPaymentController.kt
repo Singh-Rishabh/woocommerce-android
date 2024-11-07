@@ -131,11 +131,17 @@ class CardReaderPaymentController(
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
 
-    @Deprecated("Use paymentState and map to ViewState in the target [ViewModel]")
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use [CardReaderPaymentController.paymentState] and map to ViewState in the target [ViewModel]")
     val viewStateData: LiveData<ViewState> = viewState
 
     private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
         MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
+
+    /**
+     * Exposes payment collection state.
+     *
+     * Returns observable of [CardReaderPaymentOrRefundState].
+     */
     val paymentState: StateFlow<CardReaderPaymentOrRefundState> = _paymentState
 
     private var paymentFlowJob: Job? = null
@@ -1047,9 +1053,7 @@ class CardReaderPaymentController(
                 exitWithSnackbar(R.string.card_reader_refetching_order_failed)
             }
         } else {
-            _paymentState.value?.let { state ->
-                trackCancelledFlow(state)
-            }
+            trackCancelledFlow(_paymentState.value)
             triggerEvent(CardReaderPaymentEvent.Exit)
         }
     }
