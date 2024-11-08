@@ -149,7 +149,7 @@ class BlazeRepository @Inject constructor(
 
     suspend fun fetchAdSuggestions(productId: Long): Result<List<AiSuggestionForAd>> {
         fun List<BlazeAdSuggestion>.mapToUiModel(): List<AiSuggestionForAd> {
-            return map { AiSuggestionForAd(it.tagLine, it.description) }
+            return map { AiSuggestionForAd(it.tagLine, it.description, it.ctaText) }
         }
 
         val result = blazeCampaignsStore.fetchBlazeAdSuggestions(selectedSite.get(), productId)
@@ -298,6 +298,7 @@ class BlazeRepository @Inject constructor(
                 targetResourceId = campaignDetails.productId,
                 tagLine = campaignDetails.tagLine,
                 description = campaignDetails.description,
+                ctaText = campaignDetails.ctaText,
                 startDate = campaignDetails.budget.startDate,
                 endDate = campaignDetails.budget.endDate,
                 budget = BlazeCampaignCreationRequestBudget(
@@ -448,7 +449,7 @@ class BlazeRepository @Inject constructor(
     data class AiSuggestionForAd(
         val tagLine: String,
         val description: String,
-        val ctaText: String = ""
+        val ctaText: String
     ) : Parcelable
 
     @Parcelize
