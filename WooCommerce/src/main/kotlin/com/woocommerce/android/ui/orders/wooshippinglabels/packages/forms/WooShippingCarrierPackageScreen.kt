@@ -27,6 +27,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
 import kotlinx.coroutines.launch
 
 @Composable
@@ -112,4 +113,28 @@ private fun CarrierLogo(
 @Composable
 private fun PackageListPager() {
 
+}
+
+@Composable
+private fun PackageList() {
+
+}
+
+@Composable
+private fun PackageListSection(
+    modifier: Modifier,
+    sectionHeader: String,
+    packages: List<PackageData>,
+    onPackageSelected: (PackageData, Boolean) -> Unit
+) {
+    Column {
+        Text(text = sectionHeader)
+        packages.forEach { packageData ->
+            WooSavedPackageListItem(
+                modifier = modifier,
+                packageData = packageData,
+                onPackageSelected = onPackageSelected
+            )
+        }
+    }
 }
