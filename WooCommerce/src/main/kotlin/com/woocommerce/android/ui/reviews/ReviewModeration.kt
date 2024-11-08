@@ -4,8 +4,7 @@ import com.woocommerce.android.model.ActionStatus
 import com.woocommerce.android.model.ActionStatus.PENDING
 import com.woocommerce.android.model.ProductReview
 
-@Suppress("DataClassPrivateConstructor")
-data class ReviewModerationRequest private constructor(
+data class ReviewModerationRequest(
     val review: ProductReview,
     val newStatus: ProductReviewStatus,
     private val timeOfRequest: Long
