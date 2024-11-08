@@ -1,3 +1,0 @@
-21.0:
-Uygulama genelinde iyileştirilen tasarım sayesinde daha sorunsuz bir deneyimin keyfini çıkarın. Ayrıca ürün görselleriniz artık daha hızlı yükleniyor ve yeni AVIF biçimi desteği sayesinde daha da iyi görünüyor. Daha temiz ve keskin bir WooCommerce uygulama deneyimi için hemen güncelleyin!
-
