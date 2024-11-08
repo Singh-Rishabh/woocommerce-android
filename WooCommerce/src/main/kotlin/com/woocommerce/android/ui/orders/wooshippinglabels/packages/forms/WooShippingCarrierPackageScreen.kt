@@ -4,8 +4,10 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -54,7 +57,11 @@ fun WooShippingCarrierPackageScreen(
             pagerState = pagerState,
             carriers = carrierPackages.keys.toList()
         )
-        PackageListPager()
+        PackageListPager(
+            modifier = Modifier.weight(1f),
+            pagerState = pagerState,
+            carrierPackages = carrierPackages
+        )
     }
 }
 
@@ -99,24 +106,26 @@ private fun CarrierTabRow(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun CarrierLogo(
-    @DrawableRes resId: Int,
-    modifier: Modifier = Modifier
+private fun PackageListPager(
+    modifier: Modifier,
+    pagerState: PagerState,
+    carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
 ) {
-    Icon(
-        painter = painterResource(id = resId),
-        contentDescription = null,
-        modifier = modifier
-            .size(24.dp)
-            .clip(RoundedCornerShape(5.dp)),
-        tint = Color.Unspecified
-    )
-}
-
-@Composable
-private fun PackageListPager() {
-
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) { page ->
+        val carrierForPageIndex = carrierPackages.keys.toList()[page]
+        val carrierPackageGroups = carrierPackages[carrierForPageIndex] ?: emptyList()
+        PackageList(
+            modifier = modifier,
+            packageGroups = carrierPackageGroups,
+            onPackageSelected = { _, _ -> }
+        )
+    }
 }
 
 @Composable
@@ -156,4 +165,19 @@ private fun PackageListSection(
             )
         }
     }
+}
+
+@Composable
+private fun CarrierLogo(
+    @DrawableRes resId: Int,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        painter = painterResource(id = resId),
+        contentDescription = null,
+        modifier = modifier
+            .size(24.dp)
+            .clip(RoundedCornerShape(5.dp)),
+        tint = Color.Unspecified
+    )
 }
