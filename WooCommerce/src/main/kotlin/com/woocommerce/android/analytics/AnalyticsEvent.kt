@@ -278,6 +278,7 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     ORDER_DETAIL_EDIT_FLOW_FAILED,
     ORDER_DETAIL_EDIT_FLOW_CANCELED,
     ORDER_EDIT_BUTTON_TAPPED,
+    ORDER_EDIT_BUTTON_TAPPED_WHILE_DISABLED_FOR_CURRENCY_CONFLICT,
     PLUGINS_NOT_SYNCED_YET,
 
     // -- Order Creation
