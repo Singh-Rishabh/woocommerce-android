@@ -121,51 +121,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         val type: PageType
     ) : Parcelable
 
-    @Parcelize
-    data class PackageData(
-        val type: PackageType,
-        val name: String,
-        val description: String,
-        val length: String,
-        val width: String,
-        val height: String,
-        val isSelected: Boolean,
-        val dimensionUnit: String = "cm"
-    ) : Parcelable {
-        val dimensionsForDisplay: String
-            get() = "$length x $width x $height $dimensionUnit"
-    }
-
-    @Parcelize
-    data class SavedPackageSelection(
-        val packages: List<PackageData>
-    ) : Parcelable {
-        val hasSelection: Boolean
-            get() = packages.find { it.isSelected } != null
-    }
-
-    @Parcelize
-    data class CustomPackageCreationData(
-        val type: PackageType,
-        val length: String,
-        val width: String,
-        val height: String,
-        val saveAsTemplate: Boolean
-    ) : Parcelable {
-        val isValid: Boolean
-            get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
-
-        companion object {
-            val EMPTY = CustomPackageCreationData(
-                type = PackageType.BOX,
-                length = "",
-                width = "",
-                height = "",
-                saveAsTemplate = false
-            )
-        }
-    }
-
     enum class PageType {
         CUSTOM,
         CARRIER,
