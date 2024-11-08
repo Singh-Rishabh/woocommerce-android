@@ -1,0 +1,3 @@
+21.0:
+Geniet van een soepelere ervaring met verbeterd ontwerp door de hele app. Je productafbeeldingen laden nu ook sneller en zien ze er beter uit, dankzij nieuwe ondersteuning voor het AVIF-formaat. Update nu voor een strakkere, scherpere ervaring met de WooCommerce-app!
+

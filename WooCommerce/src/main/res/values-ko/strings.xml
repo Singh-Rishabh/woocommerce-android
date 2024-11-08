@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-06 09:54:04+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: ko_KR
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">배송 서비스</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">가장 빠름</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">가장 저렴</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">레이블 구매</string>
+    <string name="shipping_label_shipment_details_purchase_label">레이블 구매 · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">이 주문을 완료로 표시하고 고객에게 알립니다.</string>
+    <string name="shipping_label_shipment_details_shipment_cost">배송비</string>
+    <string name="shipping_label_shipment_details_order_details">주문 상세 정보</string>
+    <string name="shipping_label_shipment_details_title">배송 상세 정보</string>
+    <string name="shipping_label_select_package_description">패키지의 크기를 입력하거나 배송업체 패키지 옵션을 선택하여 적용 가능한 배송비를 확인하세요.</string>
+    <string name="shipping_label_select_package_title">배송비를 가져올 패키지 선택</string>
+    <string name="shipping_label_select_package_button">패키지 선택</string>
+    <string name="shipping_label_hazmat_title">위험물 또는 유해물질을 배송하시나요?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">아이템 카드 축소/확장</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">1%s 기준으로 정렬됨</string>
+    <string name="no">아니요</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">향후 캠페인을 위해 내 선택 사항 저장</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;다음과 같은 상황에 적합:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">목표 %s 선택</string>
@@ -3637,6 +3654,7 @@ Language: ko_KR
     <string name="taxes">세금</string>
     <string name="payment">결제</string>
     <string name="shipping">배송</string>
+    <string name="total">총계</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">주문</string>
