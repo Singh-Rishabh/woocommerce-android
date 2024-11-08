@@ -1,3 +1,0 @@
-21.0:
-Wir haben das Design in der App verbessert, um ein noch nahtloseres Benutzererlebnis zu schaffen. Außerdem werden deine Produktbilder jetzt noch schneller geladen und sehen dank des neuen unterstützten AVIF-Dateiformats noch besser aus. Aktualisiere deine WooCommerce-App jetzt, um von einem noch übersichtlicheren, ansprechenderen Benutzererlebnis zu profitieren!
-

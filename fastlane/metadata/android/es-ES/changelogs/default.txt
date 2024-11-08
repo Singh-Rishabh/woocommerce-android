@@ -1,3 +1,0 @@
-21.0:
-Disfruta de una experiencia más fluida con el diseño mejorado de la aplicación. Además, ahora, las imágenes de los productos se cargan más rápido y tienen una apariencia todavía mejor con la nueva compatibilidad con el formato AVIF. Actualiza y disfruta ya de una experiencia más limpia y fluida con la aplicación WooCommerce.
-
