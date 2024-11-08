@@ -58,6 +58,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentD
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentReaderTypeStateProvider
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentStateToViewStateMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentViewModel
 import com.woocommerce.android.ui.payments.cardreader.payment.ContactSupport
 import com.woocommerce.android.ui.payments.cardreader.payment.EnableNfc
@@ -187,6 +188,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val cardReaderConfigProvider: CardReaderCountryConfigProvider = mock()
     private val cardReaderConfig: CardReaderConfigForSupportedCountry = CardReaderConfigForUSA
     private val paymentReceiptShare: PaymentReceiptShare = mock()
+    private val paymentStateMapper = CardReaderPaymentStateToViewStateMapper()
 
     @Suppress("LongMethod")
     @Before
@@ -216,6 +218,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
             paymentStateProvider = paymentStateProvider,
+            paymentStateMapper = paymentStateMapper,
         )
 
         whenever(orderRepository.getOrderById(any())).thenReturn(mockedOrder)
@@ -4539,7 +4542,8 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
-            paymentStateProvider = CardReaderPaymentStateProvider(),
+            paymentStateProvider = paymentStateProvider,
+            paymentStateMapper = paymentStateMapper,
         )
     }
 
@@ -4576,6 +4580,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
             paymentStateProvider = paymentStateProvider,
+            paymentStateMapper = paymentStateMapper,
         )
     }
 }

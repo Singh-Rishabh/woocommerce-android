@@ -27,6 +27,7 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import javax.inject.Inject
 
@@ -55,6 +56,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     cardReaderOnboardingChecker: CardReaderOnboardingChecker,
     cardReaderConfigProvider: CardReaderCountryConfigProvider,
     paymentReceiptShare: PaymentReceiptShare,
+    paymentStateMapper: CardReaderPaymentStateToViewStateMapper,
 ) : ScopedViewModel(savedState) {
     private val arguments: CardReaderPaymentDialogFragmentArgs by savedState.navArgs()
 
@@ -93,7 +95,8 @@ class CardReaderPaymentViewModel @Inject constructor(
     )
 
     @Suppress("DEPRECATION")
-    val viewStateData: LiveData<ViewState> = paymentController.viewStateData
+    val viewStateData: LiveData<ViewState> =
+        paymentController.paymentState.map(paymentStateMapper()).asLiveData(coroutineContext)
 
     override val event: LiveData<MultiLiveEvent.Event> =
         paymentController.event.asLiveData(coroutineContext).map {
