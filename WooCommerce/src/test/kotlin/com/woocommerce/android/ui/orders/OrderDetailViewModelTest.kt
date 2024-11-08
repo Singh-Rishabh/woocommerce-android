@@ -1651,6 +1651,9 @@ class OrderDetailViewModelTest : BaseUnitTest() {
             doReturn(order).whenever(orderDetailRepository).fetchOrderById(any())
             doReturn(false).whenever(orderDetailRepository).fetchOrderNotes(any())
             doReturn(false).whenever(addonsRepository).containsAddonsFrom(any())
+            whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+                CurrencyMatchResult(isMatch = true, storeCurrency = "USD")
+            )
             viewModel.start()
 
             // When
