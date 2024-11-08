@@ -3,6 +3,8 @@
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
 21.1
 -----
+- [*] Disable Edit option for orders whose currency does not match with store currency [https://github.com/woocommerce/woocommerce-android/pull/12880]
+- [*] Fixed shipping lines being editable at all states [https://github.com/woocommerce/woocommerce-android/pull/12890]
 - [*] Show web views on the payments hub screen in 3/4 of the screen [https://github.com/woocommerce/woocommerce-android/pull/12875]
 - [*] Receipts can be shared via a google's sms application now [https://github.com/woocommerce/woocommerce-android/pull/12874]
 - [*] Fixed a bug where picking date ranges (for Stats and Analytics) did not use the correct timezone [https://github.com/woocommerce/woocommerce-android/pull/12887]
