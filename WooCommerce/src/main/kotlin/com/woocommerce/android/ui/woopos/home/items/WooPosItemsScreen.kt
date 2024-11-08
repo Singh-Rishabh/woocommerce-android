@@ -361,7 +361,7 @@ private fun ProductItem(
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_product_item_content_description,
         item.name,
         item.price
     )
@@ -375,7 +375,7 @@ private fun VariableProductItem(
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_variable_product_item_content_description,
         item.name,
         item.price
     )
