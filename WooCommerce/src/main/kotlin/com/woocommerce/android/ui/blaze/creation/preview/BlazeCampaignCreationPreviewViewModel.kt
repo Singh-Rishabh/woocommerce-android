@@ -76,6 +76,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                     productId = navArgs.productId,
                     description = campaignDetails.description,
                     tagLine = campaignDetails.tagLine,
+                    ctaText = campaignDetails.ctaText,
                     campaignImageUrl = campaignDetails.campaignImage.uri,
                     isContentSuggestedByAi = isAdContentGeneratedByAi(campaignDetails)
                 )
@@ -403,6 +404,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
             val productId: Long,
             val description: String,
             val tagLine: String,
+            val ctaText: String,
             val campaignImageUrl: String?,
             val isContentSuggestedByAi: Boolean,
         ) : AdDetailsUi

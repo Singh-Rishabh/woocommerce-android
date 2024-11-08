@@ -264,7 +264,7 @@ fun CampaignHeader(
                         fontWeight = FontWeight.Bold,
                     )
                     WCColoredButton(
-                        text = stringResource(id = R.string.blaze_campaign_preview_shop_now_button),
+                        text = adDetails.ctaText,
                         modifier = Modifier
                             .padding(start = 16.dp),
                         colors = ButtonDefaults.buttonColors(
@@ -418,6 +418,7 @@ fun CampaignScreenPreview() {
                 productId = 123,
                 description = "Get the latest white t-shirts",
                 tagLine = "From 45.00 USD",
+                ctaText = "Shop Now",
                 campaignImageUrl = "https://rb.gy/gmjuwb",
                 isContentSuggestedByAi = true
             ),
