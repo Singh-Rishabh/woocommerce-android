@@ -89,12 +89,14 @@ sealed class CardReaderPaymentOrRefundState {
                 val onSendReceiptClicked: () -> Unit,
                 val onSaveUserClicked: () -> Unit
             ) : PaymentSuccessful(amountWithCurrencyLabel)
+
             data class BuiltInReaderPaymentSuccessfulReceiptSentAutomatically(
                 override val amountWithCurrencyLabel: String,
                 val recipientEmail: String,
                 val onPrintReceiptClicked: () -> Unit,
                 val onSaveUserClicked: () -> Unit
             ) : PaymentSuccessful(amountWithCurrencyLabel)
+
             data class ExternalReaderPaymentSuccessfulReceiptSentAutomatically(
                 override val amountWithCurrencyLabel: String,
                 val recipientEmail: String,
@@ -143,9 +145,7 @@ sealed class CardReaderPaymentOrRefundState {
     }
 
     sealed class CardReaderInteracRefundState : CardReaderPaymentOrRefundState() {
-        data class LoadingData(
-            val onCancel: () -> Unit,
-        ) : CardReaderInteracRefundState(), TrackableState {
+        data class LoadingData(val onCancel: () -> Unit) : CardReaderInteracRefundState(), TrackableState {
             override val nameForTracking: String = "Loading"
         }
 

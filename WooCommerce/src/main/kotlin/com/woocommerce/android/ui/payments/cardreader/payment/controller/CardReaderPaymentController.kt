@@ -131,7 +131,10 @@ class CardReaderPaymentController(
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
 
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Use [CardReaderPaymentController.paymentState] and map to ViewState in the target [ViewModel]")
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "Use [CardReaderPaymentController.paymentState] and map to ViewState in the target [ViewModel]"
+    )
     val viewStateData: LiveData<ViewState> = viewState
 
     private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
