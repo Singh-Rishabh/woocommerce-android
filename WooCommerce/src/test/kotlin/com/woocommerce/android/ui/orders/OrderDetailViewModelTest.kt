@@ -2432,7 +2432,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given order and store currency mismatch, when edit clicked, then trigger snackbar event` () = testBlocking {
+    fun `given order and store currency mismatch, when edit clicked, then trigger snackbar event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
         whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
@@ -2450,7 +2450,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given order and store currency are same, when edit clicked, then trigger EditOrder event` () = testBlocking {
+    fun `given order and store currency are same, when edit clicked, then trigger EditOrder event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
         whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
