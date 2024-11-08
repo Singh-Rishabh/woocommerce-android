@@ -376,6 +376,7 @@ class OrderDetailViewModel @Inject constructor(
         launch {
             val isCurrencyMatch = isStoreCurrencyMatch(order.currency)
             if (!isCurrencyMatch.isMatch) {
+                tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
                 triggerEvent(
                     ShowSnackbar(
                         message = string.order_detail_edit_store_currency_mismatch,
