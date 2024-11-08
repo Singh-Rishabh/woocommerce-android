@@ -26,6 +26,7 @@ import com.woocommerce.android.tools.NetworkStatus
 import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
+import com.woocommerce.android.ui.orders.OrderNavigationTarget.EditOrder
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.PreviewReceipt
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.StartWooShippingLabelCreationFlow
 import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWithOtherValue
@@ -2446,5 +2447,24 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.onEditClicked()
 
         assertThat(viewModel.event.value).isInstanceOf(ShowSnackbar::class.java)
+    }
+
+    @Test
+    fun `given order and store currency are same, when edit clicked, then trigger EditOrder event` () = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = true, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
+        assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
     }
 }
