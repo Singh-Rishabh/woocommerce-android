@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.dagger.hilt)
     alias(libs.plugins.sentry)
@@ -149,10 +150,6 @@ android {
         sourceCompatibility JvmTarget.fromTarget(libs.versions.java.get()).target
         targetCompatibility JvmTarget.fromTarget(libs.versions.java.get()).target
         coreLibraryDesugaringEnabled true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
     }
 
     flavorDimensions "buildType"
