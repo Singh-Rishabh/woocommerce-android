@@ -317,7 +317,7 @@ class OrderDetailFragment :
 
     fun onPrepareMenu(menu: Menu) {
         menu.findItem(R.id.menu_edit_order)?.let {
-            it.isEnabled = viewModel.hasOrder() && viewModel.isOrderCurrencySameAsStore()
+            it.isEnabled = viewModel.hasOrder()
         }
 
         menu.findItem(R.id.menu_arrow_up)?.let {
