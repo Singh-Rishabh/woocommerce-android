@@ -71,7 +71,8 @@ fun BlazeCampaignCreationPreviewScreen(viewModel: BlazeCampaignCreationEditAdVie
             onMediaPickerDialogDismissed = viewModel::onMediaPickerDialogDismissed,
             onProductImagesRequested = viewModel::onProductImagesRequested,
             onMediaLibraryRequested = viewModel::onMediaLibraryRequested,
-            onSaveTapped = viewModel::onSaveTapped
+            onSaveTapped = viewModel::onSaveTapped,
+            onCtaTextChanged = viewModel::onCtaTextChanged
         )
     }
 }
@@ -88,7 +89,8 @@ private fun BlazeCampaignCreationEditAdScreen(
     onMediaPickerDialogDismissed: () -> Unit,
     onProductImagesRequested: () -> Unit,
     onMediaLibraryRequested: (DataSource) -> Unit,
-    onSaveTapped: () -> Unit
+    onSaveTapped: () -> Unit,
+    onCtaTextChanged: (String) -> Unit
 ) {
     if (viewState.isMediaPickerDialogVisible) {
         MediaPickerDialog(
@@ -123,7 +125,8 @@ private fun BlazeCampaignCreationEditAdScreen(
                 onDescriptionChanged,
                 onChangeImageTapped,
                 onPreviousSuggestionTapped,
-                onNextSuggestionTapped
+                onNextSuggestionTapped,
+                onCtaTextChanged
             )
         }
     }
@@ -137,6 +140,7 @@ fun CampaignEditAdContent(
     onChangeImageTapped: () -> Unit,
     onPreviousSuggestionTapped: () -> Unit,
     onNextSuggestionTapped: () -> Unit,
+    onCtaTextChanged: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -156,7 +160,8 @@ fun CampaignEditAdContent(
             onTagLineChanged = onTagLineChanged,
             onDescriptionChanged = onDescriptionChanged,
             onPreviousSuggestionTapped = onPreviousSuggestionTapped,
-            onNextSuggestionTapped = onNextSuggestionTapped
+            onNextSuggestionTapped = onNextSuggestionTapped,
+            onCtaTextChanged = onCtaTextChanged
         )
     }
 }
@@ -167,7 +172,8 @@ private fun AdDataSection(
     onTagLineChanged: (String) -> Unit,
     onDescriptionChanged: (String) -> Unit,
     onPreviousSuggestionTapped: () -> Unit,
-    onNextSuggestionTapped: () -> Unit
+    onNextSuggestionTapped: () -> Unit,
+    onCtaTextChanged: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -175,62 +181,16 @@ private fun AdDataSection(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box {
-            WCOutlinedTextField(
-                value = viewState.tagLine,
-                onValueChange = onTagLineChanged,
-                label = stringResource(id = string.blaze_campaign_edit_ad_change_tagline_title),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-
-            CornerCharacterWarning(
-                charsLeft = viewState.taglineCharactersRemaining,
-                modifier = Modifier.align(Alignment.TopEnd)
-            )
-        }
-
-        Text(
-            text = stringResource(
-                id = string.blaze_campaign_edit_ad_characters_remaining,
-                viewState.taglineCharactersRemaining
-            ),
-            style = MaterialTheme.typography.caption,
-            color = colorResource(id = color.color_on_surface_disabled),
-            modifier = Modifier
-                .padding(top = dimensionResource(id = dimen.minor_100))
-                .fillMaxWidth()
+        TaglineInputText(viewState, onTagLineChanged)
+        DescriptionInputText(
+            viewState,
+            onDescriptionChanged,
+            modifier = Modifier.padding(top = dimensionResource(id = dimen.major_150))
         )
-
-        Box(
-            modifier = Modifier
-                .padding(top = dimensionResource(id = dimen.major_150))
-        ) {
-            WCOutlinedTextField(
-                value = viewState.description,
-                onValueChange = onDescriptionChanged,
-                label = stringResource(id = string.blaze_campaign_edit_ad_change_description_title),
-                maxLines = 3,
-                minLines = 3,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-
-            CornerCharacterWarning(
-                charsLeft = viewState.descriptionCharactersRemaining,
-                modifier = Modifier.align(Alignment.TopEnd)
-            )
-        }
-
-        Text(
-            text = stringResource(
-                id = string.blaze_campaign_edit_ad_characters_remaining,
-                viewState.descriptionCharactersRemaining
-            ),
-            style = MaterialTheme.typography.caption,
-            color = colorResource(id = color.color_on_surface_disabled),
-            modifier = Modifier
-                .padding(top = dimensionResource(id = dimen.minor_100))
-                .fillMaxWidth()
+        CallToActionInputText(
+            viewState,
+            onCtaTextChanged,
+            modifier = Modifier.padding(top = dimensionResource(id = dimen.major_150))
         )
 
         if (viewState.suggestions.size > 1) {
@@ -269,6 +229,109 @@ private fun AdDataSection(
             }
         }
     }
+}
+
+@Composable
+private fun DescriptionInputText(
+    viewState: ViewState,
+    onDescriptionChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier) {
+        WCOutlinedTextField(
+            value = viewState.description,
+            onValueChange = onDescriptionChanged,
+            label = stringResource(id = string.blaze_campaign_edit_ad_change_description_title),
+            maxLines = 3,
+            minLines = 3,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+        )
+
+        CornerCharacterWarning(
+            charsLeft = viewState.descriptionCharactersRemaining,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
+    }
+
+    Text(
+        text = stringResource(
+            id = string.blaze_campaign_edit_ad_characters_remaining,
+            viewState.descriptionCharactersRemaining
+        ),
+        style = MaterialTheme.typography.caption,
+        color = colorResource(id = color.color_on_surface_disabled),
+        modifier = Modifier
+            .padding(top = dimensionResource(id = dimen.minor_100))
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+private fun TaglineInputText(
+    viewState: ViewState,
+    onTagLineChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier) {
+        WCOutlinedTextField(
+            value = viewState.tagLine,
+            onValueChange = onTagLineChanged,
+            label = stringResource(id = string.blaze_campaign_edit_ad_change_tagline_title),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+        )
+
+        CornerCharacterWarning(
+            charsLeft = viewState.taglineCharactersRemaining,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
+    }
+
+    Text(
+        text = stringResource(
+            id = string.blaze_campaign_edit_ad_characters_remaining,
+            viewState.taglineCharactersRemaining
+        ),
+        style = MaterialTheme.typography.caption,
+        color = colorResource(id = color.color_on_surface_disabled),
+        modifier = Modifier
+            .padding(top = dimensionResource(id = dimen.minor_100))
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+private fun CallToActionInputText(
+    viewState: ViewState,
+    onCtaTextChanged: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier) {
+        WCOutlinedTextField(
+            value = viewState.ctaText,
+            onValueChange = onCtaTextChanged,
+            label = stringResource(id = string.blaze_campaign_edit_ad_change_cta_text_title),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+        )
+
+        CornerCharacterWarning(
+            charsLeft = viewState.ctaTextCharactersRemaining,
+            modifier = Modifier.align(Alignment.TopEnd)
+        )
+    }
+
+    Text(
+        text = stringResource(
+            id = string.blaze_campaign_edit_ad_characters_remaining,
+            viewState.ctaTextCharactersRemaining
+        ),
+        style = MaterialTheme.typography.caption,
+        color = colorResource(id = color.color_on_surface_disabled),
+        modifier = Modifier
+            .padding(top = dimensionResource(id = dimen.minor_100))
+            .fillMaxWidth()
+    )
 }
 
 @Composable
@@ -380,7 +443,8 @@ fun PreviewCampaignEditAdContent() {
             onDescriptionChanged = { },
             onChangeImageTapped = { },
             onPreviousSuggestionTapped = { },
-            onNextSuggestionTapped = { }
+            onNextSuggestionTapped = { },
+            onCtaTextChanged = { },
         )
     }
 }

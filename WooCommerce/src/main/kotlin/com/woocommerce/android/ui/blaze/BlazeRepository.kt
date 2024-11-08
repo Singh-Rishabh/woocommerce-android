@@ -446,6 +446,7 @@ class BlazeRepository @Inject constructor(
     data class AiSuggestionForAd(
         val tagLine: String,
         val description: String,
+        val ctaText: String = ""
     ) : Parcelable
 
     @Parcelize
