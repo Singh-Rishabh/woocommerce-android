@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders
 
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -27,5 +28,13 @@ class IsStoreCurrencyMisMatchTest : BaseUnitTest() {
 
         assertFalse(isStoreCurrencyMatch("INR").isMatch)
         assertThat(isStoreCurrencyMatch("INR").storeCurrency).isEqualTo("USD")
+    }
+
+    @Test
+    fun `when order currency is same as store, then enable edit menu in order creation`() = testBlocking {
+        whenever(wooCommerceStore.getSiteSettings(selectedSite.get())).thenReturn(wcSettingsModel)
+
+        assertTrue(isStoreCurrencyMatch("USD").isMatch)
+        assertThat(isStoreCurrencyMatch("USD").storeCurrency).isEqualTo("USD")
     }
 }
