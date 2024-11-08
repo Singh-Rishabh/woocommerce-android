@@ -50,7 +50,7 @@ class BlazeCampaignCreationEditAdViewModel @Inject constructor(
 
     private fun loadSuggestions() {
         viewModelScope.launch {
-            val passedDetails = AiSuggestionForAd(navArgs.tagline, navArgs.description)
+            val passedDetails = AiSuggestionForAd(navArgs.tagline, navArgs.description, navArgs.ctaText)
             val suggestions = navArgs.aiSuggestionsForAd.toList()
             _viewState.update {
                 it.copy(
