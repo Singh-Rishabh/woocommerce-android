@@ -46,10 +46,8 @@ import com.woocommerce.android.ui.orders.details.ShippingLabelOnboardingReposito
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
-import com.woocommerce.android.ui.products.ParameterRepository
 import com.woocommerce.android.ui.products.addons.AddonRepository
 import com.woocommerce.android.ui.products.details.ProductDetailRepository
-import com.woocommerce.android.ui.products.models.SiteParameters
 import com.woocommerce.android.util.ContinuationWrapper
 import com.woocommerce.android.util.captureValues
 import com.woocommerce.android.util.getOrAwaitValue
@@ -95,8 +93,6 @@ import org.wordpress.android.fluxc.utils.DateUtils
 import java.math.BigDecimal
 import java.util.Date
 import java.util.concurrent.CancellationException
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class OrderDetailViewModelTest : BaseUnitTest() {
