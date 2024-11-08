@@ -1,6 +1,9 @@
 <!--
 Contains editorialized release notes. Raw release notes should go into `RELEASE-NOTES.txt`.
 -->
+## 21.1
+Our latest update brings key enhancements to streamline your WooCommerce experience! We've disabled order editing for transactions with currencies different from your store's, improved the payments hub with a sleek 3/4 screen web view, enabled easy receipt sharing via Google SMS, and fixed date range selection to correctly use your timezone. Enjoy smoother operations!
+
 ## 21.0
 Enjoy a smoother experience with improved design throughout the app. Plus, now your product images load faster and look even better with new AVIF format support. Update now for a cleaner, sharper WooCommerce app experience!
 
