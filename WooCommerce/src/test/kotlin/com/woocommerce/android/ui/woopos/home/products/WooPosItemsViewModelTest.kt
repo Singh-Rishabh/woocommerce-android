@@ -799,6 +799,45 @@ class WooPosItemsViewModelTest {
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
     }
 
+    @Test
+    fun `given variable products from data source, when view model created, then items list updated correctly`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple",
+                isDownloadable = false,
+            ),
+            ProductTestUtils.generateProduct(
+                productId = 2,
+                productName = "Product 2",
+                amount = "20.0",
+                productType = "variable",
+                isDownloadable = false,
+                isVariable = true
+            ).copy(firstImageUrl = "https://test.com")
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            // THEN
+            val value = awaitItem() as WooPosItemsViewState.Content
+
+            assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
+        }
+    }
+
     private fun createViewModel() =
         WooPosItemsViewModel(
             productsDataSource,
