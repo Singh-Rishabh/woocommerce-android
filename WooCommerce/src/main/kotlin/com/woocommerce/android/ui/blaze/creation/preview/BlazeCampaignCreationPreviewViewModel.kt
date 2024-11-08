@@ -265,6 +265,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                     it?.copy(
                         tagLine = suggestions?.firstOrNull()?.tagLine.orEmpty(),
                         description = suggestions?.firstOrNull()?.description.orEmpty(),
+                        ctaText = suggestions?.firstOrNull()?.ctaText.orEmpty()
                     )
                 }
             }
