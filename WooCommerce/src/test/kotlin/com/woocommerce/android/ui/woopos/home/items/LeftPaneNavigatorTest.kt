@@ -17,12 +17,12 @@ class LeftPaneNavigatorTest : BaseUnitTest() {
     }
 
     @Test
-    fun `initial state should be ItemListScreen`() = testBlocking {
+    fun `given initial state, then state should be ItemListScreen`() = testBlocking {
         assertEquals(LeftPaneNavigator.LeftPaneScreen.ItemListScreen, leftPaneNavigator.leftPaneScreen.first())
     }
 
     @Test
-    fun `navigate to VariationsScreen updates leftPaneScreen with VariableProductData`() = testBlocking {
+    fun `given navigate to VariationsScreen, then updates leftPaneScreen with VariableProductData`() = testBlocking {
         val sampleVariableProduct = WooPosItemNavigationData.VariableProductData(
             id = 1L,
             name = "Variable Product",
@@ -37,7 +37,7 @@ class LeftPaneNavigatorTest : BaseUnitTest() {
     }
 
     @Test
-    fun `navigate back to ItemListScreen sets leftPaneScreen to ItemListScreen`() = testBlocking {
+    fun `given navigate back to ItemListScreen from variations screen, then sets leftPaneScreen to ItemListScreen`() = testBlocking {
         leftPaneNavigator.navigateToVariationsScreen(
             WooPosItemNavigationData.VariableProductData(
                 id = 1L,
