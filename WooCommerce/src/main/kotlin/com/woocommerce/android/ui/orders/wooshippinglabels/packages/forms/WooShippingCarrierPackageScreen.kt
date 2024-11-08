@@ -28,12 +28,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
 import kotlinx.coroutines.launch
 
@@ -180,4 +183,55 @@ private fun CarrierLogo(
             .clip(RoundedCornerShape(5.dp)),
         tint = Color.Unspecified
     )
+}
+
+@Preview
+@Composable
+fun WooShippingCarrierPackageScreenPreview() {
+    WooThemeWithBackground {
+        WooShippingCarrierPackageScreen(
+            carrierPackages = mapOf(
+                Carrier(
+                    id = "dhl",
+                    name = "DHL Express",
+                    logoRes = R.drawable.dhl_logo
+                ) to listOf(
+                    CarrierPackageGroup(
+                        groupName = "Group 1",
+                        packages = listOf(
+                            PackageData(
+                                type = PackageType.BOX,
+                                name = "Package 1",
+                                description = "Description 1",
+                                length = "10",
+                                width = "10",
+                                height = "10",
+                                isSelected = false
+                            )
+                        )
+                    )
+                ),
+                Carrier(
+                    id = "usps",
+                    name = "USPS",
+                    logoRes = R.drawable.usps_logo
+                ) to listOf(
+                    CarrierPackageGroup(
+                        groupName = "Group 2",
+                        packages = listOf(
+                            PackageData(
+                                type = PackageType.BOX,
+                                name = "Package 2",
+                                description = "Description 2",
+                                length = "20",
+                                width = "20",
+                                height = "20",
+                                isSelected = false
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
 }
