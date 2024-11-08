@@ -11,6 +11,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     fun onSelectPackageClicked() { triggerEvent(StartPackageSelection) }
+    fun onPurchaseShippingLabel() { triggerEvent(LabelPurchased) }
 
     data object StartPackageSelection : Event()
+    data object LabelPurchased : Event()
 }
