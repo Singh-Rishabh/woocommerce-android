@@ -61,7 +61,7 @@ class CardReaderOnboardingFragment : BaseFragment(R.layout.fragment_card_reader_
             R.drawable.ic_back_24dp
         )
         binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         }
     }
 
