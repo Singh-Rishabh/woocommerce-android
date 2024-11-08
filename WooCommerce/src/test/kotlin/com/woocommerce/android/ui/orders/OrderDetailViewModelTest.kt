@@ -2450,6 +2450,24 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun `given order and store currency mismatch, when edit clicked, then track proper event`() = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = false, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        verify(orderDetailTracker).trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
+    }
+
+    @Test
     fun `given order and store currency are same, when edit clicked, then trigger EditOrder event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
