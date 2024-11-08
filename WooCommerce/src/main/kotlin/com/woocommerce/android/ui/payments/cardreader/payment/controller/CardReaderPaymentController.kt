@@ -1078,7 +1078,12 @@ class CardReaderPaymentController(
     private fun trackCancelledFlow(state: CardReaderPaymentOrRefundState) {
         when (state) {
             is CardReaderPaymentOrRefundState.TrackableState -> {
-                tracker.trackPaymentCancelled(state.nameForTracking)
+                when (state) {
+                    is CardReaderPaymentState ->
+                        tracker.trackPaymentCancelled(state.nameForTracking)
+                    is CardReaderInteracRefundState ->
+                        tracker.trackInteracRefundCancelled(state.nameForTracking)
+                }
             }
 
             else -> WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
