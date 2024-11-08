@@ -801,6 +801,37 @@ class WooPosProductsViewModelTest {
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
     }
 
+    @Test
+    fun `given variable product, when clicked on it, then trigger proper event`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "variable",
+                isVariable = true
+            )
+        )
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        val variationsNavigationData = WooPosItemNavigationData.VariableProductData(
+            id = 1L,
+            name = "Product 1",
+            numOfVariations = 10,
+            variationIds = emptyList()
+        )
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsUIEvent.NavigateToVariationsScreen(variationsNavigationData))
+
+        verify(leftPaneNavigator).navigateToVariationsScreen(variationsNavigationData)
+    }
+
     private fun createViewModel() =
         WooPosItemsViewModel(
             productsDataSource,
