@@ -188,7 +188,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
     private val getShippingMethodsWithOtherValue: GetShippingMethodsWithOtherValue = mock()
     private val refreshShippingMethods: RefreshShippingMethods = mock()
-    private val parameterRepository: ParameterRepository = mock()
+    private val isStoreCurrencyMatch: IsStoreCurrencyMatch = mock()
 
     private fun createViewModel() {
         createViewModel(newSavedState = savedState)
@@ -217,7 +217,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
                 paymentReceiptHelper,
                 analyticsTracker,
                 refreshShippingMethods,
-                parameterRepository,
+                isStoreCurrencyMatch,
                 getShippingMethodsWithOtherValue,
             )
         )
@@ -2432,65 +2432,5 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.onCreateShippingLabelButtonTapped()
 
         assertThat(viewModel.event.value).isInstanceOf(OrderNavigationTarget.StartShippingLabelCreationFlow::class.java)
-    }
-
-    @Test
-    fun `when order currency is different than store, then disable edit menu in order creation`() = testBlocking {
-        val nonRefundedOrder = order.copy(refundTotal = BigDecimal.ZERO)
-
-        doReturn(false).whenever(paymentCollectibilityChecker).isCollectable(any())
-
-        doReturn(nonRefundedOrder).whenever(orderDetailRepository).getOrderById(any())
-
-        doReturn(true).whenever(orderDetailRepository).fetchOrderNotes(any())
-
-        doReturn(testOrderNotes).whenever(orderDetailRepository).getOrderNotes(any())
-
-        doReturn(testOrderShipmentTrackings).whenever(orderDetailRepository).getOrderShipmentTrackings(any())
-
-        doReturn(emptyList<Refund>()).whenever(orderDetailRepository).getOrderRefunds(any())
-
-        doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).getOrderShippingLabels(any())
-        doReturn(false).whenever(addonsRepository).containsAddonsFrom(any())
-        val parameterResultMock = mock<SiteParameters> {
-            on { currencyCode } doReturn "INR"
-        }
-        doReturn(parameterResultMock).whenever(parameterRepository).getParameters("parameters_key", savedState)
-
-        createViewModel()
-        viewModel.start()
-        viewModel.isOrderCurrencySameAsStore()
-
-        assertFalse(viewModel.isOrderCurrencySameAsStore())
-    }
-
-    @Test
-    fun `when order currency is same as store, then enable edit menu in order creation`() = testBlocking {
-        val nonRefundedOrder = order.copy(refundTotal = BigDecimal.ZERO)
-
-        doReturn(false).whenever(paymentCollectibilityChecker).isCollectable(any())
-
-        doReturn(nonRefundedOrder).whenever(orderDetailRepository).getOrderById(any())
-
-        doReturn(true).whenever(orderDetailRepository).fetchOrderNotes(any())
-
-        doReturn(testOrderNotes).whenever(orderDetailRepository).getOrderNotes(any())
-
-        doReturn(testOrderShipmentTrackings).whenever(orderDetailRepository).getOrderShipmentTrackings(any())
-
-        doReturn(emptyList<Refund>()).whenever(orderDetailRepository).getOrderRefunds(any())
-
-        doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).getOrderShippingLabels(any())
-        doReturn(false).whenever(addonsRepository).containsAddonsFrom(any())
-        val parameterResultMock = mock<SiteParameters> {
-            on { currencyCode } doReturn "USD"
-        }
-        doReturn(parameterResultMock).whenever(parameterRepository).getParameters("parameters_key", savedState)
-
-        createViewModel()
-        viewModel.start()
-        viewModel.isOrderCurrencySameAsStore()
-
-        assertTrue(viewModel.isOrderCurrencySameAsStore())
     }
 }
