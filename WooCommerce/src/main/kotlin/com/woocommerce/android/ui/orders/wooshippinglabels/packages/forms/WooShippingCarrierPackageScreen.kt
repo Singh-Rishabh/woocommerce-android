@@ -3,10 +3,13 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.LeadingIconTab
 import androidx.compose.material.MaterialTheme
@@ -25,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
@@ -42,7 +46,7 @@ fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationVi
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WooShippingCarrierPackageScreen(
-    carrierPackages: Map<Carrier, List<PackageData>>
+    carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
 ) {
     val pagerState = rememberPagerState { carrierPackages.keys.size }
     Column {
@@ -116,8 +120,22 @@ private fun PackageListPager() {
 }
 
 @Composable
-private fun PackageList() {
-
+private fun PackageList(
+    modifier: Modifier,
+    packageGroups: List<CarrierPackageGroup>,
+    onPackageSelected: (PackageData, Boolean) -> Unit
+) {
+    packageGroups.forEach { group ->
+        Column {
+            Spacer(modifier = Modifier.height(8.dp))
+            PackageListSection(
+                modifier = modifier,
+                sectionHeader = group.groupName,
+                packages = group.packages,
+                onPackageSelected = onPackageSelected
+            )
+        }
+    }
 }
 
 @Composable
@@ -129,6 +147,7 @@ private fun PackageListSection(
 ) {
     Column {
         Text(text = sectionHeader)
+        Divider()
         packages.forEach { packageData ->
             WooSavedPackageListItem(
                 modifier = modifier,
