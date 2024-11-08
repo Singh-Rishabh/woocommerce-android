@@ -432,7 +432,7 @@ private fun ProductItem(
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_product_item_content_description,
         item.name,
         item.price
     )
@@ -446,7 +446,7 @@ private fun VariableProductItem(
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_variable_product_item_content_description,
         item.name,
         item.price
     )
@@ -540,7 +540,10 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 @Composable
 private fun VariableProductDetails(item: VariableProduct) {
     Text(
-        text = "${item.numOfVariations} Variations",
+        text = stringResource(
+            id = R.string.woopos_items_list_variable_product_variations,
+            item.numOfVariations
+        ),
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal
     )
