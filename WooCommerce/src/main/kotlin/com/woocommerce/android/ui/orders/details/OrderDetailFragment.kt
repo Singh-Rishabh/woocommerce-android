@@ -164,7 +164,6 @@ class OrderDetailFragment :
 
     override fun onResume() {
         super.onResume()
-        onPrepareMenu(binding.toolbar.menu)
         AnalyticsTracker.trackViewShown(this)
     }
 
