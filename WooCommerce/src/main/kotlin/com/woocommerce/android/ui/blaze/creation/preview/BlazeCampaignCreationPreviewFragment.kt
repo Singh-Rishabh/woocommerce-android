@@ -120,7 +120,7 @@ class BlazeCampaignCreationPreviewFragment : BaseFragment() {
 
     private fun handleResults() {
         handleResult<EditAdResult>(BlazeCampaignCreationEditAdFragment.EDIT_AD_RESULT) {
-            viewModel.onAdUpdated(it.tagline, it.description, it.campaignImage)
+            viewModel.onAdUpdated(it)
         }
         handleResult<ObjectiveResult>(BlazeCampaignObjectiveFragment.BLAZE_OBJECTIVE_SELECTION_RESULT) {
             viewModel.onObjectiveUpdated(it.objectiveId)

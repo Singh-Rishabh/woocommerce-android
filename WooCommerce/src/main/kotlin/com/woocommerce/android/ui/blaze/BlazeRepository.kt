@@ -194,7 +194,8 @@ class BlazeRepository @Inject constructor(
                 targetUrl = product.permalink,
                 parameters = emptyMap()
             ),
-            objectiveId = appPrefsWrapper.blazeCampaignSelectedObjective
+            objectiveId = appPrefsWrapper.blazeCampaignSelectedObjective,
+            ctaText = "TODO"
         )
     }
 
@@ -394,6 +395,7 @@ class BlazeRepository @Inject constructor(
         val productId: Long,
         val tagLine: String,
         val description: String,
+        val ctaText: String,
         val campaignImage: BlazeCampaignImage,
         val budget: Budget,
         val targetingParameters: TargetingParameters,

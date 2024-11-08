@@ -84,7 +84,8 @@ class BlazeCampaignCreationEditAdViewModel @Inject constructor(
                 EditAdResult(
                     tagline = _viewState.value.tagLine,
                     description = _viewState.value.description,
-                    campaignImage = _viewState.value.adImage
+                    campaignImage = _viewState.value.adImage,
+                    ctaText = _viewState.value.ctaText
                 )
             )
         )
@@ -230,6 +231,7 @@ class BlazeCampaignCreationEditAdViewModel @Inject constructor(
     data class EditAdResult(
         val tagline: String,
         val description: String,
-        val campaignImage: BlazeRepository.BlazeCampaignImage
+        val campaignImage: BlazeRepository.BlazeCampaignImage,
+        val ctaText: String
     ) : Parcelable
 }
