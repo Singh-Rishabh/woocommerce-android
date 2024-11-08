@@ -30,7 +30,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-class WooPosProductsViewModelTest {
+class WooPosItemsViewModelTest {
 
     @Rule
     @JvmField
