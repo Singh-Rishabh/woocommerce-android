@@ -20,6 +20,19 @@ data class PackageData(
 }
 
 @Parcelize
+data class CarrierPackageGroup(
+    val groupName: String,
+    val packages: List<PackageData>
+) : Parcelable
+
+@Parcelize
+data class Carrier(
+    val id: String,
+    val name: String,
+    val logoRes: Int? = null,
+) : Parcelable
+
+@Parcelize
 data class SavedPackageSelection(
     val packages: List<PackageData>
 ) : Parcelable {
@@ -48,9 +61,3 @@ data class CustomPackageCreationData(
         )
     }
 }
-
-data class Carrier(
-    val id: String,
-    val name: String,
-    val logoRes: Int? = null,
-)
