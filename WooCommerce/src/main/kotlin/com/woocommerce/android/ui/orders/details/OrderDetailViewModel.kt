@@ -34,6 +34,7 @@ import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.ProductImageMap.OnProductFetchedListener
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
+import com.woocommerce.android.ui.orders.CurrencyMatchResult
 import com.woocommerce.android.ui.orders.IsStoreCurrencyMatch
 import com.woocommerce.android.ui.orders.OrderNavigationTarget
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderNote
@@ -376,25 +377,33 @@ class OrderDetailViewModel @Inject constructor(
         launch {
             val isCurrencyMatch = isStoreCurrencyMatch(order.currency)
             if (!isCurrencyMatch.isMatch) {
-                tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
-                triggerEvent(
-                    ShowSnackbar(
-                        message = string.order_detail_edit_store_currency_mismatch,
-                        args = arrayOf(order.currency, isCurrencyMatch.storeCurrency.orEmpty())
-                    )
-                )
+                handleEditClickWhenCurrencyMismatch(isCurrencyMatch)
             } else {
-                tracker.trackEditButtonTapped(order.feesLines.size, order.shippingLines.size)
-                val firstGiftCard = giftCards.value?.firstOrNull()
-                triggerEvent(
-                    EditOrder(
-                        orderId = order.id,
-                        giftCard = firstGiftCard?.code,
-                        appliedDiscount = firstGiftCard?.used
-                    )
-                )
+                handleEditClick()
             }
         }
+    }
+
+    private fun handleEditClick() {
+        tracker.trackEditButtonTapped(order.feesLines.size, order.shippingLines.size)
+        val firstGiftCard = giftCards.value?.firstOrNull()
+        triggerEvent(
+            EditOrder(
+                orderId = order.id,
+                giftCard = firstGiftCard?.code,
+                appliedDiscount = firstGiftCard?.used
+            )
+        )
+    }
+
+    private fun handleEditClickWhenCurrencyMismatch(isCurrencyMatch: CurrencyMatchResult) {
+        tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
+        triggerEvent(
+            ShowSnackbar(
+                message = string.order_detail_edit_store_currency_mismatch,
+                args = arrayOf(order.currency, isCurrencyMatch.storeCurrency.orEmpty())
+            )
+        )
     }
 
     fun orderNavigationIsEnabled() = navArgs.allOrderIds?.let {
