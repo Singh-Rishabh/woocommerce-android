@@ -35,4 +35,20 @@ class LeftPaneNavigatorTest : BaseUnitTest() {
 
         assertEquals(expectedScreen, leftPaneNavigator.leftPaneScreen.first())
     }
+
+    @Test
+    fun `navigate back to ItemListScreen sets leftPaneScreen to ItemListScreen`() = testBlocking {
+        leftPaneNavigator.navigateToVariationsScreen(
+            WooPosItemNavigationData.VariableProductData(
+                id = 1L,
+                name = "Variable Product",
+                numOfVariations = 10,
+                variationIds = emptyList()
+            )
+        )
+
+        leftPaneNavigator.navigateBackToItemListScreen()
+
+        assertEquals(LeftPaneNavigator.LeftPaneScreen.ItemListScreen, leftPaneNavigator.leftPaneScreen.first())
+    }
 }
