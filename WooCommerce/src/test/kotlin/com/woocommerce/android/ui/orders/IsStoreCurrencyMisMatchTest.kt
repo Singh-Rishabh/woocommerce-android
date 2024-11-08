@@ -18,7 +18,7 @@ class IsStoreCurrencyMisMatchTest : BaseUnitTest() {
     private val wooCommerceStore: WooCommerceStore = mock()
     private val selectedSite: SelectedSite = mock()
     val wcSettingsModel = mock<WCSettingsModel> {
-        on { currencyCode } doReturn "USD"
+        on { currencyCode }.thenReturn("USD")
     }
     private val isStoreCurrencyMatch: IsStoreCurrencyMatch = IsStoreCurrencyMatch(wooCommerceStore, selectedSite)
 
