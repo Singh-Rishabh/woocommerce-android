@@ -380,7 +380,7 @@ private fun DefaultBlazeButton(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .size(40.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(20.dp))
             .background(color = colorResource(id = R.color.blaze_ad_cta_background))
     ) {
         Icon(
