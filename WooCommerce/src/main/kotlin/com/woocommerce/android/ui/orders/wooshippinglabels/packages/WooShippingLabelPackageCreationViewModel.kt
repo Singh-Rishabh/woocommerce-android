@@ -55,20 +55,20 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
-    fun onCarrierPackageSelected(packageData: PackageData, isSelected: Boolean) {
+    fun onCarrierPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
             viewState.carrierPackageSection.carrierPackages
-                .map { updateCarrierPackagesSelection(it, packageData, isSelected) }
+                .map { updateCarrierPackagesSelection(it, selectedPackage, isSelected) }
                 .let { viewState.copy(carrierPackageSection = CarrierPackageSelection(it.toMap())) }
         }
     }
 
-    fun onSavedPackageSelected(packageData: PackageData, isSelected: Boolean) {
+    fun onSavedPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
             viewState.savedPackageSelection.packages
                 .map { it.copy(isSelected = false) }
                 .toMutableList()
-                .apply { set(indexOf(packageData), packageData.copy(isSelected = isSelected)) }
+                .apply { set(indexOf(selectedPackage), selectedPackage.copy(isSelected = isSelected)) }
                 .let { SavedPackageSelection(it) }
                 .let { viewState.copy(savedPackageSelection = it) }
         }
