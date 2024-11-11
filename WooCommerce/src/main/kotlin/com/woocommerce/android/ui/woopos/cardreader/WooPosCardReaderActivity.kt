@@ -30,6 +30,12 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
         observeResult(navHostFragment)
     }
 
+    override fun finish() {
+        super.finish()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
     private fun observeResult(navHostFragment: NavHostFragment) {
         navHostFragment.childFragmentManager.setFragmentResultListener(
             WOO_POS_CARD_PAYMENT_REQUEST_KEY,
