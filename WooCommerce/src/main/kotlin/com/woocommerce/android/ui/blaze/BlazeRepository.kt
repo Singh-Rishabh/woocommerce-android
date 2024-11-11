@@ -274,6 +274,7 @@ class BlazeRepository @Inject constructor(
         )
     }
 
+    @Suppress("LongMethod")
     suspend fun createCampaign(
         campaignDetails: CampaignDetails,
         paymentMethodId: String
