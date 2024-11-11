@@ -36,6 +36,17 @@ sealed class WooPosItem(
             )
         }
     }
+
+    data class Variation(
+        override val id: Long,
+        override val name: String,
+        val price: String,
+        val imageUrl: String?,
+    ) : WooPosItem(id, name), ClickableItem {
+        override fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit) {
+            onUIEvent(WooPosItemsUIEvent.ItemClicked(this))
+        }
+    }
 }
 
 interface ClickableItem {
