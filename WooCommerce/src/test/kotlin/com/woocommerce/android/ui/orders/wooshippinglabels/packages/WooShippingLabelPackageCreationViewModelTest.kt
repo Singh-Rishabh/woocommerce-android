@@ -204,17 +204,25 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
 
-        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages, fetchCarrierPackages)
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
 
-        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap { it.packages }?.filter { it.isSelected }
+        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap {
+            it.packages
+        }?.filter { it.isSelected }
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `onCarrierPackageSelected selects only one package at a time with multiple carriers`() = testBlocking {
         var lastViewState: ViewState? = null
         val carrier1 = Carrier(id = "dhl", name = "DHL Express", logoRes = R.drawable.dhl_logo)
@@ -271,12 +279,19 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
 
-        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages, fetchCarrierPackages)
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
         sut.onCarrierPackageSelected(package2, true)
 
-        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap { it.packages }?.filter { it.isSelected }
+        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap {
+            it.packages
+        }?.filter { it.isSelected }
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package2.copy(isSelected = true))
