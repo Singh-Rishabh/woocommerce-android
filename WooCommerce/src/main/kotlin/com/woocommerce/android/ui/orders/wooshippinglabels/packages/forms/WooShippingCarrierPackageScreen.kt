@@ -11,10 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.LeadingIconTab
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
@@ -57,10 +60,16 @@ fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationVi
 @Composable
 fun WooShippingCarrierPackageScreen(
     modifier: Modifier = Modifier,
+    isAddPackageEnabled: Boolean = false,
+    onAddPackageClick: () -> Unit = {},
     carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
 ) {
     val pagerState = rememberPagerState { carrierPackages.keys.size }
-    Column (modifier = modifier.fillMaxSize()) {
+    Column (
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.surface)
+    ) {
         CarrierTabRow(
             modifier = modifier,
             pagerState = pagerState,
@@ -68,11 +77,22 @@ fun WooShippingCarrierPackageScreen(
         )
         PackageListPager(
             modifier = modifier
-                .weight(1f)
-                .background(MaterialTheme.colors.surface),
+                .weight(1f),
             pagerState = pagerState,
             carrierPackages = carrierPackages
         )
+        Column {
+            Divider()
+            Button(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                enabled = isAddPackageEnabled,
+                onClick = onAddPackageClick
+            ) {
+                Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
+            }
+        }
     }
 }
 
@@ -134,7 +154,6 @@ private fun PackageListPager(
         val carrierForPageIndex = carrierPackages.keys.toList()[page]
         val carrierPackageGroups = carrierPackages[carrierForPageIndex] ?: emptyList()
         PackageList(
-            modifier = modifier,
             packageGroups = carrierPackageGroups,
             onPackageSelected = { _, _ -> }
         )
@@ -143,7 +162,6 @@ private fun PackageListPager(
 
 @Composable
 private fun PackageList(
-    modifier: Modifier,
     packageGroups: List<CarrierPackageGroup>,
     onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
@@ -151,7 +169,6 @@ private fun PackageList(
         Column {
             Spacer(modifier = Modifier.height(8.dp))
             PackageListSection(
-                modifier = modifier,
                 sectionHeader = group.groupName,
                 packages = group.packages,
                 onPackageSelected = onPackageSelected
@@ -162,21 +179,20 @@ private fun PackageList(
 
 @Composable
 private fun PackageListSection(
-    modifier: Modifier,
     sectionHeader: String,
     packages: List<PackageData>,
     onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
     Column (
-        modifier = modifier
-            .padding(start = 8.dp),
+        modifier = Modifier
+            .padding(start = 8.dp)
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
             text = sectionHeader,
             style = MaterialTheme.typography.body1,
             color = colorResource(id = R.color.color_on_surface_disabled)
-
         )
         Divider()
         packages.forEach { packageData ->
@@ -234,6 +250,29 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 length = "20",
                                 width = "20",
                                 height = "20",
+                                isSelected = false
+                            )
+                        )
+                    ),
+                    CarrierPackageGroup(
+                        groupName = "Group 2",
+                        packages = listOf(
+                            PackageData(
+                                type = PackageType.BOX,
+                                name = "Package 3 - Carrier 1",
+                                description = "Description 3",
+                                length = "30",
+                                width = "30",
+                                height = "30",
+                                isSelected = false
+                            ),
+                            PackageData(
+                                type = PackageType.BOX,
+                                name = "Package 4 - Carrier 1",
+                                description = "Description 4",
+                                length = "40",
+                                width = "40",
+                                height = "40",
                                 isSelected = false
                             )
                         )
