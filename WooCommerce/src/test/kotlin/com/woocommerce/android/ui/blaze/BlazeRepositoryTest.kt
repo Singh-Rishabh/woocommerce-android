@@ -133,7 +133,7 @@ class BlazeRepositoryTest : BaseUnitTest() {
                 budget = DEFAULT_BUDGET,
                 targetingParameters = EMPTY_TARGETING_PARAMETERS,
                 destinationParameters = EMPTY_DESTINATION_PARAMETERS,
-                    objectiveId = "sales",
+                objectiveId = "sales",
             )
         private val ENDLESS_CAMPAIGN_DETAILS = DEFAULT_CAMPAIGN_DETAILS.copy(
             budget = DEFAULT_BUDGET.copy(isEndlessCampaign = true)
