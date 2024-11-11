@@ -3,9 +3,11 @@ package com.woocommerce.android.ui.woopos.home.items.variations
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -14,14 +16,25 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.items.ItemsList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
+import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun WooPosVariationsScreen(
@@ -29,6 +42,23 @@ fun WooPosVariationsScreen(
     variableProductData: VariableProductData,
     onBackClicked: () -> Unit
 ) {
+    val viewModel: WooPosVariationsViewModel = hiltViewModel()
+    LaunchedEffect(variableProductData.id) {
+        viewModel.init(variableProductData.id)
+    }
+    val state = viewModel.viewState
+    WooPosVariationsScreens(modifier, viewModel, onBackClicked, variableProductData, state)
+}
+
+@Composable
+private fun WooPosVariationsScreens(
+    modifier: Modifier,
+    viewModel: WooPosVariationsViewModel,
+    onBackClicked: () -> Unit,
+    variableProductData: VariableProductData,
+    state: StateFlow<WooPosVariationsViewState>
+) {
+    val itemState = state.collectAsState()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -47,6 +77,16 @@ fun WooPosVariationsScreen(
                 variableProductData = variableProductData,
                 onBackClicked = onBackClicked
             )
+            when (val itemsState = itemState.value) {
+                is WooPosVariationsViewState.Content -> {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ItemsList(state = itemsState, onItemClicked = {}) {
+                        viewModel.loadMore(variableProductData.id)
+                    }
+                }
+
+                else -> {}
+            }
         }
     }
 }
@@ -101,19 +141,49 @@ private fun VariationsToolbar(
     }
 }
 
-@Composable
-@WooPosPreview
-fun WooPosVariationsScreenPreview() {
-    WooPosTheme {
-        WooPosVariationsScreen(
-            modifier = Modifier,
-            variableProductData = VariableProductData(
-                id = 0,
-                name = "Variable Product",
-                numOfVariations = 20,
-                variationIds = emptyList()
-            )
-        ) {
-        }
-    }
-}
+//@Composable
+//@WooPosPreview
+//fun WooPosVariationsScreenPreview() {
+//    val productState = MutableStateFlow(
+//        WooPosVariationsViewState.Content(
+//            items = listOf(
+//                WooPosItem.Variation(
+//                    1,
+//                    name = "Product 1, Product 1, Product 1, " +
+//                        "Product 1, Product 1, Product 1, Product 1, Product 1" +
+//                        "Product 1, Product 1, Product 1, Product 1, Product 1",
+//                    price = "10.0$",
+//                    imageUrl = null,
+//                ),
+//                WooPosItem.Variation(
+//                    2,
+//                    name = "Product 2",
+//                    price = "2000.00$",
+//                    imageUrl = null,
+//                ),
+//                WooPosItem.Variation(
+//                    3,
+//                    name = "Product 3",
+//                    price = "1.0$",
+//                    imageUrl = null,
+//                ),
+//            ),
+//            loadingMore = false,
+//            reloadingProductsWithPullToRefresh = true,
+//        )
+//    )
+//    WooPosTheme {
+//        WooPosVariationsScreens(
+//            modifier = Modifier,
+//            viewModel = ,
+//            onBackClicked = {},
+//            variableProductData = VariableProductData(
+//                id = 0,
+//                name = "Variable Product",
+//                numOfVariations = 20,
+//                variationIds = emptyList()
+//            ),
+//            state = productState
+//        )
+//    }
+//}
