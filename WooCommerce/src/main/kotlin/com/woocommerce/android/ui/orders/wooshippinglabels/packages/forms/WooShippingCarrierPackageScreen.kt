@@ -51,7 +51,8 @@ import kotlinx.coroutines.launch
 fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingCarrierPackageScreen(
-        carrierPackages = viewState?.carrierPackageSection?.carrierPackages ?: emptyMap()
+        carrierPackages = viewState?.carrierPackageSection?.carrierPackages ?: emptyMap(),
+        onPackageSelected = viewModel::onCarrierPackageSelected,
     )
 }
 
@@ -60,6 +61,7 @@ fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationVi
 fun WooShippingCarrierPackageScreen(
     modifier: Modifier = Modifier,
     carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
+    onPackageSelected: (PackageData, Boolean) -> Unit,
     isAddPackageEnabled: Boolean = false,
     onAddPackageClick: () -> Unit = {}
 ) {
@@ -78,7 +80,8 @@ fun WooShippingCarrierPackageScreen(
             modifier = modifier
                 .weight(1f),
             pagerState = pagerState,
-            carrierPackages = carrierPackages
+            carrierPackages = carrierPackages,
+            onPackageSelected = onPackageSelected
         )
         Divider()
         Button(
@@ -141,7 +144,8 @@ private fun CarrierTabRow(
 private fun PackageListPager(
     modifier: Modifier,
     pagerState: PagerState,
-    carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
+    carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
+    onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
     HorizontalPager(
         state = pagerState,
@@ -152,7 +156,7 @@ private fun PackageListPager(
         val carrierPackageGroups = carrierPackages[carrierForPageIndex] ?: emptyList()
         PackageList(
             packageGroups = carrierPackageGroups,
-            onPackageSelected = { _, _ -> }
+            onPackageSelected = onPackageSelected
         )
     }
 }
@@ -304,7 +308,8 @@ fun WooShippingCarrierPackageScreenPreview() {
                         )
                     )
                 )
-            )
+            ),
+            onPackageSelected = { _, _ -> }
         )
     }
 }
