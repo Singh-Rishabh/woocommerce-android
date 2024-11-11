@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
@@ -158,6 +159,25 @@ class WooPosVariationsViewModelTest {
         wooPosVariationsViewModel.viewState.test {
             // THEN
             val value = awaitItem() as WooPosVariationsViewState.Content
+            assertTrue(value.reloadingProductsWithPullToRefresh)
+        }
+    }
+
+    @Test
+    fun `given view state is Loading, when pull to refreshed, then view state is updated with proper variation content`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+            emptyFlow()
+        )
+        whenever(getProductById.invoke(any())).thenReturn(
+            ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+        )
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
+        wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(1L))
+
+        wooPosVariationsViewModel.viewState.test {
+            // THEN
+            val value = awaitItem() as WooPosVariationsViewState.Loading
             assertTrue(value.reloadingProductsWithPullToRefresh)
         }
     }
