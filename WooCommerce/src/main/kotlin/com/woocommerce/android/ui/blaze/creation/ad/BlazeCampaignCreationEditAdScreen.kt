@@ -237,6 +237,7 @@ private fun DescriptionInputText(
     onDescriptionChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isError = viewState.description.isEmpty()
     Box(modifier = modifier) {
         WCOutlinedTextField(
             value = viewState.description,
@@ -244,7 +245,16 @@ private fun DescriptionInputText(
             label = stringResource(id = string.blaze_campaign_edit_ad_change_description_title),
             maxLines = 3,
             minLines = 3,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            helperText = when {
+                isError -> stringResource(id = string.blaze_campaign_edit_ad_change_description_empty_error)
+                else ->
+                    stringResource(
+                        id = string.blaze_campaign_edit_ad_characters_remaining,
+                        viewState.descriptionCharactersRemaining
+                    )
+            },
+            isError = isError
         )
 
         CornerCharacterWarning(
@@ -252,18 +262,6 @@ private fun DescriptionInputText(
             modifier = Modifier.align(Alignment.TopEnd)
         )
     }
-
-    Text(
-        text = stringResource(
-            id = string.blaze_campaign_edit_ad_characters_remaining,
-            viewState.descriptionCharactersRemaining
-        ),
-        style = MaterialTheme.typography.caption,
-        color = colorResource(id = color.color_on_surface_disabled),
-        modifier = Modifier
-            .padding(top = dimensionResource(id = dimen.minor_100))
-            .fillMaxWidth()
-    )
 }
 
 @Composable
@@ -272,13 +270,23 @@ private fun TaglineInputText(
     onTagLineChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isError = viewState.tagLine.isEmpty()
     Box(modifier = modifier) {
         WCOutlinedTextField(
             value = viewState.tagLine,
             onValueChange = onTagLineChanged,
             label = stringResource(id = string.blaze_campaign_edit_ad_change_tagline_title),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            helperText = when {
+                isError -> stringResource(id = string.blaze_campaign_edit_ad_change_tagline_empty_error)
+                else ->
+                    stringResource(
+                        id = string.blaze_campaign_edit_ad_characters_remaining,
+                        viewState.taglineCharactersRemaining
+                    )
+            },
+            isError = isError
         )
 
         CornerCharacterWarning(
@@ -286,18 +294,6 @@ private fun TaglineInputText(
             modifier = Modifier.align(Alignment.TopEnd)
         )
     }
-
-    Text(
-        text = stringResource(
-            id = string.blaze_campaign_edit_ad_characters_remaining,
-            viewState.taglineCharactersRemaining
-        ),
-        style = MaterialTheme.typography.caption,
-        color = colorResource(id = color.color_on_surface_disabled),
-        modifier = Modifier
-            .padding(top = dimensionResource(id = dimen.minor_100))
-            .fillMaxWidth()
-    )
 }
 
 @Composable
@@ -312,7 +308,11 @@ private fun CallToActionInputText(
             onValueChange = onCtaTextChanged,
             label = stringResource(id = string.blaze_campaign_edit_ad_change_cta_text_title),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            helperText = stringResource(
+                id = string.blaze_campaign_edit_ad_characters_remaining,
+                viewState.ctaTextCharactersRemaining
+            ),
         )
 
         CornerCharacterWarning(
@@ -320,18 +320,6 @@ private fun CallToActionInputText(
             modifier = Modifier.align(Alignment.TopEnd)
         )
     }
-
-    Text(
-        text = stringResource(
-            id = string.blaze_campaign_edit_ad_characters_remaining,
-            viewState.ctaTextCharactersRemaining
-        ),
-        style = MaterialTheme.typography.caption,
-        color = colorResource(id = color.color_on_surface_disabled),
-        modifier = Modifier
-            .padding(top = dimensionResource(id = dimen.minor_100))
-            .fillMaxWidth()
-    )
 }
 
 @Composable
