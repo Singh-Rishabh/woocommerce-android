@@ -1,9 +1,11 @@
 package com.woocommerce.android.e2e.tests.screenshot
 
+import android.Manifest
 import android.util.Log
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.GrantPermissionRule
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.BuildConfig
 import com.woocommerce.android.e2e.helpers.InitializationRule
@@ -45,6 +47,18 @@ class ScreenshotTest : TestBase(failOnUnmatchedWireMockRequests = false) {
     val localeTestRule = LocaleTestRule()
 
     @get:Rule(order = 4)
+    var locationPermissionRule: GrantPermissionRule? = GrantPermissionRule
+        .grant(Manifest.permission.ACCESS_FINE_LOCATION)
+
+    @get:Rule(order = 5)
+    var bluetoothConnectPermissionRule: GrantPermissionRule? = GrantPermissionRule
+        .grant(Manifest.permission.BLUETOOTH_CONNECT)
+
+    @get:Rule(order = 6)
+    var bluetoothScanPermissionRule: GrantPermissionRule? = GrantPermissionRule
+        .grant(Manifest.permission.BLUETOOTH_SCAN)
+
+    @get:Rule(order = 7)
     var activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Inject lateinit var wooNotificationBuilder: WooNotificationBuilder
