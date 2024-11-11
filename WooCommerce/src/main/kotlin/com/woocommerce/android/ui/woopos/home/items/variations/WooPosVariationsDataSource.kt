@@ -17,9 +17,9 @@ class WooPosVariationsDataSource @Inject constructor(
         return handler.getVariationsFlow(productId)
     }
 
-    suspend fun fetchVariations(productId: Long, forceRefresh: Boolean = true) {
+    suspend fun fetchVariations(productId: Long, forceRefresh: Boolean = true): Result<Unit> {
         val result = handler.fetchVariations(productId, forceRefresh = forceRefresh)
-        if (result.isSuccess) {
+        return if (result.isSuccess) {
             Result.success(Unit)
         } else {
             result.logFailure()
