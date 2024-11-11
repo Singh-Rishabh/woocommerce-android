@@ -2,10 +2,14 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -52,16 +56,20 @@ fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationVi
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WooShippingCarrierPackageScreen(
+    modifier: Modifier = Modifier,
     carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
 ) {
     val pagerState = rememberPagerState { carrierPackages.keys.size }
-    Column {
+    Column (modifier = modifier.fillMaxSize()) {
         CarrierTabRow(
+            modifier = modifier,
             pagerState = pagerState,
             carriers = carrierPackages.keys.toList()
         )
         PackageListPager(
-            modifier = Modifier.weight(1f),
+            modifier = modifier
+                .weight(1f)
+                .background(MaterialTheme.colors.surface),
             pagerState = pagerState,
             carrierPackages = carrierPackages
         )
@@ -71,11 +79,13 @@ fun WooShippingCarrierPackageScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CarrierTabRow(
+    modifier: Modifier,
     pagerState: PagerState,
     carriers: List<Carrier>
 ) {
     val scope = rememberCoroutineScope()
     ScrollableTabRow(
+        modifier = modifier.fillMaxWidth(),
         selectedTabIndex = pagerState.currentPage,
         edgePadding = dimensionResource(R.dimen.major_100),
         backgroundColor = MaterialTheme.colors.surface,
@@ -157,12 +167,21 @@ private fun PackageListSection(
     packages: List<PackageData>,
     onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
-    Column {
-        Text(text = sectionHeader)
+    Column (
+        modifier = modifier
+            .padding(start = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            text = sectionHeader,
+            style = MaterialTheme.typography.body1,
+            color = colorResource(id = R.color.color_on_surface_disabled)
+
+        )
         Divider()
         packages.forEach { packageData ->
             WooSavedPackageListItem(
-                modifier = modifier,
+                modifier = Modifier.padding(start = 16.dp),
                 packageData = packageData,
                 onPackageSelected = onPackageSelected
             )
@@ -201,7 +220,7 @@ fun WooShippingCarrierPackageScreenPreview() {
                         packages = listOf(
                             PackageData(
                                 type = PackageType.BOX,
-                                name = "Package 1",
+                                name = "Package 1 - Carrier 1",
                                 description = "Description 1",
                                 length = "10",
                                 width = "10",
@@ -210,7 +229,7 @@ fun WooShippingCarrierPackageScreenPreview() {
                             ),
                             PackageData(
                                 type = PackageType.BOX,
-                                name = "Package 2",
+                                name = "Package 2 - Carrier 1",
                                 description = "Description 2",
                                 length = "20",
                                 width = "20",
@@ -230,7 +249,7 @@ fun WooShippingCarrierPackageScreenPreview() {
                         packages = listOf(
                             PackageData(
                                 type = PackageType.BOX,
-                                name = "Package 1",
+                                name = "Package 1 - Carrier 2",
                                 description = "Description 1",
                                 length = "10",
                                 width = "10",
@@ -239,7 +258,7 @@ fun WooShippingCarrierPackageScreenPreview() {
                             ),
                             PackageData(
                                 type = PackageType.BOX,
-                                name = "Package 2",
+                                name = "Package 2 Carrier - 2",
                                 description = "Description 2",
                                 length = "20",
                                 width = "20",
