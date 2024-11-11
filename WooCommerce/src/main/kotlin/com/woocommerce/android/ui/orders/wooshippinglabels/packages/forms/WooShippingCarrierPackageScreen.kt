@@ -60,9 +60,9 @@ fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationVi
 @Composable
 fun WooShippingCarrierPackageScreen(
     modifier: Modifier = Modifier,
+    carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
     isAddPackageEnabled: Boolean = false,
-    onAddPackageClick: () -> Unit = {},
-    carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
+    onAddPackageClick: () -> Unit = {}
 ) {
     val pagerState = rememberPagerState { carrierPackages.keys.size }
     Column (
@@ -81,17 +81,15 @@ fun WooShippingCarrierPackageScreen(
             pagerState = pagerState,
             carrierPackages = carrierPackages
         )
-        Column {
-            Divider()
-            Button(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                enabled = isAddPackageEnabled,
-                onClick = onAddPackageClick
-            ) {
-                Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
-            }
+        Divider()
+        Button(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            enabled = isAddPackageEnabled,
+            onClick = onAddPackageClick
+        ) {
+            Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
         }
     }
 }
@@ -165,8 +163,8 @@ private fun PackageList(
     packageGroups: List<CarrierPackageGroup>,
     onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
-    packageGroups.forEach { group ->
-        Column {
+    Column(modifier = Modifier.fillMaxSize()) {
+        packageGroups.forEach { group ->
             Spacer(modifier = Modifier.height(8.dp))
             PackageListSection(
                 sectionHeader = group.groupName,
