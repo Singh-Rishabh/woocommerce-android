@@ -5,6 +5,7 @@ import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsDataSource
+import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsUIEvents
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,6 +23,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class WooPosVariationsViewModelTest {
@@ -130,6 +132,33 @@ class WooPosVariationsViewModelTest {
             assertThat(value.items[2].id).isEqualTo(4)
             assertFalse(value.loadingMore)
             assertFalse(value.reloadingProductsWithPullToRefresh)
+        }
+    }
+
+    @Test
+    fun `given view state is content, when pull to refreshed, then view state is updated with proper variation content`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+            flowOf(
+                listOf(
+                    ProductTestUtils.generateProductVariation(1L, 2L),
+                    ProductTestUtils.generateProductVariation(1L, 3L),
+                    ProductTestUtils.generateProductVariation(1L, 4L),
+                )
+            )
+        )
+        whenever(getProductById.invoke(any())).thenReturn(
+            ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+        )
+
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
+        wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(1L))
+        advanceUntilIdle()
+
+        wooPosVariationsViewModel.viewState.test {
+            // THEN
+            val value = awaitItem() as WooPosVariationsViewState.Content
+            assertTrue(value.reloadingProductsWithPullToRefresh)
         }
     }
 }
