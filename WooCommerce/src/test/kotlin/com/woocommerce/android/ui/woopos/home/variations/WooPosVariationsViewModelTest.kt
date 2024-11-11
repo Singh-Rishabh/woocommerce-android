@@ -59,4 +59,14 @@ class WooPosVariationsViewModelTest {
 
         verify(variationsDataSource).fetchVariations(eq(1L), any())
     }
+
+    @Test
+    fun `given view model init, then API call is made to fetch variation with forceRefresh set to true`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
+
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
+
+        verify(variationsDataSource).fetchVariations(1L, forceRefresh = true)
+    }
 }
