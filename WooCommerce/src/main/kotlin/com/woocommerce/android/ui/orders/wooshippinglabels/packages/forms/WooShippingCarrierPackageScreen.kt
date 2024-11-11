@@ -50,9 +50,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
-    viewState.apply { }
     WooShippingCarrierPackageScreen(
-        carrierPackages = emptyMap()
+        carrierPackages = viewState?.carrierPackageSection?.carrierPackages ?: emptyMap()
     )
 }
 
