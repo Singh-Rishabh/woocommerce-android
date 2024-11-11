@@ -136,6 +136,7 @@ class SingleOrderScreen : Screen(R.id.orderStatus_subtitle) {
     }
 
     fun tapOnCollectPayment(): PaymentSelectionScreen {
+        scrollTo(R.id.paymentInfo_collectCardPresentPaymentButton)
         clickOn(R.id.paymentInfo_collectCardPresentPaymentButton)
         return PaymentSelectionScreen()
     }
