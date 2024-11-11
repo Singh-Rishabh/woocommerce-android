@@ -58,20 +58,8 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     fun onCarrierPackageSelected(packageData: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
             viewState.carrierPackageSection.carrierPackages
-                .map { carrierPackages ->
-                    carrierPackages.value.map { packageGroup ->
-                        packageGroup.packages
-                            .map { it.copy(isSelected = false) }
-                            .toMutableList()
-                            .apply {
-                                indexOf(packageData)
-                                    .takeIf { it != -1 }
-                                    ?.let { set(it, packageData.copy(isSelected = isSelected)) }
-                                    ?: this
-                            }
-                            .let { packageGroup.copy(packages = it) }
-                    }.let { carrierPackages.key to it }
-                }.let { viewState.copy(carrierPackageSection = CarrierPackageSelection(it.toMap())) }
+                .map { updateCarrierPackagesSelection(it, packageData, isSelected) }
+                .let { viewState.copy(carrierPackageSection = CarrierPackageSelection(it.toMap())) }
         }
     }
 
@@ -133,6 +121,23 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             it.copy(customPackageCreationData = newPackageData)
         }
     }
+
+    private fun updateCarrierPackagesSelection(
+        carrierPackages: Map.Entry<Carrier, List<CarrierPackageGroup>>,
+        packageData: PackageData,
+        isSelected: Boolean
+    ) = carrierPackages.value.map { packageGroup ->
+        packageGroup.packages
+            .map { it.copy(isSelected = false) }
+            .toMutableList()
+            .apply {
+                indexOf(packageData)
+                    .takeIf { it != -1 }
+                    ?.let { set(it, packageData.copy(isSelected = isSelected)) }
+                    ?: this
+            }
+            .let { packageGroup.copy(packages = it) }
+    }.let { carrierPackages.key to it }
 
     @Parcelize
     data class ViewState(
