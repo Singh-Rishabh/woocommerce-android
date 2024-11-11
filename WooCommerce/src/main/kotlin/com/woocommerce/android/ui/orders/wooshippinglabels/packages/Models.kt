@@ -20,6 +20,11 @@ data class PackageData(
 }
 
 @Parcelize
+data class CarrierPackageSelection(
+    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
+) : Parcelable
+
+@Parcelize
 data class CarrierPackageGroup(
     val groupName: String,
     val packages: List<PackageData>
