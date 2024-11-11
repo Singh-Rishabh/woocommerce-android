@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -193,7 +195,7 @@ fun AdDetailsHeader(
     onEditAdClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CampaignHeader(
+    AdPreview(
         adDetails = adDetails,
         onEditAdClicked = onEditAdClicked,
         modifier = modifier
@@ -205,7 +207,7 @@ fun AdDetailsHeader(
 }
 
 @Composable
-fun CampaignHeader(
+fun AdPreview(
     adDetails: AdDetails,
     onEditAdClicked: () -> Unit,
     modifier: Modifier = Modifier
@@ -263,13 +265,21 @@ fun CampaignHeader(
                         style = MaterialTheme.typography.subtitle1,
                         fontWeight = FontWeight.Bold,
                     )
+                    if (adDetails.ctaText.isEmpty()) {
+                        DefaultBlazeButton(
+                            modifier = Modifier
+                                .padding(start = 16.dp)
+                                .align(Alignment.Top)
+                        )
+                    }
+                }
+                if (adDetails.ctaText.isNotEmpty()) {
                     WCColoredButton(
+                        modifier = Modifier.padding(top = 8.dp),
                         text = adDetails.ctaText,
-                        modifier = Modifier
-                            .padding(start = 16.dp),
                         colors = ButtonDefaults.buttonColors(
-                            contentColor = colorResource(id = R.color.color_on_secondary),
-                            backgroundColor = colorResource(id = R.color.blaze_campaign_preview_shop_now_button),
+                            contentColor = colorResource(id = R.color.color_on_primary_surface),
+                            backgroundColor = colorResource(id = R.color.blaze_ad_cta_background),
                         ),
                         onClick = { /*TODO*/ },
                     )
@@ -362,6 +372,26 @@ private fun CampaignPropertyGroupItem(
                 Divider(color = borderColor, thickness = borderWidth)
             }
         }
+    }
+}
+
+@Composable
+private fun DefaultBlazeButton(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(color = colorResource(id = R.color.blaze_ad_cta_background))
+    ) {
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+            contentDescription = null,
+            tint = colorResource(id = R.color.color_on_primary_surface),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .size(32.dp)
+                .padding(6.dp)
+        )
     }
 }
 
