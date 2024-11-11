@@ -21,6 +21,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
 class WooPosVariationsViewModelTest {
@@ -127,6 +128,8 @@ class WooPosVariationsViewModelTest {
             assertThat(value.items[0].id).isEqualTo(2)
             assertThat(value.items[1].id).isEqualTo(3)
             assertThat(value.items[2].id).isEqualTo(4)
+            assertFalse(value.loadingMore)
+            assertFalse(value.reloadingProductsWithPullToRefresh)
         }
     }
 }
