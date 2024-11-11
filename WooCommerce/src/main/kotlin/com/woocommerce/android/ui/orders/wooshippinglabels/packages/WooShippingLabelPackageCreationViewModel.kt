@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchCarrierPackagesFromStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val resourceProvider: ResourceProvider,
-    private val fetchSavedPackages: FetchSavedPackagesFromStore
+    private val fetchSavedPackages: FetchSavedPackagesFromStore,
+    private val fetchCarrierPackages: FetchCarrierPackagesFromStore
 ) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
@@ -46,7 +48,10 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     init {
         _viewState.update { viewState ->
-            viewState.copy(savedPackageSelection = SavedPackageSelection(fetchSavedPackages()))
+            viewState.copy(
+                savedPackageSelection = SavedPackageSelection(fetchSavedPackages()),
+                carrierPackageSection = CarrierPackageSelection(fetchCarrierPackages())
+            )
         }
     }
 
