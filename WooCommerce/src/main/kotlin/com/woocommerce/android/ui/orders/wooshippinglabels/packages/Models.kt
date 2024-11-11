@@ -20,11 +20,6 @@ data class PackageData(
 }
 
 @Parcelize
-data class CarrierPackageSelection(
-    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
-) : Parcelable
-
-@Parcelize
 data class CarrierPackageGroup(
     val groupName: String,
     val packages: List<PackageData>
@@ -36,6 +31,16 @@ data class Carrier(
     val name: String,
     val logoRes: Int? = null,
 ) : Parcelable
+
+@Parcelize
+data class CarrierPackageSelection(
+    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
+) : Parcelable {
+    val hasSelection: Boolean
+        get() = carrierPackages.values.flatten().find { group ->
+            group.packages.find { it.isSelected } != null
+        } != null
+}
 
 @Parcelize
 data class SavedPackageSelection(
