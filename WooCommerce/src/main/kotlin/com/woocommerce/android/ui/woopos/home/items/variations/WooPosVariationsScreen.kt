@@ -9,15 +9,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -47,21 +52,39 @@ fun WooPosVariationsScreen(
         viewModel.init(variableProductData.id)
     }
     val state = viewModel.viewState
-    WooPosVariationsScreens(modifier, viewModel, onBackClicked, variableProductData, state)
+    WooPosVariationsScreens(
+        modifier,
+        onBackClicked,
+        onEndOfItemListReached = {
+            viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(variableProductData.id))
+        },
+        onPullToRefresh = {
+            viewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(variableProductData.id))
+        },
+        variableProductData,
+        state
+    )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun WooPosVariationsScreens(
     modifier: Modifier,
-    viewModel: WooPosVariationsViewModel,
     onBackClicked: () -> Unit,
+    onEndOfItemListReached: () -> Unit,
+    onPullToRefresh: () -> Unit,
     variableProductData: VariableProductData,
     state: StateFlow<WooPosVariationsViewState>
 ) {
     val itemState = state.collectAsState()
+    val pullToRefreshState = rememberPullRefreshState(
+        itemState.value.reloadingProductsWithPullToRefresh,
+        onPullToRefresh
+    )
     Box(
         modifier = modifier
             .fillMaxSize()
+            .pullRefresh(pullToRefreshState)
             .padding(
                 start = 16.dp.toAdaptivePadding(),
                 end = 16.dp.toAdaptivePadding(),
@@ -81,13 +104,18 @@ private fun WooPosVariationsScreens(
                 is WooPosVariationsViewState.Content -> {
                     Spacer(modifier = Modifier.height(16.dp))
                     ItemsList(state = itemsState, onItemClicked = {}) {
-                        viewModel.loadMore(variableProductData.id)
+                        onEndOfItemListReached()
                     }
                 }
 
                 else -> {}
             }
         }
+        PullRefreshIndicator(
+            modifier = Modifier.align(Alignment.TopCenter),
+            refreshing = itemState.value.reloadingProductsWithPullToRefresh,
+            state = pullToRefreshState
+        )
     }
 }
 

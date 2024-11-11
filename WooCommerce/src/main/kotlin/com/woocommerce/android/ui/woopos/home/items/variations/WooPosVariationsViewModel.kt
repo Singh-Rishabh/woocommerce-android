@@ -37,10 +37,18 @@ class WooPosVariationsViewModel @Inject constructor(
     private var loadMoreJob: Job? = null
 
     fun init(productId: Long) {
+        fetchVariations(productId = productId, withPullToRefresh = false, withCart = true)
+    }
+
+    private fun fetchVariations(productId: Long, withPullToRefresh: Boolean, withCart: Boolean) {
+        _viewState.value = if (withPullToRefresh) {
+            buildProductsReloadingState()
+        } else {
+            WooPosVariationsViewState.Loading(withCart = withCart)
+        }
         fetchJob?.cancel()
 
         fetchJob = viewModelScope.launch {
-            _viewState.value = WooPosVariationsViewState.Loading(withCart = true)
             val product = getProductById(productId)
 
             variationsDataSource.fetchVariations(productId, forceRefresh = true)
@@ -48,19 +56,27 @@ class WooPosVariationsViewModel @Inject constructor(
             variationsDataSource.getVariationsFlow(productId).collect { variationList ->
                 _viewState.value = WooPosVariationsViewState.Content(
                     items = variationList.map {
-                    WooPosItem.Variation(
-                        id = it.remoteVariationId,
-                        name = it.getName(product),
-                        price = it.priceWithCurrency ?: "",
-                        imageUrl = it.image?.source
-                    )
-                },
+                        WooPosItem.Variation(
+                            id = it.remoteVariationId,
+                            name = it.getName(product),
+                            price = it.priceWithCurrency ?: "",
+                            imageUrl = it.image?.source
+                        )
+                    },
                     loadingMore = false,
                     reloadingProductsWithPullToRefresh = false,
                 )
             }
         }
     }
+
+    private fun buildProductsReloadingState() =
+        when (val state = viewState.value) {
+            is WooPosVariationsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosVariationsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosVariationsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosVariationsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
+        }
 
     fun loadMore(productId: Long) {
         loadMoreJob?.cancel()
@@ -78,6 +94,10 @@ class WooPosVariationsViewModel @Inject constructor(
         when (event) {
             is WooPosVariationsUIEvents.EndOfItemsListReached -> {
                 onEndOfVariationsListReached(event.productId)
+            }
+
+            is WooPosVariationsUIEvents.PullToRefreshTriggered -> {
+                fetchVariations(event.productId, withPullToRefresh = true, withCart = false)
             }
         }
     }
