@@ -100,4 +100,33 @@ class WooPosVariationsViewModelTest {
             assertThat(value).isInstanceOf(WooPosVariationsViewState.Content::class.java)
         }
     }
+
+    @Test
+    fun `given view model init, when variation fetched successfully, then view state is updated with proper variation content`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+            flowOf(
+                listOf(
+                    ProductTestUtils.generateProductVariation(1L, 2L),
+                    ProductTestUtils.generateProductVariation(1L, 3L),
+                    ProductTestUtils.generateProductVariation(1L, 4L),
+                )
+            )
+        )
+        whenever(getProductById.invoke(any())).thenReturn(
+            ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+        )
+
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
+        advanceUntilIdle()
+
+        wooPosVariationsViewModel.viewState.test {
+            // THEN
+            val value = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(value.items.size).isEqualTo(3)
+            assertThat(value.items[0].id).isEqualTo(2)
+            assertThat(value.items[1].id).isEqualTo(3)
+            assertThat(value.items[2].id).isEqualTo(4)
+        }
+    }
 }
