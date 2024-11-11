@@ -65,7 +65,7 @@ fun WooShippingCarrierPackageScreen(
     onAddPackageClick: () -> Unit = {}
 ) {
     val pagerState = rememberPagerState { carrierPackages.keys.size }
-    Column (
+    Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.surface)
@@ -181,7 +181,7 @@ private fun PackageListSection(
     packages: List<PackageData>,
     onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
-    Column (
+    Column(
         modifier = Modifier
             .padding(start = 8.dp)
             .wrapContentHeight(),
