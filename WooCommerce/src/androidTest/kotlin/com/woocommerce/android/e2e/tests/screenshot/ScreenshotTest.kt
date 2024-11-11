@@ -106,7 +106,7 @@ class ScreenshotTest : TestBase(failOnUnmatchedWireMockRequests = false) {
         AppPrefs.setShowCardReaderConnectedTutorial(false) // Skip card reader tutorial
         TabNavComponent()
             .gotoOrdersScreen()
-            .selectOrder(2)
+            .selectOrder(5)
             .tapOnCollectPayment()
             .chooseCardPayment()
             .thenTakeScreenshot<CardReaderPaymentScreen>("in-person-payments")
