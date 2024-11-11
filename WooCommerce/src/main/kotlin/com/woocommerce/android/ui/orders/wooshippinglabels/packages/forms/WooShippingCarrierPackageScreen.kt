@@ -52,8 +52,9 @@ fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationVi
     val viewState by viewModel.viewState.observeAsState()
     WooShippingCarrierPackageScreen(
         carrierPackages = viewState?.carrierPackageSection?.carrierPackages ?: emptyMap(),
-        onPackageSelected = viewModel::onCarrierPackageSelected,
         isAddPackageEnabled = viewState?.carrierPackageSection?.hasSelection ?: false,
+        onPackageSelected = viewModel::onCarrierPackageSelected,
+        onAddPackageClick = viewModel::onAddCarrierPackageClick
     )
 }
 

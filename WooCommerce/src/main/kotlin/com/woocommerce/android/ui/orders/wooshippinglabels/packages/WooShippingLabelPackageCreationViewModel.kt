@@ -74,6 +74,15 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
+    fun onAddCarrierPackageClick() {
+        _viewState.value.carrierPackageSection.carrierPackages
+            .asSequence()
+            .map { it.value }.flatten()
+            .map { it.packages }.flatten()
+            .find { it.isSelected }
+            ?.let { triggerEvent(CarrierPackageSelected(it)) }
+    }
+
     fun onAddSavedPackageClick() {
         _viewState.value.savedPackageSelection.packages.find { it.isSelected }
             ?.let { triggerEvent(SavedPackageSelected(it)) }
@@ -165,6 +174,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     data class SavedPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
+    data class CarrierPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class CustomPackageCreated(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
 }
