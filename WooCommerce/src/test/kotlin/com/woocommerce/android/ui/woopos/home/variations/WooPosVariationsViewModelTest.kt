@@ -11,6 +11,8 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentMatchers.eq
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -40,10 +42,21 @@ class WooPosVariationsViewModelTest {
 
     @Test
     fun `given view model init, then API call is made to fetch product`() = runTest {
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
+
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
         wooPosVariationsViewModel.init(1L)
 
         verify(getProductById).invoke(1L)
+    }
+
+    @Test
+    fun `given view model init, then API call is made to fetch variation`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
+
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
+
+        verify(variationsDataSource).fetchVariations(eq(1L), any())
     }
 }
