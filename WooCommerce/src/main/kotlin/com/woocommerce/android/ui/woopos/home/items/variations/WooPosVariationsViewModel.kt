@@ -51,21 +51,24 @@ class WooPosVariationsViewModel @Inject constructor(
         fetchJob = viewModelScope.launch {
             val product = getProductById(productId)
 
-            variationsDataSource.fetchVariations(productId, forceRefresh = true)
-
-            variationsDataSource.getVariationsFlow(productId).collect { variationList ->
-                _viewState.value = WooPosVariationsViewState.Content(
-                    items = variationList.map {
-                        WooPosItem.Variation(
-                            id = it.remoteVariationId,
-                            name = it.getName(product),
-                            price = it.priceWithCurrency ?: "",
-                            imageUrl = it.image?.source
-                        )
-                    },
-                    loadingMore = false,
-                    reloadingProductsWithPullToRefresh = false,
-                )
+            val result = variationsDataSource.fetchVariations(productId, forceRefresh = true)
+            if (result.isSuccess) {
+                variationsDataSource.getVariationsFlow(productId).collect { variationList ->
+                    _viewState.value = WooPosVariationsViewState.Content(
+                        items = variationList.map {
+                            WooPosItem.Variation(
+                                id = it.remoteVariationId,
+                                name = it.getName(product),
+                                price = it.priceWithCurrency ?: "",
+                                imageUrl = it.image?.source
+                            )
+                        },
+                        loadingMore = false,
+                        reloadingProductsWithPullToRefresh = false,
+                    )
+                }
+            } else {
+                _viewState.value = WooPosVariationsViewState.Error()
             }
         }
     }

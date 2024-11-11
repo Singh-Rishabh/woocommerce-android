@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.variations
 
+import androidx.lifecycle.asLiveData
 import app.cash.turbine.test
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
@@ -12,6 +13,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -179,6 +183,32 @@ class WooPosVariationsViewModelTest {
             // THEN
             val value = awaitItem() as WooPosVariationsViewState.Loading
             assertTrue(value.reloadingProductsWithPullToRefresh)
+        }
+    }
+
+    @Test
+    fun `given view state is Error, when pull to refreshed, then view state is updated with proper variation content`() = runTest {
+        val testDispatcher = StandardTestDispatcher(testScheduler)
+
+        val testScope = TestScope(testDispatcher)
+
+        testScope.launch {
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+            whenever(variationsDataSource.fetchVariations(any(), any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(1L))
+
+            wooPosVariationsViewModel.viewState.test {
+                // THEN
+                val value = awaitItem() as WooPosVariationsViewState.Error
+                assertThat(value).isInstanceOf(WooPosVariationsViewState.Error::class.java)
+                assertTrue(value.reloadingProductsWithPullToRefresh)
+            }
         }
     }
 }
