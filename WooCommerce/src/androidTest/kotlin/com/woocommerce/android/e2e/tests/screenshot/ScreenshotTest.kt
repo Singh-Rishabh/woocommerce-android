@@ -59,6 +59,10 @@ class ScreenshotTest : TestBase(failOnUnmatchedWireMockRequests = false) {
         .grant(Manifest.permission.BLUETOOTH_SCAN)
 
     @get:Rule(order = 7)
+    var notificationsPermissionRule: GrantPermissionRule? = GrantPermissionRule
+        .grant(Manifest.permission.POST_NOTIFICATIONS)
+
+    @get:Rule(order = 8)
     var activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Inject lateinit var wooNotificationBuilder: WooNotificationBuilder
