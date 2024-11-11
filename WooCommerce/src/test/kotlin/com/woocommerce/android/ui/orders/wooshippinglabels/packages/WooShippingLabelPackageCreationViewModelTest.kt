@@ -6,6 +6,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchCarrierPackagesFromStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -23,6 +24,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     private lateinit var sut: WooShippingLabelPackageCreationViewModel
     private val resourceProvider: ResourceProvider = mock()
     private val fetchSavedPackages: FetchSavedPackagesFromStore = mock()
+    private val fetchCarrierPackages: FetchCarrierPackagesFromStore = mock()
 
     @Before
     fun setUp() {
@@ -37,7 +39,12 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         ).thenReturn("Saved")
 
         whenever(fetchSavedPackages()).thenReturn(emptyList())
-        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
     }
 
     @Test
@@ -150,11 +157,58 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchSavedPackages()).thenReturn(listOf(package1, package2))
 
-        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
         sut.viewState.observeForever { lastViewState = it }
         sut.onSavedPackageSelected(package1, true)
 
         val selectedPackages = lastViewState?.savedPackageSelection?.packages?.filter { it.isSelected }
+        assertThat(selectedPackages).isNotNull
+        assertThat(selectedPackages).size().isEqualTo(1)
+        assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
+    }
+
+    @Test
+    fun `onCarrierPackageSelected selects only one package at a time`() = testBlocking {
+        var lastViewState: ViewState? = null
+        val carrier = Carrier(id = "dhl", name = "DHL Express", logoRes = R.drawable.dhl_logo)
+        val package1 = PackageData(
+            type = PackageType.BOX,
+            name = "Package 1",
+            description = "Description 1",
+            length = "10",
+            width = "10",
+            height = "10",
+            isSelected = false
+        )
+        val package2 = PackageData(
+            type = PackageType.ENVELOPE,
+            name = "Package 2",
+            description = "Description 2",
+            length = "20",
+            width = "20",
+            height = "20",
+            isSelected = false
+        )
+        val carrierPackages = mapOf(
+            carrier to listOf(
+                CarrierPackageGroup(
+                    groupName = "Group 1",
+                    packages = listOf(package1, package2)
+                )
+            )
+        )
+        whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
+
+        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages, fetchCarrierPackages)
+        sut.viewState.observeForever { lastViewState = it }
+        sut.onCarrierPackageSelected(package1, true)
+
+        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap { it.packages }?.filter { it.isSelected }
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
