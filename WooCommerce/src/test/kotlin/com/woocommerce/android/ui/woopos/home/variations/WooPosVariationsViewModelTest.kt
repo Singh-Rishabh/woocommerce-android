@@ -1,5 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.variations
 
+import app.cash.turbine.test
+import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsDataSource
@@ -7,6 +9,9 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsV
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
@@ -68,5 +73,31 @@ class WooPosVariationsViewModelTest {
         wooPosVariationsViewModel.init(1L)
 
         verify(variationsDataSource).fetchVariations(1L, forceRefresh = true)
+    }
+
+    @Test
+    fun `given view model init, when variation fetched successfully, then view state is updated with variation content`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+            flowOf(
+                listOf(
+                    ProductTestUtils.generateProductVariation(1L, 2L),
+                    ProductTestUtils.generateProductVariation(1L, 3L),
+                    ProductTestUtils.generateProductVariation(1L, 4L),
+                )
+            )
+        )
+        whenever(getProductById.invoke(any())).thenReturn(
+            ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+        )
+
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
+        advanceUntilIdle()
+
+        wooPosVariationsViewModel.viewState.test {
+            // THEN
+            val value = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(value).isInstanceOf(WooPosVariationsViewState.Content::class.java)
+        }
     }
 }
