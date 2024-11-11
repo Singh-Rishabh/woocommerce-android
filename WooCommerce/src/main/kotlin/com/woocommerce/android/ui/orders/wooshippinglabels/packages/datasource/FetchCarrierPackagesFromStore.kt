@@ -8,6 +8,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import javax.inject.Inject
 
 class FetchCarrierPackagesFromStore @Inject constructor() {
+    @Suppress("LongMethod")
     operator fun invoke(): Map<Carrier, List<CarrierPackageGroup>> {
         // This is a mocked response.
         // When fully implemented, this will be sorted from the Shipping plugin API.
