@@ -43,7 +43,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
-    viewState.apply {  }
+    viewState.apply { }
     WooShippingCarrierPackageScreen(
         carrierPackages = emptyMap()
     )
@@ -207,6 +207,15 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 width = "10",
                                 height = "10",
                                 isSelected = false
+                            ),
+                            PackageData(
+                                type = PackageType.BOX,
+                                name = "Package 2",
+                                description = "Description 2",
+                                length = "20",
+                                width = "20",
+                                height = "20",
+                                isSelected = false
                             )
                         )
                     )
@@ -219,6 +228,15 @@ fun WooShippingCarrierPackageScreenPreview() {
                     CarrierPackageGroup(
                         groupName = "Group 2",
                         packages = listOf(
+                            PackageData(
+                                type = PackageType.BOX,
+                                name = "Package 1",
+                                description = "Description 1",
+                                length = "10",
+                                width = "10",
+                                height = "10",
+                                isSelected = false
+                            ),
                             PackageData(
                                 type = PackageType.BOX,
                                 name = "Package 2",
