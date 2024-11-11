@@ -128,11 +128,12 @@ class BlazeRepositoryTest : BaseUnitTest() {
                 productId = 1,
                 tagLine = "",
                 description = "",
+                ctaText = "",
                 campaignImage = AD_IMAGE,
                 budget = DEFAULT_BUDGET,
                 targetingParameters = EMPTY_TARGETING_PARAMETERS,
                 destinationParameters = EMPTY_DESTINATION_PARAMETERS,
-                objectiveId = "sales",
+                    objectiveId = "sales",
             )
         private val ENDLESS_CAMPAIGN_DETAILS = DEFAULT_CAMPAIGN_DETAILS.copy(
             budget = DEFAULT_BUDGET.copy(isEndlessCampaign = true)
