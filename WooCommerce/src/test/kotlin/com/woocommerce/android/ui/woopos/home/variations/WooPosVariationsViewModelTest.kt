@@ -25,6 +25,7 @@ class WooPosVariationsViewModelTest {
     @Test
     fun `given view model init, then loading state is displayed`() {
         wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel.init(1L)
 
         assertThat(
             wooPosVariationsViewModel.viewState.value
