@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WooPosVariationsViewModel @Inject constructor(
     private val getProductById: WooPosGetProductById,
-    private val variationListHandler: VariationListHandler
+    private val variationsDataSource: WooPosVariationsDataSource,
 ) : ViewModel() {
 
     private val _viewState =
@@ -40,13 +40,12 @@ class WooPosVariationsViewModel @Inject constructor(
         fetchJob?.cancel()
 
         fetchJob = viewModelScope.launch {
-            println("PRODUCT ID AAA: $productId")
             _viewState.value = WooPosVariationsViewState.Loading(withCart = true)
             val product = getProductById(productId)
 
-            variationListHandler.fetchVariations(productId, forceRefresh = true)
+            variationsDataSource.fetchVariations(productId, forceRefresh = true)
 
-            variationListHandler.getVariationsFlow(productId).collect { variationList ->
+            variationsDataSource.getVariationsFlow(productId).collect { variationList ->
                 _viewState.value = WooPosVariationsViewState.Content(
                     items = variationList.map {
                     WooPosItem.Variation(
@@ -66,22 +65,24 @@ class WooPosVariationsViewModel @Inject constructor(
     fun loadMore(productId: Long) {
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
-            variationListHandler.loadMore(productId)
+            val result = variationsDataSource.loadMore(productId)
+            if (result.isSuccess) {
+                Result.success(Unit)
+            } else {
+                WooPosVariationsViewState.Error()
+            }
         }
     }
 
-    fun onUIEvent(event: WooPosItemsUIEvent) {
+    fun onUIEvent(event: WooPosVariationsUIEvents) {
         when (event) {
-            is WooPosItemsUIEvent.EndOfItemsListReached -> {
-                onEndOfVariationsListReached()
-            }
-            else -> {
-
+            is WooPosVariationsUIEvents.EndOfItemsListReached -> {
+                onEndOfVariationsListReached(event.productId)
             }
         }
     }
 
-    private fun onEndOfVariationsListReached() {
-
+    private fun onEndOfVariationsListReached(productId: Long) {
+        loadMore(productId)
     }
 }
