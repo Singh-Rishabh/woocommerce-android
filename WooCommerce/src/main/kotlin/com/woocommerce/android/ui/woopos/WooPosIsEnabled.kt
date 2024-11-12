@@ -11,33 +11,26 @@ import com.woocommerce.android.util.IsRemoteFeatureFlagEnabled
 import com.woocommerce.android.util.RemoteFeatureFlag.WOO_POS
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import org.wordpress.android.fluxc.model.SiteModel
-import org.wordpress.android.fluxc.model.payments.inperson.WCPaymentAccountResult
-import org.wordpress.android.fluxc.store.WCInPersonPaymentsStore
-import org.wordpress.android.fluxc.store.WCInPersonPaymentsStore.InPersonPaymentsPluginType.WOOCOMMERCE_PAYMENTS
+import org.wordpress.android.fluxc.store.WooCommerceStore
 import javax.inject.Inject
 import javax.inject.Singleton
-
-private typealias LocalSiteId = Int
 
 @Singleton
 class WooPosIsEnabled @Inject constructor(
     private val selectedSite: SelectedSite,
-    private val ippStore: WCInPersonPaymentsStore,
     private val isScreenSizeAllowed: WooPosIsScreenSizeAllowed,
     private val getWooCoreVersion: GetWooCorePluginCachedVersion,
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker,
+    private val wooCommerceStore: WooCommerceStore,
     private val isRemoteFeatureFlagEnabled: IsRemoteFeatureFlagEnabled,
     private val isWooPosPaymentsOnboardingSupportedInternally: WooPosIsPaymentsOnboardingSupportedInternally,
 ) {
-    private var paymentAccountCache: HashMap<LocalSiteId, WCPaymentAccountResult> = hashMapOf()
-
     @Suppress("ReturnCount")
     suspend operator fun invoke(): Boolean = coroutineScope {
         val selectedSite = selectedSite.getOrNull() ?: return@coroutineScope false
 
         val onboardingStatusDeferred = async { cardReaderOnboardingChecker.getOnboardingState() }
-        val paymentAccountDeferred = async { getOrFetchPaymentAccount(selectedSite, WOOCOMMERCE_PAYMENTS) }
+        val siteSettingsDeferred =  async { wooCommerceStore.getSiteSettings(selectedSite) }
 
         if (!isRemoteFeatureFlagEnabled(WOO_POS)) return@coroutineScope false
         if (!isScreenSizeAllowed()) return@coroutineScope false
@@ -50,25 +43,11 @@ class WooPosIsEnabled @Inject constructor(
             if (!isIPPOnboardingCompleted(onboardingStatus)) return@coroutineScope false
         }
 
-        val paymentAccount = paymentAccountDeferred.await() ?: return@coroutineScope false
-        if (paymentAccount.country.lowercase() != "us") return@coroutineScope false
-        if (paymentAccount.storeCurrencies.default.lowercase() != "usd") return@coroutineScope false
+        val siteSettings = siteSettingsDeferred.await() ?: return@coroutineScope false
+        if (siteSettings.countryCode.lowercase() !in SUPPORTED_COUNTRIES) return@coroutineScope false
+        if (siteSettings.currencyCode.lowercase() !in SUPPORTED_CURRENCIES) return@coroutineScope false
 
         return@coroutineScope true
-    }
-
-    private suspend fun getOrFetchPaymentAccount(
-        selectedSite: SiteModel,
-        ippPlugin: WCInPersonPaymentsStore.InPersonPaymentsPluginType
-    ): WCPaymentAccountResult? {
-        paymentAccountCache[selectedSite.id]?.let { return it }
-
-        val paymentsAccount = ippStore.loadAccount(
-            ippPlugin,
-            selectedSite
-        )
-
-        return paymentsAccount.model?.also { paymentAccountCache[selectedSite.id] = it }
     }
 
     private fun isIPPOnboardingCompleted(onboardingStatus: CardReaderOnboardingState): Boolean =
@@ -100,5 +79,8 @@ class WooPosIsEnabled @Inject constructor(
 
     private companion object {
         const val WC_VERSION_SUPPORTS_ORDER_AUTO_DRAFTS_AND_EXTRA_PAYMENTS_PROPS = "6.6.0"
+
+        val SUPPORTED_COUNTRIES = listOf("us")
+        val SUPPORTED_CURRENCIES = listOf("usd")
     }
 }
