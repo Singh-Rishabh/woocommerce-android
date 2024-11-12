@@ -23,6 +23,7 @@ import org.mockito.ArgumentMatchers.eq
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.assertFalse
@@ -143,6 +144,28 @@ class WooPosVariationsViewModelTest {
                 assertFalse(value.loadingMore)
                 assertFalse(value.reloadingProductsWithPullToRefresh)
             }
+        }
+
+    @Test
+    fun `given variation fetch fails, when retry clicked, then fetch variations called`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                emptyFlow()
+            )
+            whenever(variationsDataSource.fetchVariations(any(), any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.onUIEvent(
+                WooPosVariationsUIEvents.VariationsLoadingErrorRetryButtonClicked(1L)
+            )
+
+            verify(variationsDataSource, times(2)).fetchVariations(1L)
         }
 
     @SuppressLint("CheckResult")
