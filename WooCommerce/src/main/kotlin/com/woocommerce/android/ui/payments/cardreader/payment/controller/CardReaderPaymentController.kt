@@ -57,7 +57,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentE
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.FailedRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
@@ -502,39 +501,6 @@ class CardReaderPaymentController(
         val onRetryClicked = { retryInteracRefund() }
         val errorType = interacRefundErrorMapper.mapRefundErrorToUiError(error.type)
         _paymentState.value = buildInteracRefundFailedState(errorType, amountLabel, onRetryClicked)
-    }
-
-    private fun buildInteracRefundFailedViewState(
-        errorType: InteracRefundFlowError,
-        amountLabel: String?,
-        onRetryClicked: () -> Unit
-    ) = when (errorType) {
-        is InteracRefundFlowError.ContactSupportError ->
-            FailedRefundState(
-                errorType,
-                amountLabel,
-                primaryLabel = R.string.support_contact,
-                onPrimaryActionClicked = { onContactSupportClicked() },
-                secondaryLabel = R.string.cancel,
-                onSecondaryActionClicked = { onBackPressed() }
-            )
-
-        is InteracRefundFlowError.NonRetryableError ->
-            FailedRefundState(
-                errorType,
-                amountLabel,
-                R.string.card_reader_interac_refund_refund_failed_ok,
-                onPrimaryActionClicked = { onBackPressed() }
-            )
-
-        else ->
-            FailedRefundState(
-                errorType,
-                amountLabel,
-                onPrimaryActionClicked = onRetryClicked,
-                secondaryLabel = R.string.cancel,
-                onSecondaryActionClicked = { onBackPressed() }
-            )
     }
 
     private fun buildInteracRefundFailedState(
