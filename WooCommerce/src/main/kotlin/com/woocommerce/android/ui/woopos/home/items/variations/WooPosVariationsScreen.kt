@@ -157,7 +157,6 @@ private fun WooPosVariationsScreens(
                     )
 
                     is WooPosVariationsViewState.Error -> {
-
                     }
 
                     else -> {}
