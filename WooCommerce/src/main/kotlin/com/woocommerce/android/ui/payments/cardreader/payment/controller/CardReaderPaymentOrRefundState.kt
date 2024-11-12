@@ -151,6 +151,7 @@ sealed class CardReaderPaymentOrRefundState {
 
         data class CollectingInteracRefund(
             val amountWithCurrencyLabel: String,
+            val onCancel: () -> Unit,
             @StringRes val cardReaderHint: Int? = null,
         ) : CardReaderInteracRefundState(), TrackableState {
             override val nameForTracking: String = "Collecting"

@@ -508,7 +508,10 @@ class CardReaderPaymentController(
                         onSecondaryActionClicked = ::onCancelPaymentFlow
                     )
                 )
-                _paymentState.value = CardReaderInteracRefundState.CollectingInteracRefund(amountLabel)
+                _paymentState.value = CardReaderInteracRefundState.CollectingInteracRefund(
+                    amountWithCurrencyLabel = amountLabel,
+                    onCancel = ::onCancelPaymentFlow
+                )
             }
 
             ProcessingInteracRefund -> {
