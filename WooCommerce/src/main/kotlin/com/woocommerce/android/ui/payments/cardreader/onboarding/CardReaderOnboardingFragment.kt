@@ -12,7 +12,7 @@ import androidx.core.view.get
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
-import com.woocommerce.android.NavGraphMainDirections
+import com.woocommerce.android.NavGraphPaymentFlowDirections
 import com.woocommerce.android.R
 import com.woocommerce.android.databinding.FragmentCardReaderOnboardingBinding
 import com.woocommerce.android.databinding.FragmentCardReaderOnboardingCodDisabledBinding
@@ -75,7 +75,7 @@ class CardReaderOnboardingFragment : BaseFragment(R.layout.fragment_card_reader_
                 }
                 is CardReaderOnboardingEvent.NavigateToUrlInWPComWebView -> {
                     findNavController().navigate(
-                        NavGraphMainDirections.actionGlobalWPComWebViewFragment(urlToLoad = event.url)
+                        NavGraphPaymentFlowDirections.actionGlobalWPComWebViewFragment(urlToLoad = event.url)
                     )
                 }
                 is CardReaderOnboardingEvent.NavigateToUrlInGenericWebView -> {
