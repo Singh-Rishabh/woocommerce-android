@@ -17,6 +17,10 @@ class WooPosVariationsDataSource @Inject constructor(
         return handler.getVariationsFlow(productId)
     }
 
+    fun canLoadMore(): Boolean {
+        return handler.canLoadMore()
+    }
+
     suspend fun fetchVariations(productId: Long, forceRefresh: Boolean = true): Result<Unit> {
         val result = handler.fetchVariations(productId, forceRefresh = forceRefresh)
         return if (result.isSuccess) {

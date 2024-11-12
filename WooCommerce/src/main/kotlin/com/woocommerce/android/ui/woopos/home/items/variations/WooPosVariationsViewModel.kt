@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -78,11 +79,22 @@ class WooPosVariationsViewModel @Inject constructor(
         }
 
     fun loadMore(productId: Long) {
+        val currentState = _viewState.value
+        if (currentState !is WooPosVariationsViewState.Content) {
+            return
+        }
+        if (!variationsDataSource.canLoadMore()) {
+            return
+        }
+        _viewState.value = currentState.copy(loadingMore = true)
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
             val result = variationsDataSource.loadMore(productId)
             if (result.isSuccess) {
                 Result.success(Unit)
+                if (!variationsDataSource.canLoadMore()) {
+                    _viewState.value = currentState.copy(loadingMore = false)
+                }
             } else {
                 _viewState.value = WooPosVariationsViewState.Error()
             }
