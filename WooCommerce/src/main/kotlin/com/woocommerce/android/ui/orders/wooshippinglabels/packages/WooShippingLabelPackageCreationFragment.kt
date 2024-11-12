@@ -25,4 +25,17 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             }
         }
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bindEventListener()
+    }
+
+    private fun bindEventListener() {
+        viewModel.event.observe(viewLifecycleOwner) { event ->
+            when (event) {
+
+            }
+        }
+    }
 }
