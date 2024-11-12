@@ -49,7 +49,6 @@ class CardReaderPaymentViewModel @Inject constructor(
     wooStore: WooCommerceStore,
     dispatchers: CoroutineDispatchers,
     cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper,
-    cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
     paymentStateProvider: CardReaderPaymentStateProvider,
     cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper,
     paymentReceiptHelper: PaymentReceiptHelper,
@@ -81,7 +80,6 @@ class CardReaderPaymentViewModel @Inject constructor(
         wooStore = wooStore,
         dispatchers = dispatchers,
         cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
-        cardReaderPaymentReaderTypeStateProvider = cardReaderPaymentReaderTypeStateProvider,
         paymentStateProvider = paymentStateProvider,
         cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
         paymentReceiptHelper = paymentReceiptHelper,
@@ -94,7 +92,6 @@ class CardReaderPaymentViewModel @Inject constructor(
         onTTPPaymentStateChanged = { isTTPPaymentInProgress = it }
     )
 
-    @Suppress("DEPRECATION")
     val viewStateData: LiveData<ViewState> =
         paymentController.paymentState.map(paymentStateMapper()).asLiveData(coroutineContext)
 

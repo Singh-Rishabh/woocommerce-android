@@ -55,7 +55,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
-import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentReaderTypeStateProvider
 import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.FailedRefundState
@@ -103,7 +102,6 @@ class CardReaderPaymentController(
     private val wooStore: WooCommerceStore,
     private val dispatchers: CoroutineDispatchers,
     private val cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper,
-    private val cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
     private val paymentStateProvider: CardReaderPaymentStateProvider,
     private val cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper,
     private val paymentReceiptHelper: PaymentReceiptHelper,
@@ -644,65 +642,6 @@ class CardReaderPaymentController(
             onCancel = ::onBackPressed,
         )
     }
-
-    private fun buildFailedPaymentViewState(
-        errorType: PaymentFlowError,
-        amountLabel: String,
-        onRetryClicked: () -> Unit
-    ) =
-        when (errorType) {
-            is PaymentFlowError.ContactSupportError ->
-                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                    cardReaderType = cardReaderType,
-                    errorType = errorType,
-                    amountLabel = amountLabel,
-                    primaryLabel = R.string.support_contact,
-                    onPrimaryActionClicked = { onContactSupportClicked() },
-                    secondaryLabel = R.string.cancel,
-                    onSecondaryActionClicked = { onBackPressed() }
-                )
-
-            is PaymentFlowError.BuiltInReader.NfcDisabled ->
-                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                    cardReaderType = cardReaderType,
-                    errorType = errorType,
-                    amountLabel = amountLabel,
-                    primaryLabel = R.string.card_reader_payment_failed_nfc_disabled_enable_nfc,
-                    onPrimaryActionClicked = { onEnableNfcClicked() },
-                    secondaryLabel = R.string.cancel,
-                    onSecondaryActionClicked = { onBackPressed() }
-                )
-
-            is PaymentFlowError.NonRetryableError ->
-                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                    cardReaderType = cardReaderType,
-                    errorType = errorType,
-                    amountLabel = amountLabel,
-                    primaryLabel = R.string.card_reader_payment_payment_failed_ok,
-                    onPrimaryActionClicked = { onBackPressed() }
-                )
-
-            is PaymentFlowError.PurchaseHardwareReaderError ->
-                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                    cardReaderType = cardReaderType,
-                    errorType = errorType,
-                    amountLabel = amountLabel,
-                    primaryLabel = R.string.card_reader_payment_payment_failed_purchase_hardware_reader,
-                    onPrimaryActionClicked = { onPurchaseCardReaderClicked() },
-                    secondaryLabel = R.string.cancel,
-                    onSecondaryActionClicked = { onBackPressed() }
-                )
-
-            else ->
-                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                    cardReaderType = cardReaderType,
-                    errorType = errorType,
-                    amountLabel = amountLabel,
-                    onPrimaryActionClicked = onRetryClicked,
-                    secondaryLabel = R.string.cancel,
-                    onSecondaryActionClicked = { onBackPressed() }
-                )
-        }
 
     private fun showPaymentSuccessfulState() {
         scope.launch {
