@@ -88,7 +88,7 @@ class WooPosVariationsViewModel @Inject constructor(
             if (result.isSuccess) {
                 Result.success(Unit)
             } else {
-                WooPosVariationsViewState.Error()
+                _viewState.value = WooPosVariationsViewState.Error()
             }
         }
     }
