@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
 sealed class WooPosItemsViewState(
-    override  val reloadingProductsWithPullToRefresh: Boolean,
+    override val reloadingProductsWithPullToRefresh: Boolean,
 ) : WooPosBaseViewState(reloadingProductsWithPullToRefresh) {
     data class Content(
         override val items: List<WooPosItem>,

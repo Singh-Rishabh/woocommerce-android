@@ -211,7 +211,7 @@ private fun ProductImage(item: WooPosItem) {
     val imageUrl = when (item) {
         is SimpleProduct -> item.imageUrl
         is VariableProduct -> item.imageUrl
-        is WooPosItem.Variation -> {""}
+        is WooPosItem.Variation -> { "" }
     }
 
     AsyncImage(

@@ -197,7 +197,6 @@ class WooPosVariationsViewModelTest {
 
     @Test
     fun `given view state is Error, when fetch variations, then view state is updated with error state`() = runTest {
-
         whenever(getProductById.invoke(any())).thenReturn(
             ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
         )

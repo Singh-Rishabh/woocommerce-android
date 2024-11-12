@@ -2,12 +2,8 @@ package com.woocommerce.android.ui.woopos.home.items.variations
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.woocommerce.android.R
-import com.woocommerce.android.ui.products.variations.selector.VariationListHandler
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
