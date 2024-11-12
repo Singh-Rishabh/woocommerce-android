@@ -1,0 +1,13 @@
+package com.woocommerce.android.ui.woopos.home.items
+
+sealed class WooPosItem(
+    open val id: Long,
+    open val name: String
+) {
+    data class SimpleProduct(
+        override val id: Long,
+        override val name: String,
+        val price: String,
+        val imageUrl: String?,
+    ) : WooPosItem(id, name)
+}

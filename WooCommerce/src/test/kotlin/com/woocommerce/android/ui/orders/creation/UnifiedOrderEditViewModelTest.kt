@@ -66,7 +66,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.spy
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.network.BaseRequest
@@ -1856,7 +1855,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
 
     @Test
     fun `when shipping button tapped, send tracks event`() {
-        sut.onAddOrEditShipping()
+        sut.onAddOrEditShippingClicked()
 
         verify(tracker).track(AnalyticsEvent.ORDER_ADD_SHIPPING_TAPPED)
     }

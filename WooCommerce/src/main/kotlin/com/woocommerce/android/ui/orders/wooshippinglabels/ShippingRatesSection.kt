@@ -1,15 +1,18 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
+import android.content.Context
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -23,6 +26,7 @@ import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,22 +37,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.SelectionCheck
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @Composable
 internal fun ShippingRatesCard(
+    selected: ShippingRate?,
+    onSelectedChange: (ShippingRate) -> Unit = {},
     shippingRates: Map<Carrier, List<ShippingRate>>,
+    signatureRequired: SignatureRequired?,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
+    signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier
 ) {
     var selectedSortOption by remember { mutableStateOf(ShippingSortOption.CHEAPEST) }
@@ -58,15 +75,33 @@ internal fun ShippingRatesCard(
             onSortOptionSelected = { selectedSortOption = it },
             modifier = Modifier.padding(start = dimensionResource(R.dimen.major_100))
         )
-        ShippingRates(shippingRates)
+        ShippingRates(
+            selected = selected,
+            onSelectedChange = onSelectedChange,
+            shippingRates = shippingRates,
+            signatureRequired = signatureRequired,
+            onSelectedSignatureChange = onSelectedSignatureChange,
+            signatureRequiredOptions = signatureRequiredOptions
+        )
     }
 }
 
 @Preview
 @Composable
 private fun ShippingRatesCardPreview() {
+    val rates = generateShippingRates()
+    val selected = rates.values.first().first()
     WooThemeWithBackground {
-        ShippingRatesCard(shippingRates = generateShippingRates())
+        ShippingRatesCard(
+            selected = selected,
+            shippingRates = generateShippingRates(),
+            signatureRequired = null,
+            onSelectedSignatureChange = {},
+            signatureRequiredOptions = listOf(
+                SignatureRequired("Signature Required", "$10.00"),
+                SignatureRequired("Adult Signature Required", "$15.00")
+            )
+        )
     }
 }
 
@@ -158,7 +193,12 @@ private fun SortingDropdownMenu(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShippingRates(
+    selected: ShippingRate?,
+    onSelectedChange: (ShippingRate) -> Unit = {},
     shippingRates: Map<Carrier, List<ShippingRate>>,
+    signatureRequired: SignatureRequired?,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
+    signatureRequiredOptions: List<SignatureRequired>,
     modifier: Modifier = Modifier,
     tabModifier: Modifier = Modifier
 ) {
@@ -188,16 +228,7 @@ fun ShippingRates(
                     )
                 },
                 icon = {
-                    carrier.logoRes?.let {
-                        Icon(
-                            painter = painterResource(id = it),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .sizeIn(maxWidth = 24.dp)
-                                .clip(RoundedCornerShape(5.dp)),
-                            tint = Color.Unspecified
-                        )
-                    }
+                    carrier.logoRes?.let { CarrierLogo(it) }
                 },
                 selected = pagerState.currentPage == index,
                 onClick = {
@@ -209,19 +240,245 @@ fun ShippingRates(
         }
     }
 
-    HorizontalPager(state = pagerState, modifier = modifier.fillMaxSize()) { page ->
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = carriers[page].name,
-                fontSize = 32.sp
-            )
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top
+    ) { page ->
+        val carrier = carriers[page]
+        val rates = shippingRates[carrier] ?: emptyList()
+        Column {
+            rates.forEach { rate ->
+                ShippingRateItem(
+                    carrier = carrier,
+                    shippingRate = rate,
+                    isSelected = selected == rate,
+                    signatureRequired = signatureRequired,
+                    onSelectedSignatureChange = onSelectedSignatureChange,
+                    signatureRequiredOptions = signatureRequiredOptions,
+                    modifier = Modifier.clickable { onSelectedChange(rate) }
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun CarrierLogo(
+    @DrawableRes resId: Int,
+    modifier: Modifier = Modifier
+) {
+    Icon(
+        painter = painterResource(id = resId),
+        contentDescription = null,
+        modifier = modifier
+            .size(24.dp)
+            .clip(RoundedCornerShape(5.dp)),
+        tint = Color.Unspecified
+    )
+}
+
+@Composable
+private fun ShippingRateItem(
+    carrier: Carrier,
+    shippingRate: ShippingRate,
+    isSelected: Boolean,
+    signatureRequired: SignatureRequired?,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
+    signatureRequiredOptions: List<SignatureRequired>,
+    modifier: Modifier = Modifier
+) {
+    val borderWidth = if (isSelected) {
+        2.dp
+    } else {
+        1.dp
+    }
+    val borderColor = if (isSelected) {
+        MaterialTheme.colors.primary
+    } else {
+        colorResource(R.color.divider_color)
+    }
+
+    val backgroundColor = if (isSelected) {
+        animateColorAsState(targetValue = Color(0xFFF2EDFF), label = "colorAnimation")
+    } else {
+        animateColorAsState(targetValue = MaterialTheme.colors.surface, label = "colorAnimation")
+    }
+
+    RoundedCornerBoxWithBorder(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+        innerModifier = modifier,
+        backgroundColor = backgroundColor.value,
+        borderWidth = borderWidth,
+        borderColor = borderColor
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.Top
+        ) {
+            carrier.logoRes?.let {
+                CarrierLogo(resId = it)
+            }
+            Column(modifier = Modifier.animateContentSize()) {
+                Row {
+                    Text(
+                        text = shippingRate.name,
+                        style = MaterialTheme.typography.body1,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = 12.dp)
+                    )
+                    Text(
+                        text = shippingRate.rate,
+                        style = MaterialTheme.typography.body1,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                if (isSelected) {
+                    ShippingRateItemExpandedDescription(
+                        shippingRate = shippingRate,
+                        signatureRequired = signatureRequired,
+                        onSelectedSignatureChange = onSelectedSignatureChange,
+                        signatureRequiredOptions = signatureRequiredOptions,
+                        modifier = Modifier.padding(start = 12.dp, top = 8.dp, end = 16.dp)
+                    )
+                } else {
+                    Text(
+                        text = getShippingRateFormattedDescription(LocalContext.current, shippingRate),
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(start = 12.dp, top = 8.dp, end = 16.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun getShippingRateFormattedDescription(
+    context: Context,
+    shippingRate: ShippingRate
+): AnnotatedString {
+    return buildAnnotatedString {
+        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            append(shippingRate.getEstimatedDays(context))
+        }
+        val options = shippingRate.getIncludedOptions(context)
+        if (options.isNotEmpty()) {
+            append(" • ")
+            val include = context.getString(
+                R.string.shipping_label_rate_included_options,
+                options.joinToString().lowercase()
+            )
+            append(include)
+        }
+    }
+}
+
+@Composable
+private fun ShippingRateItemExpandedDescription(
+    shippingRate: ShippingRate,
+    signatureRequired: SignatureRequired?,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
+    signatureRequiredOptions: List<SignatureRequired>,
+    modifier: Modifier = Modifier
+) {
+    val options = shippingRate.getIncludedOptions(LocalContext.current)
+    Column(modifier = modifier) {
+        Text(
+            text = shippingRate.getEstimatedDays(LocalContext.current),
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(top = 8.dp, end = 16.dp, bottom = 8.dp),
+            fontWeight = FontWeight.Bold
+        )
+        options.forEach {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = it.capitalize(Locale.current),
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+        }
+        SelectSignatureRequired(
+            signatureRequired = signatureRequired,
+            onSelectedSignatureChange = onSelectedSignatureChange,
+            signatureRequiredOptions = signatureRequiredOptions,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
+@Composable
+private fun SelectSignatureRequired(
+    signatureRequired: SignatureRequired?,
+    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
+    signatureRequiredOptions: List<SignatureRequired>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        signatureRequiredOptions.forEach { option ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clickable {
+                        val isSelected = signatureRequired == option
+                        val value = if (isSelected) null else option
+                        onSelectedSignatureChange(value)
+                    }
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth()
+            ) {
+                SelectionCheck(
+                    isSelected = signatureRequired == option,
+                    onSelectionChange = null,
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+                Text(
+                    text = option.name,
+                    style = MaterialTheme.typography.body1,
+                )
+            }
+        }
+    }
+}
+
+fun ShippingRate.getEstimatedDays(context: Context): String {
+    return StringUtils.getQuantityString(
+        context = context,
+        quantity = deliveryDays,
+        default = R.string.shipping_label_shipping_carrier_rates_delivery_estimate_many,
+        one = R.string.shipping_label_shipping_carrier_rates_delivery_estimate_one
+    )
+}
+
+fun ShippingRate.getIncludedOptions(context: Context): List<String> {
+    val options = mutableListOf<String>()
+    if (tracking) {
+        val tracking = context.getString(
+            R.string.shipping_label_rate_included_options_tracking
+        )
+        options.add(tracking)
+    }
+    if (insurance != null) {
+        val insurance = context.getString(
+            R.string.shipping_label_rate_included_options_insurance,
+            context.getString(R.string.shipping_label_rate_insurance_up_to, insurance)
+        )
+        options.add(insurance)
+    }
+    if (freePickup) {
+        val freePickup = context.getString(
+            R.string.shipping_label_rate_included_options_free_pickup
+        )
+        options.add(freePickup)
+    }
+    return options
 }
 
 enum class ShippingSortOption(@StringRes val stringResource: Int) {
@@ -236,14 +493,18 @@ data class Carrier(
 )
 
 data class ShippingRate(
+    val name: String,
     val rate: String,
     val currency: String,
     val deliveryDays: Int,
     val insurance: String?,
     val tracking: Boolean,
-    val freePickup: Boolean,
-    val signatureRequired: String?,
-    val adultSignatureRequired: String?,
+    val freePickup: Boolean
+)
+
+data class SignatureRequired(
+    val name: String,
+    val amount: String,
 )
 
 fun generateShippingRates(): Map<Carrier, List<ShippingRate>> {
@@ -275,20 +536,24 @@ fun generateShippingRates(): Map<Carrier, List<ShippingRate>> {
         )
     )
 
-    return carriers.associateWith { generateRates(Random(0).nextInt(from = 3, until = 10)) }
+    return carriers.associateWith {
+        generateRates(
+            it.name,
+            Random(0).nextInt(from = 3, until = 10)
+        )
+    }
 }
 
-fun generateRates(number: Int): List<ShippingRate> {
+fun generateRates(carrier: String, number: Int): List<ShippingRate> {
     return List(number) {
         ShippingRate(
-            rate = "${(it + 1) * 2}",
+            name = "$carrier - Ground Advantage Express",
+            rate = "$${(it + 1) * 2}.00",
             currency = "USD",
             deliveryDays = it,
-            insurance = null,
-            tracking = false,
-            freePickup = false,
-            adultSignatureRequired = if (it % 2 == 0) null else "$3.00",
-            signatureRequired = "$2.00"
+            insurance = "$100.00",
+            tracking = true,
+            freePickup = true
         )
     }
 }

@@ -84,7 +84,6 @@ $ ./gradlew :WooCommerce:connectedVanillaDebugAndroidTest # assemble, install an
     - [Right to Left Layout Guidelines](docs/right-to-left-layout-guidelines.md)
 - Quality & Testing
     - [Beta Testing](https://woocommercehalo.wordpress.com/setup/join-android-beta/)
-    - [Issue Triage](docs/issue-triage.md)
 - Features
     - [Feature Flags](docs/feature-flags.md)
 
