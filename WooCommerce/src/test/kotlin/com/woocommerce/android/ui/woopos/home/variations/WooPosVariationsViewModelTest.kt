@@ -308,4 +308,34 @@ class WooPosVariationsViewModelTest {
 
             verify(variationsDataSource, never()).loadMore(1L)
         }
+
+    @Test
+    fun `given more items to load, when load more is called, then view state is updated properly`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                flowOf(
+                    listOf(
+                        ProductTestUtils.generateProductVariation(1L, 2L),
+                        ProductTestUtils.generateProductVariation(1L, 3L),
+                        ProductTestUtils.generateProductVariation(1L, 4L),
+                    )
+                )
+            )
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.success(Unit)
+            )
+            whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.loadMore(1L)
+
+            wooPosVariationsViewModel.viewState.test {
+                val value = awaitItem() as WooPosVariationsViewState.Content
+                assertTrue(value.loadingMore)
+            }
+        }
 }
