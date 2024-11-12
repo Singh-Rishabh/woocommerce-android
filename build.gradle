@@ -1,6 +1,5 @@
 import com.automattic.android.measure.MeasureBuildsExtension
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -36,7 +35,7 @@ allprojects {
 
     tasks.withType(KotlinCompile).all {
         kotlinOptions {
-            jvmTarget = JvmTarget.fromTarget(libs.versions.java.get()).target
+            jvmTarget = libs.versions.java.get()
             allWarningsAsErrors = true
             freeCompilerArgs += [
                     "-opt-in=kotlin.RequiresOptIn",
