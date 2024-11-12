@@ -157,7 +157,9 @@ class DeveloperOptionsViewModel @Inject constructor(
             UpdateOptions.ALWAYS -> CardReaderManager.SimulatorUpdateFrequency.ALWAYS
             UpdateOptions.NEVER -> CardReaderManager.SimulatorUpdateFrequency.NEVER
             UpdateOptions.LOW_BATTERY_ERROR -> CardReaderManager.SimulatorUpdateFrequency.LOW_BATTERY_ERROR
-            UpdateOptions.LOW_BATTERY_SUCCEED_CONNECT -> CardReaderManager.SimulatorUpdateFrequency.LOW_BATTERY_SUCCEED_CONNECT
+            UpdateOptions.LOW_BATTERY_SUCCEED_CONNECT -> {
+                CardReaderManager.SimulatorUpdateFrequency.LOW_BATTERY_SUCCEED_CONNECT
+            }
             UpdateOptions.RANDOM -> CardReaderManager.SimulatorUpdateFrequency.RANDOM
         }
     }
