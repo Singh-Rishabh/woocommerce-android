@@ -22,6 +22,7 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.test.assertFalse
@@ -271,5 +272,21 @@ class WooPosVariationsViewModelTest {
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
             verify(variationsDataSource).loadMore(1L)
+        }
+
+    @Test
+    fun `given view state that is not Content, when load more is called, then return with doing nothing`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                emptyFlow()
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.loadMore(1L)
+
+            verify(variationsDataSource, never()).loadMore(1L)
         }
 }
