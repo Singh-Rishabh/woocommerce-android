@@ -146,7 +146,7 @@ class WooPosVariationsViewModelTest {
 
     @SuppressLint("CheckResult")
     @Test
-    fun `given view state is content, when pull to refreshed, then view state is updated with proper variation content`() =
+    fun `given view state is content, when pull to refreshed, then view state contains Content state with pull to refresh set to true`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flowOf(
@@ -175,7 +175,7 @@ class WooPosVariationsViewModelTest {
         }
 
     @Test
-    fun `given view state is Loading, when pull to refreshed, then view state is updated with proper variation content`() =
+    fun `given view state is Loading, when pull to refreshed, then view state contains Loading state with pull to refresh set to true`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
                 emptyFlow()
@@ -236,5 +236,26 @@ class WooPosVariationsViewModelTest {
             assertThat(
                 states.any { (it as? WooPosVariationsViewState.Error)?.reloadingProductsWithPullToRefresh == true }
             )
+        }
+
+    @SuppressLint("CheckResult")
+    @Test
+    fun `given load more variations, when failure, then view state is updated with error state`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                emptyFlow()
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.loadMore(1L)
+
+            wooPosVariationsViewModel.viewState.test {
+                // THEN
+                val value = awaitItem() as WooPosVariationsViewState.Error
+                assertThat(value).isInstanceOf(WooPosVariationsViewState.Error::class.java)
+            }
         }
 }
