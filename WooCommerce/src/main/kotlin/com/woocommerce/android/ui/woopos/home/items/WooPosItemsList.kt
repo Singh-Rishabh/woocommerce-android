@@ -247,6 +247,22 @@ private fun VariableProductDetails(item: VariableProduct) {
 }
 
 @Composable
+fun ItemsLoadingIndicator(itemsCount: Int = 10) {
+    WooPosLazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(2.dp),
+    ) {
+        items(itemsCount) {
+            ItemsLoadingItem()
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+}
+
+@Composable
 fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(8.dp),

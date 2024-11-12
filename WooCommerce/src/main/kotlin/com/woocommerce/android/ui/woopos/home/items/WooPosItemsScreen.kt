@@ -292,22 +292,6 @@ private fun SimpleProductsBanner(
 }
 
 @Composable
-fun ItemsLoadingIndicator() {
-    WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(2.dp),
-    ) {
-        items(10) {
-            ItemsLoadingItem()
-        }
-
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
 fun ProductsEmptyList() {
     Box(
         modifier = Modifier
