@@ -28,7 +28,37 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                         ?: R.string.card_reader_interac_refund_refund_payment_hint,
                 )
             }
-            is CardReaderInteracRefundState.InteracRefundFailure -> TODO()
+            is CardReaderInteracRefundState.InteracRefundFailure -> {
+                if (paymentState.onRetry == null) {
+                    if (paymentState.cta != null) {
+                        ViewState.FailedRefundState(
+                            errorType = paymentState.errorType,
+                            amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                            primaryLabel = paymentState.cta.label,
+                            onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
+                            secondaryLabel = R.string.cancel,
+                            onSecondaryActionClicked = paymentState.onCancel,
+                        )
+                    } else {
+                        ViewState.FailedRefundState(
+                            errorType = paymentState.errorType,
+                            amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                            primaryLabel = R.string.card_reader_interac_refund_refund_failed_ok,
+                            onPrimaryActionClicked = paymentState.onCancel!!,
+                        )
+                    }
+                } else {
+                    ViewState.FailedRefundState(
+                        errorType = paymentState.errorType,
+                        amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                        primaryLabel = R.string.try_again,
+                        onPrimaryActionClicked = paymentState.onRetry,
+                        secondaryLabel = R.string.cancel,
+                        onSecondaryActionClicked = paymentState.onCancel,
+                    )
+                }
+            }
+
             is CardReaderInteracRefundState.InteracRefundSuccessful -> TODO()
             is CardReaderInteracRefundState.LoadingData -> TODO()
             is CardReaderInteracRefundState.ProcessingInteracRefund -> TODO()
