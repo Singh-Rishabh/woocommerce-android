@@ -32,6 +32,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.ItemsList
+import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
@@ -104,6 +105,10 @@ private fun WooPosVariationsScreens(
                         onEndOfItemListReached()
                     }
                 }
+
+                is WooPosVariationsViewState.Loading -> ItemsLoadingIndicator(
+                    minOf(10, variableProductData.numOfVariations)
+                )
 
                 else -> {}
             }
