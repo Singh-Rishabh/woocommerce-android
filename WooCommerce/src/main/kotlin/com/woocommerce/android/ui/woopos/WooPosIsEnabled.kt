@@ -30,7 +30,7 @@ class WooPosIsEnabled @Inject constructor(
         val selectedSite = selectedSite.getOrNull() ?: return@coroutineScope false
 
         val onboardingStatusDeferred = async { cardReaderOnboardingChecker.getOnboardingState() }
-        val siteSettingsDeferred =  async { wooCommerceStore.getSiteSettings(selectedSite) }
+        val siteSettingsDeferred = async { wooCommerceStore.getSiteSettings(selectedSite) }
 
         if (!isRemoteFeatureFlagEnabled(WOO_POS)) return@coroutineScope false
         if (!isScreenSizeAllowed()) return@coroutineScope false
