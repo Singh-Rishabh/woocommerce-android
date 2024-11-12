@@ -283,6 +283,25 @@ class WooPosVariationsViewModelTest {
             whenever(variationsDataSource.loadMore(any())).thenReturn(
                 Result.failure(Throwable())
             )
+
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.loadMore(1L)
+
+            verify(variationsDataSource, never()).loadMore(1L)
+        }
+
+    @Test
+    fun `given no more items to load, when load more is called, then return with doing nothing`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                emptyFlow()
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            whenever(variationsDataSource.canLoadMore()).thenReturn(false)
+
             wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
