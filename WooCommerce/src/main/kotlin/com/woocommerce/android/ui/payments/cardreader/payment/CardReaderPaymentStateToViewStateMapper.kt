@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.payments.cardreader.payment
 
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -19,7 +20,14 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
 ) {
     operator fun invoke(): (CardReaderPaymentOrRefundState) -> ViewState = { paymentState ->
         when (paymentState) {
-            is CardReaderInteracRefundState.CollectingInteracRefund -> TODO()
+            is CardReaderInteracRefundState.CollectingInteracRefund -> {
+                ViewState.CollectRefundState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                    onSecondaryActionClicked = paymentState.onCancel,
+                    hintLabel = paymentState.cardReaderHint
+                        ?: R.string.card_reader_interac_refund_refund_payment_hint,
+                )
+            }
             is CardReaderInteracRefundState.InteracRefundFailure -> TODO()
             is CardReaderInteracRefundState.InteracRefundSuccessful -> TODO()
             is CardReaderInteracRefundState.LoadingData -> TODO()
