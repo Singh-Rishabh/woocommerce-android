@@ -24,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.woocommerce.android.NavGraphMainDirections
+import com.woocommerce.android.NavGraphPaymentFlowDirections
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.databinding.CardReaderConnectDialogBinding
@@ -268,7 +269,7 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                     ToastUtils.showToast(requireContext(), event.message)
                 is CardReaderConnectEvent.OpenWPComWebView ->
                     findNavController().navigateSafely(
-                        NavGraphMainDirections.actionGlobalWPComWebViewFragment(urlToLoad = event.url)
+                        NavGraphPaymentFlowDirections.actionGlobalWPComWebViewFragment(urlToLoad = event.url)
                     )
                 is CardReaderConnectEvent.OpenGenericWebView ->
                     ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
