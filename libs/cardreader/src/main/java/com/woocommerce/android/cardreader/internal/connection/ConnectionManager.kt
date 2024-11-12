@@ -155,7 +155,7 @@ internal class ConnectionManager(
     private fun startStateResettingJobIfNeeded(currentStatus: CardReaderStatus) {
         if (currentStatus !is CardReaderStatus.Connecting) return
 
-        val connectedScope = CoroutineScope(Dispatchers.Default)
+        val connectedScope = CoroutineScope(Dispatchers.Main)
         connectedScope.launch {
             terminalListenerImpl.readerStatus.collect { connectionStatus ->
                 if (connectionStatus is CardReaderStatus.NotConnected) {
