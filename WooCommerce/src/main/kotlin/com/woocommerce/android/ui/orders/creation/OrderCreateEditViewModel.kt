@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
@@ -172,7 +171,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
@@ -469,20 +467,20 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
+    private var _isFirstShippingLineChange = true
+
     private fun shouldDisplayShippingFeedback() {
         launch {
-            shippingLineList
-                .asFlow()
-                .drop(1)
-                .take(1)
-                .takeIf { shouldDisplayShippingLinesFeedback() }
-                ?.collect {
+            if (_isFirstShippingLineChange && shouldDisplayShippingLinesFeedback()) {
+                launch {
                     delay(DELAY_BEFORE_SHOWING_SHIPPING_FEEDBACK)
                     viewState = viewState.copy(
                         showShippingFeedback = true,
                         isTotalsExpanded = false
                     )
+                    _isFirstShippingLineChange = false
                 }
+            }
         }
     }
 
@@ -1611,6 +1609,7 @@ class OrderCreateEditViewModel @Inject constructor(
 
             draft.copy(shippingLines = shipping)
         }
+        shouldDisplayShippingFeedback()
     }
 
     fun onRemoveShipping(itemId: Long) {
@@ -1633,6 +1632,7 @@ class OrderCreateEditViewModel @Inject constructor(
                 }
             )
         }
+        shouldDisplayShippingFeedback()
     }
 
     fun onFeeEdited(feeValue: BigDecimal) {
