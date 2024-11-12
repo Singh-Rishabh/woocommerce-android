@@ -77,8 +77,8 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     fun onAddCarrierPackageClick() {
         _viewState.value.carrierPackageSection.carrierPackages
             .asSequence()
-            .map { it.value }.flatten()
-            .map { it.packages }.flatten()
+            .flatMap { it.value }
+            .flatMap { it.packages }
             .find { it.isSelected }
             ?.let { triggerEvent(CarrierPackageSelected(it)) }
     }
