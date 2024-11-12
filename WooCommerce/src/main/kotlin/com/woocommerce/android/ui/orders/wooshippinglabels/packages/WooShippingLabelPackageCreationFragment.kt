@@ -9,6 +9,10 @@ import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLif
 import androidx.fragment.app.viewModels
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CarrierPackageSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreated
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.SavedPackageSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,8 +38,27 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
     private fun bindEventListener() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-
+                is ShowPackageTypeDialog -> handlePackageTypeSelection()
+                is CarrierPackageSelected -> handleCarrierPackageSelection()
+                is CustomPackageCreated -> handleCustomPackageCreation()
+                is SavedPackageSelected -> handleSavedPackageSelection()
             }
         }
+    }
+
+    private fun handlePackageTypeSelection() {
+
+    }
+
+    private fun handleCarrierPackageSelection() {
+
+    }
+
+    private fun handleCustomPackageCreation() {
+
+    }
+
+    private fun handleSavedPackageSelection() {
+
     }
 }
