@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -41,6 +42,8 @@ import androidx.lifecycle.flowWithLifecycle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.ItemsList
 import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
@@ -88,6 +91,11 @@ fun WooPosVariationsScreen(
         onPullToRefresh = {
             viewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(variableProductData.id))
         },
+        onRetryClicked = {
+            viewModel.onUIEvent(
+                WooPosVariationsUIEvents.VariationsLoadingErrorRetryButtonClicked(variableProductData.id)
+            )
+        },
         variableProductData,
         state,
         snackbarHostState,
@@ -102,6 +110,7 @@ private fun WooPosVariationsScreens(
     onBackClicked: () -> Unit,
     onEndOfItemListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
+    onRetryClicked: () -> Unit,
     variableProductData: VariableProductData,
     state: StateFlow<WooPosVariationsViewState>,
     snackbarHostState: SnackbarHostState,
@@ -157,6 +166,9 @@ private fun WooPosVariationsScreens(
                     )
 
                     is WooPosVariationsViewState.Error -> {
+                        VariationsError {
+                            onRetryClicked()
+                        }
                     }
 
                     else -> {}
@@ -168,6 +180,24 @@ private fun WooPosVariationsScreens(
                 state = pullToRefreshState
             )
         }
+    }
+}
+
+@Composable
+fun VariationsError(onRetryClicked: () -> Unit) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        WooPosErrorScreen(
+            modifier = Modifier.width(640.dp),
+            message = stringResource(id = R.string.woopos_variations_loading_error_title),
+            reason = stringResource(id = R.string.woopos_products_loading_error_message),
+            primaryButton = Button(
+                text = stringResource(id = R.string.woopos_products_loading_error_retry_button),
+                click = onRetryClicked
+            )
+        )
     }
 }
 
@@ -258,6 +288,7 @@ fun WooPosVariationsScreenPreview() {
             onBackClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
+            onRetryClicked = {},
             variableProductData = VariableProductData(
                 id = 0,
                 name = "Variable Product",

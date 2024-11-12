@@ -117,6 +117,10 @@ class WooPosVariationsViewModel @Inject constructor(
             is WooPosVariationsUIEvents.PullToRefreshTriggered -> {
                 fetchVariations(event.productId, withPullToRefresh = true, withCart = false)
             }
+
+            is WooPosVariationsUIEvents.VariationsLoadingErrorRetryButtonClicked -> {
+                fetchVariations(event.productId, withPullToRefresh = false, withCart = false)
+            }
         }
     }
 
