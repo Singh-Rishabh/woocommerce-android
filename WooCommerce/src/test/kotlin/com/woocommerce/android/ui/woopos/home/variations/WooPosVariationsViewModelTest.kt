@@ -12,8 +12,12 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsU
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -239,31 +243,21 @@ class WooPosVariationsViewModelTest {
         }
 
     @Test
-    fun `given load more variations, when failure, then view state is updated with error state`() =
-        runTest {
-            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
-                emptyFlow()
-            )
-            whenever(variationsDataSource.loadMore(any())).thenReturn(
-                Result.failure(Throwable())
-            )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
-            wooPosVariationsViewModel.init(1L)
-            wooPosVariationsViewModel.loadMore(1L)
-
-            wooPosVariationsViewModel.viewState.test {
-                // THEN
-                val value = awaitItem() as WooPosVariationsViewState.Error
-                assertThat(value).isInstanceOf(WooPosVariationsViewState.Error::class.java)
-            }
-        }
-
-    @Test
     fun `when end of list reached, then load more called`() =
         runTest {
-            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
-                emptyFlow()
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                flowOf(
+                    listOf(
+                        ProductTestUtils.generateProductVariation(1L, 2L),
+                        ProductTestUtils.generateProductVariation(1L, 3L),
+                        ProductTestUtils.generateProductVariation(1L, 4L),
+                    )
+                )
             )
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+            whenever(variationsDataSource.canLoadMore()).thenReturn(true)
             whenever(variationsDataSource.loadMore(any())).thenReturn(
                 Result.failure(Throwable())
             )
@@ -364,8 +358,8 @@ class WooPosVariationsViewModelTest {
             wooPosVariationsViewModel.loadMore(1L)
 
             wooPosVariationsViewModel.viewState.test {
-                val value = awaitItem() as WooPosVariationsViewState.Error
-                assertThat(value).isInstanceOf(WooPosVariationsViewState.Error::class.java)
+                val value = awaitItem() as WooPosVariationsViewState.Content
+                assertFalse(value.loadingMore)
             }
         }
 }

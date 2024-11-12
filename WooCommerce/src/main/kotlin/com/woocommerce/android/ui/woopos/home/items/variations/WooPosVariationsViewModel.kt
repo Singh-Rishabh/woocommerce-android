@@ -32,7 +32,9 @@ class WooPosVariationsViewModel @Inject constructor(
             initialValue = _viewState.value,
         )
 
-    private val _events: MutableSharedFlow<WooPosVariationEvents> = MutableSharedFlow(extraBufferCapacity = 1)
+    private val _events: MutableSharedFlow<WooPosVariationEvents> = MutableSharedFlow(
+        extraBufferCapacity = 1
+    )
     val events = _events.asSharedFlow()
 
     private var fetchJob: Job? = null
