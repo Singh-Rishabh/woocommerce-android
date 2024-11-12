@@ -5,6 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchCarrierPackagesFromStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val resourceProvider: ResourceProvider,
-    private val fetchSavedPackages: FetchSavedPackagesFromStore
+    private val fetchSavedPackages: FetchSavedPackagesFromStore,
+    private val fetchCarrierPackages: FetchCarrierPackagesFromStore
 ) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
@@ -45,19 +48,39 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     init {
         _viewState.update { viewState ->
-            viewState.copy(savedPackageSelection = SavedPackageSelection(fetchSavedPackages()))
+            viewState.copy(
+                savedPackageSelection = SavedPackageSelection(fetchSavedPackages()),
+                carrierPackageSection = CarrierPackageSelection(fetchCarrierPackages())
+            )
         }
     }
 
-    fun onSavedPackageSelected(packageData: PackageData, isSelected: Boolean) {
+    fun onCarrierPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
+        _viewState.update { viewState ->
+            viewState.carrierPackageSection.carrierPackages
+                .map { updateCarrierPackagesSelection(it, selectedPackage, isSelected) }
+                .let { viewState.copy(carrierPackageSection = CarrierPackageSelection(it.toMap())) }
+        }
+    }
+
+    fun onSavedPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
             viewState.savedPackageSelection.packages
                 .map { it.copy(isSelected = false) }
                 .toMutableList()
-                .apply { set(indexOf(packageData), packageData.copy(isSelected = isSelected)) }
+                .apply { set(indexOf(selectedPackage), selectedPackage.copy(isSelected = isSelected)) }
                 .let { SavedPackageSelection(it) }
                 .let { viewState.copy(savedPackageSelection = it) }
         }
+    }
+
+    fun onAddCarrierPackageClick() {
+        _viewState.value.carrierPackageSection.carrierPackages
+            .asSequence()
+            .map { it.value }.flatten()
+            .map { it.packages }.flatten()
+            .find { it.isSelected }
+            ?.let { triggerEvent(CarrierPackageSelected(it)) }
     }
 
     fun onAddSavedPackageClick() {
@@ -108,11 +131,29 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
+    private fun updateCarrierPackagesSelection(
+        carrierPackages: Map.Entry<Carrier, List<CarrierPackageGroup>>,
+        packageData: PackageData,
+        isSelected: Boolean
+    ) = carrierPackages.value.map { packageGroup ->
+        packageGroup.packages
+            .map { it.copy(isSelected = false) }
+            .toMutableList()
+            .apply {
+                indexOf(packageData)
+                    .takeIf { it != -1 }
+                    ?.let { set(it, packageData.copy(isSelected = isSelected)) }
+                    ?: this
+            }
+            .let { packageGroup.copy(packages = it) }
+    }.let { carrierPackages.key to it }
+
     @Parcelize
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList(),
         val customPackageCreationData: CustomPackageCreationData = CustomPackageCreationData.EMPTY,
-        val savedPackageSelection: SavedPackageSelection = SavedPackageSelection(emptyList())
+        val savedPackageSelection: SavedPackageSelection = SavedPackageSelection(emptyList()),
+        val carrierPackageSection: CarrierPackageSelection = CarrierPackageSelection(emptyMap())
     ) : Parcelable
 
     @Parcelize
@@ -120,51 +161,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         val title: String,
         val type: PageType
     ) : Parcelable
-
-    @Parcelize
-    data class PackageData(
-        val type: PackageType,
-        val name: String,
-        val description: String,
-        val length: String,
-        val width: String,
-        val height: String,
-        val isSelected: Boolean,
-        val dimensionUnit: String = "cm"
-    ) : Parcelable {
-        val dimensionsForDisplay: String
-            get() = "$length x $width x $height $dimensionUnit"
-    }
-
-    @Parcelize
-    data class SavedPackageSelection(
-        val packages: List<PackageData>
-    ) : Parcelable {
-        val hasSelection: Boolean
-            get() = packages.find { it.isSelected } != null
-    }
-
-    @Parcelize
-    data class CustomPackageCreationData(
-        val type: PackageType,
-        val length: String,
-        val width: String,
-        val height: String,
-        val saveAsTemplate: Boolean
-    ) : Parcelable {
-        val isValid: Boolean
-            get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
-
-        companion object {
-            val EMPTY = CustomPackageCreationData(
-                type = PackageType.BOX,
-                length = "",
-                width = "",
-                height = "",
-                saveAsTemplate = false
-            )
-        }
-    }
 
     enum class PageType {
         CUSTOM,
@@ -178,6 +174,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     data class SavedPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
+    data class CarrierPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class CustomPackageCreated(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
 }
