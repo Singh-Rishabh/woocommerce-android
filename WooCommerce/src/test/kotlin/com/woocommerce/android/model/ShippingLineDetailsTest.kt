@@ -26,7 +26,6 @@ class ShippingLineDetailsTest {
         )
     }
 
-
     @Test
     fun `toShippingLineDetails should return null for empty list`() {
         val shippingLines = emptyList<Order.ShippingLine>()
