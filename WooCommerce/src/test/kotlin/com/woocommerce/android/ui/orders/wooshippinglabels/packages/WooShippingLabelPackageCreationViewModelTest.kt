@@ -3,11 +3,11 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreated
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.CustomPackageCreationData
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchCarrierPackagesFromStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -24,6 +24,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     private lateinit var sut: WooShippingLabelPackageCreationViewModel
     private val resourceProvider: ResourceProvider = mock()
     private val fetchSavedPackages: FetchSavedPackagesFromStore = mock()
+    private val fetchCarrierPackages: FetchCarrierPackagesFromStore = mock()
 
     @Before
     fun setUp() {
@@ -38,7 +39,12 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         ).thenReturn("Saved")
 
         whenever(fetchSavedPackages()).thenReturn(emptyList())
-        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
     }
 
     @Test
@@ -151,7 +157,12 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchSavedPackages()).thenReturn(listOf(package1, package2))
 
-        sut = WooShippingLabelPackageCreationViewModel(SavedStateHandle(), resourceProvider, fetchSavedPackages)
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
         sut.viewState.observeForever { lastViewState = it }
         sut.onSavedPackageSelected(package1, true)
 
@@ -159,5 +170,130 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
+    }
+
+    @Test
+    fun `onCarrierPackageSelected selects only one package at a time`() = testBlocking {
+        var lastViewState: ViewState? = null
+        val carrier = Carrier(id = "dhl", name = "DHL Express", logoRes = R.drawable.dhl_logo)
+        val package1 = PackageData(
+            type = PackageType.BOX,
+            name = "Package 1",
+            description = "Description 1",
+            length = "10",
+            width = "10",
+            height = "10",
+            isSelected = false
+        )
+        val package2 = PackageData(
+            type = PackageType.ENVELOPE,
+            name = "Package 2",
+            description = "Description 2",
+            length = "20",
+            width = "20",
+            height = "20",
+            isSelected = false
+        )
+        val carrierPackages = mapOf(
+            carrier to listOf(
+                CarrierPackageGroup(
+                    groupName = "Group 1",
+                    packages = listOf(package1, package2)
+                )
+            )
+        )
+        whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
+
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
+        sut.viewState.observeForever { lastViewState = it }
+        sut.onCarrierPackageSelected(package1, true)
+
+        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap {
+            it.packages
+        }?.filter { it.isSelected }
+        assertThat(selectedPackages).isNotNull
+        assertThat(selectedPackages).size().isEqualTo(1)
+        assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
+    }
+
+    @Test
+    @Suppress("LongMethod")
+    fun `onCarrierPackageSelected selects only one package at a time with multiple carriers`() = testBlocking {
+        var lastViewState: ViewState? = null
+        val carrier1 = Carrier(id = "dhl", name = "DHL Express", logoRes = R.drawable.dhl_logo)
+        val carrier2 = Carrier(id = "usps", name = "USPS", logoRes = R.drawable.usps_logo)
+        val package1 = PackageData(
+            type = PackageType.BOX,
+            name = "Package 1 - Carrier 1",
+            description = "Description 1",
+            length = "10",
+            width = "10",
+            height = "10",
+            isSelected = false
+        )
+        val package2 = PackageData(
+            type = PackageType.ENVELOPE,
+            name = "Package 2 - Carrier 1",
+            description = "Description 2",
+            length = "20",
+            width = "20",
+            height = "20",
+            isSelected = false
+        )
+        val package3 = PackageData(
+            type = PackageType.BOX,
+            name = "Package 1 - Carrier 2",
+            description = "Description 3",
+            length = "30",
+            width = "30",
+            height = "30",
+            isSelected = false
+        )
+        val package4 = PackageData(
+            type = PackageType.ENVELOPE,
+            name = "Package 2 - Carrier 2",
+            description = "Description 4",
+            length = "40",
+            width = "40",
+            height = "40",
+            isSelected = false
+        )
+        val carrierPackages = mapOf(
+            carrier1 to listOf(
+                CarrierPackageGroup(
+                    groupName = "Group 1",
+                    packages = listOf(package1, package2)
+                )
+            ),
+            carrier2 to listOf(
+                CarrierPackageGroup(
+                    groupName = "Group 2",
+                    packages = listOf(package3, package4)
+                )
+            )
+        )
+        whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
+
+        sut = WooShippingLabelPackageCreationViewModel(
+            SavedStateHandle(),
+            resourceProvider,
+            fetchSavedPackages,
+            fetchCarrierPackages
+        )
+        sut.viewState.observeForever { lastViewState = it }
+        sut.onCarrierPackageSelected(package1, true)
+        sut.onCarrierPackageSelected(package2, true)
+
+        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap {
+            it.packages
+        }?.filter { it.isSelected }
+        assertThat(selectedPackages).isNotNull
+        assertThat(selectedPackages).size().isEqualTo(1)
+        assertThat(selectedPackages?.first()).isEqualTo(package2.copy(isSelected = true))
     }
 }
