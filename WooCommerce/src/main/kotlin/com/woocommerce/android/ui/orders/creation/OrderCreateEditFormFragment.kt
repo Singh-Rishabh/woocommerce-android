@@ -423,10 +423,11 @@ class OrderCreateEditFormFragment :
         binding.shippingLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                viewModel.shippingLineList.observeAsState().value?.let { shippingLines ->
+                viewModel.shippingLineSection.observeAsState().value?.let { shippingLineSection ->
                     WooThemeWithBackground {
                         ShippingLineFormSection(
-                            shippingLineDetails = shippingLines,
+                            shippingLineDetails = shippingLineSection.shippingLines,
+                            isEnabled = shippingLineSection.isEnabled,
                             formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAddClicked = { viewModel.onAddOrEditShippingClicked() },
