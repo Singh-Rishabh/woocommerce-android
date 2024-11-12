@@ -7,13 +7,8 @@ import com.woocommerce.android.model.ProductReview
 data class ReviewModerationRequest(
     val review: ProductReview,
     val newStatus: ProductReviewStatus,
-    private val timeOfRequest: Long
 ) : Comparable<ReviewModerationRequest> {
-    constructor(review: ProductReview, newStatus: ProductReviewStatus) : this(
-        review,
-        newStatus,
-        System.currentTimeMillis()
-    )
+    private val timeOfRequest = System.currentTimeMillis()
 
     override fun compareTo(other: ReviewModerationRequest): Int {
         return timeOfRequest.compareTo(other.timeOfRequest)
