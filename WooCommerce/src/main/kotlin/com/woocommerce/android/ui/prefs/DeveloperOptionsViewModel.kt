@@ -156,6 +156,8 @@ class DeveloperOptionsViewModel @Inject constructor(
         return when (updateFrequency) {
             UpdateOptions.ALWAYS -> CardReaderManager.SimulatorUpdateFrequency.ALWAYS
             UpdateOptions.NEVER -> CardReaderManager.SimulatorUpdateFrequency.NEVER
+            UpdateOptions.LOW_BATTERY_ERROR -> CardReaderManager.SimulatorUpdateFrequency.LOW_BATTERY_ERROR
+            UpdateOptions.LOW_BATTERY_SUCCEED_CONNECT -> CardReaderManager.SimulatorUpdateFrequency.LOW_BATTERY_SUCCEED_CONNECT
             UpdateOptions.RANDOM -> CardReaderManager.SimulatorUpdateFrequency.RANDOM
         }
     }
@@ -212,6 +214,8 @@ class DeveloperOptionsViewModel @Inject constructor(
         enum class UpdateOptions(@StringRes val title: Int) {
             ALWAYS(string.always_update_reader),
             NEVER(string.never_update_reader),
+            LOW_BATTERY_ERROR(string.low_battery_error_update_reader),
+            LOW_BATTERY_SUCCEED_CONNECT(string.low_battery_succeed_connect_update_reader),
             RANDOM(string.randomly_update_reader)
         }
     }

@@ -2547,6 +2547,8 @@
     <string name="update_simulated_reader_key">Update Simulated Reader Key</string>
     <string name="always_update_reader">Always</string>
     <string name="never_update_reader">Never</string>
+    <string name="low_battery_error_update_reader" translatable="false">Low Battery Error</string>
+    <string name="low_battery_succeed_connect_update_reader" translatable="false">Low Battery Succeed Connect</string>
     <string name="randomly_update_reader">Randomly</string>
     <string name="enable_interac_payment" translatable="false">Enable Interac Payment</string>
     <string name="enable_interac_key" translatable="false">Enable Interac Key</string>
