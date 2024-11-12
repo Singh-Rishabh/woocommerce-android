@@ -238,7 +238,6 @@ class WooPosVariationsViewModelTest {
             )
         }
 
-    @SuppressLint("CheckResult")
     @Test
     fun `given load more variations, when failure, then view state is updated with error state`() =
         runTest {
@@ -257,5 +256,21 @@ class WooPosVariationsViewModelTest {
                 val value = awaitItem() as WooPosVariationsViewState.Error
                 assertThat(value).isInstanceOf(WooPosVariationsViewState.Error::class.java)
             }
+        }
+
+    @Test
+    fun `when end of list reached, then load more called`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                emptyFlow()
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
+
+            verify(variationsDataSource).loadMore(1L)
         }
 }
