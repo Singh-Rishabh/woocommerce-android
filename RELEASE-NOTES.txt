@@ -3,7 +3,7 @@
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
 21.2
 -----
-
+- [*] Fixed UI glitch when updating card reader firmware fails [https://github.com/woocommerce/woocommerce-android/pull/12912]
 
 21.1
 -----
