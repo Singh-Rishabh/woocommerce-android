@@ -195,7 +195,7 @@ class BlazeRepository @Inject constructor(
                 parameters = emptyMap()
             ),
             objectiveId = appPrefsWrapper.blazeCampaignSelectedObjective,
-            ctaText = "TODO"
+            ctaText = ""
         )
     }
 
