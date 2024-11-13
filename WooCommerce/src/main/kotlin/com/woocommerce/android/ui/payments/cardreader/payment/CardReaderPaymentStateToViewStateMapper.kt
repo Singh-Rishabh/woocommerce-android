@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.payments.cardreader.payment
 
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.CollectingPayment
@@ -94,7 +95,27 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                     amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
                 )
             }
-            is PaymentFailed.BuiltInReaderFailedPayment -> TODO()
+            is PaymentFailed.BuiltInReaderFailedPayment -> {
+                if (paymentState.cta != null) {
+                    cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                        cardReaderType = CardReaderType.BUILT_IN,
+                        errorType = paymentState.errorType,
+                        amountLabel = paymentState.amountWithCurrencyLabel,
+                        primaryLabel = paymentState.cta.label,
+                        onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
+                        secondaryLabel = R.string.cancel,
+                        onSecondaryActionClicked = paymentState.onCancel,
+                    )
+                } else {
+                    cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                        cardReaderType = CardReaderType.BUILT_IN,
+                        errorType = paymentState.errorType,
+                        amountLabel = paymentState.amountWithCurrencyLabel,
+                        primaryLabel = R.string.cancel,
+                        onPrimaryActionClicked = paymentState.onCancel!!,
+                    )
+                }
+            }
             is PaymentFailed.ExternalReaderFailedPayment -> TODO()
             is PaymentSuccessful.BuiltInReaderPaymentSuccessful -> TODO()
             is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
