@@ -253,7 +253,7 @@ class WooPosProductsViewModelTest {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
                 ChildToParentEvent.ItemClickedInProductSelector(
-                    WooPosItemNavigationData.SimpleProductData(
+                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
                         id = product.id
                     )
                 )
