@@ -121,7 +121,7 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
             is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
             is PaymentSuccessful.ExternalReaderPaymentSuccessful -> TODO()
             is PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
-            is PrintingReceipt -> TODO()
+            is PrintingReceipt -> ViewState.PrintingReceiptState(paymentState.amountWithCurrencyLabel)
             is ProcessingPayment.BuiltInReaderProcessingPayment -> TODO()
             is ProcessingPayment.ExternalReaderProcessingPayment -> TODO()
             ReFetchingOrder -> ViewState.ReFetchingOrderState
