@@ -65,7 +65,9 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
             is CardReaderInteracRefundState.LoadingData -> {
                 ViewState.RefundLoadingDataState(paymentState.onCancel)
             }
-            is CardReaderInteracRefundState.ProcessingInteracRefund -> TODO()
+            is CardReaderInteracRefundState.ProcessingInteracRefund -> {
+                ViewState.ProcessingRefundState(paymentState.amountWithCurrencyLabel)
+            }
             is CollectingPayment.BuiltInReaderCollectPaymentState -> TODO()
             is CollectingPayment.ExternalReaderCollectPaymentState -> TODO()
             is LoadingData -> ViewState.LoadingDataState(paymentState.onCancel)
