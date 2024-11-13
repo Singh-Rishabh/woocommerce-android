@@ -117,7 +117,38 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                     )
                 }
             }
-            is PaymentFailed.ExternalReaderFailedPayment -> TODO()
+            is PaymentFailed.ExternalReaderFailedPayment -> {
+                if (paymentState.cta != null) {
+                    cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                        cardReaderType = CardReaderType.EXTERNAL,
+                        errorType = paymentState.errorType,
+                        amountLabel = paymentState.amountWithCurrencyLabel,
+                        primaryLabel = paymentState.cta.label,
+                        onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
+                        secondaryLabel = R.string.cancel,
+                        onSecondaryActionClicked = paymentState.onCancel,
+                    )
+                } else {
+                    if (paymentState.onRetry != null) {
+                        cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                            cardReaderType = CardReaderType.EXTERNAL,
+                            errorType = paymentState.errorType,
+                            amountLabel = paymentState.amountWithCurrencyLabel,
+                            primaryLabel = R.string.try_again,
+                            onPrimaryActionClicked = paymentState.onRetry,
+                            onSecondaryActionClicked = paymentState.onCancel,
+                        )
+                    } else {
+                        cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                            cardReaderType = CardReaderType.EXTERNAL,
+                            errorType = paymentState.errorType,
+                            amountLabel = paymentState.amountWithCurrencyLabel,
+                            primaryLabel = R.string.card_reader_payment_payment_failed_ok,
+                            onPrimaryActionClicked = paymentState.onCancel!!,
+                        )
+                    }
+                }
+            }
             is PaymentSuccessful.BuiltInReaderPaymentSuccessful -> TODO()
             is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
             is PaymentSuccessful.ExternalReaderPaymentSuccessful -> TODO()
