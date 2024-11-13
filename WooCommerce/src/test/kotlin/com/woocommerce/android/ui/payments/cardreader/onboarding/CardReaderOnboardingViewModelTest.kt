@@ -312,7 +312,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
         testBlocking {
             val url = "url"
             whenever(errorClickHandler.invoke(CardReaderOnboardingCTAErrorType.WC_PAY_NOT_SETUP))
-                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(url))
+                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser(url))
 
             val viewModel = createVM(
                 CardReaderOnboardingFragmentArgs(
@@ -328,7 +328,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
                 .actionButtonActionPrimary.invoke()
 
             assertThat(viewModel.event.value).isEqualTo(
-                CardReaderOnboardingEvent.NavigateToUrlInWPComWebView(url)
+                CardReaderOnboardingEvent.NavigateToUrlInBrowser(url)
             )
         }
 
@@ -362,7 +362,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
         testBlocking {
             val url = "url"
             whenever(errorClickHandler.invoke(CardReaderOnboardingCTAErrorType.STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS))
-                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(url))
+                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser(url))
 
             val viewModel = createVM(
                 CardReaderOnboardingFragmentArgs(
@@ -379,7 +379,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
                 .actionButtonPrimary!!.action.invoke()
 
             assertThat(viewModel.event.value).isEqualTo(
-                CardReaderOnboardingEvent.NavigateToUrlInWPComWebView(url)
+                CardReaderOnboardingEvent.NavigateToUrlInBrowser(url)
             )
         }
 
