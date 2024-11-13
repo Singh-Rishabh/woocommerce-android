@@ -245,7 +245,8 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
     private fun isAdContentGeneratedByAi(campaignDetails: CampaignDetails?): Boolean =
         aiSuggestions.any {
             it.tagLine == campaignDetails?.tagLine &&
-                it.description == campaignDetails.description
+                it.description == campaignDetails.description &&
+                it.ctaText == campaignDetails.ctaText
         }
 
     private fun loadData() {
