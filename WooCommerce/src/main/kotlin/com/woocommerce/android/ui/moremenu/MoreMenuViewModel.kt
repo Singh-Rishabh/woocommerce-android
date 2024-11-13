@@ -244,7 +244,7 @@ class MoreMenuViewModel @Inject constructor(
             )
         )
 
-    private suspend fun trackBlazeDisplayed() {
+    private fun trackBlazeDisplayed() {
         if (isBlazeEnabled()) {
             AnalyticsTracker.track(
                 stat = BLAZE_ENTRY_POINT_DISPLAYED,
