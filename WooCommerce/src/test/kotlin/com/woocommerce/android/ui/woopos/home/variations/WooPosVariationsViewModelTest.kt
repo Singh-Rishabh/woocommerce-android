@@ -6,7 +6,6 @@ import androidx.lifecycle.asLiveData
 import app.cash.turbine.test
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
-import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationsById
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel

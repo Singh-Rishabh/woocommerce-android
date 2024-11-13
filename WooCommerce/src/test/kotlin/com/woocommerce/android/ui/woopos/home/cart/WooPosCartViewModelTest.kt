@@ -5,11 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
-import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationsById
+import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -45,7 +44,7 @@ class WooPosCartViewModelTest {
         on { events }.thenReturn(MutableSharedFlow())
     }
     private val getProductById: WooPosGetProductById = mock()
-    private val getVariationsById: WooPosGetVariationsById = mock()
+    private val getVariationsById: WooPosGetVariationById = mock()
     private val resourceProvider: ResourceProvider = mock {
         on {
             getQuantityString(

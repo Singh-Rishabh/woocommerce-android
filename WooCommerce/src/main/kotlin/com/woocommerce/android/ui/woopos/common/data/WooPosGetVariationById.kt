@@ -8,7 +8,7 @@ import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 
-class WooPosGetVariationsById @Inject constructor(
+class WooPosGetVariationById @Inject constructor(
     private val store: WCProductStore,
     private val site: SelectedSite,
 ) {

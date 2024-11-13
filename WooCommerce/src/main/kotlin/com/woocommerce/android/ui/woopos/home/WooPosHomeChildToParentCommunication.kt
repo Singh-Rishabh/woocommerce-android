@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.woopos.home
 
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
