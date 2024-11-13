@@ -150,7 +150,19 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 }
             }
             is PaymentSuccessful.BuiltInReaderPaymentSuccessful -> TODO()
-            is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
+            is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> {
+                val receiptSentHint = UiString.UiStringRes(
+                    R.string.card_reader_payment_reader_receipt_sent,
+                    listOf(UiString.UiStringText(paymentState.recipientEmail)),
+                    true
+                )
+                ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                    receiptSentAutomaticallyHint = receiptSentHint,
+                    onPrimaryActionClicked = paymentState.onPrintReceiptClicked,
+                    onTertiaryActionClicked = paymentState.onSaveUserClicked,
+                )
+            }
             is PaymentSuccessful.ExternalReaderPaymentSuccessful -> TODO()
             is PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically -> {
                 val receiptSentHint = UiString.UiStringRes(
