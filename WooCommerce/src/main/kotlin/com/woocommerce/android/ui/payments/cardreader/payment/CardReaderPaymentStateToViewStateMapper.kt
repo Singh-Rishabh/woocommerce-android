@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.payments.cardreader.payment
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.CollectingPayment
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentCapturing
@@ -68,8 +67,22 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
             is CardReaderInteracRefundState.ProcessingInteracRefund -> {
                 ViewState.ProcessingRefundState(paymentState.amountWithCurrencyLabel)
             }
-            is CollectingPayment.BuiltInReaderCollectPaymentState -> TODO()
-            is CollectingPayment.ExternalReaderCollectPaymentState -> TODO()
+            is CollectingPayment.BuiltInReaderCollectPaymentState -> {
+                ViewState.BuiltInReaderCollectPaymentState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                    hintLabel = paymentState.cardReaderHint
+                        ?: R.string.card_reader_payment_collect_payment_built_in_hint
+                )
+            }
+
+            is CollectingPayment.ExternalReaderCollectPaymentState -> {
+                ViewState.ExternalReaderCollectPaymentState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                    hintLabel = paymentState.cardReaderHint
+                        ?: R.string.card_reader_payment_collect_payment_hint,
+                    onSecondaryActionClicked = paymentState.onCancel
+                )
+            }
             is LoadingData -> ViewState.LoadingDataState(paymentState.onCancel)
             is PaymentCapturing.BuiltInReaderPaymentCapturing -> TODO()
             is PaymentCapturing.ExternalReaderPaymentCapturing -> TODO()
