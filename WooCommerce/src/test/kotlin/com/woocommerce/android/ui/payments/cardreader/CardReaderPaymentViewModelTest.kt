@@ -188,7 +188,9 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val cardReaderConfigProvider: CardReaderCountryConfigProvider = mock()
     private val cardReaderConfig: CardReaderConfigForSupportedCountry = CardReaderConfigForUSA
     private val paymentReceiptShare: PaymentReceiptShare = mock()
-    private val paymentStateMapper = CardReaderPaymentStateToViewStateMapper()
+    private val paymentStateMapper = CardReaderPaymentStateToViewStateMapper(
+        cardReaderPaymentReaderTypeStateProvider
+    )
 
     @Suppress("LongMethod")
     @Before
@@ -256,6 +258,9 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             .thenReturn("$DUMMY_CURRENCY_SYMBOL$DUMMY_TOTAL")
         whenever(cardReaderPaymentOrderHelper.getReceiptDocumentName(mockedOrder.id)).thenReturn("receipt-order-1")
         whenever(cardReaderManager.batteryStatus).thenAnswer { flow { emit(CardReaderBatteryStatus.Unknown) } }
+
+        viewModel.event.observeForever {}
+        viewModel.viewStateData.observeForever {}
     }
 
     //region - Payments tests
@@ -4543,6 +4548,8 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentStateProvider = paymentStateProvider,
             paymentStateMapper = paymentStateMapper,
         )
+        viewModel.event.observeForever {}
+        viewModel.viewStateData.observeForever {}
     }
 
     private fun initViewModel(
@@ -4579,5 +4586,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentStateProvider = paymentStateProvider,
             paymentStateMapper = paymentStateMapper,
         )
+        viewModel.event.observeForever {}
+        viewModel.viewStateData.observeForever {}
     }
 }
