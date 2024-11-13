@@ -15,6 +15,7 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_M
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_INBOX
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_PAYMENTS
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_PAYMENTS_BADGE_VISIBLE
+import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_POS
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_REVIEWS
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_UPGRADES
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_MORE_MENU_VIEW_STORE
@@ -143,9 +144,7 @@ class MoreMenuViewModel @Inject constructor(
                     icon = R.drawable.ic_more_menu_pos,
                     extraIcon = R.drawable.ic_more_menu_pos_extra,
                     state = wooPosState,
-                    onClick = {
-                        triggerEvent(MoreMenuEvent.NavigateToWooPosEvent)
-                    }
+                    onClick = ::onWooPosButtonClick,
                 )
             )
         )
@@ -394,6 +393,11 @@ class MoreMenuViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun onWooPosButtonClick() {
+        trackMoreMenuOptionSelected(VALUE_MORE_MENU_POS)
+        triggerEvent(MoreMenuEvent.NavigateToWooPosEvent)
     }
 
     private fun onViewAdminButtonClick() {
