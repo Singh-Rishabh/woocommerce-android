@@ -105,21 +105,13 @@ class WooPosItemsViewModel @Inject constructor(
         when (event.item) {
             is SimpleProduct -> {
                 onItemClicked(
-                    WooPosItemNavigationData.SimpleProductData(
+                    ItemClickedData.SimpleProduct(
                         id = event.item.id
                     )
                 )
             }
-
-            is VariableProduct -> {
-            }
-
-            is WooPosItem.Variation -> {
-                onItemClicked(
-                    WooPosItemNavigationData.SimpleProductData(
-                        id = event.item.id
-                    )
-                )
+            else -> {
+                // Handled as part of the UI event NavigateToVariationsScreen
             }
         }
     }
@@ -264,7 +256,7 @@ class WooPosItemsViewModel @Inject constructor(
         )
     }
 
-    private fun onItemClicked(itemData: WooPosItemNavigationData) {
+    private fun onItemClicked(itemData: ItemClickedData) {
         sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData))
     }
 
@@ -279,4 +271,9 @@ class WooPosItemsViewModel @Inject constructor(
     private fun Product.isVariable() =
         productType == ProductType.VARIABLE ||
             productType == ProductType.VARIATION
+
+    sealed class ItemClickedData(open val id: Long) {
+        data class SimpleProduct(override val id: Long) : ItemClickedData(id)
+        data class Variation(val productId: Long, override val id: Long) : ItemClickedData(id)
+    }
 }
