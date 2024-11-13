@@ -84,8 +84,16 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is LoadingData -> ViewState.LoadingDataState(paymentState.onCancel)
-            is PaymentCapturing.BuiltInReaderPaymentCapturing -> TODO()
-            is PaymentCapturing.ExternalReaderPaymentCapturing -> TODO()
+            is PaymentCapturing.BuiltInReaderPaymentCapturing -> {
+                ViewState.BuiltInReaderCapturingPaymentState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                )
+            }
+            is PaymentCapturing.ExternalReaderPaymentCapturing -> {
+                ViewState.ExternalReaderCapturingPaymentState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                )
+            }
             is PaymentFailed.BuiltInReaderFailedPayment -> TODO()
             is PaymentFailed.ExternalReaderFailedPayment -> TODO()
             is PaymentSuccessful.BuiltInReaderPaymentSuccessful -> TODO()
