@@ -103,12 +103,13 @@ class AnalyticsTracker private constructor(
 
         val propertiesJson = JSONObject(properties.buildFinalProperties(stat.siteless))
         val eventPrefix = if (stat.isPosEvent) POS_EVENTS_PREFIX else EVENTS_PREFIX
-        tracksClient?.track(eventPrefix + eventName, propertiesJson, user, userType)
+        val fullEventName = eventPrefix + eventName
+        tracksClient?.track(fullEventName, propertiesJson, user, userType)
 
         if (propertiesJson.length() > 0) {
-            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $eventName, Properties: $propertiesJson")
+            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $fullEventName, Properties: $propertiesJson")
         } else {
-            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $eventName")
+            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $fullEventName")
         }
     }
 
