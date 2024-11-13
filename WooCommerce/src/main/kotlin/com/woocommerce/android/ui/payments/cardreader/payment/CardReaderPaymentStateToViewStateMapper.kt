@@ -163,7 +163,14 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                     onTertiaryActionClicked = paymentState.onSaveUserClicked,
                 )
             }
-            is PaymentSuccessful.ExternalReaderPaymentSuccessful -> TODO()
+            is PaymentSuccessful.ExternalReaderPaymentSuccessful -> {
+                ViewState.ExternalReaderPaymentSuccessfulState(
+                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                    onPrimaryActionClicked = paymentState.onPrintReceiptClicked,
+                    onSecondaryActionClicked = paymentState.onSendReceiptClicked,
+                    onTertiaryActionClicked = paymentState.onSaveUserClicked,
+                )
+            }
             is PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically -> {
                 val receiptSentHint = UiString.UiStringRes(
                     R.string.card_reader_payment_reader_receipt_sent,
