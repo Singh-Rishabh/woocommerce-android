@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.payments.cardreader.payment
 
 import com.woocommerce.android.R
+import com.woocommerce.android.model.UiString
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
@@ -120,7 +121,20 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
             is PaymentSuccessful.BuiltInReaderPaymentSuccessful -> TODO()
             is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
             is PaymentSuccessful.ExternalReaderPaymentSuccessful -> TODO()
-            is PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically -> TODO()
+            is PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically -> {
+                val receiptSentHint = UiString.UiStringRes(
+                    R.string.card_reader_payment_reader_receipt_sent,
+                    listOf(UiString.UiStringText(paymentState.recipientEmail)),
+                    true
+                )
+                cardReaderPaymentReaderTypeStateProvider.providePaymentSuccessfulReceiptSentAutomaticallyState(
+                    cardReaderType = CardReaderType.EXTERNAL,
+                    amountLabel = paymentState.amountWithCurrencyLabel,
+                    receiptSentHint = receiptSentHint,
+                    onSaveUserClicked = paymentState.onSaveUserClicked,
+                    onPrintReceiptClicked = paymentState.onPrintReceiptClicked,
+                )
+            }
             is PrintingReceipt -> ViewState.PrintingReceiptState(paymentState.amountWithCurrencyLabel)
             is ProcessingPayment.BuiltInReaderProcessingPayment -> {
                 ViewState.BuiltInReaderProcessingPaymentState(paymentState.amountWithCurrencyLabel)
