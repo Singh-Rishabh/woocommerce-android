@@ -30,7 +30,6 @@ sealed class WooPosItem(
                         id = id,
                         name = name,
                         numOfVariations = numOfVariations,
-                        variationIds = variationIds
                     )
                 )
             )
@@ -40,6 +39,7 @@ sealed class WooPosItem(
     data class Variation(
         override val id: Long,
         override val name: String,
+        val productId: Long,
         val price: String,
         val imageUrl: String?,
     ) : WooPosItem(id, name), ClickableItem {
