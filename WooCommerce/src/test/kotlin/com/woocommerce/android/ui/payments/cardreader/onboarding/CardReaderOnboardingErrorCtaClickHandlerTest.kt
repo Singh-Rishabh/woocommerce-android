@@ -359,44 +359,6 @@ class CardReaderOnboardingErrorCtaClickHandlerTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given wpcom site, when invoked with WC_PAY_NOT_SETUP, then OpenWpComWebView returned`() =
-        testBlocking {
-            // GIVEN
-            whenever(siteModel.isWPCom).thenReturn(true)
-            val adminUrl = "mywebsite.com"
-            whenever(siteModel.adminUrl).thenReturn(adminUrl)
-
-            // WHEN
-            val result = handler(CardReaderOnboardingCTAErrorType.WC_PAY_NOT_SETUP)
-
-            // THEN
-            assertThat(result).isEqualTo(
-                CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(
-                    url = "$adminUrl/admin.php?page=wc-admin&path=%2Fpayments%2Foverview"
-                )
-            )
-        }
-
-    @Test
-    fun `given wpcomatomic site, when invoked with WC_PAY_NOT_SETUP, then OpenWpComWebView returned`() =
-        testBlocking {
-            // GIVEN
-            whenever(siteModel.isWPComAtomic).thenReturn(true)
-            val adminUrl = "mywebsite.com"
-            whenever(siteModel.adminUrl).thenReturn(adminUrl)
-
-            // WHEN
-            val result = handler(CardReaderOnboardingCTAErrorType.WC_PAY_NOT_SETUP)
-
-            // THEN
-            assertThat(result).isEqualTo(
-                CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(
-                    url = "$adminUrl/admin.php?page=wc-admin&path=%2Fpayments%2Foverview"
-                )
-            )
-        }
-
-    @Test
     fun `given non wpcom site, when invoked with WC_PAY_NOT_SETUP, then OpenGenericWebView returned`() =
         testBlocking {
             // GIVEN
@@ -429,44 +391,6 @@ class CardReaderOnboardingErrorCtaClickHandlerTest : BaseUnitTest() {
             // THEN
             verify(paymentsFlowTracker).trackOnboardingCtaTapped(
                 OnboardingCtaReasonTapped.PLUGIN_SETUP_TAPPED
-            )
-        }
-
-    @Test
-    fun `given wpcom site, when invoked with STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS, then OpenWpComWebView returned`() =
-        testBlocking {
-            // GIVEN
-            whenever(siteModel.isWPCom).thenReturn(true)
-            val adminUrl = "mywebsite.com"
-            whenever(siteModel.adminUrl).thenReturn(adminUrl)
-
-            // WHEN
-            val result = handler(CardReaderOnboardingCTAErrorType.STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS)
-
-            // THEN
-            assertThat(result).isEqualTo(
-                CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(
-                    url = "$adminUrl/admin.php?page=wc-admin&path=%2Fpayments%2Foverview"
-                )
-            )
-        }
-
-    @Test
-    fun `given wpcom atomic site, when invoked with STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS, then OpenWpComWebView returned`() =
-        testBlocking {
-            // GIVEN
-            whenever(siteModel.isWPComAtomic).thenReturn(true)
-            val adminUrl = "mywebsite.com"
-            whenever(siteModel.adminUrl).thenReturn(adminUrl)
-
-            // WHEN
-            val result = handler(CardReaderOnboardingCTAErrorType.STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS)
-
-            // THEN
-            assertThat(result).isEqualTo(
-                CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(
-                    url = "$adminUrl/admin.php?page=wc-admin&path=%2Fpayments%2Foverview"
-                )
             )
         }
 
