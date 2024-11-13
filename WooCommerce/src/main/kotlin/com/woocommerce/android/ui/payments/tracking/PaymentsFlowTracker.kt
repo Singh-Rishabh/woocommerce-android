@@ -323,10 +323,11 @@ class PaymentsFlowTracker @Inject constructor(
         track(CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED)
     }
 
-    fun trackSoftwareUpdateUnknownStatus() {
+    fun trackSoftwareUpdateUnknownStatus(uiLoaded: Boolean) {
         track(
             CARD_READER_SOFTWARE_UPDATE_FAILED,
-            errorDescription = "Unknown software update status"
+            errorDescription = "Unknown software update status",
+            properties = mutableMapOf("uiLoaded" to uiLoaded),
         )
     }
 
