@@ -362,8 +362,6 @@ class CardReaderOnboardingErrorCtaClickHandlerTest : BaseUnitTest() {
     fun `given non wpcom site, when invoked with WC_PAY_NOT_SETUP, then OpenGenericWebView returned`() =
         testBlocking {
             // GIVEN
-            whenever(siteModel.isWPCom).thenReturn(false)
-            whenever(siteModel.isWPComAtomic).thenReturn(false)
             val adminUrl = "mywebsite.com"
             whenever(siteModel.adminUrl).thenReturn(adminUrl)
 
@@ -398,8 +396,6 @@ class CardReaderOnboardingErrorCtaClickHandlerTest : BaseUnitTest() {
     fun `given non wpcom site, when invoked with STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS, then OpenGenericWebView returned`() =
         testBlocking {
             // GIVEN
-            whenever(siteModel.isWPCom).thenReturn(false)
-            whenever(siteModel.isWPComAtomic).thenReturn(false)
             val adminUrl = "mywebsite.com"
             whenever(siteModel.adminUrl).thenReturn(adminUrl)
 
