@@ -83,6 +83,7 @@ class BlazeCampaignCreationPreviewViewModelTests : BaseUnitTest() {
         on { observeInterests() } doReturn flowOf(interests)
         on { observeLanguages() } doReturn flowOf(languages)
         on { observeObjectives() } doReturn flowOf(objectives)
+        onBlocking { fetchAdSuggestions(any()) } doReturn Result.success(emptyList())
     }
     private val analyticsTracker: AnalyticsTrackerWrapper = mock()
     private lateinit var viewModel: BlazeCampaignCreationPreviewViewModel
