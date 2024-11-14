@@ -148,6 +148,7 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                             amountLabel = paymentState.amountWithCurrencyLabel,
                             primaryLabel = R.string.try_again,
                             onPrimaryActionClicked = paymentState.onRetry,
+                            secondaryLabel = R.string.cancel,
                             onSecondaryActionClicked = paymentState.onCancel,
                         )
                     } else {
