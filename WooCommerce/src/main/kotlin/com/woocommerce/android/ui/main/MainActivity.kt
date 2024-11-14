@@ -435,6 +435,7 @@ class MainActivity :
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         AnalyticsTracker.trackBackPressed(this)
 
@@ -986,11 +987,17 @@ class MainActivity :
         restart()
     }
 
-    override fun showProductDetail(remoteProductId: Long, enableTrash: Boolean) {
-        val action = NavGraphMainDirections.actionGlobalProductDetailFragment(
-            mode = ProductDetailFragment.Mode.ShowProduct(remoteProductId),
-            isTrashEnabled = enableTrash
-        )
+    override fun showProductDetail(remoteProductId: Long, enableTrash: Boolean, popUpToProductList: Boolean) {
+        val action = when (popUpToProductList) {
+            true -> NavGraphMainDirections.actionGlobalProductDetailFragmentPopUpToProductList(
+                mode = ProductDetailFragment.Mode.ShowProduct(remoteProductId),
+                isTrashEnabled = enableTrash
+            )
+            else -> NavGraphMainDirections.actionGlobalProductDetailFragment(
+                mode = ProductDetailFragment.Mode.ShowProduct(remoteProductId),
+                isTrashEnabled = enableTrash
+            )
+        }
         navController.navigateSafely(action)
     }
 
@@ -1225,6 +1232,7 @@ class MainActivity :
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         updateAppBarVisibility(fragment)

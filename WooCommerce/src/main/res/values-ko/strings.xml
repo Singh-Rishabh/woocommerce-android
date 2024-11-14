@@ -1,11 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-02 09:54:04+0000
+Translation-Revision-Date: 2024-11-06 09:54:04+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: ko_KR
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">배송 서비스</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">가장 빠름</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">가장 저렴</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">레이블 구매</string>
+    <string name="shipping_label_shipment_details_purchase_label">레이블 구매 · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">이 주문을 완료로 표시하고 고객에게 알립니다.</string>
+    <string name="shipping_label_shipment_details_shipment_cost">배송비</string>
+    <string name="shipping_label_shipment_details_order_details">주문 상세 정보</string>
+    <string name="shipping_label_shipment_details_title">배송 상세 정보</string>
+    <string name="shipping_label_select_package_description">패키지의 크기를 입력하거나 배송업체 패키지 옵션을 선택하여 적용 가능한 배송비를 확인하세요.</string>
+    <string name="shipping_label_select_package_title">배송비를 가져올 패키지 선택</string>
+    <string name="shipping_label_select_package_button">패키지 선택</string>
+    <string name="shipping_label_hazmat_title">위험물 또는 유해물질을 배송하시나요?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">아이템 카드 축소/확장</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">1%s 기준으로 정렬됨</string>
+    <string name="no">아니요</string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">향후 캠페인을 위해 내 선택 사항 저장</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;다음과 같은 상황에 적합:&lt;/b&gt; %s</string>
+    <string name="blaze_campaign_objective_select_objective_label">목표 %s 선택</string>
+    <string name="custom_fields_empty_view_title">고객 필드를 찾을 수 없음</string>
+    <string name="custom_fields_empty_view_message">사용자 정의 필드는 추가 정보를 표시하고 매장의 쇼핑 환경을 사용자 정의할 수 있는 선택 사항 메타데이터입니다.</string>
+    <string name="blaze_campaign_created_success_feedback_request">Blaze를 경험해 보니 어떠셨나요?</string>
+    <string name="blaze_campaign_preview_missing_objective_dialog_positive_button">목표 선택</string>
+    <string name="blaze_campaign_preview_missing_objective_dialog_text">Blaze 캠페인의 목표를 선택하세요.</string>
+    <string name="blaze_campaign_preview_details_choose_objective">캠페인 목표 선택</string>
+    <string name="blaze_campaign_preview_details_objective">캠페인 목표</string>
+    <string name="more_menu_button_woo_pos_description">실제 매장에서 결제받기</string>
+    <string name="card_reader_tap_to_pay_about_how_works_4">4. 고객이 자신의 카드를 회원님의 휴대전화 뒷면에 댑니다.</string>
     <string name="custom_fields_editor_html_toggle">HTML</string>
     <string name="custom_fields_editor_text_toggle">텍스트</string>
     <string name="custom_fields_editor_toggle_accessibility_description">텍스트 편집기와 HTML 편집기 간 전환</string>
@@ -218,7 +247,6 @@ Language: ko_KR
     <string name="dashboard_product_stock_wcanalytics_inactive_title">상품 재고 보고서를 로드할 수 없음</string>
     <string name="dashboard_product_stock_no_sales_last_30_days">최근 30일간 판매된 아이템 없음</string>
     <string name="dashboard_product_stock_sales_last_30_days">최근 30일간 판매된 아이템 %d개</string>
-    <string name="more_menu_button_woo_pos_description">앱을 금전 등록기처럼 사용</string>
     <string name="more_menu_button_woo_pos">판매 지점 모드</string>
     <string name="product_stock_status_low_stock">재고 부족</string>
     <string name="order_detail_shipping_header">배송</string>
@@ -729,7 +757,6 @@ Language: ko_KR
     <string name="blaze_campaign_title">Blaze 캠페인</string>
     <string name="card_reader_tap_to_pay_about_copyright">비접촉 기호는 EMVCo, LLC가 소유한 상표이며 해당 회사의 허가 하에 사용됩니다.</string>
     <string name="card_reader_tap_to_pay_about_how_works_5">5. \"완료\" 체크 표시가 보이면 스토어에서 결제가 처리되고 거래가 완료될 것입니다.</string>
-    <string name="card_reader_tap_to_pay_about_how_works_4">4. 고객이 스마트폰 상단의 비접촉 기호 위로 카드를 수평으로 들게 합니다.</string>
     <string name="card_reader_tap_to_pay_about_how_works_3">3. 스마트폰을 고객에게 내밉니다.</string>
     <string name="card_reader_tap_to_pay_about_how_works_2">2. \"결제 받기\"를 탭하고 \"Tap to Pay\"을 선택합니다.</string>
     <string name="card_reader_tap_to_pay_about_how_works_1_updated">1. 주문 생성</string>
@@ -3627,6 +3654,7 @@ Language: ko_KR
     <string name="taxes">세금</string>
     <string name="payment">결제</string>
     <string name="shipping">배송</string>
+    <string name="total">총계</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">주문</string>

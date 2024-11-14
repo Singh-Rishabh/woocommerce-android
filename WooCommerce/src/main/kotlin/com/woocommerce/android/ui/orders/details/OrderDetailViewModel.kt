@@ -34,6 +34,8 @@ import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.ProductImageMap.OnProductFetchedListener
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
+import com.woocommerce.android.ui.orders.CurrencyMatchResult
+import com.woocommerce.android.ui.orders.IsStoreCurrencyMatch
 import com.woocommerce.android.ui.orders.OrderNavigationTarget
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderNote
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderShipmentTracking
@@ -44,6 +46,7 @@ import com.woocommerce.android.ui.orders.OrderNavigationTarget.PrintShippingLabe
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.RefundShippingLabel
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.StartPaymentFlow
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.StartShippingLabelCreationFlow
+import com.woocommerce.android.ui.orders.OrderNavigationTarget.StartWooShippingLabelCreationFlow
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.ViewCreateShippingLabelInfo
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.ViewOrderFulfillInfo
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.ViewOrderStatusSelector
@@ -115,6 +118,7 @@ class OrderDetailViewModel @Inject constructor(
     private val paymentReceiptHelper: PaymentReceiptHelper,
     private val analyticsTracker: AnalyticsTrackerWrapper,
     private val refreshShippingMethods: RefreshShippingMethods,
+    private val isStoreCurrencyMatch: IsStoreCurrencyMatch,
     getShippingMethodsWithOtherValue: GetShippingMethodsWithOtherValue
 ) : ScopedViewModel(savedState), OnProductFetchedListener {
     private val navArgs: OrderDetailFragmentArgs by savedState.navArgs()
@@ -370,6 +374,17 @@ class OrderDetailViewModel @Inject constructor(
     }
 
     fun onEditClicked() {
+        launch {
+            val isCurrencyMatch = isStoreCurrencyMatch(order.currency)
+            if (!isCurrencyMatch.isMatch) {
+                handleEditClickWhenCurrencyMismatch(isCurrencyMatch)
+            } else {
+                handleEditClick()
+            }
+        }
+    }
+
+    private fun handleEditClick() {
         tracker.trackEditButtonTapped(order.feesLines.size, order.shippingLines.size)
         val firstGiftCard = giftCards.value?.firstOrNull()
         triggerEvent(
@@ -377,6 +392,16 @@ class OrderDetailViewModel @Inject constructor(
                 orderId = order.id,
                 giftCard = firstGiftCard?.code,
                 appliedDiscount = firstGiftCard?.used
+            )
+        )
+    }
+
+    private fun handleEditClickWhenCurrencyMismatch(isCurrencyMatch: CurrencyMatchResult) {
+        tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
+        triggerEvent(
+            ShowSnackbar(
+                message = string.order_detail_edit_store_currency_mismatch,
+                args = arrayOf(order.currency, isCurrencyMatch.storeCurrency.orEmpty())
             )
         )
     }
@@ -656,7 +681,14 @@ class OrderDetailViewModel @Inject constructor(
 
     fun onCreateShippingLabelButtonTapped() {
         tracker.trackShippinhLabelTapped()
-        triggerEvent(StartShippingLabelCreationFlow(order.id))
+        if (
+            FeatureFlag.REVAMP_WOO_SHIPPING.isEnabled() &&
+            shippingLabelOnboardingRepository.shippingPluginSupport.isWooShippingSupported()
+        ) {
+            triggerEvent(StartWooShippingLabelCreationFlow(order.id))
+        } else {
+            triggerEvent(StartShippingLabelCreationFlow(order.id))
+        }
     }
 
     fun onMarkOrderCompleteButtonTapped() {

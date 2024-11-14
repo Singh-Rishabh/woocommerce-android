@@ -96,6 +96,10 @@
             android:defaultValue=""
             app:argType="string" />
         <argument
+            android:name="ctaText"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
             android:name="adImage"
             app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$BlazeCampaignImage" />
         <argument
@@ -104,6 +108,15 @@
         <action
             android:id="@+id/action_blazeCampaignCreationEditAdFragment_to_productImagePickerFragment"
             app:destination="@id/productImagePickerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/blazeCampaignObjectiveFragment"
+        android:name="com.woocommerce.android.ui.blaze.creation.objective.BlazeCampaignObjectiveFragment"
+        android:label="BlazeCampaignObjectiveFragment">
+        <argument
+            android:name="selectedObjectiveId"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignBudgetFragment"
@@ -197,8 +210,4 @@
             android:name="productId"
             app:argType="long" />
     </fragment>
-    <fragment
-        android:id="@+id/blazeCampaignObjectiveFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.objective.BlazeCampaignObjectiveFragment"
-        android:label="BlazeCampaignObjectiveFragment" />
 </navigation>

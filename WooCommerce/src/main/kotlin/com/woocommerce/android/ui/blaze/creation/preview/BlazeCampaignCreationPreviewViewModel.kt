@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsEvent.BLAZE_CREATION_CONFIRM_DETAILS_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.BLAZE_CREATION_EDIT_AD_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.BLAZE_CREATION_FORM_DISPLAYED
@@ -18,6 +19,7 @@ import com.woocommerce.android.ui.blaze.BlazeRepository.AiSuggestionForAd
 import com.woocommerce.android.ui.blaze.BlazeRepository.CampaignDetails
 import com.woocommerce.android.ui.blaze.BlazeRepository.Objective
 import com.woocommerce.android.ui.blaze.Location
+import com.woocommerce.android.ui.blaze.creation.ad.BlazeCampaignCreationEditAdViewModel.EditAdResult
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType.DEVICE
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType.INTEREST
@@ -75,6 +77,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                     productId = navArgs.productId,
                     description = campaignDetails.description,
                     tagLine = campaignDetails.tagLine,
+                    ctaText = campaignDetails.ctaText,
                     campaignImageUrl = campaignDetails.campaignImage.uri,
                     isContentSuggestedByAi = isAdContentGeneratedByAi(campaignDetails)
                 )
@@ -108,6 +111,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                     productId = navArgs.productId,
                     tagLine = it.tagLine,
                     description = it.description,
+                    ctaText = it.ctaText,
                     campaignImage = it.campaignImage,
                     aiSuggestions = aiSuggestions
                 )
@@ -115,14 +119,19 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
         }
     }
 
-    fun onAdUpdated(tagline: String, description: String, campaignImage: BlazeRepository.BlazeCampaignImage) {
+    fun onAdUpdated(updatedAd: EditAdResult) {
         campaignDetails.update {
             it?.copy(
-                tagLine = tagline,
-                description = description,
-                campaignImage = campaignImage
+                tagLine = updatedAd.tagline,
+                description = updatedAd.description,
+                campaignImage = updatedAd.campaignImage,
+                ctaText = updatedAd.ctaText
             )
         }
+    }
+
+    fun onObjectiveUpdated(objectiveId: String) {
+        campaignDetails.update { it?.copy(objectiveId = objectiveId) }
     }
 
     fun onBudgetAndDurationUpdated(updatedBudget: BlazeRepository.Budget) {
@@ -178,7 +187,8 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                         AnalyticsTracker.VALUE_EVERGREEN_CAMPAIGN
 
                     else -> AnalyticsTracker.VALUE_START_END_CAMPAIGN
-                }
+                },
+                AnalyticsTracker.KEY_BLAZE_OBJECTIVE to campaignDetails.value?.objectiveId,
             )
         )
         campaignDetails.value?.let {
@@ -202,7 +212,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                 isObjectiveMissing && FeatureFlag.OBJECTIVE_SECTION.isEnabled() -> buildMissingRequiredDataDialog(
                     message = R.string.blaze_campaign_preview_missing_objective_dialog_text,
                     positiveButtonText = R.string.blaze_campaign_preview_missing_objective_dialog_positive_button,
-                    positiveButtonOnClick = { triggerEvent(NavigateToObjectiveSelectionScreen) }
+                    positiveButtonOnClick = { triggerEvent(NavigateToObjectiveSelectionScreen(selectedId = null)) }
                 )
 
                 else -> triggerEvent(NavigateToPaymentSummary(it))
@@ -236,7 +246,8 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
     private fun isAdContentGeneratedByAi(campaignDetails: CampaignDetails?): Boolean =
         aiSuggestions.any {
             it.tagLine == campaignDetails?.tagLine &&
-                it.description == campaignDetails.description
+                it.description == campaignDetails.description &&
+                it.ctaText == campaignDetails.ctaText
         }
 
     private fun loadData() {
@@ -249,16 +260,29 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
             blazeRepository.fetchDevices()
             blazeRepository.fetchInterests()
 
-            blazeRepository.fetchAdSuggestions(productId = navArgs.productId).getOrNull().let { suggestions ->
-                aiSuggestions = suggestions.orEmpty()
-                adDetailsState.value = AdDetailsUiState.LOADED
-                campaignDetails.update {
-                    it?.copy(
-                        tagLine = suggestions?.firstOrNull()?.tagLine.orEmpty(),
-                        description = suggestions?.firstOrNull()?.description.orEmpty(),
-                    )
+            blazeRepository.fetchAdSuggestions(productId = navArgs.productId)
+                .fold(
+                    onSuccess = { suggestions ->
+                        aiSuggestions = suggestions
+                        campaignDetails.update {
+                            it?.copy(
+                                tagLine = suggestions.firstOrNull()?.tagLine.orEmpty(),
+                                description = suggestions.firstOrNull()?.description.orEmpty(),
+                                ctaText = suggestions.firstOrNull()?.ctaText.orEmpty()
+                            )
+                        }
+                    },
+                    onFailure = { error ->
+                        analyticsTrackerWrapper.track(
+                            stat = AnalyticsEvent.BLAZE_SUGGESTIONS_LOADING_FAILED,
+                            properties = mapOf(
+                                AnalyticsTracker.KEY_ERROR to error.message
+                            )
+                        )
+                    }
+                ).also {
+                    adDetailsState.value = AdDetailsUiState.LOADED
                 }
-            }
             blazeRepository.fetchObjectives()
         }
     }
@@ -283,7 +307,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
         return CampaignDetailItemUi(
             displayTitle = resourceProvider.getString(R.string.blaze_campaign_preview_details_objective),
             displayValue = selectedObjectiveDisplayValue,
-            onItemSelected = { triggerEvent(NavigateToObjectiveSelectionScreen) }
+            onItemSelected = { triggerEvent(NavigateToObjectiveSelectionScreen(campaignDetails.value?.objectiveId)) }
         )
     }
 
@@ -395,6 +419,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
             val productId: Long,
             val description: String,
             val tagLine: String,
+            val ctaText: String,
             val campaignImageUrl: String?,
             val isContentSuggestedByAi: Boolean,
         ) : AdDetailsUi
@@ -437,13 +462,14 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
         val productId: Long,
         val tagLine: String,
         val description: String,
+        val ctaText: String,
         val campaignImage: BlazeRepository.BlazeCampaignImage,
         val aiSuggestions: List<BlazeRepository.AiSuggestionForAd>
     ) : MultiLiveEvent.Event()
 
+    data class NavigateToObjectiveSelectionScreen(val selectedId: String? = null) : MultiLiveEvent.Event()
+
     data class NavigateToPaymentSummary(
         val campaignDetails: CampaignDetails
     ) : MultiLiveEvent.Event()
-
-    data object NavigateToObjectiveSelectionScreen : MultiLiveEvent.Event()
 }

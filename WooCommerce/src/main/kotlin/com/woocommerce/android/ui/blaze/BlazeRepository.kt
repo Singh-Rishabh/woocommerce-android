@@ -149,7 +149,7 @@ class BlazeRepository @Inject constructor(
 
     suspend fun fetchAdSuggestions(productId: Long): Result<List<AiSuggestionForAd>> {
         fun List<BlazeAdSuggestion>.mapToUiModel(): List<AiSuggestionForAd> {
-            return map { AiSuggestionForAd(it.tagLine, it.description) }
+            return map { AiSuggestionForAd(it.tagLine, it.description, it.ctaText) }
         }
 
         val result = blazeCampaignsStore.fetchBlazeAdSuggestions(selectedSite.get(), productId)
@@ -157,7 +157,7 @@ class BlazeRepository @Inject constructor(
         return when {
             result.isError -> {
                 WooLog.w(WooLog.T.BLAZE, "Failed to fetch ad suggestions: ${result.error}")
-                Result.failure(OnChangedException(result.error))
+                Result.failure(OnChangedException(result.error, result.error.message))
             }
 
             else -> Result.success(result.model?.mapToUiModel() ?: emptyList())
@@ -194,7 +194,8 @@ class BlazeRepository @Inject constructor(
                 targetUrl = product.permalink,
                 parameters = emptyMap()
             ),
-            objectiveId = appPrefsWrapper.blazeCampaignSelectedObjective
+            objectiveId = appPrefsWrapper.blazeCampaignSelectedObjective,
+            ctaText = ""
         )
     }
 
@@ -273,6 +274,7 @@ class BlazeRepository @Inject constructor(
         )
     }
 
+    @Suppress("LongMethod")
     suspend fun createCampaign(
         campaignDetails: CampaignDetails,
         paymentMethodId: String
@@ -297,6 +299,7 @@ class BlazeRepository @Inject constructor(
                 targetResourceId = campaignDetails.productId,
                 tagLine = campaignDetails.tagLine,
                 description = campaignDetails.description,
+                ctaText = campaignDetails.ctaText,
                 startDate = campaignDetails.budget.startDate,
                 endDate = campaignDetails.budget.endDate,
                 budget = BlazeCampaignCreationRequestBudget(
@@ -379,11 +382,22 @@ class BlazeRepository @Inject constructor(
         }
     }
 
+    fun isCampaignObjectiveSwitchChecked() = appPrefsWrapper.blazeCampaignObjectiveSwitchChecked
+
+    fun setCampaignObjectiveSwitchChecked(enabled: Boolean) {
+        appPrefsWrapper.blazeCampaignObjectiveSwitchChecked = enabled
+    }
+
+    fun storeSelectedObjective(objectiveId: String) {
+        appPrefsWrapper.blazeCampaignSelectedObjective = objectiveId
+    }
+
     @Parcelize
     data class CampaignDetails(
         val productId: Long,
         val tagLine: String,
         val description: String,
+        val ctaText: String,
         val campaignImage: BlazeCampaignImage,
         val budget: Budget,
         val targetingParameters: TargetingParameters,
@@ -436,6 +450,7 @@ class BlazeRepository @Inject constructor(
     data class AiSuggestionForAd(
         val tagLine: String,
         val description: String,
+        val ctaText: String
     ) : Parcelable
 
     @Parcelize

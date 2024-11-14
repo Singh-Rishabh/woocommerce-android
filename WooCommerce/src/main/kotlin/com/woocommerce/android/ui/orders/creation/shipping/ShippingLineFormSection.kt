@@ -42,8 +42,8 @@ import java.math.BigDecimal
 @Composable
 fun ShippingLineFormSection(
     shippingLineDetails: List<ShippingLineDetails>,
-    onAdd: () -> Unit,
-    onEdit: (id: Long) -> Unit,
+    onAddClicked: () -> Unit,
+    onEditClicked: (id: Long) -> Unit,
     formatCurrency: (amount: BigDecimal) -> String,
     modifier: Modifier = Modifier
 ) {
@@ -66,7 +66,7 @@ fun ShippingLineFormSection(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null
-                            ) { onAdd() },
+                            ) { onAddClicked() },
                         tint = MaterialTheme.colors.primary
                     )
                 }
@@ -75,7 +75,7 @@ fun ShippingLineFormSection(
                     val itemModifier = if (i == 0) Modifier else Modifier.padding(top = 8.dp)
                     ShippingLineEditCard(
                         shippingLine = shippingDetails,
-                        onEdit = onEdit,
+                        onEdit = onEditClicked,
                         formatCurrency = formatCurrency,
                         modifier = itemModifier
                     )
@@ -182,8 +182,8 @@ fun ShippingLineFormSectionPreview() {
         ShippingLineFormSection(
             shippingLineDetails = shippingDetails,
             formatCurrency = { it.toString() },
-            onAdd = { },
-            onEdit = { }
+            onAddClicked = { },
+            onEditClicked = { }
         )
     }
 }

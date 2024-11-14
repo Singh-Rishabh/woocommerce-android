@@ -32,6 +32,7 @@
     <string name="payment">Payment</string>
     <string name="taxes">Taxes</string>
     <string name="tax">Tax</string>
+    <string name="total">Total</string>
     <string name="subtotal">Subtotal</string>
     <string name="products_total">Products total</string>
     <string name="discount">Discount</string>
@@ -48,6 +49,7 @@
     <string name="untitled">Untitled</string>
     <string name="dialog_ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="no">No</string>
     <string name="cancel_anyway">Cancel anyway</string>
     <string name="keep_editing">Keep editing</string>
     <string name="keep_changes">Keep changes</string>
@@ -160,6 +162,7 @@
     <string name="last_update_with_frequency">Last update %s (Updates every 30 minutes)</string>
     <string name="receipt_fetching_error">Sorry, we couldn\'t load a receipt for this order</string>
     <string name="store_name_default">Store name</string>
+    <string name="sorted_by">Sorted by 1%s</string>
 
     <!--
         Date/Time Labels
@@ -691,7 +694,7 @@
     <string name="order_creation_select_coupon">Select a coupon</string>
     <string name="order_creation_coupon_discount_value">-%1$s</string>
     <string name="order_creation_coupon_codes">Coupon (%1$s)</string>
-    <string name="order_creation_coupon_button">Coupon</string>
+    <string name="order_creation_coupon_button">Coupons</string>
     <string name="order_creation_coupons_title">Coupons applied</string>
     <string name="order_creation_increase_item_amount_content_description">Increase product quantity</string>
     <string name="order_creation_decrease_item_amount_content_description">Decrease product quantity</string>
@@ -784,8 +787,8 @@
     <string name="order_creation_expand_collapse_order_totals">Expand collapse order totals</string>
     <string name="order_creation_payment_shipping_tax_label">Shipping Tax</string>
     <string name="order_creation_simple_payment_migration_title">Collect Payment \nhas moved</string>
-    <string name="order_creation_simple_payment_migration_message_one">We’ve combined payment collection with\norder creation, making it more accessible\nand more powerful.</string>
-    <string name="order_creation_simple_payment_migration_message_two">To set a payment amount, add\na custom amount to your new order.</string>
+    <string name="order_creation_simple_payment_migration_message_one">We’ve combined payment collection with order creation, making it more accessible and more powerful.</string>
+    <string name="order_creation_simple_payment_migration_message_two">To set a payment amount, add a custom amount to your new order.</string>
     <string name="order_creation_simple_payment_migration_button">Add a Custom Amount</string>
     <string name="customer_picker_guest_customer_not_allowed_message">This user is a guest, and guests can\'t be used for filtering orders.</string>
     <string name="customer_picker_guest">Guest</string>
@@ -1062,6 +1065,7 @@
     <string name="order_detail_attribution_session_page_views">Session page views</string>
     <string name="order_detail_move_to_trash">Move to trash</string>
     <string name="order_detail_trash_order_dialog_message">Do you want to move this order to the trash?</string>
+    <string name="order_detail_edit_store_currency_mismatch">Sorry, you can only edit this order on the web, as it uses %1$s, and your site\'s currency is %2$s</string>
 
     <!--
         Shipping label Refunds
@@ -1252,6 +1256,29 @@
     <string name="shipping_label_hazmat_option_lighters">Lighters Package - Authorized Lighters</string>
     <string name="shipping_label_hazmat_option_limited_quantity">LTD QTY Ground Package - Aerosols, spray disinfectants, spray paint, hair spray, propane, butane, cleaning products, etc. - Fragrances, nail polish, nail polish remover, solvents, hand sanitizer, rubbing alcohol, ethanol base products, etc. - Other limited quantity surface materials (cosmetics, cleaning products, paints, etc.)</string>
     <string name="shipping_label_hazmat_option_small_quantity_provision">Small Quantity Provision Package (markings required)</string>
+
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Collapse/expand items card</string>
+    <string name="shipping_label_hazmat_title">Are you shipping dangerous goods or hazardous materials?</string>
+    <string name="shipping_label_select_package_button">Select a Package</string>
+    <string name="shipping_label_select_package_title">Select a package to get shipping rates</string>
+    <string name="shipping_label_select_package_description">Enter your package\'s dimensions or pick a carrier package option to see the available shipping rates.</string>
+    <string name="shipping_label_shipment_details_title">Shipment details</string>
+    <string name="shipping_label_shipment_details_order_details">Order details</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Shipment cost</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Mark this order as complete and notify the customer</string>
+    <string name="shipping_label_shipment_details_purchase_label">Purchase Label · %1$s </string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Purchase Label</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Cheapest</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Fastest</string>
+    <string name="shipping_label_shipping_service_title">Shipping service</string>
+    <string name="shipping_label_purchased_title">Your shipping label is ready to print</string>
+    <string name="shipping_label_purchased_message">From here you can print the shipping label again or change the paper size of the label.</string>
+    <string name="shipping_label_purchased_note">Note: Reusing a printed label is a violation of our terms of service and may result in criminal charges.</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Learn how to print from your mobile device</string>
+    <string name="shipping_label_purchased_track_shipment">Track shipment</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Schedule pickup</string>
+    <string name="shipping_label_purchased_request_refund">Request refund</string>
 
     <!--
     Shipping label package creation labels
@@ -2520,6 +2547,8 @@
     <string name="update_simulated_reader_key">Update Simulated Reader Key</string>
     <string name="always_update_reader">Always</string>
     <string name="never_update_reader">Never</string>
+    <string name="low_battery_error_update_reader" translatable="false">Low Battery Error</string>
+    <string name="low_battery_succeed_connect_update_reader" translatable="false">Low Battery Succeed Connect</string>
     <string name="randomly_update_reader">Randomly</string>
     <string name="enable_interac_payment" translatable="false">Enable Interac Payment</string>
     <string name="enable_interac_key" translatable="false">Enable Interac Key</string>
@@ -3895,7 +3924,6 @@
     -->
     <string name="blaze_campaign_screen_fragment_title">Preview</string>
     <string name="blaze_campaign_preview_edit_ad">Edit ad</string>
-    <string name="blaze_campaign_preview_shop_now_button">Shop now</string>
     <string name="blaze_campaign_preview_details_section_title">Details</string>
     <string name="blaze_campaign_preview_audience_section_title">Audience</string>
     <string name="blaze_campaign_preview_details_budget">Budget</string>
@@ -3917,6 +3945,14 @@
     <string name="blaze_campaign_preview_missing_content_dialog_positive_button">Add</string>
     <string name="blaze_campaign_preview_missing_objective_dialog_text">Please select an objective for the Blaze campaign</string>
     <string name="blaze_campaign_preview_missing_objective_dialog_positive_button">Select objective</string>
+
+    <!--
+    Blaze campaign objective screen
+    -->
+    <string name="blaze_campaign_objective_select_objective_label">Select objective %s</string>
+    <string name="blaze_campaign_objective_good_for"><![CDATA[<b>Good for:</b> %s]]></string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">Save my selection for future campaigns</string>
+
     <!--
     Blaze campaign budget screen
     -->
@@ -3953,7 +3989,10 @@
     -->
     <string name="blaze_campaign_edit_ad_change_image_button">Change image</string>
     <string name="blaze_campaign_edit_ad_change_tagline_title">Tagline</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">Tagline cannot be empty</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">Call to action</string>
     <string name="blaze_campaign_edit_ad_change_description_title">Description</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">Description cannot be empty</string>
     <string name="blaze_campaign_edit_ad_characters_remaining">%d characters remaining</string>
     <string name="blaze_campaign_edit_ad_suggested_by_ai">Suggested by AI</string>
     <string name="blaze_campaign_edit_ad_invalid_image_title">Invalid image</string>
@@ -4314,4 +4353,20 @@
     <string name="custom_fields_editor_toggle_accessibility_description">Toggle between text and HTML editors</string>
     <string name="custom_fields_editor_text_toggle">Text</string>
     <string name="custom_fields_editor_html_toggle">HTML</string>
+
+    <!--
+    New Shipping Label creation
+    -->
+
+    <string name="woo_shipping_labels_package_creation_tab_custom">Custom</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Carrier</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Saved</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Package type</string>
+    <string name="woo_shipping_labels_package_creation_length">Length</string>
+    <string name="woo_shipping_labels_package_creation_width">Width</string>
+    <string name="woo_shipping_labels_package_creation_height">Height</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Save this as a new package template</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Box</string>
+    <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
 </resources>
