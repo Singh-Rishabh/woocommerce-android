@@ -19,6 +19,7 @@ import javax.inject.Inject
 class CardReaderPaymentStateToViewStateMapper @Inject constructor(
     private val cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
 ) {
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     operator fun invoke(): (CardReaderPaymentOrRefundState) -> ViewState = { paymentState ->
         when (paymentState) {
             is CardReaderInteracRefundState.CollectingInteracRefund -> {
