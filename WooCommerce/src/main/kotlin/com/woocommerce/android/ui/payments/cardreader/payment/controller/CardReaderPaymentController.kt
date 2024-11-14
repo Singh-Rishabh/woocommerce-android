@@ -658,6 +658,11 @@ class CardReaderPaymentController(
                     cardReaderHint = cardReaderHint.toHintLabel(false)
                 )
 
+            is CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState ->
+                _paymentState.value = state.copy(
+                    cardReaderHint = cardReaderHint.toHintLabel(false)
+                )
+
             else -> WooLog.e(
                 WooLog.T.CARD_READER,
                 "Got SDK message when cardReaderPaymentController is in ${_paymentState.value}"
