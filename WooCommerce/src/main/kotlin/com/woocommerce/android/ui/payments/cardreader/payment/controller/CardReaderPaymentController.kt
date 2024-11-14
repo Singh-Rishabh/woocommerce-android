@@ -1080,16 +1080,22 @@ class CardReaderPaymentController(
 
     private fun trackCancelledFlow(state: CardReaderPaymentOrRefundState) {
         when (state) {
-            is CardReaderPaymentOrRefundState.TrackableState -> {
-                when (state) {
-                    is CardReaderPaymentState ->
-                        tracker.trackPaymentCancelled(state.nameForTracking)
-                    is CardReaderInteracRefundState ->
-                        tracker.trackInteracRefundCancelled(state.nameForTracking)
+            is CardReaderPaymentState, is CardReaderInteracRefundState -> {
+                val nameForTracking = when (state) {
+                    is CardReaderPaymentState.CollectingPayment -> "Collecting"
+                    is CardReaderPaymentState.PaymentCapturing -> "Capturing"
+                    is CardReaderPaymentState.ProcessingPayment -> "Processing"
+                    is CardReaderInteracRefundState.CollectingInteracRefund -> "Collecting"
+                    is CardReaderInteracRefundState.LoadingData -> "Loading"
+                    is CardReaderInteracRefundState.ProcessingInteracRefund -> "Processing"
+                    else -> null
+                }
+                if (nameForTracking == null) {
+                    WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
+                } else {
+                    tracker.trackInteracRefundCancelled(nameForTracking)
                 }
             }
-
-            else -> WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
         }
     }
 

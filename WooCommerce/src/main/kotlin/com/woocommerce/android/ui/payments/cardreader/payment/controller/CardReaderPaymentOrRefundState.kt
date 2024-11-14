@@ -5,72 +5,48 @@ import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowE
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 
 sealed class CardReaderPaymentOrRefundState {
-    interface TrackableState {
-        val nameForTracking: String
-    }
-
     sealed class CardReaderPaymentState : CardReaderPaymentOrRefundState() {
-        data class LoadingData(val onCancel: () -> Unit,) : CardReaderPaymentState(), TrackableState {
-            override val nameForTracking: String = "Loading"
-        }
+        data class LoadingData(val onCancel: () -> Unit) : CardReaderPaymentState()
 
         data object ReFetchingOrder : CardReaderPaymentState()
 
         sealed class CollectingPayment(
             open val amountWithCurrencyLabel: String,
             @StringRes open val cardReaderHint: Int? = null,
-        ) : CardReaderPaymentState(), TrackableState {
+        ) : CardReaderPaymentState() {
             data class BuiltInReaderCollectPaymentState(
                 override val amountWithCurrencyLabel: String,
                 override val cardReaderHint: Int? = null,
-            ) : CollectingPayment(amountWithCurrencyLabel, cardReaderHint) {
-                override val nameForTracking: String
-                    get() = "Collecting"
-            }
+            ) : CollectingPayment(amountWithCurrencyLabel, cardReaderHint)
 
             data class ExternalReaderCollectPaymentState(
                 override val amountWithCurrencyLabel: String,
                 override val cardReaderHint: Int? = null,
                 val onCancel: (() -> Unit)
-            ) : CollectingPayment(amountWithCurrencyLabel, cardReaderHint) {
-                override val nameForTracking: String
-                    get() = "Collecting"
-            }
+            ) : CollectingPayment(amountWithCurrencyLabel, cardReaderHint)
         }
 
         sealed class ProcessingPayment(
             open val amountWithCurrencyLabel: String,
-        ) : CardReaderPaymentState(), TrackableState {
+        ) : CardReaderPaymentState() {
             data class BuiltInReaderProcessingPayment(override val amountWithCurrencyLabel: String) :
-                ProcessingPayment(amountWithCurrencyLabel) {
-                override val nameForTracking: String
-                    get() = "Processing"
-            }
+                ProcessingPayment(amountWithCurrencyLabel)
 
             data class ExternalReaderProcessingPayment(
                 override val amountWithCurrencyLabel: String,
                 val onCancel: () -> Unit
-            ) : ProcessingPayment(amountWithCurrencyLabel) {
-                override val nameForTracking: String
-                    get() = "Processing"
-            }
+            ) : ProcessingPayment(amountWithCurrencyLabel)
         }
 
         data class PrintingReceipt(val amountWithCurrencyLabel: String) : CardReaderPaymentState()
 
         sealed class PaymentCapturing(open val amountWithCurrencyLabel: String) :
-            CardReaderPaymentState(), TrackableState {
+            CardReaderPaymentState() {
             data class BuiltInReaderPaymentCapturing(override val amountWithCurrencyLabel: String) :
-                PaymentCapturing(amountWithCurrencyLabel) {
-                override val nameForTracking: String
-                    get() = "Capturing"
-            }
+                PaymentCapturing(amountWithCurrencyLabel)
 
             data class ExternalReaderPaymentCapturing(override val amountWithCurrencyLabel: String) :
-                PaymentCapturing(amountWithCurrencyLabel) {
-                override val nameForTracking: String
-                    get() = "Capturing"
-            }
+                PaymentCapturing(amountWithCurrencyLabel)
         }
 
         sealed class PaymentSuccessful(
@@ -145,23 +121,17 @@ sealed class CardReaderPaymentOrRefundState {
     }
 
     sealed class CardReaderInteracRefundState : CardReaderPaymentOrRefundState() {
-        data class LoadingData(val onCancel: () -> Unit) : CardReaderInteracRefundState(), TrackableState {
-            override val nameForTracking: String = "Loading"
-        }
+        data class LoadingData(val onCancel: () -> Unit) : CardReaderInteracRefundState()
 
         data class CollectingInteracRefund(
             val amountWithCurrencyLabel: String,
             val onCancel: () -> Unit,
             @StringRes val cardReaderHint: Int? = null,
-        ) : CardReaderInteracRefundState(), TrackableState {
-            override val nameForTracking: String = "Collecting"
-        }
+        ) : CardReaderInteracRefundState()
 
         data class ProcessingInteracRefund(
             val amountWithCurrencyLabel: String,
-        ) : CardReaderInteracRefundState(), TrackableState {
-            override val nameForTracking: String = "Processing"
-        }
+        ) : CardReaderInteracRefundState()
 
         data class InteracRefundFailure(
             val amountWithCurrencyLabel: String?,
