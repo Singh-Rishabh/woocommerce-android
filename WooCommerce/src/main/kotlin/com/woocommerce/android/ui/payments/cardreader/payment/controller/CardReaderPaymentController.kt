@@ -95,6 +95,7 @@ class CardReaderPaymentController(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     private val tracker: PaymentsFlowTracker,
+    private val trackCancelledFlow: CardReaderTrackCanceledFlow,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -850,21 +851,6 @@ class CardReaderPaymentController(
             ) {
                 scope.launch { cardReaderManager.disconnectReader() }
             }
-        }
-    }
-
-    private fun trackCancelledFlow(state: CardReaderPaymentOrRefundState) {
-        when (state) {
-            is CardReaderPaymentOrRefundState.TrackableState -> {
-                when (state) {
-                    is CardReaderPaymentState ->
-                        tracker.trackPaymentCancelled(state.nameForTracking)
-                    is CardReaderInteracRefundState ->
-                        tracker.trackInteracRefundCancelled(state.nameForTracking)
-                }
-            }
-
-            else -> WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
         }
     }
 
