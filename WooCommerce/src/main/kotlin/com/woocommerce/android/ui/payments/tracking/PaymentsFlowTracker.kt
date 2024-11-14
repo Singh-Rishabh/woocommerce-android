@@ -47,6 +47,7 @@ import com.woocommerce.android.analytics.AnalyticsEvent.MANAGE_CARD_READERS_AUTO
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_FLOW_ORDER_COLLECT_PAYMENT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED
+import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_ONBOARDING_DISMISSED
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_ONBOARDING_SHOWN
 import com.woocommerce.android.analytics.AnalyticsEvent.RECEIPT_EMAIL_FAILED
 import com.woocommerce.android.analytics.AnalyticsEvent.RECEIPT_EMAIL_TAPPED
@@ -668,7 +669,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackOnboardingDismissedInPosFlow(state: CardReaderOnboardingState) {
         track(
-            PAYMENTS_ONBOARDING_SHOWN,
+            PAYMENTS_ONBOARDING_DISMISSED,
             mutableMapOf(KEY_POS_ONBOARDING_STATE to (getOnboardingNotCompletedReason(state) ?: "completed"))
         )
     }
