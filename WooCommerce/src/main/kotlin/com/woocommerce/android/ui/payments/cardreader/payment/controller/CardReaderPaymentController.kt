@@ -111,6 +111,7 @@ class CardReaderPaymentController(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     private val tracker: PaymentsFlowTracker,
+    private val trackCancelledFlow: CardReaderTrackCanceledFlow,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -1074,38 +1075,6 @@ class CardReaderPaymentController(
                     )
             ) {
                 scope.launch { cardReaderManager.disconnectReader() }
-            }
-        }
-    }
-
-    private fun trackCancelledFlow(state: CardReaderPaymentOrRefundState) {
-        when (state) {
-            is CardReaderPaymentState -> {
-                val nameForTracking = when (state) {
-                    is CardReaderPaymentState.CollectingPayment -> "Collecting"
-                    is CardReaderPaymentState.PaymentCapturing -> "Capturing"
-                    is CardReaderPaymentState.ProcessingPayment -> "Processing"
-                    is CardReaderPaymentState.LoadingData -> "Loading"
-                    else -> null
-                }
-                if (nameForTracking == null) {
-                    WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
-                } else {
-                    tracker.trackPaymentCancelled(nameForTracking)
-                }
-            }
-            is CardReaderInteracRefundState -> {
-                val nameForTracking = when (state) {
-                    is CardReaderInteracRefundState.CollectingInteracRefund -> "Collecting"
-                    is CardReaderInteracRefundState.LoadingData -> "Loading"
-                    is CardReaderInteracRefundState.ProcessingInteracRefund -> "Processing"
-                    else -> null
-                }
-                if (nameForTracking == null) {
-                    WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
-                } else {
-                    tracker.trackInteracRefundCancelled(nameForTracking)
-                }
             }
         }
     }

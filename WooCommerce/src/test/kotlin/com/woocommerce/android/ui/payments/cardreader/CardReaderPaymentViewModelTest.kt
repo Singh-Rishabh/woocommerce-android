@@ -89,6 +89,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchi
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlow
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -149,6 +150,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val selectedSite: SelectedSite = mock()
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker = mock()
     private val tracker: PaymentsFlowTracker = mock()
+    private val trackCanceledFlow = CardReaderTrackCanceledFlow(tracker)
     private val appPrefs: AppPrefs = mock()
     private val currencyFormatter: CurrencyFormatter = mock()
     private val wooStore: WooCommerceStore = mock()
@@ -202,6 +204,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentCollectibilityChecker = paymentCollectibilityChecker,
             interacRefundableChecker = interacRefundableChecker,
             tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
             appPrefs = appPrefs,
             currencyFormatter = currencyFormatter,
             errorMapper = errorMapper,
@@ -4491,6 +4494,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentCollectibilityChecker = paymentCollectibilityChecker,
             interacRefundableChecker = interacRefundableChecker,
             tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
             appPrefs = appPrefs,
             currencyFormatter = currencyFormatter,
             errorMapper = errorMapper,
@@ -4528,6 +4532,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentCollectibilityChecker = paymentCollectibilityChecker,
             interacRefundableChecker = interacRefundableChecker,
             tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
             appPrefs = appPrefs,
             currencyFormatter = currencyFormatter,
             errorMapper = errorMapper,
