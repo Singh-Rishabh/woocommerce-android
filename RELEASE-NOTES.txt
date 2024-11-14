@@ -4,6 +4,7 @@
 21.2
 -----
 - [**][Payments] Fixed a bug when IPP onboarding was not possible to finish from the app [https://github.com/woocommerce/woocommerce-android/pull/12917]
+- [*] Fixed a crash that occurred when tapping on the customer shipping address in the order details screen [https://github.com/woocommerce/woocommerce-android/pull/12920]
 
 21.1
 -----

@@ -9,9 +9,6 @@
             "path": {
                 "equalTo": "/wc/v3/orders/&_method=get"
             },
-            "query": {
-                "matches": "(.*)include(.*)"
-            },
             "locale": {
                 "matches": "(.*)"
             }
