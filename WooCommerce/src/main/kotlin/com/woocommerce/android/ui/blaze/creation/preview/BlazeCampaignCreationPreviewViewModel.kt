@@ -268,10 +268,10 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                             it?.copy(
                                 tagLine = suggestions.firstOrNull()?.tagLine.orEmpty(),
                                 description = suggestions.firstOrNull()?.description.orEmpty(),
-                        ctaText = suggestions?.firstOrNull()?.ctaText.orEmpty()
-                    )
-                }
-            },
+                                ctaText = suggestions?.firstOrNull()?.ctaText.orEmpty()
+                            )
+                        }
+                    },
                     onFailure = { error ->
                         analyticsTrackerWrapper.track(
                             stat = AnalyticsEvent.BLAZE_SUGGESTIONS_LOADING_FAILED,
