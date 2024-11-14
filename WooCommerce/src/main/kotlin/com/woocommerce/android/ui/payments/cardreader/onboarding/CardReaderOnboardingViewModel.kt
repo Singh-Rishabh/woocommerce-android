@@ -454,6 +454,10 @@ class CardReaderOnboardingViewModel @Inject constructor(
     }
 
     override fun onCleared() {
+        clearViewModel()
+    }
+
+    fun clearViewModel() {
         if (arguments.cardReaderOnboardingParam.cardReaderFlowParam is CardReaderFlowParam.WooPosConnection) {
             lastShownOnboardingState?.let {
                 paymentsFlowTracker.trackOnboardingDismissedInPosFlow(it)
