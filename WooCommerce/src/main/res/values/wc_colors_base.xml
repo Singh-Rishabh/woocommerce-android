@@ -101,6 +101,8 @@
     <color name="blaze_green_60">#007017</color>
     <color name="blaze_blue_5">#BBE0FA</color>
     <color name="blaze_blue_60">#055D9C</color>
-    <color name="blaze_red_5">#FACFD2</color>
+    <color name="blaze_blue">#0038FF</color>
     <color name="blaze_red_6">#B32D2E</color>
+    <color name="blaze_red_5">#FACFD2</color>
+
 </resources>

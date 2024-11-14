@@ -906,7 +906,7 @@ platform :android do
       app_package_name: APP_PACKAGE_NAME,
       app_apk_path: 'WooCommerce/build/outputs/apk/vanilla/debug/WooCommerce-vanilla-debug.apk',
       tests_apk_path: 'WooCommerce/build/outputs/apk/androidTest/vanilla/debug/WooCommerce-vanilla-debug-androidTest.apk',
-      use_tests_in_classes: "#{APP_PACKAGE_NAME}.screenshots.ScreenshotTest",
+      use_tests_in_classes: "#{APP_PACKAGE_NAME}.e2e.tests.screenshot.ScreenshotTest",
       reinstall_app: false,
       # By default, don't clear previous because we differentiate between light
       # and dark mode
