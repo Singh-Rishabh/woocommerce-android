@@ -478,7 +478,8 @@ class AnalyticsTracker private constructor(
         const val VALUE_MORE_MENU_PAYMENTS = "payments"
         const val VALUE_MORE_MENU_UPGRADES = "upgrades"
         const val VALUE_MORE_MENU_CUSTOMERS = "customers"
-        const val VALUE_MORE_MENU_POS = "point_of_sale"
+        // We have to call in non consistent way to match the iOS naming
+        const val VALUE_MORE_MENU_POS = "pointOfSale"
 
         const val VALUE_MORE_MENU_PAYMENTS_BADGE_VISIBLE = "badge_visible"
 
