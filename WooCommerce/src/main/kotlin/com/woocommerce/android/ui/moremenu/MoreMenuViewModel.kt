@@ -439,7 +439,7 @@ class MoreMenuViewModel @Inject constructor(
         selectedOption: String,
         extraOptions: Map<String, String> = emptyMap()
     ) {
-        AnalyticsTracker.track(
+        analyticsTrackerWrapper.track(
             AnalyticsEvent.HUB_MENU_OPTION_TAPPED,
             mapOf(KEY_OPTION to selectedOption) + extraOptions
         )
