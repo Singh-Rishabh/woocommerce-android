@@ -57,7 +57,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
                 values = PackageType.entries
                     .map { getString(it.resourceId) }
                     .toTypedArray(),
-                requestKey = "package_type"
+                requestKey = SELECTOR_REQUEST_KEY
             ).let { findNavController().navigateSafely(it) }
     }
 
@@ -71,5 +71,9 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
 
     private fun handleSavedPackageSelection() {
 
+    }
+
+    companion object {
+        const val SELECTOR_REQUEST_KEY = "package_type"
     }
 }
