@@ -41,7 +41,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
     private fun bindEventListener() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is ShowPackageTypeDialog -> handlePackageTypeSelection()
+                is ShowPackageTypeDialog -> handlePackageTypeSelection(event.currentSelection)
                 is CarrierPackageSelected -> handleCarrierPackageSelection()
                 is CustomPackageCreated -> handleCustomPackageCreation()
                 is SavedPackageSelected -> handleSavedPackageSelection()
@@ -49,10 +49,10 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
         }
     }
 
-    private fun handlePackageTypeSelection() {
+    private fun handlePackageTypeSelection(currentSelection: PackageType) {
         WooShippingLabelPackageCreationFragmentDirections
             .actionWooShippingLabelPackageCreationFragmentToItemSelectorDialog(
-                selectedItem = "",
+                selectedItem = currentSelection.name,
                 keys = PackageType.entries.map { it.name }.toTypedArray(),
                 values = PackageType.entries
                     .map { getString(it.resourceId) }
