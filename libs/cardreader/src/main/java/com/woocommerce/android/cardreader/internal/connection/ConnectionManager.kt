@@ -26,6 +26,7 @@ import com.woocommerce.android.cardreader.internal.wrappers.TerminalWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
@@ -159,6 +160,15 @@ internal class ConnectionManager(
         connectedScope.launch {
             terminalListenerImpl.readerStatus.collect { connectionStatus ->
                 if (connectionStatus is CardReaderStatus.NotConnected) {
+                    /**
+                     * This delay is a workaround to avoid situations in which the state is reset to Unknown before
+                     * the consumer gets a chance to handle it. For example, when the consumer initiates the connection
+                     * flow and there is a required update, the client might want to navigate to the sw update flow.
+                     * However, the Stripe SDK starts the update flow immediately and if it fails on LOW_BATTERY_ERROR
+                     * the state is reset to Unknown (no ongoing update) before the client even got a chance to
+                     * navigate to the sw update flow. More info on PR 12912.
+                     */
+                    delay(500)
                     bluetoothReaderListener.resetConnectionState()
                     connectedScope.cancel()
                 }
