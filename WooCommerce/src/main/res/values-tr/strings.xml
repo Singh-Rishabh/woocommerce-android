@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-13 13:54:03+0000
 Plural-Forms: nplurals=2; plural=(n > 1);
 Generator: GlotPress/2.4.0-alpha
 Language: tr
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Zarf</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Kutu</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Paket Ekleyin</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Bunu yeni bir paket şablonu olarak kaydet</string>
+    <string name="woo_shipping_labels_package_creation_height">Yükseklik</string>
+    <string name="woo_shipping_labels_package_creation_width">Genişlik</string>
+    <string name="woo_shipping_labels_package_creation_length">Uzunluk</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Paket türü</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Kaydedildi</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Kargo Şirketi</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Özel</string>
+    <string name="shipping_label_purchased_request_refund">İade talep et</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Alma tarihi zamanla</string>
+    <string name="shipping_label_purchased_track_shipment">Gönderimi takip et</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Mobil cihazınızdan nasıl yazdıracağınız hakkında bilgi edinin</string>
+    <string name="shipping_label_purchased_note">Not: Yazdırılmış bir etiketi yeniden kullanmak hizmet koşullarımızın ihlalidir ve cezai suçlamalarla sonuçlanabilir.</string>
+    <string name="shipping_label_purchased_message">Buradan gönderim etiketini yeniden yazdırabilir veya etiketin kağıt boyutunu değiştirebilirsiniz.</string>
+    <string name="shipping_label_purchased_title">Gönderim etiketiniz yazdırmaya hazır</string>
+    <string name="order_detail_edit_store_currency_mismatch">Üzgünüz, bu siparişi yalnızca web üzerinden düzenleyebilirsiniz, çünkü bu sipariş %1$s kullanıyor ve sitenizin para birimi şu:%2$s</string>
+    <string name="shipping_label_shipping_service_title">Gönderim hizmeti</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">En hızlı</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">En ucuz</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Satın Alma Etiketi</string>
+    <string name="shipping_label_shipment_details_purchase_label">Satın Alma Etiketi · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Bu siparişi tamamlandı olarak işaretleyin ve müşteriyi bilgilendirin</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Gönderim maliyeti</string>
+    <string name="shipping_label_shipment_details_order_details">Sipariş ayrıntıları</string>
+    <string name="shipping_label_shipment_details_title">Gönderi ayrıntıları</string>
+    <string name="shipping_label_select_package_description">Mevcut gönderim ücretlerini görmek için paketinizin ölçülerini girin veya bir kargo paketi seçeneği seçin.</string>
+    <string name="shipping_label_select_package_title">Gönderim ücretleri almak için bir paket seçin</string>
+    <string name="shipping_label_select_package_button">Paket Seç</string>
+    <string name="shipping_label_hazmat_title">Zararlı ürünler veya tehlikeli materyaller mi gönderiyorsunuz?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Öğe kartını daraltın/genişletin</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">Şuna göre sıralı: 1%s</string>
+    <string name="no">Hayır</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Gelecekteki kampanyalar için seçimimi kaydet</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Şunlar açısından iyi:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Hedef seç %s</string>
@@ -554,7 +590,7 @@ Language: tr
     <string name="order_creation_collect_payment_button">Ödeme Alın</string>
     <string name="order_creation_gift_card_text_error">Kod XXXX-XXXX-XXXX-XXXX biçiminde olmalıdır.</string>
     <string name="order_creation_gift_card_text_field_hint">Kod girin</string>
-    <string name="order_creation_coupon_button">Kupon</string>
+    <string name="order_creation_coupon_button">Kuponlar</string>
     <string name="theme_picker_error_message">Temalar yüklenemedi.</string>
     <string name="configuration_complete">Yapılandırma tamamlandı</string>
     <string name="scan_to_update_inventory_undo_snackbar">Miktarı Güncellemeyi Geri Al</string>
@@ -3637,6 +3673,7 @@ Language: tr
     <string name="taxes">Vergiler</string>
     <string name="payment">Ödeme</string>
     <string name="shipping">Gönderim</string>
+    <string name="total">Toplam</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Siparişler</string>

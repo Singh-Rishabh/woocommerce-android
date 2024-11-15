@@ -1,10 +1,24 @@
 *** PLEASE FOLLOW THIS FORMAT: [<priority indicator, more stars = higher priority>] <description> [<PR URL>]
 *** Use [*****] to indicate smoke tests of all critical flows should be run on the final APK before release (e.g. major library or targetSdk updates).
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
+21.2
+-----
+- [**][Payments] Fixed a bug when IPP onboarding was not possible to finish from the app [https://github.com/woocommerce/woocommerce-android/pull/12917]
+- [*] Fixed shipping lines being editable at all states [https://github.com/woocommerce/woocommerce-android/pull/12890]
+- [*] Fixed a crash that occurred when tapping on the customer shipping address in the order details screen [https://github.com/woocommerce/woocommerce-android/pull/12920]
+
+21.1
+-----
+- [*] Disable Edit option for orders whose currency does not match with store currency [https://github.com/woocommerce/woocommerce-android/pull/12880]
+- [*] Show web views on the payments hub screen in 3/4 of the screen [https://github.com/woocommerce/woocommerce-android/pull/12875]
+- [*] Receipts can be shared via a google's sms application now [https://github.com/woocommerce/woocommerce-android/pull/12874]
+- [*] Fixed a bug where picking date ranges (for Stats and Analytics) did not use the correct timezone [https://github.com/woocommerce/woocommerce-android/pull/12887]
+
 21.0
 -----
 - [*] Fixed text formatting in the "Collect Payment has moved" rationale bottom sheet [https://github.com/woocommerce/woocommerce-android/pull/12815]
 - [*] Added support for loading Product images using the AVIF format [https://github.com/woocommerce/woocommerce-android/pull/12835]
+- [*] Updated Coupons UI in the order creation [https://github.com/woocommerce/woocommerce-android/pull/12855]
 
 20.9
 -----
@@ -18,6 +32,7 @@
 
 20.7
 -----
+- [Internal] Fetch remote FF on site change [https://github.com/woocommerce/woocommerce-android/pull/12751]
 - [**] Improve barcode scanner reading accuracy [https://github.com/woocommerce/woocommerce-android/pull/12673]
 - [Internal] AI product creation banner is removed [https://github.com/woocommerce/woocommerce-android/pull/12705]
 - [*] [Login] Fix an issue where the app doesn't show the correct error screen when application passwords are disabled [https://github.com/woocommerce/woocommerce-android/pull/12717]

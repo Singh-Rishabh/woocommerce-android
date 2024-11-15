@@ -14,7 +14,7 @@ import com.woocommerce.android.e2e.helpers.util.ProductData
 import com.woocommerce.android.e2e.helpers.util.Screen
 import org.hamcrest.Matchers
 
-class SingleOrderScreen : Screen(R.id.toolbar) {
+class SingleOrderScreen : Screen(R.id.orderStatus_subtitle) {
     fun goBackToOrdersScreen(): OrderListScreen {
         if (isElementDisplayed(R.id.orderDetail_container)) {
             pressBack()
@@ -136,6 +136,7 @@ class SingleOrderScreen : Screen(R.id.toolbar) {
     }
 
     fun tapOnCollectPayment(): PaymentSelectionScreen {
+        scrollTo(R.id.paymentInfo_collectCardPresentPaymentButton)
         clickOn(R.id.paymentInfo_collectCardPresentPaymentButton)
         return PaymentSelectionScreen()
     }
