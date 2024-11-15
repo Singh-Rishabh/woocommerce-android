@@ -760,7 +760,13 @@
     <fragment
         android:id="@+id/wooShippingLabelPackageCreationFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment"
-        android:label="WooShippingLabelPackageCreationFragment" />
+        android:label="WooShippingLabelPackageCreationFragment" >
+
+        <action
+            android:id="@+id/action_wooShippingLabelPackageCreationFragment_to_itemSelectorDialog"
+            app:destination="@id/itemSelectorDialog" />
+
+    </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPurchasedFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
