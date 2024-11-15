@@ -17,13 +17,6 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
-measureBuilds {
-    enable = findProperty('tracksEnabled')?.toBoolean() ?: false
-    automatticProject = MeasureBuildsExtension.AutomatticProject.WooCommerce
-    attachGradleScanId = true
-    authToken = findProperty('appsMetricsToken')
-}
-
 ext {
     secretProperties = loadPropertiesWithFallback(
             logger,
@@ -36,6 +29,13 @@ ext {
             file("${rootDir}/developer.properties-example"),
             file("${rootDir}/developer.properties")
     )
+}
+
+measureBuilds {
+    enable = secretProperties.get('tracksEnabled')?.toBoolean() ?: false
+    automatticProject = MeasureBuildsExtension.AutomatticProject.WooCommerce
+    attachGradleScanId = true
+    authToken = secretProperties.get('appsMetricsToken')
 }
 
 static def loadPropertiesWithFallback(Logger logger, File fallbackFile, File primaryFile) {
