@@ -520,6 +520,7 @@ class AnalyticsTracker private constructor(
         // -- Jetpack Setup
         const val KEY_JETPACK_SETUP_IS_ALREADY_CONNECTED = "is_already_connected"
         const val KEY_JETPACK_SETUP_REQUIRES_CONNECTION_ONLY = "requires_connection_only"
+        const val KEY_IS_SIGN_UP = "is_signup"
         const val VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS = "email_address"
         const val VALUE_JETPACK_SETUP_STEP_PASSWORD = "password"
         const val VALUE_JETPACK_SETUP_STEP_MAGIC_LINK = "magic_link"

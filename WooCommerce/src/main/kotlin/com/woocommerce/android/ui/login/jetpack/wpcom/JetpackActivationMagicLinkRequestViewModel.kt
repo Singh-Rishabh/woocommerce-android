@@ -73,7 +73,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             JETPACK_SETUP_LOGIN_FLOW,
             mapOf(
                 AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_MAGIC_LINK,
-                AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_DISMISS
+                AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_DISMISS,
+                AnalyticsTracker.KEY_IS_SIGN_UP to navArgs.isNewWpComAccount
             )
         )
     }
@@ -83,7 +84,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             JETPACK_SETUP_LOGIN_FLOW,
             mapOf(
                 AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_MAGIC_LINK,
-                AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_SUBMIT
+                AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_SUBMIT,
+                AnalyticsTracker.KEY_IS_SIGN_UP to navArgs.isNewWpComAccount
             )
         )
 
@@ -121,7 +123,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
                     JETPACK_SETUP_LOGIN_FLOW,
                     mapOf(
                         AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_MAGIC_LINK,
-                        AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_SUBMIT
+                        AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_SUBMIT,
+                        AnalyticsTracker.KEY_IS_SIGN_UP to navArgs.isNewWpComAccount
                     )
                 )
             }
