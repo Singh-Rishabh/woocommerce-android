@@ -73,9 +73,10 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
     }
 
     private fun handlePackageDataAsResult(packageData: PackageData) {
-        setFragmentResult(PACKAGE_SELECTION_RESULT, Bundle().apply {
-            putParcelable(PACKAGE_SELECTION_RESULT, packageData)
-        })
+        setFragmentResult(
+            PACKAGE_SELECTION_RESULT,
+            Bundle().apply { putParcelable(PACKAGE_SELECTION_RESULT, packageData) }
+        )
     }
 
     companion object {
