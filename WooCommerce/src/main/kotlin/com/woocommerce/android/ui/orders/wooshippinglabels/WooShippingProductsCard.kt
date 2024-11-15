@@ -49,6 +49,7 @@ import com.woocommerce.android.util.StringUtils
 fun ShippingProductsCard(
     shippableItems: ShippableItems,
     modifier: Modifier = Modifier,
+    iconColor: Color = MaterialTheme.colors.primary,
     isExpanded: Boolean = false,
     onExpand: (Boolean) -> Unit = {}
 ) {
@@ -58,6 +59,7 @@ fun ShippingProductsCard(
         ShippingProductsCardHeader(
             shippableItems = shippableItems,
             isExpanded = isExpanded,
+            iconColor = iconColor,
             modifier = Modifier
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large)))
                 .clickable { onExpand(!isExpanded) }
@@ -96,6 +98,7 @@ private fun ShippingProductsCardPreview(@PreviewParameter(IsExpandedProvider::cl
 @Composable
 private fun ShippingProductsCardHeader(
     shippableItems: ShippableItems,
+    iconColor: Color,
     modifier: Modifier = Modifier,
     isExpanded: Boolean = false
 ) {
@@ -155,7 +158,7 @@ private fun ShippingProductsCardHeader(
             )
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colors.primary,
+                tint = iconColor,
                 contentDescription =
                 stringResource(id = R.string.shipping_label_package_details_items_expand_content_description),
                 modifier = Modifier
@@ -182,6 +185,7 @@ private fun ShippingProductsCardHeaderPreview() {
             ShippingProductsCardHeader(
                 shippableItems = shippableItems,
                 isExpanded = isExpanded.value,
+                iconColor = MaterialTheme.colors.primary,
                 modifier = Modifier
                     .clickable { isExpanded.value = !isExpanded.value }
                     .padding(

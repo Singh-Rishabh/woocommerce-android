@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-05 11:54:03+0000
 Plural-Forms: nplurals=2; plural=n > 1;
 Generator: GlotPress/2.4.0-alpha
 Language: id
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">Layanan pengiriman</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Tercepat</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Termurah</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Beli Label</string>
+    <string name="shipping_label_shipment_details_purchase_label">Beli Label · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Tandai pesanan ini selesai dan kirim pemberitahuan ke pelanggan</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Biaya pengiriman</string>
+    <string name="shipping_label_shipment_details_order_details">Rincian pesanan</string>
+    <string name="shipping_label_shipment_details_title">Rincian pengiriman</string>
+    <string name="shipping_label_select_package_description">Masukkan dimensi paket Anda atau pilih opsi paket operator untuk melihat tarif pengiriman yang tersedia.</string>
+    <string name="shipping_label_select_package_title">Pilih paket untuk melihat tarif pengiriman</string>
+    <string name="shipping_label_select_package_button">Pilih Paket</string>
+    <string name="shipping_label_hazmat_title">Apakah Anda mengirim barang berisiko atau bahan berbahaya?</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Ciutkan/perluas kartu item</string>
+    <string name="no">Tidak</string>
+    <string name="sorted_by">Diurutkan berdasarkan 1%s</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Simpan pilihan saya untuk kampanye mendatang.</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Cocok untuk:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Pilih tujuan %s</string>
@@ -3631,6 +3648,7 @@ Language: id
     <string name="taxes">Pajak</string>
     <string name="payment">Pembayaran</string>
     <string name="shipping">Pengiriman</string>
+    <string name="total">Total</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Pesanan</string>
