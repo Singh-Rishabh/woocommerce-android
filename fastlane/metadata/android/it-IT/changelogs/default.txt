@@ -1,0 +1,2 @@
+21.1:
+Il nostro ultimo aggiornamento contiene miglioramenti importanti per snellire l'esperienza WooCommerce. Abbiamo corretto i permessi di modifica per gli ordini in valute diverse, ottimizzato la visualizzazione dell'hub dei pagamenti, consentito una facile condivisione delle ricevute tramite SMS Google e definito la selezione dell'intervallo di date per poter utilizzare correttamente il proprio fuso orario. Goditi un funzionamento più fluido.
