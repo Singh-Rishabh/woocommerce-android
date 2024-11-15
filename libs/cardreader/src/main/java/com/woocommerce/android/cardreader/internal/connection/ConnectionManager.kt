@@ -33,6 +33,8 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+private const val ARTIFICIAL_STATUS_UPDATE_DELAY_IN_MILLIS = 500L
+
 internal class ConnectionManager(
     private val terminal: TerminalWrapper,
     private val bluetoothReaderListener: BluetoothReaderListenerImpl,
@@ -168,7 +170,7 @@ internal class ConnectionManager(
                      * the state is reset to Unknown (no ongoing update) before the client even got a chance to
                      * navigate to the sw update flow. More info on PR 12912.
                      */
-                    delay(500)
+                    delay(ARTIFICIAL_STATUS_UPDATE_DELAY_IN_MILLIS)
                     bluetoothReaderListener.resetConnectionState()
                     connectedScope.cancel()
                 }
