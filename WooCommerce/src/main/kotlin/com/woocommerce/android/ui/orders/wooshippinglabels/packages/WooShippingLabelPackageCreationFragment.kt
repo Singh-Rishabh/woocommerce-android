@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.woocommerce.android.R
+import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -36,6 +38,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindEventListener()
+        bindResultHandlers()
     }
 
     private fun bindEventListener() {
@@ -49,15 +52,24 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
         }
     }
 
+    private fun bindResultHandlers() {
+        handleDialogResult<String>(
+            key = SELECTOR_REQUEST_KEY,
+            entryId = R.id.wooShippingLabelPackageCreationFragment
+        ) { result ->
+            viewModel.onPackageTypeSelected(PackageType.valueOf(result))
+        }
+    }
+
     private fun handlePackageTypeSelection(currentSelection: PackageType) {
         WooShippingLabelPackageCreationFragmentDirections
             .actionWooShippingLabelPackageCreationFragmentToItemSelectorDialog(
+                requestKey = SELECTOR_REQUEST_KEY,
                 selectedItem = currentSelection.name,
                 keys = PackageType.entries.map { it.name }.toTypedArray(),
                 values = PackageType.entries
                     .map { getString(it.resourceId) }
-                    .toTypedArray(),
-                requestKey = SELECTOR_REQUEST_KEY
+                    .toTypedArray()
             ).let { findNavController().navigateSafely(it) }
     }
 
