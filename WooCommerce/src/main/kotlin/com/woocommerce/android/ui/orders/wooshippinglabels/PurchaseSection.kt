@@ -23,6 +23,7 @@ internal fun PurchasesSection(
     total: String?,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -31,7 +32,7 @@ internal fun PurchasesSection(
             markOrderComplete = markOrderComplete,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
-        PurchaseButton(total)
+        PurchaseButton(total, onPurchaseShippingLabel)
     }
 }
 
@@ -40,6 +41,7 @@ internal fun PurchasesSectionLandscape(
     total: String?,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier.fillMaxWidth()) {
@@ -50,7 +52,11 @@ internal fun PurchasesSectionLandscape(
                 onMarkOrderCompleteChange = onMarkOrderCompleteChange,
                 modifier = Modifier.weight(1f)
             )
-            PurchaseButton(total = total, modifier = Modifier.weight(1f))
+            PurchaseButton(
+                total = total,
+                onPurchaseShippingLabel = onPurchaseShippingLabel,
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
@@ -63,6 +69,7 @@ fun PurchasesSectionLandscapePreview() {
             total = "$12.00",
             markOrderComplete = true,
             onMarkOrderCompleteChange = {},
+            onPurchaseShippingLabel = {},
             modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
         )
     }
@@ -97,13 +104,14 @@ private fun MarkComplete(
 @Composable
 private fun PurchaseButton(
     total: String?,
+    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val buttonText = total?.let {
         stringResource(id = R.string.shipping_label_shipment_details_purchase_label, it)
     } ?: stringResource(id = R.string.shipping_label_shipment_details_purchase_label_disabled)
     WCColoredButton(
-        onClick = { },
+        onClick = { onPurchaseShippingLabel() },
         enabled = total != null,
         text = buttonText,
         modifier = modifier
@@ -125,6 +133,7 @@ private fun PurchasesSectionPreview() {
             total = null,
             markOrderComplete = true,
             onMarkOrderCompleteChange = {},
+            onPurchaseShippingLabel = {},
             modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
         )
     }

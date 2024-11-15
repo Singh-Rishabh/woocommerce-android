@@ -95,6 +95,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
+import kotlin.reflect.KMutableProperty0
 
 private const val ARTIFICIAL_RETRY_DELAY = 500L
 private const val CANADA_FEE_FLAT_IN_CENTS = 15L
@@ -123,8 +124,7 @@ class CardReaderPaymentController(
     private val paymentReceiptShare: PaymentReceiptShare,
     private val paymentOrRefund: CardReaderFlowParam.PaymentOrRefund,
     private val cardReaderType: CardReaderType,
-    private val isTTPPaymentInProgress: Boolean,
-    private val onTTPPaymentStateChanged: (Boolean) -> Unit,
+    private val isTTPPaymentInProgress: KMutableProperty0<Boolean>,
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
     val viewStateData: LiveData<ViewState> = viewState
@@ -159,7 +159,7 @@ class CardReaderPaymentController(
     }
 
     private fun startFlowWhenReaderConnected() {
-        val isVMKilledWhenTTPActivityInForeground = paymentFlowJob == null && isTTPPaymentInProgress
+        val isVMKilledWhenTTPActivityInForeground = paymentFlowJob == null && isTTPPaymentInProgress.get()
         if (isVMKilledWhenTTPActivityInForeground) {
             tracker.trackPaymentFailed("VM killed when TTP activity in foreground")
             viewState.postValue(
@@ -222,7 +222,7 @@ class CardReaderPaymentController(
                     return@launch
                 }
                 launch {
-                    onTTPPaymentStateChanged(cardReaderType == CardReaderType.BUILT_IN)
+                    isTTPPaymentInProgress.set(cardReaderType == CardReaderType.BUILT_IN)
                     collectPaymentFlow(cardReaderManager, order)
                 }
                 launch {

@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 13:54:03+0000
+Translation-Revision-Date: 2024-11-12 13:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: es
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Envoltorio</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Caja</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Añadir paquete</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Guardar como nueva plantilla de paquete</string>
+    <string name="woo_shipping_labels_package_creation_height">Altura</string>
+    <string name="woo_shipping_labels_package_creation_width">Ancho</string>
+    <string name="woo_shipping_labels_package_creation_length">Longitud</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Tipo de paquete</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Guardado</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Empresa de transportes</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Personalizado</string>
+    <string name="shipping_label_purchased_request_refund">Solicitar reembolso</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Programar la recogida</string>
+    <string name="shipping_label_purchased_track_shipment">Hacer un seguimiento del envío</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Aprende a imprimir desde tu dispositivo móvil</string>
+    <string name="shipping_label_purchased_note">Nota: La reutilización de una etiqueta impresa es una violación de nuestras condiciones del servicio y podría resultar en cargos criminales.</string>
+    <string name="shipping_label_purchased_message">Desde aquí puedes volver a imprimir la etiqueta de envío o cambiar el tamaño de papel de la etiqueta.</string>
+    <string name="shipping_label_purchased_title">Tu etiqueta de envío está lista para imprimirse</string>
+    <string name="order_detail_edit_store_currency_mismatch">Lo sentimos, solo puedes editar este pedido en la web, ya que utiliza %1$s, y la moneda de tu sitio es %2$s</string>
+    <string name="shipping_label_shipping_service_title">Servicio de envío</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Más rápida</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Más barata</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Etiqueta de compra</string>
+    <string name="shipping_label_shipment_details_purchase_label">Etiqueta de compra %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Marcar este pedido como completado y avisar al cliente</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Coste de envío</string>
+    <string name="shipping_label_shipment_details_order_details">Detalles del pedido</string>
+    <string name="shipping_label_shipment_details_title">Detalles del envío</string>
+    <string name="shipping_label_select_package_description">Introduce las dimensiones de tu paquete o elige una opción de paquete de empresa de transporte para ver las tarifas de envío disponibles.</string>
+    <string name="shipping_label_select_package_title">Elige un paquete para obtener las tarifas de envío</string>
+    <string name="shipping_label_select_package_button">Elige un paquete</string>
+    <string name="shipping_label_hazmat_title">¿Vas a enviar mercancías peligrosas?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Contraer/ampliar tarjeta de elementos</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">Ordenado por 1%s</string>
+    <string name="no">No</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Guardar mi selección para futuras campañas</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Ideal para:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Elegir objetivo %s</string>
@@ -554,7 +590,7 @@ Language: es
     <string name="order_creation_collect_payment_button">Recibir pago</string>
     <string name="order_creation_gift_card_text_error">El código debe tener el formato XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">Introduce el código</string>
-    <string name="order_creation_coupon_button">Cupón</string>
+    <string name="order_creation_coupon_button">Cupones</string>
     <string name="theme_picker_error_message">No se han podido cargar los temas.</string>
     <string name="configuration_complete">Configuración completada</string>
     <string name="scan_to_update_inventory_undo_snackbar">Actualizar cantidad deshecha</string>
@@ -3637,6 +3673,7 @@ Language: es
     <string name="taxes">Impuestos</string>
     <string name="payment">Pago</string>
     <string name="shipping">Envío</string>
+    <string name="total">Total</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Pedidos</string>

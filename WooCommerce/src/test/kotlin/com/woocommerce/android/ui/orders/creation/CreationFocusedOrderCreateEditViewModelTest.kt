@@ -58,8 +58,12 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.setMain
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.junit.Test
@@ -1219,7 +1223,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
         initMocksForAnalyticsWithOrder(defaultOrderValue)
         createSut()
 
-        sut.onCouponAdded("abc")
+        sut.addCoupon("abc")
 
         verify(tracker).track(
             AnalyticsEvent.ORDER_COUPON_ADD,
@@ -1262,7 +1266,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
             lastReceivedEvent = it
         }
 
-        sut.onCouponAdded("abc")
+        sut.addCoupon("abc")
 
         with(lastReceivedEvent) {
             this == OnCouponRejectedByBackend
@@ -1595,6 +1599,76 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
     }
 
     @Test
+    fun `when coupon added, then coupons viewState gets updated`() = testBlocking {
+        val dummyCouponCode = "Dummy Coupon 1"
+        createSut()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isEmpty()
+
+        sut.addCoupon(dummyCouponCode)
+
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+    }
+
+    @Test
+    fun `when coupon removed, then coupons viewState gets updated`() = testBlocking {
+        val dummyCouponCode = "Dummy Coupon 1"
+        createSut()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        sut.addCoupon(dummyCouponCode)
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+
+        sut.removeCoupon(dummyCouponCode)
+
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isEmpty()
+    }
+
+    @Test
+    fun `given coupons applied, when order is being updated, then coupons list is disabled`() = testBlocking {
+        // Ensure we have full control of coroutine execution
+        Dispatchers.setMain(StandardTestDispatcher())
+        createSut()
+        advanceUntilIdle()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        sut.addCoupon("123")
+        advanceUntilIdle()
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+
+        sut.onProductsSelected(listOf(ProductSelectorViewModel.SelectedItem.Product(1L)))
+
+        assertThat(sut.couponLinesLiveData.value!!.isEnabled).isFalse()
+    }
+
+    @Test
+    fun `given order is being updated, when update finished, then coupons list is enabled`() = testBlocking {
+        // Ensure we have full control of coroutine execution
+        Dispatchers.setMain(StandardTestDispatcher())
+        createSut()
+        advanceUntilIdle()
+        sut.orderDraft.observeForever {
+        }
+        sut.couponLinesLiveData.observeForever {
+        }
+        sut.addCoupon("123")
+        advanceUntilIdle()
+        assertThat(sut.couponLinesLiveData.value!!.couponLines).isNotEmpty
+        sut.onProductsSelected(listOf(ProductSelectorViewModel.SelectedItem.Product(1L)))
+
+        advanceUntilIdle()
+
+        assertThat(sut.couponLinesLiveData.value!!.isEnabled).isTrue()
+    }
+
+    @Test
     fun `when custom amount added with tax status as taxable, then fee line gets updated with proper tax status`() {
         var orderDraft: Order? = null
         sut.orderDraft.observeForever {
@@ -1888,7 +1962,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                 )
             ).thenReturn(totalsSectionsState)
 
@@ -1919,7 +1992,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                 )
             ).thenReturn(totalsSectionsState)
             var totalsData: TotalsSectionsState? = null
@@ -1941,7 +2013,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
             val onExpandCollapseClickedCaptor = argumentCaptor<() -> Unit>()
             whenever(
                 totalsHelper.mapToPaymentTotalsState(
-                    any(),
                     any(),
                     any(),
                     any(),
@@ -1995,7 +2066,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                     any(),
                     any(),
                     any(),
-                    any(),
                     onHeightChangedCaptor.capture(),
                 )
             ).thenReturn(totalsSectionsState)
@@ -2021,7 +2091,6 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
             val onMainButtonClickedCaptor = argumentCaptor<() -> Unit>()
             whenever(
                 totalsHelper.mapToPaymentTotalsState(
-                    any(),
                     any(),
                     any(),
                     any(),

@@ -240,7 +240,7 @@ class CustomFieldsViewModel @Inject constructor(
                 stat = AnalyticsEvent.SAVE_CUSTOM_FIELD_TAPPED,
                 properties = mapOf(
                     "edited_fields_count" to currentPendingChanges.editedFields.size,
-                    "added_field_count" to currentPendingChanges.insertedFields.size,
+                    "added_fields_count" to currentPendingChanges.insertedFields.size,
                     "deleted_fields_count" to currentPendingChanges.deletedFieldIds.size
                 )
             )

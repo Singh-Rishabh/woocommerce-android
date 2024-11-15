@@ -1,11 +1,15 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Product
+import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WooPosProductsViewModel @Inject constructor(
+class WooPosItemsViewModel @Inject constructor(
     private val productsDataSource: WooPosProductsDataSource,
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val priceFormat: WooPosFormatPrice,
@@ -29,8 +33,8 @@ class WooPosProductsViewModel @Inject constructor(
     private var loadMoreProductsJob: Job? = null
 
     private val _viewState =
-        MutableStateFlow<WooPosProductsViewState>(WooPosProductsViewState.Loading(withCart = true))
-    val viewState: StateFlow<WooPosProductsViewState> = _viewState
+        MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
+    val viewState: StateFlow<WooPosItemsViewState> = _viewState
         .onEach { notifyParentAboutStatusChange(it) }
         .stateIn(
             viewModelScope,
@@ -46,17 +50,17 @@ class WooPosProductsViewModel @Inject constructor(
         )
     }
 
-    fun onUIEvent(event: WooPosProductsUIEvent) {
+    fun onUIEvent(event: WooPosItemsUIEvent) {
         when (event) {
-            is WooPosProductsUIEvent.EndOfProductListReached -> {
+            is WooPosItemsUIEvent.EndOfItemsListReached -> {
                 onEndOfProductsListReached()
             }
 
-            is WooPosProductsUIEvent.ItemClicked -> {
-                onItemClicked(event.item)
+            is WooPosItemsUIEvent.ItemClicked -> {
+                handleItemClick(event)
             }
 
-            WooPosProductsUIEvent.PullToRefreshTriggered -> {
+            WooPosItemsUIEvent.PullToRefreshTriggered -> {
                 loadProducts(
                     forceRefreshProducts = true,
                     withPullToRefresh = true,
@@ -64,7 +68,7 @@ class WooPosProductsViewModel @Inject constructor(
                 )
             }
 
-            WooPosProductsUIEvent.ProductsLoadingErrorRetryButtonClicked -> {
+            WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked -> {
                 loadProducts(
                     forceRefreshProducts = false,
                     withPullToRefresh = false,
@@ -72,16 +76,31 @@ class WooPosProductsViewModel @Inject constructor(
                 )
             }
 
-            WooPosProductsUIEvent.SimpleProductsBannerClosed -> {
+            WooPosItemsUIEvent.SimpleProductsBannerClosed -> {
                 onSimpleProductsOnlyBannerClosed()
             }
 
-            WooPosProductsUIEvent.SimpleProductsBannerLearnMoreClicked -> {
+            WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked -> {
                 onSimpleProductsOnlyBannerLearnMoreClicked()
             }
 
-            WooPosProductsUIEvent.SimpleProductsDialogInfoIconClicked -> {
+            WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked -> {
                 onSimpleProductsDialogInfoClicked()
+            }
+        }
+    }
+
+    private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
+        when (event.item) {
+            is SimpleProduct -> {
+                onItemClicked(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = event.item.id
+                    )
+                )
+            }
+
+            is VariableProduct -> {
             }
         }
     }
@@ -98,7 +117,7 @@ class WooPosProductsViewModel @Inject constructor(
 
     private fun onSimpleProductsOnlyBannerClosed() {
         viewModelScope.launch {
-            val currentState = _viewState.value as WooPosProductsViewState.Content
+            val currentState = _viewState.value as WooPosItemsViewState.Content
             preferencesRepository.setSimpleProductsOnlyBannerWasHiddenByUser(true)
             _viewState.value = currentState.copy(
                 bannerState = currentState.bannerState.copy(
@@ -117,7 +136,7 @@ class WooPosProductsViewModel @Inject constructor(
             _viewState.value = if (withPullToRefresh) {
                 buildProductsReloadingState()
             } else {
-                WooPosProductsViewState.Loading(withCart = withCart)
+                WooPosItemsViewState.Loading(withCart = withCart)
             }
 
             productsDataSource.loadSimpleProducts(forceRefreshProducts = forceRefreshProducts).collect { result ->
@@ -135,11 +154,11 @@ class WooPosProductsViewModel @Inject constructor(
                                 if (products.isNotEmpty()) {
                                     products.toContentState()
                                 } else {
-                                    WooPosProductsViewState.Empty()
+                                    WooPosItemsViewState.Empty()
                                 }
                             }
 
-                            else -> WooPosProductsViewState.Error()
+                            else -> WooPosItemsViewState.Error()
                         }
                     }
                 }
@@ -149,24 +168,35 @@ class WooPosProductsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosProductsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosProductsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosProductsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosProductsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
         }
 
-    private suspend fun List<Product>.toContentState() = WooPosProductsViewState.Content(
-        products = map { product ->
-            WooPosProductsListItem(
-                id = product.remoteId,
-                name = product.name,
-                price = priceFormat(product.price),
-                imageUrl = product.firstImageUrl,
-            )
+    private suspend fun List<Product>.toContentState() = WooPosItemsViewState.Content(
+        items = map { product ->
+            if (product.isVariable()) {
+                VariableProduct(
+                    id = product.remoteId,
+                    name = product.name,
+                    price = priceFormat(product.price),
+                    imageUrl = product.firstImageUrl,
+                    numOfVariations = product.numVariations,
+                    variationIds = product.variationIds
+                )
+            } else {
+                SimpleProduct(
+                    id = product.remoteId,
+                    name = product.name,
+                    price = priceFormat(product.price),
+                    imageUrl = product.firstImageUrl,
+                )
+            }
         },
         loadingMore = false,
         reloadingProductsWithPullToRefresh = false,
-        bannerState = WooPosProductsViewState.Content.BannerState(
+        bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
             title = R.string.woopos_banner_simple_products_only_title,
             message = R.string.woopos_banner_simple_products_only_message,
@@ -176,7 +206,7 @@ class WooPosProductsViewModel @Inject constructor(
 
     private fun onEndOfProductsListReached() {
         val currentState = _viewState.value
-        if (currentState !is WooPosProductsViewState.Content) {
+        if (currentState !is WooPosItemsViewState.Content) {
             return
         }
 
@@ -192,19 +222,19 @@ class WooPosProductsViewModel @Inject constructor(
             _viewState.value = if (result.isSuccess) {
                 result.getOrThrow().toContentState()
             } else {
-                WooPosProductsViewState.Error()
+                WooPosItemsViewState.Error()
             }
         }
     }
 
-    private fun notifyParentAboutStatusChange(newState: WooPosProductsViewState) {
+    private fun notifyParentAboutStatusChange(newState: WooPosItemsViewState) {
         sendEventToParent(
             when (newState) {
-                is WooPosProductsViewState.Content -> ChildToParentEvent.ProductsStatusChanged.WithCart
+                is WooPosItemsViewState.Content -> ChildToParentEvent.ProductsStatusChanged.WithCart
 
-                is WooPosProductsViewState.Empty,
-                is WooPosProductsViewState.Error -> ChildToParentEvent.ProductsStatusChanged.FullScreen
-                is WooPosProductsViewState.Loading -> {
+                is WooPosItemsViewState.Empty,
+                is WooPosItemsViewState.Error -> ChildToParentEvent.ProductsStatusChanged.FullScreen
+                is WooPosItemsViewState.Loading -> {
                     if (newState.withCart) {
                         ChildToParentEvent.ProductsStatusChanged.WithCart
                     } else {
@@ -215,8 +245,8 @@ class WooPosProductsViewModel @Inject constructor(
         )
     }
 
-    private fun onItemClicked(item: WooPosProductsListItem) {
-        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(item.id))
+    private fun onItemClicked(itemData: WooPosItemNavigationData) {
+        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData))
     }
 
     private fun sendEventToParent(event: ChildToParentEvent) {
@@ -226,4 +256,8 @@ class WooPosProductsViewModel @Inject constructor(
     private suspend fun isBannerHiddenByUser(): Boolean {
         return preferencesRepository.isSimpleProductsOnlyBannerWasHiddenByUser.first()
     }
+
+    private fun Product.isVariable() =
+        productType == ProductType.VARIABLE ||
+            productType == ProductType.VARIATION
 }

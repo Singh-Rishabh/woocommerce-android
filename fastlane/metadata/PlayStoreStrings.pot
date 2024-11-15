@@ -16,17 +16,17 @@ msgid "In this update, we’ve made a few small bug fixes and enhancements to en
 msgstr ""
 
 #. translators: Release notes for this version to be displayed in the Play Store. Limit to 500 characters including spaces and commas!
-msgctxt "release_note_209"
+msgctxt "release_note_211"
 msgid ""
-"20.9:\n"
-"\n"
-"\n"
+"21.1:\n"
+"Our latest update brings key enhancements to streamline your WooCommerce experience! We’ve fixed editing permissions for orders in different currencies, optimized the payments hub view, enabled easy receipt sharing via Google SMS, and fixed date range selection to correctly use your timezone. Enjoy smoother operations!\n"
 msgstr ""
 
-msgctxt "release_note_208"
+msgctxt "release_note_210"
 msgid ""
-"20.8:\n"
-"We’ve improved your WooCommerce app experience with some key updates! The "Learn More" link for the Pay in Person option in payment settings is now fixed, and we've streamlined the Blaze campaign creation process by adding an objective selection feature. Update now to enjoy a smoother workflow!\n"
+"21.0:\n"
+"Enjoy a smoother experience with improved design throughout the app. Plus, now your product images load faster and look even better with new AVIF format support. Update now for a cleaner, sharper WooCommerce app experience!\n"
+"\n"
 msgstr ""
 
 #. translators: Short description of the app to be displayed in the Play Store. Limit to 80 characters including spaces and commas!
