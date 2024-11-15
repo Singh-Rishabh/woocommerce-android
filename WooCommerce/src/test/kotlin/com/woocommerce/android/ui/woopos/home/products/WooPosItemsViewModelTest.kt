@@ -6,6 +6,7 @@ import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
@@ -29,7 +30,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-class WooPosProductsViewModelTest {
+class WooPosItemsViewModelTest {
 
     @Rule
     @JvmField
@@ -249,7 +250,11 @@ class WooPosProductsViewModelTest {
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
-                ChildToParentEvent.ItemClickedInProductSelector(product.id)
+                ChildToParentEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product.id
+                    )
+                )
             )
             cancelAndConsumeRemainingEvents()
         }
@@ -792,6 +797,45 @@ class WooPosProductsViewModelTest {
 
         // THEN
         verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
+    }
+
+    @Test
+    fun `given variable products from data source, when view model created, then items list updated correctly`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple",
+                isDownloadable = false,
+            ),
+            ProductTestUtils.generateProduct(
+                productId = 2,
+                productName = "Product 2",
+                amount = "20.0",
+                productType = "variable",
+                isDownloadable = false,
+                isVariable = true
+            ).copy(firstImageUrl = "https://test.com")
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.viewState.test {
+            // THEN
+            val value = awaitItem() as WooPosItemsViewState.Content
+
+            assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
+        }
     }
 
     private fun createViewModel() =

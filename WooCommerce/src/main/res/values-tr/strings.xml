@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-06 13:54:04+0000
+Translation-Revision-Date: 2024-11-13 13:54:03+0000
 Plural-Forms: nplurals=2; plural=(n > 1);
 Generator: GlotPress/2.4.0-alpha
 Language: tr
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Zarf</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Kutu</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Paket Ekleyin</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Bunu yeni bir paket şablonu olarak kaydet</string>
+    <string name="woo_shipping_labels_package_creation_height">Yükseklik</string>
+    <string name="woo_shipping_labels_package_creation_width">Genişlik</string>
+    <string name="woo_shipping_labels_package_creation_length">Uzunluk</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Paket türü</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Kaydedildi</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Kargo Şirketi</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Özel</string>
+    <string name="shipping_label_purchased_request_refund">İade talep et</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Alma tarihi zamanla</string>
+    <string name="shipping_label_purchased_track_shipment">Gönderimi takip et</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Mobil cihazınızdan nasıl yazdıracağınız hakkında bilgi edinin</string>
+    <string name="shipping_label_purchased_note">Not: Yazdırılmış bir etiketi yeniden kullanmak hizmet koşullarımızın ihlalidir ve cezai suçlamalarla sonuçlanabilir.</string>
+    <string name="shipping_label_purchased_message">Buradan gönderim etiketini yeniden yazdırabilir veya etiketin kağıt boyutunu değiştirebilirsiniz.</string>
+    <string name="shipping_label_purchased_title">Gönderim etiketiniz yazdırmaya hazır</string>
+    <string name="order_detail_edit_store_currency_mismatch">Üzgünüz, bu siparişi yalnızca web üzerinden düzenleyebilirsiniz, çünkü bu sipariş %1$s kullanıyor ve sitenizin para birimi şu:%2$s</string>
     <string name="shipping_label_shipping_service_title">Gönderim hizmeti</string>
     <string name="shipping_label_shipping_rates_sort_option_fastest">En hızlı</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">En ucuz</string>
@@ -571,7 +590,7 @@ Language: tr
     <string name="order_creation_collect_payment_button">Ödeme Alın</string>
     <string name="order_creation_gift_card_text_error">Kod XXXX-XXXX-XXXX-XXXX biçiminde olmalıdır.</string>
     <string name="order_creation_gift_card_text_field_hint">Kod girin</string>
-    <string name="order_creation_coupon_button">Kupon</string>
+    <string name="order_creation_coupon_button">Kuponlar</string>
     <string name="theme_picker_error_message">Temalar yüklenemedi.</string>
     <string name="configuration_complete">Yapılandırma tamamlandı</string>
     <string name="scan_to_update_inventory_undo_snackbar">Miktarı Güncellemeyi Geri Al</string>

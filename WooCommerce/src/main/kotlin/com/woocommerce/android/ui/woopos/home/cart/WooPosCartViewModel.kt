@@ -118,7 +118,7 @@ class WooPosCartViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> {
                         val itemClicked = async {
-                            val product = getProductById(event.productId)!!
+                            val product = getProductById(event.itemData.id)!!
                             val itemNumber = when (val currentState = _state.value.body) {
                                 is WooPosCartState.Body.Empty -> 1
                                 is WooPosCartState.Body.WithItems ->
