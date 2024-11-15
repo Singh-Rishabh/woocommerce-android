@@ -132,13 +132,14 @@ class WooPosCartViewModel @Inject constructor(
     private fun handleItemClickedInProductSelector(event: ParentToChildrenEvent.ItemClickedInProductSelector) {
         viewModelScope.launch {
             val itemClicked = async {
-                val product = getProductById(event.itemData.id)!!
                 when (event.itemData) {
                     is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> {
+                        val product = getProductById(event.itemData.id)!!
                         val itemNumber = getItemNumber()
                         product.toCartListItem(itemNumber)
                     }
                     is WooPosItemsViewModel.ItemClickedData.Variation -> {
+                        val product = getProductById(event.itemData.productId)!!
                         val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
                         val itemNumber = getItemNumber()
                         productVariation.toCartListItem(itemNumber, product)
