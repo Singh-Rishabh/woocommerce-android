@@ -291,7 +291,7 @@ class WooPosCartViewModel @Inject constructor(
 
 private fun WooPosItemsViewModel.ItemClickedData.toAnalyticsString(): String {
     return when (this) {
-        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple product"
+        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
         is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
     }
 }

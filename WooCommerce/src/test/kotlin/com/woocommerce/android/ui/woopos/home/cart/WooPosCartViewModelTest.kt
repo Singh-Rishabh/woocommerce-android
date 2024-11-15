@@ -561,7 +561,7 @@ class WooPosCartViewModelTest {
                 this == WooPosAnalyticsEvent.Event.ItemAddedToCart &&
                     (
                         this as WooPosAnalyticsEvent.Event.ItemAddedToCart
-                        ).properties[WooPosAnalyticsEventConstant.PRODUCT_TYPE] == "simple product"
+                        ).properties[WooPosAnalyticsEventConstant.PRODUCT_TYPE] == "simple"
             }
         )
     }
