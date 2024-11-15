@@ -131,8 +131,7 @@ class CardReaderPaymentController(
     private val paymentReceiptShare: PaymentReceiptShare,
     private val paymentOrRefund: CardReaderFlowParam.PaymentOrRefund,
     private val cardReaderType: CardReaderType,
-    private val isTTPPaymentInProgress: Boolean,
-    private val onTTPPaymentStateChanged: (Boolean) -> Unit,
+    private var isTTPPaymentInProgress: Boolean,
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
     val viewStateData: LiveData<ViewState> = viewState
@@ -231,7 +230,7 @@ class CardReaderPaymentController(
                     return@launch
                 }
                 launch {
-                    onTTPPaymentStateChanged(cardReaderType == CardReaderType.BUILT_IN)
+                    isTTPPaymentInProgress = (cardReaderType == CardReaderType.BUILT_IN)
                     collectPaymentFlow(cardReaderManager, order)
                 }
                 launch {

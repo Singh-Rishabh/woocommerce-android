@@ -83,7 +83,6 @@ class CardReaderPaymentViewModel @Inject constructor(
         paymentOrRefund = arguments.paymentOrRefund,
         cardReaderType = arguments.cardReaderType,
         isTTPPaymentInProgress = isTTPPaymentInProgress,
-        onTTPPaymentStateChanged = { isTTPPaymentInProgress = it }
     )
 
     val viewStateData: LiveData<ViewState> = paymentController.viewStateData
