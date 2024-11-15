@@ -46,7 +46,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             avatarUrl = avatarUrlFromEmail(navArgs.emailOrUsername),
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
             allowPasswordLogin = !navArgs.isAccountPasswordless,
-            isLoadingDialogShown = false
+            isLoadingDialogShown = false,
+            isNewWpComAccount = navArgs.isNewWpComAccount
         )
     )
     val viewState = _viewState.asLiveData()
@@ -91,7 +92,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             avatarUrl = avatarUrlFromEmail(navArgs.emailOrUsername),
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
             allowPasswordLogin = !navArgs.isAccountPasswordless,
-            isLoadingDialogShown = true
+            isLoadingDialogShown = true,
+            isNewWpComAccount = navArgs.isNewWpComAccount
         )
         val source = when {
             !navArgs.jetpackStatus.isJetpackInstalled -> MagicLinkSource.JetpackInstallation
@@ -145,7 +147,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             val avatarUrl: String,
             override val isJetpackInstalled: Boolean,
             override val allowPasswordLogin: Boolean,
-            val isLoadingDialogShown: Boolean
+            val isLoadingDialogShown: Boolean,
+            val isNewWpComAccount: Boolean
         ) : ViewState
 
         @Parcelize

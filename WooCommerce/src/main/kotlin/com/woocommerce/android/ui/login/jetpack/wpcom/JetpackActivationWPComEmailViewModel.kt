@@ -9,6 +9,7 @@ import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.WPComLoginRepository
+import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
@@ -90,7 +91,11 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
         wpComLoginRepository.fetchAuthOptions(emailOrUsername).fold(
             onSuccess = {
                 if (it.isPasswordless) {
-                    triggerEvent(ShowMagicLinkScreen(emailOrUsername, navArgs.jetpackStatus))
+                    triggerEvent(
+                        ShowMagicLinkScreen(
+                            emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = false
+                        )
+                    )
                 } else {
                     triggerEvent(ShowPasswordScreen(emailOrUsername, navArgs.jetpackStatus))
                 }
@@ -100,6 +105,13 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
 
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
+                        if (FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled()) {
+                            triggerEvent(
+                                ShowMagicLinkScreen(
+                                    emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = true
+                                )
+                            )
+                        }
                         errorMessage.value = R.string.email_not_registered_wpcom
                     }
 
@@ -141,6 +153,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
 
     data class ShowMagicLinkScreen(
         val emailOrUsername: String,
-        val jetpackStatus: JetpackStatus
+        val jetpackStatus: JetpackStatus,
+        val isNewWpComAccount: Boolean,
     ) : MultiLiveEvent.Event()
 }
