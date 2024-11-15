@@ -68,7 +68,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             viewState.savedPackageSelection.packages
                 .map { it.copy(isSelected = false) }
                 .toMutableList()
-                .apply { set(indexOf(selectedPackage), selectedPackage.copy(isSelected = isSelected)) }
+                .safelyUpdate(selectedPackage, selectedPackage.copy(isSelected = isSelected))
                 .let { SavedPackageSelection(it) }
                 .let { viewState.copy(savedPackageSelection = it) }
         }
@@ -141,14 +141,18 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         packageGroup.packages
             .map { it.copy(isSelected = false) }
             .toMutableList()
-            .apply {
-                indexOf(packageData)
-                    .takeIf { it != -1 }
-                    ?.let { set(it, packageData.copy(isSelected = isSelected)) }
-                    ?: this
-            }
+            .safelyUpdate(packageData, packageData.copy(isSelected = isSelected))
             .let { packageGroup.copy(packages = it) }
     }.let { carrierPackages.key to it }
+
+    private fun MutableList<PackageData>.safelyUpdate(
+        originalPackage: PackageData,
+        updatedPackage: PackageData
+    ) = apply {
+        indexOf(originalPackage)
+            .takeIf { it != -1 }
+            ?.let { set(it, updatedPackage) }
+    }
 
     @Parcelize
     data class ViewState(
