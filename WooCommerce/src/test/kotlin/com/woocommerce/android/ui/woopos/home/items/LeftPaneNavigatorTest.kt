@@ -27,7 +27,6 @@ class LeftPaneNavigatorTest : BaseUnitTest() {
             id = 1L,
             name = "Variable Product",
             numOfVariations = 10,
-            variationIds = emptyList()
         )
 
         val expectedScreen = LeftPaneNavigator.LeftPaneScreen.VariationsScreen(sampleVariableProduct)
@@ -43,7 +42,6 @@ class LeftPaneNavigatorTest : BaseUnitTest() {
                 id = 1L,
                 name = "Variable Product",
                 numOfVariations = 10,
-                variationIds = emptyList()
             )
         )
 
