@@ -749,5 +749,20 @@
         <argument
             android:name="orderId"
             app:argType="long" />
+
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelPackageCreationFragment"
+            app:destination="@id/wooShippingLabelPackageCreationFragment" />
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelPurchasedFragment"
+            app:destination="@id/wooShippingLabelPurchasedFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/wooShippingLabelPackageCreationFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment"
+        android:label="WooShippingLabelPackageCreationFragment" />
+    <fragment
+        android:id="@+id/wooShippingLabelPurchasedFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
+        android:label="WooShippingLabelPurchasedFragment" />
 </navigation>

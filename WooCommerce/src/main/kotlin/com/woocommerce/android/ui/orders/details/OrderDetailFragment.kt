@@ -502,7 +502,12 @@ class OrderDetailFragment :
                     WooThemeWithBackground {
                         ShippingLineSection(
                             shippingLineDetails = shippingLines,
-                            formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
+                            formatCurrency = { amount ->
+                                currencyFormatter.formatCurrency(
+                                    amount,
+                                    currencyCode = viewModel.order.currency
+                                )
+                            },
                             modifier = Modifier.padding(bottom = 1.dp)
                         )
                     }

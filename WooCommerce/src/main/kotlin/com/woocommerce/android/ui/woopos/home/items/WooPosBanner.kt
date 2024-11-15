@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable

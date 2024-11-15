@@ -9,6 +9,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R.string
@@ -98,6 +100,8 @@ import com.woocommerce.android.ui.orders.creation.CreateUpdateOrder.OrderUpdateS
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper.BarcodeFormat
 import com.woocommerce.android.ui.orders.creation.configuration.ConfigurationType
 import com.woocommerce.android.ui.orders.creation.configuration.ProductConfiguration
+import com.woocommerce.android.ui.orders.creation.coupon.CouponLineDetails
+import com.woocommerce.android.ui.orders.creation.coupon.CouponSection
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget.AddCustomer
@@ -114,6 +118,7 @@ import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavi
 import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWithOtherValue
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineDetails
+import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineSection
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingMethodsRepository
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingUpdateResult
 import com.woocommerce.android.ui.orders.creation.shipping.getMethodIdOrDefault
@@ -295,7 +300,6 @@ class OrderCreateEditViewModel @Inject constructor(
                 ),
                 mode = mode,
                 viewState = viewState!!,
-                onCouponsClicked = { onCouponButtonClicked() },
                 onGiftClicked = { onEditGiftCardButtonClicked(selectedGiftCard) },
                 onTaxesLearnMore = { onTaxHelpButtonClicked() },
                 onMainButtonClicked = { onTotalsSectionPrimaryButtonClicked() },
@@ -378,15 +382,17 @@ class OrderCreateEditViewModel @Inject constructor(
     private val giftCardWasEnabledAtLeastOnce: MutableStateFlow<Boolean> =
         savedState.getStateFlow(viewModelScope, false)
 
-    val shippingLineList =
-        combine(
+    val shippingLineSection =
+        viewStateData.liveData.map { it.isIdle && it.isEditable }.combineWith(
             _orderDraft.filter { it.shippingLines.isNotEmpty() }
-                .map { it.shippingLines.filter { line -> line.methodId != null } },
-            getShippingMethodsWithOtherValue().withIndex()
-        ) { shippingLines, shippingMethods ->
+                .map { it.shippingLines.filter { line -> line.methodId != null } }.asLiveData(),
+            getShippingMethodsWithOtherValue().withIndex().asLiveData()
+        ) { isIdle, shippingLines, shippingMethods ->
+            if (isIdle == null || shippingLines == null || shippingMethods == null) return@combineWith null
+
             val shippingMethodsMap = shippingMethods.value.associateBy { it.id }
 
-            shippingLines.map { shippingLine ->
+            val shippingLineDetails = shippingLines.map { shippingLine ->
                 val method = shippingLine.methodId?.let {
                     if (it == " ") {
                         shippingMethodsMap[ShippingMethodsRepository.NA_ID]
@@ -401,11 +407,29 @@ class OrderCreateEditViewModel @Inject constructor(
                     amount = shippingLine.total
                 )
             }
-        }.asLiveData()
+            ShippingLineSection(
+                shippingLines = shippingLineDetails,
+                isEnabled = isIdle
+            )
+        }
+
+    private val _couponLinesLiveData = MediatorLiveData(CouponSection(emptyList(), true))
+    val couponLinesLiveData = _couponLinesLiveData.distinctUntilChanged()
 
     init {
         monitorPluginAvailabilityChanges()
         shouldDisplayShippingFeedback()
+
+        _couponLinesLiveData.addSource(orderDraft) { newOrderDraft ->
+            _couponLinesLiveData.value =
+                _couponLinesLiveData.value
+                    ?.copy(couponLines = newOrderDraft.couponLines.map { CouponLineDetails(it.code) })
+        }
+
+        _couponLinesLiveData.addSource(viewStateData.liveData) { newViewState ->
+            _couponLinesLiveData.value = _couponLinesLiveData.value
+                ?.copy(isEnabled = newViewState.isIdle && viewState.isEditable)
+        }
 
         when (mode) {
             is Mode.Creation -> {
@@ -466,7 +490,7 @@ class OrderCreateEditViewModel @Inject constructor(
 
     private fun shouldDisplayShippingFeedback() {
         launch {
-            shippingLineList
+            shippingLineSection
                 .asFlow()
                 .drop(1)
                 .take(1)
@@ -556,7 +580,7 @@ class OrderCreateEditViewModel @Inject constructor(
     private fun handleCouponEditResult(couponEditResult: OrderCreateCouponDetailsViewModel.CouponEditResult) {
         when (couponEditResult) {
             is OrderCreateCouponDetailsViewModel.CouponEditResult.RemoveCoupon -> {
-                onCouponRemoved(couponEditResult.couponCode)
+                removeCoupon(couponEditResult.couponCode)
             }
         }
     }
@@ -1253,7 +1277,7 @@ class OrderCreateEditViewModel @Inject constructor(
         _selectedGiftCard.update { selectedGiftCard }
     }
 
-    fun onAddOrEditShipping(itemId: Long? = null) {
+    fun onAddOrEditShippingClicked(itemId: Long? = null) {
         tracker.track(AnalyticsEvent.ORDER_ADD_SHIPPING_TAPPED)
         val shippingLine = itemId?.let { id -> currentDraft.shippingLines.firstOrNull { it.itemId == id } }
         triggerEvent(EditShipping(shippingLine))
@@ -1294,6 +1318,7 @@ class OrderCreateEditViewModel @Inject constructor(
             triggerEvent(ShippingLinesFeedback)
         }
     }
+
     fun onCloseShippingFeedback() {
         launch {
             feedbackRepository.saveFeatureFeedback(
@@ -1793,7 +1818,7 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
-    fun onCouponAdded(couponCode: String) {
+    fun addCoupon(couponCode: String) {
         if (_orderDraft.value.couponLines.any { it.code == couponCode }) return
         _orderDraft.update { draft ->
             val couponLines = draft.couponLines
@@ -1803,7 +1828,7 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
-    private fun onCouponRemoved(couponCode: String) {
+    fun removeCoupon(couponCode: String) {
         trackCouponRemoved()
         _orderDraft.update { draft ->
             val updatedCouponLines = draft.couponLines.filter { it.code != couponCode }
