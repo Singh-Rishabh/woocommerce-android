@@ -18,6 +18,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.FeatureFeedbackSettings
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.ShippingMethod
+import com.woocommerce.android.model.WooPlugin
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.barcodescanner.BarcodeScanningTracker
 import com.woocommerce.android.ui.feedback.FeedbackRepository
@@ -131,6 +132,12 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                     any<Order>()
                 )
             } doReturn MutableLiveData(emptyOrder)
+            on {
+                getLiveData(
+                    key = eq("plugins_information"),
+                    initialValue = any<HashMap<String, WooPlugin>>(),
+                )
+            } doReturn MutableLiveData(HashMap())
         }
         createUpdateOrderUseCase = mock {
             onBlocking { invoke(any(), any()) } doReturn flowOf(Succeeded(Order.getEmptyOrder(Date(), Date())))
@@ -191,8 +198,24 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         prefs = mock()
         mapFeeLineToCustomAmountUiModel = mock()
         totalsHelper = mock()
-        getShippingMethodsWithOtherValue = mock()
-        feedbackRepository = mock()
+        getShippingMethodsWithOtherValue = mock {
+            onBlocking { invoke() } doReturn flowOf(
+                listOf(
+                    ShippingMethod(
+                        id = "other",
+                        title = "Other"
+                    )
+                )
+            )
+        }
+        feedbackRepository = mock {
+            onBlocking {
+                getFeatureFeedbackSetting(eq(FeatureFeedbackSettings.Feature.ORDER_SHIPPING_LINES))
+            } doReturn FeatureFeedbackSettings(
+                feature = FeatureFeedbackSettings.Feature.ORDER_SHIPPING_LINES,
+                feedbackState = FeatureFeedbackSettings.FeedbackState.UNANSWERED
+            )
+        }
         fetchProductBySKU = mock()
     }
 
@@ -1884,15 +1907,14 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         whenever(getShippingMethodsWithOtherValue.invoke()).doReturn(getShippingMethodsResult)
         createSut()
 
-        var shippingLineSection: ShippingLineSection? = null
+        var shippingSection: ShippingLineSection? = null
         sut.shippingLineSection.observeForever {
-            shippingLineSection = it
+            shippingSection = it
         }
 
-        assertThat(shippingLineSection).isNotNull
-        assertThat(shippingLineSection!!.shippingLines.size).isEqualTo(shippingLines.size)
-        val shippingMethod = shippingLineSection!!.shippingLines
-            .firstOrNull { it.shippingMethod?.id == shippingMethodId }
+        assertThat(shippingSection).isNotNull
+        assertThat(shippingSection!!.shippingLines.size).isEqualTo(shippingLines.size)
+        val shippingMethod = shippingSection!!.shippingLines.firstOrNull { it.shippingMethod?.id == shippingMethodId }
         assertThat(shippingMethod).isNotNull
         assertThat(shippingMethod!!.shippingMethod!!.title).isEqualTo(shippingMethodTitle)
     }
@@ -1922,14 +1944,14 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         whenever(getShippingMethodsWithOtherValue.invoke()).doReturn(getShippingMethodsResult)
         createSut()
 
-        var shippingDetails: ShippingLineSection? = null
+        var shippingSection: ShippingLineSection? = null
         sut.shippingLineSection.observeForever {
-            shippingDetails = it
+            shippingSection = it
         }
 
-        assertThat(shippingDetails).isNotNull
-        assertThat(shippingDetails!!.shippingLines.size).isEqualTo(shippingLines.size)
-        val shippingMethod = shippingDetails!!.shippingLines.firstOrNull { it.shippingMethod?.id == shippingMethodId }
+        assertThat(shippingSection).isNotNull
+        assertThat(shippingSection!!.shippingLines.size).isEqualTo(shippingLines.size)
+        val shippingMethod = shippingSection!!.shippingLines.firstOrNull { it.shippingMethod?.id == shippingMethodId }
         assertThat(shippingMethod).isNull()
     }
 

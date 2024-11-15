@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.map
@@ -117,11 +116,10 @@ import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavi
 import com.woocommerce.android.ui.orders.creation.navigation.OrderCreateEditNavigationTarget.TaxRateSelector
 import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWithOtherValue
-import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineDetails
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineSection
-import com.woocommerce.android.ui.orders.creation.shipping.ShippingMethodsRepository
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingUpdateResult
 import com.woocommerce.android.ui.orders.creation.shipping.getMethodIdOrDefault
+import com.woocommerce.android.ui.orders.creation.shipping.toShippingLineDetails
 import com.woocommerce.android.ui.orders.creation.taxes.GetAddressFromTaxRate
 import com.woocommerce.android.ui.orders.creation.taxes.GetTaxRatesInfoDialogViewState
 import com.woocommerce.android.ui.orders.creation.taxes.TaxBasedOnSetting
@@ -173,10 +171,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
-import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.IgnoredOnParcel
@@ -382,36 +378,19 @@ class OrderCreateEditViewModel @Inject constructor(
     private val giftCardWasEnabledAtLeastOnce: MutableStateFlow<Boolean> =
         savedState.getStateFlow(viewModelScope, false)
 
-    val shippingLineSection =
-        viewStateData.liveData.map { it.isIdle && it.isEditable }.combineWith(
-            _orderDraft.filter { it.shippingLines.isNotEmpty() }
-                .map { it.shippingLines.filter { line -> line.methodId != null } }.asLiveData(),
-            getShippingMethodsWithOtherValue().withIndex().asLiveData()
-        ) { isIdle, shippingLines, shippingMethods ->
-            if (isIdle == null || shippingLines == null || shippingMethods == null) return@combineWith null
-
-            val shippingMethodsMap = shippingMethods.value.associateBy { it.id }
-
-            val shippingLineDetails = shippingLines.map { shippingLine ->
-                val method = shippingLine.methodId?.let {
-                    if (it == " ") {
-                        shippingMethodsMap[ShippingMethodsRepository.NA_ID]
-                    } else {
-                        shippingMethodsMap[it]
-                    }
-                }
-                ShippingLineDetails(
-                    id = shippingLine.itemId,
-                    name = shippingLine.methodTitle,
-                    shippingMethod = method,
-                    amount = shippingLine.total
+    val shippingLineSection = viewStateData.liveData
+        .combineWith(
+            orderDraft.map { it.shippingLines },
+            getShippingMethodsWithOtherValue().asLiveData()
+        ) { viewState, shippingLines, shippingMethods ->
+            if (viewState == null || shippingLines == null || shippingMethods == null) return@combineWith null
+            shippingLines.toShippingLineDetails(shippingMethods)?.let { shippingLineDetails ->
+                ShippingLineSection(
+                    shippingLines = shippingLineDetails,
+                    isEnabled = viewState.isIdle && viewState.isEditable
                 )
             }
-            ShippingLineSection(
-                shippingLines = shippingLineDetails,
-                isEnabled = isIdle
-            )
-        }
+        }.distinctUntilChanged()
 
     private val _couponLinesLiveData = MediatorLiveData(CouponSection(emptyList(), true))
     val couponLinesLiveData = _couponLinesLiveData.distinctUntilChanged()
@@ -488,20 +467,20 @@ class OrderCreateEditViewModel @Inject constructor(
         }
     }
 
+    private var _isFirstShippingLineChange = true
+
     private fun shouldDisplayShippingFeedback() {
         launch {
-            shippingLineSection
-                .asFlow()
-                .drop(1)
-                .take(1)
-                .takeIf { shouldDisplayShippingLinesFeedback() }
-                ?.collect {
+            if (_isFirstShippingLineChange && shouldDisplayShippingLinesFeedback()) {
+                launch {
                     delay(DELAY_BEFORE_SHOWING_SHIPPING_FEEDBACK)
                     viewState = viewState.copy(
                         showShippingFeedback = true,
                         isTotalsExpanded = false
                     )
+                    _isFirstShippingLineChange = false
                 }
+            }
         }
     }
 
@@ -1318,7 +1297,6 @@ class OrderCreateEditViewModel @Inject constructor(
             triggerEvent(ShippingLinesFeedback)
         }
     }
-
     fun onCloseShippingFeedback() {
         launch {
             feedbackRepository.saveFeatureFeedback(
@@ -1631,6 +1609,7 @@ class OrderCreateEditViewModel @Inject constructor(
 
             draft.copy(shippingLines = shipping)
         }
+        shouldDisplayShippingFeedback()
     }
 
     fun onRemoveShipping(itemId: Long) {
@@ -1653,6 +1632,7 @@ class OrderCreateEditViewModel @Inject constructor(
                 }
             )
         }
+        shouldDisplayShippingFeedback()
     }
 
     fun onFeeEdited(feeValue: BigDecimal) {

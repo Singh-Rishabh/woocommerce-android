@@ -225,7 +225,6 @@ class OrderCreateEditFormFragment :
         initAdditionalInfoCollectionSection()
         initTaxRateSelectorSection()
         initTotalsSection()
-        initShippingLinesSection()
         adjustUIForScreenSize()
     }
 
@@ -410,6 +409,8 @@ class OrderCreateEditFormFragment :
             bindCustomAmountsSection(binding.customAmountsSection, it)
         }
 
+        bindShippingLinesSection(binding)
+
         bindCouponsLinesSection(binding)
 
         bindFeedbackSection(binding)
@@ -418,9 +419,8 @@ class OrderCreateEditFormFragment :
 
         viewModel.event.observe(viewLifecycleOwner) { handleViewModelEvents(it, binding) }
     }
-
-    private fun FragmentOrderCreateEditFormBinding.initShippingLinesSection() {
-        shippingLines.apply {
+    private fun bindShippingLinesSection(binding: FragmentOrderCreateEditFormBinding) {
+        binding.shippingLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 viewModel.shippingLineSection.observeAsState().value?.let { shippingLineSection ->
