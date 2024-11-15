@@ -113,9 +113,9 @@ fun JetpackActivationWPComEmailScreen(
                         }
                     )
                 )
-                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.minor_100)))
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.major_100)))
                 Text(
-                    style = MaterialTheme.typography.caption,
+                    style = MaterialTheme.typography.body2,
                     text = stringResource(id = R.string.login_jetpack_connection_create_account)
                 )
             }
