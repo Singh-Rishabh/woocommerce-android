@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-06 13:54:04+0000
 Plural-Forms: nplurals=2; plural=(n > 1);
 Generator: GlotPress/2.4.0-alpha
 Language: tr
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">Gönderim hizmeti</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">En hızlı</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">En ucuz</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Satın Alma Etiketi</string>
+    <string name="shipping_label_shipment_details_purchase_label">Satın Alma Etiketi · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Bu siparişi tamamlandı olarak işaretleyin ve müşteriyi bilgilendirin</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Gönderim maliyeti</string>
+    <string name="shipping_label_shipment_details_order_details">Sipariş ayrıntıları</string>
+    <string name="shipping_label_shipment_details_title">Gönderi ayrıntıları</string>
+    <string name="shipping_label_select_package_description">Mevcut gönderim ücretlerini görmek için paketinizin ölçülerini girin veya bir kargo paketi seçeneği seçin.</string>
+    <string name="shipping_label_select_package_title">Gönderim ücretleri almak için bir paket seçin</string>
+    <string name="shipping_label_select_package_button">Paket Seç</string>
+    <string name="shipping_label_hazmat_title">Zararlı ürünler veya tehlikeli materyaller mi gönderiyorsunuz?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Öğe kartını daraltın/genişletin</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">Şuna göre sıralı: 1%s</string>
+    <string name="no">Hayır</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Gelecekteki kampanyalar için seçimimi kaydet</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Şunlar açısından iyi:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Hedef seç %s</string>
@@ -3637,6 +3654,7 @@ Language: tr
     <string name="taxes">Vergiler</string>
     <string name="payment">Ödeme</string>
     <string name="shipping">Gönderim</string>
+    <string name="total">Toplam</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Siparişler</string>

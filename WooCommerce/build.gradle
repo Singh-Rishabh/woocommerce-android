@@ -3,6 +3,7 @@ import io.sentry.android.gradle.extensions.InstrumentationFeature
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.dagger.hilt)
     alias(libs.plugins.sentry)
@@ -145,13 +146,9 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility libs.versions.java.get()
+        targetCompatibility libs.versions.java.get()
         coreLibraryDesugaringEnabled true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
     }
 
     flavorDimensions "buildType"

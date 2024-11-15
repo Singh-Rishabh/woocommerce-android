@@ -123,7 +123,11 @@ class PaymentsHubFragment : BaseFragment(R.layout.fragment_payments_hub) {
                     )
                 }
                 is PaymentsHubViewModel.PaymentsHubEvents.OpenGenericWebView -> {
-                    ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
+                    ChromeCustomTabUtils.launchUrl(
+                        context = requireContext(),
+                        url = event.url,
+                        height = ChromeCustomTabUtils.Height.Partial.ThreeQuarters,
+                    )
                 }
                 is PaymentsHubViewModel.PaymentsHubEvents.ShowToastString -> {
                     ToastUtils.showToast(context, event.message)

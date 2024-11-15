@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 13:54:03+0000
+Translation-Revision-Date: 2024-11-06 09:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: es
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">Servicio de envío</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Más rápida</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Más barata</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Etiqueta de compra</string>
+    <string name="shipping_label_shipment_details_purchase_label">Etiqueta de compra %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Marcar este pedido como completado y avisar al cliente</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Coste de envío</string>
+    <string name="shipping_label_shipment_details_order_details">Detalles del pedido</string>
+    <string name="shipping_label_shipment_details_title">Detalles del envío</string>
+    <string name="shipping_label_select_package_description">Introduce las dimensiones de tu paquete o elige una opción de paquete de empresa de transporte para ver las tarifas de envío disponibles.</string>
+    <string name="shipping_label_select_package_title">Elige un paquete para obtener las tarifas de envío</string>
+    <string name="shipping_label_select_package_button">Elige un paquete</string>
+    <string name="shipping_label_hazmat_title">¿Vas a enviar mercancías peligrosas?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Contraer/ampliar tarjeta de elementos</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">Ordenado por 1%s</string>
+    <string name="no">No</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Guardar mi selección para futuras campañas</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Ideal para:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Elegir objetivo %s</string>
@@ -3637,6 +3654,7 @@ Language: es
     <string name="taxes">Impuestos</string>
     <string name="payment">Pago</string>
     <string name="shipping">Envío</string>
+    <string name="total">Total</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Pedidos</string>

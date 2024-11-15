@@ -10,12 +10,11 @@ androidx-browser = '1.5.0'
 androidx-camera = '1.2.3'
 androidx-cardview = '1.0.0'
 androidx-compose-bom = '2024.04.00'
-androidx-compose-compiler = '1.5.9'
 androidx-constraintlayout-compose = '1.0.1'
 androidx-constraintlayout-main = '2.1.4'
 androidx-core-main = '1.13.1'
 androidx-core-splashscreen = '1.0.1'
-androidx-datastore = '1.1.0'
+androidx-datastore = '1.0.0' # Higher versions of the DataStore library are presenting crashes, refer to peaMlT-XN before upgrading it.
 androidx-fragment = '1.8.2'
 androidx-hilt = '1.2.0'
 androidx-lifecycle = '2.7.0'
@@ -70,12 +69,13 @@ google-services = '4.4.0'
 google-zxing = '3.5.3'
 gravatar = '0.2.0'
 jackson-databind = '2.12.7.1'
+java = '11'
 jetty-webapp = '9.4.51.v20230217'
 json-path = '2.9.0'
 junit = '4.13.2'
-kotlin = '1.9.22'
+kotlin = '2.0.21'
 kotlinx-coroutines = '1.8.1'
-ksp = '1.9.22-1.0.17'
+ksp = '2.0.21-1.0.27'
 mockito-inline = '4.6.1'
 mockito-kotlin = '4.0.0'
 mpandroidchart = 'v3.1.0'
@@ -86,7 +86,7 @@ stripe-terminal = '3.7.1'
 tinder-statemachine = '0.2.0'
 wiremock = '2.26.3'
 wordpress-aztec = 'v2.1.4'
-wordpress-fluxc = '2.99.1'
+wordpress-fluxc = 'trunk-cc17141a0e910d5b808ba6bbfb4b7d393d3517a0'
 wordpress-login = '1.19.0'
 wordpress-libaddressinput = '0.0.2'
 wordpress-mediapicker = '0.3.1'
@@ -246,6 +246,7 @@ google-dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "goo
 google-protobuf = { id = "com.google.protobuf", version.ref = "google-protobuf-plugin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sentry = { id = "io.sentry.android.gradle", version.ref = "sentry" }
