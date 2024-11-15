@@ -241,14 +241,6 @@ dependencies {
     lintChecks(libs.android.security.lint)
 }
 
-def checkGradlePropertiesFile() {
-    def inputFile = file("${rootDir}/gradle.properties")
-    if (!inputFile.exists()) {
-        throw new StopActionException("Build configuration file gradle.properties doesn't exist, follow README instructions")
-    }
-    return inputFile
-}
-
 android.buildTypes.all { buildType ->
     (secretProperties + developerProperties).any { property ->
         if (property.key.toLowerCase().startsWith("wc.")) {

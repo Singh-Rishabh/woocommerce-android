@@ -569,14 +569,6 @@ task printVersionName {
     }
 }
 
-def checkGradlePropertiesFile() {
-    def inputFile = file("${rootDir}/gradle.properties")
-    if (!inputFile.exists()) {
-        throw new StopActionException("Build configuration file gradle.properties doesn't exist, follow README instructions")
-    }
-    return inputFile
-}
-
 static def loadPropertiesFromFile(inputFile) {
     def properties = new Properties()
     inputFile.withInputStream { stream ->
