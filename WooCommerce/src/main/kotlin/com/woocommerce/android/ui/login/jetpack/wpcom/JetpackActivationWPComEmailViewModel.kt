@@ -10,6 +10,7 @@ import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.WPComLoginRepository
 import com.woocommerce.android.util.FeatureFlag
+import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
@@ -105,14 +106,17 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
 
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
-                        if (FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled()) {
+                        if (FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() &&
+                            StringUtils.isValidEmail(emailOrUsername)
+                        ) {
                             triggerEvent(
                                 ShowMagicLinkScreen(
                                     emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = true
                                 )
                             )
+                        } else {
+                            errorMessage.value = R.string.email_not_registered_wpcom
                         }
-                        errorMessage.value = R.string.email_not_registered_wpcom
                     }
 
                     AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED -> {
