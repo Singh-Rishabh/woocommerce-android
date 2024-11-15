@@ -98,15 +98,7 @@ class CardReaderUpdateViewModel @Inject constructor(
     }
 
     private fun onUpdateStatusUnknown() {
-        var uiLoaded = true
-        if (viewState.value == null) {
-            uiLoaded = false
-            // This handles a rare scenario in which the update fails before the navigation component
-            // navigates to this screen. The StripeSDK sets the state to Unknown since there isn't any update
-            // in progress.
-            finishFlow(FAILED)
-        }
-        tracker.trackSoftwareUpdateUnknownStatus(uiLoaded)
+        tracker.trackSoftwareUpdateUnknownStatus()
     }
 
     private fun onUpdateSucceeded() {
