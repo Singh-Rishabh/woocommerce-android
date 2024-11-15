@@ -57,7 +57,9 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             key = SELECTOR_REQUEST_KEY,
             entryId = R.id.wooShippingLabelPackageCreationFragment
         ) { result ->
-            viewModel.onPackageTypeSelected(PackageType.valueOf(result))
+            PackageType.entries
+                .firstOrNull { it.toString() == result }
+                ?.let { viewModel.onPackageTypeSelected(it) }
         }
     }
 
@@ -66,8 +68,8 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             .actionWooShippingLabelPackageCreationFragmentToItemSelectorDialog(
                 requestKey = SELECTOR_REQUEST_KEY,
                 selectedItem = currentSelection.name,
-                keys = PackageType.entries.map { it.name }.toTypedArray(),
-                values = PackageType.entries
+                values = PackageType.entries.map { it.name }.toTypedArray(),
+                keys = PackageType.entries
                     .map { getString(it.resourceId) }
                     .toTypedArray()
             ).let { findNavController().navigateSafely(it) }
