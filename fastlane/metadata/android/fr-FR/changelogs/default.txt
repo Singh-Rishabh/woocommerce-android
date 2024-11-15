@@ -1,0 +1,2 @@
+21.1 :
+Notre dernière mise à jour apporte des améliorations clés pour rationaliser votre expérience WooCommerce ! Nous avons corrigé les droits d’édition pour les commandes dans d’autres devises, optimisé la vue du centre de paiements, donné la possibilité de partager facilement les reçus via Google SMS et corrigé la sélection de plage de dates pour bien utiliser votre fuseau horaire. Profitez d’opérations plus fluides !

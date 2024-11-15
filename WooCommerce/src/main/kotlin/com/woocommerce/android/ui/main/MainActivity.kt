@@ -435,6 +435,7 @@ class MainActivity :
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         AnalyticsTracker.trackBackPressed(this)
 
@@ -1231,6 +1232,7 @@ class MainActivity :
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onAttachFragment(fragment: Fragment) {
         super.onAttachFragment(fragment)
         updateAppBarVisibility(fragment)

@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-13 09:54:03+0000
 Plural-Forms: nplurals=2; plural=n > 1;
 Generator: GlotPress/2.4.0-alpha
 Language: id
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Amplop</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Kotak</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Tambah Paket</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Simpan ini sebagai templat paket baru</string>
+    <string name="woo_shipping_labels_package_creation_height">Tinggi</string>
+    <string name="woo_shipping_labels_package_creation_width">Lebar</string>
+    <string name="woo_shipping_labels_package_creation_length">Panjang</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Tipe paket</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Disimpan</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Operator</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Kustom</string>
+    <string name="shipping_label_purchased_request_refund">Minta pengembalian dana</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Jadwalkan pengambilan</string>
+    <string name="shipping_label_purchased_track_shipment">Lacak pengiriman</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Pelajari cara mencetak dari perangkat seluler Anda</string>
+    <string name="shipping_label_purchased_note">Catatan: Penggunaan kembali label yang dicetak adalah tindakan yang melanggar ketentuan layanan kami dan dapat mengakibatkan tuntutan pidana.</string>
+    <string name="shipping_label_purchased_message">Dari sini, Anda dapat mencetak label pengiriman lagi atau mengubah ukuran kertas label.</string>
+    <string name="shipping_label_purchased_title">Label pengiriman siap dicetak</string>
+    <string name="order_detail_edit_store_currency_mismatch">Maaf, Anda hanya bisa mengedit pesanan ini di web, karena pesanan menggunakan %1$s, dan mata uang situs Anda adalah %2$s</string>
+    <string name="shipping_label_shipping_service_title">Layanan pengiriman</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Tercepat</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Termurah</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Beli Label</string>
+    <string name="shipping_label_shipment_details_purchase_label">Beli Label · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Tandai pesanan ini selesai dan kirim pemberitahuan ke pelanggan</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Biaya pengiriman</string>
+    <string name="shipping_label_shipment_details_order_details">Rincian pesanan</string>
+    <string name="shipping_label_shipment_details_title">Rincian pengiriman</string>
+    <string name="shipping_label_select_package_description">Masukkan dimensi paket Anda atau pilih opsi paket operator untuk melihat tarif pengiriman yang tersedia.</string>
+    <string name="shipping_label_select_package_title">Pilih paket untuk melihat tarif pengiriman</string>
+    <string name="shipping_label_select_package_button">Pilih Paket</string>
+    <string name="shipping_label_hazmat_title">Apakah Anda mengirim barang berisiko atau bahan berbahaya?</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Ciutkan/perluas kartu item</string>
+    <string name="no">Tidak</string>
+    <string name="sorted_by">Diurutkan berdasarkan 1%s</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Simpan pilihan saya untuk kampanye mendatang.</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Cocok untuk:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Pilih tujuan %s</string>
@@ -3631,6 +3667,7 @@ Language: id
     <string name="taxes">Pajak</string>
     <string name="payment">Pembayaran</string>
     <string name="shipping">Pengiriman</string>
+    <string name="total">Total</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Pesanan</string>
