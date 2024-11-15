@@ -80,16 +80,27 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             .flatMap { it.value }
             .flatMap { it.packages }
             .find { it.isSelected }
-            ?.let { triggerEvent(CarrierPackageSelected(it)) }
+            ?.let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onAddSavedPackageClick() {
         _viewState.value.savedPackageSelection.packages.find { it.isSelected }
-            ?.let { triggerEvent(SavedPackageSelected(it)) }
+            ?.let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onAddCustomPackageClick() {
-        triggerEvent(CustomPackageCreated(_viewState.value.customPackageCreationData))
+        _viewState.value.customPackageCreationData
+            .let {
+                PackageData(
+                    type = it.type,
+                    name = "",
+                    description = "",
+                    length = it.length,
+                    width = it.width,
+                    height = it.height,
+                    isSelected = true
+                )
+            }.let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onPackageTypeSpinnerClick() {
@@ -173,8 +184,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         ENVELOPE(R.string.woo_shipping_labels_package_creation_envelope_type)
     }
 
-    data class SavedPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
-    data class CarrierPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
-    data class CustomPackageCreated(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
+    data class PackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
 }
