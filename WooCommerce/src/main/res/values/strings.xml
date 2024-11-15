@@ -365,6 +365,8 @@
     <string name="login_site_credentials_fetching_site">Fetching site…</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">Unable to login because application password creation is not approved.</string>
     <string name="login_app_login_malformed_link">We couldn\'t process your app login request</string>
+    <string name="login_jetpack_connection_create_account">If you don\'t have an account, we\'ll use this email to create one.</string>
+
     <!--
         My Store View
     -->
@@ -3428,6 +3430,7 @@
     <string name="login_magic_link_button">Log in with magic link</string>
 
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
+    <string name="username_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this username address. You can enter an email to create a new account</string>
     <string name="login_magic_links_label">We\'ll email you a link that\'ll log you in instantly, no password needed.</string>
     <string name="login_get_link_by_email">Get a login link by email</string>
     <string name="signup_magic_link_message">We’ve emailed you a signup link to create your new WordPress.com account. Check your email on this device, and tap the link in the email you receive from WordPress.com.</string>

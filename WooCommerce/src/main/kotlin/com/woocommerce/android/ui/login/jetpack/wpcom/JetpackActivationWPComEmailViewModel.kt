@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.OnChangedException
+import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent.JETPACK_SETUP_LOGIN_FLOW
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
@@ -23,7 +24,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsError
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsErrorType
-import org.wordpress.android.login.R
 import javax.inject.Inject
 
 @HiltViewModel
@@ -93,9 +93,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
             onSuccess = {
                 if (it.isPasswordless) {
                     triggerEvent(
-                        ShowMagicLinkScreen(
-                            emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = false
-                        )
+                        ShowMagicLinkScreen(emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = false)
                     )
                 } else {
                     triggerEvent(ShowPasswordScreen(emailOrUsername, navArgs.jetpackStatus))
@@ -106,16 +104,20 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
 
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
-                        if (FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() &&
-                            StringUtils.isValidEmail(emailOrUsername)
-                        ) {
-                            triggerEvent(
-                                ShowMagicLinkScreen(
-                                    emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = true
+                        when {
+                            !StringUtils.isValidEmail(emailOrUsername) ->
+                                errorMessage.value = R.string.username_not_registered_wpcom
+
+                            FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() ->
+                                triggerEvent(
+                                    ShowMagicLinkScreen(
+                                        emailOrUsername,
+                                        navArgs.jetpackStatus,
+                                        isNewWpComAccount = true
+                                    )
                                 )
-                            )
-                        } else {
-                            errorMessage.value = R.string.email_not_registered_wpcom
+
+                            else -> errorMessage.value = R.string.email_not_registered_wpcom
                         }
                     }
 
