@@ -103,7 +103,8 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
         wpComLoginRepository.requestMagicLink(
             emailOrUsername = navArgs.emailOrUsername,
             flow = MagicLinkFlow.SiteCredentialsToWPCom,
-            source = source
+            source = source,
+            isSignup = navArgs.isNewWpComAccount
         ).fold(
             onSuccess = {
                 _viewState.value = ViewState.MagicLinkSentState(
