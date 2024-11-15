@@ -55,6 +55,7 @@ fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -91,12 +92,14 @@ fun ShipmentDetails(
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         ShipmentDetailsLandscape(
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+            onPurchaseShippingLabel = onPurchaseShippingLabel
         )
     } else {
         ShipmentDetailsPortrait(
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+            onPurchaseShippingLabel = onPurchaseShippingLabel
         )
     }
 }
@@ -105,6 +108,7 @@ fun ShipmentDetails(
 private fun ShipmentDetailsPortrait(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -133,7 +137,8 @@ private fun ShipmentDetailsPortrait(
         PurchasesSection(
             total = "$120.99",
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+            onPurchaseShippingLabel = onPurchaseShippingLabel
         )
     }
 }
@@ -142,6 +147,7 @@ private fun ShipmentDetailsPortrait(
 private fun ShipmentDetailsLandscape(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -158,7 +164,11 @@ private fun ShipmentDetailsLandscape(
                 shipTo = getShipTo(),
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
             )
-            Row(modifier = Modifier.height(IntrinsicSize.Min).fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .height(IntrinsicSize.Min)
+                    .fillMaxWidth()
+            ) {
                 OrderDetailsSectionLandscape(
                     totalItems = 5,
                     totalItemsCost = "$120.99",
@@ -178,7 +188,8 @@ private fun ShipmentDetailsLandscape(
         PurchasesSectionLandscape(
             total = "$120.99",
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+            onPurchaseShippingLabel = onPurchaseShippingLabel
         )
     }
 }
@@ -264,7 +275,8 @@ fun ShipmentDetailsLandscapePreview() {
         Surface {
             ShipmentDetailsLandscape(
                 markOrderComplete = false,
-                onMarkOrderCompleteChange = {}
+                onMarkOrderCompleteChange = {},
+                onPurchaseShippingLabel = {}
             )
         }
     }

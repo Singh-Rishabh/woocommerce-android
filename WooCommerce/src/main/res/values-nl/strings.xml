@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-07 13:54:03+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: nl
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">Bezorgservice</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Snelste</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Voordeligste</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Label aanschaffen</string>
+    <string name="shipping_label_shipment_details_purchase_label">Label aanschaffen %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Markeer deze bestelling als voltooid en informeer de klant</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Verzendkosten</string>
+    <string name="shipping_label_shipment_details_order_details">Bestelgegevens</string>
+    <string name="shipping_label_shipment_details_title">Verzendingsgegevens</string>
+    <string name="shipping_label_select_package_description">Voer de afmetingen van je pakket in of kies een optie voor een pakket via vervoerder om de beschikbare verzendkosten te bekijken.</string>
+    <string name="shipping_label_select_package_title">Selecteer een pakket om de verzendkosten te bekijken</string>
+    <string name="shipping_label_select_package_button">Een pakket selecteren</string>
+    <string name="shipping_label_hazmat_title">Ben je van plan om gevaarlijke goederen of materialen te verzenden?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Artikelenkaart in-/uitvouwen</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">Gesorteerd op 1%s</string>
+    <string name="no">Nee</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">Sla mijn selectie op voor toekomstige campagnes</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;Goed voor:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">Doel selecteren %s</string>
@@ -3637,6 +3654,7 @@ Language: nl
     <string name="taxes">Belastingen</string>
     <string name="payment">Betaling</string>
     <string name="shipping">Verzending</string>
+    <string name="total">Totaal</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Bestellingen</string>

@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 11:54:03+0000
+Translation-Revision-Date: 2024-11-05 09:54:11+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: zh_CN
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="shipping_label_shipping_service_title">运输服务</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">速度最快</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">费用最低</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">购买标签</string>
+    <string name="shipping_label_shipment_details_purchase_label">购买标签 · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">将订单标注为已完成并通知客户</string>
+    <string name="shipping_label_shipment_details_shipment_cost">运输费用</string>
+    <string name="shipping_label_shipment_details_order_details">订单详细信息</string>
+    <string name="shipping_label_shipment_details_title">配送详细信息</string>
+    <string name="shipping_label_select_package_description">输入您的包裹尺寸或选择一个承运商包裹选项，查看适用的运费。</string>
+    <string name="shipping_label_select_package_title">选择一个包裹以获取运费</string>
+    <string name="shipping_label_select_package_button">选择一个包裹</string>
+    <string name="shipping_label_hazmat_title">您是否要运输危险品或危险物质？</string>
+    <string name="shipping_label_package_details_items_expand_content_description">折叠/展开商品卡</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">按 1%s 排序</string>
+    <string name="no">不</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">保存我的选择，以备将来活动使用</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;适合：&lt;/b&gt;%s</string>
     <string name="blaze_campaign_objective_select_objective_label">选择目标 %s</string>
@@ -3637,6 +3654,7 @@ Language: zh_CN
     <string name="taxes">税费</string>
     <string name="payment">付款</string>
     <string name="shipping">配送</string>
+    <string name="total">合计</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">订单</string>
