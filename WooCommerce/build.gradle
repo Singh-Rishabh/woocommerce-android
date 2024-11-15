@@ -218,6 +218,29 @@ android {
     testOptions {
         animationsDisabled = true
     }
+
+    signingConfigs {
+        if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !secretProperties.containsKey(it) } == 0) {
+            logger.info("App signing properties found in secrets.properties, configuring signing for release builds.")
+            release {
+                storeFile = rootProject.file(secretProperties.get("uploadStoreFile"))
+                storePassword = secretProperties.get("uploadStorePassword")
+                keyAlias = secretProperties.get("uploadKeyAlias")
+                keyPassword = secretProperties.get("uploadKeyPassword")
+            }
+            android.buildTypes.release.signingConfig = android.signingConfigs.release
+        }
+
+        if (secretProperties.containsKey("debugStoreFile")) {
+            logger.info("Debug signing properties found in secrets.properties, configuring signing for debug builds.")
+            def sharedDebugStore = file(secretProperties.get("debugStoreFile").replaceFirst("^~", System.getProperty("user.home")))
+            if (sharedDebugStore.exists()) {
+                debug {
+                    storeFile sharedDebugStore
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -566,32 +589,6 @@ def isLeakCanaryEnabled() {
     return project.properties.getOrDefault('enableLeakCanary', 'true') == 'true'
 }
 
-// For app signing
-if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !project.hasProperty(it) } == 0) {
-    android {
-        signingConfigs {
-            release {
-                storeFile = rootProject.file(project.uploadStoreFile)
-                storePassword = project.uploadStorePassword
-                keyAlias = project.uploadKeyAlias
-                keyPassword = project.uploadKeyPassword
-            }
-        }
-    }
-    android.buildTypes.release.signingConfig = android.signingConfigs.release
-}
 
-if (project.hasProperty("debugStoreFile")) {
-    def sharedDebugStore = file(project.debugStoreFile.replaceFirst("^~", System.getProperty("user.home")))
-    if (sharedDebugStore.exists()) {
-        android {
-            signingConfigs {
-                debug {
-                    storeFile sharedDebugStore
-                }
-            }
-        }
-    }
-}
 
 apply from: '../config/gradle/build_optimization.gradle'
