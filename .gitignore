@@ -21,7 +21,6 @@ artifacts/
 .gradle/
 build/
 */build/
-gradle.properties
 developer.properties
 
 # Crash Logging Configuration
