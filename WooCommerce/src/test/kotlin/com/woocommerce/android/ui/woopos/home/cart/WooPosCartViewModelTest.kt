@@ -129,7 +129,7 @@ class WooPosCartViewModelTest {
         // THEN
         val itemsInCart = (states.last().body as WooPosCartState.Body.WithItems).itemsInCart
         assertThat(itemsInCart).hasSize(1)
-        assertThat(itemsInCart.first().id.productId).isEqualTo(variation.remoteVariationId)
+        assertThat(itemsInCart.first().id.variationId).isEqualTo(variation.remoteVariationId)
     }
 
     @Test
@@ -159,11 +159,16 @@ class WooPosCartViewModelTest {
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
                 WooPosCartState.Body.WithItems.Item(
-                    id = WooPosCartState.Body.WithItems.Item.Id(productId = product.remoteId, itemNumber = 1),
+                    id = WooPosCartState.Body.WithItems.Item.Id(
+                        productId = product.remoteId,
+                        variationId = 0,
+                        itemNumber = 1
+                    ),
                     name = product.name,
                     price = "10.0$",
                     imageUrl = product.firstImageUrl,
-                    isAppearanceAnimationPlayed = false
+                    isAppearanceAnimationPlayed = false,
+                    productType = ProductType.Simple
                 )
             )
         )
@@ -305,11 +310,16 @@ class WooPosCartViewModelTest {
             sut.onUIEvent(
                 WooPosCartUIEvent.ItemRemovedFromCart(
                     WooPosCartState.Body.WithItems.Item(
-                        id = WooPosCartState.Body.WithItems.Item.Id(productId = product1.remoteId, itemNumber = 1),
+                        id = WooPosCartState.Body.WithItems.Item.Id(
+                            productId = product1.remoteId,
+                            variationId = 0,
+                            itemNumber = 1
+                        ),
                         name = product1.name,
                         price = "10.0$",
                         imageUrl = product1.firstImageUrl,
-                        isAppearanceAnimationPlayed = false
+                        isAppearanceAnimationPlayed = false,
+                        productType = ProductType.Simple
                     )
                 )
             )
@@ -401,11 +411,16 @@ class WooPosCartViewModelTest {
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
                 WooPosCartState.Body.WithItems.Item(
-                    id = WooPosCartState.Body.WithItems.Item.Id(productId = product.remoteId, itemNumber = 1),
+                    id = WooPosCartState.Body.WithItems.Item.Id(
+                        productId = product.remoteId,
+                        variationId = 0,
+                        itemNumber = 1
+                    ),
                     name = product.name,
                     price = "10.0$",
                     imageUrl = product.firstImageUrl,
-                    isAppearanceAnimationPlayed = false
+                    isAppearanceAnimationPlayed = false,
+                    productType = ProductType.Simple
                 )
             )
         )
