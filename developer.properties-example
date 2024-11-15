@@ -1,0 +1,2 @@
+# The type of in app update FLEXIBLE = 0; IMMEDIATE = 1
+wc.in_app_update_type = 0
