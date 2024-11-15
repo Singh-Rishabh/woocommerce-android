@@ -19,6 +19,7 @@ import com.woocommerce.android.ui.blaze.BlazeRepository.AiSuggestionForAd
 import com.woocommerce.android.ui.blaze.BlazeRepository.CampaignDetails
 import com.woocommerce.android.ui.blaze.BlazeRepository.Objective
 import com.woocommerce.android.ui.blaze.Location
+import com.woocommerce.android.ui.blaze.creation.ad.BlazeCampaignCreationEditAdViewModel.EditAdResult
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType.DEVICE
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType.INTEREST
@@ -76,6 +77,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                     productId = navArgs.productId,
                     description = campaignDetails.description,
                     tagLine = campaignDetails.tagLine,
+                    ctaText = campaignDetails.ctaText,
                     campaignImageUrl = campaignDetails.campaignImage.uri,
                     isContentSuggestedByAi = isAdContentGeneratedByAi(campaignDetails)
                 )
@@ -109,6 +111,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                     productId = navArgs.productId,
                     tagLine = it.tagLine,
                     description = it.description,
+                    ctaText = it.ctaText,
                     campaignImage = it.campaignImage,
                     aiSuggestions = aiSuggestions
                 )
@@ -116,12 +119,13 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
         }
     }
 
-    fun onAdUpdated(tagline: String, description: String, campaignImage: BlazeRepository.BlazeCampaignImage) {
+    fun onAdUpdated(updatedAd: EditAdResult) {
         campaignDetails.update {
             it?.copy(
-                tagLine = tagline,
-                description = description,
-                campaignImage = campaignImage
+                tagLine = updatedAd.tagline,
+                description = updatedAd.description,
+                campaignImage = updatedAd.campaignImage,
+                ctaText = updatedAd.ctaText
             )
         }
     }
@@ -242,7 +246,8 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
     private fun isAdContentGeneratedByAi(campaignDetails: CampaignDetails?): Boolean =
         aiSuggestions.any {
             it.tagLine == campaignDetails?.tagLine &&
-                it.description == campaignDetails.description
+                it.description == campaignDetails.description &&
+                it.ctaText == campaignDetails.ctaText
         }
 
     private fun loadData() {
@@ -263,6 +268,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
                             it?.copy(
                                 tagLine = suggestions.firstOrNull()?.tagLine.orEmpty(),
                                 description = suggestions.firstOrNull()?.description.orEmpty(),
+                                ctaText = suggestions.firstOrNull()?.ctaText.orEmpty()
                             )
                         }
                     },
@@ -413,6 +419,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
             val productId: Long,
             val description: String,
             val tagLine: String,
+            val ctaText: String,
             val campaignImageUrl: String?,
             val isContentSuggestedByAi: Boolean,
         ) : AdDetailsUi
@@ -455,6 +462,7 @@ class BlazeCampaignCreationPreviewViewModel @Inject constructor(
         val productId: Long,
         val tagLine: String,
         val description: String,
+        val ctaText: String,
         val campaignImage: BlazeRepository.BlazeCampaignImage,
         val aiSuggestions: List<BlazeRepository.AiSuggestionForAd>
     ) : MultiLiveEvent.Event()

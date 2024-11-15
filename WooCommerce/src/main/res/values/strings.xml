@@ -3924,7 +3924,6 @@
     -->
     <string name="blaze_campaign_screen_fragment_title">Preview</string>
     <string name="blaze_campaign_preview_edit_ad">Edit ad</string>
-    <string name="blaze_campaign_preview_shop_now_button">Shop now</string>
     <string name="blaze_campaign_preview_details_section_title">Details</string>
     <string name="blaze_campaign_preview_audience_section_title">Audience</string>
     <string name="blaze_campaign_preview_details_budget">Budget</string>
@@ -3990,7 +3989,10 @@
     -->
     <string name="blaze_campaign_edit_ad_change_image_button">Change image</string>
     <string name="blaze_campaign_edit_ad_change_tagline_title">Tagline</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">Tagline cannot be empty</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">Call to action</string>
     <string name="blaze_campaign_edit_ad_change_description_title">Description</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">Description cannot be empty</string>
     <string name="blaze_campaign_edit_ad_characters_remaining">%d characters remaining</string>
     <string name="blaze_campaign_edit_ad_suggested_by_ai">Suggested by AI</string>
     <string name="blaze_campaign_edit_ad_invalid_image_title">Invalid image</string>
@@ -4228,6 +4230,7 @@
     <string name="woopos_checkout_button">Check out</string>
     <string name="woopos_remove_item_button_from_cart_content_description">Remove %s from cart</string>
     <string name="woopos_product_item_content_description">Product %s, Price %s</string>
+    <string name="woopos_variable_product_item_content_description">Variable Product %s, Price %s</string>
     <string name="woopos_cart_item_content_description">Product in cart %s, Price %s</string>
     <string name="woopos_cart_title">Cart</string>
     <string name="woopos_clear_cart_button">Clear</string>
@@ -4298,6 +4301,8 @@
     <string name="woopos_floating_toolbar_pop_up_menu_content_description">Open toolbar menu</string>
     <string name="woopos_floating_toolbar_pop_up_menu_open_content_description">Popup menu with options. Swipe to navigate through items.</string>
     <string name="woopos_no_internet_message">It looks like you\'re not connected to the internet. Ensure your Wi-Fi is turned on. If you\'re using mobile data, make sure it\'s enabled in your device settings.</string>
+
+    <string name="woopos_items_list_variable_product_variations">%1$d variations</string>
 
 
     <string name="customers_details_customer_section">Customer</string>
