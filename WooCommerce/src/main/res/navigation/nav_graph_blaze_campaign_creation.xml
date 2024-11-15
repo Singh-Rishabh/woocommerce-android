@@ -96,6 +96,10 @@
             android:defaultValue=""
             app:argType="string" />
         <argument
+            android:name="ctaText"
+            android:defaultValue=""
+            app:argType="string" />
+        <argument
             android:name="adImage"
             app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$BlazeCampaignImage" />
         <argument
