@@ -67,6 +67,7 @@ import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel.Mode.
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel.Mode.Edit
 import com.woocommerce.android.ui.orders.creation.configuration.EditProductConfigurationResult
 import com.woocommerce.android.ui.orders.creation.configuration.ProductConfigurationFragment
+import com.woocommerce.android.ui.orders.creation.coupon.CouponLineFormSection
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel
 import com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponEditFragment.Companion.KEY_COUPON_EDIT_RESULT
 import com.woocommerce.android.ui.orders.creation.customerlist.OrderCustomerListFragment
@@ -167,7 +168,7 @@ class OrderCreateEditFormFragment :
         handleCouponEditResult()
         handleProductDetailsEditResult()
         handleResult<String>(KEY_COUPON_SELECTOR_RESULT) {
-            viewModel.onCouponAdded(it)
+            viewModel.addCoupon(it)
         }
         handleTaxRateSelectionResult()
         viewModel.onDeviceConfigurationChanged(requireContext().windowSizeClass)
@@ -377,7 +378,7 @@ class OrderCreateEditFormFragment :
 
     private fun FragmentOrderCreateEditFormBinding.initAdditionalInfoCollectionSection() {
         additionalInfoCollectionSection.addShippingButton.setOnClickListener {
-            viewModel.onAddOrEditShipping()
+            viewModel.onAddOrEditShippingClicked()
         }
     }
 
@@ -410,6 +411,8 @@ class OrderCreateEditFormFragment :
 
         bindShippingLinesSection(binding)
 
+        bindCouponsLinesSection(binding)
+
         bindFeedbackSection(binding)
 
         observeViewStateChanges(binding)
@@ -420,14 +423,34 @@ class OrderCreateEditFormFragment :
         binding.shippingLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                viewModel.shippingLineList.observeAsState().value?.let { shippingLines ->
+                viewModel.shippingLineSection.observeAsState().value?.let { shippingLineSection ->
                     WooThemeWithBackground {
                         ShippingLineFormSection(
-                            shippingLineDetails = shippingLines,
+                            shippingLineDetails = shippingLineSection.shippingLines,
+                            isEnabled = shippingLineSection.isEnabled,
                             formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
                             modifier = Modifier.padding(bottom = 1.dp),
-                            onAdd = { viewModel.onAddOrEditShipping() },
-                            onEdit = { id -> viewModel.onAddOrEditShipping(id) }
+                            onAddClicked = { viewModel.onAddOrEditShippingClicked() },
+                            onEditClicked = { id -> viewModel.onAddOrEditShippingClicked(id) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun bindCouponsLinesSection(binding: FragmentOrderCreateEditFormBinding) {
+        binding.couponLines.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                viewModel.couponLinesLiveData.observeAsState().value?.let { couponSection ->
+                    WooThemeWithBackground {
+                        CouponLineFormSection(
+                            couponLineDetails = couponSection.couponLines,
+                            isEnabled = couponSection.isEnabled,
+                            modifier = Modifier.padding(bottom = 1.dp),
+                            onAddClicked = { viewModel.onAddCouponButtonClicked() },
+                            onRemoveClicked = { code -> viewModel.removeCoupon(code) }
                         )
                     }
                 }
@@ -737,6 +760,22 @@ class OrderCreateEditFormFragment :
             additionalInfoCollectionSection.addShippingButtonGroup.hide()
         } else {
             additionalInfoCollectionSection.addShippingButtonGroup.show()
+        }
+
+        if (newOrderData.couponLines.isNotEmpty()) {
+            additionalInfoCollectionSection.addCouponButtonGroup.hide()
+        } else {
+            additionalInfoCollectionSection.addCouponButtonGroup.show()
+        }
+
+        // Hide the whole section when all children are invisible
+        if (!additionalInfoCollectionSection.addGiftCardButtonGroup.isVisible &&
+            !additionalInfoCollectionSection.addCouponButtonGroup.isVisible &&
+            !additionalInfoCollectionSection.addShippingButtonGroup.isVisible
+        ) {
+            additionalInfoCollectionSection.root.isVisible = false
+        } else {
+            additionalInfoCollectionSection.root.isVisible = true
         }
     }
 
