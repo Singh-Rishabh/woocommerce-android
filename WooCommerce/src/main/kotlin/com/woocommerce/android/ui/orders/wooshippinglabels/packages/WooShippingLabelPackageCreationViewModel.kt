@@ -90,17 +90,8 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onAddCustomPackageClick() {
         _viewState.value.customPackageCreationData
-            .let {
-                PackageData(
-                    type = it.type,
-                    name = "",
-                    description = "",
-                    length = it.length,
-                    width = it.width,
-                    height = it.height,
-                    isSelected = true
-                )
-            }.let { triggerEvent(PackageSelected(it)) }
+            .asPackageData
+            .let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onPackageTypeSpinnerClick() {
