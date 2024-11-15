@@ -818,7 +818,6 @@ class WooPosItemsViewModelTest {
             id = 1L,
             name = "Product 1",
             numOfVariations = 10,
-            variationIds = emptyList()
         )
         val viewModel = createViewModel()
         viewModel.onUIEvent(WooPosItemsUIEvent.NavigateToVariationsScreen(variationsNavigationData))
