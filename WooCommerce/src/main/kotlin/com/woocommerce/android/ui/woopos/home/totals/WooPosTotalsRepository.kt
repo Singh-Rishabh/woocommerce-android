@@ -29,63 +29,92 @@ class WooPosTotalsRepository @Inject constructor(
         orderCreationJob?.cancel()
 
         return withContext(IO) {
-            itemClickedDataList.map { it.id }.forEach { productId ->
-                require(productId >= 0) { "Invalid product ID: $productId" }
-            }
-
+            validateProductIds(itemClickedDataList)
             orderCreationJob = async {
-                val order = Order.getEmptyOrder(
-                    dateCreated = dateUtils.getCurrentDateInSiteTimeZone() ?: Date(),
-                    dateModified = dateUtils.getCurrentDateInSiteTimeZone() ?: Date()
-                ).copy(
-                    status = Order.Status.Custom(Order.Status.AUTO_DRAFT),
-                    items = itemClickedDataList
-                        .groupingBy { it.id }
-                        .eachCount()
-                        .map { (id, quantity) ->
-                            val itemData = itemClickedDataList.find { it.id == id }!!
-                            val productResult = when (itemData) {
-                                is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> getProductById(itemData.id)!!
-                                is WooPosItemsViewModel.ItemClickedData.Variation ->
-                                    getProductById(itemData.productId)!!
-                            }
-                            when (itemData) {
-                                is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> {
-                                    Order.Item.EMPTY.copy(
-                                        itemId = 0L,
-                                        productId = id,
-                                        variationId = 0L,
-                                        quantity = quantity.toFloat(),
-                                        total = EMPTY_TOTALS_SUBTOTAL_VALUE,
-                                        subtotal = EMPTY_TOTALS_SUBTOTAL_VALUE,
-                                        attributesList = emptyList(),
-                                        name = productResult.name,
-                                    )
-                                }
-                                is WooPosItemsViewModel.ItemClickedData.Variation -> {
-                                    val variationResult = getVariationById(
-                                        productId = itemData.productId,
-                                        variationId = itemData.id
-                                    )!!
-                                    Order.Item.EMPTY.copy(
-                                        itemId = 0L,
-                                        productId = id,
-                                        variationId = variationResult.remoteVariationId,
-                                        quantity = quantity.toFloat(),
-                                        total = EMPTY_TOTALS_SUBTOTAL_VALUE,
-                                        subtotal = EMPTY_TOTALS_SUBTOTAL_VALUE,
-                                        attributesList = emptyList(),
-                                        name = variationResult.getName(productResult),
-                                    )
-                                }
-                            }
-                        }
-                )
-
+                val order = createOrder(itemClickedDataList)
                 orderCreateEditRepository.createOrUpdateOrder(order)
             }
             orderCreationJob!!.await()
         }
+    }
+
+    private fun validateProductIds(itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>) {
+        itemClickedDataList.map { it.id }.forEach { productId ->
+            require(productId >= 0) { "Invalid product ID: $productId" }
+        }
+    }
+
+    private suspend fun createOrder(itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>): Order {
+        return Order.getEmptyOrder(
+            dateCreated = dateUtils.getCurrentDateInSiteTimeZone() ?: Date(),
+            dateModified = dateUtils.getCurrentDateInSiteTimeZone() ?: Date()
+        ).copy(
+            status = Order.Status.Custom(Order.Status.AUTO_DRAFT),
+            items = createOrderItems(itemClickedDataList)
+        )
+    }
+
+    private suspend fun createOrderItems(
+        itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
+    ): List<Order.Item> {
+        return itemClickedDataList
+            .groupingBy { it.id }
+            .eachCount()
+            .map { (id, quantity) ->
+                val itemData = itemClickedDataList.find { it.id == id }!!
+                when (itemData) {
+                    is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> createSimpleProductOrderItem(
+                        id,
+                        quantity,
+                        itemData
+                    )
+                    is WooPosItemsViewModel.ItemClickedData.Variation -> createVariationOrderItem(
+                        id,
+                        quantity,
+                        itemData
+                    )
+                }
+            }
+    }
+
+    private suspend fun createSimpleProductOrderItem(
+        id: Long,
+        quantity: Int,
+        itemData: WooPosItemsViewModel.ItemClickedData.SimpleProduct
+    ): Order.Item {
+        val productResult = getProductById(itemData.id)!!
+        return Order.Item.EMPTY.copy(
+            itemId = 0L,
+            productId = id,
+            variationId = 0L,
+            quantity = quantity.toFloat(),
+            total = EMPTY_TOTALS_SUBTOTAL_VALUE,
+            subtotal = EMPTY_TOTALS_SUBTOTAL_VALUE,
+            attributesList = emptyList(),
+            name = productResult.name,
+        )
+    }
+
+    private suspend fun createVariationOrderItem(
+        id: Long,
+        quantity: Int,
+        itemData: WooPosItemsViewModel.ItemClickedData.Variation
+    ): Order.Item {
+        val productResult = getProductById(itemData.productId)!!
+        val variationResult = getVariationById(
+            productId = itemData.productId,
+            variationId = itemData.id
+        )!!
+        return Order.Item.EMPTY.copy(
+            itemId = 0L,
+            productId = id,
+            variationId = variationResult.remoteVariationId,
+            quantity = quantity.toFloat(),
+            total = EMPTY_TOTALS_SUBTOTAL_VALUE,
+            subtotal = EMPTY_TOTALS_SUBTOTAL_VALUE,
+            attributesList = emptyList(),
+            name = variationResult.getName(productResult),
+        )
     }
 
     private companion object {
