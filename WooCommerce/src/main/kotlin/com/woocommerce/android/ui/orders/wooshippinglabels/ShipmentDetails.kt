@@ -57,10 +57,11 @@ fun ShipmentDetails(
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
+    handlerModifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     Column(
-        modifier
+        handlerModifier
             .clickable(
                 onClick = {
                     scope.launch {
@@ -91,15 +92,16 @@ fun ShipmentDetails(
     }
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
         ShipmentDetailsLandscape(
+            modifier = modifier,
             markOrderComplete = markOrderComplete,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange,
             onPurchaseShippingLabel = onPurchaseShippingLabel
         )
     } else {
         ShipmentDetailsPortrait(
+            modifier = modifier,
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
     }
 }
@@ -108,7 +110,6 @@ fun ShipmentDetails(
 private fun ShipmentDetailsPortrait(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
-    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -134,11 +135,10 @@ private fun ShipmentDetailsPortrait(
                 modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
             )
         }
-        PurchasesSection(
-            total = "$120.99",
+        Divider()
+        MarkComplete(
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
     }
 }
