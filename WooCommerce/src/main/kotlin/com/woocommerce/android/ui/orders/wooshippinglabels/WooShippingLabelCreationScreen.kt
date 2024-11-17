@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,9 +50,31 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
     )
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooShippingLabelCreationScreen(
+    modifier: Modifier = Modifier,
+    onSelectPackageClick: () -> Unit,
+    onPurchaseShippingLabel: () -> Unit
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LabelCreationScreenWithBottomSheet(
+            modifier = modifier,
+            onSelectPackageClick = onSelectPackageClick,
+            onPurchaseShippingLabel = onPurchaseShippingLabel
+        )
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter)) {
+            Surface(elevation = 4.dp) {
+                PurchaseButton(total = "$34.89", onPurchaseShippingLabel = { })
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun LabelCreationScreenWithBottomSheet(
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     onPurchaseShippingLabel: () -> Unit
@@ -61,13 +84,14 @@ fun WooShippingLabelCreationScreen(
         sheetContent = {
             val markOrderComplete = remember { mutableStateOf(false) }
             ShipmentDetails(
+                modifier = Modifier.padding(bottom = 74.dp),
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
                 onMarkOrderCompleteChange = { markOrderComplete.value = it },
                 onPurchaseShippingLabel = onPurchaseShippingLabel
             )
         },
-        sheetPeekHeight = 64.dp,
+        sheetPeekHeight = 132.dp,
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
