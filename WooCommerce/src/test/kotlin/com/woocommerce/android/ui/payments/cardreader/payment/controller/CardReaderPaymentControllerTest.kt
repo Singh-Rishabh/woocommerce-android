@@ -21,6 +21,7 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
+import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -51,6 +52,7 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -354,6 +356,16 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment::class.java)
+        }
+
+    @Test
+    fun `when fetching order fails, then event tracked`() =
+        testBlocking {
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
+
+            controller.start()
+
+            verify(tracker).trackPaymentFailed(anyOrNull(), anyOrNull())
         }
 
     companion object {
