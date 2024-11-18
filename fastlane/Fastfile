@@ -15,7 +15,7 @@ WEAR_APP = 'WooCommerce-Wear'
 PROJECT_ROOT_FOLDER = File.dirname(File.expand_path(__dir__))
 VERSIONS_CATALOG_FILE = File.join(PROJECT_ROOT_FOLDER, 'gradle/libs.versions.toml')
 BUILD_PRODUCTS_PATH = File.join(PROJECT_ROOT_FOLDER, 'artifacts')
-PROTOTYPE_BUILD_DOMAIN = 'https://d2twmm2nzpx3bg.cloudfront.net'
+PROTOTYPE_BUILD_DOMAIN = 'https://cdn.a8c-ci.services'
 # The `android_download_translations` action joins the `RES_DIR_PATH` with `PROJECT_ROOT_FOLDER`, so we don't want to
 # add `PROJECT_ROOT_FOLDER` to the beginning of this path
 RES_DIR_PATH = File.join('WooCommerce', 'src', 'main', 'res')
@@ -906,7 +906,7 @@ platform :android do
       app_package_name: APP_PACKAGE_NAME,
       app_apk_path: 'WooCommerce/build/outputs/apk/vanilla/debug/WooCommerce-vanilla-debug.apk',
       tests_apk_path: 'WooCommerce/build/outputs/apk/androidTest/vanilla/debug/WooCommerce-vanilla-debug-androidTest.apk',
-      use_tests_in_classes: "#{APP_PACKAGE_NAME}.screenshots.ScreenshotTest",
+      use_tests_in_classes: "#{APP_PACKAGE_NAME}.e2e.tests.screenshot.ScreenshotTest",
       reinstall_app: false,
       # By default, don't clear previous because we differentiate between light
       # and dark mode

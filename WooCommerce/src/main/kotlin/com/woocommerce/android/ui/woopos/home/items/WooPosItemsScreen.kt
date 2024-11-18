@@ -71,6 +71,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyCo
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ItemClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
@@ -181,7 +182,9 @@ private fun ItemsToolbar(
     onToolbarInfoIconClicked: () -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().height(40.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(40.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
     ) {
@@ -267,6 +270,14 @@ private fun ItemsList(
                         onItemClicked = onItemClicked
                     )
                 }
+
+                is VariableProduct -> {
+                    VariableProductItem(
+                        modifier = Modifier.animateItemPlacement(),
+                        item = product,
+                        onItemClicked = onItemClicked
+                    )
+                }
             }
         }
 
@@ -347,13 +358,37 @@ private fun ItemsLoadingItem() {
 private fun ProductItem(
     modifier: Modifier = Modifier,
     item: SimpleProduct,
-    onItemClicked: (item: SimpleProduct) -> Unit
+    onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_product_item_content_description,
         item.name,
         item.price
     )
+    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+}
+
+@Composable
+private fun VariableProductItem(
+    modifier: Modifier = Modifier,
+    item: VariableProduct,
+    onItemClicked: (item: WooPosItem) -> Unit
+) {
+    val itemContentDescription = stringResource(
+        id = R.string.woopos_variable_product_item_content_description,
+        item.name,
+        item.price
+    )
+    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+}
+
+@Composable
+private fun ItemCard(
+    modifier: Modifier,
+    itemContentDescription: String,
+    onItemClicked: (item: WooPosItem) -> Unit,
+    item: WooPosItem
+) {
     WooPosCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
@@ -369,40 +404,78 @@ private fun ProductItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(112.dp)
-            )
+            ProductImage(item)
 
             Spacer(modifier = Modifier.width(32.dp))
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = item.name,
-                style = MaterialTheme.typography.h5,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            Spacer(modifier = Modifier.width(32.dp))
-
-            Text(
-                text = item.price,
-                style = MaterialTheme.typography.h5,
-            )
-
-            Spacer(modifier = Modifier.width(24.dp))
+            ProductInfo(item)
         }
     }
+}
+
+@Composable
+private fun ProductInfo(item: WooPosItem) {
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(vertical = 8.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = item.name,
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        when (item) {
+            is SimpleProduct -> SimpleProductDetails(item = item)
+            is VariableProduct -> VariableProductDetails(item = item)
+        }
+    }
+}
+
+@Composable
+private fun ProductImage(item: WooPosItem) {
+    val imageUrl = when (item) {
+        is SimpleProduct -> item.imageUrl
+        is VariableProduct -> item.imageUrl
+    }
+
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(true)
+            .build(),
+        fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
+        error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
+        placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.size(112.dp)
+    )
+}
+
+@Composable
+private fun SimpleProductDetails(item: SimpleProduct) {
+    Text(
+        text = item.price,
+        style = MaterialTheme.typography.h6,
+        fontWeight = FontWeight.Normal
+    )
+}
+
+@Composable
+private fun VariableProductDetails(item: VariableProduct) {
+    Text(
+        text = stringResource(
+            id = R.string.woopos_items_list_variable_product_variations,
+            item.numOfVariations
+        ),
+        style = MaterialTheme.typography.h6,
+        fontWeight = FontWeight.Normal
+    )
 }
 
 @Composable
@@ -512,9 +585,17 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                VariableProduct(
                     3,
                     name = "Product 3",
+                    price = "2000.00$",
+                    imageUrl = null,
+                    numOfVariations = 20,
+                    variationIds = listOf()
+                ),
+                SimpleProduct(
+                    4,
+                    name = "Product 4",
                     price = "1.0$",
                     imageUrl = null,
                 ),

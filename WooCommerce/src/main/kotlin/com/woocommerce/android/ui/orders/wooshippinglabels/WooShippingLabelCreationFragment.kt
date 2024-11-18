@@ -47,6 +47,15 @@ class WooShippingLabelCreationFragment : BaseFragment() {
                     WooShippingLabelCreationFragmentDirections
                         .actionWooShippingLabelCreationFragmentToWooShippingLabelPackageCreationFragment()
                         .let { findNavController().navigateSafely(it) }
+
+                is WooShippingLabelCreationViewModel.LabelPurchased -> {
+                    WooShippingLabelCreationFragmentDirections
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelPurchasedFragment()
+                        .let {
+                            val navController = findNavController()
+                            navController.navigateSafely(it)
+                        }
+                }
             }
         }
     }

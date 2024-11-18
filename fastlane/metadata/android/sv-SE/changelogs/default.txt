@@ -1,0 +1,2 @@
+21.1:
+Vår senaste uppdatering innehåller viktiga förbättringar för att effektivisera din WooCommerce-upplevelse. Vi har fixat redigeringsbehörigheter för beställningar i olika valutor, optimerat betalningshubbvyn, möjliggjort enkel delning av kvitton via Google SMS och åtgärdat datumintervallsvalet för korrekt användning av din tidszon. Ta del av smidigare hantering.
