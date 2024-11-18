@@ -21,18 +21,16 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
-import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
+import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundableChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderCollectPaymentState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
@@ -122,7 +120,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun createController() {
+    private fun createController(cardReaderType: CardReaderType = CardReaderType.EXTERNAL) {
         controller = CardReaderPaymentController(
             scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
@@ -146,7 +144,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
             paymentOrRefund = paymentParam,
-            cardReaderType = CardReaderType.EXTERNAL,
+            cardReaderType = cardReaderType,
             isTTPPaymentInProgress = isTTPinProgressProp,
         )
     }
@@ -343,6 +341,19 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment::class.java)
+        }
+
+    @Test
+    fun `given fetching order fails and tpp, when payment screen shown, then BuiltInReaderFailedPayment state is shown`() =
+        testBlocking {
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
+
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment::class.java)
         }
 
     companion object {
