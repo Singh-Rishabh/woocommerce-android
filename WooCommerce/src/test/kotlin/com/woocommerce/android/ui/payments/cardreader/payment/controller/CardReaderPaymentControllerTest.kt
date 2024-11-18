@@ -9,6 +9,7 @@ import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStat
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_OR_SWIPE_CARD
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.REMOVE_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.SWIPE_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
 import com.woocommerce.android.model.Address
@@ -220,6 +221,27 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
+        }
+
+    @Test
+    fun `given collect payment shown, when REMOVE_CARD received, then collect payment hint updated`() =
+        testBlocking {
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    delay(1) // make sure it's run after collecting payment starts
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(REMOVE_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+
+            controller.start()
+            advanceUntilIdle()
+
+            assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_remove_card_prompt)
         }
 
     companion object {
