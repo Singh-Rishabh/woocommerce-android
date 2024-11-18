@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
+import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class WooPosVariationsViewModel @Inject constructor(
     private val getProductById: WooPosGetProductById,
     private val variationsDataSource: WooPosVariationsDataSource,
+    private val priceFormat: WooPosFormatPrice,
 ) : ViewModel() {
 
     private val _viewState =
@@ -62,7 +64,7 @@ class WooPosVariationsViewModel @Inject constructor(
                             WooPosItem.Variation(
                                 id = it.remoteVariationId,
                                 name = it.getName(product),
-                                price = it.priceWithCurrency ?: "",
+                                price = priceFormat(it.price),
                                 imageUrl = it.image?.source
                             )
                         },
