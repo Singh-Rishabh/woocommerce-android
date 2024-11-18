@@ -534,28 +534,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when flow started, then correct payment description is propagated to CardReaderManager`() =
-        testBlocking {
-            val siteName = "testName"
-            val siteId = 12345L
-            val expectedResult = "hooray"
-            whenever(selectedSite.get()).thenReturn(
-                SiteModel().apply {
-                    name = siteName
-                    url = ""
-                    this.siteId = siteId
-                }
-            )
-            whenever(cardReaderPaymentOrderHelper.getPaymentDescription(mockedOrder)).thenReturn(expectedResult)
-            val captor = argumentCaptor<PaymentInfo>()
-
-            viewModel.start()
-
-            verify(cardReaderManager).collectPayment(captor.capture())
-            assertThat(captor.firstValue.paymentDescription).isEqualTo(expectedResult)
-        }
-
-    @Test
     fun `when flow started, then correct statement descriptor is propagated to CardReaderManager`() =
         testBlocking {
             val expectedResult = "hooray"

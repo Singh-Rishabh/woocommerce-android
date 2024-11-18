@@ -16,6 +16,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalI
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_READ_METHOD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
+import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.UiString.UiStringRes
@@ -59,6 +60,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -411,6 +413,28 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             )
             assertThat(events[1]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
             job.cancel()
+        }
+
+    @Test
+    fun `when flow started, then correct payment description is propagated to CardReaderManager`() =
+        testBlocking {
+            val siteName = "testName"
+            val siteId = 12345L
+            val expectedResult = "hooray"
+            whenever(selectedSite.get()).thenReturn(
+                SiteModel().apply {
+                    name = siteName
+                    url = ""
+                    this.siteId = siteId
+                }
+            )
+            whenever(cardReaderPaymentOrderHelper.getPaymentDescription(mockedOrder)).thenReturn(expectedResult)
+            val captor = argumentCaptor<PaymentInfo>()
+
+            controller.start()
+
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.paymentDescription).isEqualTo(expectedResult)
         }
 
     companion object {
