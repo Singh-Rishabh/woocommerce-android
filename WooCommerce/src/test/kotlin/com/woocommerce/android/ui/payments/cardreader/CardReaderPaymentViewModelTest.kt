@@ -596,18 +596,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when processing payment completed with card present, then tracking keeper stores payment type`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.CARD_PRESENT)) }
-            }
-
-            viewModel.start()
-
-            verify(cardReaderTrackingInfoKeeper).setPaymentMethodType("card")
-        }
-
-    @Test
     fun `when processing payment completed with interac present, then tracking keeper stores payment type`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
