@@ -11,6 +11,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalI
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_OR_SWIPE_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.REMOVE_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.SWIPE_CARD
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -242,6 +243,27 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_remove_card_prompt)
+        }
+
+    @Test
+    fun `given collect payment shown, when TRY_OTHER_CARD message received, then collect payment hint updated`() =
+        testBlocking {
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    delay(1) // make sure it's run after collecting payment starts
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+
+            controller.start()
+            advanceUntilIdle()
+
+            assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_try_another_card_prompt)
         }
 
     companion object {
