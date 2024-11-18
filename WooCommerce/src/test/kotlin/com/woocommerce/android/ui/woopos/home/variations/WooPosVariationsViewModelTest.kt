@@ -478,7 +478,8 @@ class WooPosVariationsViewModelTest {
         wooPosVariationsViewModel = WooPosVariationsViewModel(
             childrenToParentEventSender,
             getProductById,
-            variationsDataSource
+            variationsDataSource,
+            priceFormat
         )
 
         // Act
