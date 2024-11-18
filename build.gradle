@@ -23,6 +23,7 @@ ext {
             file("${rootDir}/defaults.properties"),
             file("${System.getProperty("user.home")}/.configure/woocommerce-android/secrets/secrets.properties")
     )
+    userEnabledTracking = secretProperties.get('tracksEnabled')?.toBoolean() ?: false
 
     developerProperties = loadPropertiesWithFallback(
             logger,
@@ -32,7 +33,7 @@ ext {
 }
 
 measureBuilds {
-    enable = secretProperties.get('tracksEnabled')?.toBoolean() ?: false
+    enable = userEnabledTracking
     automatticProject = MeasureBuildsExtension.AutomatticProject.WooCommerce
     attachGradleScanId = true
     authToken = secretProperties.get('appsMetricsToken')
