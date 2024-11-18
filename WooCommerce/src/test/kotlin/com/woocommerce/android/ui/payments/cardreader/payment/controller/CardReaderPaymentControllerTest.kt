@@ -34,6 +34,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentC
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
@@ -377,6 +378,13 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             verify(cardReaderTrackingInfoKeeper).setCurrency(("GBP"))
         }
+
+    @Test
+    fun `when payment screen shown, then loading data state is emitted`() {
+        controller.start()
+
+        assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.LoadingData::class.java)
+    }
 
     companion object {
         private const val ORDER_ID = 1L
