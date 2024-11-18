@@ -7,6 +7,7 @@ import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -22,6 +23,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderCollectPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
@@ -111,7 +113,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun createController() {
+    private fun createController() {
         controller = CardReaderPaymentController(
             scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
@@ -159,6 +161,25 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_retry_card_prompt)
+        }
+
+    @Test
+    fun `given collect payment shown, when INSERT_CARD received, then collect payment hint updated`() =
+        testBlocking {
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
         }
 
     companion object {
