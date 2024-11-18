@@ -48,6 +48,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyCo
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Variation
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
@@ -85,7 +86,7 @@ fun ItemsList(
                     )
                 }
 
-                is WooPosItem.Variation -> {
+                is Variation -> {
                     VariationItem(
                         modifier = Modifier.animateItemPlacement(),
                         item = product,
@@ -116,7 +117,7 @@ private fun ProductItem(
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_product_item_content_description,
         item.name,
         item.price
     )
@@ -130,7 +131,7 @@ private fun VariableProductItem(
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_variable_product_item_content_description,
         item.name,
         item.price
     )
@@ -140,11 +141,11 @@ private fun VariableProductItem(
 @Composable
 private fun VariationItem(
     modifier: Modifier = Modifier,
-    item: WooPosItem.Variation,
+    item: Variation,
     onItemClicked: (item: WooPosItem) -> Unit
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_variation_item_content_description,
         item.name,
         item.price
     )
@@ -201,7 +202,7 @@ private fun ProductInfo(item: WooPosItem) {
         when (item) {
             is SimpleProduct -> SimpleProductDetails(item = item)
             is VariableProduct -> VariableProductDetails(item = item)
-            is WooPosItem.Variation -> {}
+            is Variation -> VariationProductDetails(item = item)
         }
     }
 }
@@ -211,7 +212,7 @@ private fun ProductImage(item: WooPosItem) {
     val imageUrl = when (item) {
         is SimpleProduct -> item.imageUrl
         is VariableProduct -> item.imageUrl
-        is WooPosItem.Variation -> { "" }
+        is Variation -> item.imageUrl
     }
 
     AsyncImage(
@@ -241,6 +242,15 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 private fun VariableProductDetails(item: VariableProduct) {
     Text(
         text = "${item.numOfVariations} Variations",
+        style = MaterialTheme.typography.h6,
+        fontWeight = FontWeight.Normal
+    )
+}
+
+@Composable
+fun VariationProductDetails(item: Variation) {
+    Text(
+        text = item.price,
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal
     )
