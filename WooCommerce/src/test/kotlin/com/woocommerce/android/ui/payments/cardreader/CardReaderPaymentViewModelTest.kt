@@ -534,20 +534,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when flow started, then correct statement descriptor is propagated to CardReaderManager`() =
-        testBlocking {
-            val expectedResult = "hooray"
-            whenever(appPrefs.getCardReaderStatementDescriptor(anyOrNull(), anyOrNull(), anyOrNull()))
-                .thenReturn(expectedResult)
-            val captor = argumentCaptor<PaymentInfo>()
-
-            viewModel.start()
-
-            verify(cardReaderManager).collectPayment(captor.capture())
-            assertThat(captor.firstValue.statementDescriptor.value).isEqualTo(expectedResult)
-        }
-
-    @Test
     fun `when initializing payment, then ui updated to initializing payment state `() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
