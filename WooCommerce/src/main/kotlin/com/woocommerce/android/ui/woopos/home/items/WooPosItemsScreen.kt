@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -75,11 +74,9 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
-import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -92,7 +89,6 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
     WooPosItemsScreen(
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
-        leftPaneScreen = productsViewModel.leftPaneScreen,
         onItemClicked = { item ->
             (item as? ClickableItem)?.onItemClick { event ->
                 productsViewModel.onUIEvent(event)
@@ -110,9 +106,6 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
         onToolbarInfoIconClicked = {
             productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
         },
-        onNavigateBackClicked = {
-            productsViewModel.onUIEvent(WooPosItemsUIEvent.NavigateBackToItemListScreen)
-        }
     )
 }
 
@@ -121,7 +114,6 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
 private fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     itemsStateFlow: StateFlow<WooPosItemsViewState>,
-    leftPaneScreen: StateFlow<LeftPaneNavigator.LeftPaneScreen>,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfItemListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
@@ -129,39 +121,21 @@ private fun WooPosItemsScreen(
     onSimpleProductsBannerClosed: () -> Unit,
     onSimpleProductsBannerLearnMoreClicked: () -> Unit,
     onToolbarInfoIconClicked: () -> Unit,
-    onNavigateBackClicked: () -> Unit,
 ) {
     val state = itemsStateFlow.collectAsState()
-    val currentNavigationState = leftPaneScreen.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(state.value.reloadingProductsWithPullToRefresh, onPullToRefresh)
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Crossfade(targetState = currentNavigationState.value, label = "") { navigationState ->
-            when (navigationState) {
-                is LeftPaneNavigator.LeftPaneScreen.ItemListScreen -> {
-                    MainItemsList(
-                        modifier = modifier,
-                        pullToRefreshState = pullToRefreshState,
-                        state = state,
-                        onToolbarInfoIconClicked = onToolbarInfoIconClicked,
-                        onSimpleProductsBannerLearnMoreClicked = onSimpleProductsBannerLearnMoreClicked,
-                        onSimpleProductsBannerClosed = onSimpleProductsBannerClosed,
-                        onItemClicked = onItemClicked,
-                        onEndOfItemListReached = onEndOfItemListReached,
-                        onRetryClicked = onRetryClicked
-                    )
-                }
-
-                is LeftPaneNavigator.LeftPaneScreen.VariationsScreen -> {
-                    NavigateToVariationsScreen(
-                        variableProductData = navigationState.product,
-                        modifier = modifier,
-                        onBackClicked = { onNavigateBackClicked() }
-                    )
-                }
-            }
-        }
-    }
+    MainItemsList(
+        modifier = modifier,
+        pullToRefreshState = pullToRefreshState,
+        state = state,
+        onToolbarInfoIconClicked = onToolbarInfoIconClicked,
+        onSimpleProductsBannerLearnMoreClicked = onSimpleProductsBannerLearnMoreClicked,
+        onSimpleProductsBannerClosed = onSimpleProductsBannerClosed,
+        onItemClicked = onItemClicked,
+        onEndOfItemListReached = onEndOfItemListReached,
+        onRetryClicked = onRetryClicked
+    )
 }
 
 @ExperimentalMaterialApi
@@ -231,19 +205,6 @@ private fun MainItemsList(
             state = pullToRefreshState
         )
     }
-}
-
-@Composable
-private fun NavigateToVariationsScreen(
-    variableProductData: VariableProductData,
-    modifier: Modifier,
-    onBackClicked: () -> Unit,
-) {
-    WooPosVariationsScreen(
-        modifier,
-        variableProductData,
-        onBackClicked = onBackClicked
-    )
 }
 
 @Composable
@@ -685,7 +646,6 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
         WooPosItemsScreen(
             modifier = modifier,
             itemsStateFlow = productState,
-            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -693,7 +653,6 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
-            onNavigateBackClicked = {},
         )
     }
 }
@@ -711,7 +670,6 @@ fun WooPosItemsScreenLoadingPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -719,7 +677,6 @@ fun WooPosItemsScreenLoadingPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
-            onNavigateBackClicked = {},
         )
     }
 }
@@ -732,7 +689,6 @@ fun WooPosProductsScreenEmptyListPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -740,7 +696,6 @@ fun WooPosProductsScreenEmptyListPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
-            onNavigateBackClicked = {},
         )
     }
 }
@@ -753,7 +708,6 @@ fun WooPosProductsScreenErrorPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -761,7 +715,6 @@ fun WooPosProductsScreenErrorPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
-            onNavigateBackClicked = {},
         )
     }
 }
@@ -807,7 +760,6 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -815,7 +767,6 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
-            onNavigateBackClicked = {},
         )
     }
 }
@@ -861,7 +812,6 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
-            leftPaneScreen = MutableStateFlow(LeftPaneNavigator.LeftPaneScreen.ItemListScreen),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -869,7 +819,6 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
-            onNavigateBackClicked = {},
         )
     }
 }
