@@ -29,7 +29,8 @@ import javax.inject.Inject
 class JetpackActivationWPComEmailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val wpComLoginRepository: WPComLoginRepository,
-    private val analyticsTrackerWrapper: AnalyticsTrackerWrapper
+    private val analyticsTrackerWrapper: AnalyticsTrackerWrapper,
+    private val stringUtils: StringUtils,
 ) : ScopedViewModel(savedStateHandle) {
     private val navArgs: JetpackActivationWPComEmailFragmentArgs by savedStateHandle.navArgs()
 
@@ -105,7 +106,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
                         when {
-                            !StringUtils.isValidEmail(emailOrUsername) ->
+                            !stringUtils.isValidEmail(emailOrUsername) ->
                                 errorMessage.value = R.string.username_not_registered_wpcom
 
                             else -> {
