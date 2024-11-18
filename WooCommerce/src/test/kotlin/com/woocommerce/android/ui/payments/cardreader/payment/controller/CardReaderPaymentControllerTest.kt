@@ -35,6 +35,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentE
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
@@ -42,11 +43,15 @@ import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
@@ -385,6 +390,28 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
         assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.LoadingData::class.java)
     }
+
+    @Test
+    fun `when payment not collectable, then error event emitted and flow terminated`() =
+        testBlocking {
+            whenever(paymentCollectibilityChecker.isCollectable(any())).thenReturn(false)
+            val events = mutableListOf<CardReaderPaymentEvent>()
+            val job = launch {
+                controller.event.collect {
+                    events.add(it)
+                }
+            }
+
+            controller.start()
+
+            assertThat(
+                (events[0] as ShowErrorMessage).message
+            ).isEqualTo(
+                R.string.card_reader_payment_order_paid_payment_cancelled
+            )
+            assertThat(events[1]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+            job.cancel()
+        }
 
     companion object {
         private const val ORDER_ID = 1L
