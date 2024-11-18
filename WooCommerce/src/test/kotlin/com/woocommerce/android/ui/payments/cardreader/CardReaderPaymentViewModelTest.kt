@@ -508,14 +508,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given fetching order succeeds, when payment screen shown, then order currency stored `() =
-        testBlocking {
-            viewModel.start()
-
-            verify(cardReaderTrackingInfoKeeper).setCurrency(("GBP"))
-        }
-
-    @Test
     fun `when payment screen shown, then loading data state is shown`() {
         viewModel.start()
 
