@@ -19,7 +19,6 @@ fun WooPosLeftPaneScreens(modifier: Modifier) {
     WooPosLeftPaneScreens(modifier = modifier, leftPaneScreen = viewModel.leftPaneScreen) {
         viewModel.onUiEvent(WooPosLeftPaneScreensNavigationEvent.OnNavigateToItemsListScreen)
     }
-
 }
 
 @Composable

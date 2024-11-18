@@ -5,7 +5,7 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
-class WooPosLeftPaneNavigationViewModelTest {
+class WooPosLeftPaneScreensViewModelTest {
     private val navigator: LeftPaneNavigator = mock()
     private val viewModel = WooPosLeftPaneScreensViewModel(navigator)
 
