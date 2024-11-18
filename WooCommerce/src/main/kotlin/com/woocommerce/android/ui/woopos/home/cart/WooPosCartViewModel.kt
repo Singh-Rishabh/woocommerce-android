@@ -125,7 +125,7 @@ class WooPosCartViewModel @Inject constructor(
             parentToChildrenEventReceiver.events.collect { event ->
                 when (event) {
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> handleBackFromCheckoutToCartClicked()
-                    is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInProductSelector(event)
+                    is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInItemsSelector(event)
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> handleOrderSuccessfullyPaid()
                     is ParentToChildrenEvent.CheckoutClicked -> handleCheckoutClicked()
                 }
@@ -137,7 +137,7 @@ class WooPosCartViewModel @Inject constructor(
         _state.value = _state.value.copy(cartStatus = EDITABLE)
     }
 
-    private fun handleItemClickedInProductSelector(event: ParentToChildrenEvent.ItemClickedInProductSelector) {
+    private fun handleItemClickedInItemsSelector(event: ParentToChildrenEvent.ItemClickedInProductSelector) {
         viewModelScope.launch {
             val itemClicked = async {
                 val product = getProductById(
