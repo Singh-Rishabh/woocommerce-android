@@ -8,6 +8,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
+import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,6 +25,7 @@ class WooPosVariationsViewModel @Inject constructor(
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val getProductById: WooPosGetProductById,
     private val variationsDataSource: WooPosVariationsDataSource,
+    private val priceFormat: WooPosFormatPrice,
 ) : ViewModel() {
 
     private val _viewState =
@@ -67,7 +69,7 @@ class WooPosVariationsViewModel @Inject constructor(
                                 id = it.remoteVariationId,
                                 name = it.getName(product),
                                 productId = it.remoteProductId,
-                                price = it.priceWithCurrency ?: "",
+                                price = priceFormat(it.price),
                                 imageUrl = it.image?.source
                             )
                         },
