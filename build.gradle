@@ -23,7 +23,7 @@ ext {
             file("${rootDir}/defaults.properties"),
             file("${System.getProperty("user.home")}/.configure/woocommerce-android/secrets/secrets.properties")
     )
-    userEnabledTracking = secretProperties.get('tracksEnabled')?.toBoolean() ?: false
+    userEnabledTracking = secretProperties.get('measureBuildsEnabled')?.toBoolean() ?: false
 
     developerProperties = loadPropertiesWithFallback(
             logger,

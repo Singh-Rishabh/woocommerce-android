@@ -1,7 +1,7 @@
 {
   "project_name": "woocommerce-android",
   "branch": "wcandroid_secrets_split",
-  "pinned_hash": "5d4f631c605314d93671ad94eaf134690418e00a",
+  "pinned_hash": "257367569d44a36d331dfc1dd814a01200ea17ce",
   "files_to_copy": [
     {
       "file": "android/WCAndroid/secrets.properties",
@@ -44,7 +44,5 @@
       "encrypt": true
     }
   ],
-  "file_dependencies": [
-
-  ]
+  "file_dependencies": []
 }
