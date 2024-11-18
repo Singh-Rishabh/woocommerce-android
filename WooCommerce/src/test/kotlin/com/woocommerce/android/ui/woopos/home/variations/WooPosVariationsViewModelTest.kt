@@ -11,12 +11,14 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsD
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsUIEvents
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
+import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentMatchers.eq
@@ -26,6 +28,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.math.BigDecimal
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -41,13 +44,16 @@ class WooPosVariationsViewModelTest {
 
     private val getProductById: WooPosGetProductById = mock()
     private val variationsDataSource: WooPosVariationsDataSource = mock()
+    private val priceFormat: WooPosFormatPrice = mock {
+        onBlocking { invoke(any()) }.thenReturn("$10.0")
+    }
     private lateinit var wooPosVariationsViewModel: WooPosVariationsViewModel
 
     @Test
     fun `given view model init, then loading state is displayed`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
         wooPosVariationsViewModel.init(1L)
 
         assertThat(
@@ -61,7 +67,7 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch product`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
         wooPosVariationsViewModel.init(1L)
 
         verify(getProductById).invoke(1L)
@@ -71,7 +77,7 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch variation`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
         wooPosVariationsViewModel.init(1L)
 
         verify(variationsDataSource).fetchVariations(eq(1L), any())
@@ -81,7 +87,7 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch variation with forceRefresh set to true`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
         wooPosVariationsViewModel.init(1L)
 
         verify(variationsDataSource).fetchVariations(1L, forceRefresh = true)
@@ -103,7 +109,7 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
 
@@ -130,7 +136,7 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
 
@@ -158,7 +164,7 @@ class WooPosVariationsViewModelTest {
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
 
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.onUIEvent(
@@ -184,7 +190,7 @@ class WooPosVariationsViewModelTest {
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             val states: MutableList<WooPosVariationsViewState> = mutableListOf()
             wooPosVariationsViewModel.viewState.asLiveData().observeForever {
                 states.add(it)
@@ -208,7 +214,7 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(1L))
 
@@ -228,7 +234,7 @@ class WooPosVariationsViewModelTest {
             Result.failure(Throwable())
         )
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
         wooPosVariationsViewModel.init(1L)
 
         wooPosVariationsViewModel.viewState.test {
@@ -247,7 +253,7 @@ class WooPosVariationsViewModelTest {
             whenever(variationsDataSource.fetchVariations(any(), any())).thenReturn(
                 Result.failure(Throwable())
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             val states: MutableList<WooPosVariationsViewState> = mutableListOf()
             wooPosVariationsViewModel.viewState.asLiveData().observeForever {
                 states.add(it)
@@ -280,7 +286,7 @@ class WooPosVariationsViewModelTest {
             whenever(variationsDataSource.loadMore(any())).thenReturn(
                 Result.failure(Throwable())
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
@@ -297,7 +303,7 @@ class WooPosVariationsViewModelTest {
                 Result.failure(Throwable())
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -315,7 +321,7 @@ class WooPosVariationsViewModelTest {
             )
             whenever(variationsDataSource.canLoadMore()).thenReturn(false)
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -342,7 +348,7 @@ class WooPosVariationsViewModelTest {
             )
             whenever(variationsDataSource.canLoadMore()).thenReturn(true)
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -372,7 +378,7 @@ class WooPosVariationsViewModelTest {
             )
             whenever(variationsDataSource.canLoadMore()).thenReturn(true)
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
