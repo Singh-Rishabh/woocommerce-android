@@ -94,10 +94,14 @@ class WooPosItemsViewModel @Inject constructor(
             is WooPosItemsUIEvent.NavigateToVariationsScreen -> {
                 navigator.navigateToVariationsScreen(event.itemNavigationData)
             }
+
+            WooPosItemsUIEvent.NavigateBackToItemListScreen -> {
+                navigateBackToItemListScreen()
+            }
         }
     }
 
-    fun navigateBackToItemListScreen() {
+    private fun navigateBackToItemListScreen() {
         navigator.navigateBackToItemListScreen()
     }
 
