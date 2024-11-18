@@ -498,6 +498,20 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 .isInstanceOf(CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment::class.java)
         }
 
+    @Test
+    fun `given built in reader, when processing payment, then ProcessingPayment state emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPayment) }
+            }
+            createController(BUILT_IN)
+
+            controller.start()
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.ProcessingPayment.BuiltInReaderProcessingPayment::class.java)
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
