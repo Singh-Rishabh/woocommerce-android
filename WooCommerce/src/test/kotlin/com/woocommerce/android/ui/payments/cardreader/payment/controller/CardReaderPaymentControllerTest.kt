@@ -10,6 +10,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalI
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.CARD_REMOVED_TOO_EARLY
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_OR_SWIPE_CARD
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.MULTIPLE_CONTACTLESS_CARDS_DETECTED
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.REMOVE_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.SWIPE_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_CARD
@@ -308,6 +309,27 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_try_another_read_method_prompt)
+        }
+
+    @Test
+    fun `given collect payment shown, when MULTIPLE_CARDS_DETECTED received, then collect payment hint updated`() =
+        testBlocking {
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    delay(1) // make sure it's run after collecting payment starts
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(MULTIPLE_CONTACTLESS_CARDS_DETECTED))
+                }
+            }
+
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+
+            controller.start()
+            advanceUntilIdle()
+
+            assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_multiple_contactless_cards_detected_prompt)
         }
 
     companion object {
