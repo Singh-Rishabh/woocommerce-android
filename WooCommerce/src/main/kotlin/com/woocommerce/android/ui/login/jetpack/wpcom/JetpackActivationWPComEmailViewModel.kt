@@ -10,7 +10,6 @@ import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.WPComLoginRepository
-import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
@@ -109,7 +108,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                             !StringUtils.isValidEmail(emailOrUsername) ->
                                 errorMessage.value = R.string.username_not_registered_wpcom
 
-                            FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() -> {
+                            else -> {
                                 triggerEvent(
                                     ShowMagicLinkScreen(
                                         emailOrUsername,
@@ -119,8 +118,6 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                                 )
                                 isSignup = true
                             }
-
-                            else -> errorMessage.value = R.string.email_not_registered_wpcom
                         }
                     }
 
