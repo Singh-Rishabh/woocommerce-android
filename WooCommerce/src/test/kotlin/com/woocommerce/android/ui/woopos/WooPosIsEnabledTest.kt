@@ -4,7 +4,6 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState
 import com.woocommerce.android.ui.payments.cardreader.onboarding.PluginType
-import com.woocommerce.android.ui.woopos.featureflags.WooPosIsPaymentsOnboardingSupportedInternally
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
 import com.woocommerce.android.util.IsRemoteFeatureFlagEnabled
 import com.woocommerce.android.util.RemoteFeatureFlag.WOO_POS
@@ -31,7 +30,6 @@ class WooPosIsEnabledTest : BaseUnitTest() {
     private val getWooCoreVersion: GetWooCorePluginCachedVersion = mock {
         on { invoke() }.thenReturn("6.6.0")
     }
-    private val isWooPosPaymentsOnboardingSupportedInternally: WooPosIsPaymentsOnboardingSupportedInternally = mock()
 
     private lateinit var sut: WooPosIsEnabled
 
@@ -44,7 +42,6 @@ class WooPosIsEnabledTest : BaseUnitTest() {
         whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
         whenever(isScreenSizeAllowed()).thenReturn(true)
         whenever(isRemoteFeatureFlagEnabled(WOO_POS)).thenReturn(true)
-        whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(false)
         val siteSettings = buildSiteSettings()
         whenever(wooCommerceStore.getSiteSettings(siteModel)).thenReturn(siteSettings)
 
@@ -55,7 +52,6 @@ class WooPosIsEnabledTest : BaseUnitTest() {
             isScreenSizeAllowed = isScreenSizeAllowed,
             isRemoteFeatureFlagEnabled = isRemoteFeatureFlagEnabled,
             getWooCoreVersion = getWooCoreVersion,
-            isWooPosPaymentsOnboardingSupportedInternally = isWooPosPaymentsOnboardingSupportedInternally
         )
     }
 
@@ -96,28 +92,6 @@ class WooPosIsEnabledTest : BaseUnitTest() {
         val onboardingCompleted = mock<CardReaderOnboardingState.OnboardingCompleted>()
         whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.STRIPE_EXTENSION_GATEWAY)
         whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
-
-        assertFalse(sut())
-    }
-
-    @Test
-    fun `given onboarding not completed when supported internally, when invoked, then return true`() = testBlocking {
-        whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(true)
-        val onboardingNotCompleted = CardReaderOnboardingState.SetupNotCompleted(
-            preferredPlugin = PluginType.WOOCOMMERCE_PAYMENTS
-        )
-        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingNotCompleted)
-
-        assertTrue(sut())
-    }
-
-    @Test
-    fun `given onboarding not completed when not supported internally, when invoked, then return false`() = testBlocking {
-        whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(false)
-        val onboardingNotCompleted = CardReaderOnboardingState.SetupNotCompleted(
-            preferredPlugin = PluginType.WOOCOMMERCE_PAYMENTS
-        )
-        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingNotCompleted)
 
         assertFalse(sut())
     }

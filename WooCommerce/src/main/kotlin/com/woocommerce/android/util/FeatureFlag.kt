@@ -7,7 +7,6 @@ import android.content.Context
  */
 enum class FeatureFlag {
     DB_DOWNGRADE,
-    WOO_POS_PAYMENTS_ONBOARDING,
     INBOX,
     WC_SHIPPING_BANNER,
     BETTER_CUSTOMER_SEARCH_M2,
@@ -30,7 +29,6 @@ enum class FeatureFlag {
             WC_SHIPPING_BANNER,
             BETTER_CUSTOMER_SEARCH_M2,
             ORDER_CREATION_AUTO_TAX_RATE,
-            WOO_POS_PAYMENTS_ONBOARDING,
             REVAMP_WOO_SHIPPING,
             POS_NON_SIMPLE_PRODUCT_TYPES -> PackageUtils.isDebugBuild()
 
