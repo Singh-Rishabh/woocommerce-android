@@ -111,7 +111,7 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
             productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
         },
         onNavigateBackClicked = {
-            productsViewModel.navigateBackToItemListScreen()
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.NavigateBackToItemListScreen)
         }
     )
 }
