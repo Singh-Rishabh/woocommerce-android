@@ -10,8 +10,7 @@ import com.woocommerce.android.model.UiString
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.cardreader.LearnMoreUrlProvider
 import com.woocommerce.android.ui.payments.cardreader.LearnMoreUrlProvider.LearnMoreUrlType.IN_PERSON_PAYMENTS
-import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
-import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingEvent.NavigateToUrlInWPComWebView
+import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingEvent.NavigateToUrlInBrowser
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingParams.Check
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingParams.Failed
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState.ChoosePaymentGatewayProvider
@@ -118,13 +117,9 @@ class CardReaderOnboardingViewModel @Inject constructor(
                     triggerEvent(Event.ShowUiStringSnackbar(UiString.UiStringText(reaction.message)))
                     refreshState()
                 }
-                is CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView -> {
-                    triggerEvent(NavigateToUrlInWPComWebView(reaction.url))
-                    viewState.value = prevState!!
-                }
 
-                is CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenGenericWebView -> {
-                    triggerEvent(NavigateToUrlInGenericWebView(reaction.url))
+                is CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser -> {
+                    triggerEvent(NavigateToUrlInBrowser(reaction.url))
                     viewState.value = prevState!!
                 }
             }
@@ -428,7 +423,7 @@ class CardReaderOnboardingViewModel @Inject constructor(
 
     private fun onLearnMoreClicked() {
         paymentsFlowTracker.trackOnboardingLearnMoreTapped()
-        triggerEvent(NavigateToUrlInGenericWebView(learnMoreUrlProvider.provideLearnMoreUrlFor(IN_PERSON_PAYMENTS)))
+        triggerEvent(NavigateToUrlInBrowser(learnMoreUrlProvider.provideLearnMoreUrlFor(IN_PERSON_PAYMENTS)))
     }
 
     private fun onSkipPendingRequirementsClicked() {

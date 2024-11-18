@@ -28,6 +28,7 @@ class BlazeCampaignPaymentSummaryViewModelTests : BaseUnitTest() {
             productId = 0L,
             tagLine = "",
             description = "",
+            ctaText = "",
             campaignImage = BlazeRepository.BlazeCampaignImage.LocalImage("test"),
             budget = Budget(
                 totalBudget = 10f,

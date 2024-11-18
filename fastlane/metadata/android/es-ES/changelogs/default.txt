@@ -1,0 +1,2 @@
+21.1:
+Nuestra última actualización trae mejoras clave para agilizar tu experiencia de WooCommerce. Hemos corregido los permisos de edición para pedidos en distintas divisas, optimizado la vista del centro de pagos, facilitado el uso compartido de recibos a través de Google SMS y corregido la selección del intervalo de fechas para utilizar correctamente la zona horaria. Disfruta de un funcionamiento más fluido.

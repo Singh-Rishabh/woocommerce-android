@@ -1,11 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-22 09:54:04+0000
+Translation-Revision-Date: 2024-11-12 09:54:04+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: ja_JP
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">封筒</string>
+    <string name="woo_shipping_labels_package_creation_box_type">ボックス</string>
+    <string name="woo_shipping_labels_package_creation_add_package">パッケージを追加</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">これを新しいパッケージテンプレートとして保存</string>
+    <string name="woo_shipping_labels_package_creation_height">高さ</string>
+    <string name="woo_shipping_labels_package_creation_width">幅</string>
+    <string name="woo_shipping_labels_package_creation_length">長さ</string>
+    <string name="woo_shipping_labels_package_creation_package_type">パッケージの種類</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">保存済み</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">運送業者</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">カスタム</string>
+    <string name="shipping_label_purchased_request_refund">返金をリクエスト</string>
+    <string name="shipping_label_purchased_schedule_pick_up">集荷日を設定</string>
+    <string name="shipping_label_purchased_track_shipment">配送状況を追跡</string>
+    <string name="shipping_label_purchased_learn_how_to_print">モバイルデバイスを使って印刷する方法を確認</string>
+    <string name="shipping_label_purchased_note">注意: 印刷されたラベルを再利用すると、弊社の利用規約違反となり、刑事責任を問われる可能性があります。</string>
+    <string name="shipping_label_purchased_message">こちらから再度配送ラベルを印刷するか、ラベルの用紙サイズを変更することができます。</string>
+    <string name="shipping_label_purchased_title">配送ラベルを印刷する準備ができました</string>
+    <string name="order_detail_edit_store_currency_mismatch">この注文は %1$s を使用しており、サイトの通貨は %2$s であるため、編集はウェブ上でしか行えません</string>
+    <string name="shipping_label_shipping_service_title">配送サービス</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">最速</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">最安値</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">ラベルを購入</string>
+    <string name="shipping_label_shipment_details_purchase_label">ラベルを購入 · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">この注文に完了のマークを付けてお客様に通知</string>
+    <string name="shipping_label_shipment_details_shipment_cost">配送料</string>
+    <string name="shipping_label_shipment_details_order_details">注文詳細</string>
+    <string name="shipping_label_shipment_details_title">配送状況の詳細</string>
+    <string name="shipping_label_select_package_description">荷物の寸法を入力するか、配送業者の荷物オプションを選択して、利用可能な配送料金を確認してください。</string>
+    <string name="shipping_label_select_package_title">荷物を選択して配送料を取得</string>
+    <string name="shipping_label_select_package_button">荷物を選択</string>
+    <string name="shipping_label_hazmat_title">危険物または有害物質を発送しようとしていますか ?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">アイテムカードを折りたたむ / 展開する</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">1%sで並べ替え</string>
+    <string name="no">いいえ</string>
     <string name="blaze_campaign_objective_save_selection_switch_label">今後のキャンペーンのために選択を保存</string>
     <string name="blaze_campaign_objective_good_for">&lt;b&gt;効果:&lt;/b&gt; %s</string>
     <string name="blaze_campaign_objective_select_objective_label">目的 %s を選択</string>
@@ -3637,6 +3673,7 @@ Language: ja_JP
     <string name="taxes">税</string>
     <string name="payment">決済</string>
     <string name="shipping">配送</string>
+    <string name="total">合計</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">注文</string>

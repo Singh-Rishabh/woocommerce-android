@@ -312,7 +312,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
         testBlocking {
             val url = "url"
             whenever(errorClickHandler.invoke(CardReaderOnboardingCTAErrorType.WC_PAY_NOT_SETUP))
-                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(url))
+                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser(url))
 
             val viewModel = createVM(
                 CardReaderOnboardingFragmentArgs(
@@ -328,7 +328,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
                 .actionButtonActionPrimary.invoke()
 
             assertThat(viewModel.event.value).isEqualTo(
-                CardReaderOnboardingEvent.NavigateToUrlInWPComWebView(url)
+                CardReaderOnboardingEvent.NavigateToUrlInBrowser(url)
             )
         }
 
@@ -337,7 +337,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
         testBlocking {
             val url = "url"
             whenever(errorClickHandler.invoke(CardReaderOnboardingCTAErrorType.WC_PAY_NOT_SETUP))
-                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenGenericWebView(url))
+                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser(url))
 
             val viewModel = createVM(
                 CardReaderOnboardingFragmentArgs(
@@ -353,7 +353,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
                 .actionButtonActionPrimary.invoke()
 
             assertThat(viewModel.event.value).isEqualTo(
-                CardReaderOnboardingEvent.NavigateToUrlInGenericWebView(url)
+                CardReaderOnboardingEvent.NavigateToUrlInBrowser(url)
             )
         }
 
@@ -362,7 +362,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
         testBlocking {
             val url = "url"
             whenever(errorClickHandler.invoke(CardReaderOnboardingCTAErrorType.STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS))
-                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenWpComWebView(url))
+                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser(url))
 
             val viewModel = createVM(
                 CardReaderOnboardingFragmentArgs(
@@ -379,7 +379,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
                 .actionButtonPrimary!!.action.invoke()
 
             assertThat(viewModel.event.value).isEqualTo(
-                CardReaderOnboardingEvent.NavigateToUrlInWPComWebView(url)
+                CardReaderOnboardingEvent.NavigateToUrlInBrowser(url)
             )
         }
 
@@ -388,7 +388,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
         testBlocking {
             val url = "url"
             whenever(errorClickHandler.invoke(CardReaderOnboardingCTAErrorType.STRIPE_ACCOUNT_OVERDUE_REQUIREMENTS))
-                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenGenericWebView(url))
+                .thenReturn(CardReaderOnboardingErrorCtaClickHandler.Reaction.OpenBrowser(url))
 
             val viewModel = createVM(
                 CardReaderOnboardingFragmentArgs(
@@ -404,7 +404,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
                 .actionButtonPrimary!!.action.invoke()
 
             assertThat(viewModel.event.value).isEqualTo(
-                CardReaderOnboardingEvent.NavigateToUrlInGenericWebView(url)
+                CardReaderOnboardingEvent.NavigateToUrlInBrowser(url)
             )
         }
 
@@ -623,7 +623,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
             (viewModel.viewStateData.value as UnsupportedErrorState.WcPayInCountry)
                 .onLearnMoreActionClicked.invoke()
 
-            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
+            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInBrowser
             assertThat(event.url).isEqualTo(AppUrls.WOOCOMMERCE_LEARN_MORE_ABOUT_PAYMENTS)
         }
 
@@ -637,7 +637,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
             (viewModel.viewStateData.value as UnsupportedErrorState.Country)
                 .onLearnMoreActionClicked.invoke()
 
-            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
+            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInBrowser
             assertThat(event.url).isEqualTo(AppUrls.WOOCOMMERCE_LEARN_MORE_ABOUT_PAYMENTS)
         }
 
@@ -690,7 +690,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
 
             (viewModel.viewStateData.value as UnsupportedErrorState.Country).onLearnMoreActionClicked.invoke()
 
-            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
+            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInBrowser
             assertThat(event.url).isEqualTo(AppUrls.STRIPE_LEARN_MORE_ABOUT_PAYMENTS)
         }
 
@@ -706,7 +706,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
 
             (viewModel.viewStateData.value as UnsupportedErrorState.Country).onLearnMoreActionClicked.invoke()
 
-            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
+            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInBrowser
             assertThat(event.url).isEqualTo(AppUrls.WOOCOMMERCE_LEARN_MORE_ABOUT_PAYMENTS)
         }
 
@@ -720,7 +720,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
             (viewModel.viewStateData.value as UnsupportedErrorState.StripeAccountInUnsupportedCountry)
                 .onLearnMoreActionClicked.invoke()
 
-            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
+            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInBrowser
             assertThat(event.url).isEqualTo(AppUrls.WOOCOMMERCE_LEARN_MORE_ABOUT_PAYMENTS)
         }
 
@@ -1113,7 +1113,7 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
             (viewModel.viewStateData.value as CashOnDeliveryDisabledState)
                 .onLearnMoreActionClicked.invoke()
 
-            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInGenericWebView
+            val event = viewModel.event.value as CardReaderOnboardingEvent.NavigateToUrlInBrowser
             assertThat(event.url).isEqualTo(AppUrls.WOOCOMMERCE_LEARN_MORE_ABOUT_PAYMENTS)
         }
 
