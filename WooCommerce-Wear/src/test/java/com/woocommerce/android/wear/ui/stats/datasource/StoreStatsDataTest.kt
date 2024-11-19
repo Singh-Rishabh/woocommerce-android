@@ -1,5 +1,6 @@
 package com.woocommerce.android.wear.ui.stats.datasource
 
+import com.woocommerce.android.wear.ui.stats.datasource.StoreStatsData.StatRequest.*
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -21,8 +22,8 @@ class StoreStatsDataTest {
 
     @Test
     fun `StoreStatsData with waiting requests should return default values`() {
-        val revenueRequest = StoreStatsData.StatRequest.Waiting<StoreStatsData.RevenueData>()
-        val visitorRequest = StoreStatsData.StatRequest.Waiting<Int>()
+        val revenueRequest = Waiting<StoreStatsData.RevenueData>()
+        val visitorRequest = Waiting<Int>()
 
         val storeStatsData = StoreStatsData(revenueRequest, visitorRequest)
 
@@ -35,8 +36,8 @@ class StoreStatsDataTest {
 
     @Test
     fun `StoreStatsData with error requests should return default values`() {
-        val revenueRequest = StoreStatsData.StatRequest.Error<StoreStatsData.RevenueData>()
-        val visitorRequest = StoreStatsData.StatRequest.Error<Int>()
+        val revenueRequest = Error<StoreStatsData.RevenueData>()
+        val visitorRequest = Error<Int>()
 
         val storeStatsData = StoreStatsData(revenueRequest, visitorRequest)
 
@@ -44,6 +45,36 @@ class StoreStatsDataTest {
         assertEquals(0, storeStatsData.ordersCount)
         assertEquals(0, storeStatsData.visitorsCount)
         assertEquals("0%", storeStatsData.conversionRate)
+        assertFalse(storeStatsData.isComplete)
+    }
+
+    @Test
+    fun `StoreStatsData with mixed finished and waiting requests should return incomplete`() {
+        val revenueData = StoreStatsData.RevenueData(totalRevenue = "1000", orderCount = 10)
+        val visitorRequest = Waiting<Int>()
+
+        val storeStatsData = StoreStatsData(Finished(revenueData), visitorRequest)
+
+        assertFalse(storeStatsData.isComplete)
+    }
+
+    @Test
+    fun `StoreStatsData with mixed finished and error requests should return complete`() {
+        val revenueData = StoreStatsData.RevenueData(totalRevenue = "1000", orderCount = 10)
+        val visitorRequest = Error<Int>()
+
+        val storeStatsData = StoreStatsData(Finished(revenueData), visitorRequest)
+
         assertTrue(storeStatsData.isComplete)
+    }
+
+    @Test
+    fun `StoreStatsData with mixed waiting and error requests should return complete`() {
+        val revenueRequest = Waiting<StoreStatsData.RevenueData>()
+        val visitorRequest = Error<Int>()
+
+        val storeStatsData = StoreStatsData(revenueRequest, visitorRequest)
+
+        assertFalse(storeStatsData.isComplete)
     }
 }
