@@ -251,6 +251,8 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             .thenReturn("$DUMMY_CURRENCY_SYMBOL$DUMMY_TOTAL")
         whenever(cardReaderPaymentOrderHelper.getReceiptDocumentName(mockedOrder.id)).thenReturn("receipt-order-1")
         whenever(cardReaderManager.batteryStatus).thenAnswer { flow { emit(CardReaderBatteryStatus.Unknown) } }
+
+        viewModel.event.observeForever {}
     }
 
     //region - Payments tests
@@ -785,7 +787,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
                 flow { emit(PaymentCompleted("")) }
             }
-
             viewModel.start()
             val events = mutableListOf<Event>()
             viewModel.event.observeForever {
@@ -1398,7 +1399,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
             whenever(wooStore.getStoreCountryCode(siteModel)).thenReturn("US")
             initViewModel(BUILT_IN)
-
             viewModel.start()
             (viewModel.viewStateData.value as BuiltInReaderFailedPaymentState).onPrimaryActionClicked.invoke()
 
@@ -1422,7 +1422,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
                 flow { emit(paymentFailedWithAmountTooSmall) }
             }
-
             viewModel.start()
             (viewModel.viewStateData.value as ExternalReaderFailedPaymentState).onPrimaryActionClicked.invoke()
 
@@ -1628,7 +1627,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
                 flow { emit(PaymentFailed(Generic, paymentData, "dummy msg")) }
             }
-
             viewModel.start()
 
             (viewModel.viewStateData.value as ExternalReaderFailedPaymentState).onSecondaryActionClicked!!.invoke()
@@ -2021,7 +2019,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
 
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
@@ -2053,7 +2050,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
 
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState)
@@ -2218,7 +2214,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
 
@@ -2387,7 +2382,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
 
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onSecondaryActionClicked.invoke()
@@ -2458,7 +2452,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 flow { emit(PaymentCompleted("")) }
             }
             whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
-
             viewModel.start()
 
             (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onSecondaryActionClicked.invoke()
@@ -2475,7 +2468,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
 
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onSecondaryActionClicked.invoke()
@@ -2533,7 +2525,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
 
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onTertiaryActionClicked.invoke()
@@ -2565,7 +2556,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             }
 
             initViewModel(BUILT_IN)
-
             viewModel.start()
 
             (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState)
@@ -3340,7 +3330,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                     )
                 }
             }
-
             viewModel.start()
 
             val externalReaderFailedPaymentState = viewModel.viewStateData.value as FailedRefundState
@@ -3694,7 +3683,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                     CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
                 )
             ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
-
             viewModel.start()
             val viewState = viewModel.viewStateData.value!!
             (viewState as FailedRefundState).onPrimaryActionClicked.invoke()
@@ -4514,6 +4502,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
         )
+        viewModel.event.observeForever {}
     }
 
     private fun initViewModel(
@@ -4549,5 +4538,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
         )
+        viewModel.event.observeForever {}
     }
 }

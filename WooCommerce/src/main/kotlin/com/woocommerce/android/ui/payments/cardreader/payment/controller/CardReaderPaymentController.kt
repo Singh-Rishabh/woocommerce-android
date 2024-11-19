@@ -60,16 +60,10 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentC
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentReaderTypeStateProvider
-import com.woocommerce.android.ui.payments.cardreader.payment.ContactSupport
-import com.woocommerce.android.ui.payments.cardreader.payment.EnableNfc
 import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlow
 import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowError
-import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundSuccessful
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlow
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
-import com.woocommerce.android.ui.payments.cardreader.payment.PlayChaChing
-import com.woocommerce.android.ui.payments.cardreader.payment.PrintReceipt
-import com.woocommerce.android.ui.payments.cardreader.payment.PurchaseCardReader
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderCollectPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
@@ -93,13 +87,11 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.CANCELLED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.WooLog
-import com.woocommerce.android.viewmodel.MultiLiveEvent
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -147,12 +139,11 @@ class CardReaderPaymentController(
         get() = this is CardReaderFlowParam.PaymentOrRefund.Payment &&
             this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
 
-    private val _event: MutableLiveData<Event> = MultiLiveEvent()
-    val event: LiveData<Event> = _event
+    private val _event: MutableSharedFlow<CardReaderPaymentEvent> = MutableSharedFlow()
+    val event: Flow<CardReaderPaymentEvent> = _event
 
-    private fun triggerEvent(event: Event) {
-        event.isHandled = false
-        _event.value = event
+    private fun triggerEvent(event: CardReaderPaymentEvent) = scope.launch {
+        _event.emit(event)
     }
 
     fun start() {
@@ -455,7 +446,7 @@ class CardReaderPaymentController(
             ProcessingInteracRefund -> viewState.postValue(ProcessingRefundState(amountLabel))
             is InteracRefundSuccess -> {
                 viewState.postValue(RefundSuccessfulState(amountLabel))
-                triggerEvent(InteracRefundSuccessful)
+                triggerEvent(CardReaderPaymentEvent.InteracRefundSuccessful)
             }
 
             is InteracRefundFailure -> {
@@ -481,10 +472,10 @@ class CardReaderPaymentController(
         if (paymentOrRefund.isPOS) {
             scope.launch {
                 syncOrderStatus(orderId)
-                triggerEvent(Exit)
+                triggerEvent(CardReaderPaymentEvent.Exit)
             }
         } else {
-            triggerEvent(PlayChaChing)
+            triggerEvent(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
             showPaymentSuccessfulState()
             reFetchOrder()
         }
@@ -497,9 +488,13 @@ class CardReaderPaymentController(
     @VisibleForTesting
     fun reFetchOrder() {
         refetchOrderJob = scope.launch {
-            fetchOrder() ?: triggerEvent(ShowSnackbar(R.string.card_reader_refetching_order_failed))
+            fetchOrder() ?: triggerEvent(
+                CardReaderPaymentEvent.ShowErrorMessage(
+                    R.string.card_reader_refetching_order_failed
+                )
+            )
             if (viewState.value == ReFetchingOrderState) {
-                triggerEvent(Exit)
+                triggerEvent(CardReaderPaymentEvent.Exit)
             }
         }
     }
@@ -749,7 +744,7 @@ class CardReaderPaymentController(
             val receiptResult = paymentReceiptHelper.getReceiptUrl(paymentOrRefund.orderId)
             if (receiptResult.isSuccess) {
                 triggerEvent(
-                    PrintReceipt(
+                    CardReaderPaymentEvent.PrintReceiptTapped(
                         receiptResult.getOrThrow(),
                         cardReaderPaymentOrderHelper.getReceiptDocumentName(paymentOrRefund.orderId)
                     )
@@ -758,7 +753,7 @@ class CardReaderPaymentController(
                 tracker.trackReceiptUrlFetchingFails(
                     errorDescription = receiptResult.exceptionOrNull()?.message ?: "Unknown error",
                 )
-                triggerEvent(ShowSnackbar(R.string.receipt_fetching_error))
+                triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
             }
         }
     }
@@ -777,17 +772,27 @@ class CardReaderPaymentController(
                 ) {
                     is PaymentReceiptShare.ReceiptShareResult.Error.FileCreation -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
-                        triggerEvent(ShowSnackbar(R.string.card_reader_payment_receipt_can_not_be_stored))
+                        triggerEvent(
+                            CardReaderPaymentEvent.ShowErrorMessage(
+                                R.string.card_reader_payment_receipt_can_not_be_stored
+                            )
+                        )
                     }
 
                     is PaymentReceiptShare.ReceiptShareResult.Error.FileDownload -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
-                        triggerEvent(ShowSnackbar(R.string.card_reader_payment_receipt_can_not_be_downloaded))
+                        triggerEvent(
+                            CardReaderPaymentEvent.ShowErrorMessage(
+                                R.string.card_reader_payment_receipt_can_not_be_downloaded
+                            )
+                        )
                     }
 
                     is PaymentReceiptShare.ReceiptShareResult.Error.Sharing -> {
                         tracker.trackPaymentsReceiptSharingFailed(sharingResult)
-                        triggerEvent(ShowSnackbar(R.string.card_reader_payment_email_client_not_found))
+                        triggerEvent(
+                            CardReaderPaymentEvent.ShowErrorMessage(R.string.card_reader_payment_email_client_not_found)
+                        )
                     }
 
                     PaymentReceiptShare.ReceiptShareResult.Success -> {
@@ -798,7 +803,7 @@ class CardReaderPaymentController(
                 tracker.trackReceiptUrlFetchingFails(
                     errorDescription = receiptResult.exceptionOrNull()?.message ?: "Unknown error",
                 )
-                triggerEvent(ShowSnackbar(R.string.receipt_fetching_error))
+                triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
             }
 
             viewState.postValue(stateBeforeLoading)
@@ -831,20 +836,20 @@ class CardReaderPaymentController(
     private fun onContactSupportClicked() {
         tracker.trackPaymentFailedContactSupportTapped()
         onCancelPaymentFlow()
-        triggerEvent(ContactSupport)
+        triggerEvent(CardReaderPaymentEvent.ContactSupportTapped)
     }
 
     private fun onEnableNfcClicked() {
         tracker.trackPaymentFailedEnabledNfcTapped()
         onCancelPaymentFlow()
-        triggerEvent(EnableNfc)
+        triggerEvent(CardReaderPaymentEvent.EnableNfcTapped)
     }
 
     private fun onPurchaseCardReaderClicked() {
         onCancelPaymentFlow()
         val storeCountryCode = wooStore.getStoreCountryCode(selectedSite.get())
         triggerEvent(
-            PurchaseCardReader(
+            CardReaderPaymentEvent.PurchaseCardReaderTapped(
                 "${AppUrls.WOOCOMMERCE_PURCHASE_CARD_READER_IN_COUNTRY}$storeCountryCode"
             )
         )
@@ -862,7 +867,7 @@ class CardReaderPaymentController(
             viewState.value?.let { state ->
                 trackCancelledFlow(state)
             }
-            triggerEvent(Exit)
+            triggerEvent(CardReaderPaymentEvent.Exit)
         }
     }
 
@@ -892,8 +897,8 @@ class CardReaderPaymentController(
     }
 
     private fun exitWithSnackbar(@StringRes message: Int) {
-        triggerEvent(ShowSnackbar(message))
-        triggerEvent(Exit)
+        triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(message))
+        triggerEvent(CardReaderPaymentEvent.Exit)
     }
 
     private suspend fun getStoreCountryCode(): String {

@@ -3,6 +3,8 @@ package com.woocommerce.android.ui.payments.cardreader.payment
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.cardreader.CardReaderManager
@@ -12,6 +14,7 @@ import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -87,7 +90,23 @@ class CardReaderPaymentViewModel @Inject constructor(
 
     val viewStateData: LiveData<ViewState> = paymentController.viewStateData
 
-    override val event: LiveData<MultiLiveEvent.Event> = paymentController.event
+    override val event: LiveData<MultiLiveEvent.Event> =
+        paymentController.event.asLiveData(coroutineContext).map {
+            when (it) {
+                CardReaderPaymentEvent.ContactSupportTapped -> ContactSupport
+                CardReaderPaymentEvent.EnableNfcTapped -> EnableNfc
+                CardReaderPaymentEvent.Exit -> MultiLiveEvent.Event.Exit
+                CardReaderPaymentEvent.InteracRefundSuccessful -> InteracRefundSuccessful
+                CardReaderPaymentEvent.PlaySuccessfulPaymentSound -> PlayChaChing
+                is CardReaderPaymentEvent.PrintReceiptTapped -> PrintReceipt(
+                    it.receiptUrl,
+                    it.documentName
+                )
+                is CardReaderPaymentEvent.PurchaseCardReaderTapped -> PurchaseCardReader(it.url)
+                is CardReaderPaymentEvent.ShowPaymentErrorMessage -> ShowSnackbarInDialog(it.message)
+                is CardReaderPaymentEvent.ShowErrorMessage -> MultiLiveEvent.Event.ShowSnackbar(it.message)
+            }
+        }
 
     fun start() = paymentController.start()
 
