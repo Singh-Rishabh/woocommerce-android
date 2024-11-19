@@ -5,6 +5,7 @@
 -----
 - [*] Fixed shipping lines being editable at all states [https://github.com/woocommerce/woocommerce-android/pull/12890]
 - [*] Fixed a crash that occurred when tapping on the customer shipping address in the order details screen [https://github.com/woocommerce/woocommerce-android/pull/12920]
+- [**] Enables creating a new WP.com account during Jetpack activation flow [https://github.com/woocommerce/woocommerce-android/issues/11114]
 
 21.1
 -----
