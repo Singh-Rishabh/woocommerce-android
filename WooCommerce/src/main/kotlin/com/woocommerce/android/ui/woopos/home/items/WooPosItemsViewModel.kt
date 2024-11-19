@@ -122,19 +122,14 @@ class WooPosItemsViewModel @Inject constructor(
                                 id = event.item.id,
                                 name = event.item.name,
                                 numOfVariations = event.item.numOfVariations,
-                                variationIds = event.item.variationIds
                             )
                         )
                     )
                 }
             }
 
-            is WooPosItem.Variation -> {
-                onItemClicked(
-                    WooPosItemNavigationData.SimpleProductData(
-                        id = event.item.id
-                    )
-                )
+            else -> {
+                // Do nothing
             }
         }
     }
