@@ -91,7 +91,7 @@ class WooPosItemsViewModel @Inject constructor(
                 onSimpleProductsDialogInfoClicked()
             }
 
-            WooPosItemsUIEvent.NavigateBackToItemListScreen -> {
+            WooPosItemsUIEvent.BackButtonClicked -> {
                 navigateBackToItemListScreen()
             }
         }

@@ -858,7 +858,7 @@ class WooPosItemsViewModelTest {
             )
         )
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosItemsUIEvent.NavigateBackToItemListScreen)
+        viewModel.onUIEvent(WooPosItemsUIEvent.BackButtonClicked)
 
         verify(leftPaneNavigator).navigateBackToItemListScreen()
     }
