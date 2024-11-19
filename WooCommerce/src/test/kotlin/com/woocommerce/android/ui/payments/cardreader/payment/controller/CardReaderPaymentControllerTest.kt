@@ -526,6 +526,18 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             verify(cardReaderTrackingInfoKeeper).setPaymentMethodType("card")
         }
 
+    @Test
+    fun `when processing payment completed with interac present, then tracking keeper stores payment type`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.INTERAC_PRESENT)) }
+            }
+
+            controller.start()
+
+            verify(cardReaderTrackingInfoKeeper).setPaymentMethodType("card_interac")
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
