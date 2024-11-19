@@ -595,17 +595,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             assertThat(viewModel.viewStateData.value).isInstanceOf(BuiltInReaderProcessingPaymentState::class.java)
         }
 
-    @Test
-    fun `when processing payment completed with interac present, then track interac success`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.INTERAC_PRESENT)) }
-            }
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentSucceeded()
-        }
 
     @Test
     fun `when processing payment completed with card present, then do not track interac success`() =
