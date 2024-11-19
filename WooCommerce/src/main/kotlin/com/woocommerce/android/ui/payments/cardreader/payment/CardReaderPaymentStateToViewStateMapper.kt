@@ -31,33 +31,47 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is CardReaderInteracRefundState.InteracRefundFailure -> {
-                if (paymentState.onRetry == null) {
-                    if (paymentState.cta != null) {
+                when (paymentState) {
+                    is CardReaderInteracRefundState.InteracRefundFailure.Cancelable -> {
+                        // onCancel is not null; onRetry is nullable
+                        if (paymentState.onRetry == null) {
+                            if (paymentState.cta != null) {
+                                ViewState.FailedRefundState(
+                                    errorType = paymentState.errorType,
+                                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                                    primaryLabel = paymentState.cta.label,
+                                    onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
+                                    secondaryLabel = R.string.cancel,
+                                    onSecondaryActionClicked = paymentState.onCancel,
+                                )
+                            } else {
+                                ViewState.FailedRefundState(
+                                    errorType = paymentState.errorType,
+                                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                                    primaryLabel = R.string.card_reader_interac_refund_refund_failed_ok,
+                                    onPrimaryActionClicked = paymentState.onCancel,
+                                )
+                            }
+                        } else {
+                            ViewState.FailedRefundState(
+                                errorType = paymentState.errorType,
+                                amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                                primaryLabel = R.string.try_again,
+                                onPrimaryActionClicked = paymentState.onRetry,
+                                secondaryLabel = R.string.cancel,
+                                onSecondaryActionClicked = paymentState.onCancel,
+                            )
+                        }
+                    }
+                    is CardReaderInteracRefundState.InteracRefundFailure.NonCancelable -> {
+                        // onCancel is always null; onRetry is never null; amountWithCurrencyLabel is always null;
                         ViewState.FailedRefundState(
                             errorType = paymentState.errorType,
+                            primaryLabel = R.string.try_again,
                             amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
-                            primaryLabel = paymentState.cta.label,
-                            onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
-                            secondaryLabel = R.string.cancel,
-                            onSecondaryActionClicked = paymentState.onCancel,
-                        )
-                    } else {
-                        ViewState.FailedRefundState(
-                            errorType = paymentState.errorType,
-                            amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
-                            primaryLabel = R.string.card_reader_interac_refund_refund_failed_ok,
-                            onPrimaryActionClicked = paymentState.onCancel!!,
+                            onPrimaryActionClicked = paymentState.onRetry,
                         )
                     }
-                } else {
-                    ViewState.FailedRefundState(
-                        errorType = paymentState.errorType,
-                        amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
-                        primaryLabel = R.string.try_again,
-                        onPrimaryActionClicked = paymentState.onRetry,
-                        secondaryLabel = R.string.cancel,
-                        onSecondaryActionClicked = paymentState.onCancel,
-                    )
                 }
             }
 

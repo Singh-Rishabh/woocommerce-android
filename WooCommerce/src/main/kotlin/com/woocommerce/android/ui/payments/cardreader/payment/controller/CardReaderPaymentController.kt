@@ -248,9 +248,8 @@ class CardReaderPaymentController(
                     orderId = paymentOrRefund.orderId,
                     errorMessage = "Fetching order failed"
                 )
-                _paymentState.value = CardReaderInteracRefundState.InteracRefundFailure(
+                _paymentState.value = CardReaderInteracRefundState.InteracRefundFailure.NonCancelable(
                     errorType = InteracRefundFlowError.FetchingOrderFailed,
-                    amountWithCurrencyLabel = null,
                     onRetry = { initRefundFlow(isRetry = true) },
                 )
             }
@@ -510,7 +509,7 @@ class CardReaderPaymentController(
         onRetryClicked: () -> Unit
     ) = when (errorType) {
         is InteracRefundFlowError.ContactSupportError ->
-            CardReaderInteracRefundState.InteracRefundFailure(
+            CardReaderInteracRefundState.InteracRefundFailure.Cancelable(
                 errorType = errorType,
                 amountWithCurrencyLabel = amountLabel,
                 cta = CardReaderPaymentOrRefundState.CallToAction(
@@ -521,14 +520,14 @@ class CardReaderPaymentController(
             )
 
         is InteracRefundFlowError.NonRetryableError ->
-            CardReaderInteracRefundState.InteracRefundFailure(
+            CardReaderInteracRefundState.InteracRefundFailure.Cancelable(
                 errorType = errorType,
                 amountWithCurrencyLabel = amountLabel,
                 onCancel = ::onBackPressed
             )
 
         else ->
-            CardReaderInteracRefundState.InteracRefundFailure(
+            CardReaderInteracRefundState.InteracRefundFailure.Cancelable(
                 errorType = errorType,
                 amountWithCurrencyLabel = amountLabel,
                 onRetry = onRetryClicked,
