@@ -61,11 +61,7 @@ class FetchStatsTest : BaseUnitTest() {
             .filter { it !is Waiting }
             .first()
 
-        assertThat(event).isInstanceOf(Finished::class.java)
-        val eventData = (event as Finished).data
-        assertThat(eventData.revenue).isEmpty()
-        assertThat(eventData.ordersCount).isEqualTo(0)
-        assertThat(eventData.visitorsCount).isEqualTo(0)
+        assertThat(event).isEqualTo(StoreStatsRequest.Error)
     }
 
     @Test
