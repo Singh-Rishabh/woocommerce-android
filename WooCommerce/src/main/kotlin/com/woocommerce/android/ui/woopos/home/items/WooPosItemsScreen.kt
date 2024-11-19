@@ -90,9 +90,7 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
         onItemClicked = { item ->
-            (item as? ClickableItem)?.onItemClick { event ->
-                productsViewModel.onUIEvent(event)
-            }
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.ItemClicked(item))
         },
         onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfItemsListReached) },
         onPullToRefresh = { productsViewModel.onUIEvent(PullToRefreshTriggered) },

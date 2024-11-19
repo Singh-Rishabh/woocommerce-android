@@ -814,16 +814,28 @@ class WooPosItemsViewModelTest {
                 )
             )
         )
-        val variationsNavigationData = WooPosItemNavigationData.VariableProductData(
-            id = 1L,
-            name = "Product 1",
-            numOfVariations = 10,
-            variationIds = emptyList()
-        )
         val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosItemsUIEvent.NavigateToVariationsScreen(variationsNavigationData))
+        viewModel.onUIEvent(
+            WooPosItemsUIEvent.ItemClicked(
+                WooPosItem.VariableProduct(
+                    id = 1L,
+                    name = "Product 1",
+                    numOfVariations = 10,
+                    variationIds = emptyList(),
+                    price = "$10.0",
+                    imageUrl = null
+                )
+            )
+        )
 
-        verify(leftPaneNavigator).navigateToVariationsScreen(variationsNavigationData)
+        verify(leftPaneNavigator).navigateToVariationsScreen(
+            WooPosItemNavigationData.VariableProductData(
+                id = 1,
+                name = "Product 1",
+                numOfVariations = 10,
+                variationIds = emptyList()
+            )
+        )
     }
 
     @Test

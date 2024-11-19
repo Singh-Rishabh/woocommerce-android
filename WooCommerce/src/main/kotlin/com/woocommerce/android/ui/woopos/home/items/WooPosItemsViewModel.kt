@@ -91,10 +91,6 @@ class WooPosItemsViewModel @Inject constructor(
                 onSimpleProductsDialogInfoClicked()
             }
 
-            is WooPosItemsUIEvent.NavigateToVariationsScreen -> {
-                navigator.navigateToVariationsScreen(event.itemNavigationData)
-            }
-
             WooPosItemsUIEvent.NavigateBackToItemListScreen -> {
                 navigateBackToItemListScreen()
             }
@@ -116,6 +112,14 @@ class WooPosItemsViewModel @Inject constructor(
             }
 
             is VariableProduct -> {
+                navigator.navigateToVariationsScreen(
+                    WooPosItemNavigationData.VariableProductData(
+                        id = event.item.id,
+                        name = event.item.name,
+                        numOfVariations = event.item.numOfVariations,
+                        variationIds = event.item.variationIds
+                    )
+                )
             }
         }
     }
