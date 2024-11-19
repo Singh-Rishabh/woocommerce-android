@@ -15,26 +15,26 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun WooPosLeftPaneScreens(modifier: Modifier) {
     val viewModel: WooPosLeftPaneScreensViewModel = hiltViewModel()
-    WooPosLeftPaneScreens(modifier = modifier, leftPaneScreen = viewModel.leftPaneScreen) {
-        viewModel.onUiEvent(WooPosLeftPaneScreensNavigationEvent.OnNavigateToItemsListScreen)
+    WooPosLeftPaneScreens(modifier = modifier, leftPaneScreen = viewModel.screenState) {
+        viewModel.onUiEvent(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen)
     }
 }
 
 @Composable
 fun WooPosLeftPaneScreens(
     modifier: Modifier,
-    leftPaneScreen: StateFlow<LeftPaneNavigator.LeftPaneScreen>,
+    leftPaneScreen: StateFlow<WooPosLeftPaneScreensViewModel.LeftPaneScreen>,
     onNavigateToItemsListScreen: () -> Unit
 ) {
     val currentNavigationState = leftPaneScreen.collectAsState()
     Box(modifier = modifier.fillMaxSize()) {
         Crossfade(targetState = currentNavigationState.value, label = "LeftPaneScreen") { navigationState ->
             when (navigationState) {
-                is LeftPaneNavigator.LeftPaneScreen.ItemListScreen -> {
+                is WooPosLeftPaneScreensViewModel.LeftPaneScreen.ItemListScreen -> {
                     WooPosItemsScreen(modifier = modifier)
                 }
 
-                is LeftPaneNavigator.LeftPaneScreen.VariationsScreen -> {
+                is WooPosLeftPaneScreensViewModel.LeftPaneScreen.VariationsScreen -> {
                     NavigateToVariationsScreen(
                         variableProductData = navigationState.product,
                         modifier = modifier,

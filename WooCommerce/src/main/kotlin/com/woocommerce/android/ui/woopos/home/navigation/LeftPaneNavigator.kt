@@ -1,23 +1,20 @@
 package com.woocommerce.android.ui.woopos.home.navigation
 
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import javax.inject.Inject
 
-class LeftPaneNavigator {
-    private val _leftPaneScreen = MutableStateFlow<LeftPaneScreen>(LeftPaneScreen.ItemListScreen)
-    val leftPaneScreen: StateFlow<LeftPaneScreen> = _leftPaneScreen
+class LeftPaneNavigator @Inject constructor() {
+    private val _events = MutableSharedFlow<LeftPaneNavigationEvent>()
+    val events = _events.asSharedFlow()
 
-    fun navigateToVariationsScreen(product: VariableProductData) {
-        _leftPaneScreen.value = LeftPaneScreen.VariationsScreen(product)
+    suspend fun sendNavigationEvent(event: LeftPaneNavigationEvent) {
+        _events.emit(event)
     }
 
-    fun navigateBackToItemListScreen() {
-        _leftPaneScreen.value = LeftPaneScreen.ItemListScreen
-    }
-
-    sealed class LeftPaneScreen {
-        data object ItemListScreen : LeftPaneScreen()
-        data class VariationsScreen(val product: VariableProductData) : LeftPaneScreen()
+    sealed class LeftPaneNavigationEvent {
+        data class NavigateToVariationsScreen(val product: VariableProductData) : LeftPaneNavigationEvent()
+        data object NavigateBackToItemListScreen : LeftPaneNavigationEvent()
     }
 }

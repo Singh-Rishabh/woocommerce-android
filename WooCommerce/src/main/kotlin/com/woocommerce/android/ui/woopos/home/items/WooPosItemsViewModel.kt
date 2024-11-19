@@ -34,8 +34,6 @@ class WooPosItemsViewModel @Inject constructor(
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
 
-    val leftPaneScreen = navigator.leftPaneScreen
-
     private val _viewState =
         MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
     val viewState: StateFlow<WooPosItemsViewState> = _viewState
@@ -99,7 +97,11 @@ class WooPosItemsViewModel @Inject constructor(
     }
 
     private fun navigateBackToItemListScreen() {
-        navigator.navigateBackToItemListScreen()
+        viewModelScope.launch {
+            navigator.sendNavigationEvent(
+                LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen
+            )
+        }
     }
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
@@ -113,14 +115,18 @@ class WooPosItemsViewModel @Inject constructor(
             }
 
             is VariableProduct -> {
-                navigator.navigateToVariationsScreen(
-                    WooPosItemNavigationData.VariableProductData(
-                        id = event.item.id,
-                        name = event.item.name,
-                        numOfVariations = event.item.numOfVariations,
-                        variationIds = event.item.variationIds
+                viewModelScope.launch {
+                    navigator.sendNavigationEvent(
+                        LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(
+                            WooPosItemNavigationData.VariableProductData(
+                                id = event.item.id,
+                                name = event.item.name,
+                                numOfVariations = event.item.numOfVariations,
+                                variationIds = event.item.variationIds
+                            )
+                        )
                     )
-                )
+                }
             }
         }
     }
