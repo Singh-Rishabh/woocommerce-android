@@ -575,6 +575,18 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             verify(tracker, never()).trackInteracPaymentSucceeded()
         }
 
+    @Test
+    fun `when processing payment completed with unknown, then tracking keeper stores payment type`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.UNKNOWN)) }
+            }
+
+            controller.start()
+
+            verify(cardReaderTrackingInfoKeeper).setPaymentMethodType("unknown")
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }

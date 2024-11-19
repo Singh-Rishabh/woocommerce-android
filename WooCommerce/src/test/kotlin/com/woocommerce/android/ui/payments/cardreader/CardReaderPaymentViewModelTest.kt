@@ -33,9 +33,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingP
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.InitializingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentCompleted
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentFailed
-import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentMethodType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPayment
-import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPaymentCompleted
 import com.woocommerce.android.cardreader.payments.PaymentData
 import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.cardreader.payments.RefundParams
@@ -593,18 +591,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             viewModel.start()
 
             assertThat(viewModel.viewStateData.value).isInstanceOf(BuiltInReaderProcessingPaymentState::class.java)
-        }
-
-    @Test
-    fun `when processing payment completed with unknown, then tracking keeper stores payment type`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.UNKNOWN)) }
-            }
-
-            viewModel.start()
-
-            verify(cardReaderTrackingInfoKeeper).setPaymentMethodType("unknown")
         }
 
     @Test
