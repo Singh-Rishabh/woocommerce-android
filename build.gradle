@@ -18,11 +18,43 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
+ext {
+    secretProperties = loadPropertiesWithFallback(
+            logger,
+            file("${rootDir}/defaults.properties"),
+            file("${System.getProperty("user.home")}/.configure/woocommerce-android/secrets/secrets.properties")
+    )
+    userEnabledTracking = secretProperties.get('measureBuildsEnabled')?.toBoolean() ?: false
+
+    developerProperties = loadPropertiesWithFallback(
+            logger,
+            file("${rootDir}/developer.properties-example"),
+            file("${rootDir}/developer.properties")
+    )
+}
+
 measureBuilds {
-    enable = findProperty('tracksEnabled')?.toBoolean() ?: false
+    enable = userEnabledTracking
     automatticProject = MeasureBuildsExtension.AutomatticProject.WooCommerce
     attachGradleScanId = true
-    authToken = findProperty('appsMetricsToken')
+    authToken = secretProperties.get('appsMetricsToken')
+}
+
+static def loadPropertiesWithFallback(Logger logger, File fallbackFile, File primaryFile) {
+    if (primaryFile.exists()) {
+        return readPropertiesFromFile(primaryFile)
+    } else {
+        logger.warn("Primary properties file not found: ${primaryFile}. Using fallback: ${fallbackFile}.")
+        return readPropertiesFromFile(fallbackFile)
+    }
+}
+
+static def readPropertiesFromFile(File file) {
+    def properties = new Properties()
+    file.withInputStream { stream ->
+        properties.load(stream)
+    }
+    return properties
 }
 
 allprojects {
