@@ -1,7 +1,8 @@
 package com.woocommerce.android.wear.ui.stats.datasource
 
-import com.woocommerce.android.wear.ui.stats.datasource.StoreStatsData.StatRequest.*
-import org.junit.Assert.*
+import com.woocommerce.android.wear.ui.stats.datasource.StoreStatsData.StatRequest
+import com.woocommerce.android.wear.ui.stats.datasource.StoreStatsData.StatRequest.Waiting
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class StoreStatsDataTest {
@@ -13,11 +14,11 @@ class StoreStatsDataTest {
 
         val storeStatsData = StoreStatsData(revenueData, visitorData)
 
-        assertEquals("1000", storeStatsData.revenue)
-        assertEquals(10, storeStatsData.ordersCount)
-        assertEquals(100, storeStatsData.visitorsCount)
-        assertEquals("10%", storeStatsData.conversionRate)
-        assertTrue(storeStatsData.isComplete)
+        assertThat(storeStatsData.revenue).isEqualTo("1000")
+        assertThat(storeStatsData.ordersCount).isEqualTo(10)
+        assertThat(storeStatsData.visitorsCount).isEqualTo(100)
+        assertThat(storeStatsData.conversionRate).isEqualTo("10%")
+        assertThat(storeStatsData.isComplete).isTrue
     }
 
     @Test
@@ -27,25 +28,25 @@ class StoreStatsDataTest {
 
         val storeStatsData = StoreStatsData(revenueRequest, visitorRequest)
 
-        assertEquals("", storeStatsData.revenue)
-        assertEquals(0, storeStatsData.ordersCount)
-        assertEquals(0, storeStatsData.visitorsCount)
-        assertEquals("0%", storeStatsData.conversionRate)
-        assertFalse(storeStatsData.isComplete)
+        assertThat(storeStatsData.revenue).isEqualTo("")
+        assertThat(storeStatsData.ordersCount).isEqualTo(0)
+        assertThat(storeStatsData.visitorsCount).isEqualTo(0)
+        assertThat(storeStatsData.conversionRate).isEqualTo("0%")
+        assertThat(storeStatsData.isComplete).isFalse
     }
 
     @Test
     fun `StoreStatsData with error requests should return default values`() {
-        val revenueRequest = Error<StoreStatsData.RevenueData>()
-        val visitorRequest = Error<Int>()
+        val revenueRequest = StatRequest.Error<StoreStatsData.RevenueData>()
+        val visitorRequest = StatRequest.Error<Int>()
 
         val storeStatsData = StoreStatsData(revenueRequest, visitorRequest)
 
-        assertEquals("", storeStatsData.revenue)
-        assertEquals(0, storeStatsData.ordersCount)
-        assertEquals(0, storeStatsData.visitorsCount)
-        assertEquals("0%", storeStatsData.conversionRate)
-        assertFalse(storeStatsData.isComplete)
+        assertThat(storeStatsData.revenue).isEqualTo("")
+        assertThat(storeStatsData.ordersCount).isEqualTo(0)
+        assertThat(storeStatsData.visitorsCount).isEqualTo(0)
+        assertThat(storeStatsData.conversionRate).isEqualTo("0%")
+        assertThat(storeStatsData.isComplete).isFalse
     }
 
     @Test
@@ -53,28 +54,28 @@ class StoreStatsDataTest {
         val revenueData = StoreStatsData.RevenueData(totalRevenue = "1000", orderCount = 10)
         val visitorRequest = Waiting<Int>()
 
-        val storeStatsData = StoreStatsData(Finished(revenueData), visitorRequest)
+        val storeStatsData = StoreStatsData(StatRequest.Finished(revenueData), visitorRequest)
 
-        assertFalse(storeStatsData.isComplete)
+        assertThat(storeStatsData.isComplete).isFalse
     }
 
     @Test
     fun `StoreStatsData with mixed finished and error requests should return complete`() {
         val revenueData = StoreStatsData.RevenueData(totalRevenue = "1000", orderCount = 10)
-        val visitorRequest = Error<Int>()
+        val visitorRequest = StatRequest.Error<Int>()
 
-        val storeStatsData = StoreStatsData(Finished(revenueData), visitorRequest)
+        val storeStatsData = StoreStatsData(StatRequest.Finished(revenueData), visitorRequest)
 
-        assertTrue(storeStatsData.isComplete)
+        assertThat(storeStatsData.isComplete).isTrue
     }
 
     @Test
     fun `StoreStatsData with mixed waiting and error requests should return complete`() {
         val revenueRequest = Waiting<StoreStatsData.RevenueData>()
-        val visitorRequest = Error<Int>()
+        val visitorRequest = StatRequest.Error<Int>()
 
         val storeStatsData = StoreStatsData(revenueRequest, visitorRequest)
 
-        assertFalse(storeStatsData.isComplete)
+        assertThat(storeStatsData.isComplete).isFalse
     }
 }
