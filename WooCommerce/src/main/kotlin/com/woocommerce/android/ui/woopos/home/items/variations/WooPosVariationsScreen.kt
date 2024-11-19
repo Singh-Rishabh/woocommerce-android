@@ -222,7 +222,7 @@ private fun VariationsToolbar(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(id = R.string.woopos_variations_back_content_description),
                 tint = MaterialTheme.colors.onSurface
             )
         }
@@ -240,7 +240,10 @@ private fun VariationsToolbar(
         )
 
         Text(
-            text = "${variableProductData.numOfVariations} variations",
+            text = stringResource(
+                id = R.string.woopos_items_list_variable_product_variations,
+                variableProductData.numOfVariations
+            ),
             style = MaterialTheme.typography.h6,
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
             modifier = Modifier.constrainAs(variationsCount) {
