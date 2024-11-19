@@ -37,7 +37,7 @@ class StoreStatsData(
         }
 
     val isComplete
-        get() = revenueRequest.isComplete && visitorRequest.isComplete
+        get() = revenueRequest is StatRequest.Finished && visitorRequest.isComplete
 
     data class RevenueData(
         val totalRevenue: String,
