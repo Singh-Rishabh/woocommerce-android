@@ -760,41 +760,42 @@ class WooPosItemsViewModelTest {
     }
 
     @Test
-    fun `given simple products banner displayed, when learn more clicked, then appropriate event is triggered`() = runTest {
-        // GIVEN
-        val products = listOf(
-            ProductTestUtils.generateProduct(
-                productId = 1,
-                productName = "Product 1",
-                amount = "10.0",
-                productType = "simple"
-            ),
-            ProductTestUtils.generateProduct(
-                productId = 2,
-                productName = "Product 2",
-                amount = "20.0",
-                productType = "simple"
-            ).copy(firstImageUrl = "https://test.com")
-        )
+    fun `given simple products banner displayed, when learn more clicked, then appropriate event is triggered`() =
+        runTest {
+            // GIVEN
+            val products = listOf(
+                ProductTestUtils.generateProduct(
+                    productId = 1,
+                    productName = "Product 1",
+                    amount = "10.0",
+                    productType = "simple"
+                ),
+                ProductTestUtils.generateProduct(
+                    productId = 2,
+                    productName = "Product 2",
+                    amount = "20.0",
+                    productType = "simple"
+                ).copy(firstImageUrl = "https://test.com")
+            )
 
-        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
-            flowOf(
-                WooPosProductsDataSource.ProductsResult.Remote(
-                    Result.success(products)
+            whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+                flowOf(
+                    WooPosProductsDataSource.ProductsResult.Remote(
+                        Result.success(products)
+                    )
                 )
             )
-        )
-        whenever(posPreferencesRepository.isSimpleProductsOnlyBannerWasHiddenByUser).thenReturn(
-            flowOf(false)
-        )
+            whenever(posPreferencesRepository.isSimpleProductsOnlyBannerWasHiddenByUser).thenReturn(
+                flowOf(false)
+            )
 
-        // WHEN
-        val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
+            // WHEN
+            val viewModel = createViewModel()
+            viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
 
-        // THEN
-        verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
-    }
+            // THEN
+            verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
+        }
 
     @Test
     fun `given variable product, when clicked on it, then trigger proper event`() = runTest {
@@ -829,12 +830,14 @@ class WooPosItemsViewModelTest {
             )
         )
 
-        verify(leftPaneNavigator).navigateToVariationsScreen(
-            WooPosItemNavigationData.VariableProductData(
-                id = 1,
-                name = "Product 1",
-                numOfVariations = 10,
-                variationIds = emptyList()
+        verify(leftPaneNavigator).sendNavigationEvent(
+            LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(
+                WooPosItemNavigationData.VariableProductData(
+                    id = 1,
+                    name = "Product 1",
+                    numOfVariations = 10,
+                    variationIds = emptyList()
+                )
             )
         )
     }
@@ -861,47 +864,50 @@ class WooPosItemsViewModelTest {
         val viewModel = createViewModel()
         viewModel.onUIEvent(WooPosItemsUIEvent.BackButtonClicked)
 
-        verify(leftPaneNavigator).navigateBackToItemListScreen()
+        verify(leftPaneNavigator).sendNavigationEvent(
+            LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen
+        )
     }
 
     @Test
-    fun `given variable products from data source, when view model created, then items list updated correctly`() = runTest {
-        // GIVEN
-        val products = listOf(
-            ProductTestUtils.generateProduct(
-                productId = 1,
-                productName = "Product 1",
-                amount = "10.0",
-                productType = "simple",
-                isDownloadable = false,
-            ),
-            ProductTestUtils.generateProduct(
-                productId = 2,
-                productName = "Product 2",
-                amount = "20.0",
-                productType = "variable",
-                isDownloadable = false,
-                isVariable = true
-            ).copy(firstImageUrl = "https://test.com")
-        )
+    fun `given variable products from data source, when view model created, then items list updated correctly`() =
+        runTest {
+            // GIVEN
+            val products = listOf(
+                ProductTestUtils.generateProduct(
+                    productId = 1,
+                    productName = "Product 1",
+                    amount = "10.0",
+                    productType = "simple",
+                    isDownloadable = false,
+                ),
+                ProductTestUtils.generateProduct(
+                    productId = 2,
+                    productName = "Product 2",
+                    amount = "20.0",
+                    productType = "variable",
+                    isDownloadable = false,
+                    isVariable = true
+                ).copy(firstImageUrl = "https://test.com")
+            )
 
-        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
-            flowOf(
-                WooPosProductsDataSource.ProductsResult.Remote(
-                    Result.success(products)
+            whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+                flowOf(
+                    WooPosProductsDataSource.ProductsResult.Remote(
+                        Result.success(products)
+                    )
                 )
             )
-        )
 
-        // WHEN
-        val viewModel = createViewModel()
-        viewModel.viewState.test {
-            // THEN
-            val value = awaitItem() as WooPosItemsViewState.Content
+            // WHEN
+            val viewModel = createViewModel()
+            viewModel.viewState.test {
+                // THEN
+                val value = awaitItem() as WooPosItemsViewState.Content
 
-            assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
+                assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
+            }
         }
-    }
 
     private fun createViewModel() =
         WooPosItemsViewModel(
