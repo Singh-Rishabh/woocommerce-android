@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.woopos.home.navigation
 
-import com.woocommerce.android.ui.woopos.home.items.LeftPaneNavigator
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify

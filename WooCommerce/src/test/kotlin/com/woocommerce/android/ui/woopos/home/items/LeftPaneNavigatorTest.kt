@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items
 
+import com.woocommerce.android.ui.woopos.home.navigation.LeftPaneNavigator
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first

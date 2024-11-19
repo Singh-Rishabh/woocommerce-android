@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.items
+package com.woocommerce.android.ui.woopos.home.navigation
 
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import kotlinx.coroutines.flow.MutableStateFlow
