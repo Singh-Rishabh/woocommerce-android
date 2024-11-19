@@ -16,7 +16,7 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboa
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlow
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -43,7 +43,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     interacRefundableChecker: CardReaderInteracRefundableChecker,
     tracker: PaymentsFlowTracker,
-    trackCancelledFlow: CardReaderTrackCanceledFlow,
+    trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     currencyFormatter: CurrencyFormatter,
     errorMapper: CardReaderPaymentErrorMapper,
     interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,

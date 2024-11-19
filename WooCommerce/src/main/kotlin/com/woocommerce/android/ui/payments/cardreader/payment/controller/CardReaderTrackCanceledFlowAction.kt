@@ -6,7 +6,7 @@ import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.WooLog
 import javax.inject.Inject
 
-class CardReaderTrackCanceledFlow @Inject constructor(
+class CardReaderTrackCanceledFlowAction @Inject constructor(
     private val tracker: PaymentsFlowTracker,
 ) {
     operator fun invoke(state: CardReaderPaymentOrRefundState) = when (state) {
