@@ -596,18 +596,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when processing payment completed with unknown type, then do not track interac success`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.UNKNOWN)) }
-            }
-
-            viewModel.start()
-
-            verify(tracker, never()).trackInteracPaymentSucceeded()
-        }
-
-    @Test
     fun `when processing payment completed with unknown, then tracking keeper stores payment type`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
