@@ -101,6 +101,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
             },
             onFailure = {
                 val failure = (it as? OnChangedException)?.error as? AuthOptionsError
+                var isSignup = false
 
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
@@ -108,7 +109,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                             !StringUtils.isValidEmail(emailOrUsername) ->
                                 errorMessage.value = R.string.username_not_registered_wpcom
 
-                            FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() ->
+                            FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() -> {
                                 triggerEvent(
                                     ShowMagicLinkScreen(
                                         emailOrUsername,
@@ -116,6 +117,8 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                                         isNewWpComAccount = true
                                     )
                                 )
+                                isSignup = true
+                            }
 
                             else -> errorMessage.value = R.string.email_not_registered_wpcom
                         }
@@ -131,16 +134,24 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                     }
                 }
 
-                analyticsTrackerWrapper.track(
-                    JETPACK_SETUP_LOGIN_FLOW,
-                    mapOf(
-                        AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS,
-                        AnalyticsTracker.KEY_FAILURE to (failure?.type?.name ?: "Unknown error")
-                    )
-                )
+                trackLoginFlowAuthOptionError(failure, isSignup)
             }
         )
         isLoadingDialogShown.value = false
+    }
+
+    private fun trackLoginFlowAuthOptionError(
+        failure: AuthOptionsError?,
+        isSignup: Boolean
+    ) {
+        analyticsTrackerWrapper.track(
+            JETPACK_SETUP_LOGIN_FLOW,
+            mapOf(
+                AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS,
+                AnalyticsTracker.KEY_FAILURE to (failure?.type?.name ?: "Unknown error"),
+                AnalyticsTracker.KEY_IS_SIGN_UP to isSignup
+            )
+        )
     }
 
     data class ViewState(
