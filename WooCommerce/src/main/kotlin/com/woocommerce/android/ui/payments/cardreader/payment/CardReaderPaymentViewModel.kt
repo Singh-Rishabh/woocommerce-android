@@ -744,6 +744,7 @@ class CardReaderPaymentViewModel
                     errorDescription = receiptResult.exceptionOrNull()?.message ?: "Unknown error",
                 )
                 triggerEvent(ShowSnackbar(R.string.receipt_fetching_error))
+                onCancelPaymentFlow()
             }
         }
     }
