@@ -4304,6 +4304,7 @@
     <string name="woopos_no_internet_message">It looks like you\'re not connected to the internet. Ensure your Wi-Fi is turned on. If you\'re using mobile data, make sure it\'s enabled in your device settings.</string>
 
     <string name="woopos_items_list_variable_product_variations">%1$d variations</string>
+    <string name="woopos_variations_back_content_description">Back</string>
     <string name="woopos_variations_screen_pagination_error">"Failed to load more items. Please try again."</string>
     <string name="woopos_variations_loading_error_title">Error loading variations</string>
 
