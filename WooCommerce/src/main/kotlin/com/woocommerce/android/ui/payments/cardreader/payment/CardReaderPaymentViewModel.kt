@@ -15,6 +15,8 @@ import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigPro
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -41,6 +43,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     interacRefundableChecker: CardReaderInteracRefundableChecker,
     tracker: PaymentsFlowTracker,
+    trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     currencyFormatter: CurrencyFormatter,
     errorMapper: CardReaderPaymentErrorMapper,
     interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -48,6 +51,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     dispatchers: CoroutineDispatchers,
     cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper,
     cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
+    paymentStateProvider: CardReaderPaymentStateProvider,
     cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper,
     paymentReceiptHelper: PaymentReceiptHelper,
     cardReaderOnboardingChecker: CardReaderOnboardingChecker,
@@ -71,6 +75,7 @@ class CardReaderPaymentViewModel @Inject constructor(
         paymentCollectibilityChecker = paymentCollectibilityChecker,
         interacRefundableChecker = interacRefundableChecker,
         tracker = tracker,
+        trackCancelledFlow = trackCancelledFlow,
         currencyFormatter = currencyFormatter,
         errorMapper = errorMapper,
         interacRefundErrorMapper = interacRefundErrorMapper,
@@ -78,6 +83,7 @@ class CardReaderPaymentViewModel @Inject constructor(
         dispatchers = dispatchers,
         cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
         cardReaderPaymentReaderTypeStateProvider = cardReaderPaymentReaderTypeStateProvider,
+        paymentStateProvider = paymentStateProvider,
         cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
         paymentReceiptHelper = paymentReceiptHelper,
         cardReaderOnboardingChecker = cardReaderOnboardingChecker,
@@ -88,6 +94,7 @@ class CardReaderPaymentViewModel @Inject constructor(
         isTTPPaymentInProgress = ::isTTPPaymentInProgress,
     )
 
+    @Suppress("DEPRECATION")
     val viewStateData: LiveData<ViewState> = paymentController.viewStateData
 
     override val event: LiveData<MultiLiveEvent.Event> =

@@ -60,13 +60,10 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentC
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentReaderTypeStateProvider
-import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlow
 import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowError
-import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlow
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderCollectPaymentState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.CollectRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderCollectPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.FailedRefundState
@@ -76,6 +73,9 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.Processi
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -92,6 +92,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -110,6 +112,7 @@ class CardReaderPaymentController(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     private val tracker: PaymentsFlowTracker,
+    private val trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -117,6 +120,7 @@ class CardReaderPaymentController(
     private val dispatchers: CoroutineDispatchers,
     private val cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper,
     private val cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
+    private val paymentStateProvider: CardReaderPaymentStateProvider,
     private val cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper,
     private val paymentReceiptHelper: PaymentReceiptHelper,
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker,
@@ -127,7 +131,22 @@ class CardReaderPaymentController(
     private val isTTPPaymentInProgress: KMutableProperty0<Boolean>,
 ) {
     private val viewState = MutableLiveData<ViewState>(LoadingDataState(::onCancelPaymentFlow))
+
+    @Deprecated(
+        level = DeprecationLevel.WARNING,
+        message = "Use [CardReaderPaymentController.paymentState] and map to ViewState in the target [ViewModel]"
+    )
     val viewStateData: LiveData<ViewState> = viewState
+
+    private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
+        MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
+
+    /**
+     * Exposes payment collection state.
+     *
+     * Returns observable of [CardReaderPaymentOrRefundState].
+     */
+    val paymentState: StateFlow<CardReaderPaymentOrRefundState> = _paymentState
 
     private var paymentFlowJob: Job? = null
     private var refundFlowJob: Job? = null
@@ -163,11 +182,16 @@ class CardReaderPaymentController(
         if (isVMKilledWhenTTPActivityInForeground) {
             tracker.trackPaymentFailed("VM killed when TTP activity in foreground")
             viewState.postValue(
-                buildFailedPaymentState(
+                buildFailedPaymentViewState(
                     PaymentFlowError.BuiltInReader.AppKilledWhileInBackground,
                     "",
                     {}
                 )
+            )
+            _paymentState.value = buildFailedPaymentState(
+                PaymentFlowError.BuiltInReader.AppKilledWhileInBackground,
+                "",
+                {}
             )
         } else {
             when (paymentOrRefund) {
@@ -195,6 +219,7 @@ class CardReaderPaymentController(
             when (message) {
                 is BluetoothCardReaderMessages.CardReaderDisplayMessage -> {
                     handleAdditionalInfo(message.message)
+                    updatePaymentState(message.message)
                 }
 
                 is BluetoothCardReaderMessages.CardReaderInputMessage -> {
@@ -211,6 +236,7 @@ class CardReaderPaymentController(
     private fun initPaymentFlow(isRetry: Boolean) {
         paymentFlowJob = scope.launch {
             viewState.postValue((LoadingDataState(::onCancelPaymentFlow)))
+            _paymentState.value = CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             if (isRetry) {
                 delay(ARTIFICIAL_RETRY_DELAY)
             }
@@ -237,6 +263,12 @@ class CardReaderPaymentController(
                         amountLabel = null,
                         onPrimaryActionClicked = { initPaymentFlow(isRetry = true) }
                     )
+                )
+                _paymentState.value = paymentStateProvider.provideFailedPaymentState(
+                    cardReaderType = cardReaderType,
+                    errorType = PaymentFlowError.FetchingOrderFailed,
+                    amountWithCurrencyLabel = null,
+                    onRetry = { initPaymentFlow(isRetry = true) },
                 )
             }
         }
@@ -271,6 +303,11 @@ class CardReaderPaymentController(
                         onPrimaryActionClicked = { initRefundFlow(isRetry = true) }
                     )
                 )
+                _paymentState.value = CardReaderInteracRefundState.InteracRefundFailure(
+                    errorType = InteracRefundFlowError.FetchingOrderFailed,
+                    amountWithCurrencyLabel = null,
+                    onRetry = { initRefundFlow(isRetry = true) },
+                )
             }
         }
     }
@@ -278,6 +315,7 @@ class CardReaderPaymentController(
     fun retry(orderId: Long, billingEmail: String, paymentData: PaymentData, amountLabel: String) {
         paymentFlowJob = scope.launch {
             viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
+            _paymentState.value = CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             delay(ARTIFICIAL_RETRY_DELAY)
             cardReaderManager.retryCollectPayment(orderId, paymentData).collect { paymentStatus ->
                 onPaymentStatusChanged(orderId, billingEmail, paymentStatus, amountLabel)
@@ -324,6 +362,7 @@ class CardReaderPaymentController(
         }
     }
 
+    @Suppress("LongMethod")
     private suspend fun onPaymentStatusChanged(
         orderId: Long,
         billingEmail: String,
@@ -332,22 +371,40 @@ class CardReaderPaymentController(
     ) {
         paymentDataForRetry = null
         when (paymentStatus) {
-            InitializingPayment -> viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
-            CollectingPayment -> viewState.postValue(
-                cardReaderPaymentReaderTypeStateProvider.provideCollectPaymentState(
+            InitializingPayment -> {
+                viewState.postValue(LoadingDataState(::onCancelPaymentFlow))
+                _paymentState.value =
+                    CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
+            }
+            CollectingPayment -> {
+                viewState.postValue(
+                    cardReaderPaymentReaderTypeStateProvider.provideCollectPaymentState(
+                        cardReaderType,
+                        amountLabel,
+                        ::onCancelPaymentFlow
+                    )
+                )
+                _paymentState.value = paymentStateProvider.provideCollectingPaymentState(
                     cardReaderType,
                     amountLabel,
                     ::onCancelPaymentFlow
                 )
-            )
+            }
 
-            ProcessingPayment -> viewState.postValue(
-                cardReaderPaymentReaderTypeStateProvider.provideProcessingPaymentState(
+            ProcessingPayment -> {
+                viewState.postValue(
+                    cardReaderPaymentReaderTypeStateProvider.provideProcessingPaymentState(
+                        cardReaderType,
+                        amountLabel,
+                        ::onCancelPaymentFlow
+                    )
+                )
+                _paymentState.value = paymentStateProvider.provideProcessingPaymentState(
                     cardReaderType,
                     amountLabel,
                     ::onCancelPaymentFlow
                 )
-            )
+            }
 
             is ProcessingPaymentCompleted -> {
                 cardReaderTrackingInfoKeeper.setPaymentMethodType(paymentStatus.paymentMethodType.stringRepresentation)
@@ -358,12 +415,18 @@ class CardReaderPaymentController(
                 }
             }
 
-            CapturingPayment -> viewState.postValue(
-                cardReaderPaymentReaderTypeStateProvider.provideCapturingPaymentState(
-                    cardReaderType,
-                    amountLabel,
+            CapturingPayment -> {
+                viewState.postValue(
+                    cardReaderPaymentReaderTypeStateProvider.provideCapturingPaymentState(
+                        cardReaderType,
+                        amountLabel,
+                    )
                 )
-            )
+                _paymentState.value = paymentStateProvider.provideCapturingPaymentState(
+                    cardReaderType,
+                    amountLabel
+                )
+            }
 
             is PaymentCompleted -> {
                 tracker.trackPaymentSucceeded()
@@ -435,17 +498,30 @@ class CardReaderPaymentController(
         amountLabel: String
     ) {
         when (refundStatus) {
-            InitializingInteracRefund -> viewState.postValue(RefundLoadingDataState(::onCancelPaymentFlow))
-            CollectingInteracRefund -> viewState.postValue(
-                CollectRefundState(
-                    amountLabel,
-                    onSecondaryActionClicked = ::onCancelPaymentFlow
+            InitializingInteracRefund -> {
+                viewState.postValue(RefundLoadingDataState(::onCancelPaymentFlow))
+                _paymentState.value = CardReaderInteracRefundState.LoadingData(::onCancelPaymentFlow)
+            }
+            CollectingInteracRefund -> {
+                viewState.postValue(
+                    CollectRefundState(
+                        amountLabel,
+                        onSecondaryActionClicked = ::onCancelPaymentFlow
+                    )
                 )
-            )
+                _paymentState.value = CardReaderInteracRefundState.CollectingInteracRefund(
+                    amountWithCurrencyLabel = amountLabel,
+                    onCancel = ::onCancelPaymentFlow
+                )
+            }
 
-            ProcessingInteracRefund -> viewState.postValue(ProcessingRefundState(amountLabel))
+            ProcessingInteracRefund -> {
+                viewState.postValue(ProcessingRefundState(amountLabel))
+                _paymentState.value = CardReaderInteracRefundState.ProcessingInteracRefund(amountLabel)
+            }
             is InteracRefundSuccess -> {
                 viewState.postValue(RefundSuccessfulState(amountLabel))
+                _paymentState.value = CardReaderInteracRefundState.InteracRefundSuccessful(amountLabel)
                 triggerEvent(CardReaderPaymentEvent.InteracRefundSuccessful)
             }
 
@@ -493,7 +569,7 @@ class CardReaderPaymentController(
                     R.string.card_reader_refetching_order_failed
                 )
             )
-            if (viewState.value == ReFetchingOrderState) {
+            if (_paymentState.value == CardReaderPaymentState.ReFetchingOrder) {
                 triggerEvent(CardReaderPaymentEvent.Exit)
             }
         }
@@ -504,17 +580,18 @@ class CardReaderPaymentController(
     }
 
     private fun emitFailedInteracRefundState(
-        amountLabel: String?,
+        amountLabel: String,
         error: InteracRefundFailure
     ) {
         WooLog.e(WooLog.T.CARD_READER, "Refund failed: ${error.errorMessage}")
         cardReaderOnboardingChecker.invalidateCache()
         val onRetryClicked = { retryInteracRefund() }
         val errorType = interacRefundErrorMapper.mapRefundErrorToUiError(error.type)
-        viewState.postValue(buildInteracRefundFailedState(errorType, amountLabel, onRetryClicked))
+        viewState.postValue(buildInteracRefundFailedViewState(errorType, amountLabel, onRetryClicked))
+        _paymentState.value = buildInteracRefundFailedState(errorType, amountLabel, onRetryClicked)
     }
 
-    private fun buildInteracRefundFailedState(
+    private fun buildInteracRefundFailedViewState(
         errorType: InteracRefundFlowError,
         amountLabel: String?,
         onRetryClicked: () -> Unit
@@ -547,6 +624,38 @@ class CardReaderPaymentController(
             )
     }
 
+    private fun buildInteracRefundFailedState(
+        errorType: InteracRefundFlowError,
+        amountLabel: String,
+        onRetryClicked: () -> Unit
+    ) = when (errorType) {
+        is InteracRefundFlowError.ContactSupportError ->
+            CardReaderInteracRefundState.InteracRefundFailure(
+                errorType = errorType,
+                amountWithCurrencyLabel = amountLabel,
+                cta = CardReaderPaymentOrRefundState.CallToAction(
+                    label = R.string.support_contact,
+                    onCallToActionTapped = { onContactSupportClicked() }
+                ),
+                onCancel = ::onBackPressed
+            )
+
+        is InteracRefundFlowError.NonRetryableError ->
+            CardReaderInteracRefundState.InteracRefundFailure(
+                errorType = errorType,
+                amountWithCurrencyLabel = amountLabel,
+                onCancel = ::onBackPressed
+            )
+
+        else ->
+            CardReaderInteracRefundState.InteracRefundFailure(
+                errorType = errorType,
+                amountWithCurrencyLabel = amountLabel,
+                onRetry = onRetryClicked,
+                onCancel = ::onBackPressed
+            )
+    }
+
     private suspend fun emitFailedPaymentState(
         orderId: Long,
         billingEmail: String,
@@ -571,10 +680,61 @@ class CardReaderPaymentController(
             config,
             cardReaderType == CardReaderType.BUILT_IN
         )
-        viewState.postValue(buildFailedPaymentState(errorType, amountLabel, onRetryClicked))
+        viewState.postValue(buildFailedPaymentViewState(errorType, amountLabel, onRetryClicked))
+        _paymentState.value = buildFailedPaymentState(errorType, amountLabel, onRetryClicked)
     }
 
     private fun buildFailedPaymentState(
+        errorType: PaymentFlowError,
+        amountLabel: String,
+        onRetryClicked: () -> Unit
+    ): CardReaderPaymentState.PaymentFailed = when (errorType) {
+        is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountWithCurrencyLabel = amountLabel,
+            cta = CardReaderPaymentOrRefundState.CallToAction(
+                label = R.string.support_contact,
+                onCallToActionTapped = { onContactSupportClicked() }
+            ),
+            onCancel = ::onBackPressed
+        )
+        is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountWithCurrencyLabel = amountLabel,
+            onCancel = ::onBackPressed,
+            cta = CardReaderPaymentOrRefundState.CallToAction(
+                label = R.string.card_reader_payment_failed_nfc_disabled_enable_nfc,
+                onCallToActionTapped = { onEnableNfcClicked() }
+            )
+        )
+        is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountWithCurrencyLabel = amountLabel,
+            onCancel = ::onBackPressed,
+        )
+        is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            cta = CardReaderPaymentOrRefundState.CallToAction(
+                label = R.string.card_reader_payment_payment_failed_purchase_hardware_reader,
+                onCallToActionTapped = { onPurchaseCardReaderClicked() }
+            ),
+            errorType = errorType,
+            amountWithCurrencyLabel = amountLabel,
+            onCancel = ::onBackPressed,
+        )
+        else -> paymentStateProvider.provideFailedPaymentState(
+            cardReaderType = cardReaderType,
+            errorType = errorType,
+            amountWithCurrencyLabel = amountLabel,
+            onRetry = onRetryClicked,
+            onCancel = ::onBackPressed,
+        )
+    }
+
+    private fun buildFailedPaymentViewState(
         errorType: PaymentFlowError,
         amountLabel: String,
         onRetryClicked: () -> Unit
@@ -656,6 +816,13 @@ class CardReaderPaymentController(
                         onSaveUserClicked
                     )
                 )
+                _paymentState.value = paymentStateProvider.providePaymentSuccessState(
+                    cardReaderType = cardReaderType,
+                    amountLabel = amountLabel,
+                    onPrintReceiptClicked = onPrintReceiptClicked,
+                    onSendReceiptClicked = onSendReceiptClicked,
+                    onSaveUserClicked = onSaveUserClicked
+                )
             } else {
                 val receiptSentHint = UiStringRes(
                     R.string.card_reader_payment_reader_receipt_sent,
@@ -670,6 +837,13 @@ class CardReaderPaymentController(
                         onPrintReceiptClicked,
                         onSaveUserClicked
                     )
+                )
+                _paymentState.value = paymentStateProvider.providePaymentSuccessfulReceiptSentAutomaticallyState(
+                    cardReaderType = cardReaderType,
+                    amountLabel = amountLabel,
+                    recipientEmail = order.billingAddress.email,
+                    onPrintReceiptClicked = onPrintReceiptClicked,
+                    onSaveUserClicked = onSaveUserClicked
                 )
             }
         }
@@ -693,9 +867,26 @@ class CardReaderPaymentController(
                     hintLabel = type.toHintLabel(false)
                 )
 
+            else -> Unit
+        }
+    }
+
+    private fun updatePaymentState(type: AdditionalInfoType) {
+        when (val state = _paymentState.value) {
+            is CardReaderInteracRefundState.CollectingInteracRefund -> {
+                _paymentState.value = state.copy(
+                    cardReaderHint = type.toHintLabel(true)
+                )
+            }
+
+            is CardReaderPaymentState.CollectingPayment.BuiltInReaderCollectPaymentState ->
+                _paymentState.value = state.copy(
+                    cardReaderHint = type.toHintLabel(false)
+                )
+
             else -> WooLog.e(
                 WooLog.T.CARD_READER,
-                "Got SDK message when cardReaderPaymentViewModel is in ${viewState.value}"
+                "Got SDK message when cardReaderPaymentController is in ${_paymentState.value}"
             )
         }
     }
@@ -728,13 +919,14 @@ class CardReaderPaymentController(
     private fun onPrintReceiptClicked(amountWithCurrencyLabel: String) {
         scope.launch {
             viewState.value = PrintingReceiptState(amountWithCurrencyLabel)
+            _paymentState.value = CardReaderPaymentState.PrintingReceipt(amountWithCurrencyLabel)
             tracker.trackPrintReceiptTapped()
             startPrintingFlow()
         }
     }
 
     fun onViewCreated() {
-        if (viewState.value is PrintingReceiptState) {
+        if (_paymentState.value is CardReaderPaymentState.PrintingReceipt) {
             startPrintingFlow()
         }
     }
@@ -761,8 +953,10 @@ class CardReaderPaymentController(
     private fun onSendReceiptClicked() {
         scope.launch {
             tracker.trackEmailReceiptTapped()
-            val stateBeforeLoading = viewState.value!!
+            val viewStateBeforeLoading = viewState.value!!
+            val paymentStateBeforeLoading = _paymentState.value
             viewState.postValue(ViewState.SharingReceiptState)
+            _paymentState.value = CardReaderPaymentState.SharingReceipt
             val receiptResult = paymentReceiptHelper.getReceiptUrl(paymentOrRefund.orderId)
 
             if (receiptResult.isSuccess) {
@@ -806,7 +1000,8 @@ class CardReaderPaymentController(
                 triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
             }
 
-            viewState.postValue(stateBeforeLoading)
+            viewState.postValue(viewStateBeforeLoading)
+            _paymentState.value = paymentStateBeforeLoading
         }
     }
 
@@ -857,16 +1052,15 @@ class CardReaderPaymentController(
 
     private fun onCancelPaymentFlow() {
         if (refetchOrderJob?.isActive == true) {
-            if (viewState.value != ReFetchingOrderState) {
+            if (_paymentState.value != CardReaderPaymentState.ReFetchingOrder) {
                 viewState.value = ReFetchingOrderState
+                _paymentState.value = CardReaderPaymentState.ReFetchingOrder
             } else {
                 // show "data might be outdated" and exit the flow when the user presses back on FetchingOrder screen
                 exitWithSnackbar(R.string.card_reader_refetching_order_failed)
             }
         } else {
-            viewState.value?.let { state ->
-                trackCancelledFlow(state)
-            }
+            trackCancelledFlow(_paymentState.value)
             triggerEvent(CardReaderPaymentEvent.Exit)
         }
     }
@@ -875,24 +1069,13 @@ class CardReaderPaymentController(
         val readerStatus = cardReaderManager.readerStatus.value
         if (readerStatus is CardReaderStatus.Connected) {
             if (ReaderType.isBuiltInReaderType(readerStatus.cardReader.type) &&
-                (viewState.value is BuiltInReaderFailedPaymentState || viewState.value is FailedRefundState)
+                (
+                    _paymentState.value is BuiltInReaderFailedPayment ||
+                        _paymentState.value is CardReaderInteracRefundState.InteracRefundFailure
+                    )
             ) {
                 scope.launch { cardReaderManager.disconnectReader() }
             }
-        }
-    }
-
-    private fun trackCancelledFlow(state: ViewState) {
-        when (state) {
-            is PaymentFlow -> {
-                tracker.trackPaymentCancelled(state.nameForTracking)
-            }
-
-            is InteracRefundFlow -> {
-                tracker.trackInteracRefundCancelled(state.nameForTracking)
-            }
-
-            else -> WooLog.e(WooLog.T.CARD_READER, "Invalid state received")
         }
     }
 

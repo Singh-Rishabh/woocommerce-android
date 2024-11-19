@@ -88,6 +88,8 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.Processi
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -148,6 +150,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val selectedSite: SelectedSite = mock()
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker = mock()
     private val tracker: PaymentsFlowTracker = mock()
+    private val trackCanceledFlow = CardReaderTrackCanceledFlowAction(tracker)
     private val appPrefs: AppPrefs = mock()
     private val currencyFormatter: CurrencyFormatter = mock()
     private val wooStore: WooCommerceStore = mock()
@@ -179,6 +182,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper = mock()
     private val interacRefundableChecker: CardReaderInteracRefundableChecker = mock()
     private val cardReaderPaymentReaderTypeStateProvider = CardReaderPaymentReaderTypeStateProvider()
+    private val paymentStateProvider = CardReaderPaymentStateProvider()
     private val cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper = mock()
     private val paymentReceiptHelper: PaymentReceiptHelper = mock()
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker = mock()
@@ -200,6 +204,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentCollectibilityChecker = paymentCollectibilityChecker,
             interacRefundableChecker = interacRefundableChecker,
             tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
             appPrefs = appPrefs,
             currencyFormatter = currencyFormatter,
             errorMapper = errorMapper,
@@ -213,6 +218,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
+            paymentStateProvider = paymentStateProvider,
         )
 
         whenever(orderRepository.getOrderById(any())).thenReturn(mockedOrder)
@@ -4488,6 +4494,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentCollectibilityChecker = paymentCollectibilityChecker,
             interacRefundableChecker = interacRefundableChecker,
             tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
             appPrefs = appPrefs,
             currencyFormatter = currencyFormatter,
             errorMapper = errorMapper,
@@ -4501,6 +4508,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
+            paymentStateProvider = CardReaderPaymentStateProvider(),
         )
         viewModel.event.observeForever {}
     }
@@ -4524,6 +4532,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             paymentCollectibilityChecker = paymentCollectibilityChecker,
             interacRefundableChecker = interacRefundableChecker,
             tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
             appPrefs = appPrefs,
             currencyFormatter = currencyFormatter,
             errorMapper = errorMapper,
@@ -4537,6 +4546,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
+            paymentStateProvider = paymentStateProvider,
         )
         viewModel.event.observeForever {}
     }
