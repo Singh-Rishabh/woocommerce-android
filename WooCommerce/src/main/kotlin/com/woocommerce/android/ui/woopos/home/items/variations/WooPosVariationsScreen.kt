@@ -15,9 +15,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -72,7 +74,7 @@ private fun VariationsToolbar(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Back",
+                contentDescription = stringResource(id = R.string.woopos_variations_back_content_description),
                 tint = MaterialTheme.colors.onSurface
             )
         }
