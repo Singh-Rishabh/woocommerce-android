@@ -59,6 +59,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
@@ -548,6 +549,18 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             verify(tracker).trackInteracPaymentSucceeded()
+        }
+
+    @Test
+    fun `when processing payment completed with card present, then do not track interac success`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPaymentCompleted(PaymentMethodType.CARD_PRESENT)) }
+            }
+
+            controller.start()
+
+            verify(tracker, never()).trackInteracPaymentSucceeded()
         }
 
     companion object {
