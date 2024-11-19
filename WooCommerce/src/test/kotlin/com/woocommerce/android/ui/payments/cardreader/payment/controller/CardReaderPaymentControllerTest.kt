@@ -6,6 +6,7 @@ import com.woocommerce.android.cardreader.CardReaderManager
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.CARD_REMOVED_TOO_EARLY
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_CARD
@@ -18,6 +19,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalI
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CapturingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.InitializingPayment
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentCompleted
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentMethodType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPaymentCompleted
@@ -27,6 +29,7 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
+import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -39,6 +42,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentE
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderCapturingPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderCapturingPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -108,6 +112,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         createController()
         whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
         whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(mockedOrder)
+        whenever(orderRepository.getOrderById(any())).thenReturn(mockedOrder)
 
         whenever(mockedOrder.total).thenReturn(DUMMY_TOTAL)
         whenever(mockedOrder.currency).thenReturn("GBP")
@@ -125,11 +130,30 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             .thenReturn("test statement descriptor")
         whenever(paymentReceiptHelper.isPluginCanSendReceipt(siteModel)).thenReturn(true)
 
-        whenever(paymentReceiptHelper.isPluginCanSendReceipt(siteModel)).thenReturn(true)
-        whenever(cardReaderPaymentOrderHelper.getPaymentDescription(mockedOrder)).thenReturn("test description")
         whenever(cardReaderPaymentOrderHelper.getAmountLabel(mockedOrder))
             .thenReturn("${DUMMY_CURRENCY_SYMBOL}${DUMMY_TOTAL}")
         whenever(cardReaderManager.batteryStatus).thenAnswer { flow { emit(CardReaderBatteryStatus.Unknown) } }
+        whenever(currencyFormatter.formatAmountWithCurrency(DUMMY_TOTAL.toDouble(), "GBP"))
+            .thenReturn("${DUMMY_CURRENCY_SYMBOL}${DUMMY_TOTAL}")
+        whenever(mockedOrder.billingAddress).thenReturn(mockedAddress)
+        whenever(mockedAddress.email).thenReturn("")
+        whenever(mockedAddress.firstName).thenReturn("Tester")
+        whenever(mockedAddress.lastName).thenReturn("Test")
+        whenever(mockedOrder.orderKey).thenReturn("wc_order_j0LMK3bFhalEL")
+        whenever(mockedOrder.chargeId).thenReturn("chargeId")
+        whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+            flow<CardPaymentStatus> { }
+        }
+        whenever(cardReaderManager.retryCollectPayment(any(), any())).thenAnswer {
+            flow<CardPaymentStatus> { }
+        }
+        whenever(interacRefundableChecker.isRefundable(any())).thenReturn(true)
+        whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+            flow<BluetoothCardReaderMessages> {}
+        }
+        whenever(paymentReceiptHelper.getReceiptUrl(ORDER_ID)).thenReturn(Result.success("test url"))
+        whenever(cardReaderPaymentOrderHelper.getPaymentDescription(mockedOrder)).thenReturn("test description")
+        whenever(cardReaderPaymentOrderHelper.getReceiptDocumentName(mockedOrder.id)).thenReturn("receipt-order-1")
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -604,7 +628,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given built in reader, when capturing payment, then ui updated to capturing payment state`() =
+    fun `given built in reader, when capturing payment, then capturing payment state emitted`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
                 flow { emit(CapturingPayment) }
@@ -615,6 +639,19 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PaymentCapturing.BuiltInReaderPaymentCapturing::class.java)
+        }
+
+    @Test
+    fun `given billing email empty, when external payment completed, then payment successful state emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
         }
 
     companion object {

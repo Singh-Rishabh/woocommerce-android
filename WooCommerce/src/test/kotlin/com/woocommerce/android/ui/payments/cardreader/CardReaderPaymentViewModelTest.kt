@@ -617,7 +617,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
 
             assertThat(viewModel.viewStateData.value).isInstanceOf(BuiltInReaderCapturingPaymentState::class.java)
         }
-
+///
     @Test
     fun `given billing email empty, when external payment completed, then ui updated to external payment successful state`() =
         testBlocking {
