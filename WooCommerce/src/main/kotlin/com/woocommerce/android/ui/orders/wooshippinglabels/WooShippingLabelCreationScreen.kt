@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -28,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -50,23 +52,37 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooShippingLabelCreationScreen(
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     onPurchaseShippingLabel: () -> Unit
 ) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
     Box(modifier = Modifier.fillMaxSize()) {
         LabelCreationScreenWithBottomSheet(
             modifier = modifier,
             onSelectPackageClick = onSelectPackageClick,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
+            scaffoldState = scaffoldState
         )
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter)) {
-            Surface(elevation = 4.dp) {
-                PurchaseButton(total = "$34.89", onPurchaseShippingLabel = { })
+        val elevation = if (scaffoldState.bottomSheetState.isCollapsed) { 0.dp } else { 4.dp }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        ) {
+            Surface(elevation = elevation) {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    PurchasesSectionLandscape(
+                        total = "$34.89",
+                        markOrderComplete = true,
+                        onMarkOrderCompleteChange = { },
+                        onPurchaseShippingLabel = onPurchaseShippingLabel
+                    )
+                } else {
+                    PurchaseButton(total = "$34.89", onPurchaseShippingLabel = { })
+                }
             }
         }
     }
@@ -77,9 +93,8 @@ fun WooShippingLabelCreationScreen(
 private fun LabelCreationScreenWithBottomSheet(
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
-    onPurchaseShippingLabel: () -> Unit
+    scaffoldState: BottomSheetScaffoldState
 ) {
-    val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         sheetContent = {
             val markOrderComplete = remember { mutableStateOf(false) }
@@ -87,8 +102,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 modifier = Modifier.padding(bottom = 74.dp),
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it },
-                onPurchaseShippingLabel = onPurchaseShippingLabel
+                onMarkOrderCompleteChange = { markOrderComplete.value = it }
             )
         },
         sheetPeekHeight = 132.dp,

@@ -55,7 +55,6 @@ fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
-    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
     handlerModifier: Modifier = Modifier,
 ) {
@@ -91,12 +90,7 @@ fun ShipmentDetails(
         }
     }
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        ShipmentDetailsLandscape(
-            modifier = modifier,
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
-        )
+        ShipmentDetailsLandscape(modifier = modifier)
     } else {
         ShipmentDetailsPortrait(
             modifier = modifier,
@@ -145,9 +139,6 @@ private fun ShipmentDetailsPortrait(
 
 @Composable
 private fun ShipmentDetailsLandscape(
-    markOrderComplete: Boolean,
-    onMarkOrderCompleteChange: (Boolean) -> Unit,
-    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -185,12 +176,6 @@ private fun ShipmentDetailsLandscape(
                 )
             }
         }
-        PurchasesSectionLandscape(
-            total = "$120.99",
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
-        )
     }
 }
 
@@ -273,11 +258,7 @@ private fun OrderDetailsSectionLandscape(
 fun ShipmentDetailsLandscapePreview() {
     WooThemeWithBackground {
         Surface {
-            ShipmentDetailsLandscape(
-                markOrderComplete = false,
-                onMarkOrderCompleteChange = {},
-                onPurchaseShippingLabel = {}
-            )
+            ShipmentDetailsLandscape()
         }
     }
 }

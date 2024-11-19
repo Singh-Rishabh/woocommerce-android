@@ -44,7 +44,6 @@ internal fun PurchasesSectionLandscape(
     modifier: Modifier = Modifier
 ) {
     Column(modifier.fillMaxWidth()) {
-        Divider()
         Row(verticalAlignment = Alignment.CenterVertically) {
             MarkComplete(
                 markOrderComplete = markOrderComplete,
