@@ -50,6 +50,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -83,6 +84,7 @@ import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import kotlin.reflect.KMutableProperty0
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
@@ -927,6 +929,21 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             )
         }
 
+    @Test
+    fun `given external reader, when payment fails not because of AMOUNT_TOO_SMALL, then failed state is retryable`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Server(""), cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Server)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithServerError) }
+            }
+
+            controller.start()
+
+            assertNotNull(
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry,
+            )
+        }
 
     companion object {
         private const val ORDER_ID = 1L
