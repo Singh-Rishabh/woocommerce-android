@@ -1612,6 +1612,26 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             verify(tracker).trackPrintReceiptTapped()
         }
 
+    @Test
+    fun `given get receipt url fails, when user clicks on print receipt button, then error event emitted`() =
+        testBlocking {
+            // GIVEN
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
+
+            // WHEN
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            }
+
+            // THEN
+            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
