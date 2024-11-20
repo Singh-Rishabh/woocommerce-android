@@ -1246,6 +1246,19 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         assertNotNull((paymentState as CardReaderPaymentState.LoadingData).onCancel)
     }
 
+    @Test
+    fun `when collecting payment, then cancellation is possible`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+
+            controller.start()
+            val viewState = controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
+
+            assertNotNull(viewState.onCancel)
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
