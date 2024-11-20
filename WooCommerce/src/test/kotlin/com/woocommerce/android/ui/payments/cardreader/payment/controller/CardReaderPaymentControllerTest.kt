@@ -51,6 +51,8 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.PrintReceipt
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -1630,6 +1632,26 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             // THEN
             assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+        }
+
+    @Test
+    fun `given get receipt url succeeds, when user clicks on print receipt button, then PrintReceipt emitted`() =
+        testBlocking {
+            // GIVEN
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            val receiptUrl = "testUrl"
+            whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.success(receiptUrl))
+
+            // WHEN
+            controller.start()
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            }
+            // THEN
+            assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).receiptUrl).isEqualTo(receiptUrl)
+            assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).documentName).isEqualTo("receipt-order-1")
         }
 
     companion object {
