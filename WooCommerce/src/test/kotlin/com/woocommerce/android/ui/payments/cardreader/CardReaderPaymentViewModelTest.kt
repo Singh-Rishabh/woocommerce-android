@@ -1790,22 +1790,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given payment flow already started, when start() is invoked, then flow is not restarted`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow<CardPaymentStatus> {}
-            }
-
-            viewModel.start()
-            viewModel.start()
-            viewModel.start()
-            viewModel.start()
-
-            verify(cardReaderManager, times(1))
-                .collectPayment(anyOrNull())
-        }
-
-    @Test
     fun `given billing email empty and external, when user clicks on print receipt button, then PrintReceipt event emitted`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {

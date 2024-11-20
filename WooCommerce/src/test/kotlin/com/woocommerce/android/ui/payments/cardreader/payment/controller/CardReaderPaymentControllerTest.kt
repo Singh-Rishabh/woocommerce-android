@@ -81,6 +81,7 @@ import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
@@ -1294,6 +1295,22 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             verify(paymentReceiptHelper).storeReceiptUrl(eq(ORDER_ID), eq(receiptUrl))
+        }
+
+    @Test
+    fun `given payment flow already started, when start() is invoked, then flow is not restarted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow<CardPaymentStatus> {}
+            }
+
+            controller.start()
+            controller.start()
+            controller.start()
+            controller.start()
+
+            verify(cardReaderManager, times(1))
+                .collectPayment(anyOrNull())
         }
 
     companion object {
