@@ -82,7 +82,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.External
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderProcessingPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.FailedRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.PrintingReceiptState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ProcessingRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
@@ -1787,22 +1786,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 .isEqualTo(R.string.card_reader_payment_send_receipt)
             assertThat(viewState.tertiaryActionLabel).describedAs("tertiaryActionLabel")
                 .isEqualTo(R.string.card_reader_payment_save_for_later)
-        }
-
-    @Test
-    fun `given billing email empty and built in, when user clicks on print receipt button, then event tracked`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            initViewModel(BUILT_IN)
-
-            viewModel.start()
-
-            (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
-
-            verify(tracker).trackPrintReceiptTapped()
         }
 
     @Test
