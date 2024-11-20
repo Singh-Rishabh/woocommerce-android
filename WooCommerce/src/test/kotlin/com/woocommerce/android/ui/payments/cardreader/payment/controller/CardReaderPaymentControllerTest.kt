@@ -34,7 +34,6 @@ import com.woocommerce.android.cardreader.payments.PaymentData
 import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
-import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
@@ -52,8 +51,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -65,7 +62,6 @@ import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -1254,9 +1250,21 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
-            val viewState = controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
+            val paymentState = controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
 
-            assertNotNull(viewState.onCancel)
+            assertNotNull(paymentState.onCancel)
+        }
+
+    @Test
+    fun `when processing payment, then cancellation is possible`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPayment) }
+            }
+
+            controller.start()
+            val paymentState = controller.paymentState.value as CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment
+            assertNotNull(paymentState.onCancel)
         }
 
     companion object {
