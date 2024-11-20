@@ -2,7 +2,7 @@ package com.woocommerce.android.ui.payments.hub.depositsummary
 
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryRepository
-import com.woocommerce.android.ui.payments.hub.payoutsummary.RetrieveDepositOverviewResult
+import com.woocommerce.android.ui.payments.hub.payoutsummary.RetrievePayoutOverviewResult
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -46,12 +46,12 @@ class PaymentsHubPayoutSummaryRepositoryTest : BaseUnitTest() {
         )
 
         // WHEN
-        val result = repo.retrieveDepositOverview()
+        val result = repo.retrievePayoutOverview()
         advanceUntilIdle()
 
         // THEN
         assertThat(result.first()).isEqualTo(
-            RetrieveDepositOverviewResult.Cache(overviewCache)
+            RetrievePayoutOverviewResult.Cache(overviewCache)
         )
     }
 
@@ -72,12 +72,12 @@ class PaymentsHubPayoutSummaryRepositoryTest : BaseUnitTest() {
             )
 
             // WHEN
-            val result = repo.retrieveDepositOverview()
+            val result = repo.retrievePayoutOverview()
             advanceUntilIdle()
 
             // THEN
             assertThat(result.first()).isEqualTo(
-                RetrieveDepositOverviewResult.Error(
+                RetrievePayoutOverviewResult.Error(
                     error
                 )
             )
@@ -97,12 +97,12 @@ class PaymentsHubPayoutSummaryRepositoryTest : BaseUnitTest() {
             )
 
             // WHEN
-            val result = repo.retrieveDepositOverview()
+            val result = repo.retrievePayoutOverview()
             advanceUntilIdle()
 
             // THEN
             assertThat(result.first()).isEqualTo(
-                RetrieveDepositOverviewResult.Remote(
+                RetrievePayoutOverviewResult.Remote(
                     overview
                 )
             )

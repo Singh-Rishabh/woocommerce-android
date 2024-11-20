@@ -10,7 +10,7 @@ class PaymentsHubPayoutSummaryStateMapper @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
     private val dateFormatter: DateToDDMMMYYYYStringFormatter
 ) {
-    fun mapDepositOverviewToViewModelOverviews(
+    fun mapPayoutOverviewToViewModelOverviews(
         overview: WooPaymentsDepositsOverview
     ): Result {
         val pendingBalances = overview.balance?.pending.orEmpty()
@@ -46,8 +46,8 @@ class PaymentsHubPayoutSummaryStateMapper @Inject constructor(
                                 ?: 0,
                             pendingFundsAmount = pendingBalances.firstOrNull { it.currency == currency }?.amount ?: 0,
                             fundsAvailableInDays = overview.account?.depositsSchedule?.delayDays,
-                            fundsDepositInterval = overview.account.fundsAvailableIn(),
-                            lastDeposit = lastPaidDeposits.firstOrNull { it.currency == currency }?.let {
+                            fundsPayoutInterval = overview.account.fundsAvailableIn(),
+                            lastPayout = lastPaidDeposits.firstOrNull { it.currency == currency }?.let {
                                 mapDeposit(it)
                             }
                         )
@@ -60,7 +60,7 @@ class PaymentsHubPayoutSummaryStateMapper @Inject constructor(
     }
 
     private fun mapDeposit(info: WooPaymentsDepositsOverview.Deposit.Info) =
-        PaymentsHubPayoutSummaryState.Deposit(
+        PaymentsHubPayoutSummaryState.Payout(
             amount = formatMoney(info.amount ?: 0L, info.currency.orEmpty()),
             status = info.status.toDepositStatus(),
             date = if (info.date != null) dateFormatter(Date(info.date!!)) else ""
@@ -90,13 +90,13 @@ class PaymentsHubPayoutSummaryStateMapper @Inject constructor(
 
     private fun String?.toDepositStatus() =
         when (this?.uppercase()) {
-            "ESTIMATED" -> PaymentsHubPayoutSummaryState.Deposit.Status.ESTIMATED
-            "PENDING" -> PaymentsHubPayoutSummaryState.Deposit.Status.PENDING
-            "IN_TRANSIT" -> PaymentsHubPayoutSummaryState.Deposit.Status.IN_TRANSIT
-            "PAID" -> PaymentsHubPayoutSummaryState.Deposit.Status.PAID
-            "CANCELED" -> PaymentsHubPayoutSummaryState.Deposit.Status.CANCELED
-            "FAILED" -> PaymentsHubPayoutSummaryState.Deposit.Status.FAILED
-            else -> PaymentsHubPayoutSummaryState.Deposit.Status.UNKNOWN
+            "ESTIMATED" -> PaymentsHubPayoutSummaryState.Payout.Status.ESTIMATED
+            "PENDING" -> PaymentsHubPayoutSummaryState.Payout.Status.PENDING
+            "IN_TRANSIT" -> PaymentsHubPayoutSummaryState.Payout.Status.IN_TRANSIT
+            "PAID" -> PaymentsHubPayoutSummaryState.Payout.Status.PAID
+            "CANCELED" -> PaymentsHubPayoutSummaryState.Payout.Status.CANCELED
+            "FAILED" -> PaymentsHubPayoutSummaryState.Payout.Status.FAILED
+            else -> PaymentsHubPayoutSummaryState.Payout.Status.UNKNOWN
         }
 
     sealed class Result {

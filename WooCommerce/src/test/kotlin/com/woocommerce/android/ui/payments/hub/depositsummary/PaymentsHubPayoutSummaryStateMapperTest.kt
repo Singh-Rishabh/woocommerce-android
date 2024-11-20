@@ -31,7 +31,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
     )
 
     @Test
-    fun `given overview without default currency, when mapDepositOverviewToViewModelOverviews, then return null`() {
+    fun `given overview without default currency, when mapPayoutOverviewToViewModelOverviews, then return null`() {
         // GIVEN
         val overview = WooPaymentsDepositsOverview(
             account = WooPaymentsDepositsOverview.Account(
@@ -50,7 +50,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         )
 
         // WHEN
-        val result = mapper.mapDepositOverviewToViewModelOverviews(overview)
+        val result = mapper.mapPayoutOverviewToViewModelOverviews(overview)
 
         // THEN
         assertThat(result).isInstanceOf(PaymentsHubPayoutSummaryStateMapper.Result.InvalidInputData::class.java)
@@ -58,7 +58,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
 
     @Suppress("LongMethod")
     @Test
-    fun `given overview with instant balances, when mapDepositOverviewToViewModelOverviews, then return Overview with instant balances`() {
+    fun `given overview with instant balances, when mapPayoutOverviewToViewModelOverviews, then return Overview with instant balances`() {
         // GIVEN
         val overview = WooPaymentsDepositsOverview(
             account = WooPaymentsDepositsOverview.Account(
@@ -108,7 +108,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         )
 
         // WHEN
-        val result = mapper.mapDepositOverviewToViewModelOverviews(overview)
+        val result = mapper.mapPayoutOverviewToViewModelOverviews(overview)
 
         // THEN
         result as PaymentsHubPayoutSummaryStateMapper.Result.Success
@@ -118,14 +118,14 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         assertThat(result.overview.infoPerCurrency["USD"]?.pendingFundsFormatted).isEqualTo("300$")
         assertThat(result.overview.infoPerCurrency["USD"]?.pendingFundsAmount).isEqualTo(300)
         assertThat(result.overview.infoPerCurrency["USD"]?.fundsAvailableInDays).isEqualTo(1)
-        assertThat(result.overview.infoPerCurrency["USD"]?.fundsDepositInterval).isEqualTo(
+        assertThat(result.overview.infoPerCurrency["USD"]?.fundsPayoutInterval).isEqualTo(
             PaymentsHubPayoutSummaryState.Info.Interval.Weekly("monday")
         )
     }
 
     @Suppress("LongMethod")
     @Test
-    fun `given overview with multiple currencies and different deposit statuses, when mapDepositOverviewToViewModelOverviews, then return Overview with correct statuses and sorted`() {
+    fun `given overview with multiple currencies and different payout statuses, when mapPayoutOverviewToViewModelOverviews, then return Overview with correct statuses and sorted`() {
         // GIVEN
         val currentDate = System.currentTimeMillis()
         val overview = WooPaymentsDepositsOverview(
@@ -193,7 +193,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         whenever(dateFormatter(Date(currentDate))).thenReturn(date)
 
         // WHEN
-        val result = mapper.mapDepositOverviewToViewModelOverviews(overview)
+        val result = mapper.mapPayoutOverviewToViewModelOverviews(overview)
 
         // THEN
         result as PaymentsHubPayoutSummaryStateMapper.Result.Success
@@ -201,17 +201,17 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         val firstKey = result.overview.infoPerCurrency.keys.elementAt(0)
         val secondKey = result.overview.infoPerCurrency.keys.elementAt(1)
         val thirdKey = result.overview.infoPerCurrency.keys.elementAt(2)
-        assertThat(result.overview.infoPerCurrency[firstKey]?.lastDeposit?.status).isEqualTo(
-            PaymentsHubPayoutSummaryState.Deposit.Status.PAID
+        assertThat(result.overview.infoPerCurrency[firstKey]?.lastPayout?.status).isEqualTo(
+            PaymentsHubPayoutSummaryState.Payout.Status.PAID
         )
-        assertThat(result.overview.infoPerCurrency[firstKey]?.lastDeposit?.amount).isEqualTo("200$")
-        assertThat(result.overview.infoPerCurrency[firstKey]?.lastDeposit?.date).isEqualTo(date)
+        assertThat(result.overview.infoPerCurrency[firstKey]?.lastPayout?.amount).isEqualTo("200$")
+        assertThat(result.overview.infoPerCurrency[firstKey]?.lastPayout?.date).isEqualTo(date)
         assertThat(result.overview.infoPerCurrency[firstKey]?.availableFundsFormatted).isEqualTo("100$")
         assertThat(result.overview.infoPerCurrency[firstKey]?.availableFundsAmount).isEqualTo(100)
         assertThat(result.overview.infoPerCurrency[firstKey]?.pendingFundsFormatted).isEqualTo("0$")
         assertThat(result.overview.infoPerCurrency[firstKey]?.pendingFundsAmount).isEqualTo(0)
         assertThat(result.overview.infoPerCurrency[firstKey]?.fundsAvailableInDays).isEqualTo(30)
-        assertThat(result.overview.infoPerCurrency[firstKey]?.fundsDepositInterval).isEqualTo(
+        assertThat(result.overview.infoPerCurrency[firstKey]?.fundsPayoutInterval).isEqualTo(
             PaymentsHubPayoutSummaryState.Info.Interval.Monthly(15)
         )
         assertThat(result.overview.infoPerCurrency[secondKey]?.availableFundsFormatted).isEqualTo("150€")
@@ -219,7 +219,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         assertThat(result.overview.infoPerCurrency[secondKey]?.pendingFundsFormatted).isEqualTo("0€")
         assertThat(result.overview.infoPerCurrency[secondKey]?.pendingFundsAmount).isEqualTo(0)
         assertThat(result.overview.infoPerCurrency[secondKey]?.fundsAvailableInDays).isEqualTo(30)
-        assertThat(result.overview.infoPerCurrency[secondKey]?.fundsDepositInterval).isEqualTo(
+        assertThat(result.overview.infoPerCurrency[secondKey]?.fundsPayoutInterval).isEqualTo(
             PaymentsHubPayoutSummaryState.Info.Interval.Monthly(15)
         )
 
@@ -228,7 +228,7 @@ class PaymentsHubPayoutSummaryStateMapperTest {
         assertThat(result.overview.infoPerCurrency[thirdKey]?.pendingFundsFormatted).isEqualTo("0R")
         assertThat(result.overview.infoPerCurrency[thirdKey]?.pendingFundsAmount).isEqualTo(0)
         assertThat(result.overview.infoPerCurrency[thirdKey]?.fundsAvailableInDays).isEqualTo(30)
-        assertThat(result.overview.infoPerCurrency[thirdKey]?.fundsDepositInterval).isEqualTo(
+        assertThat(result.overview.infoPerCurrency[thirdKey]?.fundsPayoutInterval).isEqualTo(
             PaymentsHubPayoutSummaryState.Info.Interval.Monthly(15)
         )
     }

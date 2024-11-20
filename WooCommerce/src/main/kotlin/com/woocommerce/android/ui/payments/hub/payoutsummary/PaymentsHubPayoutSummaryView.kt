@@ -90,7 +90,7 @@ fun PaymentsHubPayoutSummaryView(
                     value.fromCache,
                     value.onLearnMoreClicked,
                     value.onExpandCollapseClicked,
-                    viewModel::onSummaryDepositShown,
+                    viewModel::onSummaryPayoutShown,
                     value.onCurrencySelected,
                 )
 
@@ -123,12 +123,12 @@ fun PaymentsHubPayoutSummaryView(
     fromCache: Boolean,
     onLearnMoreClicked: () -> Unit,
     onExpandCollapseClicked: (Boolean) -> Unit,
-    onSummaryDepositShown: () -> Unit,
+    onSummaryPayoutShown: () -> Unit,
     onCurrencySelected: (String) -> Unit,
     isPreview: Boolean = LocalInspectionMode.current,
     selectedPage: Int = 0,
 ) {
-    LaunchedEffect(key1 = overview) { onSummaryDepositShown() }
+    LaunchedEffect(key1 = overview) { onSummaryPayoutShown() }
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     val pageCount = overview.infoPerCurrency.size
@@ -180,7 +180,7 @@ fun PaymentsHubPayoutSummaryView(
                     visible = isExpanded || isPreview,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    DepositsInfo(
+                    PayoutsInfo(
                         selectedCurrencyInfo,
                         onLearnMoreClicked
                     )
@@ -320,7 +320,7 @@ private fun FundsOverview(
 }
 
 @Composable
-private fun DepositsInfo(
+private fun PayoutsInfo(
     currencyInfo: PaymentsHubPayoutSummaryState.Info,
     onLearnMoreClicked: () -> Unit
 ) {
@@ -329,7 +329,7 @@ private fun DepositsInfo(
             modifier = Modifier
                 .padding(all = dimensionResource(id = R.dimen.major_100))
         ) {
-            LastDeposit(currencyInfo)
+            LastPayout(currencyInfo)
 
             Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_75)))
 
@@ -362,8 +362,8 @@ private fun DepositsInfo(
 }
 
 @Composable
-private fun LastDeposit(currencyInfo: PaymentsHubPayoutSummaryState.Info) {
-    currencyInfo.lastDeposit?.let {
+private fun LastPayout(currencyInfo: PaymentsHubPayoutSummaryState.Info) {
+    currencyInfo.lastPayout?.let {
         Text(
             style = MaterialTheme.typography.body2,
             text = stringResource(id = R.string.card_reader_hub_deposit_funds_deposits_title).uppercase(),
@@ -372,11 +372,11 @@ private fun LastDeposit(currencyInfo: PaymentsHubPayoutSummaryState.Info) {
 
         Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.minor_100)))
 
-        Deposit(deposit = it)
+        Payout(payout = it)
 
         Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_100)))
 
-        currencyInfo.fundsDepositInterval?.let { interval ->
+        currencyInfo.fundsPayoutInterval?.let { interval ->
             Text(
                 style = MaterialTheme.typography.caption,
                 text = interval.buildText(),
@@ -391,7 +391,7 @@ private fun LastDeposit(currencyInfo: PaymentsHubPayoutSummaryState.Info) {
 }
 
 @Composable
-private fun Deposit(deposit: PaymentsHubPayoutSummaryState.Deposit) {
+private fun Payout(payout: PaymentsHubPayoutSummaryState.Payout) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -407,54 +407,54 @@ private fun Deposit(deposit: PaymentsHubPayoutSummaryState.Deposit) {
         Text(
             modifier = Modifier.weight(1.2f),
             style = MaterialTheme.typography.body1,
-            text = deposit.date,
+            text = payout.date,
         )
 
         Box(modifier = Modifier.weight(1f)) {
-            when (deposit.status) {
-                PaymentsHubPayoutSummaryState.Deposit.Status.ESTIMATED ->
-                    DepositStatus(
+            when (payout.status) {
+                PaymentsHubPayoutSummaryState.Payout.Status.ESTIMATED ->
+                    PayoutStatus(
                         text = R.string.card_reader_hub_deposit_summary_status_estimated,
                         backgroundColor = R.color.deposit_summary_status_estimated_background,
                         textColor = R.color.deposit_summary_status_estimated_text
                     )
 
-                PaymentsHubPayoutSummaryState.Deposit.Status.PENDING ->
-                    DepositStatus(
+                PaymentsHubPayoutSummaryState.Payout.Status.PENDING ->
+                    PayoutStatus(
                         text = R.string.card_reader_hub_deposit_summary_status_pending,
                         backgroundColor = R.color.deposit_summary_status_pending_background,
                         textColor = R.color.deposit_summary_status_pending_text
                     )
 
-                PaymentsHubPayoutSummaryState.Deposit.Status.IN_TRANSIT ->
-                    DepositStatus(
+                PaymentsHubPayoutSummaryState.Payout.Status.IN_TRANSIT ->
+                    PayoutStatus(
                         text = R.string.card_reader_hub_deposit_summary_status_in_transit,
                         backgroundColor = R.color.deposit_summary_status_in_transit_background,
                         textColor = R.color.deposit_summary_status_in_transit_text
                     )
 
-                PaymentsHubPayoutSummaryState.Deposit.Status.PAID ->
-                    DepositStatus(
+                PaymentsHubPayoutSummaryState.Payout.Status.PAID ->
+                    PayoutStatus(
                         text = R.string.card_reader_hub_deposit_summary_status_paid,
                         backgroundColor = R.color.deposit_summary_status_paid_background,
                         textColor = R.color.deposit_summary_status_paid_text
                     )
 
-                PaymentsHubPayoutSummaryState.Deposit.Status.CANCELED ->
-                    DepositStatus(
+                PaymentsHubPayoutSummaryState.Payout.Status.CANCELED ->
+                    PayoutStatus(
                         text = R.string.card_reader_hub_deposit_summary_status_canceled,
                         backgroundColor = R.color.deposit_summary_status_canceled_background,
                         textColor = R.color.deposit_summary_status_canceled_text
                     )
 
-                PaymentsHubPayoutSummaryState.Deposit.Status.FAILED ->
-                    DepositStatus(
+                PaymentsHubPayoutSummaryState.Payout.Status.FAILED ->
+                    PayoutStatus(
                         text = R.string.card_reader_hub_deposit_summary_status_failed,
                         backgroundColor = R.color.deposit_summary_status_failed_background,
                         textColor = R.color.deposit_summary_status_failed_text
                     )
 
-                PaymentsHubPayoutSummaryState.Deposit.Status.UNKNOWN -> DepositStatus(
+                PaymentsHubPayoutSummaryState.Payout.Status.UNKNOWN -> PayoutStatus(
                     text = R.string.card_reader_hub_deposit_summary_status_unknown,
                     backgroundColor = R.color.deposit_summary_status_unknown_background,
                     textColor = R.color.deposit_summary_status_unknown_text
@@ -468,7 +468,7 @@ private fun Deposit(deposit: PaymentsHubPayoutSummaryState.Deposit) {
         ) {
             Text(
                 style = MaterialTheme.typography.body1,
-                text = deposit.amount,
+                text = payout.amount,
             )
         }
     }
@@ -521,7 +521,7 @@ private fun CurrenciesTabs(
 }
 
 @Composable
-private fun DepositStatus(
+private fun PayoutStatus(
     text: Int,
     backgroundColor: Int,
     textColor: Int
@@ -618,10 +618,10 @@ private val previewState = sortedMapOf(
         availableFundsAmount = 10000,
         pendingFundsAmount = 20000,
         fundsAvailableInDays = 5,
-        fundsDepositInterval = PaymentsHubPayoutSummaryState.Info.Interval.Daily,
-        lastDeposit = PaymentsHubPayoutSummaryState.Deposit(
+        fundsPayoutInterval = PaymentsHubPayoutSummaryState.Info.Interval.Daily,
+        lastPayout = PaymentsHubPayoutSummaryState.Payout(
             amount = "100$",
-            status = PaymentsHubPayoutSummaryState.Deposit.Status.FAILED,
+            status = PaymentsHubPayoutSummaryState.Payout.Status.FAILED,
             date = "13 Oct 2023"
         )
     ),
@@ -631,10 +631,10 @@ private val previewState = sortedMapOf(
         availableFundsAmount = 10000,
         pendingFundsAmount = 20000,
         fundsAvailableInDays = 2,
-        fundsDepositInterval = PaymentsHubPayoutSummaryState.Info.Interval.Weekly("Friday"),
-        lastDeposit = PaymentsHubPayoutSummaryState.Deposit(
+        fundsPayoutInterval = PaymentsHubPayoutSummaryState.Info.Interval.Weekly("Friday"),
+        lastPayout = PaymentsHubPayoutSummaryState.Payout(
             amount = "100$",
-            status = PaymentsHubPayoutSummaryState.Deposit.Status.PENDING,
+            status = PaymentsHubPayoutSummaryState.Payout.Status.PENDING,
             date = "13 Oct 2023"
         )
     ),
@@ -644,10 +644,10 @@ private val previewState = sortedMapOf(
         availableFundsAmount = 10000,
         pendingFundsAmount = 20000,
         fundsAvailableInDays = 4,
-        fundsDepositInterval = PaymentsHubPayoutSummaryState.Info.Interval.Weekly("Monday"),
-        lastDeposit = PaymentsHubPayoutSummaryState.Deposit(
+        fundsPayoutInterval = PaymentsHubPayoutSummaryState.Info.Interval.Weekly("Monday"),
+        lastPayout = PaymentsHubPayoutSummaryState.Payout(
             amount = "100$",
-            status = PaymentsHubPayoutSummaryState.Deposit.Status.CANCELED,
+            status = PaymentsHubPayoutSummaryState.Payout.Status.CANCELED,
             date = "13 Oct 2023"
         )
     ),
@@ -657,10 +657,10 @@ private val previewState = sortedMapOf(
         availableFundsAmount = 10000,
         pendingFundsAmount = 20000,
         fundsAvailableInDays = 3,
-        fundsDepositInterval = PaymentsHubPayoutSummaryState.Info.Interval.Weekly("Tuesday"),
-        lastDeposit = PaymentsHubPayoutSummaryState.Deposit(
+        fundsPayoutInterval = PaymentsHubPayoutSummaryState.Info.Interval.Weekly("Tuesday"),
+        lastPayout = PaymentsHubPayoutSummaryState.Payout(
             amount = "100$",
-            status = PaymentsHubPayoutSummaryState.Deposit.Status.ESTIMATED,
+            status = PaymentsHubPayoutSummaryState.Payout.Status.ESTIMATED,
             date = "13 Oct 2023"
         )
     ),
@@ -669,7 +669,7 @@ private val previewState = sortedMapOf(
 @Preview(name = "Light mode")
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PaymentsHubDepositSummaryViewUsdPreview() {
+fun PaymentsHubPayoutSummaryViewUsdPreview() {
     WooThemeWithBackground {
         PaymentsHubPayoutSummaryView(
             PaymentsHubPayoutSummaryState.Overview(
@@ -679,7 +679,7 @@ fun PaymentsHubDepositSummaryViewUsdPreview() {
             fromCache = false,
             onLearnMoreClicked = {},
             onExpandCollapseClicked = {},
-            onSummaryDepositShown = {},
+            onSummaryPayoutShown = {},
             onCurrencySelected = {},
             selectedPage = 0
         )
@@ -689,7 +689,7 @@ fun PaymentsHubDepositSummaryViewUsdPreview() {
 @Preview(name = "Light mode")
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PaymentsHubDepositSummaryViewEurPreview() {
+fun PaymentsHubPayoutSummaryViewEurPreview() {
     WooThemeWithBackground {
         PaymentsHubPayoutSummaryView(
             PaymentsHubPayoutSummaryState.Overview(
@@ -699,7 +699,7 @@ fun PaymentsHubDepositSummaryViewEurPreview() {
             fromCache = false,
             onLearnMoreClicked = {},
             onExpandCollapseClicked = {},
-            onSummaryDepositShown = {},
+            onSummaryPayoutShown = {},
             onCurrencySelected = {},
             selectedPage = 1
         )
@@ -709,7 +709,7 @@ fun PaymentsHubDepositSummaryViewEurPreview() {
 @Preview(name = "Light mode")
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PaymentsHubDepositSummaryViewRubPreview() {
+fun PaymentsHubPayoutSummaryViewRubPreview() {
     WooThemeWithBackground {
         PaymentsHubPayoutSummaryView(
             PaymentsHubPayoutSummaryState.Overview(
@@ -719,7 +719,7 @@ fun PaymentsHubDepositSummaryViewRubPreview() {
             fromCache = false,
             onLearnMoreClicked = {},
             onExpandCollapseClicked = {},
-            onSummaryDepositShown = {},
+            onSummaryPayoutShown = {},
             onCurrencySelected = {},
             selectedPage = 2
         )
@@ -729,7 +729,7 @@ fun PaymentsHubDepositSummaryViewRubPreview() {
 @Preview(name = "Light mode")
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PaymentsHubDepositSummaryViewGbpPreview() {
+fun PaymentsHubPayoutSummaryViewGbpPreview() {
     WooThemeWithBackground {
         PaymentsHubPayoutSummaryView(
             PaymentsHubPayoutSummaryState.Overview(
@@ -739,7 +739,7 @@ fun PaymentsHubDepositSummaryViewGbpPreview() {
             fromCache = false,
             onLearnMoreClicked = {},
             onExpandCollapseClicked = {},
-            onSummaryDepositShown = {},
+            onSummaryPayoutShown = {},
             onCurrencySelected = {},
             selectedPage = 3
         )
@@ -749,7 +749,7 @@ fun PaymentsHubDepositSummaryViewGbpPreview() {
 @Preview(name = "Light mode")
 @Preview(name = "Dark mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-fun PaymentsHubDepositSummaryViewNoDepositsPreview() {
+fun PaymentsHubPayoutSummaryViewNoPayoutsPreview() {
     WooThemeWithBackground {
         PaymentsHubPayoutSummaryView(
             PaymentsHubPayoutSummaryState.Overview(
@@ -761,15 +761,15 @@ fun PaymentsHubDepositSummaryViewNoDepositsPreview() {
                         availableFundsAmount = 10000,
                         pendingFundsAmount = 20000,
                         fundsAvailableInDays = 5,
-                        fundsDepositInterval = PaymentsHubPayoutSummaryState.Info.Interval.Daily,
-                        lastDeposit = null,
+                        fundsPayoutInterval = PaymentsHubPayoutSummaryState.Info.Interval.Daily,
+                        lastPayout = null,
                     )
                 )
             ),
             fromCache = false,
             onLearnMoreClicked = {},
             onExpandCollapseClicked = {},
-            onSummaryDepositShown = {},
+            onSummaryPayoutShown = {},
             onCurrencySelected = {},
             selectedPage = 0
         )

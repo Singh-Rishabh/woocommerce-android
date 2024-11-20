@@ -25,8 +25,8 @@ sealed class PaymentsHubPayoutSummaryState {
         val availableFundsAmount: Long,
         val pendingFundsAmount: Long,
         val fundsAvailableInDays: Int?,
-        val fundsDepositInterval: Interval?,
-        val lastDeposit: Deposit?,
+        val fundsPayoutInterval: Interval?,
+        val lastPayout: Payout?,
     ) {
         sealed class Interval {
             object Daily : Interval()
@@ -35,7 +35,7 @@ sealed class PaymentsHubPayoutSummaryState {
         }
     }
 
-    data class Deposit(
+    data class Payout(
         val amount: String,
         val status: Status,
         val date: String,

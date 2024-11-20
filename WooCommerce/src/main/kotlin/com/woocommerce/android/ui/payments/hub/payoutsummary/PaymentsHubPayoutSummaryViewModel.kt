@@ -43,22 +43,22 @@ class PaymentsHubPayoutSummaryViewModel @Inject constructor(
 
     init {
         launch {
-            repository.retrieveDepositOverview().map {
+            repository.retrievePayoutOverview().map {
                 when (it) {
-                    is RetrieveDepositOverviewResult.Cache ->
-                        buildDepositSummaryState(
+                    is RetrievePayoutOverviewResult.Cache ->
+                        buildPayoutSummaryState(
                             overview = it.overview,
                             fromCache = true
                         )
 
-                    is RetrieveDepositOverviewResult.Remote -> {
-                        buildDepositSummaryState(
+                    is RetrievePayoutOverviewResult.Remote -> {
+                        buildPayoutSummaryState(
                             overview = it.overview,
                             fromCache = false
                         )
                     }
 
-                    is RetrieveDepositOverviewResult.Error -> {
+                    is RetrievePayoutOverviewResult.Error -> {
                         PaymentsHubPayoutSummaryState.Error(it.error)
                     }
                 }
@@ -71,7 +71,7 @@ class PaymentsHubPayoutSummaryViewModel @Inject constructor(
         }
     }
 
-    fun onSummaryDepositShown() {
+    fun onSummaryPayoutShown() {
         val success = _viewState.value as? PaymentsHubPayoutSummaryState.Success ?: return
         trackerWrapper.track(
             AnalyticsEvent.PAYMENTS_HUB_DEPOSIT_SUMMARY_SHOWN,
@@ -81,11 +81,11 @@ class PaymentsHubPayoutSummaryViewModel @Inject constructor(
         )
     }
 
-    private fun buildDepositSummaryState(
+    private fun buildPayoutSummaryState(
         overview: WooPaymentsDepositsOverview,
         fromCache: Boolean
     ): PaymentsHubPayoutSummaryState =
-        when (val mappingResult = mapper.mapDepositOverviewToViewModelOverviews(overview)) {
+        when (val mappingResult = mapper.mapPayoutOverviewToViewModelOverviews(overview)) {
             PaymentsHubPayoutSummaryStateMapper.Result.InvalidInputData -> constructApiError()
             is PaymentsHubPayoutSummaryStateMapper.Result.Success -> {
                 PaymentsHubPayoutSummaryState.Success(
@@ -101,7 +101,7 @@ class PaymentsHubPayoutSummaryViewModel @Inject constructor(
     private fun onLearnMoreClicked() {
         trackerWrapper.track(AnalyticsEvent.PAYMENTS_HUB_DEPOSIT_SUMMARY_LEARN_MORE_CLICKED)
         launch {
-            _openBrowserEvents.emit(LEARN_MORE_ABOUT_DEPOSIT_URL)
+            _openBrowserEvents.emit(LEARN_MORE_ABOUT_PAYOUT_URL)
         }
     }
 
@@ -138,7 +138,7 @@ class PaymentsHubPayoutSummaryViewModel @Inject constructor(
     )
 
     private companion object {
-        private const val LEARN_MORE_ABOUT_DEPOSIT_URL =
+        private const val LEARN_MORE_ABOUT_PAYOUT_URL =
             "https://woocommerce.com/document/woopayments/payouts/payout-schedule/"
 
         private const val NUMBER_OF_CURRENCIES_TRACK_PROP_KEY = "number_of_currencies"
