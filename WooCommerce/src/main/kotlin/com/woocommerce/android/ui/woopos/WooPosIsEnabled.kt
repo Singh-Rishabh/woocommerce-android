@@ -2,12 +2,9 @@ package com.woocommerce.android.ui.woopos
 
 import com.woocommerce.android.extensions.semverCompareTo
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
-import com.woocommerce.android.ui.payments.cardreader.onboarding.PluginType
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
 import com.woocommerce.android.util.IsRemoteFeatureFlagEnabled
 import com.woocommerce.android.util.RemoteFeatureFlag.WOO_POS
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import javax.inject.Inject
@@ -18,7 +15,6 @@ class WooPosIsEnabled @Inject constructor(
     private val selectedSite: SelectedSite,
     private val isScreenSizeAllowed: WooPosIsScreenSizeAllowed,
     private val getWooCoreVersion: GetWooCorePluginCachedVersion,
-    private val cardReaderOnboardingChecker: CardReaderOnboardingChecker,
     private val wooCommerceStore: WooCommerceStore,
     private val isRemoteFeatureFlagEnabled: IsRemoteFeatureFlagEnabled,
 ) {
@@ -26,17 +22,11 @@ class WooPosIsEnabled @Inject constructor(
     suspend operator fun invoke(): Boolean = coroutineScope {
         val selectedSite = selectedSite.getOrNull() ?: return@coroutineScope false
 
-        val onboardingStatusDeferred = async { cardReaderOnboardingChecker.getOnboardingState() }
-        val siteSettingsDeferred = async { wooCommerceStore.getSiteSettings(selectedSite) }
-
         if (!isRemoteFeatureFlagEnabled(WOO_POS)) return@coroutineScope false
         if (!isScreenSizeAllowed()) return@coroutineScope false
         if (!isWooCoreSupportsOrderAutoDraftsAndExtraPaymentsProps()) return@coroutineScope false
 
-        val onboardingStatus = onboardingStatusDeferred.await()
-        if (onboardingStatus.preferredPlugin != PluginType.WOOCOMMERCE_PAYMENTS) return@coroutineScope false
-
-        val siteSettings = siteSettingsDeferred.await() ?: return@coroutineScope false
+        val siteSettings = wooCommerceStore.getSiteSettings(selectedSite) ?: return@coroutineScope false
         if (siteSettings.countryCode.lowercase() !in SUPPORTED_COUNTRIES) return@coroutineScope false
         if (siteSettings.currencyCode.lowercase() !in SUPPORTED_CURRENCIES) return@coroutineScope false
 
