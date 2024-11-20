@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.navigation
+package com.woocommerce.android.ui.woopos.home.items.navigation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,11 +10,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WooPosLeftPaneScreensViewModel @Inject constructor(
-    private val navigator: LeftPaneNavigator,
+class WooPosItemsScreenViewModel @Inject constructor(
+    private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
-    private val _screenState = MutableStateFlow<LeftPaneScreen>(LeftPaneScreen.ItemListScreen)
-    val screenState: StateFlow<LeftPaneScreen> = _screenState
+    private val _screenState = MutableStateFlow<ItemsScreens>(ItemsScreens.ItemListScreen)
+    val screenState: StateFlow<ItemsScreens> = _screenState
 
     init {
         viewModelScope.launch {
@@ -23,34 +23,34 @@ class WooPosLeftPaneScreensViewModel @Inject constructor(
     }
 
     private fun navigateToVariationsScreen(product: VariableProductData) {
-        _screenState.value = LeftPaneScreen.VariationsScreen(product)
+        _screenState.value = ItemsScreens.VariationsScreen(product)
     }
 
     private fun navigateBackToItemListScreen() {
-        _screenState.value = LeftPaneScreen.ItemListScreen
+        _screenState.value = ItemsScreens.ItemListScreen
     }
 
     private suspend fun listenToNavigationEvents() {
         navigator.events.collect {
             when (it) {
-                is LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen -> {
+                is WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen -> {
                     navigateToVariationsScreen(it.product)
                 }
-                is LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen -> {
+                is WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen -> {
                     navigateBackToItemListScreen()
                 }
             }
         }
     }
 
-    fun onUiEvent(wooPosLeftPaneScreensNavigationEvent: LeftPaneNavigator.LeftPaneNavigationEvent) {
+    fun onUiEvent(wooPosLeftPaneScreensNavigationEvent: WooPosItemsNavigator.WooPosItemsScreenNavigationEvent) {
         viewModelScope.launch {
             navigator.sendNavigationEvent(wooPosLeftPaneScreensNavigationEvent)
         }
     }
 
-    sealed class LeftPaneScreen {
-        data object ItemListScreen : LeftPaneScreen()
-        data class VariationsScreen(val product: VariableProductData) : LeftPaneScreen()
+    sealed class ItemsScreens {
+        data object ItemListScreen : ItemsScreens()
+        data class VariationsScreen(val product: VariableProductData) : ItemsScreens()
     }
 }
