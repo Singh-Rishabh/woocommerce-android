@@ -567,7 +567,7 @@ static def loadPropertiesFromFile(inputFile) {
 }
 
 def isLeakCanaryEnabled() {
-    return developerProperties.get("enable_leak_canary")
+    return developerProperties.get("enable_leak_canary") ?: true
 }
 
 apply from: '../config/gradle/build_optimization.gradle'
