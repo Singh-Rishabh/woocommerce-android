@@ -772,20 +772,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when payment fails, then invalidate onboarding cache`() =
-        testBlocking {
-            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
-                .thenReturn(PaymentFlowError.Generic)
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithEmptyDataForRetry) }
-            }
-
-            viewModel.start()
-
-            verify(cardReaderOnboardingChecker).invalidateCache()
-        }
-
-    @Test
     fun `given external reader, when payment fails because of NoNetwork, then error is mapped correctly`() =
         testBlocking {
             whenever(errorMapper.mapPaymentErrorToUiError(NoNetwork, cardReaderConfig, false))
@@ -888,18 +874,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 (viewModel.viewStateData.value as BuiltInReaderFailedPaymentState).paymentStateLabel,
                 PaymentFlowError.Generic.message
             )
-        }
-
-    @Test
-    fun `when payment fails, then event tracked`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithEmptyDataForRetry) }
-            }
-
-            viewModel.start()
-
-            verify(tracker).trackPaymentFailed(anyOrNull(), anyOrNull())
         }
 
     @Test
