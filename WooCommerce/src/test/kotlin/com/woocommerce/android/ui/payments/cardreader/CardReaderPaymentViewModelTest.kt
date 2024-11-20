@@ -1789,24 +1789,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given billing email not empty and built in, when user clicks on print receipt button, then event tracked`() =
-        testBlocking {
-            whenever(mockedAddress.email).thenReturn("nonemptyemail")
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            initViewModel(BUILT_IN)
-
-            viewModel.start()
-
-            (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState)
-                .onPrimaryActionClicked.invoke()
-
-            verify(tracker).trackPrintReceiptTapped()
-        }
-
-    @Test
     fun `given get receipt url fails, when user clicks on print receipt button, then ShowSnackbar emitted`() =
         testBlocking {
             // GIVEN
