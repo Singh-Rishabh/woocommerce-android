@@ -1558,6 +1558,19 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertThat(controller.paymentState.value).isEqualTo(originalState)
         }
 
+    @Test
+    fun `given billing email empty and external, when user clicks on print receipt button, then event tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+
+            verify(tracker).trackPrintReceiptTapped()
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
