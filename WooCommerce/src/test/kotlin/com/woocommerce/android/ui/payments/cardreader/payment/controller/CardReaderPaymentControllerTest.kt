@@ -1267,6 +1267,21 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertNotNull(paymentState.onCancel)
         }
 
+    @Test
+    fun `when payment fails, then cancellation is possible`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+
+            controller.start()
+            val paymentState = controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+
+            assertNotNull(paymentState.onCancel)
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
