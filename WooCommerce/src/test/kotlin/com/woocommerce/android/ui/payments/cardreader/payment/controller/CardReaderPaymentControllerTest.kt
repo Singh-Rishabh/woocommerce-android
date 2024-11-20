@@ -19,7 +19,10 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalI
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_READ_METHOD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CapturingPayment
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Generic
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.NoNetwork
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Server
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.InitializingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentCompleted
@@ -43,6 +46,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -109,11 +113,23 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
     private val cardReaderConfig: CardReaderConfigForSupportedCountry = CardReaderConfigForUSA
     private val paymentFailedWithEmptyDataForRetry = PaymentFailed(Generic, null, "dummy msg")
+    private val paymentFailedWithValidDataForRetry = PaymentFailed(Generic, mock(), "dummy msg")
+    private val paymentFailedWithNoNetwork = PaymentFailed(NoNetwork, mock(), "dummy msg")
+    private val paymentFailedWithPaymentDeclined = PaymentFailed(DeclinedByBackendError.Unknown, mock(), "dummy msg")
+    private val paymentFailedWithCardReadTimeOut = PaymentFailed(Generic, mock(), "dummy msg")
+    private val paymentFailedWithServerError = PaymentFailed(Server(""), mock(), "dummy msg")
+    private val paymentFailedWithAmountTooSmall = PaymentFailed(
+        DeclinedByBackendError.AmountTooSmall,
+        mock(),
+        "dummy msg"
+    )
 
     @OptIn(InternalCoroutinesApi::class)
     @Before
     fun setUp() = testBlocking {
         createController()
+        whenever(cardReaderConfigProvider.provideCountryConfigFor("US"))
+            .thenReturn(CardReaderConfigForUSA)
         whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
         whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(mockedOrder)
         whenever(orderRepository.getOrderById(any())).thenReturn(mockedOrder)
@@ -731,6 +747,21 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             verify(tracker).trackPaymentSucceeded()
+        }
+
+    @Test
+    fun `given external reader, when payment fails, then failed state emitted`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment::class.java)
         }
 
     companion object {
