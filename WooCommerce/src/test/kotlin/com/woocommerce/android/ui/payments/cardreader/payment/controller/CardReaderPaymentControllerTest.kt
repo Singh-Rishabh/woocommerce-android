@@ -30,6 +30,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentFail
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentMethodType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPaymentCompleted
+import com.woocommerce.android.cardreader.payments.PaymentData
 import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -50,6 +51,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
@@ -77,6 +79,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.clearInvocations
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -1140,6 +1143,40 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             advanceUntilIdle()
 
             verify(cardReaderManager).retryCollectPayment(any(), any())
+        }
+
+    @Test
+    fun `given failed payment and built-in reader, when user retries, then retryCollectPayment invoked`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithValidDataForRetry) }
+            }
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry!!()
+            advanceUntilIdle()
+
+            verify(cardReaderManager).retryCollectPayment(any(), any())
+        }
+
+    @Test
+    fun `given failed payment and external reader, when user retries, then flow retried with provided PaymentData`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Generic)
+            val paymentData = mock<PaymentData>()
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(Generic, paymentData, "dummy msg")) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry!!()
+            advanceUntilIdle()
+
+            verify(cardReaderManager).retryCollectPayment(any(), eq(paymentData))
         }
 
     companion object {
