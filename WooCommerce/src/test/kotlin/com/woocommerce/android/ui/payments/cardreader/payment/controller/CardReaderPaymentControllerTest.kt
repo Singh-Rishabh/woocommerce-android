@@ -39,6 +39,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -676,6 +677,22 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value).isInstanceOf(
                 CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+            )
+        }
+
+    @Test
+    fun `given billing not empty, when built in payment completed, then built in payment successful receipt sent state emitted`() =
+        testBlocking {
+            whenever(mockedAddress.email).thenReturn("nonemptyemail")
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            createController(BUILT_IN)
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(
+                CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
             )
         }
 
