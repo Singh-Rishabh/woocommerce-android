@@ -39,7 +39,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -694,6 +694,24 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertThat(controller.paymentState.value).isInstanceOf(
                 CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
             )
+        }
+
+    @Test
+    fun `when payment completed, then success sound is played`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            val events = mutableListOf<CardReaderPaymentEvent>()
+            val job = launch {
+                controller.event.collect {
+                    events.add(it)
+                }
+            }
+            controller.start()
+
+            assertThat(events[0]).isInstanceOf(PlaySuccessfulPaymentSound::class.java)
+            job.cancel()
         }
 
     companion object {
