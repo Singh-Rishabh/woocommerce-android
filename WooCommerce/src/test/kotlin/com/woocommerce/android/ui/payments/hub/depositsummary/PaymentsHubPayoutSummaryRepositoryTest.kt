@@ -1,6 +1,8 @@
 package com.woocommerce.android.ui.payments.hub.depositsummary
 
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryRepository
+import com.woocommerce.android.ui.payments.hub.payoutsummary.RetrieveDepositOverviewResult
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -20,12 +22,12 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 import org.wordpress.android.fluxc.store.WCWooPaymentsStore
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PaymentsHubDepositSummaryRepositoryTest : BaseUnitTest() {
+class PaymentsHubPayoutSummaryRepositoryTest : BaseUnitTest() {
     private val store: WCWooPaymentsStore = mock()
     private val selectedSite: SelectedSite = mock()
     private val site = SiteModel()
 
-    private val repo = PaymentsHubDepositSummaryRepository(
+    private val repo = PaymentsHubPayoutSummaryRepository(
         store = store,
         site = selectedSite,
     )

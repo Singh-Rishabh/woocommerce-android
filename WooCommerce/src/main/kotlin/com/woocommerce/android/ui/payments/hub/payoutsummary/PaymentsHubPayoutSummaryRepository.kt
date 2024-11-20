@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import com.woocommerce.android.tools.SelectedSite
 import kotlinx.coroutines.flow.flow
@@ -7,7 +7,7 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
 import org.wordpress.android.fluxc.store.WCWooPaymentsStore
 import javax.inject.Inject
 
-class PaymentsHubDepositSummaryRepository @Inject constructor(
+class PaymentsHubPayoutSummaryRepository @Inject constructor(
     private val store: WCWooPaymentsStore,
     private val site: SelectedSite,
 ) {

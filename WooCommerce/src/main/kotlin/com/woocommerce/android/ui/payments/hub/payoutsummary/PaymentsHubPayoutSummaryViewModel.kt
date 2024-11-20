@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
@@ -23,14 +23,14 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 import javax.inject.Inject
 
 @HiltViewModel
-class PaymentsHubDepositSummaryViewModel @Inject constructor(
+class PaymentsHubPayoutSummaryViewModel @Inject constructor(
     savedState: SavedStateHandle,
-    private val repository: PaymentsHubDepositSummaryRepository,
-    private val mapper: PaymentsHubDepositSummaryStateMapper,
+    private val repository: PaymentsHubPayoutSummaryRepository,
+    private val mapper: PaymentsHubPayoutSummaryStateMapper,
     private val trackerWrapper: AnalyticsTrackerWrapper,
 ) : ScopedViewModel(savedState) {
-    private val _viewState = MutableStateFlow<PaymentsHubDepositSummaryState>(PaymentsHubDepositSummaryState.Loading)
-    val viewState: LiveData<PaymentsHubDepositSummaryState> = _viewState.asLiveData()
+    private val _viewState = MutableStateFlow<PaymentsHubPayoutSummaryState>(PaymentsHubPayoutSummaryState.Loading)
+    val viewState: LiveData<PaymentsHubPayoutSummaryState> = _viewState.asLiveData()
 
     private val _openBrowserEvents = MutableSharedFlow<String>()
     val openBrowserEvents = _openBrowserEvents
@@ -59,11 +59,11 @@ class PaymentsHubDepositSummaryViewModel @Inject constructor(
                     }
 
                     is RetrieveDepositOverviewResult.Error -> {
-                        PaymentsHubDepositSummaryState.Error(it.error)
+                        PaymentsHubPayoutSummaryState.Error(it.error)
                     }
                 }
             }.collect {
-                if (it is PaymentsHubDepositSummaryState.Error) {
+                if (it is PaymentsHubPayoutSummaryState.Error) {
                     trackApiError(it)
                 }
                 _viewState.value = it
@@ -72,7 +72,7 @@ class PaymentsHubDepositSummaryViewModel @Inject constructor(
     }
 
     fun onSummaryDepositShown() {
-        val success = _viewState.value as? PaymentsHubDepositSummaryState.Success ?: return
+        val success = _viewState.value as? PaymentsHubPayoutSummaryState.Success ?: return
         trackerWrapper.track(
             AnalyticsEvent.PAYMENTS_HUB_DEPOSIT_SUMMARY_SHOWN,
             properties = mapOf(
@@ -84,11 +84,11 @@ class PaymentsHubDepositSummaryViewModel @Inject constructor(
     private fun buildDepositSummaryState(
         overview: WooPaymentsDepositsOverview,
         fromCache: Boolean
-    ): PaymentsHubDepositSummaryState =
+    ): PaymentsHubPayoutSummaryState =
         when (val mappingResult = mapper.mapDepositOverviewToViewModelOverviews(overview)) {
-            PaymentsHubDepositSummaryStateMapper.Result.InvalidInputData -> constructApiError()
-            is PaymentsHubDepositSummaryStateMapper.Result.Success -> {
-                PaymentsHubDepositSummaryState.Success(
+            PaymentsHubPayoutSummaryStateMapper.Result.InvalidInputData -> constructApiError()
+            is PaymentsHubPayoutSummaryStateMapper.Result.Success -> {
+                PaymentsHubPayoutSummaryState.Success(
                     overview = mappingResult.overview,
                     fromCache = fromCache,
                     onLearnMoreClicked = { onLearnMoreClicked() },
@@ -120,16 +120,16 @@ class PaymentsHubDepositSummaryViewModel @Inject constructor(
         }
     }
 
-    private fun trackApiError(error: PaymentsHubDepositSummaryState.Error) {
+    private fun trackApiError(error: PaymentsHubPayoutSummaryState.Error) {
         trackerWrapper.track(
             AnalyticsEvent.PAYMENTS_HUB_DEPOSIT_SUMMARY_ERROR,
-            errorContext = this@PaymentsHubDepositSummaryViewModel.javaClass.simpleName,
+            errorContext = this@PaymentsHubPayoutSummaryViewModel.javaClass.simpleName,
             errorType = error.error.type.name,
             errorDescription = error.error.message
         )
     }
 
-    private fun constructApiError() = PaymentsHubDepositSummaryState.Error(
+    private fun constructApiError() = PaymentsHubPayoutSummaryState.Error(
         WooError(
             WooErrorType.API_ERROR,
             BaseRequest.GenericErrorType.UNKNOWN,

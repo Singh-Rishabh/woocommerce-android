@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import com.woocommerce.android.extensions.formatToDDMMMYYYY
 import com.woocommerce.android.util.CurrencyFormatter
@@ -6,7 +6,7 @@ import org.wordpress.android.fluxc.model.payments.woo.WooPaymentsDepositsOvervie
 import java.util.Date
 import javax.inject.Inject
 
-class PaymentsHubDepositSummaryStateMapper @Inject constructor(
+class PaymentsHubPayoutSummaryStateMapper @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
     private val dateFormatter: DateToDDMMMYYYYStringFormatter
 ) {
@@ -30,10 +30,10 @@ class PaymentsHubDepositSummaryStateMapper @Inject constructor(
             Result.InvalidInputData
         } else {
             Result.Success(
-                PaymentsHubDepositSummaryState.Overview(
+                PaymentsHubPayoutSummaryState.Overview(
                     defaultCurrency = defaultCurrency,
                     infoPerCurrency = currencies.associateWith { currency ->
-                        PaymentsHubDepositSummaryState.Info(
+                        PaymentsHubPayoutSummaryState.Info(
                             availableFundsFormatted = formatMoney(
                                 amount = availableBalances.firstOrNull { it.currency == currency }?.amount ?: 0,
                                 currency = currency
@@ -42,7 +42,8 @@ class PaymentsHubDepositSummaryStateMapper @Inject constructor(
                                 amount = pendingBalances.firstOrNull { it.currency == currency }?.amount ?: 0,
                                 currency = currency
                             ),
-                            availableFundsAmount = availableBalances.firstOrNull { it.currency == currency }?.amount ?: 0,
+                            availableFundsAmount = availableBalances.firstOrNull { it.currency == currency }?.amount
+                                ?: 0,
                             pendingFundsAmount = pendingBalances.firstOrNull { it.currency == currency }?.amount ?: 0,
                             fundsAvailableInDays = overview.account?.depositsSchedule?.delayDays,
                             fundsDepositInterval = overview.account.fundsAvailableIn(),
@@ -59,7 +60,7 @@ class PaymentsHubDepositSummaryStateMapper @Inject constructor(
     }
 
     private fun mapDeposit(info: WooPaymentsDepositsOverview.Deposit.Info) =
-        PaymentsHubDepositSummaryState.Deposit(
+        PaymentsHubPayoutSummaryState.Deposit(
             amount = formatMoney(info.amount ?: 0L, info.currency.orEmpty()),
             status = info.status.toDepositStatus(),
             date = if (info.date != null) dateFormatter(Date(info.date!!)) else ""
@@ -72,14 +73,14 @@ class PaymentsHubDepositSummaryStateMapper @Inject constructor(
         )
 
     @Suppress("ReturnCount")
-    private fun WooPaymentsDepositsOverview.Account?.fundsAvailableIn(): PaymentsHubDepositSummaryState.Info.Interval? {
+    private fun WooPaymentsDepositsOverview.Account?.fundsAvailableIn(): PaymentsHubPayoutSummaryState.Info.Interval? {
         return when (this?.depositsSchedule?.interval?.lowercase()) {
-            "daily" -> PaymentsHubDepositSummaryState.Info.Interval.Daily
-            "weekly" -> PaymentsHubDepositSummaryState.Info.Interval.Weekly(
+            "daily" -> PaymentsHubPayoutSummaryState.Info.Interval.Daily
+            "weekly" -> PaymentsHubPayoutSummaryState.Info.Interval.Weekly(
                 this.depositsSchedule?.weeklyAnchor ?: return null
             )
 
-            "monthly" -> PaymentsHubDepositSummaryState.Info.Interval.Monthly(
+            "monthly" -> PaymentsHubPayoutSummaryState.Info.Interval.Monthly(
                 this.depositsSchedule?.monthlyAnchor ?: return null
             )
 
@@ -89,17 +90,17 @@ class PaymentsHubDepositSummaryStateMapper @Inject constructor(
 
     private fun String?.toDepositStatus() =
         when (this?.uppercase()) {
-            "ESTIMATED" -> PaymentsHubDepositSummaryState.Deposit.Status.ESTIMATED
-            "PENDING" -> PaymentsHubDepositSummaryState.Deposit.Status.PENDING
-            "IN_TRANSIT" -> PaymentsHubDepositSummaryState.Deposit.Status.IN_TRANSIT
-            "PAID" -> PaymentsHubDepositSummaryState.Deposit.Status.PAID
-            "CANCELED" -> PaymentsHubDepositSummaryState.Deposit.Status.CANCELED
-            "FAILED" -> PaymentsHubDepositSummaryState.Deposit.Status.FAILED
-            else -> PaymentsHubDepositSummaryState.Deposit.Status.UNKNOWN
+            "ESTIMATED" -> PaymentsHubPayoutSummaryState.Deposit.Status.ESTIMATED
+            "PENDING" -> PaymentsHubPayoutSummaryState.Deposit.Status.PENDING
+            "IN_TRANSIT" -> PaymentsHubPayoutSummaryState.Deposit.Status.IN_TRANSIT
+            "PAID" -> PaymentsHubPayoutSummaryState.Deposit.Status.PAID
+            "CANCELED" -> PaymentsHubPayoutSummaryState.Deposit.Status.CANCELED
+            "FAILED" -> PaymentsHubPayoutSummaryState.Deposit.Status.FAILED
+            else -> PaymentsHubPayoutSummaryState.Deposit.Status.UNKNOWN
         }
 
     sealed class Result {
-        data class Success(val overview: PaymentsHubDepositSummaryState.Overview) : Result()
+        data class Success(val overview: PaymentsHubPayoutSummaryState.Overview) : Result()
         object InvalidInputData : Result()
     }
 }

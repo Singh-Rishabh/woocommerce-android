@@ -54,7 +54,7 @@ class PaymentsHubAdapter :
                 PaymentsHubViewHolder.LearnMoreViewHolder(parent)
             }
             VIEW_TYPE_DEPOSIT_SUMMARY -> {
-                PaymentsHubViewHolder.DepositSummaryViewHolder(ComposeView(parent.context))
+                PaymentsHubViewHolder.PayoutSummaryViewHolder(ComposeView(parent.context))
             }
             else -> error("Unknown section")
         }
