@@ -125,7 +125,7 @@ android {
         // TODO remove this once the hilt migration is complete
         javaCompileOptions.annotationProcessorOptions.arguments['dagger.hilt.disableModulesHaveInstallInCheck'] = 'true'
 
-        resValue "bool", "enable_leak_canary", isLeakCanaryEnabled().toString()
+        resValue "bool", "enable_leak_canary", isLeakCanaryEnabled()
 
         packagingOptions {
             exclude 'META-INF/gradle/incremental.annotation.processors'
@@ -567,7 +567,7 @@ static def loadPropertiesFromFile(inputFile) {
 }
 
 def isLeakCanaryEnabled() {
-    return gradle.hasProperty('enableLeakCanary') && gradle.enableLeakCanary == true
+    return developerProperties.get("enable_leak_canary")
 }
 
 apply from: '../config/gradle/build_optimization.gradle'
