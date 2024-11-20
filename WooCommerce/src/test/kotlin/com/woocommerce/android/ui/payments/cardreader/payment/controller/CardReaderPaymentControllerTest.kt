@@ -51,6 +51,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulReceiptSentAutomaticallyState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -1467,6 +1468,24 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
         }
+
+    @Test
+    fun `given billing email not empty and external, when print result received, then payment success receipt sent state shown`() =
+        testBlocking {
+            whenever(mockedAddress.email).thenReturn("nonemptyemail")
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+
+            controller.onPrintResult(CANCELLED)
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
+        }
+
+
 
     companion object {
         private const val ORDER_ID = 1L
