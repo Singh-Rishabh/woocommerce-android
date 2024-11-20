@@ -1216,6 +1216,26 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
 
+    @Test
+    fun `given built in failed payment, when user clicks on secondary button, then exit event is triggered`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.Generic)
+            val paymentData = mock<PaymentData>()
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(Generic, paymentData, "dummy msg")) }
+            }
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onCancel!!()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
