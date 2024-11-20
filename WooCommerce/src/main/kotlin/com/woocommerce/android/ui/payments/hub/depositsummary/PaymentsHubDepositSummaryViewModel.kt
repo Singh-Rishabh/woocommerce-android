@@ -139,7 +139,7 @@ class PaymentsHubDepositSummaryViewModel @Inject constructor(
 
     private companion object {
         private const val LEARN_MORE_ABOUT_DEPOSIT_URL =
-            "https://woocommerce.com/document/woopayments/deposits/deposit-schedule/"
+            "https://woocommerce.com/document/woopayments/payouts/payout-schedule/"
 
         private const val NUMBER_OF_CURRENCIES_TRACK_PROP_KEY = "number_of_currencies"
         private const val LEARN_MORE_CLICKS_THROTTLING_DELAY = 500L

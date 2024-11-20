@@ -218,7 +218,7 @@ class PaymentsHubDepositSummaryViewModelTest : BaseUnitTest() {
         // THEN
         assertThat(emittedValues).hasSize(1)
         assertThat(emittedValues.last()).isEqualTo(
-            "https://woocommerce.com/document/woopayments/deposits/deposit-schedule/"
+            "https://woocommerce.com/document/woopayments/payouts/payout-schedule/"
         )
 
         verify(trackerWrapper).track(AnalyticsEvent.PAYMENTS_HUB_DEPOSIT_SUMMARY_LEARN_MORE_CLICKED)
@@ -293,7 +293,7 @@ class PaymentsHubDepositSummaryViewModelTest : BaseUnitTest() {
             // THEN
             assertThat(emittedValues).hasSize(1)
             assertThat(emittedValues.last()).isEqualTo(
-                "https://woocommerce.com/document/woopayments/deposits/deposit-schedule/"
+                "https://woocommerce.com/document/woopayments/payouts/payout-schedule/"
             )
 
             job.cancel()
