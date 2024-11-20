@@ -64,6 +64,7 @@ import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -1195,6 +1196,24 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             advanceUntilIdle()
 
             verify(cardReaderManager).retryCollectPayment(any(), eq(paymentData))
+        }
+
+    @Test
+    fun `given external failed payment, when user clicks on secondary button, then exit event is triggered`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Generic)
+            val paymentData = mock<PaymentData>()
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(Generic, paymentData, "dummy msg")) }
+            }
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onCancel!!()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
 
     companion object {
