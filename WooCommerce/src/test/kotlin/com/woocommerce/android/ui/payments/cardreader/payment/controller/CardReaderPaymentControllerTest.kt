@@ -51,6 +51,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulReceiptSentAutomaticallyState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
@@ -1483,6 +1484,25 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
+        }
+
+    @Test
+    fun `given billing email not empty and built in, when print result received, then payment success receipt sent state shown`() =
+        testBlocking {
+            whenever(mockedAddress.email).thenReturn("nonemptyemail")
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+
+            controller.onPrintResult(CANCELLED)
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
         }
 
 
