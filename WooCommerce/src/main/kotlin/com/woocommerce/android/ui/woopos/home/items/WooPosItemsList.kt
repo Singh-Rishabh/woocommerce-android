@@ -56,10 +56,10 @@ import kotlinx.coroutines.flow.filter
 @Composable
 fun ItemsList(
     state: ContentViewState,
+    listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
 ) {
-    val listState = rememberLazyListState()
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(2.dp),
