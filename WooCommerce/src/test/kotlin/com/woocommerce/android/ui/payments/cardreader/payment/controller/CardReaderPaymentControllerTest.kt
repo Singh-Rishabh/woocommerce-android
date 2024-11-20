@@ -33,6 +33,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingP
 import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
@@ -47,8 +48,8 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentC
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
+import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -82,7 +83,8 @@ import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import kotlin.reflect.KMutableProperty0
-import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class CardReaderPaymentControllerTest : BaseUnitTest() {
@@ -898,6 +900,31 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             verify(tracker).trackPaymentFailed(anyOrNull(), anyOrNull())
+        }
+
+    @Test
+    fun `given external reader, when payment fails because of AMOUNT_TOO_SMALL, then failed state is not retryable`() =
+        testBlocking {
+            val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
+            whenever(
+                errorMapper.mapPaymentErrorToUiError(
+                    DeclinedByBackendError.AmountTooSmall,
+                    cardReaderConfig,
+                    false
+                )
+            ).thenReturn(error)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithAmountTooSmall) }
+            }
+
+            controller.start()
+
+            assertNull(
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry
+            )
+            assertNotNull(
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onCancel
+            )
         }
 
 
