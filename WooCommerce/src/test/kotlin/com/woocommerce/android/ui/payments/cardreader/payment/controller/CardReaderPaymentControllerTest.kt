@@ -37,7 +37,6 @@ import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
-import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -51,8 +50,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.PurchaseCardReader
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -1011,6 +1008,52 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertThat((events.last() as CardReaderPaymentEvent.PurchaseCardReaderTapped).url).isEqualTo(
                 "https://woocommerce.com/products/hardware/US"
             )
+        }
+
+    @Test
+    fun `given external reader, when payment fails because of AMOUNT_TOO_SMALL, then clicking on ok button triggers exit event`() =
+        testBlocking {
+            val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
+            whenever(
+                errorMapper.mapPaymentErrorToUiError(
+                    DeclinedByBackendError.AmountTooSmall,
+                    cardReaderConfig,
+                    false
+                )
+            ).thenReturn(error)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithAmountTooSmall) }
+            }
+            controller.start()
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onCancel!!()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given built in reader, when payment fails because of AMOUNT_TOO_SMALL, then clicking on ok button triggers exit event`() =
+        testBlocking {
+            val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
+            whenever(
+                errorMapper.mapPaymentErrorToUiError(
+                    DeclinedByBackendError.AmountTooSmall,
+                    cardReaderConfig,
+                    true
+                )
+            ).thenReturn(error)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithAmountTooSmall) }
+            }
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onCancel!!()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
 
     companion object {
