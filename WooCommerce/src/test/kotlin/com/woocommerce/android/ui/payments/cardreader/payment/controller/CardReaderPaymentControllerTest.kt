@@ -60,6 +60,7 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.CANCELLED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1434,6 +1435,37 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
+        }
+
+    @Test
+    fun `given billing email empty and external, when print result received, then payment successful state shown`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+
+            controller.onPrintResult(CANCELLED)
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
+        }
+
+    @Test
+    fun `given billing email empty and built in, when print result received, then payment successful state shown`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(BUILT_IN)
+
+            controller.start()
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+
+            controller.onPrintResult(CANCELLED)
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
         }
 
     companion object {
