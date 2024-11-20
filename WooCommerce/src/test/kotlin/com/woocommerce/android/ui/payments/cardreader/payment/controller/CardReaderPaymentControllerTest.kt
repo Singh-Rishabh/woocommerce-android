@@ -53,6 +53,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
 import com.woocommerce.android.ui.payments.cardreader.payment.PrintReceipt
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
@@ -1325,6 +1326,23 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             val events = controller.event.runAndCaptureValues {
                 (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
+        }
+
+    @Test
+    fun `given billing email empty and built in, when user clicks on print receipt button, then PrintReceipt event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
