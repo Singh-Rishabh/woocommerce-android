@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
-import com.woocommerce.android.ui.compose.component.BottomSheetHandle
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
@@ -79,7 +78,16 @@ fun ShipmentDetails(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BottomSheetHandle(modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100)))
+        Icon(
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100)),
+            painter = if (scaffoldState.bottomSheetState.isExpanded) {
+                painterResource(R.drawable.ic_arrow_down_26)
+            } else {
+                painterResource(R.drawable.ic_arrow_up_26)
+            },
+            contentDescription = stringResource(R.string.order_creation_expand_collapse_order_totals),
+            tint = colorResource(id = R.color.color_primary),
+        )
         AnimatedVisibility(visible = scaffoldState.bottomSheetState.isCollapsed) {
             Text(
                 text = stringResource(R.string.shipping_label_shipment_details_title),
