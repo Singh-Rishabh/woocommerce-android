@@ -4,6 +4,7 @@
 -----
 21.2
 - [Internal] Changed a way how authenticated web view opened in the IPP flows [https://github.com/woocommerce/woocommerce-android/pull/12908]
+- [*] Fixed an inconsistent state while refreshing the orders list [https://github.com/woocommerce/woocommerce-android/pull/12948]
 - [**][Payments] Fixed a bug when IPP onboarding was not possible to finish from the app [https://github.com/woocommerce/woocommerce-android/pull/12917]
 - [*] Fixed shipping lines being editable at all states [https://github.com/woocommerce/woocommerce-android/pull/12890]
 - [*] Fixed a crash that occurred when tapping on the customer shipping address in the order details screen [https://github.com/woocommerce/woocommerce-android/pull/12920]

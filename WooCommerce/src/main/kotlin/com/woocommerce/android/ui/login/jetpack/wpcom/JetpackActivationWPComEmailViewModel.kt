@@ -4,11 +4,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.OnChangedException
+import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent.JETPACK_SETUP_LOGIN_FLOW
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.WPComLoginRepository
+import com.woocommerce.android.util.FeatureFlag
+import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
@@ -21,7 +24,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsError
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsErrorType
-import org.wordpress.android.login.R
 import javax.inject.Inject
 
 @HiltViewModel
@@ -90,17 +92,36 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
         wpComLoginRepository.fetchAuthOptions(emailOrUsername).fold(
             onSuccess = {
                 if (it.isPasswordless) {
-                    triggerEvent(ShowMagicLinkScreen(emailOrUsername, navArgs.jetpackStatus))
+                    triggerEvent(
+                        ShowMagicLinkScreen(emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = false)
+                    )
                 } else {
                     triggerEvent(ShowPasswordScreen(emailOrUsername, navArgs.jetpackStatus))
                 }
             },
             onFailure = {
                 val failure = (it as? OnChangedException)?.error as? AuthOptionsError
+                var isSignup = false
 
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
-                        errorMessage.value = R.string.email_not_registered_wpcom
+                        when {
+                            !StringUtils.isValidEmail(emailOrUsername) ->
+                                errorMessage.value = R.string.username_not_registered_wpcom
+
+                            FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() -> {
+                                triggerEvent(
+                                    ShowMagicLinkScreen(
+                                        emailOrUsername,
+                                        navArgs.jetpackStatus,
+                                        isNewWpComAccount = true
+                                    )
+                                )
+                                isSignup = true
+                            }
+
+                            else -> errorMessage.value = R.string.email_not_registered_wpcom
+                        }
                     }
 
                     AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED -> {
@@ -113,16 +134,24 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                     }
                 }
 
-                analyticsTrackerWrapper.track(
-                    JETPACK_SETUP_LOGIN_FLOW,
-                    mapOf(
-                        AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS,
-                        AnalyticsTracker.KEY_FAILURE to (failure?.type?.name ?: "Unknown error")
-                    )
-                )
+                trackLoginFlowAuthOptionError(failure, isSignup)
             }
         )
         isLoadingDialogShown.value = false
+    }
+
+    private fun trackLoginFlowAuthOptionError(
+        failure: AuthOptionsError?,
+        isSignup: Boolean
+    ) {
+        analyticsTrackerWrapper.track(
+            JETPACK_SETUP_LOGIN_FLOW,
+            mapOf(
+                AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS,
+                AnalyticsTracker.KEY_FAILURE to (failure?.type?.name ?: "Unknown error"),
+                AnalyticsTracker.KEY_IS_SIGN_UP to isSignup
+            )
+        )
     }
 
     data class ViewState(
@@ -141,6 +170,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
 
     data class ShowMagicLinkScreen(
         val emailOrUsername: String,
-        val jetpackStatus: JetpackStatus
+        val jetpackStatus: JetpackStatus,
+        val isNewWpComAccount: Boolean,
     ) : MultiLiveEvent.Event()
 }
