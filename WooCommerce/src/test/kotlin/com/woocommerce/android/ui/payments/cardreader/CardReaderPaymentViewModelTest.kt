@@ -1790,20 +1790,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given billing email empty and external, when user clicks on print receipt button, then printing receipt state shown`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-            viewModel.start()
-
-            (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
-
-            assertThat(viewModel.viewStateData.value)
-                .isInstanceOf(PrintingReceiptState::class.java)
-        }
-
-    @Test
     fun `given billing email empty and built in, when user clicks on print receipt button, then printing receipt state shown`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
