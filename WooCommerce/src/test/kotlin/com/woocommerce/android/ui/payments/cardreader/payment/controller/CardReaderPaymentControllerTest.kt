@@ -3,6 +3,8 @@ package com.woocommerce.android.ui.payments.cardreader.payment.controller
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.CardReaderManager
+import com.woocommerce.android.cardreader.config.CardReaderConfigForSupportedCountry
+import com.woocommerce.android.cardreader.config.CardReaderConfigForUSA
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
@@ -17,9 +19,11 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalI
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_CARD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.TRY_ANOTHER_READ_METHOD
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CapturingPayment
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Generic
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CollectingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.InitializingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentCompleted
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentFailed
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentMethodType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPaymentCompleted
@@ -102,6 +106,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
     private val mockedOrder = mock<Order>()
     private val mockedAddress = mock<Address>()
+
+    private val cardReaderConfig: CardReaderConfigForSupportedCountry = CardReaderConfigForUSA
+    private val paymentFailedWithEmptyDataForRetry = PaymentFailed(Generic, null, "dummy msg")
 
     @OptIn(InternalCoroutinesApi::class)
     @Before
@@ -712,6 +719,18 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(events[0]).isInstanceOf(PlaySuccessfulPaymentSound::class.java)
             job.cancel()
+        }
+
+    @Test
+    fun `when payment completed, then event tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            controller.start()
+
+            verify(tracker).trackPaymentSucceeded()
         }
 
     companion object {

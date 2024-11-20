@@ -690,18 +690,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when payment completed, then event tracked`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            viewModel.start()
-
-            verify(tracker).trackPaymentSucceeded()
-        }
-
-    @Test
     fun `given external reader, when payment fails, then ui updated to external failed state`() =
         testBlocking {
             whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
