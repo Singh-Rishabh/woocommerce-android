@@ -19,11 +19,6 @@
       "encrypt": true
     },
     {
-      "file": "android/automattic.jks",
-      "destination": "WooCommerce/release.jks",
-      "encrypt": false
-    },
-    {
       "file": "android/debug.keystore",
       "destination": "~/.configure/woocommerce-android/secrets/debug_a8c.keystore",
       "encrypt": true
