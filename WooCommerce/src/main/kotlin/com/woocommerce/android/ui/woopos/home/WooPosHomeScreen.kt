@@ -36,7 +36,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreen
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreenProductsPreview
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsScreenPreview
-import com.woocommerce.android.ui.woopos.home.navigation.WooPosLeftPaneScreens
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsScreens
 import com.woocommerce.android.ui.woopos.home.toolbar.PreviewWooPosFloatingToolbarStatusConnectedWithMenu
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosFloatingToolbar
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreen
@@ -187,7 +187,7 @@ private fun WooPosHomeScreenProducts(modifier: Modifier) {
     if (isPreviewMode()) {
         WooPosItemsScreenPreview(modifier)
     } else {
-        WooPosLeftPaneScreens(modifier = modifier)
+        WooPosItemsScreens(modifier = modifier)
     }
 }
 

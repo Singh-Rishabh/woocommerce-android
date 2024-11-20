@@ -1,8 +1,9 @@
-package com.woocommerce.android.ui.woopos.home.navigation
+package com.woocommerce.android.ui.woopos.home.items.navigation
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -13,28 +14,29 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsS
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun WooPosLeftPaneScreens(modifier: Modifier) {
-    val viewModel: WooPosLeftPaneScreensViewModel = hiltViewModel()
-    WooPosLeftPaneScreens(modifier = modifier, leftPaneScreen = viewModel.screenState) {
-        viewModel.onUiEvent(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen)
+fun WooPosItemsScreens(modifier: Modifier) {
+    val viewModel: WooPosItemsScreenViewModel = hiltViewModel()
+    WooPosItemsScreens(modifier = modifier, itemsScreens = viewModel.screenState) {
+        viewModel.onUiEvent(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen)
     }
 }
 
 @Composable
-fun WooPosLeftPaneScreens(
+fun WooPosItemsScreens(
     modifier: Modifier,
-    leftPaneScreen: StateFlow<WooPosLeftPaneScreensViewModel.LeftPaneScreen>,
+    itemsScreens: StateFlow<WooPosItemsScreenViewModel.ItemsScreens>,
     onNavigateToItemsListScreen: () -> Unit
 ) {
-    val currentNavigationState = leftPaneScreen.collectAsState()
+    val currentNavigationState = itemsScreens.collectAsState()
+    val listState = rememberLazyListState()
     Box(modifier = modifier.fillMaxSize()) {
         Crossfade(targetState = currentNavigationState.value, label = "LeftPaneScreen") { navigationState ->
             when (navigationState) {
-                is WooPosLeftPaneScreensViewModel.LeftPaneScreen.ItemListScreen -> {
-                    WooPosItemsScreen(modifier = modifier)
+                is WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen -> {
+                    WooPosItemsScreen(modifier = modifier, listState)
                 }
 
-                is WooPosLeftPaneScreensViewModel.LeftPaneScreen.VariationsScreen -> {
+                is WooPosItemsScreenViewModel.ItemsScreens.VariationsScreen -> {
                     NavigateToVariationsScreen(
                         variableProductData = navigationState.product,
                         modifier = modifier,

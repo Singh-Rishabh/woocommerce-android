@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -56,10 +55,10 @@ import kotlinx.coroutines.flow.filter
 @Composable
 fun ItemsList(
     state: ContentViewState,
+    listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
 ) {
-    val listState = rememberLazyListState()
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(2.dp),
