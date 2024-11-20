@@ -9,8 +9,8 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
-import com.woocommerce.android.ui.woopos.home.navigation.LeftPaneNavigator
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,7 +30,7 @@ class WooPosItemsViewModel @Inject constructor(
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val priceFormat: WooPosFormatPrice,
     private val preferencesRepository: WooPosPreferencesRepository,
-    private val navigator: LeftPaneNavigator,
+    private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
 
@@ -99,7 +99,7 @@ class WooPosItemsViewModel @Inject constructor(
     private fun navigateBackToItemListScreen() {
         viewModelScope.launch {
             navigator.sendNavigationEvent(
-                LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen
+                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
             )
         }
     }
@@ -117,7 +117,7 @@ class WooPosItemsViewModel @Inject constructor(
             is VariableProduct -> {
                 viewModelScope.launch {
                     navigator.sendNavigationEvent(
-                        LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(
+                        WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(
                             WooPosItemNavigationData.VariableProductData(
                                 id = event.item.id,
                                 name = event.item.name,

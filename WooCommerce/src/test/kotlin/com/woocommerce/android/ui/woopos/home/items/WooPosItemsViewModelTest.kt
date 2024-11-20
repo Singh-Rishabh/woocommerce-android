@@ -5,8 +5,8 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
-import com.woocommerce.android.ui.woopos.home.navigation.LeftPaneNavigator
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
@@ -35,7 +35,7 @@ class WooPosItemsViewModelTest {
     private val productsDataSource: WooPosProductsDataSource = mock()
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val posPreferencesRepository: WooPosPreferencesRepository = mock()
-    private val leftPaneNavigator: LeftPaneNavigator = mock()
+    private val wooPosItemsNavigator: WooPosItemsNavigator = mock()
     private val priceFormat: WooPosFormatPrice = mock {
         onBlocking { invoke(BigDecimal("10.0")) }.thenReturn("$10.0")
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
@@ -830,8 +830,8 @@ class WooPosItemsViewModelTest {
             )
         )
 
-        verify(leftPaneNavigator).sendNavigationEvent(
-            LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(
+        verify(wooPosItemsNavigator).sendNavigationEvent(
+            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(
                 WooPosItemNavigationData.VariableProductData(
                     id = 1,
                     name = "Product 1",
@@ -864,8 +864,8 @@ class WooPosItemsViewModelTest {
         val viewModel = createViewModel()
         viewModel.onUIEvent(WooPosItemsUIEvent.BackButtonClicked)
 
-        verify(leftPaneNavigator).sendNavigationEvent(
-            LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen
+        verify(wooPosItemsNavigator).sendNavigationEvent(
+            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
         )
     }
 
@@ -915,6 +915,6 @@ class WooPosItemsViewModelTest {
             fromChildToParentEventSender,
             priceFormat,
             posPreferencesRepository,
-            leftPaneNavigator,
+            wooPosItemsNavigator,
         )
 }
