@@ -2,7 +2,6 @@
 
 echo "--- 🧪 Testing"
 set +e
-cp gradle.properties-example gradle.properties
 ./gradlew testJalapenoDebugUnitTest lib:cardreader:testDebugUnitTest lib:iap:testDebugUnitTest
 TESTS_EXIT_STATUS=$?
 set -e

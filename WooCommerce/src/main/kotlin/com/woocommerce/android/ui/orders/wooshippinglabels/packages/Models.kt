@@ -61,6 +61,17 @@ data class CustomPackageCreationData(
     val isValid: Boolean
         get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
 
+    val asPackageData: PackageData
+        get() = PackageData(
+            type = type,
+            name = "",
+            description = "",
+            length = length,
+            width = width,
+            height = height,
+            isSelected = true
+        )
+
     companion object {
         val EMPTY = CustomPackageCreationData(
             type = PackageType.BOX,
