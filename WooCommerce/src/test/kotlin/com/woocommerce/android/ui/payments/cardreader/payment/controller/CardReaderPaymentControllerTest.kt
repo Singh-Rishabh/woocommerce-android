@@ -50,7 +50,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -942,6 +941,46 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertNotNull(
                 (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry,
+            )
+        }
+
+    @Test
+    fun `given built in reader, when payment fails not because of AMOUNT_TOO_SMALL, then failed state has Try again button`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Server(""), cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.Server)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithServerError) }
+            }
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+
+            assertNotNull(
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry,
+            )
+        }
+
+    @Test
+    fun `given built in reader, when payment fails PIN_REQUIRED, then failed state has purchase card reader cta`() =
+        testBlocking {
+            whenever(
+                errorMapper.mapPaymentErrorToUiError(
+                    DeclinedByBackendError.CardDeclined.PinRequired,
+                    cardReaderConfig,
+                    true
+                )
+            ).thenReturn(PaymentFlowError.BuiltInReader.PinRequired)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(DeclinedByBackendError.CardDeclined.PinRequired, mock(), "dummy msg")) }
+            }
+            createController(BUILT_IN)
+
+            controller.start()
+
+            assertEquals(
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).cta!!.label,
+                R.string.card_reader_payment_payment_failed_purchase_hardware_reader
             )
         }
 
