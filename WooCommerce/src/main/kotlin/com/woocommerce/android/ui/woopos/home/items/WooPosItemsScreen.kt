@@ -32,10 +32,12 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
@@ -73,7 +75,6 @@ import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ItemClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,12 +84,18 @@ import kotlinx.coroutines.flow.filter
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WooPosItemsScreen(modifier: Modifier = Modifier) {
+fun WooPosItemsScreen(
+    modifier: Modifier = Modifier,
+    listState: LazyListState,
+) {
     val productsViewModel: WooPosItemsViewModel = hiltViewModel()
     WooPosItemsScreen(
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
-        onItemClicked = { productsViewModel.onUIEvent(ItemClicked(it)) },
+        listState,
+        onItemClicked = { item ->
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.ItemClicked(item))
+        },
         onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfItemsListReached) },
         onPullToRefresh = { productsViewModel.onUIEvent(PullToRefreshTriggered) },
         onRetryClicked = { productsViewModel.onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
@@ -109,6 +116,7 @@ fun WooPosItemsScreen(modifier: Modifier = Modifier) {
 private fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     itemsStateFlow: StateFlow<WooPosItemsViewState>,
+    listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfItemListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
@@ -119,6 +127,35 @@ private fun WooPosItemsScreen(
 ) {
     val state = itemsStateFlow.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(state.value.reloadingProductsWithPullToRefresh, onPullToRefresh)
+
+    MainItemsList(
+        modifier = modifier,
+        pullToRefreshState = pullToRefreshState,
+        state = state,
+        listState = listState,
+        onToolbarInfoIconClicked = onToolbarInfoIconClicked,
+        onSimpleProductsBannerLearnMoreClicked = onSimpleProductsBannerLearnMoreClicked,
+        onSimpleProductsBannerClosed = onSimpleProductsBannerClosed,
+        onItemClicked = onItemClicked,
+        onEndOfItemListReached = onEndOfItemListReached,
+        onRetryClicked = onRetryClicked
+    )
+}
+
+@ExperimentalMaterialApi
+@Composable
+private fun MainItemsList(
+    modifier: Modifier,
+    pullToRefreshState: PullRefreshState,
+    state: State<WooPosItemsViewState>,
+    listState: LazyListState,
+    onToolbarInfoIconClicked: () -> Unit,
+    onSimpleProductsBannerLearnMoreClicked: () -> Unit,
+    onSimpleProductsBannerClosed: () -> Unit,
+    onItemClicked: (item: WooPosItem) -> Unit,
+    onEndOfItemListReached: () -> Unit,
+    onRetryClicked: () -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -154,6 +191,7 @@ private fun WooPosItemsScreen(
                         )
                         ItemsList(
                             itemsState,
+                            listState,
                             onItemClicked,
                             onEndOfItemListReached,
                         )
@@ -249,10 +287,10 @@ private fun SimpleProductsBanner(
 @Composable
 private fun ItemsList(
     state: WooPosItemsViewState.Content,
+    listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
 ) {
-    val listState = rememberLazyListState()
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(2.dp),
@@ -614,6 +652,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
         WooPosItemsScreen(
             modifier = modifier,
             itemsStateFlow = productState,
+            listState = rememberLazyListState(),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -638,6 +677,7 @@ fun WooPosItemsScreenLoadingPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
+            listState = rememberLazyListState(),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -657,6 +697,7 @@ fun WooPosProductsScreenEmptyListPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
+            listState = rememberLazyListState(),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -676,6 +717,7 @@ fun WooPosProductsScreenErrorPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
+            listState = rememberLazyListState(),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -728,6 +770,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
+            listState = rememberLazyListState(),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
@@ -780,6 +823,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
+            listState = rememberLazyListState(),
             onItemClicked = {},
             onEndOfItemListReached = {},
             onPullToRefresh = {},
