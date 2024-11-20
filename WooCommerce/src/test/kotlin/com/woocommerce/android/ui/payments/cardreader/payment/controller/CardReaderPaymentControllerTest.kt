@@ -34,6 +34,7 @@ import com.woocommerce.android.cardreader.payments.PaymentData
 import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
@@ -1235,6 +1236,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
+
+    @Test
+    fun `when loading data, then cancellation is possible`() = testBlocking {
+        controller.start()
+        val paymentState = controller.paymentState.value
+
+        assertThat(paymentState).isInstanceOf(CardReaderPaymentState.LoadingData::class.java)
+        assertNotNull((paymentState as CardReaderPaymentState.LoadingData).onCancel)
+    }
 
     companion object {
         private const val ORDER_ID = 1L
