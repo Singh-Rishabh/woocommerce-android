@@ -47,9 +47,11 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.EnableNfc
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -59,6 +61,7 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.captureValues
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1054,6 +1057,39 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given payment fails because of NFC_DISABLED, when primary button clicked, then tracked and enablenfc emitted`() =
+        testBlocking {
+            whenever(
+                errorMapper.mapPaymentErrorToUiError(
+                    CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.NfcDisabled,
+                    cardReaderConfig,
+                    true
+                )
+            ).thenReturn(PaymentFlowError.BuiltInReader.NfcDisabled)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow {
+                    emit(
+                        PaymentFailed(
+                            CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.NfcDisabled,
+                            null,
+                            "message"
+                        )
+                    )
+                }
+            }
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).cta!!.onCallToActionTapped()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.EnableNfcTapped::class.java)
+            verify(tracker).trackPaymentFailedEnabledNfcTapped()
         }
 
     companion object {
