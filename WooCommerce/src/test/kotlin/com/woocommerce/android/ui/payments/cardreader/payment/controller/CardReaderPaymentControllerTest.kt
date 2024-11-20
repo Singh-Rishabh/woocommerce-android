@@ -37,6 +37,7 @@ import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
+import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -50,6 +51,8 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.PurchaseCardReader
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -981,6 +984,32 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertEquals(
                 (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).cta!!.label,
                 R.string.card_reader_payment_payment_failed_purchase_hardware_reader
+            )
+        }
+
+    @Test
+    fun `given built in reader, when purchase button clicked, then purchase even emmited`() =
+        testBlocking {
+            whenever(
+                errorMapper.mapPaymentErrorToUiError(
+                    DeclinedByBackendError.CardDeclined.PinRequired,
+                    cardReaderConfig,
+                    true
+                )
+            ).thenReturn(PaymentFlowError.BuiltInReader.PinRequired)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(DeclinedByBackendError.CardDeclined.PinRequired, mock(), "dummy msg")) }
+            }
+            whenever(wooStore.getStoreCountryCode(siteModel)).thenReturn("US")
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).cta!!.onCallToActionTapped()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PurchaseCardReaderTapped::class.java)
+            assertThat((events.last() as CardReaderPaymentEvent.PurchaseCardReaderTapped).url).isEqualTo(
+                "https://woocommerce.com/products/hardware/US"
             )
         }
 
