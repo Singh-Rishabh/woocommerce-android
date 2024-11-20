@@ -1179,6 +1179,24 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             verify(cardReaderManager).retryCollectPayment(any(), eq(paymentData))
         }
 
+    @Test
+    fun `given failed payment and built-in reader, when user retries, then flow retried with provided PaymentData`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.Generic)
+            val paymentData = mock<PaymentData>()
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(Generic, paymentData, "dummy msg")) }
+            }
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry!!()
+            advanceUntilIdle()
+
+            verify(cardReaderManager).retryCollectPayment(any(), eq(paymentData))
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
