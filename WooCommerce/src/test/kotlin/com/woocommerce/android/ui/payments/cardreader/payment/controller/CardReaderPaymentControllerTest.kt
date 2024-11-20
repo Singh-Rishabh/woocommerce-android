@@ -52,6 +52,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -78,6 +79,7 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -1090,6 +1092,41 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.EnableNfcTapped::class.java)
             verify(tracker).trackPaymentFailedEnabledNfcTapped()
+        }
+
+    @Test
+    fun `given user clicks on retry and external, when payment fails and retryData are null, then flow restarted from scratch`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+            controller.start()
+            clearInvocations(cardReaderManager)
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry!!()
+            advanceUntilIdle()
+
+            verify(cardReaderManager).collectPayment(any())
+        }
+
+    @Test
+    fun `given user clicks on retry and built in, when payment fails and retryData are null, then flow restarted from scratch`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+            clearInvocations(cardReaderManager)
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).onRetry!!()
+            advanceUntilIdle()
+
+            verify(cardReaderManager).collectPayment(any())
         }
 
     companion object {
