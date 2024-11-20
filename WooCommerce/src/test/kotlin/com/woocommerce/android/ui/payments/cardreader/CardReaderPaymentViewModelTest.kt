@@ -1790,34 +1790,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given not in printing receipt state, when view recreated, then state not changed`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow<CardPaymentStatus> {}
-            }
-            viewModel.start()
-            val originalState = viewModel.viewStateData.value
-            assertThat(originalState).isNotInstanceOf(PrintingReceiptState::class.java)
-
-            viewModel.onViewCreated()
-
-            assertThat(viewModel.viewStateData.value).isEqualTo(originalState)
-        }
-
-    @Test
-    fun `given billing email empty and external, when user clicks on print receipt button, then event tracked`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-            viewModel.start()
-
-            (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
-
-            verify(tracker).trackPrintReceiptTapped()
-        }
-
-    @Test
     fun `given billing email empty and built in, when user clicks on print receipt button, then event tracked`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {

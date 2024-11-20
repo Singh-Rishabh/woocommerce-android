@@ -56,6 +56,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInR
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulReceiptSentAutomaticallyState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.PrintingReceiptState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -1540,6 +1541,21 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.onViewCreated()
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
+        }
+
+    @Test
+    fun `given not in printing receipt state, when view recreated, then state not changed`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow<CardPaymentStatus> {}
+            }
+            controller.start()
+            val originalState = controller.paymentState.value
+            assertThat(originalState).isNotInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
+
+            controller.onViewCreated()
+
+            assertThat(controller.paymentState.value).isEqualTo(originalState)
         }
 
     companion object {
