@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.navigation
+package com.woocommerce.android.ui.woopos.home.items.navigation
 
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -18,21 +18,21 @@ class WooPosLeftPaneScreensViewModelTest {
     @JvmField
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
-    private lateinit var navigator: LeftPaneNavigator
-    private lateinit var viewModel: WooPosLeftPaneScreensViewModel
-    private val navigationEvents = MutableSharedFlow<LeftPaneNavigator.LeftPaneNavigationEvent>()
+    private lateinit var navigator: WooPosItemsNavigator
+    private lateinit var viewModel: WooPosItemsScreenViewModel
+    private val navigationEvents = MutableSharedFlow<WooPosItemsNavigator.WooPosItemsScreenNavigationEvent>()
 
     @Before
     fun setUp() {
         navigator = mock {
             on { events } doReturn navigationEvents
         }
-        viewModel = WooPosLeftPaneScreensViewModel(navigator)
+        viewModel = WooPosItemsScreenViewModel(navigator)
     }
 
     @Test
     fun `given view model init, then initial state is ItemListScreen`() = runTest {
-        assert(viewModel.screenState.value is WooPosLeftPaneScreensViewModel.LeftPaneScreen.ItemListScreen)
+        assert(viewModel.screenState.value is WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen)
     }
 
     @Test
@@ -42,12 +42,12 @@ class WooPosLeftPaneScreensViewModelTest {
             "Product Name",
             numOfVariations = 10,
         )
-        navigationEvents.emit(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(product))
+        navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(product))
 
-        assert(viewModel.screenState.value is WooPosLeftPaneScreensViewModel.LeftPaneScreen.VariationsScreen)
+        assert(viewModel.screenState.value is WooPosItemsScreenViewModel.ItemsScreens.VariationsScreen)
         assert(
             (
-                viewModel.screenState.value as WooPosLeftPaneScreensViewModel.LeftPaneScreen.VariationsScreen
+                viewModel.screenState.value as WooPosItemsScreenViewModel.ItemsScreens.VariationsScreen
                 ).product == product
         )
     }
@@ -59,10 +59,10 @@ class WooPosLeftPaneScreensViewModelTest {
             "Product Name",
             numOfVariations = 10,
         )
-        navigationEvents.emit(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(product))
-        navigationEvents.emit(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen)
+        navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(product))
+        navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen)
 
-        assert(viewModel.screenState.value is WooPosLeftPaneScreensViewModel.LeftPaneScreen.ItemListScreen)
+        assert(viewModel.screenState.value is WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen)
     }
 
     @Test
@@ -72,17 +72,17 @@ class WooPosLeftPaneScreensViewModelTest {
             "Product Name",
             numOfVariations = 10,
         )
-        navigationEvents.emit(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateToVariationsScreen(product))
+        navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(product))
 
-        assert(viewModel.screenState.value is WooPosLeftPaneScreensViewModel.LeftPaneScreen.VariationsScreen)
+        assert(viewModel.screenState.value is WooPosItemsScreenViewModel.ItemsScreens.VariationsScreen)
         assert(
             (
-                viewModel.screenState.value as WooPosLeftPaneScreensViewModel.LeftPaneScreen.VariationsScreen
+                viewModel.screenState.value as WooPosItemsScreenViewModel.ItemsScreens.VariationsScreen
                 ).product == product
         )
 
-        navigationEvents.emit(LeftPaneNavigator.LeftPaneNavigationEvent.NavigateBackToItemListScreen)
+        navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen)
 
-        assert(viewModel.screenState.value is WooPosLeftPaneScreensViewModel.LeftPaneScreen.ItemListScreen)
+        assert(viewModel.screenState.value is WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen)
     }
 }
