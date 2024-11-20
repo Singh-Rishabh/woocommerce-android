@@ -38,6 +38,7 @@ import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
+import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -1280,6 +1281,19 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             val paymentState = controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
 
             assertNotNull(paymentState.onCancel)
+        }
+
+    @Test
+    fun `when payment succeeds, then receiptUrl stored into a persistant storage`() =
+        testBlocking {
+            val receiptUrl = "testUrl"
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted(receiptUrl)) }
+            }
+
+            controller.start()
+
+            verify(paymentReceiptHelper).storeReceiptUrl(eq(ORDER_ID), eq(receiptUrl))
         }
 
     companion object {

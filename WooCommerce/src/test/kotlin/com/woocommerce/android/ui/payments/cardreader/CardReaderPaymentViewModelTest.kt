@@ -1733,19 +1733,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when payment succeeds, then receiptUrl stored into a persistant storage`() =
-        testBlocking {
-            val receiptUrl = "testUrl"
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted(receiptUrl)) }
-            }
-
-            viewModel.start()
-
-            verify(paymentReceiptHelper).storeReceiptUrl(eq(ORDER_ID), eq(receiptUrl))
-        }
-
-    @Test
     fun `given external reader, when payment succeeds, then correct labels, illustration and buttons are shown`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
