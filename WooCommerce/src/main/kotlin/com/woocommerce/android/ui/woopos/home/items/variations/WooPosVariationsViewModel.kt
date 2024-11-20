@@ -64,7 +64,8 @@ class WooPosVariationsViewModel @Inject constructor(
             if (result.isSuccess) {
                 variationsDataSource.getVariationsFlow(productId).collect { variationList ->
                     _viewState.value = WooPosVariationsViewState.Content(
-                        items = variationList.map {
+                        items = variationList.filter { it.price != null }
+                            .map {
                             WooPosItem.Variation(
                                 id = it.remoteVariationId,
                                 name = it.getName(product),

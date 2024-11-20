@@ -117,7 +117,7 @@ object ProductTestUtils {
     fun generateProductVariation(
         productId: Long = 1L,
         variationId: Long = 1L,
-        amount: String = "10.00"
+        amount: String = "10.00",
     ): ProductVariation {
         return WCProductVariationModel(2).apply {
             dateCreated = "2018-01-05T05:14:30Z"
