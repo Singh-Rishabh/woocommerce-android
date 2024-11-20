@@ -60,14 +60,15 @@ class WooPosVariationsViewModel @Inject constructor(
             if (result.isSuccess) {
                 variationsDataSource.getVariationsFlow(productId).collect { variationList ->
                     _viewState.value = WooPosVariationsViewState.Content(
-                        items = variationList.map {
-                            WooPosItem.Variation(
-                                id = it.remoteVariationId,
-                                name = it.getName(product),
-                                price = priceFormat(it.price),
-                                imageUrl = it.image?.source
-                            )
-                        },
+                        items = variationList.filter { it.price != null }
+                            .map {
+                                WooPosItem.Variation(
+                                    id = it.remoteVariationId,
+                                    name = it.getName(product),
+                                    price = priceFormat(it.price),
+                                    imageUrl = it.image?.source
+                                )
+                            },
                         loadingMore = false,
                         reloadingProductsWithPullToRefresh = false,
                     )

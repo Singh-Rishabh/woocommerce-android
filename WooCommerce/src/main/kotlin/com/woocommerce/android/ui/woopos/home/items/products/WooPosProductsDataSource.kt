@@ -16,7 +16,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WCProductStore
-import java.math.BigDecimal
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -100,7 +99,7 @@ class WooPosProductsDataSource @Inject constructor(
     private fun isProductNotVirtual(product: Product) = !product.isVirtual
 
     private fun isProductHasAPrice(product: Product) =
-        (product.price != null && product.price.compareTo(BigDecimal.ZERO) != 0)
+        (product.price != null)
 
     sealed class ProductsResult {
         data class Cached(val products: List<Product>) : ProductsResult()

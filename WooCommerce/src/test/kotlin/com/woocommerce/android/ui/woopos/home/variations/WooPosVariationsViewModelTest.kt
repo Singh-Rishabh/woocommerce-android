@@ -119,6 +119,33 @@ class WooPosVariationsViewModelTest {
         }
 
     @Test
+    fun `given view model init, when variation fetched successfully, then filter out variations with price null`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                flowOf(
+                    listOf(
+                        ProductTestUtils.generateProductVariation(1L, 2L, amount = ""),
+                        ProductTestUtils.generateProductVariation(1L, 3L),
+                        ProductTestUtils.generateProductVariation(1L, 4L),
+                    )
+                )
+            )
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+
+            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel.init(1L)
+            advanceUntilIdle()
+
+            wooPosVariationsViewModel.viewState.test {
+                // THEN
+                val value = awaitItem() as WooPosVariationsViewState.Content
+                assertThat(value.items.size).isEqualTo(2)
+            }
+        }
+
+    @Test
     fun `given view model init, when variation fetched successfully, then view state is updated with proper variation content`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
