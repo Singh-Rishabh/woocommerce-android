@@ -53,6 +53,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.A
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
 import com.woocommerce.android.ui.payments.cardreader.payment.PrintReceipt
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulReceiptSentAutomaticallyState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
@@ -1516,6 +1517,24 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
             val events = controller.event.runAndCaptureValues {
                 (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            }
+
+            controller.onViewCreated()
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
+        }
+
+    @Test
+    fun `given in printing receipt state and built in, when view recreated, then PrintReceipt event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
             }
 
             controller.onViewCreated()

@@ -1790,22 +1790,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given in printing receipt state and built in, when view recreated, then PrintReceipt event emitted`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            initViewModel(BUILT_IN)
-            viewModel.start()
-            (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
-
-            viewModel.onViewCreated()
-
-            assertThat(viewModel.event.value).isInstanceOf(PrintReceipt::class.java)
-        }
-
-    @Test
     fun `given not in printing receipt state, when view recreated, then state not changed`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
