@@ -2,4 +2,4 @@
 wc.in_app_update_type = 0
 wc.iap_testing_sandbox_url=
 wc.jitm_testing_json_file_name=
-enable_leak_canary=false
+enable_leak_canary=true
