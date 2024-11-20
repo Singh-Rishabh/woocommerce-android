@@ -737,22 +737,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when contact support clicked, then contact support event tracked`() =
-        testBlocking {
-            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
-                .thenReturn(PaymentFlowError.Declined.Generic)
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithEmptyDataForRetry) }
-            }
-
-            viewModel.start()
-
-            (viewModel.viewStateData.value as ExternalReaderFailedPaymentState).onPrimaryActionClicked.invoke()
-
-            verify(tracker).trackPaymentFailedContactSupportTapped()
-        }
-
-    @Test
     fun `given built in reader fails with generic error, when contact support clicked, then contact support emitted and flow canceled`() =
         testBlocking {
             whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))

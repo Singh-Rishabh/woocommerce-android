@@ -51,6 +51,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.U
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.*
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -399,7 +400,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment::class.java)
+                .isInstanceOf(ExternalReaderFailedPayment::class.java)
         }
 
     @Test
@@ -412,7 +413,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment::class.java)
+                .isInstanceOf(BuiltInReaderFailedPayment::class.java)
         }
 
     @Test
@@ -763,7 +764,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment::class.java)
+                .isInstanceOf(ExternalReaderFailedPayment::class.java)
         }
 
     @Test
@@ -778,7 +779,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val externalReaderFailedPaymentState =
-                controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+                controller.paymentState.value as ExternalReaderFailedPayment
             assertThat(externalReaderFailedPaymentState.cta).isNotNull
             assertThat(externalReaderFailedPaymentState.cta!!.label).isEqualTo(R.string.support_contact)
         }
@@ -795,7 +796,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            val state = controller.paymentState.value as CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
+            val state = controller.paymentState.value as BuiltInReaderFailedPayment
             assertThat(state.cta).isNotNull
             assertThat(state.cta!!.label).isEqualTo(R.string.support_contact)
         }
@@ -812,7 +813,43 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events: List<CardReaderPaymentEvent> = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment).cta!!.onCallToActionTapped.invoke()
+                (controller.paymentState.value as ExternalReaderFailedPayment).cta!!.onCallToActionTapped()
+            }
+
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+            assertThat(events[1]).isInstanceOf(CardReaderPaymentEvent.ContactSupportTapped::class.java)
+        }
+
+    @Test
+    fun `when contact support clicked, then contact support event tracked`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Declined.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).cta!!.onCallToActionTapped()
+
+            verify(tracker).trackPaymentFailedContactSupportTapped()
+        }
+
+    @Test
+    fun `given built in reader fails with generic error, when contact support clicked, then contact support emitted and flow canceled`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.Declined.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+            createController(BUILT_IN)
+
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed).cta!!.onCallToActionTapped()
             }
 
             assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
