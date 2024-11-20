@@ -56,6 +56,7 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -797,6 +798,25 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             val state = controller.paymentState.value as CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
             assertThat(state.cta).isNotNull
             assertThat(state.cta!!.label).isEqualTo(R.string.support_contact)
+        }
+
+    @Test
+    fun `given external reader fails with generic error, when contact support clicked, then contact support emitted and flow canceled`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Declined.Generic)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+
+            controller.start()
+
+            val events: List<CardReaderPaymentEvent> = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment).cta!!.onCallToActionTapped.invoke()
+            }
+
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+            assertThat(events[1]).isInstanceOf(CardReaderPaymentEvent.ContactSupportTapped::class.java)
         }
 
     companion object {
