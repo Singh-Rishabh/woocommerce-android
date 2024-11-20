@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -162,6 +163,7 @@ private fun WooPosVariationsScreens(
                         Spacer(modifier = Modifier.height(16.dp))
                         ItemsList(
                             state = itemsState,
+                            listState = rememberLazyListState(),
                             onItemClicked = {
                                 onItemClicked(
                                     (it as WooPosItem.Variation).productId,
