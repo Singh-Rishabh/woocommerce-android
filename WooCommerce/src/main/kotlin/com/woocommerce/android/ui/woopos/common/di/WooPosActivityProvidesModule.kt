@@ -1,6 +1,6 @@
 package com.woocommerce.android.ui.woopos.common.di
 
-import com.woocommerce.android.ui.woopos.home.items.LeftPaneNavigator
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 class WooPosActivityProvidesModule {
     @ActivityRetainedScoped
     @Provides
-    fun provideLeftPaneNavigator(): LeftPaneNavigator = LeftPaneNavigator()
+    fun provideLeftPaneNavigator(): WooPosItemsNavigator = WooPosItemsNavigator()
 }

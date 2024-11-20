@@ -10,6 +10,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
@@ -31,11 +32,9 @@ class WooPosItemsViewModel @Inject constructor(
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val priceFormat: WooPosFormatPrice,
     private val preferencesRepository: WooPosPreferencesRepository,
-    private val navigator: LeftPaneNavigator,
+    private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
-
-    val leftPaneScreen = navigator.leftPaneScreen
 
     private val _viewState =
         MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
@@ -93,18 +92,18 @@ class WooPosItemsViewModel @Inject constructor(
                 onSimpleProductsDialogInfoClicked()
             }
 
-            is WooPosItemsUIEvent.NavigateToVariationsScreen -> {
-                navigator.navigateToVariationsScreen(event.itemNavigationData)
-            }
-
-            WooPosItemsUIEvent.NavigateBackToItemListScreen -> {
+            WooPosItemsUIEvent.BackButtonClicked -> {
                 navigateBackToItemListScreen()
             }
         }
     }
 
     private fun navigateBackToItemListScreen() {
-        navigator.navigateBackToItemListScreen()
+        viewModelScope.launch {
+            navigator.sendNavigationEvent(
+                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+            )
+        }
     }
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
@@ -116,8 +115,23 @@ class WooPosItemsViewModel @Inject constructor(
                     )
                 )
             }
+
+            is VariableProduct -> {
+                viewModelScope.launch {
+                    navigator.sendNavigationEvent(
+                        WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(
+                            WooPosItemNavigationData.VariableProductData(
+                                id = event.item.id,
+                                name = event.item.name,
+                                numOfVariations = event.item.numOfVariations,
+                            )
+                        )
+                    )
+                }
+            }
+
             else -> {
-                // Handled as part of the UI event NavigateToVariationsScreen
+                // Do nothing
             }
         }
     }

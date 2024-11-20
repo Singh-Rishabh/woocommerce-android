@@ -9,11 +9,7 @@ sealed class WooPosItem(
         override val name: String,
         val price: String,
         val imageUrl: String?,
-    ) : WooPosItem(id, name), ClickableItem {
-        override fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit) {
-            onUIEvent(WooPosItemsUIEvent.ItemClicked(this))
-        }
-    }
+    ) : WooPosItem(id, name)
 
     data class VariableProduct(
         override val id: Long,
@@ -22,19 +18,7 @@ sealed class WooPosItem(
         val imageUrl: String?,
         val numOfVariations: Int,
         val variationIds: List<Long>,
-    ) : WooPosItem(id, name), ClickableItem {
-        override fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit) {
-            onUIEvent(
-                WooPosItemsUIEvent.NavigateToVariationsScreen(
-                    WooPosItemNavigationData.VariableProductData(
-                        id = id,
-                        name = name,
-                        numOfVariations = numOfVariations,
-                    )
-                )
-            )
-        }
-    }
+    ) : WooPosItem(id, name)
 
     data class Variation(
         override val id: Long,
@@ -42,13 +26,5 @@ sealed class WooPosItem(
         val productId: Long,
         val price: String,
         val imageUrl: String?,
-    ) : WooPosItem(id, name), ClickableItem {
-        override fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit) {
-            onUIEvent(WooPosItemsUIEvent.ItemClicked(this))
-        }
-    }
-}
-
-interface ClickableItem {
-    fun onItemClick(onUIEvent: (WooPosItemsUIEvent) -> Unit)
+    ) : WooPosItem(id, name)
 }
