@@ -230,7 +230,7 @@ private fun FundsOverview(
         ) {
             Text(
                 style = MaterialTheme.typography.body2,
-                text = stringResource(id = R.string.card_reader_hub_deposit_summary_available_funds),
+                text = stringResource(id = R.string.card_reader_hub_payout_summary_available_funds),
                 color = colorResource(id = R.color.color_on_surface)
             )
             FundsNumber(
@@ -246,7 +246,7 @@ private fun FundsOverview(
         ) {
             Text(
                 style = MaterialTheme.typography.body2,
-                text = stringResource(id = R.string.card_reader_hub_deposit_summary_pending_funds),
+                text = stringResource(id = R.string.card_reader_hub_payout_summary_pending_funds),
                 color = colorResource(id = R.color.color_on_surface)
             )
 
@@ -271,7 +271,7 @@ private fun FundsOverview(
                     modifier = Modifier.rotate(chevronRotation),
                     imageVector = Icons.Filled.KeyboardArrowDown,
                     contentDescription =
-                    stringResource(R.string.card_reader_hub_deposit_summary_collapse_expand_content_description),
+                    stringResource(R.string.card_reader_hub_payout_summary_collapse_expand_content_description),
                     tint = MaterialTheme.colors.primary,
                 )
             }
@@ -295,8 +295,8 @@ private fun FundsOverview(
                 text = StringUtils.getQuantityString(
                     context = LocalContext.current,
                     quantity = fundsAvailableInDays,
-                    default = R.string.card_reader_hub_deposit_summary_funds_available_after_plural,
-                    one = R.string.card_reader_hub_deposit_summary_funds_available_after_one,
+                    default = R.string.card_reader_hub_payout_summary_funds_available_after_plural,
+                    one = R.string.card_reader_hub_payout_summary_funds_available_after_one,
                 ),
                 color = colorResource(id = R.color.color_on_surface_medium),
             )
@@ -351,7 +351,7 @@ private fun PayoutsInfo(
                 Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.minor_100)))
                 Text(
                     style = MaterialTheme.typography.caption,
-                    text = stringResource(id = R.string.card_reader_hub_deposit_summary_learn_more),
+                    text = stringResource(id = R.string.card_reader_hub_payout_summary_learn_more),
                     color = colorResource(id = R.color.color_primary),
                 )
             }
@@ -366,7 +366,7 @@ private fun LastPayout(currencyInfo: PaymentsHubPayoutSummaryState.Info) {
     currencyInfo.lastPayout?.let {
         Text(
             style = MaterialTheme.typography.body2,
-            text = stringResource(id = R.string.card_reader_hub_deposit_funds_deposits_title).uppercase(),
+            text = stringResource(id = R.string.card_reader_hub_payout_funds_payout_title).uppercase(),
             color = colorResource(id = R.color.color_on_surface_medium),
         )
 
@@ -414,48 +414,48 @@ private fun Payout(payout: PaymentsHubPayoutSummaryState.Payout) {
             when (payout.status) {
                 PaymentsHubPayoutSummaryState.Payout.Status.ESTIMATED ->
                     PayoutStatus(
-                        text = R.string.card_reader_hub_deposit_summary_status_estimated,
+                        text = R.string.card_reader_hub_payout_summary_status_estimated,
                         backgroundColor = R.color.payout_summary_status_estimated_background,
                         textColor = R.color.payout_summary_status_estimated_text
                     )
 
                 PaymentsHubPayoutSummaryState.Payout.Status.PENDING ->
                     PayoutStatus(
-                        text = R.string.card_reader_hub_deposit_summary_status_pending,
+                        text = R.string.card_reader_hub_payout_summary_status_pending,
                         backgroundColor = R.color.payout_summary_status_pending_background,
                         textColor = R.color.payout_summary_status_pending_text
                     )
 
                 PaymentsHubPayoutSummaryState.Payout.Status.IN_TRANSIT ->
                     PayoutStatus(
-                        text = R.string.card_reader_hub_deposit_summary_status_in_transit,
+                        text = R.string.card_reader_hub_payout_summary_status_in_transit,
                         backgroundColor = R.color.payout_summary_status_in_transit_background,
                         textColor = R.color.payout_summary_status_in_transit_text
                     )
 
                 PaymentsHubPayoutSummaryState.Payout.Status.PAID ->
                     PayoutStatus(
-                        text = R.string.card_reader_hub_deposit_summary_status_paid,
+                        text = R.string.card_reader_hub_payout_summary_status_paid,
                         backgroundColor = R.color.payout_summary_status_paid_background,
                         textColor = R.color.payout_summary_status_paid_text
                     )
 
                 PaymentsHubPayoutSummaryState.Payout.Status.CANCELED ->
                     PayoutStatus(
-                        text = R.string.card_reader_hub_deposit_summary_status_canceled,
+                        text = R.string.card_reader_hub_payout_summary_status_canceled,
                         backgroundColor = R.color.payout_summary_status_canceled_background,
                         textColor = R.color.payout_summary_status_canceled_text
                     )
 
                 PaymentsHubPayoutSummaryState.Payout.Status.FAILED ->
                     PayoutStatus(
-                        text = R.string.card_reader_hub_deposit_summary_status_failed,
+                        text = R.string.card_reader_hub_payout_summary_status_failed,
                         backgroundColor = R.color.payout_summary_status_failed_background,
                         textColor = R.color.payout_summary_status_failed_text
                     )
 
                 PaymentsHubPayoutSummaryState.Payout.Status.UNKNOWN -> PayoutStatus(
-                    text = R.string.card_reader_hub_deposit_summary_status_unknown,
+                    text = R.string.card_reader_hub_payout_summary_status_unknown,
                     backgroundColor = R.color.payout_summary_status_unknown_background,
                     textColor = R.color.payout_summary_status_unknown_text
                 )
@@ -591,13 +591,13 @@ private fun FundsNumber(
 private fun PaymentsHubPayoutSummaryState.Info.Interval.buildText() =
     when (this) {
         PaymentsHubPayoutSummaryState.Info.Interval.Daily -> stringResource(
-            id = R.string.card_reader_hub_deposit_summary_available_deposit_time_daily
+            id = R.string.card_reader_hub_payout_summary_available_payout_time_daily
         )
 
         is PaymentsHubPayoutSummaryState.Info.Interval.Weekly -> {
             val dayOfWeek = DayOfWeek.valueOf(weekDay.uppercase(Locale.getDefault()))
             stringResource(
-                id = R.string.card_reader_hub_deposit_summary_available_deposit_time_weekly,
+                id = R.string.card_reader_hub_payout_summary_available_payout_time_weekly,
                 dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
             )
         }
@@ -605,7 +605,7 @@ private fun PaymentsHubPayoutSummaryState.Info.Interval.buildText() =
         is PaymentsHubPayoutSummaryState.Info.Interval.Monthly -> {
             val formatter = MessageFormat("{0,ordinal}", Locale.getDefault())
             stringResource(
-                id = R.string.card_reader_hub_deposit_summary_available_deposit_time_monthly,
+                id = R.string.card_reader_hub_payout_summary_available_payout_time_monthly,
                 formatter.format(arrayOf(day))
             )
         }
