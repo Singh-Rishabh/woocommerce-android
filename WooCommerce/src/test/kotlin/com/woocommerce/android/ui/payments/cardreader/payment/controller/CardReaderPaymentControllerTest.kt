@@ -47,6 +47,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentC
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
+import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -762,6 +763,40 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment::class.java)
+        }
+
+    @Test
+    fun `given external reader fails with Unknown error, when flow starts, then CTA with contact support button is provided`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(Unknown)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+
+            controller.start()
+
+            val externalReaderFailedPaymentState =
+                controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+            assertThat(externalReaderFailedPaymentState.cta).isNotNull
+            assertThat(externalReaderFailedPaymentState.cta!!.label).isEqualTo(R.string.support_contact)
+        }
+
+    @Test
+    fun `given built in reader fails with Unknown error, when view model starts, then CTA with contact support button is provided`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, true))
+                .thenReturn(Unknown)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithEmptyDataForRetry) }
+            }
+            createController(BUILT_IN)
+
+            controller.start()
+
+            val state = controller.paymentState.value as CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
+            assertThat(state.cta).isNotNull
+            assertThat(state.cta!!.label).isEqualTo(R.string.support_contact)
         }
 
     companion object {
