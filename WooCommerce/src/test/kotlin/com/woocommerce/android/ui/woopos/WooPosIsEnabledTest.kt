@@ -12,17 +12,11 @@ import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.mockito.kotlin.any
-import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
-import org.wordpress.android.fluxc.model.payments.inperson.WCPaymentAccountResult
-import org.wordpress.android.fluxc.model.payments.inperson.WCPaymentAccountResult.WCPaymentAccountStatus.StoreCurrencies
-import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
-import org.wordpress.android.fluxc.store.WCInPersonPaymentsStore
+import org.wordpress.android.fluxc.model.WCSettingsModel
+import org.wordpress.android.fluxc.store.WooCommerceStore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -30,7 +24,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooPosIsEnabledTest : BaseUnitTest() {
     private val selectedSite: SelectedSite = mock()
-    private val ippStore: WCInPersonPaymentsStore = mock()
+    private val wooCommerceStore: WooCommerceStore = mock()
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker = mock()
     private val isScreenSizeAllowed: WooPosIsScreenSizeAllowed = mock()
     private val isRemoteFeatureFlagEnabled: IsRemoteFeatureFlagEnabled = mock()
@@ -43,18 +37,20 @@ class WooPosIsEnabledTest : BaseUnitTest() {
 
     @Before
     fun setup() = testBlocking {
-        whenever(selectedSite.getOrNull()).thenReturn(SiteModel().also { it.id = 1 })
+        val siteModel = SiteModel().also { it.id = 1 }
+        whenever(selectedSite.getOrNull()).thenReturn(siteModel)
         val onboardingCompleted = mock<CardReaderOnboardingState.OnboardingCompleted>()
         whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.WOOCOMMERCE_PAYMENTS)
         whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
         whenever(isScreenSizeAllowed()).thenReturn(true)
-        whenever(ippStore.loadAccount(any(), any())).thenReturn(buildPaymentAccountResult())
         whenever(isRemoteFeatureFlagEnabled(WOO_POS)).thenReturn(true)
         whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(false)
+        val siteSettings = buildSiteSettings()
+        whenever(wooCommerceStore.getSiteSettings(siteModel)).thenReturn(siteSettings)
 
         sut = WooPosIsEnabled(
             selectedSite = selectedSite,
-            ippStore = ippStore,
+            wooCommerceStore = wooCommerceStore,
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             isScreenSizeAllowed = isScreenSizeAllowed,
             isRemoteFeatureFlagEnabled = isRemoteFeatureFlagEnabled,
@@ -64,68 +60,39 @@ class WooPosIsEnabledTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given big enough screen, IPP Onboarding completed, USD currency, store in the US, then return true`() =
+    fun `given feature flag enabled screen size allowed onboarding completed correct plugin supported country and currency, when invoked, then return true`() =
         testBlocking {
-            whenever(selectedSite.getOrNull()).thenReturn(SiteModel().also { it.id = 1 })
+            whenever(isRemoteFeatureFlagEnabled(WOO_POS)).thenReturn(true)
             whenever(isScreenSizeAllowed()).thenReturn(true)
             val onboardingCompleted = mock<CardReaderOnboardingState.OnboardingCompleted>()
-            whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
             whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.WOOCOMMERCE_PAYMENTS)
-            whenever(ippStore.loadAccount(any(), any()))
-                .thenReturn(buildPaymentAccountResult(countryCode = "US", defaultCurrency = "USD"))
-            whenever(isRemoteFeatureFlagEnabled(WOO_POS)).thenReturn(true)
+            whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
 
             assertTrue(sut())
         }
 
     @Test
-    fun `given store not in the US, then return false`() = testBlocking {
-        val result = buildPaymentAccountResult(countryCode = "CA")
-        whenever(ippStore.loadAccount(any(), any())).thenReturn(result)
+    fun `given feature flag disabled, when invoked, then return false`() = testBlocking {
+        whenever(isRemoteFeatureFlagEnabled.invoke(WOO_POS)).thenReturn(false)
         assertFalse(sut())
     }
 
     @Test
-    fun `given not big enough screen, then return false`() = testBlocking {
-        whenever(isScreenSizeAllowed()).thenReturn(false)
+    fun `given unsupported country, when invoked, then return false`() = testBlocking {
+        val result = buildSiteSettings(countryCode = "CA", currencyCode = "USD")
+        whenever(wooCommerceStore.getSiteSettings(any())).thenReturn(result)
         assertFalse(sut())
     }
 
     @Test
-    fun `given currency is not USD, then return false`() = testBlocking {
-        val result = buildPaymentAccountResult(defaultCurrency = "CAD")
-        whenever(ippStore.loadAccount(any(), any())).thenReturn(result)
+    fun `given unsupported currency, when invoked, then return false`() = testBlocking {
+        val result = buildSiteSettings(currencyCode = "CAD", countryCode = "US")
+        whenever(wooCommerceStore.getSiteSettings(any())).thenReturn(result)
         assertFalse(sut())
     }
 
     @Test
-    fun `given ipp onboarding is Completed, then return true`() = testBlocking {
-        val onboardingCompleted = mock<CardReaderOnboardingState.OnboardingCompleted>()
-        whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.WOOCOMMERCE_PAYMENTS)
-        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
-
-        assertTrue(sut())
-    }
-
-    @Test
-    fun `given ipp onboarding is Pending Requirements, then return false`() = testBlocking {
-        val onboardingCompleted = mock<CardReaderOnboardingState.StripeAccountPendingRequirement>()
-        whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.WOOCOMMERCE_PAYMENTS)
-        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
-
-        assertFalse(sut())
-    }
-
-    @Test
-    fun `given ipp onboarding is WCPayNotInstalled, then return false`() = testBlocking {
-        val onboardingCompleted = CardReaderOnboardingState.WcpayNotInstalled
-        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
-
-        assertFalse(sut())
-    }
-
-    @Test
-    fun `given ipp plugin is not woo payments, then return false`() = testBlocking {
+    fun `given plugin is not WooCommerce Payments, when invoked,  then return false`() = testBlocking {
         val onboardingCompleted = mock<CardReaderOnboardingState.OnboardingCompleted>()
         whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.STRIPE_EXTENSION_GATEWAY)
         whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
@@ -134,10 +101,36 @@ class WooPosIsEnabledTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given feature flag disabled, then return false`() = testBlocking {
-        whenever(isRemoteFeatureFlagEnabled.invoke(WOO_POS)).thenReturn(false)
+    fun `given onboarding not completed when supported internally, when invoked, then return true`() = testBlocking {
+        whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(true)
+        val onboardingNotCompleted = CardReaderOnboardingState.SetupNotCompleted(
+            preferredPlugin = PluginType.WOOCOMMERCE_PAYMENTS
+        )
+        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingNotCompleted)
+
+        assertTrue(sut())
+    }
+
+    @Test
+    fun `given onboarding not completed when not supported internally, when invoked, then return false`() = testBlocking {
+        whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(false)
+        val onboardingNotCompleted = CardReaderOnboardingState.SetupNotCompleted(
+            preferredPlugin = PluginType.WOOCOMMERCE_PAYMENTS
+        )
+        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingNotCompleted)
+
         assertFalse(sut())
     }
+
+    @Test
+    fun `given IPP onboarding completed and plugin is WooCommerce Payments, when invoked, then return true`() =
+        testBlocking {
+            val onboardingCompleted = mock<CardReaderOnboardingState.OnboardingCompleted>()
+            whenever(onboardingCompleted.preferredPlugin).thenReturn(PluginType.WOOCOMMERCE_PAYMENTS)
+            whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingCompleted)
+
+            assertTrue(sut())
+        }
 
     @Test
     fun `given woo version 6_5_0, when invoked, then return false`() = testBlocking {
@@ -163,69 +156,11 @@ class WooPosIsEnabledTest : BaseUnitTest() {
         assertTrue(sut())
     }
 
-    @Test
-    fun `given payment account cached, when invoked, then do not send remote request`() = testBlocking {
-        sut() // ensure it is cached
-        verify(ippStore, times(1)).loadAccount(any(), any())
-        clearInvocations(ippStore)
-
-        sut()
-        sut()
-        sut()
-        sut()
-        sut()
-
-        verify(ippStore, never()).loadAccount(any(), any())
-    }
-
-    @Test
-    fun `given cached for siteA, when switched to siteB, then send remote request`() = testBlocking {
-        whenever(selectedSite.getOrNull()).thenReturn(SiteModel().also { it.id = 1 })
-        sut()
-
-        whenever(selectedSite.getOrNull()).thenReturn(SiteModel().also { it.id = 2 })
-        sut()
-
-        verify(ippStore, times(2)).loadAccount(any(), any())
-    }
-
-    @Test
-    fun `given onboarding supported internally and onboarding not completed, when sut run, then return true`() = testBlocking {
-        whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(true)
-        val onboardingNotCompleted = CardReaderOnboardingState.SetupNotCompleted(
-            preferredPlugin = PluginType.WOOCOMMERCE_PAYMENTS
-        )
-        whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingNotCompleted)
-
-        assertTrue(sut())
-    }
-
-    @Test
-    fun `given onboarding not supported internally and onboarding not completed, when sut run, then return false`() =
-        testBlocking {
-            whenever(isWooPosPaymentsOnboardingSupportedInternally()).thenReturn(false)
-            val onboardingNotCompleted = CardReaderOnboardingState.SetupNotCompleted(
-                preferredPlugin = PluginType.WOOCOMMERCE_PAYMENTS
-            )
-            whenever(cardReaderOnboardingChecker.getOnboardingState()).thenReturn(onboardingNotCompleted)
-
-            assertFalse(sut())
-        }
-
-    private fun buildPaymentAccountResult(
+    private fun buildSiteSettings(
         countryCode: String = "US",
-        defaultCurrency: String = "USD"
-    ) = WooResult(
-        WCPaymentAccountResult(
-            status = mock(),
-            hasPendingRequirements = false,
-            hasOverdueRequirements = false,
-            currentDeadline = null,
-            statementDescriptor = "",
-            storeCurrencies = StoreCurrencies(defaultCurrency, listOf(defaultCurrency)),
-            country = countryCode,
-            isLive = true,
-            testMode = false,
-        )
-    )
+        currencyCode: String = "USD"
+    ) = mock<WCSettingsModel> {
+        on { this.countryCode }.thenReturn(countryCode)
+        on { this.currencyCode }.thenReturn(currencyCode)
+    }
 }

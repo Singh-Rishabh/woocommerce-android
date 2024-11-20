@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-05 15:54:03+0000
+Translation-Revision-Date: 2024-11-14 12:54:03+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: it
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Busta</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Confezione</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Aggiungi pacchetto</string>
+    <string name="woo_shipping_labels_package_creation_height">Altezza</string>
+    <string name="woo_shipping_labels_package_creation_width">Larghezza</string>
+    <string name="woo_shipping_labels_package_creation_length">Lunghezza</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Tipo di pacchetto</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Salvato</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Corriere</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Personalizza</string>
+    <string name="shipping_label_purchased_request_refund">Richiedi rimborso</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Pianifica ritiro</string>
+    <string name="shipping_label_purchased_track_shipment">Traccia spedizione</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Scopri come stampare dal tuo dispositivo mobile</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Salvalo come nuovo template di pacchetto</string>
+    <string name="shipping_label_purchased_note">Nota: il riutilizzo di un\'etichetta stampata viola i nostri termini di servizio e può comportare una denuncia penale.</string>
+    <string name="shipping_label_purchased_message">Da qui puoi stampare di nuovo l\'etichetta di spedizione o cambiare il formato carta per l\'etichetta.</string>
+    <string name="shipping_label_purchased_title">La tua etichetta di spedizione è pronta per la stampa</string>
+    <string name="order_detail_edit_store_currency_mismatch">Spiacenti, puoi modificare questo ordine solo sul web, in quanto utilizza %1$s, mentre la valuta del tuo sito è %2$s</string>
     <string name="shipping_label_shipping_service_title">Servizio di spedizione</string>
     <string name="shipping_label_shipping_rates_sort_option_fastest">Più veloce</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">Più economico</string>
@@ -570,8 +589,8 @@ Language: it
     <string name="order_creation_collect_payment_button">Ricevi pagamenti</string>
     <string name="order_creation_gift_card_text_error">Il codice dovrebbe essere nel formato XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">Inserisci codice</string>
-    <string name="order_creation_coupon_button">Codice promozionale</string>
     <string name="blaze_campaign_creation_new_intro_description">Il nostro strumento è stato progettato per consentire ai venditori di impostare annunci semplici e veloci per incrementare al massimo il traffico.</string>
+    <string name="order_creation_coupon_button">Codici promozionali</string>
     <string name="theme_picker_error_message">Impossibile caricare i temi.</string>
     <string name="configuration_complete">Configurazione completata</string>
     <string name="scan_to_update_inventory_undo_snackbar">Aggiornamento quantità annullato</string>

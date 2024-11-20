@@ -1,0 +1,2 @@
+21.1:
+En son güncellememiz WooCommerce deneyiminizi daha da kolaylaştırmak için önemli geliştirmeler getiriyor! Farklı para birimlerindeki siparişler için düzenleme izinlerini düzelttik, ödeme merkezi görünümünü optimize ettik, Google SMS aracılığıyla kolay makbuz paylaşımını etkinleştirdik ve saat diliminizi doğru şekilde kullanmak için tarih aralığı seçimini düzelttik. Daha sorunsuz işlemlerin keyfini çıkarın!

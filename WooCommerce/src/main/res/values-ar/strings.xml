@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-05 18:54:03+0000
+Translation-Revision-Date: 2024-11-11 18:54:04+0000
 Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;
 Generator: GlotPress/2.4.0-alpha
 Language: ar
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">ظرف</string>
+    <string name="woo_shipping_labels_package_creation_box_type">صندوق</string>
+    <string name="woo_shipping_labels_package_creation_add_package">إضافة طرد</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">حفظ ذلك كنموذج طرد جديد</string>
+    <string name="woo_shipping_labels_package_creation_height">الارتفاع</string>
+    <string name="woo_shipping_labels_package_creation_width">العرض</string>
+    <string name="woo_shipping_labels_package_creation_length">المدة</string>
+    <string name="woo_shipping_labels_package_creation_package_type">نوع الطرد</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">تم الحفظ</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">شركة نقل</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">مخصص</string>
+    <string name="shipping_label_purchased_request_refund">طلب استرداد الأموال</string>
+    <string name="shipping_label_purchased_schedule_pick_up">جدولة الاستلام</string>
+    <string name="shipping_label_purchased_track_shipment">تعقب الشحنة</string>
+    <string name="shipping_label_purchased_learn_how_to_print">التعرف على كيفية الطباعة من جهازك المحمول</string>
+    <string name="shipping_label_purchased_note">ملاحظة: يُعد إعادة استخدام ملصق طباعة انتهاكًا لشروط الخدمة وقد يؤدي إلى توجيه اتهامات جنائية.</string>
+    <string name="shipping_label_purchased_message">من هنا، يمكنك طباعة ملصق الشحن مجددًا أو تغيير حجم ورق الملصق.</string>
+    <string name="shipping_label_purchased_title">ملصق الشحن لديك جاهز للطباعة</string>
+    <string name="order_detail_edit_store_currency_mismatch">عذرًا، لا يمكنك سوى تحرير هذا الطلب على الويب، لأنه يستخدم ⁦%1$s⁩، وعملة موقعك هي ⁦%2$s⁩</string>
     <string name="shipping_label_shipping_service_title">خدمة الشحن</string>
     <string name="shipping_label_shipping_rates_sort_option_fastest">الأسرع</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">الأرخص</string>
@@ -571,7 +590,7 @@ Language: ar
     <string name="order_creation_collect_payment_button">تحصيل المدفوعات</string>
     <string name="order_creation_gift_card_text_error">ينبغي أن يكون الكود بتنسيق XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">إدخال الكود</string>
-    <string name="order_creation_coupon_button">القسيمة</string>
+    <string name="order_creation_coupon_button">القسائم</string>
     <string name="theme_picker_error_message">فشل تحميل القوالب.</string>
     <string name="configuration_complete">اكتمل التكوين</string>
     <string name="scan_to_update_inventory_undo_snackbar">تم التراجع عن تحديث الكمية</string>
