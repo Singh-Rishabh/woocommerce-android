@@ -1420,6 +1420,22 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
         }
 
+    @Test
+    fun `given billing email not empty and built-in, when user clicks on print receipt button, then printing receipt state shown`() =
+        testBlocking {
+            whenever(mockedAddress.email).thenReturn("nonemptyemail")
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+
+            assertThat(controller.paymentState.value)
+                .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
+        }
+
     companion object {
         private const val ORDER_ID = 1L
         private val siteModel = SiteModel().apply { name = "testName" }.apply { url = "testUrl.com" }
