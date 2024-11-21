@@ -12,6 +12,7 @@
 - [*][Payments] Fixed a bug when loading indicator was shown forever after fetching of a receipt failed [https://github.com/woocommerce/woocommerce-android/pull/12950]
 - [**] Enables creating a new WP.com account during Jetpack activation flow [https://github.com/woocommerce/woocommerce-android/issues/11114]
 - [*] Renamed Deposits to Payouts [https://github.com/woocommerce/woocommerce-android/pull/12961]
+- [*] Switched to use `/wp/v2` for media uploads on Jetpack sites, this fixes media upload issues caused by XMLRPC problems [https://github.com/woocommerce/woocommerce-android/pull/12938]
 
 21.1
 -----
