@@ -111,7 +111,7 @@ private fun WooPosVariationsScreens(
     ) {
         BackHandler(onBack = onBackClicked)
         Column(
-            modifier = modifier.fillMaxHeight().padding(bottom = 80.dp)
+            modifier = modifier.fillMaxHeight()
         ) {
             VariationsToolbar(
                 variableProductData = variableProductData,
