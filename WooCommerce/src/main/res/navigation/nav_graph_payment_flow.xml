@@ -22,6 +22,11 @@
             android:id="@+id/action_selectPaymentMethodFragment_to_cardReaderPaymentFlow"
             app:destination="@id/cardReaderStatusCheckerDialogFragment" />
         <action
+            android:id="@+id/action_wooPos_selectPaymentMethodFragment_to_cardReaderPaymentFlow"
+            app:destination="@id/cardReaderStatusCheckerDialogFragment"
+            app:popUpTo="@+id/selectPaymentMethodFragment"
+            app:popUpToInclusive="true" />
+        <action
             android:id="@+id/action_selectPaymentMethodFragment_to_cardReaderRefundFlow"
             app:destination="@id/cardReaderStatusCheckerDialogFragment"
             app:popUpTo="@+id/selectPaymentMethodFragment"
