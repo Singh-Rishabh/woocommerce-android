@@ -169,7 +169,14 @@ private fun MainItemsList(
                             listState,
                             onItemClicked,
                             onEndOfItemListReached,
-                        )
+                        ) {
+                            ProductsError(
+                                modifier = Modifier.height(500.dp),
+                                onRetryClicked = {
+                                    onEndOfItemListReached()
+                                }
+                            )
+                        }
                     }
                 }
 
@@ -177,7 +184,7 @@ private fun MainItemsList(
 
                 is WooPosItemsViewState.Empty -> ProductsEmptyList()
 
-                is WooPosItemsViewState.Error -> ProductsError { onRetryClicked() }
+                is WooPosItemsViewState.Error -> ProductsError(modifier = Modifier.width(640.dp)) { onRetryClicked() }
             }
         }
         PullRefreshIndicator(
@@ -300,13 +307,13 @@ fun ProductsEmptyList() {
 }
 
 @Composable
-fun ProductsError(onRetryClicked: () -> Unit) {
+fun ProductsError(modifier: Modifier, onRetryClicked: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         WooPosErrorScreen(
-            modifier = Modifier.width(640.dp),
+            modifier = modifier,
             message = stringResource(id = R.string.woopos_products_loading_error_title),
             reason = stringResource(id = R.string.woopos_products_loading_error_message),
             primaryButton = Button(
