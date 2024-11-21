@@ -35,11 +35,12 @@ class WooShippingLabelPackageRestClient @Inject constructor(
 
     class PackagesInfoDTO {
         val saved: SavedPackageInfoDTO? = null
-        val predefined: String? = null
+        val predefined: CarrierPredefinedPackagesDTO? = null
     }
 
     class SavedPackageInfoDTO {
         val custom: List<CustomPackageDTO>? = null
+        val predefined: List<PredefinedPackageDTO>? = null
     }
 
     class CustomPackageDTO {
@@ -53,6 +54,11 @@ class WooShippingLabelPackageRestClient @Inject constructor(
         val isLetter: Boolean? = null
         val isUserDefined: Boolean? = null
         val type: String? = null
+    }
+
+    class CarrierPredefinedPackagesDTO {
+        val usps: USPSPackageDTO? = null
+        val dhlExpress: DHLPackageDTO? = null
     }
 
     class USPSPackageDTO {
