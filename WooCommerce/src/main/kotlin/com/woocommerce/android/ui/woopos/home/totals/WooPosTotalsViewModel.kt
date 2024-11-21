@@ -40,7 +40,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
-    private val navigator: WooPosItemsNavigator,
+    private val wooPosItemsNavigator: WooPosItemsNavigator,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -123,7 +123,7 @@ class WooPosTotalsViewModel @Inject constructor(
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
                         val state = uiState.value
-                        navigator.sendNavigationEvent(
+                        wooPosItemsNavigator.sendNavigationEvent(
                             WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
                         )
                         check(state is WooPosTotalsViewState.Totals)
