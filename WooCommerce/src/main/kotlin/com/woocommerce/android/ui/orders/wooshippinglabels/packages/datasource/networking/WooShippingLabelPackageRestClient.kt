@@ -68,10 +68,21 @@ class WooShippingLabelPackageRestClient @Inject constructor(
     }
 
     class CarrierPackageGroupDTO {
-
+        val title: String? = null
+        val definitions: List<PredefinedPackageDTO>? = null
     }
 
     class PredefinedPackageDTO {
-
+        val innerDimensions: String? = null
+        val outerDimensions: String? = null
+        val boxWeight: Double? = null
+        val isFlatRate: Boolean? = null
+        val id: String? = null
+        val name: String? = null
+        val dimensions: String? = null
+        val maxWeight: Double? = null
+        val isLetter: Boolean? = null
+        val groupId: String? = null
+        val canShipInternational: Boolean? = null
     }
 }
