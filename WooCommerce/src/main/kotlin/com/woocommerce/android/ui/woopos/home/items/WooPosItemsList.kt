@@ -43,6 +43,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
@@ -58,6 +59,7 @@ fun ItemList(
     listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
+    onErrorWhilePaginating: @Composable () -> Unit,
 ) {
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -98,6 +100,11 @@ fun ItemList(
         if (state.loadingMore) {
             item {
                 ItemsLoadingItem()
+            }
+        }
+        if (state.errorLoadingMoreItems) {
+            item {
+                onErrorWhilePaginating()
             }
         }
         item {
