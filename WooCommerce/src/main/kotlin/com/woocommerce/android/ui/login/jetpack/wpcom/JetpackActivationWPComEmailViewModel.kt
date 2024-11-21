@@ -131,23 +131,20 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                         triggerEvent(ShowSnackbar(R.string.error_generic))
                     }
                 }
-
-                trackLoginFlowAuthOptionError(failure, isSignup)
+                if (!isSignup) {
+                    trackLoginFlowAuthOptionError(failure)
+                }
             }
         )
         isLoadingDialogShown.value = false
     }
 
-    private fun trackLoginFlowAuthOptionError(
-        failure: AuthOptionsError?,
-        isSignup: Boolean
-    ) {
+    private fun trackLoginFlowAuthOptionError(failure: AuthOptionsError?) {
         analyticsTrackerWrapper.track(
             JETPACK_SETUP_LOGIN_FLOW,
             mapOf(
                 AnalyticsTracker.KEY_STEP to AnalyticsTracker.VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS,
                 AnalyticsTracker.KEY_FAILURE to (failure?.type?.name ?: "Unknown error"),
-                AnalyticsTracker.KEY_IS_SIGN_UP to isSignup
             )
         )
     }
