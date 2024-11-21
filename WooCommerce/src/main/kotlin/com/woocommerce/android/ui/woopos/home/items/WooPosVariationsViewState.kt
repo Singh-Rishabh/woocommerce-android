@@ -8,6 +8,7 @@ sealed class WooPosVariationsViewState(
         override val items: List<WooPosItem.Variation>,
         override val loadingMore: Boolean,
         override val reloadingProductsWithPullToRefresh: Boolean = false,
+        override val errorLoadingMoreItems: Boolean = false,
     ) : WooPosVariationsViewState(reloadingProductsWithPullToRefresh), ContentViewState
 
     data class Loading(
