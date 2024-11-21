@@ -163,7 +163,12 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
 
