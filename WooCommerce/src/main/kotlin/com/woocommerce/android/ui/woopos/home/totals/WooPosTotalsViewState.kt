@@ -8,9 +8,10 @@ sealed class WooPosTotalsViewState : Parcelable {
     data object Loading : WooPosTotalsViewState()
 
     data class Totals(
-        var orderSubtotalText: String,
-        var orderTaxText: String,
-        var orderTotalText: String,
+        val orderSubtotalText: String,
+        val orderTaxText: String,
+        val orderTotalText: String,
+        val paymentStateText: String,
     ) : WooPosTotalsViewState()
 
     data class PaymentSuccess(var orderTotalText: String) : WooPosTotalsViewState()
