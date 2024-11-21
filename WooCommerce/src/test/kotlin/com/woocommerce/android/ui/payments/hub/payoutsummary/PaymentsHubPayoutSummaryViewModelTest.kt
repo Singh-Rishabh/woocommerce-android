@@ -1,14 +1,9 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryRepository
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryState
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryStateMapper
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryViewModel
-import com.woocommerce.android.ui.payments.hub.payoutsummary.RetrievePayoutOverviewResult
 import com.woocommerce.android.util.captureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi

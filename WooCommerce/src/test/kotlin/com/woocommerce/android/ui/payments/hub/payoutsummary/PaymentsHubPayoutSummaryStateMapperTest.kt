@@ -1,8 +1,5 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
-import com.woocommerce.android.ui.payments.hub.payoutsummary.DateToDDMMMYYYYStringFormatter
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryState
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryStateMapper
 import com.woocommerce.android.util.CurrencyFormatter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

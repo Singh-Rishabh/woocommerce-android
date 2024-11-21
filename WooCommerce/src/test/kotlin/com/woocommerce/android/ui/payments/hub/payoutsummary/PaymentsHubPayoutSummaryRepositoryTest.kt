@@ -1,8 +1,6 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.payments.hub.payoutsummary.PaymentsHubPayoutSummaryRepository
-import com.woocommerce.android.ui.payments.hub.payoutsummary.RetrievePayoutOverviewResult
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
