@@ -19,7 +19,8 @@ enum class FeatureFlag {
     CUSTOM_FIELDS,
     REVAMP_WOO_SHIPPING,
     OBJECTIVE_SECTION,
-    POS_NON_SIMPLE_PRODUCT_TYPES;
+    POS_NON_SIMPLE_PRODUCT_TYPES,
+    PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT;
 
     fun isEnabled(context: Context? = null): Boolean {
         return when (this) {
@@ -32,7 +33,8 @@ enum class FeatureFlag {
             ORDER_CREATION_AUTO_TAX_RATE,
             WOO_POS_PAYMENTS_ONBOARDING,
             REVAMP_WOO_SHIPPING,
-            POS_NON_SIMPLE_PRODUCT_TYPES -> PackageUtils.isDebugBuild()
+            POS_NON_SIMPLE_PRODUCT_TYPES,
+            PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
             INBOX,

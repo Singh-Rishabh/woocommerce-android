@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Product
+import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
@@ -27,6 +30,7 @@ class WooPosItemsViewModel @Inject constructor(
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val priceFormat: WooPosFormatPrice,
     private val preferencesRepository: WooPosPreferencesRepository,
+    private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
 
@@ -85,12 +89,47 @@ class WooPosItemsViewModel @Inject constructor(
             WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked -> {
                 onSimpleProductsDialogInfoClicked()
             }
+
+            WooPosItemsUIEvent.BackButtonClicked -> {
+                navigateBackToItemListScreen()
+            }
+        }
+    }
+
+    private fun navigateBackToItemListScreen() {
+        viewModelScope.launch {
+            navigator.sendNavigationEvent(
+                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+            )
         }
     }
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
         when (event.item) {
             is SimpleProduct -> {
+                onItemClicked(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = event.item.id
+                    )
+                )
+            }
+
+            is VariableProduct -> {
+                viewModelScope.launch {
+                    navigator.sendNavigationEvent(
+                        WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(
+                            WooPosItemNavigationData.VariableProductData(
+                                id = event.item.id,
+                                name = event.item.name,
+                                numOfVariations = event.item.numOfVariations,
+                                variationIds = event.item.variationIds
+                            )
+                        )
+                    )
+                }
+            }
+
+            is WooPosItem.Variation -> {
                 onItemClicked(
                     WooPosItemNavigationData.SimpleProductData(
                         id = event.item.id
@@ -171,12 +210,23 @@ class WooPosItemsViewModel @Inject constructor(
 
     private suspend fun List<Product>.toContentState() = WooPosItemsViewState.Content(
         items = map { product ->
-            SimpleProduct(
-                id = product.remoteId,
-                name = product.name,
-                price = priceFormat(product.price),
-                imageUrl = product.firstImageUrl,
-            )
+            if (product.isVariable()) {
+                VariableProduct(
+                    id = product.remoteId,
+                    name = product.name,
+                    price = priceFormat(product.price),
+                    imageUrl = product.firstImageUrl,
+                    numOfVariations = product.numVariations,
+                    variationIds = product.variationIds
+                )
+            } else {
+                SimpleProduct(
+                    id = product.remoteId,
+                    name = product.name,
+                    price = priceFormat(product.price),
+                    imageUrl = product.firstImageUrl,
+                )
+            }
         },
         loadingMore = false,
         reloadingProductsWithPullToRefresh = false,
@@ -229,8 +279,8 @@ class WooPosItemsViewModel @Inject constructor(
         )
     }
 
-    private fun onItemClicked(itemData: WooPosItemNavigationData.SimpleProductData) {
-        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData.id))
+    private fun onItemClicked(itemData: WooPosItemNavigationData) {
+        sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData))
     }
 
     private fun sendEventToParent(event: ChildToParentEvent) {
@@ -240,4 +290,8 @@ class WooPosItemsViewModel @Inject constructor(
     private suspend fun isBannerHiddenByUser(): Boolean {
         return preferencesRepository.isSimpleProductsOnlyBannerWasHiddenByUser.first()
     }
+
+    private fun Product.isVariable() =
+        productType == ProductType.VARIABLE ||
+            productType == ProductType.VARIATION
 }

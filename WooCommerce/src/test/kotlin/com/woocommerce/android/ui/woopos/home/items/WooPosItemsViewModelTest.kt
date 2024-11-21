@@ -1,14 +1,11 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
@@ -29,7 +26,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-class WooPosProductsViewModelTest {
+class WooPosItemsViewModelTest {
 
     @Rule
     @JvmField
@@ -38,6 +35,7 @@ class WooPosProductsViewModelTest {
     private val productsDataSource: WooPosProductsDataSource = mock()
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val posPreferencesRepository: WooPosPreferencesRepository = mock()
+    private val wooPosItemsNavigator: WooPosItemsNavigator = mock()
     private val priceFormat: WooPosFormatPrice = mock {
         onBlocking { invoke(BigDecimal("10.0")) }.thenReturn("$10.0")
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
@@ -249,7 +247,11 @@ class WooPosProductsViewModelTest {
         viewModel.viewState.test {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
-                ChildToParentEvent.ItemClickedInProductSelector(product.id)
+                ChildToParentEvent.ItemClickedInProductSelector(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = product.id
+                    )
+                )
             )
             cancelAndConsumeRemainingEvents()
         }
@@ -758,23 +760,55 @@ class WooPosProductsViewModelTest {
     }
 
     @Test
-    fun `given simple products banner displayed, when learn more clicked, then appropriate event is triggered`() = runTest {
+    fun `given simple products banner displayed, when learn more clicked, then appropriate event is triggered`() =
+        runTest {
+            // GIVEN
+            val products = listOf(
+                ProductTestUtils.generateProduct(
+                    productId = 1,
+                    productName = "Product 1",
+                    amount = "10.0",
+                    productType = "simple"
+                ),
+                ProductTestUtils.generateProduct(
+                    productId = 2,
+                    productName = "Product 2",
+                    amount = "20.0",
+                    productType = "simple"
+                ).copy(firstImageUrl = "https://test.com")
+            )
+
+            whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+                flowOf(
+                    WooPosProductsDataSource.ProductsResult.Remote(
+                        Result.success(products)
+                    )
+                )
+            )
+            whenever(posPreferencesRepository.isSimpleProductsOnlyBannerWasHiddenByUser).thenReturn(
+                flowOf(false)
+            )
+
+            // WHEN
+            val viewModel = createViewModel()
+            viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
+
+            // THEN
+            verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
+        }
+
+    @Test
+    fun `given variable product, when clicked on it, then trigger proper event`() = runTest {
         // GIVEN
         val products = listOf(
             ProductTestUtils.generateProduct(
                 productId = 1,
                 productName = "Product 1",
                 amount = "10.0",
-                productType = "simple"
-            ),
-            ProductTestUtils.generateProduct(
-                productId = 2,
-                productName = "Product 2",
-                amount = "20.0",
-                productType = "simple"
-            ).copy(firstImageUrl = "https://test.com")
+                productType = "variable",
+                isVariable = true
+            )
         )
-
         whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
             flowOf(
                 WooPosProductsDataSource.ProductsResult.Remote(
@@ -782,17 +816,98 @@ class WooPosProductsViewModelTest {
                 )
             )
         )
-        whenever(posPreferencesRepository.isSimpleProductsOnlyBannerWasHiddenByUser).thenReturn(
-            flowOf(false)
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(
+            WooPosItemsUIEvent.ItemClicked(
+                WooPosItem.VariableProduct(
+                    id = 1L,
+                    name = "Product 1",
+                    numOfVariations = 10,
+                    variationIds = emptyList(),
+                    price = "$10.0",
+                    imageUrl = null
+                )
+            )
         )
 
-        // WHEN
-        val viewModel = createViewModel()
-        viewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
-
-        // THEN
-        verify(fromChildToParentEventSender).sendToParent(ChildToParentEvent.ProductsDialogInfoIconClicked)
+        verify(wooPosItemsNavigator).sendNavigationEvent(
+            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(
+                WooPosItemNavigationData.VariableProductData(
+                    id = 1,
+                    name = "Product 1",
+                    numOfVariations = 10,
+                    variationIds = emptyList()
+                )
+            )
+        )
     }
+
+    @Test
+    fun `given variations screen, when clicked back, then trigger proper event`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "variable",
+                isVariable = true
+            )
+        )
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsUIEvent.BackButtonClicked)
+
+        verify(wooPosItemsNavigator).sendNavigationEvent(
+            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+        )
+    }
+
+    @Test
+    fun `given variable products from data source, when view model created, then items list updated correctly`() =
+        runTest {
+            // GIVEN
+            val products = listOf(
+                ProductTestUtils.generateProduct(
+                    productId = 1,
+                    productName = "Product 1",
+                    amount = "10.0",
+                    productType = "simple",
+                    isDownloadable = false,
+                ),
+                ProductTestUtils.generateProduct(
+                    productId = 2,
+                    productName = "Product 2",
+                    amount = "20.0",
+                    productType = "variable",
+                    isDownloadable = false,
+                    isVariable = true
+                ).copy(firstImageUrl = "https://test.com")
+            )
+
+            whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+                flowOf(
+                    WooPosProductsDataSource.ProductsResult.Remote(
+                        Result.success(products)
+                    )
+                )
+            )
+
+            // WHEN
+            val viewModel = createViewModel()
+            viewModel.viewState.test {
+                // THEN
+                val value = awaitItem() as WooPosItemsViewState.Content
+
+                assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
+            }
+        }
 
     private fun createViewModel() =
         WooPosItemsViewModel(
@@ -800,5 +915,6 @@ class WooPosProductsViewModelTest {
             fromChildToParentEventSender,
             priceFormat,
             posPreferencesRepository,
+            wooPosItemsNavigator,
         )
 }

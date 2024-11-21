@@ -365,6 +365,8 @@
     <string name="login_site_credentials_fetching_site">Fetching site…</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">Unable to login because application password creation is not approved.</string>
     <string name="login_app_login_malformed_link">We couldn\'t process your app login request</string>
+    <string name="login_jetpack_connection_create_account">If you don\'t have an account, we\'ll use this email to create one.</string>
+
     <!--
         My Store View
     -->
@@ -1266,7 +1268,7 @@
     <string name="shipping_label_shipment_details_title">Shipment details</string>
     <string name="shipping_label_shipment_details_order_details">Order details</string>
     <string name="shipping_label_shipment_details_shipment_cost">Shipment cost</string>
-    <string name="shipping_label_shipment_details_mark_order_complete">Mark this order as complete and notify the customer</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">After purchasing a label, mark this order as complete and notify the customer.</string>
     <string name="shipping_label_shipment_details_purchase_label">Purchase Label · %1$s </string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">Purchase Label</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">Cheapest</string>
@@ -3427,7 +3429,7 @@
     <string name="login_magic_link_auto_sent">We just sent you a magic link to your e-mail address. Please tap the link in the email to log in.</string>
     <string name="login_magic_link_button">Log in with magic link</string>
 
-    <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
+    <string name="username_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this username. You can enter an email to create a new account.</string>
     <string name="login_magic_links_label">We\'ll email you a link that\'ll log you in instantly, no password needed.</string>
     <string name="login_get_link_by_email">Get a login link by email</string>
     <string name="signup_magic_link_message">We’ve emailed you a signup link to create your new WordPress.com account. Check your email on this device, and tap the link in the email you receive from WordPress.com.</string>
@@ -3510,6 +3512,7 @@
     <string name="or_use_password">Use password to sign in</string>
     <string name="login_magic_links_sent_label_short">Check your email on this device!</string>
     <string name="login_magic_links_email_sent">We just sent a magic link to</string>
+    <string name="login_magic_links_email_sent_double_check_email">Ensure your email is correct and double check your spam folder.</string>
     <string name="login_magic_links_email_sent_to_unknown_email">We just sent a magic link to your account\'s email address</string>
     <string name="login_site_picker_try_another_address">Try another address</string>
     <string name="or_use_password_below_qr_code_scan_option">Or log in with password</string>
@@ -4230,6 +4233,8 @@
     <string name="woopos_checkout_button">Check out</string>
     <string name="woopos_remove_item_button_from_cart_content_description">Remove %s from cart</string>
     <string name="woopos_product_item_content_description">Product %s, Price %s</string>
+    <string name="woopos_variable_product_item_content_description">Variable Product %s, Price %s</string>
+    <string name="woopos_variation_item_content_description">Variation %s, Price %s</string>
     <string name="woopos_cart_item_content_description">Product in cart %s, Price %s</string>
     <string name="woopos_cart_title">Cart</string>
     <string name="woopos_clear_cart_button">Clear</string>
@@ -4300,6 +4305,11 @@
     <string name="woopos_floating_toolbar_pop_up_menu_content_description">Open toolbar menu</string>
     <string name="woopos_floating_toolbar_pop_up_menu_open_content_description">Popup menu with options. Swipe to navigate through items.</string>
     <string name="woopos_no_internet_message">It looks like you\'re not connected to the internet. Ensure your Wi-Fi is turned on. If you\'re using mobile data, make sure it\'s enabled in your device settings.</string>
+
+    <string name="woopos_items_list_variable_product_variations">%1$d variations</string>
+    <string name="woopos_variations_back_content_description">Back</string>
+    <string name="woopos_variations_screen_pagination_error">"Failed to load more items. Please try again."</string>
+    <string name="woopos_variations_loading_error_title">Error loading variations</string>
 
 
     <string name="customers_details_customer_section">Customer</string>

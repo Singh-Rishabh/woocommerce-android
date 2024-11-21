@@ -1,0 +1,2 @@
+21.1:
+Mit unserem neuesten Update stehen wichtige Verbesserungen zur Optimierung deines WooCommerce-Erlebnisses bereit! Wir haben die Bearbeitungsberechtigungen für Bestellungen in verschiedenen Währungen angepasst, die Hub-Ansicht für Zahlungen optimiert, das einfache Teilen von Belegen über Google SMS aktiviert und die Auswahl des Datumsbereichs korrigiert, sodass deine Zeitzone verwendet wird. Genieße die reibungsloseren Abläufe!

@@ -213,7 +213,7 @@ class SelectPaymentMethodFragment : BaseFragment(R.layout.fragment_select_paymen
                     if (findNavController().currentDestination?.id == R.id.selectPaymentMethodFragment) {
                         findNavController().navigate(
                             SelectPaymentMethodFragmentDirections
-                                .actionSelectPaymentMethodFragmentToCardReaderPaymentFlow(
+                                .actionWooPosSelectPaymentMethodFragmentToCardReaderPaymentFlow(
                                     event.cardReaderFlowParam,
                                     event.cardReaderType
                                 )
