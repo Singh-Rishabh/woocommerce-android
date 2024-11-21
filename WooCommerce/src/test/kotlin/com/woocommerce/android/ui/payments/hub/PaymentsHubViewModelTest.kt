@@ -820,7 +820,7 @@ class PaymentsHubViewModelTest : BaseUnitTest() {
     fun `when screen shown, then DepositSummaryListItem shown`() {
         assertThat((viewModel.viewStateData.getOrAwaitValue()).rows)
             .anyMatch {
-                it is PaymentsHubViewState.ListItem.DepositSummaryListItem &&
+                it is PaymentsHubViewState.ListItem.PayoutSummaryListItem &&
                     it.index == 0
             }
     }

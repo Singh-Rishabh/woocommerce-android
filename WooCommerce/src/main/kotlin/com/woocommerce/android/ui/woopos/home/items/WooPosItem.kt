@@ -19,4 +19,11 @@ sealed class WooPosItem(
         val numOfVariations: Int,
         val variationIds: List<Long>,
     ) : WooPosItem(id, name)
+
+    data class Variation(
+        override val id: Long,
+        override val name: String,
+        val price: String,
+        val imageUrl: String?,
+    ) : WooPosItem(id, name)
 }

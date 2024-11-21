@@ -1,7 +1,6 @@
 #!/bin/bash -u
 
 echo "--- 🧹 Linting"
-cp gradle.properties-example gradle.properties
 ./gradlew :WooCommerce:lintJalapenoDebug
 app_lint_exit_code=$?
 
