@@ -15,7 +15,6 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsU
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
-import com.woocommerce.android.util.runAndCaptureValues
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
