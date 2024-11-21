@@ -128,6 +128,14 @@ class WooPosItemsViewModel @Inject constructor(
                     )
                 }
             }
+
+            is WooPosItem.Variation -> {
+                onItemClicked(
+                    WooPosItemNavigationData.SimpleProductData(
+                        id = event.item.id
+                    )
+                )
+            }
         }
     }
 
