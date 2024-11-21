@@ -54,4 +54,20 @@ class WooShippingLabelPackageRestClient @Inject constructor(
         val isUserDefined: Boolean? = null
         val type: String? = null
     }
+
+    class USPSPackageDTO {
+        val flatBoxes: CarrierPackageGroupDTO? = null
+        val boxes: CarrierPackageGroupDTO? = null
+        val expressBoxes: CarrierPackageGroupDTO? = null
+        val envelopes: CarrierPackageGroupDTO? = null
+        val expressEnvelopes: CarrierPackageGroupDTO? = null
+    }
+
+    class CarrierPackageGroupDTO {
+
+    }
+
+    class PredefinedPackageDTO {
+
+    }
 }
