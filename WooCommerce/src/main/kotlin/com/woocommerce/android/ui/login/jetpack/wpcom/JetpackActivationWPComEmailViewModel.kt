@@ -10,7 +10,6 @@ import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.WPComLoginRepository
-import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
@@ -30,7 +29,8 @@ import javax.inject.Inject
 class JetpackActivationWPComEmailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val wpComLoginRepository: WPComLoginRepository,
-    private val analyticsTrackerWrapper: AnalyticsTrackerWrapper
+    private val analyticsTrackerWrapper: AnalyticsTrackerWrapper,
+    private val stringUtils: StringUtils,
 ) : ScopedViewModel(savedStateHandle) {
     private val navArgs: JetpackActivationWPComEmailFragmentArgs by savedStateHandle.navArgs()
 
@@ -106,10 +106,10 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                 when (failure?.type) {
                     AuthOptionsErrorType.UNKNOWN_USER -> {
                         when {
-                            !StringUtils.isValidEmail(emailOrUsername) ->
+                            !stringUtils.isValidEmail(emailOrUsername) ->
                                 errorMessage.value = R.string.username_not_registered_wpcom
 
-                            FeatureFlag.JETPACK_FLOW_ACCOUNT_CREATION.isEnabled() -> {
+                            else -> {
                                 triggerEvent(
                                     ShowMagicLinkScreen(
                                         emailOrUsername,
@@ -119,8 +119,6 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                                 )
                                 isSignup = true
                             }
-
-                            else -> errorMessage.value = R.string.email_not_registered_wpcom
                         }
                     }
 
