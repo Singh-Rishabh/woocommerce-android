@@ -11,84 +11,13 @@ class WooShippingLabelPackageRestClient @Inject constructor(
 ) {
     suspend fun fetchShippingLabelPackages(
         site: SiteModel
-    ) : WooPayload<StorePackagesDTO> {
+    ) : WooPayload<PackageResponse> {
         val url = "/wcshipping/v1/packages"
 
         return wooNetwork.executeGetGsonRequest(
             site = site,
             path = url,
-            clazz = StorePackagesDTO::class.java,
+            clazz = PackageResponse::class.java,
         ).toWooPayload()
-    }
-
-    class StorePackagesDTO {
-        val storeOptions: PackageStoreOptionsDTO? = null
-        val packages: PackagesInfoDTO? = null
-    }
-
-    class PackageStoreOptionsDTO {
-        val currencySymbol: String? = null
-        val dimensionUnit: String? = null
-        val weightUnit: String? = null
-        val originCountry: String? = null
-    }
-
-    class PackagesInfoDTO {
-        val saved: SavedPackageInfoDTO? = null
-        val predefined: CarrierPredefinedPackagesDTO? = null
-    }
-
-    class SavedPackageInfoDTO {
-        val custom: List<CustomPackageDTO>? = null
-        val predefined: List<PredefinedPackageDTO>? = null
-    }
-
-    class CustomPackageDTO {
-        val id: String? = null
-        val name: String? = null
-        val dimensions: String? = null
-        val length: Double? = null
-        val width: Double? = null
-        val height: Double? = null
-        val boxWeight: Double? = null
-        val isLetter: Boolean? = null
-        val isUserDefined: Boolean? = null
-        val type: String? = null
-    }
-
-    class CarrierPredefinedPackagesDTO {
-        val usps: USPSPackageDTO? = null
-        val dhlExpress: DHLPackageDTO? = null
-    }
-
-    class USPSPackageDTO {
-        val flatBoxes: CarrierPackageGroupDTO? = null
-        val boxes: CarrierPackageGroupDTO? = null
-        val expressBoxes: CarrierPackageGroupDTO? = null
-        val envelopes: CarrierPackageGroupDTO? = null
-        val expressEnvelopes: CarrierPackageGroupDTO? = null
-    }
-
-    class DHLPackageDTO {
-        val domesticAndInternationalPackages: CarrierPackageGroupDTO? = null
-    }
-
-    class CarrierPackageGroupDTO {
-        val title: String? = null
-        val definitions: List<PredefinedPackageDTO>? = null
-    }
-
-    class PredefinedPackageDTO {
-        val innerDimensions: String? = null
-        val outerDimensions: String? = null
-        val boxWeight: Double? = null
-        val isFlatRate: Boolean? = null
-        val id: String? = null
-        val name: String? = null
-        val dimensions: String? = null
-        val maxWeight: Double? = null
-        val isLetter: Boolean? = null
-        val groupId: String? = null
-        val canShipInternational: Boolean? = null
     }
 }
