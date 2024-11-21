@@ -123,10 +123,6 @@ class CardReaderPaymentController(
 
     private var refetchOrderJob: Job? = null
 
-    private val CardReaderFlowParam.PaymentOrRefund.isPOS: Boolean
-        get() = this is CardReaderFlowParam.PaymentOrRefund.Payment &&
-            this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-
     private val _event: MutableSharedFlow<CardReaderPaymentEvent> = MutableSharedFlow()
     val event: Flow<CardReaderPaymentEvent> = _event
 
@@ -459,20 +455,10 @@ class CardReaderPaymentController(
     ) {
         paymentReceiptHelper.storeReceiptUrl(orderId, paymentStatus.receiptUrl)
         appPrefs.setCardReaderSuccessfulPaymentTime()
-        if (paymentOrRefund.isPOS) {
-            scope.launch {
-                syncOrderStatus(orderId)
-                triggerEvent(CardReaderPaymentEvent.Exit)
-            }
-        } else {
-            triggerEvent(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
-            showPaymentSuccessfulState()
-            reFetchOrder()
-        }
-    }
 
-    private suspend fun syncOrderStatus(orderId: Long) {
-        orderRepository.fetchOrderById(orderId)
+        triggerEvent(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
+        showPaymentSuccessfulState()
+        reFetchOrder()
     }
 
     @VisibleForTesting
