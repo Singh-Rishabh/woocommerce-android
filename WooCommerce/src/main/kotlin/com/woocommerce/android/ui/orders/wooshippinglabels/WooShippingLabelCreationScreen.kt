@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -66,7 +67,14 @@ fun WooShippingLabelCreationScreen(
             onSelectPackageClick = onSelectPackageClick,
             scaffoldState = scaffoldState
         )
-        val elevation = if (scaffoldState.bottomSheetState.isCollapsed) { 0.dp } else { 4.dp }
+        val isDarkTheme = isSystemInDarkTheme()
+        val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
+        val elevation = when {
+            isDarkTheme && isCollapsed -> { 7.dp }
+            !isDarkTheme && isCollapsed -> { 0.dp }
+            isDarkTheme && !isCollapsed -> { 16.dp }
+            else -> { 8.dp }
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
