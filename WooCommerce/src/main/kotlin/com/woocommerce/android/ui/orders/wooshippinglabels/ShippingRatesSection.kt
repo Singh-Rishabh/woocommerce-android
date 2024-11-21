@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import android.content.Context
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Colors
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -49,6 +51,7 @@ import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
@@ -57,6 +60,9 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+
+@Suppress("MagicNumber")
+val Colors.selectedRateBackgroundColor: Color get() = if (isLight) Color(0xFFF2EDFF) else Color(0x22F2EDFF)
 
 @Composable
 internal fun ShippingRatesCard(
@@ -86,7 +92,8 @@ internal fun ShippingRatesCard(
     }
 }
 
-@Preview
+@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL)
+@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL)
 @Composable
 private fun ShippingRatesCardPreview() {
     val rates = generateShippingRates()
@@ -300,7 +307,7 @@ private fun ShippingRateItem(
     }
 
     val backgroundColor = if (isSelected) {
-        animateColorAsState(targetValue = Color(0xFFF2EDFF), label = "colorAnimation")
+        animateColorAsState(targetValue = MaterialTheme.colors.selectedRateBackgroundColor, label = "colorAnimation")
     } else {
         animateColorAsState(targetValue = MaterialTheme.colors.surface, label = "colorAnimation")
     }
