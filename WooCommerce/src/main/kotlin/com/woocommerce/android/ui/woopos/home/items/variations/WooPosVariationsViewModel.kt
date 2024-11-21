@@ -11,11 +11,9 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,11 +34,6 @@ class WooPosVariationsViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(),
             initialValue = _viewState.value,
         )
-
-    private val _events: MutableSharedFlow<WooPosVariationEvents> = MutableSharedFlow(
-        extraBufferCapacity = 1
-    )
-    val events = _events.asSharedFlow()
 
     private var fetchJob: Job? = null
     private var loadMoreJob: Job? = null
@@ -100,18 +93,18 @@ class WooPosVariationsViewModel @Inject constructor(
         if (!variationsDataSource.canLoadMore()) {
             return
         }
-        _viewState.value = currentState.copy(loadingMore = true)
+        _viewState.value = currentState.copy(loadingMore = true, errorLoadingMoreItems = false)
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
             val result = variationsDataSource.loadMore(productId)
             if (result.isSuccess) {
                 Result.success(Unit)
+                _viewState.value = currentState.copy(errorLoadingMoreItems = false)
                 if (!variationsDataSource.canLoadMore()) {
                     _viewState.value = currentState.copy(loadingMore = false)
                 }
             } else {
-                _events.tryEmit(WooPosVariationEvents.PaginationError)
-                _viewState.value = currentState.copy(loadingMore = false)
+                _viewState.value = currentState.copy(loadingMore = false, errorLoadingMoreItems = true)
             }
         }
     }
@@ -150,9 +143,5 @@ class WooPosVariationsViewModel @Inject constructor(
 
     private fun onEndOfVariationsListReached(productId: Long) {
         loadMore(productId)
-    }
-
-    sealed class WooPosVariationEvents {
-        data object PaginationError : WooPosVariationEvents()
     }
 }

@@ -16,10 +16,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarDuration
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,17 +25,13 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
@@ -61,26 +53,9 @@ fun WooPosVariationsScreen(
     onBackClicked: () -> Unit
 ) {
     val viewModel: WooPosVariationsViewModel = hiltViewModel()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val paginationErrorMessage = stringResource(id = R.string.woopos_variations_screen_pagination_error)
 
     LaunchedEffect(variableProductData.id) {
         viewModel.init(variableProductData.id)
-    }
-    LaunchedEffect(Unit) {
-        viewModel.events
-            .flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-            .collect { event ->
-                when (event) {
-                    is WooPosVariationsViewModel.WooPosVariationEvents.PaginationError -> {
-                        snackbarHostState.showSnackbar(
-                            message = paginationErrorMessage,
-                            duration = SnackbarDuration.Short
-                        )
-                    }
-                }
-            }
     }
     val state = viewModel.viewState
     WooPosVariationsScreens(
@@ -102,7 +77,6 @@ fun WooPosVariationsScreen(
         },
         variableProductData,
         state,
-        snackbarHostState,
     )
 }
 
@@ -118,93 +92,82 @@ private fun WooPosVariationsScreens(
     onRetryClicked: () -> Unit,
     variableProductData: VariableProductData,
     state: StateFlow<WooPosVariationsViewState>,
-    snackbarHostState: SnackbarHostState,
 ) {
     val itemState = state.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(
         itemState.value.reloadingProductsWithPullToRefresh,
         onPullToRefresh
     )
-    Scaffold(
-        snackbarHost = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 80.dp)
-            ) {
-                SnackbarHost(
-                    hostState = snackbarHostState,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
-    ) {
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .pullRefresh(pullToRefreshState)
-                .padding(
-                    start = 16.dp.toAdaptivePadding(),
-                    end = 16.dp.toAdaptivePadding(),
-                    top = 30.dp.toAdaptivePadding(),
-                    bottom = 0.dp.toAdaptivePadding(),
-                )
-        ) {
-            BackHandler(onBack = onBackClicked)
-            Column(
-                modifier = modifier.fillMaxHeight()
-            ) {
-                VariationsToolbar(
-                    variableProductData = variableProductData,
-                    onBackClicked = onBackClicked
-                )
-                when (val itemsState = itemState.value) {
-                    is WooPosVariationsViewState.Content -> {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        ItemList(
-                            state = itemsState,
-                            listState = rememberLazyListState(),
-                            onItemClicked = {
-                                onItemClicked(
-                                    (it as WooPosItem.Variation).productId,
-                                    it.id
-                                )
-                            }
-                        ) {
-                            onEndOfItemListReached()
-                        }
-                    }
-
-                    is WooPosVariationsViewState.Loading -> ItemsLoadingIndicator(
-                        minOf(10, variableProductData.numOfVariations)
-                    )
-
-                    is WooPosVariationsViewState.Error -> {
-                        VariationsError {
-                            onRetryClicked()
-                        }
-                    }
-
-                    else -> {}
-                }
-            }
-            PullRefreshIndicator(
-                modifier = Modifier.align(Alignment.TopCenter),
-                refreshing = itemState.value.reloadingProductsWithPullToRefresh,
-                state = pullToRefreshState
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .pullRefresh(pullToRefreshState)
+            .padding(
+                start = 16.dp.toAdaptivePadding(),
+                end = 16.dp.toAdaptivePadding(),
+                top = 30.dp.toAdaptivePadding(),
+                bottom = 0.dp.toAdaptivePadding(),
             )
+    ) {
+        BackHandler(onBack = onBackClicked)
+        Column(
+            modifier = modifier.fillMaxHeight().padding(bottom = 80.dp)
+        ) {
+            VariationsToolbar(
+                variableProductData = variableProductData,
+                onBackClicked = onBackClicked
+            )
+            when (val itemsState = itemState.value) {
+                is WooPosVariationsViewState.Content -> {
+                    val lazyListState = rememberLazyListState()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ItemList(
+                        state = itemsState,
+                        listState = lazyListState,
+                        onItemClicked = {
+                            onItemClicked(
+                                (it as WooPosItem.Variation).productId,
+                                it.id
+                            )
+                        },
+                        onEndOfProductsListReached = onEndOfItemListReached,
+                        onErrorWhilePaginating = {
+                            VariationsError(modifier = Modifier.height(500.dp)) {
+                                onEndOfItemListReached()
+                            }
+                        }
+                    )
+                }
+
+                is WooPosVariationsViewState.Loading -> ItemsLoadingIndicator(
+                    minOf(10, variableProductData.numOfVariations)
+                )
+
+                is WooPosVariationsViewState.Error -> {
+                    VariationsError(modifier = Modifier.width(640.dp)) {
+                        onRetryClicked()
+                    }
+                }
+
+                else -> {}
+            }
         }
+        PullRefreshIndicator(
+            modifier = Modifier.align(Alignment.TopCenter),
+            refreshing = itemState.value.reloadingProductsWithPullToRefresh,
+            state = pullToRefreshState
+        )
     }
 }
 
 @Composable
-fun VariationsError(onRetryClicked: () -> Unit) {
+fun VariationsError(modifier: Modifier, onRetryClicked: () -> Unit) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
         WooPosErrorScreen(
-            modifier = Modifier.width(640.dp),
+            modifier = modifier,
             message = stringResource(id = R.string.woopos_variations_loading_error_title),
             reason = stringResource(id = R.string.woopos_products_loading_error_message),
             primaryButton = Button(
@@ -316,7 +279,6 @@ fun WooPosVariationsScreenPreview() {
                 numOfVariations = 20,
             ),
             state = productState,
-            snackbarHostState = SnackbarHostState()
         )
     }
 }
