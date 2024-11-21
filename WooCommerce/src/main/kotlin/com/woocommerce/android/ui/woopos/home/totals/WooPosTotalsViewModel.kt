@@ -13,6 +13,8 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsScreenViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -38,6 +40,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
+    private val navigator: WooPosItemsNavigator,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -120,6 +123,9 @@ class WooPosTotalsViewModel @Inject constructor(
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
                         val state = uiState.value
+                        navigator.sendNavigationEvent(
+                            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+                        )
                         check(state is WooPosTotalsViewState.Totals)
                         uiState.value = WooPosTotalsViewState.PaymentSuccess(orderTotalText = state.orderTotalText)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
