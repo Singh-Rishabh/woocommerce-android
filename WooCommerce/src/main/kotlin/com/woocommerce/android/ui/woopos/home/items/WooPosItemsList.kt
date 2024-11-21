@@ -53,7 +53,7 @@ import kotlinx.coroutines.flow.filter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ItemsList(
+fun ItemList(
     state: ContentViewState,
     listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
