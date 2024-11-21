@@ -46,7 +46,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.items.ItemsList
+import com.woocommerce.android.ui.woopos.home.items.ItemList
 import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
@@ -157,7 +157,7 @@ private fun WooPosVariationsScreens(
                 when (val itemsState = itemState.value) {
                     is WooPosVariationsViewState.Content -> {
                         Spacer(modifier = Modifier.height(16.dp))
-                        ItemsList(
+                        ItemList(
                             state = itemsState,
                             listState = rememberLazyListState(),
                             onItemClicked = {}
