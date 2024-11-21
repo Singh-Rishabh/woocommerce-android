@@ -63,6 +63,10 @@ class WooShippingLabelPackageRestClient @Inject constructor(
         val expressEnvelopes: CarrierPackageGroupDTO? = null
     }
 
+    class DHLPackageDTO {
+        val domesticAndInternationalPackages: CarrierPackageGroupDTO? = null
+    }
+
     class CarrierPackageGroupDTO {
 
     }
