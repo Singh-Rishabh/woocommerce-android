@@ -99,10 +99,7 @@ class WooPosVariationsViewModel @Inject constructor(
             val result = variationsDataSource.loadMore(productId)
             if (result.isSuccess) {
                 Result.success(Unit)
-                _viewState.value = currentState.copy(errorLoadingMoreItems = false)
-                if (!variationsDataSource.canLoadMore()) {
-                    _viewState.value = currentState.copy(loadingMore = false)
-                }
+                _viewState.value = currentState.copy(loadingMore = false, errorLoadingMoreItems = false)
             } else {
                 _viewState.value = currentState.copy(loadingMore = false, errorLoadingMoreItems = true)
             }

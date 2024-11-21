@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsU
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
+import com.woocommerce.android.util.runAndCaptureValues
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
@@ -433,7 +434,7 @@ class WooPosVariationsViewModelTest {
         }
 
     @Test
-    fun `given more items to load, when load more is called, then view state is updated properly`() =
+    fun `given more items to load, when load more is success, then view state is updated with errorLoadingMoreItems to false `() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
                 flowOf(
@@ -460,15 +461,52 @@ class WooPosVariationsViewModelTest {
             )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
-
-            wooPosVariationsViewModel.viewState.test {
-                val value = awaitItem() as WooPosVariationsViewState.Content
-                assertTrue(value.loadingMore)
+            val states: MutableList<WooPosVariationsViewState> = mutableListOf()
+            wooPosVariationsViewModel.viewState.asLiveData().observeForever {
+                states.add(it)
             }
+
+            assertFalse((states[1] as WooPosVariationsViewState.Content).errorLoadingMoreItems)
         }
 
     @Test
-    fun `given load more call fails, when load more is called, then view state is updated properly`() =
+    fun `given more items to load, when load more is success, then view state is updated with loading more to false `() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                flowOf(
+                    listOf(
+                        ProductTestUtils.generateProductVariation(1L, 2L),
+                        ProductTestUtils.generateProductVariation(1L, 3L),
+                        ProductTestUtils.generateProductVariation(1L, 4L),
+                    )
+                )
+            )
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.success(Unit)
+            )
+            whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.loadMore(1L)
+            val states: MutableList<WooPosVariationsViewState> = mutableListOf()
+            wooPosVariationsViewModel.viewState.asLiveData().observeForever {
+                states.add(it)
+            }
+
+            assertFalse((states[1] as WooPosVariationsViewState.Content).loadingMore)
+        }
+
+    @Test
+    fun `given load more call fails, when load more is called, then view state is updated with loadingMore set to false`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
                 flowOf(
@@ -499,6 +537,41 @@ class WooPosVariationsViewModelTest {
             wooPosVariationsViewModel.viewState.test {
                 val value = awaitItem() as WooPosVariationsViewState.Content
                 assertFalse(value.loadingMore)
+            }
+        }
+
+    @Test
+    fun `given load more call fails, when load more is called, then view state is updated with errorLoadingMoreItems to true`() =
+        runTest {
+            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
+                flowOf(
+                    listOf(
+                        ProductTestUtils.generateProductVariation(1L, 2L),
+                        ProductTestUtils.generateProductVariation(1L, 3L),
+                        ProductTestUtils.generateProductVariation(1L, 4L),
+                    )
+                )
+            )
+            whenever(getProductById.invoke(any())).thenReturn(
+                ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
+            )
+            whenever(variationsDataSource.loadMore(any())).thenReturn(
+                Result.failure(Throwable())
+            )
+            whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
+            wooPosVariationsViewModel.init(1L)
+            wooPosVariationsViewModel.loadMore(1L)
+
+            wooPosVariationsViewModel.viewState.test {
+                val value = awaitItem() as WooPosVariationsViewState.Content
+                assertTrue(value.errorLoadingMoreItems)
             }
         }
 
