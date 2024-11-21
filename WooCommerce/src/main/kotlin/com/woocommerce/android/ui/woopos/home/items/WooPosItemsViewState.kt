@@ -10,6 +10,7 @@ sealed class WooPosItemsViewState(
         override val items: List<WooPosItem>,
         override val loadingMore: Boolean,
         val bannerState: BannerState,
+        override val errorLoadingMoreItems: Boolean = false,
         override val reloadingProductsWithPullToRefresh: Boolean = false
     ) : WooPosItemsViewState(reloadingProductsWithPullToRefresh), ContentViewState {
         data class BannerState(

@@ -8,4 +8,5 @@ interface ContentViewState {
     val items: List<WooPosItem>
     val loadingMore: Boolean
     val reloadingProductsWithPullToRefresh: Boolean
+    val errorLoadingMoreItems: Boolean
 }
