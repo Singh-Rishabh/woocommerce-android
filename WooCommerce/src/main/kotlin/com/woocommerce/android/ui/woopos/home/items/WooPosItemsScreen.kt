@@ -164,7 +164,7 @@ private fun MainItemsList(
                             onSimpleProductsBannerLearnMoreClicked,
                             onSimpleProductsBannerClosed
                         )
-                        ItemsList(
+                        ItemList(
                             itemsState,
                             listState,
                             onItemClicked,

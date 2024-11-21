@@ -309,7 +309,7 @@ class WooPosProductsDataSourceTest {
                         ProductTestUtils.generateProduct(
                             productId = 1,
                             productName = "Product 1",
-                            amount = "0",
+                            amount = "",
                             productType = "simple",
                             isDownloadable = false,
                         ),
