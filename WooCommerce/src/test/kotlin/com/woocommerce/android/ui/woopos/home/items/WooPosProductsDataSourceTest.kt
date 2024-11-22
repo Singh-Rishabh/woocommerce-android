@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.products
+package com.woocommerce.android.ui.woopos.home.items
 
 import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductTestUtils
@@ -309,7 +309,7 @@ class WooPosProductsDataSourceTest {
                         ProductTestUtils.generateProduct(
                             productId = 1,
                             productName = "Product 1",
-                            amount = "0",
+                            amount = "",
                             productType = "simple",
                             isDownloadable = false,
                         ),
