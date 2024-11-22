@@ -33,7 +33,6 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
             is CardReaderInteracRefundState.InteracRefundFailure -> {
                 when (paymentState) {
                     is CardReaderInteracRefundState.InteracRefundFailure.Cancelable -> {
-                        // onCancel is not null; onRetry is nullable
                         if (paymentState.onRetry == null) {
                             if (paymentState.cta != null) {
                                 ViewState.FailedRefundState(
@@ -64,7 +63,6 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                         }
                     }
                     is CardReaderInteracRefundState.InteracRefundFailure.NonCancelable -> {
-                        // onCancel is always null; onRetry is never null; amountWithCurrencyLabel is always null;
                         ViewState.FailedRefundState(
                             errorType = paymentState.errorType,
                             primaryLabel = R.string.try_again,
@@ -112,67 +110,95 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is PaymentFailed.BuiltInReaderFailedPayment -> {
-                if (paymentState.cta != null) {
-                    cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                        cardReaderType = CardReaderType.BUILT_IN,
-                        errorType = paymentState.errorType,
-                        amountLabel = paymentState.amountWithCurrencyLabel,
-                        primaryLabel = paymentState.cta.label,
-                        onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
-                        secondaryLabel = R.string.cancel,
-                        onSecondaryActionClicked = paymentState.onCancel,
-                    )
-                } else {
-                    if (paymentState.onRetry != null) {
+                when (paymentState) {
+                    is PaymentFailed.BuiltInReaderFailedPayment.Cancelable -> {
+                        if (paymentState.cta != null) {
+                            cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                                cardReaderType = CardReaderType.BUILT_IN,
+                                errorType = paymentState.errorType,
+                                amountLabel = paymentState.amountWithCurrencyLabel,
+                                primaryLabel = paymentState.cta.label,
+                                onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
+                                secondaryLabel = R.string.cancel,
+                                onSecondaryActionClicked = paymentState.onCancel,
+                            )
+                        } else {
+                            if (paymentState.onRetry != null) {
+                                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                                    cardReaderType = CardReaderType.BUILT_IN,
+                                    errorType = paymentState.errorType,
+                                    amountLabel = paymentState.amountWithCurrencyLabel,
+                                    primaryLabel = R.string.try_again,
+                                    onPrimaryActionClicked = paymentState.onRetry,
+                                    onSecondaryActionClicked = paymentState.onCancel,
+                                    secondaryLabel = R.string.cancel,
+                                )
+                            } else {
+                                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                                    cardReaderType = CardReaderType.BUILT_IN,
+                                    errorType = paymentState.errorType,
+                                    amountLabel = paymentState.amountWithCurrencyLabel,
+                                    primaryLabel = R.string.card_reader_payment_payment_failed_ok,
+                                    onPrimaryActionClicked = paymentState.onCancel,
+                                )
+                            }
+                        }
+                    }
+
+                    is PaymentFailed.BuiltInReaderFailedPayment.NonCancelable -> {
                         cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
                             cardReaderType = CardReaderType.BUILT_IN,
                             errorType = paymentState.errorType,
                             amountLabel = paymentState.amountWithCurrencyLabel,
                             primaryLabel = R.string.try_again,
                             onPrimaryActionClicked = paymentState.onRetry,
-                            onSecondaryActionClicked = paymentState.onCancel,
-                            secondaryLabel = R.string.cancel,
-                        )
-                    } else {
-                        cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                            cardReaderType = CardReaderType.BUILT_IN,
-                            errorType = paymentState.errorType,
-                            amountLabel = paymentState.amountWithCurrencyLabel,
-                            primaryLabel = R.string.card_reader_payment_payment_failed_ok,
-                            onPrimaryActionClicked = paymentState.onCancel!!,
                         )
                     }
                 }
             }
             is PaymentFailed.ExternalReaderFailedPayment -> {
-                if (paymentState.cta != null) {
-                    cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                        cardReaderType = CardReaderType.EXTERNAL,
-                        errorType = paymentState.errorType,
-                        amountLabel = paymentState.amountWithCurrencyLabel,
-                        primaryLabel = paymentState.cta.label,
-                        onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
-                        secondaryLabel = R.string.cancel,
-                        onSecondaryActionClicked = paymentState.onCancel,
-                    )
-                } else {
-                    if (paymentState.onRetry != null) {
+                when (paymentState) {
+                    is PaymentFailed.ExternalReaderFailedPayment.Cancelable -> {
+                        if (paymentState.cta != null) {
+                            cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                                cardReaderType = CardReaderType.EXTERNAL,
+                                errorType = paymentState.errorType,
+                                amountLabel = paymentState.amountWithCurrencyLabel,
+                                primaryLabel = paymentState.cta.label,
+                                onPrimaryActionClicked = paymentState.cta.onCallToActionTapped,
+                                secondaryLabel = R.string.cancel,
+                                onSecondaryActionClicked = paymentState.onCancel,
+                            )
+                        } else {
+                            if (paymentState.onRetry != null) {
+                                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                                    cardReaderType = CardReaderType.EXTERNAL,
+                                    errorType = paymentState.errorType,
+                                    amountLabel = paymentState.amountWithCurrencyLabel,
+                                    primaryLabel = R.string.try_again,
+                                    onPrimaryActionClicked = paymentState.onRetry,
+                                    secondaryLabel = R.string.cancel,
+                                    onSecondaryActionClicked = paymentState.onCancel,
+                                )
+                            } else {
+                                cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                                    cardReaderType = CardReaderType.EXTERNAL,
+                                    errorType = paymentState.errorType,
+                                    amountLabel = paymentState.amountWithCurrencyLabel,
+                                    primaryLabel = R.string.card_reader_payment_payment_failed_ok,
+                                    onPrimaryActionClicked = paymentState.onCancel!!,
+                                )
+                            }
+                        }
+                    }
+
+                    is PaymentFailed.ExternalReaderFailedPayment.NonCancelable -> {
                         cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
                             cardReaderType = CardReaderType.EXTERNAL,
                             errorType = paymentState.errorType,
                             amountLabel = paymentState.amountWithCurrencyLabel,
                             primaryLabel = R.string.try_again,
-                            onPrimaryActionClicked = paymentState.onRetry,
-                            secondaryLabel = R.string.cancel,
-                            onSecondaryActionClicked = paymentState.onCancel,
-                        )
-                    } else {
-                        cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                            cardReaderType = CardReaderType.EXTERNAL,
-                            errorType = paymentState.errorType,
-                            amountLabel = paymentState.amountWithCurrencyLabel,
-                            primaryLabel = R.string.card_reader_payment_payment_failed_ok,
-                            onPrimaryActionClicked = paymentState.onCancel!!,
+                            onPrimaryActionClicked = paymentState.onRetry
                         )
                     }
                 }
