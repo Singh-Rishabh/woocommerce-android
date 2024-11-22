@@ -206,7 +206,6 @@ class WooPosTotalsViewModel @Inject constructor(
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
                         // ready to collect payment
-                        Log.d("WooPosTotalsViewModel", "Ready to collect payment")
                         val state = uiState.value
                         check(state is WooPosTotalsViewState.Totals)
                         val orderId = dataState.value.orderId
@@ -215,8 +214,6 @@ class WooPosTotalsViewModel @Inject constructor(
                         createCardReaderPaymentController(dataState.value.orderId)
                         cardReaderPaymentController?.start()
                         listenToPaymentController()
-//                        uiState.value = WooPosTotalsViewState.PaymentSuccess(orderTotalText = state.orderTotalText)
-//                        childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
                     is WooPosCardReaderPaymentStatus.Failure,
                     is WooPosCardReaderPaymentStatus.Unknown -> Unit
@@ -228,7 +225,6 @@ class WooPosTotalsViewModel @Inject constructor(
     private fun listenToPaymentController() {
         viewModelScope.launch {
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
-                Log.d("WooPosTotalsViewModel", "state: ${paymentState.javaClass.simpleName}")
                 val totalsState = uiState.value
                 if (totalsState is WooPosTotalsViewState.Totals) {
                     uiState.value = totalsState.copy(
@@ -243,7 +239,7 @@ class WooPosTotalsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             cardReaderPaymentController?.event?.collect { event ->
-                Log.d("WooPosTotalsViewModel", "event: ${event.javaClass.simpleName}")
+
             }
         }
     }

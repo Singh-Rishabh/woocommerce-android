@@ -2,7 +2,28 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.AppPrefs
+import com.woocommerce.android.cardreader.CardReaderManager
+import com.woocommerce.android.cardreader.connection.CardReaderStatus
+import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
+import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
+import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundErrorMapper
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundableChecker
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
+import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlow
+import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
+import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
+import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
+import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -14,12 +35,15 @@ import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
+import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
 import org.junit.Rule
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -27,6 +51,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import java.util.Date
 import kotlin.test.Test
@@ -45,6 +70,25 @@ class WooPosTotalsViewModelTest {
     private val networkStatus: WooPosNetworkStatus = mock()
 
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
+    private val cardReaderManager: CardReaderManager = mock()
+    private val orderRepository: OrderDetailRepository = mock()
+    private val selectedSite: SelectedSite = mock()
+    private val appPrefs: AppPrefs = mock()
+    private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker = mock()
+    private val interacRefundableChecker: CardReaderInteracRefundableChecker = mock()
+    private val tracker: PaymentsFlowTracker = mock()
+    private val trackCanceledFlow = CardReaderTrackCanceledFlow(tracker)
+    private val currencyFormatter: CurrencyFormatter = mock()
+    private val errorMapper: CardReaderPaymentErrorMapper = mock()
+    private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper = mock()
+    private val wooStore: WooCommerceStore = mock()
+    private val cardReaderTrackingInfoKeeper: CardReaderTrackingInfoKeeper = mock()
+    private val paymentStateProvider = CardReaderPaymentStateProvider()
+    private val cardReaderPaymentOrderHelper: CardReaderPaymentOrderHelper = mock()
+    private val paymentReceiptHelper: PaymentReceiptHelper = mock()
+    private val cardReaderOnboardingChecker: CardReaderOnboardingChecker = mock()
+    private val cardReaderConfigProvider: CardReaderCountryConfigProvider = mock()
+    private val paymentReceiptShare: PaymentReceiptShare = mock()
 
     private fun createMockSavedStateHandle(): SavedStateHandle {
         return SavedStateHandle(
@@ -62,6 +106,21 @@ class WooPosTotalsViewModelTest {
 
     private companion object {
         private const val EMPTY_ORDER_ID = -1L
+    }
+
+    @Before
+    fun setUp() = runTest {
+        whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
+        whenever(cardReaderManager.batteryStatus).thenAnswer { flow { emit(CardReaderBatteryStatus.Unknown) } }
+        whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+            flow<CardPaymentStatus> { }
+        }
+        whenever(cardReaderManager.retryCollectPayment(any(), any())).thenAnswer {
+            flow<CardPaymentStatus> { }
+        }
+        whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+            flow<BluetoothCardReaderMessages> {}
+        }
     }
 
     @Test
@@ -131,13 +190,10 @@ class WooPosTotalsViewModelTest {
         )
 
         // THEN
-        assertThat(viewModel.state.value).isEqualTo(
-            WooPosTotalsViewState.Totals(
-                orderSubtotalText = "$3.00",
-                orderTaxText = "$2.00",
-                orderTotalText = "$5.00"
-            )
-        )
+        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        assertThat(state.orderTotalText).isEqualTo("$5.00")
+        assertThat(state.orderTaxText).isEqualTo("$2.00")
+        assertThat(state.orderSubtotalText).isEqualTo("$3.00")
         verify(totalsRepository).createOrderWithProducts(productIds)
     }
 
@@ -420,13 +476,10 @@ class WooPosTotalsViewModelTest {
         )
 
         // THEN
-        assertThat(viewModel.state.value).isEqualTo(
-            WooPosTotalsViewState.Totals(
-                orderSubtotalText = "3.00$",
-                orderTaxText = "2.00$",
-                orderTotalText = "5.00$"
-            )
-        )
+        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        assertThat(state.orderTotalText).isEqualTo("5.00$")
+        assertThat(state.orderTaxText).isEqualTo("2.00$")
+        assertThat(state.orderSubtotalText).isEqualTo("3.00$")
         verify(totalsRepository).createOrderWithProducts(productIds)
     }
 
@@ -466,7 +519,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given payment status is success, when payment flow started, then OrderSuccessfullyPaid event and update state to PaymentSuccess`() = runTest {
+    fun `given order creation success, when reader prepared for payment, then payment collection started`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(true)
         val productIds = listOf(1L, 2L, 3L)
@@ -498,7 +551,6 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("$2.00")
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("$3.00")
         }
-
         val paymentStatusFlow = MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Unknown)
         whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
 
@@ -515,11 +567,9 @@ class WooPosTotalsViewModelTest {
         advanceUntilIdle()
 
         // THEN
-        val state = viewModel.state.value
-        assertThat(state).isEqualTo(
-            WooPosTotalsViewState.PaymentSuccess(orderTotalText = "$3.00")
-        )
-        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
+        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        assertThat(state.orderTotalText).isEqualTo("$3.00")
+        assertThat(state.paymentStateText).isNotNull()
     }
 
     @org.junit.Test
@@ -639,6 +689,26 @@ class WooPosTotalsViewModelTest {
         priceFormat,
         analyticsTracker,
         networkStatus,
+        cardReaderManager = cardReaderManager,
+        orderRepository = orderRepository,
+        selectedSite = selectedSite,
+        appPrefs = appPrefs,
+        paymentCollectibilityChecker = paymentCollectibilityChecker,
+        interacRefundableChecker = interacRefundableChecker,
+        tracker = tracker,
+        trackCancelledFlow = trackCanceledFlow,
+        currencyFormatter = currencyFormatter,
+        errorMapper = errorMapper,
+        interacRefundErrorMapper = interacRefundErrorMapper,
+        wooStore = wooStore,
+        dispatchers = coroutinesTestRule.testDispatchers,
+        cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
+        paymentStateProvider = paymentStateProvider,
+        cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
+        paymentReceiptHelper = paymentReceiptHelper,
+        cardReaderOnboardingChecker = cardReaderOnboardingChecker,
+        cardReaderConfigProvider = cardReaderConfigProvider,
+        paymentReceiptShare = paymentReceiptShare,
         savedState
     )
 }
