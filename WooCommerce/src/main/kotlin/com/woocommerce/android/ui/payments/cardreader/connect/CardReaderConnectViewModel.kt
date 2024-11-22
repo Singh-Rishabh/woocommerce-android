@@ -59,7 +59,6 @@ import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectV
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectViewState.MultipleExternalReadersFoundState
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectViewState.ScanningFailedState
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
-import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.EXTERNAL
