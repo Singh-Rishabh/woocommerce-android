@@ -256,7 +256,7 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                         result = event.data as Boolean,
                     )
                 }
-                is CardReaderConnectEvent.CardReaderPrepareForPaymentResult -> {
+                is CardReaderConnectEvent.ReturnToWooPos -> {
                     parentFragmentManager.setFragmentResult(
                         WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_REQUEST_KEY,
                         Bundle()

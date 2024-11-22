@@ -47,8 +47,5 @@ sealed class CardReaderConnectEvent : MultiLiveEvent.Event() {
 
     data class OpenGenericWebView(val url: String) : CardReaderConnectEvent()
 
-    sealed class CardReaderPrepareForPaymentResult : MultiLiveEvent.Event() {
-        data object Success : CardReaderPrepareForPaymentResult()
-        data object Failure : CardReaderPrepareForPaymentResult()
-    }
+    data object ReturnToWooPos : MultiLiveEvent.Event()
 }

@@ -16,7 +16,7 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.EXTERNAL
 import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.NavigateToConnection
-import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.ReturnResultToWooPos
+import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.ReturnToWooPos
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -66,7 +66,7 @@ class CardReaderStatusCheckerViewModel
                         handleNotSelectedReaderTypeConnected(param)
                     } else {
                         if (param.isPOS) {
-                            triggerEvent(ReturnResultToWooPos.Success)
+                            triggerEvent(ReturnToWooPos)
                         } else {
                             triggerEvent(
                                 StatusCheckerEvent.NavigateToPayment(
@@ -139,9 +139,6 @@ class CardReaderStatusCheckerViewModel
             val cardReaderType: CardReaderType,
         ) : MultiLiveEvent.Event()
 
-        sealed class ReturnResultToWooPos : MultiLiveEvent.Event() {
-            data object Success : ReturnResultToWooPos()
-            data object Failure : ReturnResultToWooPos()
-        }
+        data object ReturnToWooPos : MultiLiveEvent.Event()
     }
 }

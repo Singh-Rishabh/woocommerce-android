@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.payments.PaymentsBaseDialogFragment
-import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.ReturnResultToWooPos
+import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.ReturnToWooPos
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -68,7 +68,7 @@ class CardReaderStatusCheckerDialogFragment : PaymentsBaseDialogFragment(R.layou
                                 )
                         )
                 }
-                is ReturnResultToWooPos -> {
+                is ReturnToWooPos -> {
                     parentFragmentManager.setFragmentResult(
                         WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_REQUEST_KEY,
                         Bundle()

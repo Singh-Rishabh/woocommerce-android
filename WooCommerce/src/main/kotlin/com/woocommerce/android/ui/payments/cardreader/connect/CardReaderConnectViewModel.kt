@@ -27,7 +27,6 @@ import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.cardreader.LearnMoreUrlProvider
 import com.woocommerce.android.ui.payments.cardreader.LearnMoreUrlProvider.LearnMoreUrlType.IN_PERSON_PAYMENTS
-import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CardReaderPrepareForPaymentResult
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckBluetoothEnabled
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckBluetoothPermissionsGiven
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckLocationEnabled
@@ -39,6 +38,7 @@ import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectE
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestBluetoothRuntimePermissions
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestEnableBluetooth
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestLocationPermissions
+import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.ReturnToWooPos
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.ShowCardReaderTutorial
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.ShowToast
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.ShowToastString
@@ -531,7 +531,7 @@ class CardReaderConnectViewModel @Inject constructor(
     private fun exitFlow(connected: Boolean) {
         val param = arguments.cardReaderFlowParam
         if (param.isPOS) {
-            returnToWooPos(connected)
+            returnToWooPos()
         } else if (!connected) {
             triggerEvent(ExitWithResult(false))
         } else {
@@ -544,13 +544,8 @@ class CardReaderConnectViewModel @Inject constructor(
         }
     }
 
-    private fun returnToWooPos(connected: Boolean) {
-        val event = if (connected) {
-            CardReaderPrepareForPaymentResult.Success
-        } else {
-            CardReaderPrepareForPaymentResult.Failure
-        }
-        triggerEvent(event)
+    private fun returnToWooPos() {
+        triggerEvent(ReturnToWooPos)
     }
 
     private fun storeConnectedReader(cardReader: CardReader) {
