@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.networking
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking
 
 import javax.inject.Inject
 import org.wordpress.android.fluxc.model.SiteModel

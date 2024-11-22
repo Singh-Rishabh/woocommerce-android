@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.networking
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking
 
 class CarrierPredefinedPackagesDTO {
     val usps: USPSPackageDTO? = null

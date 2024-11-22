@@ -1,6 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.networking
-
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.networking.WooShippingLabelPackageRestClient.PredefinedPackageDTO
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking
 
 class SavedPackageInfoDTO {
     val custom: List<CustomPackageDTO>? = null

@@ -1,6 +1,6 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.networking
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking
 
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.networking.WooShippingLabelPackageRestClient.CarrierPredefinedPackagesDTO
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.WooShippingLabelPackageRestClient.CarrierPredefinedPackagesDTO
 
 class PackageResponse {
     val storeOptions: PackageStoreOptionsDTO? = null
