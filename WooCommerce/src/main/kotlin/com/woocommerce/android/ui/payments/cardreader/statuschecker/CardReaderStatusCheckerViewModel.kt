@@ -8,7 +8,6 @@ import com.woocommerce.android.cardreader.connection.CardReader
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
 import com.woocommerce.android.cardreader.connection.ReaderType
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
-import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingParams
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState
@@ -16,7 +15,6 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.EXTERNAL
 import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.NavigateToConnection
-import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.ReturnToWooPos
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -40,17 +38,12 @@ class CardReaderStatusCheckerViewModel
     override val _event = SingleLiveEvent<MultiLiveEvent.Event>()
     override val event: LiveData<MultiLiveEvent.Event> = _event
 
-    private val CardReaderFlowParam.isPOS: Boolean
-        get() = this is Payment && paymentType == Payment.PaymentType.WOO_POS ||
-            this is CardReaderFlowParam.WooPosConnection
-
     init {
         launch {
             checkStatus()
         }
     }
 
-    @Suppress("NestedBlockDepth")
     private suspend fun checkStatus() {
         when (val param = arguments.cardReaderFlowParam) {
             is CardReaderFlowParam.CardReadersHub -> triggerEvent(
@@ -65,16 +58,12 @@ class CardReaderStatusCheckerViewModel
                     if (cardReaderStatus.cardReader.toCardReaderType() != arguments.cardReaderType) {
                         handleNotSelectedReaderTypeConnected(param)
                     } else {
-                        if (param.isPOS) {
-                            triggerEvent(ReturnToWooPos)
-                        } else {
-                            triggerEvent(
-                                StatusCheckerEvent.NavigateToPayment(
-                                    param,
-                                    cardReaderStatus.cardReader.toCardReaderType()
-                                )
+                        triggerEvent(
+                            StatusCheckerEvent.NavigateToPayment(
+                                param,
+                                cardReaderStatus.cardReader.toCardReaderType()
                             )
-                        }
+                        )
                     }
                 } else {
                     handleOnboardingStatus(param)
