@@ -183,7 +183,7 @@ class WooPosTotalsViewModel @Inject constructor(
                 check(uiState.value is WooPosTotalsViewState.Totals)
                 createCardReaderPaymentController(dataState.value.orderId)
                 cardReaderPaymentController?.start()
-                listenToPaymentController()
+                listenToPaymentState()
             } else {
                 // TODO: Update view state to ask user to connect card reader. Once connected, proceed with payment.
             }
@@ -211,7 +211,7 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private fun listenToPaymentController() {
+    private fun listenToPaymentState() {
         viewModelScope.launch {
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
                 val totalsState = uiState.value
@@ -227,10 +227,6 @@ class WooPosTotalsViewModel @Inject constructor(
                         )
                     childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                 }
-            }
-        }
-        viewModelScope.launch {
-            cardReaderPaymentController?.event?.collect { event ->
             }
         }
     }
