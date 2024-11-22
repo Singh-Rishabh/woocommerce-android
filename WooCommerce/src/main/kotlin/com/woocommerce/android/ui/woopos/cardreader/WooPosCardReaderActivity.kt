@@ -49,19 +49,6 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
                 else -> logResultListenerError(requestKey)
             }
         }
-
-        navHostFragment.childFragmentManager.setFragmentResultListener(
-            WOO_POS_CARD_CONNECTION_REQUEST_KEY,
-            this
-        ) { requestKey, _ ->
-            when (requestKey) {
-                WOO_POS_CARD_CONNECTION_REQUEST_KEY -> {
-                    finish()
-                }
-
-                else -> logResultListenerError(requestKey)
-            }
-        }
     }
 
     private fun setupNavGraph(navHostFragment: NavHostFragment) {
@@ -88,7 +75,6 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
 
     companion object {
         const val WOO_POS_CARD_PAYMENT_REQUEST_KEY = "woo_pos_card_payment_request"
-        const val WOO_POS_CARD_CONNECTION_REQUEST_KEY = "woo_pos_card_connection_request"
         const val WOO_POS_CARD_PAYMENT_RESULT_KEY = "woo_pos_card_payment_result"
         internal const val WOO_POS_CARD_READER_MODE_KEY = "card_reader_connection_mode"
 
