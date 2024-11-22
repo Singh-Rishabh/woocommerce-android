@@ -1,31 +1,25 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.PackageResponse
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.WooShippingLabelPackageRestClient
 import javax.inject.Inject
 import javax.inject.Singleton
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
-import org.wordpress.android.fluxc.store.WCShippingLabelStore
 
 @Singleton
 class WooShippingLabelPackageRepository @Inject constructor(
     private val selectedSite: SelectedSite,
-    private val shippingLabelStore: WCShippingLabelStore,
     private val packageMapper: WooShippingLabelPackageMapper,
     private val packageRestClient: WooShippingLabelPackageRestClient
 ) {
     suspend fun fetchAllStorePackages(
         site: SiteModel = selectedSite.get()
-    ): WooResult<StorePackages> {
-        val response = packageRestClient.fetchShippingLabelPackages(site)
-
-        return response.result
-            .takeIf { response.isError.not() }
+    ) = with(packageRestClient.fetchShippingLabelPackages(site)) {
+        result.takeIf { isError.not() }
             ?.let { packageMapper.invoke(it) }
             ?.let { WooResult(it) }
-            ?: WooResult(response.error)
+            ?: WooResult(error)
     }
 
     data class StorePackages(
