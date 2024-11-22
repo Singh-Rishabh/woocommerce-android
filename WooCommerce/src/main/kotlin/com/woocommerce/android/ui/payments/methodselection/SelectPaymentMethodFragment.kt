@@ -34,7 +34,6 @@ import com.woocommerce.android.ui.payments.methodselection.SelectPaymentMethodVi
 import com.woocommerce.android.ui.payments.methodselection.SelectPaymentMethodViewState.Success
 import com.woocommerce.android.ui.payments.scantopay.ScanToPayDialogFragment
 import com.woocommerce.android.ui.payments.taptopay.summary.TapToPaySummaryFragment
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.UiHelpers
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
@@ -274,13 +273,6 @@ class SelectPaymentMethodFragment : BaseFragment(R.layout.fragment_select_paymen
                                     order = event.order
                                 )
                             )
-                    )
-                }
-
-                is ReturnResultToWooPos -> {
-                    parentFragmentManager.setFragmentResult(
-                        WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_REQUEST_KEY,
-                        Bundle()
                     )
                 }
             }

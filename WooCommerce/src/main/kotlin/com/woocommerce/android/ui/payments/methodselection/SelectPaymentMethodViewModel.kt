@@ -321,10 +321,6 @@ class SelectPaymentMethodViewModel @Inject constructor(
                 flow = cardReaderPaymentFlowParam.toAnalyticsFlowName(),
             )
         }
-        if (cardReaderPaymentFlowParam.paymentType == WOO_POS) {
-            val result = if (connected) ReturnResultToWooPos.Success else ReturnResultToWooPos.Failure
-            triggerEvent(result)
-        }
     }
 
     fun onCardReaderPaymentCompleted() {
