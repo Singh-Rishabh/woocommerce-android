@@ -45,7 +45,6 @@ import com.woocommerce.android.ui.payments.cardreader.connect.adapter.MultipleCa
 import com.woocommerce.android.ui.payments.cardreader.update.CardReaderUpdateDialogFragment
 import com.woocommerce.android.ui.payments.cardreader.update.CardReaderUpdateViewModel.UpdateResult
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.LocationUtils
 import com.woocommerce.android.util.UiHelpers
@@ -260,12 +259,7 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                 is CardReaderConnectEvent.CardReaderPrepareForPaymentResult -> {
                     parentFragmentManager.setFragmentResult(
                         WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_REQUEST_KEY,
-                        Bundle().apply {
-                            putParcelable(
-                                WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_RESULT_KEY,
-                                event.asWooPosCardReaderPaymentResult(),
-                            )
-                        }
+                        Bundle()
                     )
                 }
                 is CardReaderConnectEvent.ShowToast ->
@@ -282,12 +276,6 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
             }
         }
     }
-
-    fun CardReaderConnectEvent.CardReaderPrepareForPaymentResult.asWooPosCardReaderPaymentResult() =
-        when (this) {
-            CardReaderConnectEvent.CardReaderPrepareForPaymentResult.Failure -> WooPosCardReaderConnectionStatus.Failure
-            CardReaderConnectEvent.CardReaderPrepareForPaymentResult.Success -> WooPosCardReaderConnectionStatus.Success
-        }
 
     private fun updateMultipleReadersFoundRecyclerView(
         binding: CardReaderConnectDialogBinding,

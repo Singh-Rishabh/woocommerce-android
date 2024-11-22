@@ -15,7 +15,6 @@ import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.payments.PaymentsBaseDialogFragment
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

@@ -10,7 +10,6 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.payments.PaymentsBaseDialogFragment
 import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerViewModel.StatusCheckerEvent.ReturnResultToWooPos
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -72,22 +71,11 @@ class CardReaderStatusCheckerDialogFragment : PaymentsBaseDialogFragment(R.layou
                 is ReturnResultToWooPos -> {
                     parentFragmentManager.setFragmentResult(
                         WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_REQUEST_KEY,
-                        Bundle().apply {
-                            putParcelable(
-                                WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_RESULT_KEY,
-                                event.asWooPosCardReaderPaymentResult(),
-                            )
-                        }
+                        Bundle()
                     )
                 }
                 else -> event.isHandled = false
             }
         }
     }
-
-    fun ReturnResultToWooPos.asWooPosCardReaderPaymentResult() =
-        when (this) {
-            is ReturnResultToWooPos.Success -> WooPosCardReaderConnectionStatus.Success
-            is ReturnResultToWooPos.Failure -> WooPosCardReaderConnectionStatus.Failure
-        }
 }
