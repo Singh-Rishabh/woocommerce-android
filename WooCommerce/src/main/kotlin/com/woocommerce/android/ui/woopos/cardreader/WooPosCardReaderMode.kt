@@ -15,13 +15,4 @@ sealed class WooPosCardReaderMode(
         cardReaderFlowParam = CardReaderFlowParam.WooPosConnection,
         cardReaderType = CardReaderType.EXTERNAL
     )
-
-    @Parcelize
-    data class Payment(val orderId: Long) : WooPosCardReaderMode(
-        cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
-            orderId = orderId,
-            paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-        ),
-        cardReaderType = CardReaderType.EXTERNAL
-    )
 }

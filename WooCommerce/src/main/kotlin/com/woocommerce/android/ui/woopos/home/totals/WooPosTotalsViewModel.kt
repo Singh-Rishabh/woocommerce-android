@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.CardReaderManager
+import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
@@ -28,7 +29,6 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -63,7 +63,6 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
-
     private val cardReaderManager: CardReaderManager,
     private val orderRepository: OrderDetailRepository,
     private val selectedSite: SelectedSite,
@@ -150,7 +149,6 @@ class WooPosTotalsViewModel @Inject constructor(
 
     init {
         listenUpEvents()
-        listenToPaymentsStatus()
     }
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
@@ -177,7 +175,18 @@ class WooPosTotalsViewModel @Inject constructor(
         } else {
             val orderId = dataState.value.orderId
             check(orderId != EMPTY_ORDER_ID)
-            cardReaderFacade.collectPayment(orderId)
+            if (cardReaderFacade.readerStatus.value is Connected) {
+                val state = uiState.value
+                check(state is WooPosTotalsViewState.Totals)
+                val orderId = dataState.value.orderId
+                check(orderId != EMPTY_ORDER_ID)
+                check(uiState.value is WooPosTotalsViewState.Totals)
+                createCardReaderPaymentController(dataState.value.orderId)
+                cardReaderPaymentController?.start()
+                listenToPaymentController()
+            } else {
+              // TODO: Update view state to ask user to connect card reader. Once connected, proceed with payment.
+            }
         }
     }
 
@@ -197,28 +206,6 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector,
                     ParentToChildrenEvent.OrderSuccessfullyPaid -> Unit
-                }
-            }
-        }
-    }
-
-    private fun listenToPaymentsStatus() {
-        viewModelScope.launch {
-            cardReaderFacade.paymentStatus.collect { status ->
-                when (status) {
-                    is WooPosCardReaderConnectionStatus.Success -> {
-                        // ready to collect payment
-                        val state = uiState.value
-                        check(state is WooPosTotalsViewState.Totals)
-                        val orderId = dataState.value.orderId
-                        check(orderId != EMPTY_ORDER_ID)
-                        check(uiState.value is WooPosTotalsViewState.Totals)
-                        createCardReaderPaymentController(dataState.value.orderId)
-                        cardReaderPaymentController?.start()
-                        listenToPaymentController()
-                    }
-                    is WooPosCardReaderConnectionStatus.Failure,
-                    is WooPosCardReaderConnectionStatus.Unknown -> Unit
                 }
             }
         }

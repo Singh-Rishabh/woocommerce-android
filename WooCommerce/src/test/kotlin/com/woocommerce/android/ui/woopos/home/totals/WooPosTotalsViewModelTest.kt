@@ -25,7 +25,6 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -48,7 +47,6 @@ import org.junit.Rule
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -99,9 +97,7 @@ class WooPosTotalsViewModelTest {
         )
     }
 
-    private val cardReaderFacade: WooPosCardReaderFacade = mock {
-        on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderConnectionStatus.Unknown))
-    }
+    private val cardReaderFacade: WooPosCardReaderFacade = mock()
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
 
     private companion object {
@@ -378,57 +374,6 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `when CollectPaymentClicked is emitted, then should collect payment`() = runTest {
-        // GIVEN
-        whenever(networkStatus.isConnected()).thenReturn(true)
-        val productIds = listOf(1L, 2L, 3L)
-        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
-        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
-            on { events }.thenReturn(parentToChildrenEventFlow)
-        }
-        val order = Order.getEmptyOrder(
-            dateCreated = Date(),
-            dateModified = Date()
-        ).copy(
-            totalTax = BigDecimal("2.00"),
-            items = listOf(
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                )
-            ),
-            productsTotal = BigDecimal("3.00"),
-            total = BigDecimal("5.00"),
-        )
-        val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(productIds = productIds) }.thenReturn(
-                Result.success(order)
-            )
-        }
-        val priceFormat: WooPosFormatPrice = mock {
-            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
-            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
-            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
-        }
-
-        // WHEN
-        val viewModel = createViewModel(
-            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
-            totalsRepository = totalsRepository,
-            priceFormat = priceFormat,
-        )
-        viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
-
-        // THEN
-        verify(cardReaderFacade, times(1)).collectPayment(any())
-    }
-
-    @Test
     fun `when order is created, then should track order creation success`() = runTest {
         // GIVEN
         val productIds = listOf(1L, 2L, 3L)
@@ -519,7 +464,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given order creation success, when reader prepared for payment, then payment collection started`() = runTest {
+    fun `given reader connected, when order created, then payment collection started`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(true)
         val productIds = listOf(1L, 2L, 3L)
@@ -551,8 +496,7 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("$2.00")
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("$3.00")
         }
-        val paymentStatusFlow = MutableStateFlow<WooPosCardReaderConnectionStatus>(WooPosCardReaderConnectionStatus.Unknown)
-        whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
 
         val viewModel = createViewModel(
             savedState = savedState,
@@ -563,7 +507,6 @@ class WooPosTotalsViewModelTest {
 
         // WHEN
         viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
-        paymentStatusFlow.value = WooPosCardReaderConnectionStatus.Success
         advanceUntilIdle()
 
         // THEN
@@ -671,7 +614,7 @@ class WooPosTotalsViewModelTest {
         viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
 
         // THEN
-        verify(cardReaderFacade, never()).collectPayment(any())
+        verify(cardReaderManager, never()).collectPayment(any())
     }
 
     private fun createViewModel(

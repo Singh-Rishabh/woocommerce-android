@@ -9,7 +9,7 @@ import com.woocommerce.android.ui.woopos.support.WooPosGetSupportFacade
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
@@ -25,7 +25,7 @@ class WooPosToolbarViewModelTest {
     @JvmField
     val coroutinesTestRule = WooPosCoroutineTestRule()
     private val cardReaderFacade: WooPosCardReaderFacade = mock {
-        onBlocking { readerStatus }.thenReturn(flowOf(CardReaderStatus.NotConnected()))
+        onBlocking { readerStatus }.thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
     }
     private val getSupportFacade: WooPosGetSupportFacade = mock()
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
@@ -34,7 +34,7 @@ class WooPosToolbarViewModelTest {
     @Test
     fun `given card reader status is NotConnected, when initialized, then state should be NotConnected`() = runTest {
         // GIVEN
-        whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.NotConnected()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
         val viewModel = createViewModel()
 
         // THEN
@@ -45,7 +45,7 @@ class WooPosToolbarViewModelTest {
     @Test
     fun `given card reader status is Connected, when initialized, then state should be Connected`() = runTest {
         // GIVEN
-        whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.Connected(mock())))
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
         val viewModel = createViewModel()
 
         // THEN
@@ -56,7 +56,7 @@ class WooPosToolbarViewModelTest {
     @Test
     fun `given card reader status is Connecting, when initialized, then state should be NotConnected`() = runTest {
         // GIVEN
-        whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.Connecting))
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connecting))
         val viewModel = createViewModel()
 
         // THEN
@@ -107,7 +107,7 @@ class WooPosToolbarViewModelTest {
     @Test
     fun `when ConnectToAReaderClicked passed, then connect to reader should be called`() = runTest {
         // GIVEN
-        whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.NotConnected()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
         whenever(networkStatus.isConnected()).thenReturn(true)
         val viewModel = createViewModel()
 
@@ -139,7 +139,7 @@ class WooPosToolbarViewModelTest {
     fun `given card reader status is Connected, when OnCardReaderStatusClicked, then disconnect from reader should be called`() =
         runTest {
             // GIVEN
-            whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.Connected(mock())))
+            whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
             val viewModel = createViewModel()
 
             // WHEN
@@ -153,7 +153,7 @@ class WooPosToolbarViewModelTest {
     fun `given card reader status is NotConnected, when OnCardReaderStatusClicked, then connect to reader should be called`() =
         runTest {
             // GIVEN
-            whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.NotConnected()))
+            whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
             whenever(networkStatus.isConnected()).thenReturn(true)
             val viewModel = createViewModel()
 
@@ -184,7 +184,7 @@ class WooPosToolbarViewModelTest {
     fun `given there is no internet, when trying to connect card reader, then trigger proper event`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
-        whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.NotConnected()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
 
         // WHEN
         val viewModel = createViewModel()
@@ -198,7 +198,7 @@ class WooPosToolbarViewModelTest {
     fun `given there is no internet, when trying to connect card reader, then connect card reader method is not called`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
-        whenever(cardReaderFacade.readerStatus).thenReturn(flowOf(CardReaderStatus.NotConnected()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
 
         // WHEN
         val viewModel = createViewModel()
