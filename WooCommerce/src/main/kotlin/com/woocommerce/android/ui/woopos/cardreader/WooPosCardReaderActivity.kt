@@ -10,7 +10,6 @@ import androidx.navigation.fragment.NavHostFragment
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.parcelable
 import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerDialogFragmentArgs
-import com.woocommerce.android.ui.payments.methodselection.SelectPaymentMethodFragmentArgs
 import com.woocommerce.android.util.WooLog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -66,31 +65,19 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
     }
 
     private fun setupNavGraph(navHostFragment: NavHostFragment) {
-        when (val mode = viewModel.cardReaderMode) {
-            is WooPosCardReaderMode.Payment -> {
-                val navController = navHostFragment.navController
-                val graph = navController.navInflater.inflate(R.navigation.nav_graph_payment_flow)
-                navController.setGraph(
-                    graph,
-                    SelectPaymentMethodFragmentArgs(cardReaderFlowParam = mode.cardReaderFlowParam).toBundle()
-                )
+        val mode = viewModel.cardReaderMode
+        val navController = navHostFragment.navController
+        val graph =
+            navController.navInflater.inflate(R.navigation.nav_graph_payment_flow).apply {
+                setStartDestination(R.id.cardReaderStatusCheckerDialogFragment)
             }
-
-            WooPosCardReaderMode.Connection -> {
-                val navController = navHostFragment.navController
-                val graph =
-                    navController.navInflater.inflate(R.navigation.nav_graph_payment_flow).apply {
-                        setStartDestination(R.id.cardReaderStatusCheckerDialogFragment)
-                    }
-                navController.setGraph(
-                    graph,
-                    CardReaderStatusCheckerDialogFragmentArgs(
-                        cardReaderFlowParam = mode.cardReaderFlowParam,
-                        cardReaderType = mode.cardReaderType,
-                    ).toBundle()
-                )
-            }
-        }
+        navController.setGraph(
+            graph,
+            CardReaderStatusCheckerDialogFragmentArgs(
+                cardReaderFlowParam = mode.cardReaderFlowParam,
+                cardReaderType = mode.cardReaderType,
+            ).toBundle()
+        )
     }
 
     private fun logResultListenerError(requestKey: String) {
