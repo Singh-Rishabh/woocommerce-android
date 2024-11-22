@@ -473,7 +473,7 @@ class SelectPaymentMethodViewModel @Inject constructor(
                 SIMPLE -> NavigateBackToHub(CardReadersHub())
                 TRY_TAP_TO_PAY -> NavigateToTapToPaySummary(order.first())
                 ORDER, ORDER_CREATION -> NavigateBackToOrderList(order.first())
-                WOO_POS -> ReturnResultToWooPos.Success // TODO: throw illegal state exception
+                WOO_POS -> error("Woo POS is expected to use CardReaderPaymentController directly")
             }
         )
     }
