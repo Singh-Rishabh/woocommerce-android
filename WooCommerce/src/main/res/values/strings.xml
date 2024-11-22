@@ -4381,4 +4381,5 @@
     <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
     <string name="woo_shipping_labels_package_creation_box_type">Box</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
+    <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
 </resources>
