@@ -36,7 +36,7 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
         ) { requestKey, bundle ->
             when (requestKey) {
                 WOO_POS_CARD_PAYMENT_REQUEST_KEY -> {
-                    val result = bundle.parcelable<WooPosCardReaderPaymentStatus>(
+                    val result = bundle.parcelable<WooPosCardReaderConnectionStatus>(
                         WOO_POS_CARD_PAYMENT_RESULT_KEY
                     )
                     setResult(

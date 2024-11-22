@@ -35,7 +35,7 @@ import com.woocommerce.android.ui.payments.methodselection.SelectPaymentMethodVi
 import com.woocommerce.android.ui.payments.scantopay.ScanToPayDialogFragment
 import com.woocommerce.android.ui.payments.taptopay.summary.TapToPaySummaryFragment
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.UiHelpers
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
@@ -295,8 +295,8 @@ class SelectPaymentMethodFragment : BaseFragment(R.layout.fragment_select_paymen
 
     private fun ReturnResultToWooPos.asWooPosCardReaderPaymentResult() =
         when (this) {
-            is ReturnResultToWooPos.Success -> WooPosCardReaderPaymentStatus.Success
-            else -> WooPosCardReaderPaymentStatus.Failure
+            is ReturnResultToWooPos.Success -> WooPosCardReaderConnectionStatus.Success
+            else -> WooPosCardReaderConnectionStatus.Failure
         }
 
     private fun setupResultHandlers() {

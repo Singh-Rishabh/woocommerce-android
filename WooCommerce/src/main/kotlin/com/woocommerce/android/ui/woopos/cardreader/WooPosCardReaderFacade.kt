@@ -24,10 +24,10 @@ class WooPosCardReaderFacade @Inject constructor(
 
     val readerStatus: Flow<CardReaderStatus> = cardReaderManager.readerStatus
 
-    private val _paymentStatus = MutableStateFlow<WooPosCardReaderPaymentStatus>(
-        WooPosCardReaderPaymentStatus.Unknown
+    private val _paymentStatus = MutableStateFlow<WooPosCardReaderConnectionStatus>(
+        WooPosCardReaderConnectionStatus.Unknown
     )
-    val paymentStatus: Flow<WooPosCardReaderPaymentStatus> = _paymentStatus
+    val paymentStatus: Flow<WooPosCardReaderConnectionStatus> = _paymentStatus
 
     override fun onCreate(owner: LifecycleOwner) {
         activity = owner as AppCompatActivity
@@ -35,14 +35,14 @@ class WooPosCardReaderFacade @Inject constructor(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             val paymentResult = if (result.data != null && result.resultCode == AppCompatActivity.RESULT_OK) {
-                result.data!!.parcelable<WooPosCardReaderPaymentStatus>(
+                result.data!!.parcelable<WooPosCardReaderConnectionStatus>(
                     WOO_POS_CARD_PAYMENT_RESULT_KEY
                 )
             } else {
-                WooPosCardReaderPaymentStatus.Failure
+                WooPosCardReaderConnectionStatus.Failure
             }
             _paymentStatus.value = paymentResult!!
-            _paymentStatus.value = WooPosCardReaderPaymentStatus.Unknown
+            _paymentStatus.value = WooPosCardReaderConnectionStatus.Unknown
         }
     }
 
@@ -59,7 +59,7 @@ class WooPosCardReaderFacade @Inject constructor(
     }
 
     fun collectPayment(orderId: Long) {
-        _paymentStatus.value = WooPosCardReaderPaymentStatus.Unknown
+        _paymentStatus.value = WooPosCardReaderConnectionStatus.Unknown
         val intent = WooPosCardReaderActivity.buildIntentForPayment(activity!!, orderId).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }

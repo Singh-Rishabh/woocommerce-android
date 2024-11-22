@@ -25,7 +25,7 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -100,7 +100,7 @@ class WooPosTotalsViewModelTest {
     }
 
     private val cardReaderFacade: WooPosCardReaderFacade = mock {
-        on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
+        on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderConnectionStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
 
@@ -551,7 +551,7 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("$2.00")
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("$3.00")
         }
-        val paymentStatusFlow = MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Unknown)
+        val paymentStatusFlow = MutableStateFlow<WooPosCardReaderConnectionStatus>(WooPosCardReaderConnectionStatus.Unknown)
         whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
 
         val viewModel = createViewModel(
@@ -563,7 +563,7 @@ class WooPosTotalsViewModelTest {
 
         // WHEN
         viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
-        paymentStatusFlow.value = WooPosCardReaderPaymentStatus.Success
+        paymentStatusFlow.value = WooPosCardReaderConnectionStatus.Success
         advanceUntilIdle()
 
         // THEN

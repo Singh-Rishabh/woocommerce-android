@@ -28,7 +28,7 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderConnectionStatus
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -206,7 +206,7 @@ class WooPosTotalsViewModel @Inject constructor(
         viewModelScope.launch {
             cardReaderFacade.paymentStatus.collect { status ->
                 when (status) {
-                    is WooPosCardReaderPaymentStatus.Success -> {
+                    is WooPosCardReaderConnectionStatus.Success -> {
                         // ready to collect payment
                         val state = uiState.value
                         check(state is WooPosTotalsViewState.Totals)
@@ -217,8 +217,8 @@ class WooPosTotalsViewModel @Inject constructor(
                         cardReaderPaymentController?.start()
                         listenToPaymentController()
                     }
-                    is WooPosCardReaderPaymentStatus.Failure,
-                    is WooPosCardReaderPaymentStatus.Unknown -> Unit
+                    is WooPosCardReaderConnectionStatus.Failure,
+                    is WooPosCardReaderConnectionStatus.Unknown -> Unit
                 }
             }
         }
