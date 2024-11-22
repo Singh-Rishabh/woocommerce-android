@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,15 +48,27 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
-    WooShippingLabelCreationScreen(
-        onSelectPackageClick = viewModel::onSelectPackageClicked,
-        onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel
-    )
+    val viewState = viewModel.viewState.collectAsState().value
+
+    when (viewState) {
+        WooShippingLabelCreationViewModel.WooShippingViewState.Loading -> {
+            Text(text = "Loading")
+        }
+
+        is WooShippingLabelCreationViewModel.WooShippingViewState.DataState -> {
+            WooShippingLabelCreationScreen(
+                onSelectPackageClick = viewModel::onSelectPackageClicked,
+                onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel,
+                shippableItems = viewState.shippableItems
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooShippingLabelCreationScreen(
+    shippableItems: ShippableItems,
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     onPurchaseShippingLabel: () -> Unit
@@ -63,6 +76,7 @@ fun WooShippingLabelCreationScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     Box(modifier = Modifier.fillMaxSize()) {
         LabelCreationScreenWithBottomSheet(
+            shippableItems = shippableItems,
             modifier = modifier,
             onSelectPackageClick = onSelectPackageClick,
             scaffoldState = scaffoldState
@@ -99,6 +113,7 @@ fun WooShippingLabelCreationScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LabelCreationScreenWithBottomSheet(
+    shippableItems: ShippableItems,
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState
@@ -139,11 +154,7 @@ private fun LabelCreationScreenWithBottomSheet(
             Column(modifier.verticalScroll(rememberScrollState())) {
                 val isExpanded = remember { mutableStateOf(false) }
                 ShippingProductsCard(
-                    shippableItems = ShippableItems(
-                        shippableItems = generateItems(6),
-                        totalWeight = "8.5kg",
-                        totalPrice = "$92.78"
-                    ),
+                    shippableItems = shippableItems,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
@@ -187,6 +198,11 @@ private fun LabelCreationScreenWithBottomSheet(
 private fun WooShippingLabelCreationScreenPreview() {
     WooThemeWithBackground {
         WooShippingLabelCreationScreen(
+            shippableItems = ShippableItems(
+                shippableItems = generateItems(6),
+                totalWeight = "8.5kg",
+                totalPrice = "$92.78"
+            ),
             modifier = Modifier.fillMaxSize(),
             onSelectPackageClick = {},
             onPurchaseShippingLabel = {}
@@ -305,7 +321,7 @@ data class ShippableItem(
     val description: String,
     val weight: String,
     val price: String,
-    val quantity: Int,
+    val quantity: Float,
     val imageUrl: String? = null
 )
 
