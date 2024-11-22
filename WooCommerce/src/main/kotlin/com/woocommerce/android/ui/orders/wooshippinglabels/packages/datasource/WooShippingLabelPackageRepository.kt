@@ -13,15 +13,17 @@ import org.wordpress.android.fluxc.store.WCShippingLabelStore
 class WooShippingLabelPackageRepository @Inject constructor(
     private val selectedSite: SelectedSite,
     private val shippingLabelStore: WCShippingLabelStore,
+    private val packageMapper: WooShippingLabelPackageMapper,
     private val packageRestClient: WooShippingLabelPackageRestClient
 ) {
     suspend fun fetchAllStorePackages(
         site: SiteModel = selectedSite.get()
-    ): WooResult<PackageResponse> {
+    ): WooResult<StorePackages> {
         val response = packageRestClient.fetchShippingLabelPackages(site)
 
         return response.result
             .takeIf { response.isError.not() }
+            ?.let { packageMapper.invoke(it) }
             ?.let { WooResult(it) }
             ?: WooResult(response.error)
     }
