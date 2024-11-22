@@ -1,18 +1,18 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
 import java.util.SortedMap
 
-sealed class PaymentsHubDepositSummaryState {
-    object Loading : PaymentsHubDepositSummaryState()
-    data class Error(val error: WooError) : PaymentsHubDepositSummaryState()
+sealed class PaymentsHubPayoutSummaryState {
+    object Loading : PaymentsHubPayoutSummaryState()
+    data class Error(val error: WooError) : PaymentsHubPayoutSummaryState()
     data class Success(
         val overview: Overview,
         val fromCache: Boolean,
         val onLearnMoreClicked: () -> Unit,
         val onExpandCollapseClicked: (Boolean) -> Unit,
         val onCurrencySelected: (String) -> Unit,
-    ) : PaymentsHubDepositSummaryState()
+    ) : PaymentsHubPayoutSummaryState()
 
     data class Overview(
         val defaultCurrency: String,
@@ -25,8 +25,8 @@ sealed class PaymentsHubDepositSummaryState {
         val availableFundsAmount: Long,
         val pendingFundsAmount: Long,
         val fundsAvailableInDays: Int?,
-        val fundsDepositInterval: Interval?,
-        val lastDeposit: Deposit?,
+        val fundsPayoutInterval: Interval?,
+        val lastPayout: Payout?,
     ) {
         sealed class Interval {
             object Daily : Interval()
@@ -35,7 +35,7 @@ sealed class PaymentsHubDepositSummaryState {
         }
     }
 
-    data class Deposit(
+    data class Payout(
         val amount: String,
         val status: Status,
         val date: String,

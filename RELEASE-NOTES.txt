@@ -4,12 +4,15 @@
 -----
 21.2
 - [Internal] Changed a way how authenticated web view opened in the IPP flows [https://github.com/woocommerce/woocommerce-android/pull/12908]
+- [Internal][POS] Onboarding to the IPP now is part of the POS [https://github.com/woocommerce/woocommerce-android/pull/12942]
 - [*] Fixed an inconsistent state while refreshing the orders list [https://github.com/woocommerce/woocommerce-android/pull/12948]
 - [**][Payments] Fixed a bug when IPP onboarding was not possible to finish from the app [https://github.com/woocommerce/woocommerce-android/pull/12917]
 - [*] Fixed shipping lines being editable at all states [https://github.com/woocommerce/woocommerce-android/pull/12890]
 - [*] Fixed a crash that occurred when tapping on the customer shipping address in the order details screen [https://github.com/woocommerce/woocommerce-android/pull/12920]
 - [*][Payments] Fixed a bug when loading indicator was shown forever after fetching of a receipt failed [https://github.com/woocommerce/woocommerce-android/pull/12950]
 - [**] Enables creating a new WP.com account during Jetpack activation flow [https://github.com/woocommerce/woocommerce-android/issues/11114]
+- [*] Renamed Deposits to Payouts [https://github.com/woocommerce/woocommerce-android/pull/12961]
+- [*] Switched to use `/wp/v2` for media uploads on Jetpack sites, this fixes media upload issues caused by XMLRPC problems [https://github.com/woocommerce/woocommerce-android/pull/12938]
 
 21.1
 -----

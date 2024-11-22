@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.viewmodel.BaseUnitTest
@@ -20,12 +20,12 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 import org.wordpress.android.fluxc.store.WCWooPaymentsStore
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class PaymentsHubDepositSummaryRepositoryTest : BaseUnitTest() {
+class PaymentsHubPayoutSummaryRepositoryTest : BaseUnitTest() {
     private val store: WCWooPaymentsStore = mock()
     private val selectedSite: SelectedSite = mock()
     private val site = SiteModel()
 
-    private val repo = PaymentsHubDepositSummaryRepository(
+    private val repo = PaymentsHubPayoutSummaryRepository(
         store = store,
         site = selectedSite,
     )
@@ -44,12 +44,12 @@ class PaymentsHubDepositSummaryRepositoryTest : BaseUnitTest() {
         )
 
         // WHEN
-        val result = repo.retrieveDepositOverview()
+        val result = repo.retrievePayoutOverview()
         advanceUntilIdle()
 
         // THEN
         assertThat(result.first()).isEqualTo(
-            RetrieveDepositOverviewResult.Cache(overviewCache)
+            RetrievePayoutOverviewResult.Cache(overviewCache)
         )
     }
 
@@ -70,12 +70,12 @@ class PaymentsHubDepositSummaryRepositoryTest : BaseUnitTest() {
             )
 
             // WHEN
-            val result = repo.retrieveDepositOverview()
+            val result = repo.retrievePayoutOverview()
             advanceUntilIdle()
 
             // THEN
             assertThat(result.first()).isEqualTo(
-                RetrieveDepositOverviewResult.Error(
+                RetrievePayoutOverviewResult.Error(
                     error
                 )
             )
@@ -95,12 +95,12 @@ class PaymentsHubDepositSummaryRepositoryTest : BaseUnitTest() {
             )
 
             // WHEN
-            val result = repo.retrieveDepositOverview()
+            val result = repo.retrievePayoutOverview()
             advanceUntilIdle()
 
             // THEN
             assertThat(result.first()).isEqualTo(
-                RetrieveDepositOverviewResult.Remote(
+                RetrievePayoutOverviewResult.Remote(
                     overview
                 )
             )
