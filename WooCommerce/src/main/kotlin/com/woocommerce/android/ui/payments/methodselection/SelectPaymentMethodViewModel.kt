@@ -120,7 +120,7 @@ class SelectPaymentMethodViewModel @Inject constructor(
 
                             when (param.paymentType) {
                                 SIMPLE, ORDER, ORDER_CREATION, TRY_TAP_TO_PAY -> showPaymentState()
-                                WOO_POS -> skipScreenDuringPosFlow()
+                                WOO_POS -> error("Unsupported card reader flow param: $param")
                             }
                         }
                         Unit
@@ -304,10 +304,6 @@ class SelectPaymentMethodViewModel @Inject constructor(
             trackPaymentMethodSelection(VALUE_SIMPLE_PAYMENTS_COLLECT_CARD, VALUE_CARD_READER_TYPE_EXTERNAL)
             triggerEvent(NavigateToCardReaderPaymentFlow(cardReaderPaymentFlowParam, EXTERNAL))
         }
-    }
-
-    private fun skipScreenDuringPosFlow() {
-        triggerEvent(SkipScreenInPosAndNavigateToCardReaderPaymentFlow(cardReaderPaymentFlowParam, EXTERNAL))
     }
 
     fun onTapToPayClicked() {
