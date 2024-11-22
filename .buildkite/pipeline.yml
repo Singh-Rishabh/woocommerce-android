@@ -14,9 +14,6 @@ agents:
 steps:
   - label: Gradle Wrapper Validation
     command: validate_gradle_wrapper
-    retry:
-      manual:
-        permit_on_passed: true
     agents:
       queue: linter
 
