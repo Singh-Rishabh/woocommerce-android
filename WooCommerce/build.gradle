@@ -552,12 +552,6 @@ android.buildTypes.all { buildType ->
     }
 }
 
-task printVersionName {
-    doLast {
-        println android.defaultConfig.versionName
-    }
-}
-
 static def loadPropertiesFromFile(inputFile) {
     def properties = new Properties()
     inputFile.withInputStream { stream ->
