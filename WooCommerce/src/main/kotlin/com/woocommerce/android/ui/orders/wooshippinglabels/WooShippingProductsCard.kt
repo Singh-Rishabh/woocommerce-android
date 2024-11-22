@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.util.StringUtils
 
@@ -209,7 +210,8 @@ private fun ShippingProductsList(
                 description = it.description,
                 weight = it.weight,
                 price = it.price,
-                quantity = it.quantity
+                quantity = it.quantity,
+                imageUrl = it.imageUrl
             )
             Spacer(modifier = Modifier.size(dimensionResource(R.dimen.minor_100)))
         }
@@ -222,7 +224,7 @@ private fun ShippingProduct(
     description: String,
     weight: String,
     price: String,
-    quantity: Int,
+    quantity: Float,
     modifier: Modifier = Modifier,
     imageUrl: String? = null
 ) {
@@ -256,7 +258,7 @@ internal fun ShippingProductPreview() {
                 description = "23 x 23 x 52 cm",
                 weight = "0.6kg",
                 price = "$12.99",
-                quantity = 1
+                quantity = 1f
             )
         }
     }
@@ -267,7 +269,7 @@ private fun ShippingProductDetails(
     title: String,
     description: String,
     weight: String,
-    quantity: Int,
+    quantity: Float,
     modifier: Modifier = Modifier,
     imageUrl: String? = null
 ) {
@@ -333,7 +335,7 @@ internal fun ShippingProductDetailsPreview() {
             title = "Title",
             description = "23 x 23 x 52 cm",
             weight = "0.6kg",
-            quantity = 1
+            quantity = 1f
         )
     }
 }
@@ -353,7 +355,7 @@ private fun ShippingProductInfo(
 
 @Composable
 private fun QuantityBadge(
-    quantity: Int,
+    quantity: Float,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -374,7 +376,7 @@ private fun QuantityBadge(
             .padding(dimensionResource(R.dimen.minor_50))
     ) {
         Text(
-            text = quantity.toString(),
+            text = quantity.formatToString(),
             style = MaterialTheme.typography.caption,
             color = MaterialTheme.colors.surface,
             modifier = Modifier.align(Alignment.Center)
@@ -387,10 +389,10 @@ private fun QuantityBadge(
 internal fun QuantityBadgePreview() {
     WooThemeWithBackground {
         Column(modifier = Modifier.background(Color.DarkGray)) {
-            QuantityBadge(quantity = 1, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
-            QuantityBadge(quantity = 10, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
-            QuantityBadge(quantity = 45, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
-            QuantityBadge(quantity = 100, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
+            QuantityBadge(quantity = 1f, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
+            QuantityBadge(quantity = 10f, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
+            QuantityBadge(quantity = 45.56f, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
+            QuantityBadge(quantity = 100f, modifier = Modifier.padding(dimensionResource(R.dimen.major_100)))
         }
     }
 }
@@ -432,7 +434,7 @@ fun generateItems(number: Int): List<ShippableItem> {
             description = "23 x 23 x 52 cm",
             weight = "1.5kg",
             price = "$12.99",
-            quantity = i % 2 + 1
+            quantity = (i % 2 + 1).toFloat()
         )
     }
 }
