@@ -65,12 +65,8 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
 
     companion object {
         const val WOO_POS_CARD_PAYMENT_REQUEST_KEY = "woo_pos_card_payment_request"
-        const val WOO_POS_CARD_PAYMENT_RESULT_KEY = "woo_pos_card_payment_result"
-        internal const val WOO_POS_CARD_READER_MODE_KEY = "card_reader_connection_mode"
 
         fun buildIntentForCardReaderConnection(context: Context) =
-            Intent(context, WooPosCardReaderActivity::class.java).apply {
-                putExtra(WOO_POS_CARD_READER_MODE_KEY, WooPosCardReaderMode.Connection)
-            }
+            Intent(context, WooPosCardReaderActivity::class.java)
     }
 }
