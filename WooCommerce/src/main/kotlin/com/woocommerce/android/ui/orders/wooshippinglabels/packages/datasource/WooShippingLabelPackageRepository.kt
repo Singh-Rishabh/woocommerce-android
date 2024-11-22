@@ -25,4 +25,20 @@ class WooShippingLabelPackageRepository @Inject constructor(
             ?.let { WooResult(it) }
             ?: WooResult(response.error)
     }
+
+    data class StorePackages(
+        val savedPackages: List<Package>,
+        val carrierPackages: List<CarrierGroup>
+    )
+
+    data class Package(
+        val id: String,
+        val name: String,
+        val dimensions: String
+    )
+
+    data class CarrierGroup(
+        val description: String,
+        val packages: List<Package>
+    )
 }
