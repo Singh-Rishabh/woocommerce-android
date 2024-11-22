@@ -118,10 +118,6 @@ class CardReaderConnectViewModel @Inject constructor(
 
     val viewStateData: LiveData<CardReaderConnectViewState> = viewState
 
-    private val CardReaderFlowParam.isPOS: Boolean
-        get() = this is Payment && paymentType == Payment.PaymentType.WOO_POS ||
-            this is CardReaderFlowParam.WooPosConnection
-
     init {
         startFlow()
     }
@@ -530,7 +526,7 @@ class CardReaderConnectViewModel @Inject constructor(
 
     private fun exitFlow(connected: Boolean) {
         val param = arguments.cardReaderFlowParam
-        if (param.isPOS) {
+        if (param is CardReaderFlowParam.WooPosConnection) {
             returnToWooPos()
         } else if (!connected) {
             triggerEvent(ExitWithResult(false))
