@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -140,7 +139,10 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
-            paymentOrRefund = PaymentOrRefund.Payment(orderId = orderId, paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS),
+            paymentOrRefund = PaymentOrRefund.Payment(
+                orderId = orderId,
+                paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS
+            ),
             cardReaderType = CardReaderType.EXTERNAL,
             isTTPPaymentInProgress = ::isTTPPaymentInProgress,
         )
@@ -232,14 +234,16 @@ class WooPosTotalsViewModel @Inject constructor(
                     )
                 }
                 if (paymentState is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentSuccessful) {
-                    uiState.value = WooPosTotalsViewState.PaymentSuccess(orderTotalText = paymentState.amountWithCurrencyLabel)
+                    uiState.value =
+                        WooPosTotalsViewState.PaymentSuccess(
+                            orderTotalText = paymentState.amountWithCurrencyLabel
+                        )
                     childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                 }
             }
         }
         viewModelScope.launch {
             cardReaderPaymentController?.event?.collect { event ->
-
             }
         }
     }

@@ -51,12 +51,9 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.PrintReceipt
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.*
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -412,7 +409,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(ExternalReaderFailedPayment::class.java)
+                .isInstanceOf(CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment::class.java)
         }
 
     @Test
@@ -425,7 +422,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(BuiltInReaderFailedPayment::class.java)
+                .isInstanceOf(CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment::class.java)
         }
 
     @Test
@@ -1450,7 +1447,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.onPrintResult(CANCELLED)
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -1467,7 +1466,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.onPrintResult(CANCELLED)
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -1483,7 +1484,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.onPrintResult(CANCELLED)
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
+                .isInstanceOf(
+                    CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                )
         }
 
     @Test
@@ -1502,7 +1505,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.onPrintResult(CANCELLED)
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
+                .isInstanceOf(
+                    CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                )
         }
 
     @Test
@@ -1631,7 +1636,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             // THEN
-            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(
+                (events.last() as CardReaderPaymentEvent.ShowErrorMessage).message
+            ).isEqualTo(R.string.receipt_fetching_error)
         }
 
     @Test
@@ -1651,7 +1658,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             // THEN
             assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).receiptUrl).isEqualTo(receiptUrl)
-            assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).documentName).isEqualTo("receipt-order-1")
+            assertThat(
+                (events.last() as CardReaderPaymentEvent.PrintReceiptTapped).documentName
+            ).isEqualTo("receipt-order-1")
         }
 
     companion object {
