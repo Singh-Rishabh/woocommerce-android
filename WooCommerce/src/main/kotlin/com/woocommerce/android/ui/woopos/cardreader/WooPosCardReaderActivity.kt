@@ -46,8 +46,8 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
     private fun setupNavGraph(navHostFragment: NavHostFragment) {
         val navController = navHostFragment.navController
         val graph = navController.navInflater.inflate(R.navigation.nav_graph_payment_flow).apply {
-                setStartDestination(R.id.cardReaderStatusCheckerDialogFragment)
-            }
+            setStartDestination(R.id.cardReaderStatusCheckerDialogFragment)
+        }
         navController.setGraph(
             graph,
             CardReaderStatusCheckerDialogFragmentArgs(

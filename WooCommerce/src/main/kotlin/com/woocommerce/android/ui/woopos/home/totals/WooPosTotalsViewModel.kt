@@ -185,7 +185,7 @@ class WooPosTotalsViewModel @Inject constructor(
                 cardReaderPaymentController?.start()
                 listenToPaymentController()
             } else {
-              // TODO: Update view state to ask user to connect card reader. Once connected, proceed with payment.
+                // TODO: Update view state to ask user to connect card reader. Once connected, proceed with payment.
             }
         }
     }
