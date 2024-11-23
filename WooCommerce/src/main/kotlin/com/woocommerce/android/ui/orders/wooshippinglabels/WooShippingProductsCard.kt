@@ -48,7 +48,7 @@ import com.woocommerce.android.util.StringUtils
 
 @Composable
 fun ShippingProductsCard(
-    shippableItems: ShippableItems,
+    shippableItems: ShippableItemsUI,
     modifier: Modifier = Modifier,
     iconColor: Color = MaterialTheme.colors.primary,
     isExpanded: Boolean = false,
@@ -73,7 +73,7 @@ fun ShippingProductsCard(
         )
         if (isExpanded) {
             ShippingProductsList(
-                shippableItems = shippableItems.shippableItems,
+                shippableItemUI = shippableItems.shippableItems,
             )
         }
     }
@@ -85,10 +85,10 @@ private fun ShippingProductsCardPreview(@PreviewParameter(IsExpandedProvider::cl
     WooThemeWithBackground {
         Box(modifier = Modifier.padding(dimensionResource(R.dimen.major_100))) {
             ShippingProductsCard(
-                shippableItems = ShippableItems(
+                shippableItems = ShippableItemsUI(
                     shippableItems = generateItems(6),
-                    totalWeight = "8.5kg",
-                    totalPrice = "$92.78"
+                    formattedTotalWeight = "8.5kg",
+                    formattedTotalPrice = "$92.78"
                 ),
                 isExpanded = isExpanded
             )
@@ -98,7 +98,7 @@ private fun ShippingProductsCardPreview(@PreviewParameter(IsExpandedProvider::cl
 
 @Composable
 private fun ShippingProductsCardHeader(
-    shippableItems: ShippableItems,
+    shippableItems: ShippableItemsUI,
     iconColor: Color,
     modifier: Modifier = Modifier,
     isExpanded: Boolean = false
@@ -148,8 +148,8 @@ private fun ShippingProductsCardHeader(
             Text(
                 text = stringResource(
                     R.string.shipping_label_package_details_items_weight_price,
-                    shippableItems.totalWeight,
-                    shippableItems.totalPrice
+                    shippableItems.formattedTotalWeight,
+                    shippableItems.formattedTotalPrice
                 ),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -174,10 +174,10 @@ private fun ShippingProductsCardHeader(
 @Preview
 @Composable
 private fun ShippingProductsCardHeaderPreview() {
-    val shippableItems = ShippableItems(
+    val shippableItems = ShippableItemsUI(
         shippableItems = generateItems(4),
-        totalWeight = "8.5kg",
-        totalPrice = "$92.78"
+        formattedTotalWeight = "8.5kg",
+        formattedTotalPrice = "$92.78"
     )
     val isExpanded = remember { mutableStateOf(false) }
 
@@ -200,16 +200,16 @@ private fun ShippingProductsCardHeaderPreview() {
 
 @Composable
 private fun ShippingProductsList(
-    shippableItems: List<ShippableItem>,
+    shippableItemUI: List<ShippableItemUI>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        shippableItems.forEach {
+        shippableItemUI.forEach {
             ShippingProduct(
                 title = it.title,
-                description = it.description,
-                weight = it.weight,
-                price = it.price,
+                description = it.formattedSize,
+                weight = it.formattedWeight,
+                price = it.formattedPrice,
                 quantity = it.quantity,
                 imageUrl = it.imageUrl
             )
@@ -425,15 +425,16 @@ fun RoundedCornerBoxWithBorder(
     }
 }
 
-fun generateItems(number: Int): List<ShippableItem> {
+fun generateItems(number: Int): List<ShippableItemUI> {
     return List(number) { i ->
         val id = i + 1
-        ShippableItem(
+        ShippableItemUI(
+            itemId = id.toLong(),
             productId = id.toLong(),
             title = "Title $id",
-            description = "23 x 23 x 52 cm",
-            weight = "1.5kg",
-            price = "$12.99",
+            formattedSize = "23 x 23 x 52 cm",
+            formattedWeight = "1.5kg",
+            formattedPrice = "$12.99",
             quantity = (i % 2 + 1).toFloat()
         )
     }
