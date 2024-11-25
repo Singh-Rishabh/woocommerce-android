@@ -96,7 +96,7 @@ class CardReaderPaymentController(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     private val tracker: PaymentsFlowTracker,
-    private val trackCancelledFlow: CardReaderTrackCanceledFlow,
+    private val trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -723,6 +723,7 @@ class CardReaderPaymentController(
                     errorDescription = receiptResult.exceptionOrNull()?.message ?: "Unknown error",
                 )
                 triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
+                onCancelPaymentFlow()
             }
         }
     }

@@ -3,6 +3,8 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -27,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -57,17 +61,59 @@ fun WooShippingLabelCreationScreen(
     onPurchaseShippingLabel: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
+    Box(modifier = Modifier.fillMaxSize()) {
+        LabelCreationScreenWithBottomSheet(
+            modifier = modifier,
+            onSelectPackageClick = onSelectPackageClick,
+            scaffoldState = scaffoldState
+        )
+        val isDarkTheme = isSystemInDarkTheme()
+        val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
+        val elevation = when {
+            isDarkTheme && isCollapsed -> { 7.dp }
+            !isDarkTheme && isCollapsed -> { 0.dp }
+            isDarkTheme && !isCollapsed -> { 16.dp }
+            else -> { 8.dp }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+        ) {
+            Surface(elevation = elevation) {
+                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    PurchasesSectionLandscape(
+                        total = "$34.89",
+                        markOrderComplete = true,
+                        onMarkOrderCompleteChange = { },
+                        onPurchaseShippingLabel = onPurchaseShippingLabel
+                    )
+                } else {
+                    PurchaseButton(total = "$34.89", onPurchaseShippingLabel = { })
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun LabelCreationScreenWithBottomSheet(
+    modifier: Modifier = Modifier,
+    onSelectPackageClick: () -> Unit,
+    scaffoldState: BottomSheetScaffoldState
+) {
     BottomSheetScaffold(
         sheetContent = {
             val markOrderComplete = remember { mutableStateOf(false) }
             ShipmentDetails(
+                modifier = Modifier.padding(bottom = 74.dp),
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it },
-                onPurchaseShippingLabel = onPurchaseShippingLabel
+                onMarkOrderCompleteChange = { markOrderComplete.value = it }
             )
         },
-        sheetPeekHeight = 64.dp,
+        sheetPeekHeight = 132.dp,
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(

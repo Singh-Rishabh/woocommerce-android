@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +26,6 @@ internal fun PurchasesSection(
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
-        Divider()
         MarkComplete(
             markOrderComplete = markOrderComplete,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange
@@ -45,7 +43,6 @@ internal fun PurchasesSectionLandscape(
     modifier: Modifier = Modifier
 ) {
     Column(modifier.fillMaxWidth()) {
-        Divider()
         Row(verticalAlignment = Alignment.CenterVertically) {
             MarkComplete(
                 markOrderComplete = markOrderComplete,
@@ -76,7 +73,7 @@ fun PurchasesSectionLandscapePreview() {
 }
 
 @Composable
-private fun MarkComplete(
+internal fun MarkComplete(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
@@ -102,7 +99,7 @@ private fun MarkComplete(
 }
 
 @Composable
-private fun PurchaseButton(
+internal fun PurchaseButton(
     total: String?,
     onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier
@@ -127,7 +124,7 @@ private fun PurchaseButton(
 
 @Preview
 @Composable
-private fun PurchasesSectionPreview() {
+internal fun PurchasesSectionPreview() {
     WooThemeWithBackground {
         PurchasesSection(
             total = null,

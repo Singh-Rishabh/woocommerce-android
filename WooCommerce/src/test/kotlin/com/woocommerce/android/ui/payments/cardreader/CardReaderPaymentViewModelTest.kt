@@ -90,7 +90,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchi
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlow
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -151,7 +151,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val selectedSite: SelectedSite = mock()
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker = mock()
     private val tracker: PaymentsFlowTracker = mock()
-    private val trackCanceledFlow = CardReaderTrackCanceledFlow(tracker)
+    private val trackCanceledFlow = CardReaderTrackCanceledFlowAction(tracker)
     private val appPrefs: AppPrefs = mock()
     private val currencyFormatter: CurrencyFormatter = mock()
     private val wooStore: WooCommerceStore = mock()
@@ -2320,12 +2320,14 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
 
             // WHEN
+            val events = viewModel.event.captureValues()
             viewModel.start()
 
             (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
 
             // THEN
-            assertThat((viewModel.event.value as ShowSnackbar).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat((events[events.size - 2] as ShowSnackbar).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(events.last()).isInstanceOf(Exit::class.java)
         }
 
     @Test
@@ -4476,6 +4478,21 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
 
             assertThat(events[0]).isInstanceOf(Exit::class.java)
         }
+    }
+
+    @Test
+    fun `given fetching receipt URL fails, when startPrintingFlow, then payment flow is canceled`() = testBlocking {
+        val errorMessage = "Receipt fetching error"
+        whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception(errorMessage)))
+        whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+            flow { emit(PaymentCompleted("")) }
+        }
+        viewModel.start()
+
+        (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
+
+        verify(tracker).trackReceiptUrlFetchingFails(errorDescription = errorMessage)
+        assertThat(viewModel.event.value).isInstanceOf(Exit::class.java)
     }
 
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
