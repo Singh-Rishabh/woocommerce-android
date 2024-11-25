@@ -19,6 +19,7 @@ import javax.inject.Inject
 class CardReaderPaymentStateToViewStateMapper @Inject constructor(
     private val cardReaderPaymentReaderTypeStateProvider: CardReaderPaymentReaderTypeStateProvider,
 ) {
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     operator fun invoke(): (CardReaderPaymentOrRefundState) -> ViewState = { paymentState ->
         when (paymentState) {
             is CardReaderInteracRefundState.CollectingInteracRefund -> {
@@ -30,21 +31,8 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is CardReaderInteracRefundState.InteracRefundFailure -> {
-                when (paymentState) {
-                    is CardReaderInteracRefundState.InteracRefundFailure.Cancelable -> {
-                        provideViewStateFor(paymentState)
-                    }
-                    is CardReaderInteracRefundState.InteracRefundFailure.NonCancelable -> {
-                        ViewState.FailedRefundState(
-                            errorType = paymentState.errorType,
-                            primaryLabel = R.string.try_again,
-                            amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
-                            onPrimaryActionClicked = paymentState.onRetry,
-                        )
-                    }
-                }
+                provideViewStateFor(paymentState)
             }
-
             is CardReaderInteracRefundState.InteracRefundSuccessful -> {
                 ViewState.RefundSuccessfulState(paymentState.amountWithCurrencyLabel)
             }
@@ -61,7 +49,6 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                         ?: R.string.card_reader_payment_collect_payment_built_in_hint
                 )
             }
-
             is CollectingPayment.ExternalReaderCollectPaymentState -> {
                 ViewState.ExternalReaderCollectPaymentState(
                     amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
@@ -82,36 +69,10 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is PaymentFailed.BuiltInReaderFailedPayment -> {
-                when (paymentState) {
-                    is PaymentFailed.BuiltInReaderFailedPayment.Cancelable -> {
-                        provideViewStateFor(paymentState)
-                    }
-                    is PaymentFailed.BuiltInReaderFailedPayment.NonCancelable -> {
-                        cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                            cardReaderType = CardReaderType.BUILT_IN,
-                            errorType = paymentState.errorType,
-                            amountLabel = paymentState.amountWithCurrencyLabel,
-                            primaryLabel = R.string.try_again,
-                            onPrimaryActionClicked = paymentState.onRetry,
-                        )
-                    }
-                }
+                provideViewStateFor(paymentState)
             }
             is PaymentFailed.ExternalReaderFailedPayment -> {
-                when (paymentState) {
-                    is PaymentFailed.ExternalReaderFailedPayment.Cancelable -> {
-                        provideViewStateFor(paymentState)
-                    }
-                    is PaymentFailed.ExternalReaderFailedPayment.NonCancelable -> {
-                        cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
-                            cardReaderType = CardReaderType.EXTERNAL,
-                            errorType = paymentState.errorType,
-                            amountLabel = paymentState.amountWithCurrencyLabel,
-                            primaryLabel = R.string.try_again,
-                            onPrimaryActionClicked = paymentState.onRetry
-                        )
-                    }
-                }
+                provideViewStateFor(paymentState)
             }
             is PaymentSuccessful.BuiltInReaderPaymentSuccessful -> {
                 ViewState.BuiltInReaderPaymentSuccessfulState(
@@ -122,17 +83,7 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically -> {
-                val receiptSentHint = UiString.UiStringRes(
-                    R.string.card_reader_payment_reader_receipt_sent,
-                    listOf(UiString.UiStringText(paymentState.recipientEmail)),
-                    true
-                )
-                ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState(
-                    amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
-                    receiptSentAutomaticallyHint = receiptSentHint,
-                    onPrimaryActionClicked = paymentState.onPrintReceiptClicked,
-                    onTertiaryActionClicked = paymentState.onSaveUserClicked,
-                )
+                provideViewStateFor(paymentState)
             }
             is PaymentSuccessful.ExternalReaderPaymentSuccessful -> {
                 ViewState.ExternalReaderPaymentSuccessfulState(
@@ -143,18 +94,7 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
             is PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically -> {
-                val receiptSentHint = UiString.UiStringRes(
-                    R.string.card_reader_payment_reader_receipt_sent,
-                    listOf(UiString.UiStringText(paymentState.recipientEmail)),
-                    true
-                )
-                cardReaderPaymentReaderTypeStateProvider.providePaymentSuccessfulReceiptSentAutomaticallyState(
-                    cardReaderType = CardReaderType.EXTERNAL,
-                    amountLabel = paymentState.amountWithCurrencyLabel,
-                    receiptSentHint = receiptSentHint,
-                    onSaveUserClicked = paymentState.onSaveUserClicked,
-                    onPrintReceiptClicked = paymentState.onPrintReceiptClicked,
-                )
+                provideViewStateFor(paymentState)
             }
             is PrintingReceipt -> ViewState.PrintingReceiptState(paymentState.amountWithCurrencyLabel)
             is ProcessingPayment.BuiltInReaderProcessingPayment -> {
@@ -168,6 +108,23 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
             }
             ReFetchingOrder -> ViewState.ReFetchingOrderState
             SharingReceipt -> ViewState.SharingReceiptState
+        }
+    }
+
+    private fun provideViewStateFor(
+        paymentState: CardReaderInteracRefundState.InteracRefundFailure
+    ): ViewState = when (paymentState) {
+        is CardReaderInteracRefundState.InteracRefundFailure.Cancelable -> {
+            provideViewStateFor(paymentState)
+        }
+
+        is CardReaderInteracRefundState.InteracRefundFailure.NonCancelable -> {
+            ViewState.FailedRefundState(
+                errorType = paymentState.errorType,
+                primaryLabel = R.string.try_again,
+                amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+                onPrimaryActionClicked = paymentState.onRetry,
+            )
         }
     }
 
@@ -202,6 +159,24 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 onSecondaryActionClicked = paymentState.onCancel,
             )
         }
+
+    private fun provideViewStateFor(
+        paymentState: PaymentFailed.ExternalReaderFailedPayment
+    ): ViewState = when (paymentState) {
+        is PaymentFailed.ExternalReaderFailedPayment.Cancelable -> {
+            provideViewStateFor(paymentState)
+        }
+
+        is PaymentFailed.ExternalReaderFailedPayment.NonCancelable -> {
+            cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                cardReaderType = CardReaderType.EXTERNAL,
+                errorType = paymentState.errorType,
+                amountLabel = paymentState.amountWithCurrencyLabel,
+                primaryLabel = R.string.try_again,
+                onPrimaryActionClicked = paymentState.onRetry
+            )
+        }
+    }
 
     private fun provideViewStateFor(
         paymentState: PaymentFailed.ExternalReaderFailedPayment.Cancelable
@@ -239,6 +214,24 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
         }
 
     private fun provideViewStateFor(
+        paymentState: PaymentFailed.BuiltInReaderFailedPayment
+    ): ViewState = when (paymentState) {
+        is PaymentFailed.BuiltInReaderFailedPayment.Cancelable -> {
+            provideViewStateFor(paymentState)
+        }
+
+        is PaymentFailed.BuiltInReaderFailedPayment.NonCancelable -> {
+            cardReaderPaymentReaderTypeStateProvider.provideFailedPaymentState(
+                cardReaderType = CardReaderType.BUILT_IN,
+                errorType = paymentState.errorType,
+                amountLabel = paymentState.amountWithCurrencyLabel,
+                primaryLabel = R.string.try_again,
+                onPrimaryActionClicked = paymentState.onRetry,
+            )
+        }
+    }
+
+    private fun provideViewStateFor(
         paymentState: PaymentFailed.BuiltInReaderFailedPayment.Cancelable
     ): ViewState =
         if (paymentState.cta != null) {
@@ -272,4 +265,37 @@ class CardReaderPaymentStateToViewStateMapper @Inject constructor(
                 )
             }
         }
+
+    private fun provideViewStateFor(
+        paymentState: PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
+    ): ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState {
+        val receiptSentHint = UiString.UiStringRes(
+            R.string.card_reader_payment_reader_receipt_sent,
+            listOf(UiString.UiStringText(paymentState.recipientEmail)),
+            true
+        )
+        return ViewState.BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState(
+            amountWithCurrencyLabel = paymentState.amountWithCurrencyLabel,
+            receiptSentAutomaticallyHint = receiptSentHint,
+            onPrimaryActionClicked = paymentState.onPrintReceiptClicked,
+            onTertiaryActionClicked = paymentState.onSaveUserClicked,
+        )
+    }
+
+    private fun provideViewStateFor(
+        paymentState: PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+    ): ViewState {
+        val receiptSentHint = UiString.UiStringRes(
+            R.string.card_reader_payment_reader_receipt_sent,
+            listOf(UiString.UiStringText(paymentState.recipientEmail)),
+            true
+        )
+        return cardReaderPaymentReaderTypeStateProvider.providePaymentSuccessfulReceiptSentAutomaticallyState(
+            cardReaderType = CardReaderType.EXTERNAL,
+            amountLabel = paymentState.amountWithCurrencyLabel,
+            receiptSentHint = receiptSentHint,
+            onSaveUserClicked = paymentState.onSaveUserClicked,
+            onPrintReceiptClicked = paymentState.onPrintReceiptClicked,
+        )
+    }
 }
