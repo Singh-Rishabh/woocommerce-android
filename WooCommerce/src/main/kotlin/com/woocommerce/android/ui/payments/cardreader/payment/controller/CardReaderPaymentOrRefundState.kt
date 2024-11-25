@@ -196,7 +196,7 @@ sealed class CardReaderPaymentOrRefundState {
                 override val onRetry: (() -> Unit)? = null,
                 override val onCancel: (() -> Unit),
                 override val cta: CallToAction? = null,
-            ): InteracRefundFailure(
+            ) : InteracRefundFailure(
                 amountWithCurrencyLabel = amountWithCurrencyLabel,
                 errorType = errorType,
                 onRetry = onRetry,
@@ -207,7 +207,7 @@ sealed class CardReaderPaymentOrRefundState {
                 override val errorType: InteracRefundFlowError,
                 override val onRetry: (() -> Unit),
                 override val cta: CallToAction? = null,
-            ): InteracRefundFailure(
+            ) : InteracRefundFailure(
                 amountWithCurrencyLabel = null,
                 errorType = errorType,
                 onRetry = onRetry,
