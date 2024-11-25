@@ -9,6 +9,7 @@ import com.woocommerce.android.cardreader.connection.CardReader
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
+import com.woocommerce.android.cardreader.payments.CardInteracRefundStatus
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.CARD_REMOVED_TOO_EARLY
@@ -35,13 +36,13 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingP
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPaymentCompleted
 import com.woocommerce.android.cardreader.payments.PaymentData
 import com.woocommerce.android.cardreader.payments.PaymentInfo
+import com.woocommerce.android.cardreader.payments.RefundParams
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
-import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -52,17 +53,14 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderCollectPaymentState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderProcessingPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.*
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -75,9 +73,6 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -2622,6 +2617,843 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment::class.java)
         }
 
+    // region - Interac refund
+    @Test
+    fun `given interac refund shown, when RETRY message received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(RETRY_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_retry_card_prompt)
+        }
+
+    @Test
+    fun `given Unknown refund error, when view model starts, then ui has contact support button`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Unknown)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "USD"
+                            )
+                        )
+                    )
+                }
+            }
+
+            controller.start()
+
+            val externalReaderFailedPaymentState = controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure
+            assertThat(externalReaderFailedPaymentState.cta!!.label).isEqualTo(R.string.support_contact)
+            assertNotNull(externalReaderFailedPaymentState.onCancel)
+        }
+
+    @Test
+    fun `given unknown error, when contact support clicked, then contact support event emited`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Unknown)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "USD"
+                            )
+                        )
+                    )
+                }
+            }
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                val externalReaderFailedPaymentState = controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure
+                externalReaderFailedPaymentState.cta!!.onCallToActionTapped()
+            }
+
+            assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.ContactSupportTapped)
+        }
+
+    @Test
+    fun `given interac refund shown, when INSERT_CARD received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_interac_refund_refund_payment_hint)
+        }
+
+    @Test
+    fun `given interac refund shown, when INSERT_OR_SWIPE_CARD received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_OR_SWIPE_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_interac_refund_refund_payment_hint)
+        }
+
+    @Test
+    fun `given interac refund shown, when SWIPE_CARD received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(SWIPE_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_interac_refund_refund_payment_hint)
+        }
+
+    @Test
+    fun `given interac refund shown, when REMOVE_CARD received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(REMOVE_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_remove_card_prompt)
+        }
+
+    @Test
+    fun `given interac refund, when MULTIPLE_CONTACTLESS_CARDS_DETECTED received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(MULTIPLE_CONTACTLESS_CARDS_DETECTED))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_multiple_contactless_cards_detected_prompt)
+        }
+
+    @Test
+    fun `given interac refund shown, when TRY_ANOTHER_READ_METHOD received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_READ_METHOD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_try_another_read_method_prompt)
+        }
+
+    @Test
+    fun `given interac refund, when TRY_ANOTHER_CARD received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_CARD))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_try_another_card_prompt)
+        }
+
+    @Test
+    fun `given interac refund, when CHECK_MOBILE_DEVICE received, then refund payment hint updated`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
+                flow {
+                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(CHECK_MOBILE_DEVICE))
+                }
+            }
+
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+                .isEqualTo(R.string.card_reader_payment_check_mobile_device_prompt)
+        }
+
+    @Test
+    fun `given interac refund, when payment screen shown, then loading data state is shown`() {
+        setupControllerForInteracRefund()
+
+        controller.start()
+
+        assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.LoadingData::class.java)
+    }
+
+    @Test
+    fun `when initializing interac refund, then ui updated to initializing refund state `() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.InitializingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.LoadingData::class.java)
+        }
+
+    @Test
+    fun `given fetch order failed, when initializing interac refund, then ui updated to proper error state `() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardInteracRefundStatus.InteracRefundFailure::class.java)
+        }
+
+    @Test
+    fun `when collecting interac refund, then ui updated to collecting refund state`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.CollectingInteracRefund::class.java)
+        }
+
+    @Test
+    fun `when processing interac refund, then ui updated to processing refund state`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.ProcessingInteracRefund) }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.ProcessingInteracRefund::class.java)
+        }
+
+    @Test
+    fun `when interac refund completed, then ui updated to refund successful state`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.InteracRefundSuccess) }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundSuccessful::class.java)
+        }
+
+    @Test
+    fun `when interac refund fails, then ui updated to refund failed state`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Generic)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "USD"
+                            )
+                        )
+                    )
+                }
+            }
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
+        }
+
+    @Test
+    fun `when interac refund fails, then invalidate onboarding cache`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Generic)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "USD"
+                            )
+                        )
+                    )
+                }
+            }
+
+            controller.start()
+
+            verify(cardReaderOnboardingChecker).invalidateCache()
+        }
+
+    @Test
+    fun `given chargeId is null, when interac refund initiated, then proper state is shown`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(mockedOrder.chargeId).thenReturn(null)
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
+                )
+            ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
+        }
+
+    @Test
+    fun `given non retryable error, when interac refund initiated, then primary action is back press`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(mockedOrder.chargeId).thenReturn(null)
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
+                )
+            ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                val viewState = controller.paymentState.value
+                (viewState as CardReaderInteracRefundState.InteracRefundFailure.Cancelable).onCancel()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given refund flow is initializing state, when user presses cancel, then cancel event is tracked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.InitializingInteracRefund) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderInteracRefundState.LoadingData).onCancel()
+
+            verify(tracker).trackInteracRefundCancelled("Loading")
+        }
+
+    @Test
+    fun `given refund flow is initializing state, when user presses cancel, then exit event emitted`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.InitializingInteracRefund) }
+            }
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderInteracRefundState.LoadingData).onCancel()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given refund flow is collection state, when user presses cancel, then cancel event is tracked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).onCancel()
+
+            verify(tracker).trackInteracRefundCancelled("Collecting")
+        }
+
+    @Test
+    fun `given refund flow is collection state, when user presses cancel, then exit event emitted`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).onCancel()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `when interac refund fails, then interac refund failed event is triggered`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "USD"
+                            )
+                        )
+                    )
+                }
+            }
+
+            controller.start()
+
+            verify(tracker).trackInteracPaymentFailed(any(), any(), any())
+        }
+
+    @Test
+    fun `when interac refund fails, then interac refund failed event is triggered with correct data`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            val expectedOrderId = ORDER_ID
+            val expectedErrorMessage = "Error Message"
+            val expectedErrorType = CardInteracRefundStatus.RefundStatusErrorType.Cancelled
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            expectedErrorType,
+                            expectedErrorMessage,
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "USD"
+                            )
+                        )
+                    )
+                }
+            }
+            val captor = argumentCaptor<Long, String, CardInteracRefundStatus.RefundStatusErrorType>()
+
+            controller.start()
+
+            verify(tracker).trackInteracPaymentFailed(
+                captor.first.capture(),
+                captor.second.capture(),
+                captor.third.capture(),
+            )
+            assertThat(captor.first.firstValue).isEqualTo(expectedOrderId)
+            assertThat(captor.second.firstValue).isEqualTo(expectedErrorMessage)
+            assertThat(captor.third.firstValue).isEqualTo(expectedErrorType)
+        }
+
+    @Test
+    fun `given failed to fetch order, when interac refund fails, then interac refund failed event is triggered`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
+
+            controller.start()
+
+            verify(tracker).trackInteracPaymentFailed(any(), any(), any())
+        }
+
+    @Test
+    fun `given failed to fetch order, when interac refund fails, then event is triggered with correct data`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
+            val captor = argumentCaptor<String>()
+            val expectedErrorMessage = "Fetching order failed"
+
+            controller.start()
+
+            verify(tracker).trackInteracPaymentFailed(any(), captor.capture(), any())
+            assertThat(captor.firstValue).isEqualTo(expectedErrorMessage)
+        }
+
+    @Test
+    fun `given null chargeid on order, when interac refund fails, then interac refund failed event is triggered`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(mockedOrder.chargeId).thenReturn(null)
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
+                )
+            ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
+
+            controller.start()
+
+            verify(tracker).trackInteracPaymentFailed(any(), any(), any())
+        }
+
+    @Test
+    fun `given null chargeid on order, when interac refund fails, then event is triggered with correct data`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(mockedOrder.chargeId).thenReturn(null)
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
+                )
+            ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
+            val expectedOrderId = ORDER_ID
+            val expectedErrorMessage = "Charge id is null for the order."
+            val expectedErrorType = CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
+            val captor = argumentCaptor<Long, String, CardInteracRefundStatus.RefundStatusErrorType>()
+
+            controller.start()
+
+            verify(tracker).trackInteracPaymentFailed(
+                captor.first.capture(),
+                captor.second.capture(),
+                captor.third.capture(),
+            )
+            assertThat(captor.first.firstValue).isEqualTo(expectedOrderId)
+            assertThat(captor.second.firstValue).isEqualTo(expectedErrorMessage)
+            assertThat(captor.third.firstValue).isEqualTo(expectedErrorType)
+        }
+
+    @Test
+    fun `given interac refund flow already started, when start() is invoked, then flow is not restarted`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow<CardInteracRefundStatus> {}
+            }
+
+            controller.start()
+            controller.start()
+            controller.start()
+            controller.start()
+
+            verify(cardReaderManager, times(1))
+                .refundInteracPayment(anyOrNull(), anyOrNull())
+        }
+
+    @Test
+    fun `given user clicks on retry, when interac refund fails, then refundInteracPayment invoked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Generic)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "CAD"
+                            )
+                        )
+                    )
+                }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure).onRetry!!()
+            advanceUntilIdle()
+
+            // Times 2 because, refundInteracPayment() method gets called when refund is initiated
+            // as well as when the refund is retried.
+            verify(cardReaderManager, times(2)).refundInteracPayment(any(), any())
+        }
+
+    @Test
+    fun `given refund flow is loading, when user presses back button, then refund cancel event is tracked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.InitializingInteracRefund) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackInteracRefundCancelled("Loading")
+        }
+
+    @Test
+    fun `given refund flow is collecting, when user presses back button, then refund cancel event is tracked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackInteracRefundCancelled("Collecting")
+        }
+
+    @Test
+    fun `given refund flow is processing, when user presses back button, then refund cancel event is tracked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.ProcessingInteracRefund) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackInteracRefundCancelled("Processing")
+        }
+
+    @Test
+    fun `given refund failed state and connected BI, when user presses back, then disconnect from a reader invoked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            val cardReader: CardReader = mock {
+                on { type }.thenReturn("COTS_DEVICE")
+            }
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Generic)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "CAD"
+                            )
+                        )
+                    )
+                }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager).disconnectReader()
+        }
+
+    @Test
+    fun `given refund failed state and connected BT, when user presses back, then disconnect not invoked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            val cardReader: CardReader = mock {
+                on { type }.thenReturn("WISEPAD_3")
+            }
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Generic)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "CAD"
+                            )
+                        )
+                    )
+                }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager, never()).disconnectReader()
+        }
+
+    @Test
+    fun `given refund failed state and not connected, when user presses back, then disconnect not invoked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.NotConnected())
+            )
+
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager, never()).disconnectReader()
+        }
+
+    @Test
+    fun `given refund success state and connected BT, when user presses back, then disconnect not invoked`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            val cardReader: CardReader = mock {
+                on { type }.thenReturn("WISEPAD_3")
+            }
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow { emit(CardInteracRefundStatus.InteracRefundSuccess) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager, never()).disconnectReader()
+        }
+
+    @Test
+    fun `given refund failed state, when user clicks on secondary button, then exit event is triggered`() =
+        testBlocking {
+            setupControllerForInteracRefund()
+            whenever(
+                interacRefundErrorMapper.mapRefundErrorToUiError(
+                    CardInteracRefundStatus.RefundStatusErrorType.Generic
+                )
+            ).thenReturn(InteracRefundFlowError.Generic)
+            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
+                flow {
+                    emit(
+                        CardInteracRefundStatus.InteracRefundFailure(
+                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
+                            "",
+                            RefundParams(
+                                amount = BigDecimal.TEN,
+                                chargeId = "",
+                                currency = "CAD"
+                            )
+                        )
+                    )
+                }
+            }
+
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure.Cancelable).onCancel()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+    // endregion - Interac refund
+
+
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
         if (inProgress) {
             whenever(orderRepository.fetchOrderById(any())).doSuspendableAnswer {
@@ -2632,6 +3464,36 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             whenever(orderRepository.fetchOrderById(any())).doReturn(mock())
         }
         controller.reFetchOrder()
+    }
+
+    private fun setupControllerForInteracRefund() {
+        val param = CardReaderFlowParam.PaymentOrRefund.Refund(ORDER_ID, refundAmount = BigDecimal(10.72))
+        controller = CardReaderPaymentController(
+            scope = TestScope(coroutinesTestRule.testDispatcher),
+            cardReaderManager = cardReaderManager,
+            orderRepository = orderRepository,
+            selectedSite = selectedSite,
+            appPrefs = appPrefs,
+            paymentCollectibilityChecker = paymentCollectibilityChecker,
+            interacRefundableChecker = interacRefundableChecker,
+            tracker = tracker,
+            trackCancelledFlow = trackCanceledFlow,
+            currencyFormatter = currencyFormatter,
+            errorMapper = errorMapper,
+            interacRefundErrorMapper = interacRefundErrorMapper,
+            wooStore = wooStore,
+            dispatchers = coroutinesTestRule.testDispatchers,
+            cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
+            paymentStateProvider = paymentStateProvider,
+            cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
+            paymentReceiptHelper = paymentReceiptHelper,
+            cardReaderOnboardingChecker = cardReaderOnboardingChecker,
+            cardReaderConfigProvider = cardReaderConfigProvider,
+            paymentReceiptShare = paymentReceiptShare,
+            paymentOrRefund = param,
+            cardReaderType = CardReaderType.EXTERNAL,
+            isTTPPaymentInProgress = isTTPinProgressProp,
+        )
     }
 
     companion object {

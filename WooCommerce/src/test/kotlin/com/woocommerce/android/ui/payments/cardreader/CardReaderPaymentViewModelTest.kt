@@ -35,7 +35,6 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentComp
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.PaymentFailed
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.ProcessingPayment
 import com.woocommerce.android.cardreader.payments.PaymentData
-import com.woocommerce.android.cardreader.payments.PaymentInfo
 import com.woocommerce.android.cardreader.payments.RefundParams
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -83,7 +82,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.External
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.FailedRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ProcessingRefundState
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundLoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.RefundSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
@@ -110,7 +108,6 @@ import org.junit.Test
 import org.mockito.ArgumentMatchers.anyFloat
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
-import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
@@ -2550,135 +2547,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when interac refund fails, then interac refund failed event is triggered`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow {
-                    emit(
-                        CardInteracRefundStatus.InteracRefundFailure(
-                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
-                            "",
-                            RefundParams(
-                                amount = BigDecimal.TEN,
-                                chargeId = "",
-                                currency = "USD"
-                            )
-                        )
-                    )
-                }
-            }
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentFailed(any(), any(), any())
-        }
-
-    @Test
-    fun `when interac refund fails, then interac refund failed event is triggered with correct data`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            val expectedOrderId = ORDER_ID
-            val expectedErrorMessage = "Error Message"
-            val expectedErrorType = CardInteracRefundStatus.RefundStatusErrorType.Cancelled
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow {
-                    emit(
-                        CardInteracRefundStatus.InteracRefundFailure(
-                            expectedErrorType,
-                            expectedErrorMessage,
-                            RefundParams(
-                                amount = BigDecimal.TEN,
-                                chargeId = "",
-                                currency = "USD"
-                            )
-                        )
-                    )
-                }
-            }
-            val captor = argumentCaptor<Long, String, CardInteracRefundStatus.RefundStatusErrorType>()
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentFailed(
-                captor.first.capture(),
-                captor.second.capture(),
-                captor.third.capture(),
-            )
-            assertThat(captor.first.firstValue).isEqualTo(expectedOrderId)
-            assertThat(captor.second.firstValue).isEqualTo(expectedErrorMessage)
-            assertThat(captor.third.firstValue).isEqualTo(expectedErrorType)
-        }
-
-    @Test
-    fun `given failed to fetch order, when interac refund fails, then interac refund failed event is triggered`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentFailed(any(), any(), any())
-        }
-
-    @Test
-    fun `given failed to fetch order, when interac refund fails, then event is triggered with correct data`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(null)
-            val captor = argumentCaptor<String>()
-            val expectedErrorMessage = "Fetching order failed"
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentFailed(any(), captor.capture(), any())
-            assertThat(captor.firstValue).isEqualTo(expectedErrorMessage)
-        }
-
-    @Test
-    fun `given null chargeid on order, when interac refund fails, then interac refund failed event is triggered`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(mockedOrder.chargeId).thenReturn(null)
-            whenever(
-                interacRefundErrorMapper.mapRefundErrorToUiError(
-                    CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
-                )
-            ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentFailed(any(), any(), any())
-        }
-
-    @Test
-    fun `given null chargeid on order, when interac refund fails, then event is triggered with correct data`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(mockedOrder.chargeId).thenReturn(null)
-            whenever(
-                interacRefundErrorMapper.mapRefundErrorToUiError(
-                    CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
-                )
-            ).thenReturn(InteracRefundFlowError.NonRetryableGeneric)
-            val expectedOrderId = ORDER_ID
-            val expectedErrorMessage = "Charge id is null for the order."
-            val expectedErrorType = CardInteracRefundStatus.RefundStatusErrorType.NonRetryable
-            val captor = argumentCaptor<Long, String, CardInteracRefundStatus.RefundStatusErrorType>()
-
-            viewModel.start()
-
-            verify(tracker).trackInteracPaymentFailed(
-                captor.first.capture(),
-                captor.second.capture(),
-                captor.third.capture(),
-            )
-            assertThat(captor.first.firstValue).isEqualTo(expectedOrderId)
-            assertThat(captor.second.firstValue).isEqualTo(expectedErrorMessage)
-            assertThat(captor.third.firstValue).isEqualTo(expectedErrorType)
-        }
-
-    @Test
     fun `when interac refund succeeds, then correct labels, illustration and buttons are shown`() =
         testBlocking {
             setupViewModelForInteracRefund()
@@ -2698,23 +2566,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             assertThat(viewState.paymentStateLabelTopMargin).describedAs("paymentStateLabelTopMargin")
                 .isEqualTo(R.dimen.major_275)
             assertThat(viewState.hintLabel).describedAs("hintLabel").isNull()
-        }
-
-    @Test
-    fun `given interac refund flow already started, when start() is invoked, then flow is not restarted`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow<CardInteracRefundStatus> {}
-            }
-
-            viewModel.start()
-            viewModel.start()
-            viewModel.start()
-            viewModel.start()
-
-            verify(cardReaderManager, times(1))
-                .refundInteracPayment(anyOrNull(), anyOrNull())
         }
 
     @Test
@@ -2752,157 +2603,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given refund flow is loading, when user presses back button, then refund cancel event is tracked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow { emit(CardInteracRefundStatus.InitializingInteracRefund) }
-            }
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(tracker).trackInteracRefundCancelled("Loading")
-        }
-
-    @Test
-    fun `given refund flow is collecting, when user presses back button, then refund cancel event is tracked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow { emit(CardInteracRefundStatus.CollectingInteracRefund) }
-            }
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(tracker).trackInteracRefundCancelled("Collecting")
-        }
-
-    @Test
-    fun `given refund flow is processing, when user presses back button, then refund cancel event is tracked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow { emit(CardInteracRefundStatus.ProcessingInteracRefund) }
-            }
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(tracker).trackInteracRefundCancelled("Processing")
-        }
-
-    @Test
-    fun `given refund failed state and connected BI, when user presses back, then disconnect from a reader invoked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            val cardReader: CardReader = mock {
-                on { type }.thenReturn("COTS_DEVICE")
-            }
-            whenever(cardReaderManager.readerStatus).thenReturn(
-                MutableStateFlow(CardReaderStatus.Connected(cardReader))
-            )
-            whenever(
-                interacRefundErrorMapper.mapRefundErrorToUiError(
-                    CardInteracRefundStatus.RefundStatusErrorType.Generic
-                )
-            ).thenReturn(InteracRefundFlowError.Generic)
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow {
-                    emit(
-                        CardInteracRefundStatus.InteracRefundFailure(
-                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
-                            "",
-                            RefundParams(
-                                amount = BigDecimal.TEN,
-                                chargeId = "",
-                                currency = "CAD"
-                            )
-                        )
-                    )
-                }
-            }
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(cardReaderManager).disconnectReader()
-        }
-
-    @Test
-    fun `given refund failed state and connected BT, when user presses back, then disconnect not invoked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            val cardReader: CardReader = mock {
-                on { type }.thenReturn("WISEPAD_3")
-            }
-            whenever(cardReaderManager.readerStatus).thenReturn(
-                MutableStateFlow(CardReaderStatus.Connected(cardReader))
-            )
-            whenever(
-                interacRefundErrorMapper.mapRefundErrorToUiError(
-                    CardInteracRefundStatus.RefundStatusErrorType.Generic
-                )
-            ).thenReturn(InteracRefundFlowError.Generic)
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow {
-                    emit(
-                        CardInteracRefundStatus.InteracRefundFailure(
-                            CardInteracRefundStatus.RefundStatusErrorType.Generic,
-                            "",
-                            RefundParams(
-                                amount = BigDecimal.TEN,
-                                chargeId = "",
-                                currency = "CAD"
-                            )
-                        )
-                    )
-                }
-            }
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(cardReaderManager, never()).disconnectReader()
-        }
-
-    @Test
-    fun `given refund failed state and not connected, when user presses back, then disconnect not invoked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            whenever(cardReaderManager.readerStatus).thenReturn(
-                MutableStateFlow(CardReaderStatus.NotConnected())
-            )
-
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(cardReaderManager, never()).disconnectReader()
-        }
-
-    @Test
-    fun `given refund success state and connected BT, when user presses back, then disconnect not invoked`() =
-        testBlocking {
-            setupViewModelForInteracRefund()
-            val cardReader: CardReader = mock {
-                on { type }.thenReturn("WISEPAD_3")
-            }
-            whenever(cardReaderManager.readerStatus).thenReturn(
-                MutableStateFlow(CardReaderStatus.Connected(cardReader))
-            )
-            whenever(cardReaderManager.refundInteracPayment(any(), any())).thenAnswer {
-                flow { emit(CardInteracRefundStatus.InteracRefundSuccess) }
-            }
-            viewModel.start()
-
-            viewModel.onBackPressed()
-
-            verify(cardReaderManager, never()).disconnectReader()
-        }
-
-    @Test
     fun `given refund failed state, when user clicks on secondary button, then exit event is triggered`() =
         testBlocking {
             setupViewModelForInteracRefund()
@@ -2932,7 +2632,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
 
             assertThat(viewModel.event.value).isInstanceOf(Exit::class.java)
         }
-
     //endregion - Interac Refund tests
 
     @Test
