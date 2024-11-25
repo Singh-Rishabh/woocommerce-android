@@ -1827,27 +1827,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when OS accepts the print request, then print success event tracked`() = testBlocking {
-        viewModel.onPrintResult(STARTED)
-
-        verify(tracker).trackPrintReceiptSucceeded()
-    }
-
-    @Test
-    fun `when OS refuses the print request, then print failed event tracked`() = testBlocking {
-        viewModel.onPrintResult(FAILED)
-
-        verify(tracker).trackPrintReceiptFailed()
-    }
-
-    @Test
-    fun `when manually cancels the print request, then print cancelled event tracked`() = testBlocking {
-        viewModel.onPrintResult(CANCELLED)
-
-        verify(tracker).trackPrintReceiptCancelled()
-    }
-
-    @Test
     fun `given external reader and receipt fetching and sharing success, when user clicks on send receipt button, then PlayChaChing emitted`() =
         testBlocking {
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {

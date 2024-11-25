@@ -51,8 +51,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.PrintReceipt
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -63,6 +61,8 @@ import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.CANCELLED
+import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
+import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1450,7 +1450,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.onPrintResult(CANCELLED)
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -1467,7 +1469,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.onPrintResult(CANCELLED)
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -1483,7 +1487,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.onPrintResult(CANCELLED)
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
+                .isInstanceOf(
+                    CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                )
         }
 
     @Test
@@ -1502,7 +1508,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.onPrintResult(CANCELLED)
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java)
+                .isInstanceOf(
+                    CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                )
         }
 
     @Test
@@ -1631,7 +1639,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             // THEN
-            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(
+                (events.last() as CardReaderPaymentEvent.ShowErrorMessage).message
+            ).isEqualTo(R.string.receipt_fetching_error)
         }
 
     @Test
@@ -1651,8 +1661,31 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             // THEN
             assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).receiptUrl).isEqualTo(receiptUrl)
-            assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).documentName).isEqualTo("receipt-order-1")
+            assertThat(
+                (events.last() as CardReaderPaymentEvent.PrintReceiptTapped).documentName
+            ).isEqualTo("receipt-order-1")
         }
+
+    @Test
+    fun `when OS accepts the print request, then print success event tracked`() = testBlocking {
+        controller.onPrintResult(STARTED)
+
+        verify(tracker).trackPrintReceiptSucceeded()
+    }
+
+    @Test
+    fun `when OS refuses the print request, then print failed event tracked`() = testBlocking {
+        controller.onPrintResult(FAILED)
+
+        verify(tracker).trackPrintReceiptFailed()
+    }
+
+    @Test
+    fun `when manually cancels the print request, then print cancelled event tracked`() = testBlocking {
+        controller.onPrintResult(CANCELLED)
+
+        verify(tracker).trackPrintReceiptCancelled()
+    }
 
     companion object {
         private const val ORDER_ID = 1L
