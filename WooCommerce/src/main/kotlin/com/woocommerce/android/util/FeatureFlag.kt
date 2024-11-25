@@ -15,7 +15,6 @@ enum class FeatureFlag {
     GOOGLE_ADS_M1,
     SHOW_INBOX_CTA,
     ENDLESS_CAMPAIGNS_SUPPORT,
-    CUSTOM_FIELDS,
     REVAMP_WOO_SHIPPING,
     OBJECTIVE_SECTION,
     POS_NON_SIMPLE_PRODUCT_TYPES,
@@ -38,7 +37,6 @@ enum class FeatureFlag {
             INBOX,
             SHOW_INBOX_CTA,
             GOOGLE_ADS_M1,
-            CUSTOM_FIELDS,
             ENDLESS_CAMPAIGNS_SUPPORT,
             OBJECTIVE_SECTION -> true
         }

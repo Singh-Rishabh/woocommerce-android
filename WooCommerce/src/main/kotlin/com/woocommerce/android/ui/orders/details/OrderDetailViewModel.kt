@@ -269,7 +269,6 @@ class OrderDetailViewModel @Inject constructor(
         loadOrderNotes()
         displayProductAndShippingDetails()
         displayCustomAmounts()
-        checkOrderMetaData()
     }
 
     private suspend fun fetchOrder(showSkeleton: Boolean) {
@@ -311,13 +310,6 @@ class OrderDetailViewModel @Inject constructor(
                 isRefreshing = false
             )
         }
-    }
-
-    private suspend fun checkOrderMetaData() {
-        viewState = viewState.copy(
-            isCustomFieldsButtonShown = FeatureFlag.CUSTOM_FIELDS.isEnabled() ||
-                orderDetailRepository.orderHasMetadata(navArgs.orderId)
-        )
     }
 
     /**
