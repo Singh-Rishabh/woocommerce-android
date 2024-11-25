@@ -2633,41 +2633,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             assertThat(viewModel.event.value).isInstanceOf(Exit::class.java)
         }
     //endregion - Interac Refund tests
-
-    @Test
-    fun `when new battery status event is received, then tracking is updated with new battery level`() =
-        testBlocking {
-            val batteryLevel1 = .5F
-            val batteryLevel2 = .45F
-            whenever(cardReaderManager.batteryStatus).thenAnswer {
-                flow {
-                    emit(CardReaderBatteryStatus.StatusChanged(batteryLevel1, BatteryStatus.NOMINAL, false))
-                    emit(CardReaderBatteryStatus.StatusChanged(batteryLevel2, BatteryStatus.NOMINAL, false))
-                }
-            }
-
-            viewModel.start()
-
-            val inOrder = inOrder(cardReaderTrackingInfoKeeper)
-            inOrder.verify(cardReaderTrackingInfoKeeper).setCardReaderBatteryLevel(batteryLevel1)
-            inOrder.verify(cardReaderTrackingInfoKeeper).setCardReaderBatteryLevel(batteryLevel2)
-        }
-
-    @Test
-    fun `when new battery status event is received, then tracking is not updated if the battery level didn't change`() =
-        testBlocking {
-            whenever(cardReaderManager.batteryStatus).thenAnswer {
-                flow {
-                    emit(CardReaderBatteryStatus.Unknown)
-                    emit(CardReaderBatteryStatus.Warning)
-                }
-            }
-
-            viewModel.start()
-
-            verify(cardReaderTrackingInfoKeeper, never()).setCardReaderBatteryLevel(anyFloat())
-        }
-
     @Test
     fun `given ttp in progress and reader connected, when vm starts, then AppKilledWhileInBackground state emitted`() =
         testBlocking {

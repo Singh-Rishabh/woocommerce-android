@@ -7,6 +7,7 @@ import com.woocommerce.android.cardreader.config.CardReaderConfigForSupportedCou
 import com.woocommerce.android.cardreader.config.CardReaderConfigForUSA
 import com.woocommerce.android.cardreader.connection.CardReader
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
+import com.woocommerce.android.cardreader.connection.event.BatteryStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
 import com.woocommerce.android.cardreader.payments.CardInteracRefundStatus
@@ -84,6 +85,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyFloat
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
@@ -91,6 +93,7 @@ import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -3452,6 +3455,41 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
     // endregion - Interac refund
+
+    @Test
+    fun `when new battery status event is received, then tracking is updated with new battery level`() =
+        testBlocking {
+            val batteryLevel1 = .5F
+            val batteryLevel2 = .45F
+            whenever(cardReaderManager.batteryStatus).thenAnswer {
+                flow {
+                    emit(CardReaderBatteryStatus.StatusChanged(batteryLevel1, BatteryStatus.NOMINAL, false))
+                    emit(CardReaderBatteryStatus.StatusChanged(batteryLevel2, BatteryStatus.NOMINAL, false))
+                }
+            }
+
+            controller.start()
+
+            val inOrder = inOrder(cardReaderTrackingInfoKeeper)
+            inOrder.verify(cardReaderTrackingInfoKeeper).setCardReaderBatteryLevel(batteryLevel1)
+            inOrder.verify(cardReaderTrackingInfoKeeper).setCardReaderBatteryLevel(batteryLevel2)
+        }
+
+    @Test
+    fun `when new battery status event is received, then tracking is not updated if the battery level didn't change`() =
+        testBlocking {
+            whenever(cardReaderManager.batteryStatus).thenAnswer {
+                flow {
+                    emit(CardReaderBatteryStatus.Unknown)
+                    emit(CardReaderBatteryStatus.Warning)
+                }
+            }
+
+            controller.start()
+
+            verify(cardReaderTrackingInfoKeeper, never()).setCardReaderBatteryLevel(anyFloat())
+        }
+
 
 
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
