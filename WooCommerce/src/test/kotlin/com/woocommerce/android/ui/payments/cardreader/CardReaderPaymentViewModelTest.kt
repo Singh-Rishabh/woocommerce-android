@@ -2626,6 +2626,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
 
             assertThat(viewModel.event.value).isInstanceOf(Exit::class.java)
         }
+
     //endregion - Interac Refund tests
     @Test
     fun `given ttp in progress and reader connected, when vm starts, then AppKilledWhileInBackground state emitted`() =

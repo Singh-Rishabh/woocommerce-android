@@ -65,7 +65,9 @@ import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardRea
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderInteracRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.*
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentSuccessful
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -701,7 +703,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
+                .isInstanceOf(PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -715,7 +717,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value)
-                .isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
+                .isInstanceOf(PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -729,7 +731,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value).isInstanceOf(
-                CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
             )
         }
 
@@ -745,7 +747,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value).isInstanceOf(
-                CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
             )
         }
 
@@ -1269,7 +1271,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
-            val paymentState = controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
+            val paymentState =
+                controller.paymentState.value as
+                    CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
 
             assertNotNull(paymentState.onCancel)
         }
@@ -1282,7 +1286,8 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
-            val paymentState = controller.paymentState.value as CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment
+            val paymentState = controller.paymentState.value as
+                CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment
             assertNotNull(paymentState.onCancel)
         }
 
@@ -1296,7 +1301,8 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
-            val paymentState = controller.paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+            val paymentState = controller.paymentState.value as
+                CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
 
             assertNotNull(paymentState.onCancel)
         }
@@ -1339,7 +1345,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onPrintReceiptClicked()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
@@ -1356,7 +1365,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                    ).onPrintReceiptClicked()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
@@ -1372,7 +1384,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+                    ).onPrintReceiptClicked()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
@@ -1389,7 +1404,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(cardReaderType = BUILT_IN)
             controller.start()
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
+                    ).onPrintReceiptClicked()
             }
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.PrintReceiptTapped::class.java)
         }
@@ -1402,7 +1420,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            (controller.paymentState.value as PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
@@ -1417,7 +1435,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(cardReaderType = BUILT_IN)
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+            (controller.paymentState.value as PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
@@ -1432,7 +1450,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+                ).onPrintReceiptClicked()
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
@@ -1448,7 +1469,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(cardReaderType = BUILT_IN)
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
+                ).onPrintReceiptClicked()
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(CardReaderPaymentState.PrintingReceipt::class.java)
@@ -1461,13 +1485,16 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 flow { emit(PaymentCompleted("")) }
             }
             controller.start()
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessful
+                ).onPrintReceiptClicked()
 
             controller.onPrintResult(CANCELLED)
 
             assertThat(
                 controller.paymentState.value
-            ).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
+            ).isInstanceOf(PaymentSuccessful.ExternalReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -1480,13 +1507,13 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(BUILT_IN)
 
             controller.start()
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+            (controller.paymentState.value as PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
 
             controller.onPrintResult(CANCELLED)
 
             assertThat(
                 controller.paymentState.value
-            ).isInstanceOf(CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
+            ).isInstanceOf(PaymentSuccessful.BuiltInReaderPaymentSuccessful::class.java)
         }
 
     @Test
@@ -1497,13 +1524,16 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 flow { emit(PaymentCompleted("")) }
             }
             controller.start()
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+                ).onPrintReceiptClicked()
 
             controller.onPrintResult(CANCELLED)
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(
-                    CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                    PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically::class.java
                 )
         }
 
@@ -1518,13 +1548,16 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(cardReaderType = BUILT_IN)
 
             controller.start()
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
+                ).onPrintReceiptClicked()
 
             controller.onPrintResult(CANCELLED)
 
             assertThat(controller.paymentState.value)
                 .isInstanceOf(
-                    CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
+                    PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically::class.java
                 )
         }
 
@@ -1536,7 +1569,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onPrintReceiptClicked()
             }
 
             controller.onViewCreated()
@@ -1554,7 +1590,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(cardReaderType = BUILT_IN)
             controller.start()
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                    ).onPrintReceiptClicked()
             }
 
             controller.onViewCreated()
@@ -1585,7 +1624,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessful
+                ).onPrintReceiptClicked()
 
             verify(tracker).trackPrintReceiptTapped()
         }
@@ -1601,7 +1643,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                ).onPrintReceiptClicked()
 
             verify(tracker).trackPrintReceiptTapped()
         }
@@ -1615,7 +1660,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+                ).onPrintReceiptClicked()
 
             verify(tracker).trackPrintReceiptTapped()
         }
@@ -1632,7 +1680,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
+                ).onPrintReceiptClicked()
 
             verify(tracker).trackPrintReceiptTapped()
         }
@@ -1650,17 +1701,20 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onPrintReceiptClicked()
             }
 
             // THEN
             assertThat(
-                (events[events.size-2] as CardReaderPaymentEvent.ShowErrorMessage).message
+                (events[events.size - 2] as CardReaderPaymentEvent.ShowErrorMessage).message
             ).isEqualTo(R.string.receipt_fetching_error)
             assertThat(
-                (events[events.size-1])).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+                (events[events.size - 1])
+            ).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
-
 
     @Test
     fun `given fetching receipt URL fails, when startPrintingFlow, then payment flow is canceled`() = testBlocking {
@@ -1671,9 +1725,11 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         }
         controller.start()
         val events = controller.event.runAndCaptureValues {
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessful
+                ).onPrintReceiptClicked()
         }
-
 
         verify(tracker).trackReceiptUrlFetchingFails(errorDescription = errorMessage)
         assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
@@ -1692,7 +1748,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             // WHEN
             controller.start()
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onPrintReceiptClicked()
             }
             // THEN
             assertThat((events.last() as CardReaderPaymentEvent.PrintReceiptTapped).receiptUrl).isEqualTo(receiptUrl)
@@ -1734,7 +1793,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
             assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
@@ -1751,7 +1813,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
             assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
@@ -1769,7 +1834,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
             assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(
@@ -1790,7 +1858,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
             assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(
@@ -1810,7 +1881,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
             assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(
@@ -1829,10 +1903,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
-            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(
+                (events.last() as CardReaderPaymentEvent.ShowErrorMessage).message
+            ).isEqualTo(R.string.receipt_fetching_error)
         }
 
     @Test
@@ -1847,10 +1926,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             val events = controller.event.runAndCaptureValues {
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSendReceiptClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                    ).onSendReceiptClicked()
             }
 
-            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(
+                (events.last() as CardReaderPaymentEvent.ShowErrorMessage).message
+            ).isEqualTo(R.string.receipt_fetching_error)
         }
 
     @Test
@@ -1861,7 +1945,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.ExternalReaderPaymentSuccessful
+                ).onSendReceiptClicked()
 
             verify(tracker).trackEmailReceiptTapped()
         }
@@ -1877,7 +1964,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSendReceiptClicked()
+            (
+                controller.paymentState.value as
+                    PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                ).onSendReceiptClicked()
 
             verify(tracker).trackEmailReceiptTapped()
         }
@@ -1890,7 +1980,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSaveUserClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessful
+                    ).onSaveUserClicked()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
@@ -1906,7 +1999,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(BUILT_IN)
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSaveUserClicked()
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessful
+                    ).onSaveUserClicked()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
@@ -1922,7 +2018,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically)
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically
+                    )
                     .onSaveUserClicked()
             }
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
@@ -1939,7 +2038,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             createController(cardReaderType = BUILT_IN)
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically)
+                (
+                    controller.paymentState.value as
+                        PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically
+                    )
                     .onSaveUserClicked()
             }
 
@@ -2062,7 +2164,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState).onCancel()
+            (
+                controller.paymentState.value as
+                    CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
+                ).onCancel()
 
             verify(tracker).trackPaymentCancelled("Collecting")
         }
@@ -2075,7 +2180,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState).onCancel()
+                (
+                    controller.paymentState.value as
+                        CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState
+                    ).onCancel()
             }
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
@@ -2088,7 +2196,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment).onCancel()
+            (
+                controller.paymentState.value as
+                    CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment
+                ).onCancel()
 
             verify(tracker).trackPaymentCancelled("Processing")
         }
@@ -2101,7 +2212,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment).onCancel()
+                (
+                    controller.paymentState.value as
+                        CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment
+                    ).onCancel()
             }
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
@@ -2114,7 +2228,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            (controller.paymentState.value as PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
             controller.onBackPressed()
 
             verify(tracker, never()).trackPaymentCancelled(anyOrNull())
@@ -2131,7 +2245,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+            (controller.paymentState.value as PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
             controller.onBackPressed()
 
             verify(tracker, never()).trackPaymentCancelled(anyOrNull())
@@ -2170,7 +2284,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
             simulateFetchOrderJobState(inProgress = true)
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSaveUserClicked()
+            (controller.paymentState.value as PaymentSuccessful.ExternalReaderPaymentSuccessful).onSaveUserClicked()
 
             assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ReFetchingOrder::class.java)
         }
@@ -2187,7 +2301,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
             simulateFetchOrderJobState(inProgress = true)
 
-            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSaveUserClicked()
+            (controller.paymentState.value as PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSaveUserClicked()
 
             assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ReFetchingOrder::class.java)
         }
@@ -2619,7 +2733,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             assertThat((events)).isEmpty()
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment::class.java)
         }
 
     // region - Interac refund
@@ -2639,7 +2755,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_payment_retry_card_prompt)
         }
 
@@ -2670,7 +2788,8 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            val externalReaderFailedPaymentState = controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure
+            val externalReaderFailedPaymentState = controller.paymentState.value as
+                CardReaderInteracRefundState.InteracRefundFailure
             assertThat(externalReaderFailedPaymentState.cta!!.label).isEqualTo(R.string.support_contact)
             assertNotNull(externalReaderFailedPaymentState.onCancel)
         }
@@ -2701,7 +2820,8 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                val externalReaderFailedPaymentState = controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure
+                val externalReaderFailedPaymentState = controller.paymentState.value as
+                    CardReaderInteracRefundState.InteracRefundFailure
                 externalReaderFailedPaymentState.cta!!.onCallToActionTapped()
             }
 
@@ -2724,7 +2844,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_interac_refund_refund_payment_hint)
         }
 
@@ -2744,7 +2866,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_interac_refund_refund_payment_hint)
         }
 
@@ -2764,7 +2888,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_interac_refund_refund_payment_hint)
         }
 
@@ -2784,7 +2910,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_payment_remove_card_prompt)
         }
 
@@ -2804,7 +2932,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_payment_multiple_contactless_cards_detected_prompt)
         }
 
@@ -2824,7 +2954,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_payment_try_another_read_method_prompt)
         }
 
@@ -2844,7 +2976,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_payment_try_another_card_prompt)
         }
 
@@ -2864,7 +2998,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat((controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint)
+            assertThat(
+                (controller.paymentState.value as CardReaderInteracRefundState.CollectingInteracRefund).cardReaderHint
+            )
                 .isEqualTo(R.string.card_reader_payment_check_mobile_device_prompt)
         }
 
@@ -2898,7 +3034,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
         }
 
     @Test
@@ -2911,7 +3049,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.CollectingInteracRefund::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderInteracRefundState.CollectingInteracRefund::class.java)
         }
 
     @Test
@@ -2924,7 +3064,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.ProcessingInteracRefund::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderInteracRefundState.ProcessingInteracRefund::class.java)
         }
 
     @Test
@@ -2937,7 +3079,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundSuccessful::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderInteracRefundState.InteracRefundSuccessful::class.java)
         }
 
     @Test
@@ -2967,7 +3111,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
         }
 
     @Test
@@ -3013,7 +3159,9 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
+            assertThat(
+                controller.paymentState.value
+            ).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
         }
 
     @Test
@@ -3451,7 +3599,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             val events = controller.event.runAndCaptureValues {
                 controller.start()
-                (controller.paymentState.value as CardReaderInteracRefundState.InteracRefundFailure.Cancelable).onCancel()
+                (
+                    controller.paymentState.value as
+                        CardReaderInteracRefundState.InteracRefundFailure.Cancelable
+                    ).onCancel()
             }
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
@@ -3541,7 +3692,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.start()
 
             assertThat(controller.paymentState.value).isNotInstanceOf(
-                CardReaderPaymentState.PaymentSuccessful::class.java,
+                PaymentSuccessful::class.java,
             )
         }
     }
