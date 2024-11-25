@@ -105,7 +105,7 @@ private fun WooPosVariationsScreens(
             .padding(
                 start = 16.dp.toAdaptivePadding(),
                 end = 16.dp.toAdaptivePadding(),
-                top = 30.dp.toAdaptivePadding(),
+                top = 32.dp.toAdaptivePadding(),
                 bottom = 0.dp.toAdaptivePadding(),
             )
     ) {
