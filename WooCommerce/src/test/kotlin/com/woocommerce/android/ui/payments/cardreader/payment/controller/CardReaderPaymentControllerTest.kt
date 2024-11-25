@@ -51,7 +51,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
-import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -66,7 +65,6 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -1708,6 +1706,230 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
         verify(tracker).trackPrintReceiptCancelled()
     }
+
+    @Test
+    fun `given external reader and receipt fetching and sharing success, when user clicks on send receipt button, then PlayChaChing emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("url")) }
+            }
+            whenever(paymentReceiptShare("test url", 1L)).thenReturn(
+                PaymentReceiptShare.ReceiptShareResult.Success
+            )
+
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
+        }
+
+    @Test
+    fun `given built in reader and receipt fetching  and sharing success, when user clicks on send receipt button, then PlayChaChing emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
+        }
+
+    @Test
+    fun `given receipt fetching success and receipt file not created, when user clicks on send receipt button, then ShowSnackbar emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("url")) }
+            }
+            whenever(paymentReceiptShare("test url", 1L)).thenReturn(
+                PaymentReceiptShare.ReceiptShareResult.Error.FileCreation
+            )
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(
+                R.string.card_reader_payment_receipt_can_not_be_stored
+            )
+            verify(tracker).trackPaymentsReceiptSharingFailed(PaymentReceiptShare.ReceiptShareResult.Error.FileCreation)
+        }
+
+    @Test
+    fun `given receipt fetching success and receipt file not downloaded, when user clicks on send receipt button, then ShowSnackbar emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("url")) }
+            }
+            whenever(paymentReceiptShare("test url", 1L)).thenReturn(
+                PaymentReceiptShare.ReceiptShareResult.Error.FileDownload
+            )
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(
+                R.string.card_reader_payment_receipt_can_not_be_downloaded
+            )
+            verify(tracker).trackPaymentsReceiptSharingFailed(PaymentReceiptShare.ReceiptShareResult.Error.FileDownload)
+        }
+
+    @Test
+    fun `given receipt fetching success and receipt file not shared, when user clicks on send receipt button, then ShowSnackbar emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("url")) }
+            }
+            val sharing = PaymentReceiptShare.ReceiptShareResult.Error.Sharing(Exception())
+            whenever(paymentReceiptShare("test url", 1L)).thenReturn(sharing)
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(
+                R.string.card_reader_payment_email_client_not_found
+            )
+            verify(tracker).trackPaymentsReceiptSharingFailed(sharing)
+        }
+
+    @Test
+    fun `given external reader and receipt fetching fails, when user clicks on send receipt button, then ShowSnackabar event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+        }
+
+    @Test
+    fun `given built reader and receipt fetching fails, when user clicks on send receipt button, then ShowSnackabar event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
+
+            createController(BUILT_IN)
+            controller.start()
+
+            val events = controller.event.runAndCaptureValues {
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSendReceiptClicked()
+            }
+
+            assertThat((events.last() as CardReaderPaymentEvent.ShowErrorMessage).message).isEqualTo(R.string.receipt_fetching_error)
+        }
+
+    @Test
+    fun `given external reader, when user clicks on send receipt button, then event tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSendReceiptClicked()
+
+            verify(tracker).trackEmailReceiptTapped()
+        }
+
+    @Test
+    fun `given built in reader, when user clicks on send receipt button, then event tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(BUILT_IN)
+
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSendReceiptClicked()
+
+            verify(tracker).trackEmailReceiptTapped()
+        }
+
+    @Test
+    fun `given billing email empty and external, when user clicks on save for later button, then Exit event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSaveUserClicked()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given billing email built in and external, when user clicks on save for later button, then Exit event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(BUILT_IN)
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSaveUserClicked()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given billing email not empty and external, when user clicks on save for later button, then Exit event emitted`() =
+        testBlocking {
+            whenever(mockedAddress.email).thenReturn("nonemptyemail")
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically)
+                    .onSaveUserClicked()
+            }
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given billing email not empty and built in, when user clicks on save for later button, then Exit event emitted`() =
+        testBlocking {
+            whenever(mockedAddress.email).thenReturn("nonemptyemail")
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically)
+                    .onSaveUserClicked()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
 
     companion object {
         private const val ORDER_ID = 1L
