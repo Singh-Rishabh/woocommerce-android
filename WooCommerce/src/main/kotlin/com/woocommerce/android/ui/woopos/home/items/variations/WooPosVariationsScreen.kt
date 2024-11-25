@@ -261,7 +261,6 @@ fun WooPosVariationsScreenPreview() {
                     imageUrl = null,
                 ),
             ),
-            loadingMore = false,
             reloadingProductsWithPullToRefresh = true,
         )
     )

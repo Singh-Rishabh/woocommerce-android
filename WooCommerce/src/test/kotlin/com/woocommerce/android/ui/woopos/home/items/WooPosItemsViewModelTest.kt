@@ -205,7 +205,7 @@ class WooPosItemsViewModelTest {
         viewModel.viewState.test {
             // THEN
             val value = awaitItem() as WooPosItemsViewState.Content
-            assertThat(value.loadingMore).isFalse()
+            assertThat(value.paginationState).isEqualTo(PaginationState.None)
         }
     }
 
@@ -288,7 +288,7 @@ class WooPosItemsViewModelTest {
             viewModel.viewState.test {
                 // THEN
                 val value = awaitItem() as WooPosItemsViewState.Content
-                assertThat(value.loadingMore).isFalse()
+                assertThat(value.paginationState).isEqualTo(PaginationState.None)
             }
         }
 

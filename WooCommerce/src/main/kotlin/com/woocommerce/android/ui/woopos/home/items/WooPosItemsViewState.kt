@@ -8,9 +8,8 @@ sealed class WooPosItemsViewState(
 ) : WooPosBaseViewState(reloadingProductsWithPullToRefresh) {
     data class Content(
         override val items: List<WooPosItem>,
-        override val loadingMore: Boolean,
         val bannerState: BannerState,
-        override val errorLoadingMoreItems: Boolean = false,
+        override val paginationState: PaginationState = PaginationState.None,
         override val reloadingProductsWithPullToRefresh: Boolean = false
     ) : WooPosItemsViewState(reloadingProductsWithPullToRefresh), ContentViewState {
         data class BannerState(

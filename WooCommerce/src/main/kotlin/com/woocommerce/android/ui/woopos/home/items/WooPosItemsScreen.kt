@@ -360,7 +360,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     imageUrl = null,
                 ),
             ),
-            loadingMore = true,
+            paginationState = PaginationState.Loading,
             reloadingProductsWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
@@ -479,7 +479,6 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                     imageUrl = null,
                 ),
             ),
-            loadingMore = false,
             reloadingProductsWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = false,
@@ -532,7 +531,6 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
                     imageUrl = null,
                 ),
             ),
-            loadingMore = false,
             reloadingProductsWithPullToRefresh = false,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,

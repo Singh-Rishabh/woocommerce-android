@@ -225,7 +225,7 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
         },
-        loadingMore = false,
+        paginationState = PaginationState.None,
         reloadingProductsWithPullToRefresh = false,
         bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
@@ -245,7 +245,7 @@ class WooPosItemsViewModel @Inject constructor(
             return
         }
 
-        _viewState.value = currentState.copy(loadingMore = true)
+        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
 
         loadMoreProductsJob?.cancel()
         loadMoreProductsJob = viewModelScope.launch {

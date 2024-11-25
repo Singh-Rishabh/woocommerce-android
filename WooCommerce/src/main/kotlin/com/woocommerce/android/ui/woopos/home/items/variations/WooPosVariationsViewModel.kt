@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
@@ -67,7 +68,6 @@ class WooPosVariationsViewModel @Inject constructor(
                                     imageUrl = it.image?.source
                                 )
                             },
-                        loadingMore = false,
                         reloadingProductsWithPullToRefresh = false,
                     )
                 }
@@ -93,15 +93,15 @@ class WooPosVariationsViewModel @Inject constructor(
         if (!variationsDataSource.canLoadMore()) {
             return
         }
-        _viewState.value = currentState.copy(loadingMore = true, errorLoadingMoreItems = false)
+        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
             val result = variationsDataSource.loadMore(productId)
             if (result.isSuccess) {
                 Result.success(Unit)
-                _viewState.value = currentState.copy(loadingMore = false, errorLoadingMoreItems = false)
+                _viewState.value = currentState.copy(paginationState = PaginationState.None)
             } else {
-                _viewState.value = currentState.copy(loadingMore = false, errorLoadingMoreItems = true)
+                _viewState.value = currentState.copy(paginationState = PaginationState.Error)
             }
         }
     }

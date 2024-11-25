@@ -6,7 +6,12 @@ sealed class WooPosBaseViewState(
 
 interface ContentViewState {
     val items: List<WooPosItem>
-    val loadingMore: Boolean
     val reloadingProductsWithPullToRefresh: Boolean
-    val errorLoadingMoreItems: Boolean
+    val paginationState: PaginationState
+}
+
+sealed interface PaginationState {
+    data object None : PaginationState
+    data object Loading : PaginationState
+    data object Error : PaginationState
 }

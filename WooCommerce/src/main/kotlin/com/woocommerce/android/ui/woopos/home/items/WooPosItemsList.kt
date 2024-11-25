@@ -96,14 +96,19 @@ fun ItemList(
             }
         }
 
-        if (state.loadingMore) {
-            item {
-                ItemsLoadingItem()
+        when (state.paginationState) {
+            PaginationState.Error -> {
+                item {
+                    onErrorWhilePaginating()
+                }
             }
-        }
-        if (state.errorLoadingMoreItems) {
-            item {
-                onErrorWhilePaginating()
+            PaginationState.Loading -> {
+                item {
+                    ItemsLoadingItem()
+                }
+            }
+            PaginationState.None -> {
+                // no op
             }
         }
         item {
