@@ -1825,46 +1825,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             assertThat((viewModel.event.value as PrintReceipt).documentName).isEqualTo("receipt-order-1")
         }
     //
-    @Test
-    fun `given user presses back button, when re-fetching order, then ReFetchingOrderState shown`() =
-        testBlocking {
-            simulateFetchOrderJobState(inProgress = true)
-
-            viewModel.onBackPressed()
-
-            assertThat(viewModel.viewStateData.value).isInstanceOf(ReFetchingOrderState::class.java)
-        }
-
-    @Test
-    fun `given re-fetching order and external, when user clicks on save for later button, then ReFetchingOrderState shown`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-            viewModel.start()
-            simulateFetchOrderJobState(inProgress = true)
-
-            (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onTertiaryActionClicked.invoke()
-
-            assertThat(viewModel.viewStateData.value).isInstanceOf(ReFetchingOrderState::class.java)
-        }
-
-    @Test
-    fun `given re-fetching order and built in, when user clicks on save for later button, then ReFetchingOrderState shown`() =
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            initViewModel(BUILT_IN)
-
-            viewModel.start()
-            simulateFetchOrderJobState(inProgress = true)
-
-            (viewModel.viewStateData.value as BuiltInReaderPaymentSuccessfulState).onTertiaryActionClicked.invoke()
-
-            assertThat(viewModel.viewStateData.value).isInstanceOf(ReFetchingOrderState::class.java)
-        }
 
     @Test
     fun `given user presses back, when already in ReFetchingOrderState, then snackbar shown and screen dismissed`() =

@@ -56,6 +56,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.External
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderProcessingPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ReFetchingOrderState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -2142,6 +2143,47 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             controller.onBackPressed()
 
             verify(tracker, never()).trackPaymentCancelled(anyOrNull())
+        }
+
+    @Test
+    fun `given user presses back button, when re-fetching order, then ReFetchingOrderState shown`() =
+        testBlocking {
+            simulateFetchOrderJobState(inProgress = true)
+
+            controller.onBackPressed()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ReFetchingOrder::class.java)
+        }
+
+    @Test
+    fun `given re-fetching order and external, when user clicks on save for later button, then ReFetchingOrderState shown`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+            simulateFetchOrderJobState(inProgress = true)
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onSaveUserClicked()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ReFetchingOrder::class.java)
+        }
+
+    @Test
+    fun `given re-fetching order and built in, when user clicks on save for later button, then ReFetchingOrderState shown`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+            simulateFetchOrderJobState(inProgress = true)
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSaveUserClicked()
+
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ReFetchingOrder::class.java)
         }
 
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
