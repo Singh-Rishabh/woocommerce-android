@@ -49,6 +49,7 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowP
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
+import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.EXTERNAL
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundableChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
@@ -58,6 +59,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.InteracRefundFlowE
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderFailedPaymentState
 import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
@@ -142,9 +144,6 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     private val cardReaderConfig: CardReaderConfigForSupportedCountry = CardReaderConfigForUSA
     private val paymentFailedWithEmptyDataForRetry = PaymentFailed(Generic, null, "dummy msg")
     private val paymentFailedWithValidDataForRetry = PaymentFailed(Generic, mock(), "dummy msg")
-    private val paymentFailedWithNoNetwork = PaymentFailed(NoNetwork, mock(), "dummy msg")
-    private val paymentFailedWithPaymentDeclined = PaymentFailed(DeclinedByBackendError.Unknown, mock(), "dummy msg")
-    private val paymentFailedWithCardReadTimeOut = PaymentFailed(Generic, mock(), "dummy msg")
     private val paymentFailedWithServerError = PaymentFailed(Server(""), mock(), "dummy msg")
     private val paymentFailedWithAmountTooSmall = PaymentFailed(
         DeclinedByBackendError.AmountTooSmall,
@@ -205,7 +204,10 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun createController(cardReaderType: CardReaderType = CardReaderType.EXTERNAL) {
+    private fun createController(
+        cardReaderType: CardReaderType = CardReaderType.EXTERNAL,
+        cardReaderFlowParam: CardReaderFlowParam.PaymentOrRefund = paymentParam,
+    ) {
         controller = CardReaderPaymentController(
             scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
@@ -228,7 +230,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             cardReaderOnboardingChecker = cardReaderOnboardingChecker,
             cardReaderConfigProvider = cardReaderConfigProvider,
             paymentReceiptShare = paymentReceiptShare,
-            paymentOrRefund = paymentParam,
+            paymentOrRefund = cardReaderFlowParam,
             cardReaderType = cardReaderType,
             isTTPPaymentInProgress = isTTPinProgressProp,
         )
@@ -2896,7 +2898,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             controller.start()
 
-            assertThat(controller.paymentState.value).isInstanceOf(CardInteracRefundStatus.InteracRefundFailure::class.java)
+            assertThat(controller.paymentState.value).isInstanceOf(CardReaderInteracRefundState.InteracRefundFailure::class.java)
         }
 
     @Test
@@ -3490,7 +3492,82 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             verify(cardReaderTrackingInfoKeeper, never()).setCardReaderBatteryLevel(anyFloat())
         }
 
+    @Test
+    fun `given ttp not in progress and reader connected, when vm starts, then AppKilledWhileInBackground state not emitted`() =
+        testBlocking {
+            val cardReader: CardReader = mock()
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            isTTPinProgress = false
+            createController(BUILT_IN)
 
+            controller.start()
+
+            verify(tracker, never()).trackPaymentFailed("VM killed when TTP activity in foreground")
+            assertThat(controller.paymentState.value).isNotInstanceOf(BuiltInReaderFailedPaymentState::class.java)
+        }
+
+    @Test
+    fun `given AppKilledWhileInBackground, when vm starts, then payment collection doesnt start`() =
+        testBlocking {
+            val cardReader: CardReader = mock()
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            isTTPinProgress = true
+            createController(cardReaderType = BUILT_IN,)
+
+            controller.start()
+
+            verify(cardReaderManager, never()).collectPayment(any())
+        }
+
+    @Test
+    fun `given point of sale, when payment captured, then should not show success state`() {
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(
+                cardReaderType = EXTERNAL,
+                cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
+                    orderId = ORDER_ID,
+                    paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
+                )
+            )
+
+            controller.start()
+
+            assertThat(controller.paymentState.value).isNotInstanceOf(
+                CardReaderPaymentState.PaymentSuccessful::class.java,
+            )
+        }
+    }
+
+    @Test
+    fun `given point of sale, when payment captured, then should exit`() {
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(
+                cardReaderType = EXTERNAL,
+                cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
+                    orderId = ORDER_ID,
+                    paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
+                )
+            )
+
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+            }
+
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+    }
 
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
         if (inProgress) {

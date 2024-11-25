@@ -8,7 +8,6 @@ import com.woocommerce.android.cardreader.config.CardReaderConfigForSupportedCou
 import com.woocommerce.android.cardreader.config.CardReaderConfigForUSA
 import com.woocommerce.android.cardreader.connection.CardReader
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
-import com.woocommerce.android.cardreader.connection.event.BatteryStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
 import com.woocommerce.android.cardreader.payments.CardInteracRefundStatus
@@ -105,14 +104,10 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.anyFloat
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.clearInvocations
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.times
@@ -246,7 +241,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             flow<BluetoothCardReaderMessages> {}
         }
         whenever(paymentReceiptHelper.isPluginCanSendReceipt(siteModel)).thenReturn(true)
-        whenever(paymentReceiptHelper.getReceiptUrl(ORDER_ID)).thenReturn(Result.success("test url"))
         whenever(cardReaderPaymentOrderHelper.getPaymentDescription(mockedOrder)).thenReturn("test description")
         whenever(cardReaderPaymentOrderHelper.getAmountLabel(mockedOrder))
             .thenReturn("$DUMMY_CURRENCY_SYMBOL$DUMMY_TOTAL")
@@ -2707,44 +2701,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState::class.java,
             )
         }
-    }
-
-    @Test
-    fun `given point of sale, when payment captured, then should exit`() {
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            initViewModel(
-                readerType = EXTERNAL,
-                cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
-                    orderId = ORDER_ID,
-                    paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-                )
-            )
-
-            val events = mutableListOf<Event>()
-            viewModel.event.observeForever {
-                events.add(it)
-            }
-
-            viewModel.start()
-
-            assertThat(events[0]).isInstanceOf(Exit::class.java)
-        }
-    }
-
-    private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
-        if (inProgress) {
-            whenever(orderRepository.fetchOrderById(any())).doSuspendableAnswer {
-                delay(1000)
-                mock()
-            }
-        } else {
-            whenever(orderRepository.fetchOrderById(any())).doReturn(mock())
-        }
-        viewModel.reFetchOrder()
     }
 
     private fun setupViewModelForInteracRefund() {
