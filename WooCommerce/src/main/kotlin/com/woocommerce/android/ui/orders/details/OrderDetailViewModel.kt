@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.details
 
-import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
@@ -59,7 +58,6 @@ import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWit
 import com.woocommerce.android.ui.orders.creation.shipping.RefreshShippingMethods
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineDetails
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingMethodsRepository
-import com.woocommerce.android.ui.orders.details.customfields.CustomOrderFieldsHelper
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -318,13 +316,6 @@ class OrderDetailViewModel @Inject constructor(
     fun onCustomFieldsButtonClicked() {
         tracker.trackCustomFieldsTapped()
         triggerEvent(OrderNavigationTarget.ViewCustomFields(navArgs.orderId))
-    }
-
-    /**
-     * User tapped an actionable custom field
-     */
-    fun onCustomFieldClicked(context: Context, value: String) {
-        CustomOrderFieldsHelper.handleMetadataValue(context, value)
     }
 
     fun onBackPressed() {
