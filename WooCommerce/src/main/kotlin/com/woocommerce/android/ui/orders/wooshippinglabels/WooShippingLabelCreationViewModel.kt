@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -43,18 +44,31 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch {
             shippableItems.filter { it.isNotEmpty() }.collect { items ->
                 val shippableItems = items.map { item -> item.toUIModel(currencyFormatter, storeOptions) }
-                val totalWeight = items.sumByFloat { it.weight * it.quantity }
-                val totalPrice = items.sumOf { it.price }
+                val formattedTotalPrice = getTotalPrice(items)
+                val formattedTotalWeight = getTotalWeight(items)
 
                 viewState.value = WooShippingViewState.DataState(
                     shippableItems = ShippableItemsUI(
                         shippableItems = shippableItems,
-                        formattedTotalWeight = totalWeight.toString(),
-                        formattedTotalPrice = totalPrice.toString()
+                        formattedTotalWeight = formattedTotalWeight,
+                        formattedTotalPrice = formattedTotalPrice
                     )
                 )
             }
         }
+    }
+
+    private fun getTotalPrice(items: List<ShippableItemModel>): String {
+        val totalPrice = items.sumOf { it.price }
+        val formattedTotalPrice = items.firstOrNull()?.currency?.let {
+            currencyFormatter.formatCurrency(totalPrice, it)
+        } ?: currencyFormatter.formatCurrency(totalPrice)
+        return formattedTotalPrice
+    }
+
+    private fun getTotalWeight(items: List<ShippableItemModel>): String {
+        val totalWeight = items.sumByFloat { it.weight * it.quantity }
+        return "${totalWeight.formatToString()} ${storeOptions.weightUnit}"
     }
 
     fun onSelectPackageClicked() {
