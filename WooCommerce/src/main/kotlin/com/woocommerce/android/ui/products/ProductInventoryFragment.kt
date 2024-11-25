@@ -13,6 +13,7 @@ import com.woocommerce.android.extensions.expand
 import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.ui.products.ProductItemSelectorDialog.ProductItemSelectorDialogListener
+import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.util.setupTabletSecondPaneToolbar
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -149,6 +150,8 @@ class ProductInventoryFragment :
             }
         }
 
+        setupProductUniqueGlobalIdView()
+
         with(binding.manageStockSwitch) {
             setOnCheckedChangeListener { _, isChecked ->
                 enableManageStockStatus(isChecked, binding.editProductStockStatus.isVisible)
@@ -203,6 +206,14 @@ class ProductInventoryFragment :
                 }
             }
         )
+    }
+
+    private fun setupProductUniqueGlobalIdView() {
+        val featureIsEnabled = FeatureFlag.PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT.isEnabled()
+
+        with(binding.productGlobalUniqueId) {
+            visibility = if (featureIsEnabled) View.VISIBLE else View.GONE
+        }
     }
 
     private fun enableManageStockStatus(isStockManaged: Boolean, isStockStatusVisible: Boolean) {

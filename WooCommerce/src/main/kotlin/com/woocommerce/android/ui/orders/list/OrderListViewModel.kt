@@ -518,6 +518,10 @@ class OrderListViewModel @Inject constructor(
             _isEmpty.removeSource(isEmpty)
             _isFetchingFirstPage.removeSource(isFetchingFirstPage)
             _isLoadingMore.removeSource(isLoadingMore)
+
+            _isFetchingFirstPage.value = false
+            _isEmpty.value = false
+            _isLoadingMore.value = false
         }
     }
 
