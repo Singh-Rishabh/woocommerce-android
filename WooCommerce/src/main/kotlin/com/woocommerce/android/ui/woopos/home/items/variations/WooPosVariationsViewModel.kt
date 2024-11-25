@@ -97,7 +97,10 @@ class WooPosVariationsViewModel @Inject constructor(
                 }
             }
 
-            if (updatedState !is WooPosVariationsViewState.Content || updatedState.paginationState != PaginationState.Loading) {
+            if (
+                updatedState !is WooPosVariationsViewState.Content ||
+                updatedState.paginationState != PaginationState.Loading
+            ) {
                 return@launch
             }
 
