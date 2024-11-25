@@ -1798,12 +1798,14 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception()))
 
             // WHEN
+            val events = viewModel.event.captureValues()
             viewModel.start()
 
             (viewModel.viewStateData.value as ExternalReaderPaymentSuccessfulState).onPrimaryActionClicked.invoke()
 
             // THEN
-            assertThat((viewModel.event.value as ShowSnackbar).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat((events[events.size - 2] as ShowSnackbar).message).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(events.last()).isInstanceOf(Exit::class.java)
         }
 
     @Test

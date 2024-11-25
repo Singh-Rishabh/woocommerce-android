@@ -975,6 +975,27 @@ class OrderListViewModelTest : BaseUnitTest() {
     }
     //endregion
 
+    @Test
+    fun `when the search view is closed while a search is in progress, then isFetchingFirstPage is reset to false`() {
+        // Trying to simulate a quick search close
+        whenever(pagedListWrapper.isFetchingFirstPage).doReturn(MutableLiveData(true), MutableLiveData())
+
+        viewModel = createViewModel()
+
+        var isFetchingFirstPage: Boolean? = null
+        viewModel.isFetchingFirstPage.observeForever {
+            isFetchingFirstPage = it
+        }
+
+        viewModel.submitSearchOrFilter("query")
+        viewModel.onSearchClosed()
+
+        assertNotNull(isFetchingFirstPage)
+
+        // Check that isFetchingFirstPage is reset to default value (false) on clearLiveDataSources
+        assertFalse(isFetchingFirstPage!!)
+    }
+
     private companion object {
         const val ANY_SEARCH_QUERY = "search query"
     }

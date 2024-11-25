@@ -51,6 +51,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -65,6 +66,7 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -1640,9 +1642,29 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             // THEN
             assertThat(
-                (events.last() as CardReaderPaymentEvent.ShowErrorMessage).message
+                (events[events.size-2] as CardReaderPaymentEvent.ShowErrorMessage).message
             ).isEqualTo(R.string.receipt_fetching_error)
+            assertThat(
+                (events[events.size-1])).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
+
+
+    @Test
+    fun `given fetching receipt URL fails, when startPrintingFlow, then payment flow is canceled`() = testBlocking {
+        val errorMessage = "Receipt fetching error"
+        whenever(paymentReceiptHelper.getReceiptUrl(any())).thenReturn(Result.failure(Exception(errorMessage)))
+        whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+            flow { emit(PaymentCompleted("")) }
+        }
+        controller.start()
+        val events = controller.event.runAndCaptureValues {
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+        }
+
+
+        verify(tracker).trackReceiptUrlFetchingFails(errorDescription = errorMessage)
+        assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+    }
 
     @Test
     fun `given get receipt url succeeds, when user clicks on print receipt button, then PrintReceipt emitted`() =

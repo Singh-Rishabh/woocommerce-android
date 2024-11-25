@@ -2207,6 +2207,55 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
 
             verify(tracker).trackOnboardingLearnMoreTapped()
         }
+
+    @Test
+    fun `when onboarding initialized in POS flow, then track onboarding shown in POS flow event`() =
+        testBlocking {
+            val onboardingState = CashOnDeliveryDisabled(
+                countryCode = countryCode,
+                preferredPlugin = WOOCOMMERCE_PAYMENTS,
+                version = pluginVersion
+            )
+            whenever(onboardingChecker.getOnboardingState())
+                .thenReturn(onboardingState)
+
+            val viewModel = createVM(
+                CardReaderOnboardingFragmentArgs(
+                    cardReaderOnboardingParam = CardReaderOnboardingParams.Check(
+                        cardReaderFlowParam = CardReaderFlowParam.WooPosConnection
+                    ),
+                    cardReaderType = CardReaderType.EXTERNAL
+                ).toSavedStateHandle()
+            )
+
+            assertThat(viewModel.viewStateData.value).isInstanceOf(CashOnDeliveryDisabledState::class.java)
+            verify(tracker).trackOnboardingShownInPosFlow(onboardingState)
+        }
+
+    @Test
+    fun `when POS flow onboarding is dismissed, then track onboarding dismissed in POS flow event`() =
+        testBlocking {
+            val onboardingState = CashOnDeliveryDisabled(
+                countryCode = countryCode,
+                preferredPlugin = WOOCOMMERCE_PAYMENTS,
+                version = pluginVersion
+            )
+            whenever(onboardingChecker.getOnboardingState())
+                .thenReturn(onboardingState)
+
+            val viewModel = createVM(
+                CardReaderOnboardingFragmentArgs(
+                    cardReaderOnboardingParam = CardReaderOnboardingParams.Check(
+                        cardReaderFlowParam = CardReaderFlowParam.WooPosConnection
+                    ),
+                    cardReaderType = CardReaderType.EXTERNAL
+                ).toSavedStateHandle()
+            )
+
+            viewModel.clearViewModel()
+
+            verify(tracker).trackOnboardingDismissedInPosFlow(onboardingState)
+        }
     // Tracking End
 
     private fun createVM(

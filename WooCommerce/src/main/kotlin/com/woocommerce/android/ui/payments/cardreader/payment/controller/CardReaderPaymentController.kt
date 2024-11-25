@@ -725,6 +725,7 @@ class CardReaderPaymentController(
                     errorDescription = receiptResult.exceptionOrNull()?.message ?: "Unknown error",
                 )
                 triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
+                onCancelPaymentFlow()
             }
         }
     }
