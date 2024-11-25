@@ -216,10 +216,9 @@ class CardReaderPaymentController(
                 }
             } ?: run {
                 tracker.trackPaymentFailed("Fetching order failed")
-                _paymentState.value = paymentStateProvider.provideFailedPaymentState(
+                _paymentState.value = paymentStateProvider.provideNonCancellableFailedPaymentState(
                     cardReaderType = cardReaderType,
                     errorType = PaymentFlowError.FetchingOrderFailed,
-                    amountWithCurrencyLabel = null,
                     onRetry = { initPaymentFlow(isRetry = true) },
                 )
             }
@@ -567,7 +566,7 @@ class CardReaderPaymentController(
         amountLabel: String,
         onRetryClicked: () -> Unit
     ): CardReaderPaymentState.PaymentFailed = when (errorType) {
-        is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
@@ -577,7 +576,7 @@ class CardReaderPaymentController(
             ),
             onCancel = ::onBackPressed
         )
-        is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
@@ -587,13 +586,13 @@ class CardReaderPaymentController(
                 onCallToActionTapped = { onEnableNfcClicked() }
             )
         )
-        is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
             onCancel = ::onBackPressed,
         )
-        is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             cta = CardReaderPaymentOrRefundState.CallToAction(
                 label = R.string.card_reader_payment_payment_failed_purchase_hardware_reader,
@@ -603,7 +602,7 @@ class CardReaderPaymentController(
             amountWithCurrencyLabel = amountLabel,
             onCancel = ::onBackPressed,
         )
-        else -> paymentStateProvider.provideFailedPaymentState(
+        else -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
