@@ -105,7 +105,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     private val selectedSite: SelectedSite = mock()
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker = mock()
     private val tracker: PaymentsFlowTracker = mock()
-    private val trackCanceledFlow = CardReaderTrackCanceledFlow(tracker)
+    private val trackCanceledFlow = CardReaderTrackCanceledFlowAction(tracker)
     private val appPrefs: AppPrefs = mock()
     private val currencyFormatter: CurrencyFormatter = mock()
     private val wooStore: WooCommerceStore = mock()
