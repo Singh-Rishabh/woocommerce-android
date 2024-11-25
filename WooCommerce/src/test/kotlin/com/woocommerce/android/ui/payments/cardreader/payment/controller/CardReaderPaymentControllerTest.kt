@@ -5,6 +5,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.CardReaderManager
 import com.woocommerce.android.cardreader.config.CardReaderConfigForSupportedCountry
 import com.woocommerce.android.cardreader.config.CardReaderConfigForUSA
+import com.woocommerce.android.cardreader.connection.CardReader
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
@@ -38,6 +39,7 @@ import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
+import com.woocommerce.android.ui.payments.cardreader.CardReaderPaymentViewModelTest
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
@@ -71,7 +73,9 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -2184,6 +2188,406 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onSaveUserClicked()
 
             assertThat(controller.paymentState.value).isInstanceOf(CardReaderPaymentState.ReFetchingOrder::class.java)
+        }
+
+    @Test
+    fun `given user presses back, when already in ReFetchingOrderState, then snackbar shown and screen dismissed`() =
+        testBlocking {
+            val events = controller.event.runAndCaptureValues {
+                simulateFetchOrderJobState(inProgress = true)
+                controller.onBackPressed() // shows ReFetchingOrderState screen
+                controller.onBackPressed()
+            }
+
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.ShowErrorMessage::class.java)
+            assertThat(events[1]).isEqualTo(CardReaderPaymentEvent.Exit)
+        }
+
+    @Test
+    fun `given user presses back, when already showing ReFetchingOrderState, then correct snackbar message shown`() =
+        testBlocking {
+            val events = controller.event.runAndCaptureValues {
+                simulateFetchOrderJobState(inProgress = true)
+                controller.onBackPressed() // shows ReFetchingOrderState screen
+                controller.onBackPressed()
+            }
+
+            assertThat((events[0] as CardReaderPaymentEvent.ShowErrorMessage).message)
+                .isEqualTo(R.string.card_reader_refetching_order_failed)
+        }
+
+    @Test
+    fun `given user presses back button, when re-fetching order, then screen not dismissed`() =
+        testBlocking {
+            val events = controller.event.runAndCaptureValues {
+                simulateFetchOrderJobState(inProgress = true)
+                controller.onBackPressed()
+            }
+            assertThat(events).isEmpty()
+        }
+
+    @Test
+    fun `given user presses back button, when not re-fetching order, then screen dismissed`() =
+        testBlocking {
+            val events = controller.event.runAndCaptureValues {
+                simulateFetchOrderJobState(inProgress = false)
+                controller.onBackPressed()
+            }
+
+            assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.Exit)
+        }
+
+    @Test
+    fun `given ReFetchingOrderState shown, when re-fetching order completes, then screen auto-dismissed`() =
+        testBlocking {
+            val events = controller.event.runAndCaptureValues {
+                simulateFetchOrderJobState(inProgress = true)
+                controller.onBackPressed() // show ReFetchingOrderState screen
+                controller.onBackPressed()
+            }
+            advanceUntilIdle()
+
+            assertThat(events.last()).isEqualTo(CardReaderPaymentEvent.Exit)
+        }
+
+    @Test
+    fun `given built in payment failed state and connected BI, when user presses back, then disconnect from reader invoked`() =
+        testBlocking {
+            val cardReader: CardReader = mock {
+                on { type }.thenReturn("COTS_DEVICE")
+            }
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            whenever(errorMapper.mapPaymentErrorToUiError(NoNetwork, cardReaderConfig, true))
+                .thenReturn(PaymentFlowError.NoNetwork)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(NoNetwork, null, "")) }
+            }
+            createController(cardReaderType = BUILT_IN)
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager).disconnectReader()
+        }
+
+    @Test
+    fun `given payment failed state and connected BT, when user presses back, then disconnect not invoked`() =
+        testBlocking {
+            val cardReader: CardReader = mock {
+                on { type }.thenReturn("STRIPE_M2")
+            }
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            whenever(errorMapper.mapPaymentErrorToUiError(NoNetwork, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.NoNetwork)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(NoNetwork, null, "")) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager, never()).disconnectReader()
+        }
+
+    @Test
+    fun `given payment processing state and connected BT, when user presses back, then disconnect not invoked`() =
+        testBlocking {
+            val cardReader: CardReader = mock {
+                on { type }.thenReturn("STRIPE_M2")
+            }
+            whenever(cardReaderManager.readerStatus).thenReturn(
+                MutableStateFlow(CardReaderStatus.Connected(cardReader))
+            )
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(cardReaderManager, never()).disconnectReader()
+        }
+
+    @Test
+    fun `given ReFetchingOrderState not shown, when re-fetching order completes, then screen not auto-dismissed`() =
+        testBlocking {
+            val events = controller.event.runAndCaptureValues {
+                simulateFetchOrderJobState(inProgress = true)
+                controller.reFetchOrder()
+            }
+            assertThat(events).isEmpty()
+        }
+
+    @Test
+    fun `when re-fetching order fails, then SnackBar shown`() =
+        testBlocking {
+            whenever(orderRepository.fetchOrderById(any())).thenReturn(null)
+
+            val events = controller.event.runAndCaptureValues {
+                controller.reFetchOrder()
+            }
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.ShowErrorMessage::class.java)
+        }
+
+    @Test
+    fun `given user leaves the screen, when payment fails, then payment canceled`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(paymentFailedWithValidDataForRetry) }
+            }
+            controller.start()
+
+            controller.onCleared()
+
+            verify(cardReaderManager).cancelPayment(any())
+        }
+
+    @Test
+    fun `given user leaves the screen, when payment succeeded on retry, then payment NOT canceled`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(Generic, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.Generic)
+            whenever(cardReaderManager.collectPayment(any()))
+                .thenAnswer {
+                    flow {
+                        emit(paymentFailedWithValidDataForRetry)
+                        emit(PaymentCompleted(""))
+                    }
+                }
+            controller.start()
+
+            controller.onCleared()
+
+            verify(cardReaderManager, never()).cancelPayment(any())
+        }
+
+    @Test
+    fun `given reader status is connecting, when payment screen is shown, then make sure NOT to initiate payment`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connecting))
+
+            // when
+            controller.start()
+
+            // Then
+            verify(cardReaderManager, never()).collectPayment(any())
+        }
+
+    @Test
+    fun `given reader status is NOT connected, when payment screen is shown, then make sure NOT to initiate payment`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager, never()).collectPayment(any())
+        }
+
+    @Test
+    fun `given reader status is connected, when payment screen is shown, then proceed to initiate payment`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connected(mock())))
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(any())
+        }
+
+    @Test
+    fun `given reader status is NOT connected, when payment screen is shown, then show error Snackbar`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
+
+            val events = controller.event.runAndCaptureValues {
+                // When
+                controller.start()
+            }
+
+            // Then
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.ShowErrorMessage::class.java)
+        }
+
+    @Test
+    fun `given reader status is NOT connected, when payment screen is shown, then Snackbar is shown with message`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
+            val events = controller.event.runAndCaptureValues {
+                // When
+                controller.start()
+            }
+
+            // Then
+            assertThat((events[0] as CardReaderPaymentEvent.ShowErrorMessage).message)
+                .isEqualTo(R.string.card_reader_payment_reader_not_connected)
+        }
+
+    @Test
+    fun `given reader status is NOT connected, when payment screen is shown, then exit event is triggered`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
+
+            // When
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                advanceUntilIdle()
+            }
+
+            // Then
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given reader status is connecting, when payment screen is shown, then show error Snackbar`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connecting))
+            val events = controller.event.runAndCaptureValues {
+                // When
+                controller.start()
+            }
+
+            // Then
+            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.ShowErrorMessage::class.java)
+        }
+
+    @Test
+    fun `given reader status is connecting, when payment screen is shown, then Snackbar is shown with the message`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connecting))
+
+            val events = controller.event.runAndCaptureValues {
+                // When
+                controller.start()
+            }
+
+            // Then
+            assertThat((events[0] as ShowErrorMessage).message)
+                .isEqualTo(R.string.card_reader_payment_reader_not_connected)
+        }
+
+    @Test
+    fun `given reader status is connecting, when payment screen is shown, then exit event is triggered`() =
+        testBlocking {
+            // Given
+            whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.Connecting))
+
+            val events = controller.event.runAndCaptureValues {
+                // When
+                controller.start()
+            }
+
+            // Then
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `when flow started, then correct order key is propagated to CardReaderManager`() =
+        testBlocking {
+            // Given
+            val captor = argumentCaptor<PaymentInfo>()
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.orderKey).isEqualTo("wc_order_j0LMK3bFhalEL")
+        }
+
+    @Test
+    fun `given plugin can not be send, when flow started, then wc pay can send receipt is false`() =
+        testBlocking {
+            // Given
+            whenever(paymentReceiptHelper.isPluginCanSendReceipt(siteModel)).thenReturn(false)
+            val captor = argumentCaptor<PaymentInfo>()
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.isPluginCanSendReceipt).isFalse()
+        }
+
+    @Test
+    fun `given plugin can be send, when flow started, then wc pay can send receipt is true`() =
+        testBlocking {
+            // Given
+            whenever(paymentReceiptHelper.isPluginCanSendReceipt(siteModel)).thenReturn(true)
+            val captor = argumentCaptor<PaymentInfo>()
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.isPluginCanSendReceipt).isTrue()
+        }
+
+    @Test
+    fun `given canada and total 0,58, when flow started, then fee set to 15`() =
+        testBlocking {
+            // Given
+            whenever(wooStore.getStoreCountryCode(any())).thenReturn("CA")
+            whenever(mockedOrder.total).thenReturn(BigDecimal(0.58))
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(mockedOrder)
+            val captor = argumentCaptor<PaymentInfo>()
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.feeAmount).isEqualTo(15)
+        }
+
+    @Test
+    fun `given canada and total 135,6, when flow started, then fee set to 15`() =
+        testBlocking {
+            // Given
+            whenever(wooStore.getStoreCountryCode(any())).thenReturn("CA")
+            whenever(mockedOrder.total).thenReturn(BigDecimal(145.6))
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(mockedOrder)
+            val captor = argumentCaptor<PaymentInfo>()
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.feeAmount).isEqualTo(15)
+        }
+
+    @Test
+    fun `given us and total 1,49, when flow started, then fee is not set`() =
+        testBlocking {
+            // Given
+            whenever(wooStore.getStoreCountryCode(any())).thenReturn("US")
+            whenever(mockedOrder.total).thenReturn(BigDecimal(1.49))
+            whenever(orderRepository.fetchOrderById(ORDER_ID)).thenReturn(mockedOrder)
+            val captor = argumentCaptor<PaymentInfo>()
+
+            // When
+            controller.start()
+
+            // Then
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.feeAmount).isNull()
         }
 
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
