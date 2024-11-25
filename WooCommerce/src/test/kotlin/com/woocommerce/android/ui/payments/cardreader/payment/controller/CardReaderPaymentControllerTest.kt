@@ -51,6 +51,11 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.AmountTooSmall
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError.Unknown
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.BuiltInReaderPaymentSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderCollectPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderPaymentSuccessfulState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.ExternalReaderProcessingPaymentState
+import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.LoadingDataState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.PlaySuccessfulPaymentSound
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentEvent.ShowErrorMessage
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
@@ -65,6 +70,7 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -80,6 +86,8 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.clearInvocations
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -1930,6 +1938,223 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
         }
+
+    @Test
+    fun `given payment flow is loading, when user presses back button, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(LoadingDataState(mock())) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackPaymentCancelled("Loading")
+        }
+
+    @Test
+    fun `given payment flow is collecting state, when user presses back button, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackPaymentCancelled("Collecting")
+        }
+
+    @Test
+    fun `given payment flow is processing state, when user presses back button, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPayment) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackPaymentCancelled("Processing")
+        }
+
+    @Test
+    fun `given payment flow is capturing state, when user presses back button, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CapturingPayment) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker).trackPaymentCancelled("Capturing")
+        }
+
+    @Test
+    fun `given payment flow is payment failed, when user presses back button, then cancel event is not tracked`() =
+        testBlocking {
+            whenever(errorMapper.mapPaymentErrorToUiError(NoNetwork, cardReaderConfig, false))
+                .thenReturn(PaymentFlowError.NoNetwork)
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentFailed(NoNetwork, null, "")) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker, never()).trackPaymentCancelled(anyOrNull())
+        }
+
+    @Test
+    fun `given payment flow is success state, when user presses back button, then cancel event is not tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+
+            controller.onBackPressed()
+
+            verify(tracker, never()).trackPaymentCancelled(anyOrNull())
+        }
+
+    @Test
+    fun `given payment flow is initializing payment state, when user presses cancel, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(InitializingPayment) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.LoadingData).onCancel()
+
+            verify(tracker).trackPaymentCancelled("Loading")
+        }
+
+    @Test
+    fun `given payment flow is initializing payment state, when user presses cancel, then exit event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(InitializingPayment) }
+            }
+
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.LoadingData).onCancel()
+            }
+
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given payment flow is collection payment state, when user presses cancel, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState).onCancel()
+
+            verify(tracker).trackPaymentCancelled("Collecting")
+        }
+
+    @Test
+    fun `given payment flow is collection payment state, when user presses cancel, then exit event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(CollectingPayment) }
+            }
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState).onCancel()
+            }
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given payment flow is processing payment state, when user presses cancel, then cancel event is tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPayment) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment).onCancel()
+
+            verify(tracker).trackPaymentCancelled("Processing")
+        }
+
+    @Test
+    fun `given payment flow is processing payment state, when user presses cancel, then exit event emitted`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(ProcessingPayment) }
+            }
+            val events = controller.event.runAndCaptureValues {
+                controller.start()
+                (controller.paymentState.value as CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment).onCancel()
+            }
+            assertThat(events.last()).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
+        }
+
+    @Test
+    fun `given payment flow is receipt print state and external, when user presses back button, then cancel event is not tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful).onPrintReceiptClicked()
+            controller.onBackPressed()
+
+            verify(tracker, never()).trackPaymentCancelled(anyOrNull())
+        }
+
+    @Test
+    fun `given payment flow is receipt print state and built in, when user presses back button, then cancel event is not tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+
+            createController(cardReaderType = BUILT_IN)
+
+            controller.start()
+
+            (controller.paymentState.value as CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful).onPrintReceiptClicked()
+            controller.onBackPressed()
+
+            verify(tracker, never()).trackPaymentCancelled(anyOrNull())
+        }
+
+    @Test
+    fun `given payment flow is refetching order, when user presses back button, then cancel event is not tracked`() =
+        testBlocking {
+            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
+                flow { emit(PaymentCompleted("")) }
+            }
+            controller.start()
+            simulateFetchOrderJobState(inProgress = true)
+
+            controller.onBackPressed()
+
+            verify(tracker, never()).trackPaymentCancelled(anyOrNull())
+        }
+
+    private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
+        if (inProgress) {
+            whenever(orderRepository.fetchOrderById(any())).doSuspendableAnswer {
+                delay(1000)
+                mock()
+            }
+        } else {
+            whenever(orderRepository.fetchOrderById(any())).doReturn(mock())
+        }
+        controller.reFetchOrder()
+    }
 
     companion object {
         private const val ORDER_ID = 1L
