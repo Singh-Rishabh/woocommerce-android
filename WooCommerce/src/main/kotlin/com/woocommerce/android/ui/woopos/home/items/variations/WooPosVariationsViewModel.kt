@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -86,22 +88,33 @@ class WooPosVariationsViewModel @Inject constructor(
         }
 
     fun loadMore(productId: Long) {
-        val currentState = _viewState.value
-        if (currentState !is WooPosVariationsViewState.Content) {
-            return
-        }
-        if (!variationsDataSource.canLoadMore()) {
-            return
-        }
-        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
-        loadMoreJob?.cancel()
-        loadMoreJob = viewModelScope.launch {
-            val result = variationsDataSource.loadMore(productId)
-            if (result.isSuccess) {
-                Result.success(Unit)
-                _viewState.value = currentState.copy(paginationState = PaginationState.None)
-            } else {
-                _viewState.value = currentState.copy(paginationState = PaginationState.Error)
+        viewModelScope.launch {
+            val updatedState = _viewState.updateAndGet { currentState ->
+                if (currentState is WooPosVariationsViewState.Content && variationsDataSource.canLoadMore()) {
+                    currentState.copy(paginationState = PaginationState.Loading)
+                } else {
+                    currentState
+                }
+            }
+
+            if (updatedState !is WooPosVariationsViewState.Content || updatedState.paginationState != PaginationState.Loading) {
+                return@launch
+            }
+
+            loadMoreJob?.cancel()
+            loadMoreJob = this.launch {
+                val result = variationsDataSource.loadMore(productId)
+                _viewState.update { current ->
+                    if (current is WooPosVariationsViewState.Content) {
+                        if (result.isSuccess) {
+                            current.copy(paginationState = PaginationState.None)
+                        } else {
+                            current.copy(paginationState = PaginationState.Error)
+                        }
+                    } else {
+                        current
+                    }
+                }
             }
         }
     }
