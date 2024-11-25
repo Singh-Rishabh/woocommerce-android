@@ -1824,7 +1824,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             assertThat((viewModel.event.value as PrintReceipt).receiptUrl).isEqualTo(receiptUrl)
             assertThat((viewModel.event.value as PrintReceipt).documentName).isEqualTo("receipt-order-1")
         }
-    //
 
     @Test
     fun `given collect payment NOT shown, when show additional info event received, then event ignored`() =
