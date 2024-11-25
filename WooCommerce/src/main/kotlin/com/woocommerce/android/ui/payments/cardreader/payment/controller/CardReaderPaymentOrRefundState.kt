@@ -88,7 +88,7 @@ sealed class CardReaderPaymentOrRefundState {
             open val onRetry: (() -> Unit)?,
             open val cta: CallToAction? = null,
         ) : CardReaderPaymentState() {
-            data class BuiltInReaderFailedPayment(
+            sealed class BuiltInReaderFailedPayment(
                 override val errorType: PaymentFlowError,
                 override val amountWithCurrencyLabel: String?,
                 override val onCancel: (() -> Unit)? = null,
@@ -100,9 +100,34 @@ sealed class CardReaderPaymentOrRefundState {
                 onCancel,
                 onRetry,
                 cta,
-            )
+            ) {
+                data class Cancelable(
+                    override val errorType: PaymentFlowError,
+                    override val amountWithCurrencyLabel: String,
+                    override val onCancel: (() -> Unit),
+                    override val onRetry: (() -> Unit)? = null,
+                    override val cta: CallToAction? = null,
+                ) : BuiltInReaderFailedPayment(
+                    errorType = errorType,
+                    amountWithCurrencyLabel = amountWithCurrencyLabel,
+                    onCancel = onCancel,
+                    onRetry = onRetry,
+                    cta = cta,
+                )
+                data class NonCancelable(
+                    override val errorType: PaymentFlowError,
+                    override val onRetry: (() -> Unit),
+                    override val cta: CallToAction? = null,
+                ) : BuiltInReaderFailedPayment(
+                    errorType,
+                    amountWithCurrencyLabel = null,
+                    onCancel = null,
+                    onRetry = onRetry,
+                    cta = cta,
+                )
+            }
 
-            data class ExternalReaderFailedPayment(
+            sealed class ExternalReaderFailedPayment(
                 override val errorType: PaymentFlowError,
                 override val amountWithCurrencyLabel: String?,
                 override val onCancel: (() -> Unit)? = null,
@@ -114,7 +139,32 @@ sealed class CardReaderPaymentOrRefundState {
                 onCancel,
                 onRetry,
                 cta,
-            )
+            ) {
+                data class Cancelable(
+                    override val errorType: PaymentFlowError,
+                    override val amountWithCurrencyLabel: String,
+                    override val onCancel: (() -> Unit),
+                    override val onRetry: (() -> Unit)? = null,
+                    override val cta: CallToAction? = null,
+                ) : ExternalReaderFailedPayment(
+                    errorType = errorType,
+                    amountWithCurrencyLabel = amountWithCurrencyLabel,
+                    onCancel = onCancel,
+                    onRetry = onRetry,
+                    cta = cta,
+                )
+                data class NonCancelable(
+                    override val errorType: PaymentFlowError,
+                    override val onRetry: (() -> Unit),
+                    override val cta: CallToAction? = null,
+                ) : ExternalReaderFailedPayment(
+                    errorType,
+                    amountWithCurrencyLabel = null,
+                    onCancel = null,
+                    onRetry = onRetry,
+                    cta = cta,
+                )
+            }
         }
 
         data object SharingReceipt : CardReaderPaymentState()
@@ -133,13 +183,38 @@ sealed class CardReaderPaymentOrRefundState {
             val amountWithCurrencyLabel: String,
         ) : CardReaderInteracRefundState()
 
-        data class InteracRefundFailure(
-            val amountWithCurrencyLabel: String?,
-            val errorType: InteracRefundFlowError,
-            val onCancel: (() -> Unit)? = null,
-            val onRetry: (() -> Unit)? = null,
-            val cta: CallToAction? = null,
-        ) : CardReaderInteracRefundState()
+        sealed class InteracRefundFailure(
+            open val amountWithCurrencyLabel: String?,
+            open val errorType: InteracRefundFlowError,
+            open val onRetry: (() -> Unit)? = null,
+            open val onCancel: (() -> Unit)? = null,
+            open val cta: CallToAction? = null,
+        ) : CardReaderInteracRefundState() {
+            data class Cancelable(
+                override val amountWithCurrencyLabel: String,
+                override val errorType: InteracRefundFlowError,
+                override val onRetry: (() -> Unit)? = null,
+                override val onCancel: (() -> Unit),
+                override val cta: CallToAction? = null,
+            ) : InteracRefundFailure(
+                amountWithCurrencyLabel = amountWithCurrencyLabel,
+                errorType = errorType,
+                onRetry = onRetry,
+                onCancel = onCancel,
+                cta = cta,
+            )
+            data class NonCancelable(
+                override val errorType: InteracRefundFlowError,
+                override val onRetry: (() -> Unit),
+                override val cta: CallToAction? = null,
+            ) : InteracRefundFailure(
+                amountWithCurrencyLabel = null,
+                errorType = errorType,
+                onRetry = onRetry,
+                onCancel = null,
+                cta = cta,
+            )
+        }
 
         data class InteracRefundSuccessful(
             val amountWithCurrencyLabel: String,
