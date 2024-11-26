@@ -93,8 +93,8 @@ class CardReaderOnboardingViewModel @Inject constructor(
         get() {
             val cardReaderFlowParam = arguments.cardReaderOnboardingParam.cardReaderFlowParam
             return cardReaderFlowParam is CardReaderFlowParam.WooPosConnection ||
-                (cardReaderFlowParam is CardReaderFlowParam.PaymentOrRefund.Payment &&
-                    cardReaderFlowParam.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS)
+                cardReaderFlowParam is CardReaderFlowParam.PaymentOrRefund.Payment &&
+                cardReaderFlowParam.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
         }
 
     init {
