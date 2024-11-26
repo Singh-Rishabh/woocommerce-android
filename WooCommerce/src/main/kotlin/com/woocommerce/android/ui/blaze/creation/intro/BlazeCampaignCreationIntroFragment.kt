@@ -57,6 +57,10 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
                     navigateToProductSelectorScreen()
                 }
 
+                is BlazeCampaignCreationIntroViewModel.ShowNoProductCTA -> {
+                    // TODO-12503: Add popup with message and button.
+                }
+
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
             }
         }
