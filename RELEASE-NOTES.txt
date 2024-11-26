@@ -3,7 +3,7 @@
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
 21.3
 -----
-
+- [*] Blaze Campaign Intro screen now offers creating a new product if the site has no products yet [https://github.com/woocommerce/woocommerce-android/pull/13001]
 
 -----
 21.2
