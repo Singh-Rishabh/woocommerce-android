@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.payments.hub.depositsummary
+package com.woocommerce.android.ui.payments.hub.payoutsummary
 
 import com.woocommerce.android.tools.SelectedSite
 import kotlinx.coroutines.flow.flow
@@ -7,34 +7,34 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
 import org.wordpress.android.fluxc.store.WCWooPaymentsStore
 import javax.inject.Inject
 
-class PaymentsHubDepositSummaryRepository @Inject constructor(
+class PaymentsHubPayoutSummaryRepository @Inject constructor(
     private val store: WCWooPaymentsStore,
     private val site: SelectedSite,
 ) {
-    suspend fun retrieveDepositOverview() =
+    suspend fun retrievePayoutOverview() =
         flow {
             val cachedData = store.getDepositsOverviewAll(site.get())
             if (cachedData != null) {
-                emit(RetrieveDepositOverviewResult.Cache(cachedData))
+                emit(RetrievePayoutOverviewResult.Cache(cachedData))
             }
 
             val fetchedData = store.fetchDepositsOverview(site.get())
             val data = fetchedData.result
             if (fetchedData.isError || data == null) {
                 store.deleteDepositsOverview(site.get())
-                emit(RetrieveDepositOverviewResult.Error(fetchedData.error))
+                emit(RetrievePayoutOverviewResult.Error(fetchedData.error))
             } else {
                 store.insertDepositsOverview(site.get(), data)
-                emit(RetrieveDepositOverviewResult.Remote(data))
+                emit(RetrievePayoutOverviewResult.Remote(data))
             }
         }
 }
 
-sealed class RetrieveDepositOverviewResult {
-    data class Error(val error: WooError) : RetrieveDepositOverviewResult()
+sealed class RetrievePayoutOverviewResult {
+    data class Error(val error: WooError) : RetrievePayoutOverviewResult()
     data class Cache(val overview: WooPaymentsDepositsOverview) :
-        RetrieveDepositOverviewResult()
+        RetrievePayoutOverviewResult()
 
     data class Remote(val overview: WooPaymentsDepositsOverview) :
-        RetrieveDepositOverviewResult()
+        RetrievePayoutOverviewResult()
 }

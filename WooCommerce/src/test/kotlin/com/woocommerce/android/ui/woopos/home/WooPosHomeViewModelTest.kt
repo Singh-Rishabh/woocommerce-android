@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -262,9 +263,14 @@ class WooPosHomeViewModelTest {
 
     @Test
     fun `given home screen is at checkout, when products are updated, then should not modify screen position`() {
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            )
+        )
         whenever(childrenToParentEventReceiver.events).thenReturn(
             flowOf(
-                ChildToParentEvent.CheckoutClicked(listOf(1)),
+                ChildToParentEvent.CheckoutClicked(itemClickedData),
                 ChildToParentEvent.ProductsStatusChanged.FullScreen
             )
         )

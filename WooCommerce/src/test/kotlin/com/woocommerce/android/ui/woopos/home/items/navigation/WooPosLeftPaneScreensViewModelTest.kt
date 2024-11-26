@@ -41,7 +41,6 @@ class WooPosLeftPaneScreensViewModelTest {
             1L,
             "Product Name",
             numOfVariations = 10,
-            variationIds = emptyList()
         )
         navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(product))
 
@@ -59,7 +58,6 @@ class WooPosLeftPaneScreensViewModelTest {
             1L,
             "Product Name",
             numOfVariations = 10,
-            variationIds = emptyList()
         )
         navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(product))
         navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen)
@@ -73,7 +71,6 @@ class WooPosLeftPaneScreensViewModelTest {
             1L,
             "Product Name",
             numOfVariations = 10,
-            variationIds = emptyList()
         )
         navigationEvents.emit(WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(product))
 
