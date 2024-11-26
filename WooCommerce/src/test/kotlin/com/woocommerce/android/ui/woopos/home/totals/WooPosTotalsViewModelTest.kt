@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentControllerFactory
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -68,6 +69,7 @@ class WooPosTotalsViewModelTest {
     private val networkStatus: WooPosNetworkStatus = mock()
 
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
+
     private val cardReaderManager: CardReaderManager = mock()
     private val orderRepository: OrderDetailRepository = mock()
     private val selectedSite: SelectedSite = mock()
@@ -87,6 +89,28 @@ class WooPosTotalsViewModelTest {
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker = mock()
     private val cardReaderConfigProvider: CardReaderCountryConfigProvider = mock()
     private val paymentReceiptShare: PaymentReceiptShare = mock()
+    private val paymentControllerFactory = CardReaderPaymentControllerFactory(
+        cardReaderManager = cardReaderManager,
+        orderRepository = orderRepository,
+        selectedSite = selectedSite,
+        appPrefs = appPrefs,
+        paymentCollectibilityChecker = paymentCollectibilityChecker,
+        interacRefundableChecker = interacRefundableChecker,
+        tracker = tracker,
+        trackCancelledFlow = trackCanceledFlow,
+        currencyFormatter = currencyFormatter,
+        errorMapper = errorMapper,
+        interacRefundErrorMapper = interacRefundErrorMapper,
+        wooStore = wooStore,
+        dispatchers = coroutinesTestRule.testDispatchers,
+        cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
+        paymentStateProvider = paymentStateProvider,
+        cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
+        paymentReceiptHelper = paymentReceiptHelper,
+        cardReaderOnboardingChecker = cardReaderOnboardingChecker,
+        cardReaderConfigProvider = cardReaderConfigProvider,
+        paymentReceiptShare = paymentReceiptShare,
+    )
 
     private fun createMockSavedStateHandle(): SavedStateHandle {
         return SavedStateHandle(
@@ -632,26 +656,7 @@ class WooPosTotalsViewModelTest {
         priceFormat,
         analyticsTracker,
         networkStatus,
-        cardReaderManager = cardReaderManager,
-        orderRepository = orderRepository,
-        selectedSite = selectedSite,
-        appPrefs = appPrefs,
-        paymentCollectibilityChecker = paymentCollectibilityChecker,
-        interacRefundableChecker = interacRefundableChecker,
-        tracker = tracker,
-        trackCancelledFlow = trackCanceledFlow,
-        currencyFormatter = currencyFormatter,
-        errorMapper = errorMapper,
-        interacRefundErrorMapper = interacRefundErrorMapper,
-        wooStore = wooStore,
-        dispatchers = coroutinesTestRule.testDispatchers,
-        cardReaderTrackingInfoKeeper = cardReaderTrackingInfoKeeper,
-        paymentStateProvider = paymentStateProvider,
-        cardReaderPaymentOrderHelper = cardReaderPaymentOrderHelper,
-        paymentReceiptHelper = paymentReceiptHelper,
-        cardReaderOnboardingChecker = cardReaderOnboardingChecker,
-        cardReaderConfigProvider = cardReaderConfigProvider,
-        paymentReceiptShare = paymentReceiptShare,
-        savedState
+        cardReaderPaymentControllerFactory = paymentControllerFactory,
+        savedState,
     )
 }
