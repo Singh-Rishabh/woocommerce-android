@@ -519,26 +519,41 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
                         WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(productId = 1L, itemNumber = 1),
+                            id = WooPosCartState.Body.WithItems.Item.Id(
+                                productId = 1L,
+                                variationId = 0L,
+                                itemNumber = 1
+                            ),
                             imageUrl = "",
                             name = "VW California, VW California VW California, VW California VW California, " +
                                 "VW California VW California, VW California,VW California",
                             price = "€50,000",
-                            isAppearanceAnimationPlayed = true
+                            isAppearanceAnimationPlayed = true,
+                            productType = ProductType.Simple,
                         ),
                         WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(productId = 2L, itemNumber = 2),
+                            id = WooPosCartState.Body.WithItems.Item.Id(
+                                productId = 2L,
+                                variationId = 0L,
+                                itemNumber = 2
+                            ),
                             imageUrl = "",
                             name = "VW California",
                             price = "$150,000",
-                            isAppearanceAnimationPlayed = true
+                            isAppearanceAnimationPlayed = true,
+                            productType = ProductType.Simple,
                         ),
                         WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(productId = 3L, itemNumber = 3),
+                            id = WooPosCartState.Body.WithItems.Item.Id(
+                                productId = 3L,
+                                variationId = 0L,
+                                itemNumber = 3
+                            ),
                             imageUrl = "",
                             name = "VW California",
                             price = "€250,000",
-                            isAppearanceAnimationPlayed = true
+                            isAppearanceAnimationPlayed = true,
+                            productType = ProductType.Simple,
                         )
                     )
                 ),
@@ -564,25 +579,40 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
                         WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(productId = 1L, itemNumber = 1),
+                            id = WooPosCartState.Body.WithItems.Item.Id(
+                                productId = 1L,
+                                variationId = 0L,
+                                itemNumber = 1
+                            ),
                             imageUrl = "",
                             name = "VW California",
                             price = "€50,000",
-                            isAppearanceAnimationPlayed = true
+                            isAppearanceAnimationPlayed = true,
+                            productType = ProductType.Simple,
                         ),
                         WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(productId = 2L, itemNumber = 2),
+                            id = WooPosCartState.Body.WithItems.Item.Id(
+                                productId = 2L,
+                                variationId = 0L,
+                                itemNumber = 2
+                            ),
                             imageUrl = "",
                             name = "VW California",
                             price = "$150,000",
-                            isAppearanceAnimationPlayed = true
+                            isAppearanceAnimationPlayed = true,
+                            productType = ProductType.Simple,
                         ),
                         WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(productId = 3L, itemNumber = 3),
+                            id = WooPosCartState.Body.WithItems.Item.Id(
+                                productId = 3L,
+                                variationId = 0L,
+                                itemNumber = 3
+                            ),
                             imageUrl = "",
                             name = "VW California",
                             price = "€250,000",
-                            isAppearanceAnimationPlayed = true
+                            isAppearanceAnimationPlayed = true,
+                            productType = ProductType.Simple,
                         )
                     )
                 ),
