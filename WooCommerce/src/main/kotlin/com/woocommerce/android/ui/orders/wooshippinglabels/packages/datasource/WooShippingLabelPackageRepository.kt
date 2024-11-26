@@ -17,7 +17,7 @@ class WooShippingLabelPackageRepository @Inject constructor(
         site: SiteModel = selectedSite.get()
     ) = with(packageRestClient.fetchShippingLabelPackages(site)) {
         result.takeIf { isError.not() }
-            ?.let { packageMapper.invoke(it) }
+            ?.let { packageMapper(it) }
             ?.let { WooResult(it) }
             ?: WooResult(error)
     }
