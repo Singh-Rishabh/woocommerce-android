@@ -37,6 +37,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.ItemList
 import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
@@ -132,7 +133,7 @@ private fun WooPosVariationsScreens(
                         },
                         onEndOfProductsListReached = onEndOfItemListReached,
                         onErrorWhilePaginating = {
-                            VariationsError(modifier = Modifier.height(500.dp)) {
+                            VariationsPaginationError() {
                                 onEndOfItemListReached()
                             }
                         }
@@ -176,6 +177,17 @@ fun VariationsError(modifier: Modifier, onRetryClicked: () -> Unit) {
             )
         )
     }
+}
+
+@Composable
+fun VariationsPaginationError(onRetryClicked: () -> Unit) {
+    WooPosPaginationErrorScreen(
+        message = stringResource(id = R.string.woopos_items_pagination_error),
+        primaryButton = Button(
+            text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
+            click = onRetryClicked
+        ),
+    )
 }
 
 @Composable

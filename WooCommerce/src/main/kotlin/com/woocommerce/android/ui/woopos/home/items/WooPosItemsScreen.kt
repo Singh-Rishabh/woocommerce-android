@@ -48,6 +48,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
@@ -170,8 +171,7 @@ private fun MainItemsList(
                             onItemClicked,
                             onEndOfItemListReached,
                         ) {
-                            ProductsError(
-                                modifier = Modifier.height(500.dp),
+                            ProductsPaginationError(
                                 onRetryClicked = {
                                     onEndOfItemListReached()
                                 }
@@ -322,6 +322,17 @@ fun ProductsError(modifier: Modifier, onRetryClicked: () -> Unit) {
             )
         )
     }
+}
+
+@Composable
+fun ProductsPaginationError(onRetryClicked: () -> Unit) {
+    WooPosPaginationErrorScreen(
+        message = stringResource(id = R.string.woopos_items_pagination_error),
+        primaryButton = Button(
+            text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
+            click = onRetryClicked
+        ),
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
