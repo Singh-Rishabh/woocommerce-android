@@ -525,12 +525,10 @@ class CardReaderConnectViewModel @Inject constructor(
 
     private fun exitFlow(connected: Boolean) {
         val param = arguments.cardReaderFlowParam
-        if (param is CardReaderFlowParam.WooPosConnection) {
-            returnToWooPos()
-        } else if (!connected) {
-            triggerEvent(ExitWithResult(false))
-        } else {
-            triggerEvent(
+        when {
+            param is CardReaderFlowParam.WooPosConnection -> returnToWooPos()
+            !connected -> triggerEvent(ExitWithResult(false))
+            else -> triggerEvent(
                 ShowCardReaderTutorial(
                     arguments.cardReaderFlowParam,
                     arguments.cardReaderType
