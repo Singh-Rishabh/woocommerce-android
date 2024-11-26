@@ -22,9 +22,9 @@ class WooShippingLabelPackageMapper @Inject constructor() {
     private fun mapSavedPackages(savedResponse: List<PredefinedPackageDTO>): List<Package> {
         return savedResponse.map {
             Package(
-                id = it.id ?: "",
-                name = it.name ?: "",
-                dimensions = it.dimensions ?: ""
+                id = it.id.orEmpty(),
+                name = it.name.orEmpty(),
+                dimensions = it.dimensions.orEmpty()
             )
         }
     }
