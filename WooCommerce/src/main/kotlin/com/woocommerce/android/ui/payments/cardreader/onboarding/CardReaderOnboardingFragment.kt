@@ -60,6 +60,8 @@ class CardReaderOnboardingFragment : BaseFragment(R.layout.fragment_card_reader_
                     if (viewModel.isPos) {
                         // If the user is in POS, we should navigate back skipping everything
                         requireActivity().finish()
+                    } else {
+                        findNavController().popBackStack()
                     }
                 }
             }
