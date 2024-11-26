@@ -127,7 +127,5 @@ class CardReaderStatusCheckerViewModel
             val cardReaderOnboardingParams: CardReaderOnboardingParams,
             val cardReaderType: CardReaderType,
         ) : MultiLiveEvent.Event()
-
-        data object ReturnToWooPos : MultiLiveEvent.Event()
     }
 }
