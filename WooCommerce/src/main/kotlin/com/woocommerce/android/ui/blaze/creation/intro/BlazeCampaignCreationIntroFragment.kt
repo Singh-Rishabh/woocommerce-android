@@ -14,7 +14,6 @@ import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.composeView
 import com.woocommerce.android.ui.dialog.WooDialog
 import com.woocommerce.android.ui.main.AppBarStatus
-import com.woocommerce.android.ui.products.AddProductNavigator
 import com.woocommerce.android.ui.products.selector.ProductSelectorFragment
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel.SelectedItem
@@ -35,13 +34,11 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        handleEvents(viewModel.addProductNavigator)
+        handleEvents()
         handleResults()
     }
 
-    private fun handleEvents(
-        addProductNavigator: AddProductNavigator
-    ) {
+    private fun handleEvents() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is BlazeCampaignCreationIntroViewModel.ShowCampaignCreationForm -> {
@@ -70,6 +67,17 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
                         negativeButtonId = R.string.login_app_password_exit_dialog_cancel,
                         posBtnAction = { _, _ -> viewModel.onCreateProductClicked() }
                     )
+                }
+
+                is BlazeCampaignCreationIntroViewModel.NavigateToAddProduct -> {
+                    with(viewModel.addProductNavigator) {
+                        findNavController().navigateToAddProducts(
+                            aiBottomSheetAction = BlazeCampaignCreationIntroFragmentDirections
+                                .actionBlazeCampaignCreationIntroFragmentToAddProductWithAIBottomSheet(),
+                            typesBottomSheetAction = BlazeCampaignCreationIntroFragmentDirections
+                                .actionBlazeCampaignCreationIntroFragmentToProductTypesBottomSheet()
+                        )
+                    }
                 }
 
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
