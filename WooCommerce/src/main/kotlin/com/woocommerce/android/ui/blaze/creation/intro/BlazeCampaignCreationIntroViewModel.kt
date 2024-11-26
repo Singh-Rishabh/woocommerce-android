@@ -59,7 +59,6 @@ class BlazeCampaignCreationIntroViewModel @Inject constructor(
 
                     products.isNotEmpty() -> triggerEvent(ShowProductSelector)
                     else -> {
-                        // TODO-12503: Add popup with message and button.
                         WooLog.w(WooLog.T.BLAZE, "No products available to create a campaign")
                         triggerEvent(ShowNoProductCTA)
                     }
