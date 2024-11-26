@@ -309,7 +309,7 @@
             app:destination="@id/nav_graph_coupons" />
         <action
             android:id="@+id/action_moreMenu_to_paymentFlow"
-            app:destination="@id/paymentFlow"
+            app:destination="@id/nav_graph_payment_flow"
             app:enterAnim="@null">
             <argument
                 android:name="cardReaderFlowParam"

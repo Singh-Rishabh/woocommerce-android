@@ -68,7 +68,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             viewState.savedPackageSelection.packages
                 .map { it.copy(isSelected = false) }
                 .toMutableList()
-                .apply { set(indexOf(selectedPackage), selectedPackage.copy(isSelected = isSelected)) }
+                .safelyUpdate(selectedPackage, selectedPackage.copy(isSelected = isSelected))
                 .let { SavedPackageSelection(it) }
                 .let { viewState.copy(savedPackageSelection = it) }
         }
@@ -77,19 +77,21 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     fun onAddCarrierPackageClick() {
         _viewState.value.carrierPackageSection.carrierPackages
             .asSequence()
-            .map { it.value }.flatten()
-            .map { it.packages }.flatten()
+            .flatMap { it.value }
+            .flatMap { it.packages }
             .find { it.isSelected }
-            ?.let { triggerEvent(CarrierPackageSelected(it)) }
+            ?.let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onAddSavedPackageClick() {
         _viewState.value.savedPackageSelection.packages.find { it.isSelected }
-            ?.let { triggerEvent(SavedPackageSelected(it)) }
+            ?.let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onAddCustomPackageClick() {
-        triggerEvent(CustomPackageCreated(_viewState.value.customPackageCreationData))
+        _viewState.value.customPackageCreationData
+            .asPackageData
+            .let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onPackageTypeSpinnerClick() {
@@ -139,14 +141,18 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         packageGroup.packages
             .map { it.copy(isSelected = false) }
             .toMutableList()
-            .apply {
-                indexOf(packageData)
-                    .takeIf { it != -1 }
-                    ?.let { set(it, packageData.copy(isSelected = isSelected)) }
-                    ?: this
-            }
+            .safelyUpdate(packageData, packageData.copy(isSelected = isSelected))
             .let { packageGroup.copy(packages = it) }
     }.let { carrierPackages.key to it }
+
+    private fun MutableList<PackageData>.safelyUpdate(
+        originalPackage: PackageData,
+        updatedPackage: PackageData
+    ) = apply {
+        indexOf(originalPackage)
+            .takeIf { it != -1 }
+            ?.let { set(it, updatedPackage) }
+    }
 
     @Parcelize
     data class ViewState(
@@ -173,8 +179,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         ENVELOPE(R.string.woo_shipping_labels_package_creation_envelope_type)
     }
 
-    data class SavedPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
-    data class CarrierPackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
-    data class CustomPackageCreated(val packageData: CustomPackageCreationData) : MultiLiveEvent.Event()
+    data class PackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.woocommerce.android.cardreader.CardReaderManager
@@ -55,7 +56,7 @@ class WooPosCardReaderFacade @Inject constructor(
         val intent = WooPosCardReaderActivity.buildIntentForCardReaderConnection(activity!!).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
-        activity!!.startActivity(intent)
+        startActivity(intent)
     }
 
     fun collectPayment(orderId: Long) {
@@ -63,10 +64,19 @@ class WooPosCardReaderFacade @Inject constructor(
         val intent = WooPosCardReaderActivity.buildIntentForPayment(activity!!, orderId).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
-        paymentResultLauncher!!.launch(intent)
+        startActivity(intent)
     }
 
     suspend fun disconnectFromReader() {
         cardReaderManager.disconnectReader()
+    }
+
+    private fun startActivity(intent: Intent) {
+        val options = ActivityOptionsCompat.makeCustomAnimation(
+            activity!!,
+            android.R.anim.fade_in,
+            android.R.anim.fade_out
+        )
+        paymentResultLauncher!!.launch(intent, options)
     }
 }
