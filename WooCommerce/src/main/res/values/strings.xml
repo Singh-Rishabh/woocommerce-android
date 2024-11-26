@@ -4305,7 +4305,8 @@
 
     <string name="woopos_items_list_variable_product_variations">%1$d variations</string>
     <string name="woopos_variations_back_content_description">Back</string>
-    <string name="woopos_variations_screen_pagination_error">"Failed to load more items. Please try again."</string>
+    <string name="woopos_items_pagination_load_more_label">Load more</string>
+    <string name="woopos_items_pagination_error">"Failed to load more items. Please try again."</string>
     <string name="woopos_variations_loading_error_title">Error loading variations</string>
 
 
