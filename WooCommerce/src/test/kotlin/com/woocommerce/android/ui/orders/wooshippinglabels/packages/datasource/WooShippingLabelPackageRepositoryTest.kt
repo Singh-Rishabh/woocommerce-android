@@ -11,6 +11,11 @@ import org.junit.Test
 import org.mockito.Mockito.*
 import org.mockito.kotlin.mock
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.network.BaseRequest
+import org.wordpress.android.fluxc.network.BaseRequest.GenericErrorType.UNKNOWN
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType.GENERIC_ERROR
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 
 class WooShippingLabelPackageRepositoryTest {
@@ -45,8 +50,11 @@ class WooShippingLabelPackageRepositoryTest {
 
     @Test
     fun `fetchAllStorePackages returns WooResult with error`() = runBlocking {
-        val error = Exception("Error fetching packages")
-        `when`(packageRestClient.fetchShippingLabelPackages(siteModel)).thenThrow(error)
+        val error = WooError(
+            type = GENERIC_ERROR,
+            original = UNKNOWN
+        )
+        `when`(packageRestClient.fetchShippingLabelPackages(siteModel)).thenReturn(WooPayload(error))
 
         val result = repository.fetchAllStorePackages()
 
