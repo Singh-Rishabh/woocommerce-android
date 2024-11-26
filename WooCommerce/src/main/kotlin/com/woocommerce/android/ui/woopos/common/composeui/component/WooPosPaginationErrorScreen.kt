@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -47,7 +45,12 @@ fun WooPosPaginationErrorScreen(
 }
 
 @Composable
-private fun WooPosPaginationErrorScreenContent(modifier: Modifier, icon: Painter, message: String, primaryButton: Button) {
+private fun WooPosPaginationErrorScreenContent(
+    modifier: Modifier,
+    icon: Painter,
+    message: String,
+    primaryButton: Button
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()

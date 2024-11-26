@@ -133,7 +133,7 @@ private fun WooPosVariationsScreens(
                         },
                         onEndOfProductsListReached = onEndOfItemListReached,
                         onErrorWhilePaginating = {
-                            VariationsPaginationError() {
+                            VariationsPaginationError {
                                 onEndOfItemListReached()
                             }
                         }
