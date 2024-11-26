@@ -12,7 +12,9 @@ import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.composeView
+import com.woocommerce.android.ui.dialog.WooDialog
 import com.woocommerce.android.ui.main.AppBarStatus
+import com.woocommerce.android.ui.products.AddProductNavigator
 import com.woocommerce.android.ui.products.selector.ProductSelectorFragment
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel.SelectedItem
@@ -58,7 +60,14 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
                 }
 
                 is BlazeCampaignCreationIntroViewModel.ShowNoProductCTA -> {
-                    // TODO-12503: Add popup with message and button.
+                    WooDialog.showDialog(
+                        activity = requireActivity(),
+                        titleId = R.string.blaze_campaign_creation_no_product_modal_title,
+                        messageId = R.string.blaze_campaign_creation_no_product_modal_body,
+                        positiveButtonId = R.string.blaze_campaign_creation_no_product_modal_cta,
+                        negativeButtonId = R.string.login_app_password_exit_dialog_cancel,
+                        posBtnAction = { _, _ -> viewModel.onCreateProductClicked() }
+                    )
                 }
 
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()

@@ -85,7 +85,12 @@ class BlazeCampaignCreationIntroViewModel @Inject constructor(
         analyticsTracker.track(stat = BLAZE_INTRO_LEARN_MORE_TAPPED)
     }
 
+    fun onCreateProductClicked() {
+        triggerEvent(NavigateToAddProduct)
+    }
+
     object ShowProductSelector : MultiLiveEvent.Event()
     data class ShowCampaignCreationForm(val productId: Long, val source: BlazeFlowSource) : MultiLiveEvent.Event()
     object ShowNoProductCTA : MultiLiveEvent.Event()
+    object NavigateToAddProduct : MultiLiveEvent.Event()
 }
