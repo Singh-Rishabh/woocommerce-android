@@ -35,11 +35,13 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        handleEvents()
+        handleEvents(viewModel.addProductNavigator)
         handleResults()
     }
 
-    private fun handleEvents() {
+    private fun handleEvents(
+        addProductNavigator: AddProductNavigator
+    ) {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is BlazeCampaignCreationIntroViewModel.ShowCampaignCreationForm -> {

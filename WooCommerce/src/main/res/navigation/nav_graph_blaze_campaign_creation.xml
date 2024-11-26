@@ -45,6 +45,25 @@
                 android:defaultValue="-1L"
                 app:argType="long" />
         </action>
+        <action
+            android:id="@+id/action_blazeCampaignCreationIntroFragment_to_productTypesBottomSheet"
+            app:destination="@id/productTypesBottomSheetFragment"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@null"
+            app:popEnterAnim="@null"
+            app:popExitAnim="@anim/activity_fade_out">
+            <argument
+                android:name="isAddProduct"
+                android:defaultValue="true"
+                app:argType="boolean" />
+            <argument
+                android:name="source"
+                android:defaultValue="BLAZE_CAMPAIGN_CREATION"
+                app:argType="com.woocommerce.android.ui.products.AddProductSource" />
+        </action>
+        <action
+            android:id="@+id/action_blazeCampaignCreationIntroFragment_to_addProductWithAIBottomSheet"
+            app:destination="@id/addProductWithAIBottomSheet" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignCreationPreviewFragment"
