@@ -9,6 +9,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.totals.receipt.WooPosIsReceiptSendingAvailable
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -59,6 +60,7 @@ class WooPosTotalsViewModelTest {
         on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
+    private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable = mock()
 
     private companion object {
         private const val EMPTY_ORDER_ID = -1L
@@ -517,12 +519,15 @@ class WooPosTotalsViewModelTest {
         // THEN
         val state = viewModel.state.value
         assertThat(state).isEqualTo(
-            WooPosTotalsViewState.PaymentSuccess(orderTotalText = "$3.00")
+            WooPosTotalsViewState.PaymentSuccess(
+                orderTotalText = "$3.00",
+                isReceiptAvailable = false,
+            )
         )
         verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
     }
 
-    @org.junit.Test
+    @Test
     fun `given there is no internet, when trying to complete payment, then trigger proper event`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
@@ -573,7 +578,7 @@ class WooPosTotalsViewModelTest {
         verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.NoInternet)
     }
 
-    @org.junit.Test
+    @Test
     fun `given there is no internet, when trying to complete payment, then collect payment method is not called`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
@@ -639,6 +644,7 @@ class WooPosTotalsViewModelTest {
         priceFormat,
         analyticsTracker,
         networkStatus,
+        isReceiptSendingAvailable,
         savedState
     )
 }
