@@ -10,6 +10,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.BaseRequest
 import org.wordpress.android.fluxc.network.BaseRequest.GenericErrorType.UNKNOWN
@@ -28,7 +29,7 @@ class WooShippingLabelPackageRepositoryTest {
 
     @Before
     fun setUp() {
-        `when`(selectedSite.get()).thenReturn(siteModel)
+        whenever(selectedSite.get()).thenReturn(siteModel)
         repository = WooShippingLabelPackageRepository(selectedSite, packageMapper, packageRestClient)
     }
 
@@ -39,8 +40,8 @@ class WooShippingLabelPackageRepositoryTest {
             carrierPackages = listOf()
         )
         val packageResponse = mock<PackageResponse>()
-        `when`(packageRestClient.fetchShippingLabelPackages(siteModel)).thenReturn(WooPayload(packageResponse))
-        `when`(packageMapper(packageResponse)).thenReturn(storePackages)
+        whenever(packageRestClient.fetchShippingLabelPackages(siteModel)).thenReturn(WooPayload(packageResponse))
+        whenever(packageMapper(packageResponse)).thenReturn(storePackages)
 
         val result = repository.fetchAllStorePackages()
 
@@ -54,7 +55,7 @@ class WooShippingLabelPackageRepositoryTest {
             type = GENERIC_ERROR,
             original = UNKNOWN
         )
-        `when`(packageRestClient.fetchShippingLabelPackages(siteModel)).thenReturn(WooPayload(error))
+        whenever(packageRestClient.fetchShippingLabelPackages(siteModel)).thenReturn(WooPayload(error))
 
         val result = repository.fetchAllStorePackages()
 
