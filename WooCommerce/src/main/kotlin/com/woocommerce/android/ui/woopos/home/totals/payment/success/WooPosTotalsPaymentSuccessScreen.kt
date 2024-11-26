@@ -107,7 +107,7 @@ fun WooPosPaymentSuccessScreen(
 
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
             Text(
-                text = stringResource(R.string.woopos_success_screen_total, state.orderTotalText),
+                text = state.orderTotalText,
                 style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
@@ -183,7 +183,10 @@ private fun CheckMarkIcon(
 fun WooPosPaymentSuccessScreenPreview() {
     WooPosTheme {
         WooPosPaymentSuccessScreen(
-            state = WooPosTotalsViewState.PaymentSuccess(orderTotalText = "$13.18"),
+            state = WooPosTotalsViewState.PaymentSuccess(
+                orderTotalText = "A payment of 13.18 was successfully made",
+                isReceiptAvailable = true,
+            ),
             bottomAnimationStarted = true,
             iconAnimationStarted = true,
             onNewTransactionClicked = {}
