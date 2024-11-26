@@ -2,10 +2,10 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.WooShippingLabelPackageRestClient
-import javax.inject.Inject
-import javax.inject.Singleton
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class WooShippingLabelPackageRepository @Inject constructor(

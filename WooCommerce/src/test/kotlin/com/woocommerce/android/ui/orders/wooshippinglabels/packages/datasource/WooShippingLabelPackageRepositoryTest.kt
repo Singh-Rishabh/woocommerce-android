@@ -5,10 +5,9 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.P
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.WooShippingLabelPackageRestClient
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.Assert.*
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
@@ -21,11 +20,10 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 class WooShippingLabelPackageRepositoryTest : BaseUnitTest() {
 
     private lateinit var repository: WooShippingLabelPackageRepository
-    private val selectedSite: SelectedSite = mock(SelectedSite::class.java)
-    private val packageMapper: WooShippingLabelPackageMapper = mock(WooShippingLabelPackageMapper::class.java)
-    private val packageRestClient: WooShippingLabelPackageRestClient =
-        mock(WooShippingLabelPackageRestClient::class.java)
-    private val siteModel: SiteModel = mock(SiteModel::class.java)
+    private val selectedSite: SelectedSite = mock()
+    private val packageMapper: WooShippingLabelPackageMapper = mock()
+    private val packageRestClient: WooShippingLabelPackageRestClient = mock()
+    private val siteModel: SiteModel = mock()
 
     @Before
     fun setUp() {
@@ -45,8 +43,8 @@ class WooShippingLabelPackageRepositoryTest : BaseUnitTest() {
 
         val result = repository.fetchAllStorePackages()
 
-        assertTrue(result.isError.not())
-        assertEquals(storePackages, result.model)
+        assertThat(result.isError).isFalse
+        assertThat(storePackages).isEqualTo(result.model)
     }
 
     @Test
@@ -59,7 +57,7 @@ class WooShippingLabelPackageRepositoryTest : BaseUnitTest() {
 
         val result = repository.fetchAllStorePackages()
 
-        assertTrue(result.isError)
-        assertEquals(error, result.error)
+        assertThat(result.isError).isTrue
+        assertThat(error).isEqualTo(result.error)
     }
 }
