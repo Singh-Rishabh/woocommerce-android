@@ -89,6 +89,14 @@ class CardReaderOnboardingViewModel @Inject constructor(
 
     private var lastShownOnboardingState: CardReaderOnboardingState? = null
 
+    val isPos: Boolean
+        get() {
+            val cardReaderFlowParam = arguments.cardReaderOnboardingParam.cardReaderFlowParam
+            return cardReaderFlowParam is CardReaderFlowParam.WooPosConnection ||
+                (cardReaderFlowParam is CardReaderFlowParam.PaymentOrRefund.Payment &&
+                    cardReaderFlowParam.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS)
+        }
+
     init {
         when (val onboardingParam = arguments.cardReaderOnboardingParam) {
             is Check -> refreshState(onboardingParam.pluginType)
@@ -143,7 +151,7 @@ class CardReaderOnboardingViewModel @Inject constructor(
     @Suppress("LongMethod", "ComplexMethod")
     private fun showOnboardingState(state: CardReaderOnboardingState) {
         lastShownOnboardingState = state
-        if (arguments.cardReaderOnboardingParam.cardReaderFlowParam is CardReaderFlowParam.WooPosConnection) {
+        if (isPos) {
             paymentsFlowTracker.trackOnboardingShownInPosFlow(state)
         }
 
@@ -453,7 +461,7 @@ class CardReaderOnboardingViewModel @Inject constructor(
     }
 
     fun clearViewModel() {
-        if (arguments.cardReaderOnboardingParam.cardReaderFlowParam is CardReaderFlowParam.WooPosConnection) {
+        if (isPos) {
             lastShownOnboardingState?.let {
                 paymentsFlowTracker.trackOnboardingDismissedInPosFlow(it)
             }
