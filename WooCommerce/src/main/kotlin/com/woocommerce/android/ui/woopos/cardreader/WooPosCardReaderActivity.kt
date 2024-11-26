@@ -4,12 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.fragment.NavHostFragment
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.statuschecker.CardReaderStatusCheckerDialogFragmentArgs
+import com.woocommerce.android.ui.woopos.util.ext.isGestureNavigation
 import com.woocommerce.android.util.WooLog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,6 +25,7 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupTopAndBottomInsets()
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
 
         val navHostFragment = supportFragmentManager.findFragmentById(
@@ -26,6 +34,37 @@ class WooPosCardReaderActivity : AppCompatActivity(R.layout.activity_woo_pos_car
 
         setupNavGraph(navHostFragment)
         observeResult(navHostFragment)
+    }
+
+    private fun setupTopAndBottomInsets() {
+        window.navigationBarColor = ContextCompat.getColor(this, android.R.color.transparent)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val rootView = findViewById<View>(R.id.root)
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            insets.toWindowInsets()?.let { windowInsets ->
+                val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(windowInsets, view)
+                val isGestureNavigation = insetsCompat.isGestureNavigation(this)
+
+                val topPadding = insetsCompat.getInsets(WindowInsetsCompat.Type.statusBars()).top
+                val bottomPadding = if (isGestureNavigation) {
+                    0
+                } else {
+                    insetsCompat.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                }
+                view.updatePadding(
+                    top = topPadding,
+                    bottom = bottomPadding
+                )
+            }
+
+            insets
+        }
+    }
+
+    override fun finish() {
+        super.finish()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     private fun observeResult(navHostFragment: NavHostFragment) {

@@ -1,2 +1,0 @@
-21.1:
-Onze nieuwste update voert belangrijke verbeteringen door om je WooCommerce-ervaring te stroomlijnen! We hebben de bewerkingstoestemmingen voor bestellingen in verschillende valuta's hersteld, de hubweergave voor betalingen geoptimaliseerd, het delen van betalingsbewijzen via Google SMS mogelijk gemaakt en de selectie van datumbereiken hersteld zodat je tijdzone correct wordt weergeven. Geniet van een verbeterd systeem!

@@ -13,25 +13,43 @@ import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardRea
 import javax.inject.Inject
 
 class CardReaderPaymentStateProvider @Inject constructor() {
-    fun provideFailedPaymentState(
+    fun provideCancellableFailedPaymentState(
         cardReaderType: CardReaderType,
         errorType: PaymentFlowError,
-        amountWithCurrencyLabel: String?,
-        onCancel: (() -> Unit)? = null,
+        amountWithCurrencyLabel: String,
+        onCancel: (() -> Unit),
         onRetry: (() -> Unit)? = null,
         cta: CardReaderPaymentOrRefundState.CallToAction? = null,
     ) = when (cardReaderType) {
-        BUILT_IN -> BuiltInReaderFailedPayment(
+        BUILT_IN -> BuiltInReaderFailedPayment.Cancelable(
             errorType = errorType,
             amountWithCurrencyLabel = amountWithCurrencyLabel,
             onCancel = onCancel,
             onRetry = onRetry,
             cta = cta
         )
-        EXTERNAL -> ExternalReaderFailedPayment(
+        EXTERNAL -> ExternalReaderFailedPayment.Cancelable(
             errorType = errorType,
             amountWithCurrencyLabel = amountWithCurrencyLabel,
             onCancel = onCancel,
+            onRetry = onRetry,
+            cta = cta
+        )
+    }
+
+    fun provideNonCancellableFailedPaymentState(
+        cardReaderType: CardReaderType,
+        errorType: PaymentFlowError,
+        onRetry: (() -> Unit),
+        cta: CardReaderPaymentOrRefundState.CallToAction? = null,
+    ) = when (cardReaderType) {
+        BUILT_IN -> BuiltInReaderFailedPayment.NonCancelable(
+            errorType = errorType,
+            onRetry = onRetry,
+            cta = cta
+        )
+        EXTERNAL -> ExternalReaderFailedPayment.NonCancelable(
+            errorType = errorType,
             onRetry = onRetry,
             cta = cta
         )

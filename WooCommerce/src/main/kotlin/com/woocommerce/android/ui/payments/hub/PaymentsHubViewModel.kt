@@ -39,10 +39,10 @@ import com.woocommerce.android.ui.payments.hub.PaymentsHubViewModel.CashOnDelive
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewModel.PaymentsHubEvents.ShowToast
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewModel.PaymentsHubEvents.ShowToastString
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem
-import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem.DepositSummaryListItem
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem.HeaderItem
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem.LearnMoreListItem
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem.NonToggleableListItem
+import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem.PayoutSummaryListItem
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.ListItem.ToggleableListItem
 import com.woocommerce.android.ui.payments.hub.PaymentsHubViewState.OnboardingErrorAction
 import com.woocommerce.android.ui.payments.taptopay.TapToPayAvailabilityStatus
@@ -185,7 +185,7 @@ class PaymentsHubViewModel @Inject constructor(
         isOnboardingComplete: Boolean,
         cashOnDeliveryItem: ToggleableListItem
     ): List<ListItem> = mutableListOf(
-        DepositSummaryListItem(index = 0),
+        PayoutSummaryListItem(index = 0),
         HeaderItem(
             label = UiStringRes(R.string.card_reader_hub_actions_category_header),
             index = 1

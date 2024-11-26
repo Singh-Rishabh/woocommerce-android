@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
-import com.woocommerce.android.ui.compose.component.BottomSheetHandle
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
@@ -55,12 +54,12 @@ fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
-    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
+    handlerModifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     Column(
-        modifier
+        handlerModifier
             .clickable(
                 onClick = {
                     scope.launch {
@@ -79,7 +78,16 @@ fun ShipmentDetails(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BottomSheetHandle(modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100)))
+        Icon(
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100)),
+            painter = if (scaffoldState.bottomSheetState.isExpanded) {
+                painterResource(R.drawable.ic_arrow_down_26)
+            } else {
+                painterResource(R.drawable.ic_arrow_up_26)
+            },
+            contentDescription = stringResource(R.string.order_creation_expand_collapse_order_totals),
+            tint = colorResource(id = R.color.color_primary),
+        )
         AnimatedVisibility(visible = scaffoldState.bottomSheetState.isCollapsed) {
             Text(
                 text = stringResource(R.string.shipping_label_shipment_details_title),
@@ -90,16 +98,12 @@ fun ShipmentDetails(
         }
     }
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        ShipmentDetailsLandscape(
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
-        )
+        ShipmentDetailsLandscape(modifier = modifier)
     } else {
         ShipmentDetailsPortrait(
+            modifier = modifier,
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
     }
 }
@@ -108,7 +112,6 @@ fun ShipmentDetails(
 private fun ShipmentDetailsPortrait(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
-    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -134,20 +137,16 @@ private fun ShipmentDetailsPortrait(
                 modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
             )
         }
-        PurchasesSection(
-            total = "$120.99",
+        Divider()
+        MarkComplete(
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
     }
 }
 
 @Composable
 private fun ShipmentDetailsLandscape(
-    markOrderComplete: Boolean,
-    onMarkOrderCompleteChange: (Boolean) -> Unit,
-    onPurchaseShippingLabel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -185,12 +184,6 @@ private fun ShipmentDetailsLandscape(
                 )
             }
         }
-        PurchasesSectionLandscape(
-            total = "$120.99",
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            onPurchaseShippingLabel = onPurchaseShippingLabel
-        )
     }
 }
 
@@ -273,11 +266,7 @@ private fun OrderDetailsSectionLandscape(
 fun ShipmentDetailsLandscapePreview() {
     WooThemeWithBackground {
         Surface {
-            ShipmentDetailsLandscape(
-                markOrderComplete = false,
-                onMarkOrderCompleteChange = {},
-                onPurchaseShippingLabel = {}
-            )
+            ShipmentDetailsLandscape()
         }
     }
 }

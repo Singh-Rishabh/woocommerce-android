@@ -23,7 +23,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentO
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlow
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -70,7 +70,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     private val tracker: PaymentsFlowTracker,
-    private val trackCancelledFlow: CardReaderTrackCanceledFlow,
+    private val trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -83,7 +83,6 @@ class WooPosTotalsViewModel @Inject constructor(
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker,
     private val cardReaderConfigProvider: CardReaderCountryConfigProvider,
     private val paymentReceiptShare: PaymentReceiptShare,
-
     private val savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -184,8 +183,6 @@ class WooPosTotalsViewModel @Inject constructor(
                 createCardReaderPaymentController(dataState.value.orderId)
                 cardReaderPaymentController?.start()
                 listenToPaymentState()
-            } else {
-                // TODO: Update view state to ask user to connect card reader. Once connected, proceed with payment.
             }
         }
     }

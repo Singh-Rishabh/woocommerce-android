@@ -87,6 +87,8 @@ class CardReaderOnboardingViewModel @Inject constructor(
     private val viewState = MutableLiveData<CardReaderOnboardingViewState>()
     val viewStateData: LiveData<CardReaderOnboardingViewState> = viewState
 
+    private var lastShownOnboardingState: CardReaderOnboardingState? = null
+
     init {
         when (val onboardingParam = arguments.cardReaderOnboardingParam) {
             is Check -> refreshState(onboardingParam.pluginType)
@@ -140,6 +142,11 @@ class CardReaderOnboardingViewModel @Inject constructor(
 
     @Suppress("LongMethod", "ComplexMethod")
     private fun showOnboardingState(state: CardReaderOnboardingState) {
+        lastShownOnboardingState = state
+        if (arguments.cardReaderOnboardingParam.cardReaderFlowParam is CardReaderFlowParam.WooPosConnection) {
+            paymentsFlowTracker.trackOnboardingShownInPosFlow(state)
+        }
+
         when (state) {
             is OnboardingCompleted -> {
                 continueFlow()
@@ -434,7 +441,21 @@ class CardReaderOnboardingViewModel @Inject constructor(
                 )
             }
             is CardReaderFlowParam.WooPosConnection -> {
-                error("Unsupported flow param: $params")
+                triggerEvent(
+                    CardReaderOnboardingEvent.ContinueToConnection(params, requireNotNull(arguments.cardReaderType))
+                )
+            }
+        }
+    }
+
+    override fun onCleared() {
+        clearViewModel()
+    }
+
+    fun clearViewModel() {
+        if (arguments.cardReaderOnboardingParam.cardReaderFlowParam is CardReaderFlowParam.WooPosConnection) {
+            lastShownOnboardingState?.let {
+                paymentsFlowTracker.trackOnboardingDismissedInPosFlow(it)
             }
         }
     }

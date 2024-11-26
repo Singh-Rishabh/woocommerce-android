@@ -96,7 +96,7 @@ class CardReaderPaymentController(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     private val tracker: PaymentsFlowTracker,
-    private val trackCancelledFlow: CardReaderTrackCanceledFlow,
+    private val trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,
@@ -212,10 +212,9 @@ class CardReaderPaymentController(
                 }
             } ?: run {
                 tracker.trackPaymentFailed("Fetching order failed")
-                _paymentState.value = paymentStateProvider.provideFailedPaymentState(
+                _paymentState.value = paymentStateProvider.provideNonCancellableFailedPaymentState(
                     cardReaderType = cardReaderType,
                     errorType = PaymentFlowError.FetchingOrderFailed,
-                    amountWithCurrencyLabel = null,
                     onRetry = { initPaymentFlow(isRetry = true) },
                 )
             }
@@ -244,9 +243,8 @@ class CardReaderPaymentController(
                     orderId = paymentOrRefund.orderId,
                     errorMessage = "Fetching order failed"
                 )
-                _paymentState.value = CardReaderInteracRefundState.InteracRefundFailure(
+                _paymentState.value = CardReaderInteracRefundState.InteracRefundFailure.NonCancelable(
                     errorType = InteracRefundFlowError.FetchingOrderFailed,
-                    amountWithCurrencyLabel = null,
                     onRetry = { initRefundFlow(isRetry = true) },
                 )
             }
@@ -496,7 +494,7 @@ class CardReaderPaymentController(
         onRetryClicked: () -> Unit
     ) = when (errorType) {
         is InteracRefundFlowError.ContactSupportError ->
-            CardReaderInteracRefundState.InteracRefundFailure(
+            CardReaderInteracRefundState.InteracRefundFailure.Cancelable(
                 errorType = errorType,
                 amountWithCurrencyLabel = amountLabel,
                 cta = CardReaderPaymentOrRefundState.CallToAction(
@@ -507,14 +505,14 @@ class CardReaderPaymentController(
             )
 
         is InteracRefundFlowError.NonRetryableError ->
-            CardReaderInteracRefundState.InteracRefundFailure(
+            CardReaderInteracRefundState.InteracRefundFailure.Cancelable(
                 errorType = errorType,
                 amountWithCurrencyLabel = amountLabel,
                 onCancel = ::onBackPressed
             )
 
         else ->
-            CardReaderInteracRefundState.InteracRefundFailure(
+            CardReaderInteracRefundState.InteracRefundFailure.Cancelable(
                 errorType = errorType,
                 amountWithCurrencyLabel = amountLabel,
                 onRetry = onRetryClicked,
@@ -554,7 +552,7 @@ class CardReaderPaymentController(
         amountLabel: String,
         onRetryClicked: () -> Unit
     ): CardReaderPaymentState.PaymentFailed = when (errorType) {
-        is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.ContactSupportError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
@@ -564,7 +562,7 @@ class CardReaderPaymentController(
             ),
             onCancel = ::onBackPressed
         )
-        is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
@@ -574,13 +572,13 @@ class CardReaderPaymentController(
                 onCallToActionTapped = { onEnableNfcClicked() }
             )
         )
-        is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
             onCancel = ::onBackPressed,
         )
-        is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideFailedPaymentState(
+        is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             cta = CardReaderPaymentOrRefundState.CallToAction(
                 label = R.string.card_reader_payment_payment_failed_purchase_hardware_reader,
@@ -590,7 +588,7 @@ class CardReaderPaymentController(
             amountWithCurrencyLabel = amountLabel,
             onCancel = ::onBackPressed,
         )
-        else -> paymentStateProvider.provideFailedPaymentState(
+        else -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
@@ -711,6 +709,7 @@ class CardReaderPaymentController(
                     errorDescription = receiptResult.exceptionOrNull()?.message ?: "Unknown error",
                 )
                 triggerEvent(CardReaderPaymentEvent.ShowErrorMessage(R.string.receipt_fetching_error))
+                onCancelPaymentFlow()
             }
         }
     }

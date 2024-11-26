@@ -19,7 +19,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentC
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
-import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlow
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
@@ -75,7 +75,7 @@ class WooPosTotalsViewModelTest {
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker = mock()
     private val interacRefundableChecker: CardReaderInteracRefundableChecker = mock()
     private val tracker: PaymentsFlowTracker = mock()
-    private val trackCanceledFlow = CardReaderTrackCanceledFlow(tracker)
+    private val trackCanceledFlow = CardReaderTrackCanceledFlowAction(tracker)
     private val currencyFormatter: CurrencyFormatter = mock()
     private val errorMapper: CardReaderPaymentErrorMapper = mock()
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper = mock()
