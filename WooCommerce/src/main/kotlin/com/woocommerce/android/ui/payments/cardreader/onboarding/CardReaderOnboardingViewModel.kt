@@ -89,7 +89,7 @@ class CardReaderOnboardingViewModel @Inject constructor(
 
     private var lastShownOnboardingState: CardReaderOnboardingState? = null
 
-    private val isPos: Boolean
+    val isPos: Boolean
         get() {
             val cardReaderFlowParam = arguments.cardReaderOnboardingParam.cardReaderFlowParam
             return cardReaderFlowParam is CardReaderFlowParam.WooPosConnection ||

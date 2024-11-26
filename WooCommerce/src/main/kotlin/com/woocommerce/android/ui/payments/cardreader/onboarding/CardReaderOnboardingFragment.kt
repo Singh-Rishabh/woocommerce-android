@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat.getColor
@@ -51,6 +52,18 @@ class CardReaderOnboardingFragment : BaseFragment(R.layout.fragment_card_reader_
         val binding = FragmentCardReaderOnboardingBinding.bind(view)
         setupToolbar(binding)
         initObservers(binding)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (viewModel.isPos) {
+                        // If the user is in POS, we should navigate back skipping everything
+                        requireActivity().finish()
+                    }
+                }
+            }
+        )
     }
 
     private fun setupToolbar(binding: FragmentCardReaderOnboardingBinding) {
