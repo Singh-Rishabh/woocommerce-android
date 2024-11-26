@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.totals.receipt.WooPosIsReceiptSendingAvailable
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -37,6 +38,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
+    private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -122,7 +124,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         check(state is WooPosTotalsViewState.Totals)
                         uiState.value = WooPosTotalsViewState.PaymentSuccess(
                             orderTotalText = state.orderTotalText,
-
+                            isReceiptAvailable = isReceiptSendingAvailable()
                         )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }

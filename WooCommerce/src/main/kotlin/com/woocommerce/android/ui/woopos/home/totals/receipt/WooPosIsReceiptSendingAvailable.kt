@@ -11,7 +11,7 @@ class WooPosIsReceiptSendingAvailable @Inject constructor(
     private val isReceiptsEnabled: WooPosIsReceiptsEnabled,
     private val getWooCoreVersion: GetWooCorePluginCachedVersion,
 ) {
-    suspend fun invoke() =
+    suspend operator fun invoke() =
         if (!isReceiptsEnabled()) {
             false
         } else {

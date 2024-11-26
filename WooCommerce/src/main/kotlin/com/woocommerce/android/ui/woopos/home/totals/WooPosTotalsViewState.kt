@@ -15,7 +15,7 @@ sealed class WooPosTotalsViewState : Parcelable {
 
     data class PaymentSuccess(
         val orderTotalText: String,
-        val canSendReceipt: Boolean,
+        val isReceiptAvailable: Boolean,
     ) : WooPosTotalsViewState()
 
     data class Error(val message: String) : WooPosTotalsViewState()
