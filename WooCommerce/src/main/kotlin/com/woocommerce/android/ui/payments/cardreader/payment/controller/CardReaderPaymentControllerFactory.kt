@@ -50,10 +50,10 @@ class CardReaderPaymentControllerFactory @Inject constructor(
     fun create(
         orderId: Long,
         paymentType: PaymentType,
-        scoppe: CoroutineScope,
+        coroutineScope: CoroutineScope,
         isTTPPaymentInProgress: KMutableProperty0<Boolean>,
     ): CardReaderPaymentController = CardReaderPaymentController(
-        scope = scoppe,
+        scope = coroutineScope,
         cardReaderManager = cardReaderManager,
         orderRepository = orderRepository,
         selectedSite = selectedSite,

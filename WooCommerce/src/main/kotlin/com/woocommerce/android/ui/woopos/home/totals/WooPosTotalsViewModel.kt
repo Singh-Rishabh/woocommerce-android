@@ -79,7 +79,7 @@ class WooPosTotalsViewModel @Inject constructor(
         cardReaderPaymentController = cardReaderPaymentControllerFactory.create(
             orderId = orderId,
             paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS,
-            scoppe = viewModelScope,
+            coroutineScope = viewModelScope,
             isTTPPaymentInProgress = ::isTTPPaymentInProgress,
         )
     }
