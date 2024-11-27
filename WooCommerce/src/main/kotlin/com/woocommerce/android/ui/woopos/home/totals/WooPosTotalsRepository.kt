@@ -1,11 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import com.woocommerce.android.model.Order
-import com.woocommerce.android.model.Product
-import com.woocommerce.android.model.ProductVariation
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditRepository
-import com.woocommerce.android.ui.orders.creation.configuration.ProductConfiguration
-import com.woocommerce.android.ui.products.variations.VariationDetailRepository
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
@@ -14,7 +10,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
 import java.util.Date
 import javax.inject.Inject
 
