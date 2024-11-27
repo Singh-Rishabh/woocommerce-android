@@ -1,6 +1,7 @@
 package com.woocommerce.android.e2e.tests.screenshot
 
 import android.Manifest
+import android.content.Intent
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -66,6 +67,7 @@ class ScreenshotTest : TestBase(failOnUnmatchedWireMockRequests = false) {
 
     @Before
     fun setUp() {
+        cleanStatusBar()
         rule.inject()
     }
 
@@ -125,5 +127,19 @@ class ScreenshotTest : TestBase(failOnUnmatchedWireMockRequests = false) {
         NotificationsScreen(wooNotificationBuilder)
             .thenTakeScreenshot<NotificationsScreen>("push-notifications")
             .goBackToApp()
+    }
+
+    private fun cleanStatusBar() {
+        fun getSystemUiDemoIntent() = Intent("com.android.systemui.demo").setPackage("com.android.systemui")
+        getSystemUiDemoIntent()
+            .putExtra("command", "clock")
+            .putExtra("hhmm", "1230").apply {
+                appContext.sendOrderedBroadcast(this, null)
+            }
+        getSystemUiDemoIntent()
+            .putExtra("command", "network")
+            .putExtra("mobile", "hide").apply {
+                appContext.sendOrderedBroadcast(this, null)
+            }
     }
 }
