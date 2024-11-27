@@ -13,9 +13,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 
 @Composable
 fun WooPosTotalsPaymentReceiptScreen(
+    state: WooPosTotalsViewState.ReceiptSending,
     onEmailAddressChanged: (String) -> Unit,
     onSendReceiptClicked: () -> Unit,
 ) {
@@ -40,7 +42,7 @@ fun WooPosTotalsPaymentReceiptScreen(
             )
 
             TextField(
-                value = "",
+                value = state.email,
                 onValueChange = onEmailAddressChanged,
                 label = { "email" },
                 modifier = Modifier.constrainAs(email) {

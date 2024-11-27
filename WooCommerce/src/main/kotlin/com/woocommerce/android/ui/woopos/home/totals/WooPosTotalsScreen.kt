@@ -46,6 +46,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 import kotlinx.coroutines.delay
 
@@ -73,7 +74,7 @@ private fun WooPosTotalsScreen(
             if (state is WooPosTotalsViewState.PaymentSuccess) {
                 WooPosPaymentSuccessScreen(
                     state,
-                    onReceiptClicked = {},
+                    onReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked) },
                     onNewTransactionClicked = { onUIEvent(WooPosTotalsUIEvent.OnNewTransactionClicked) }
                 )
             }
@@ -82,6 +83,16 @@ private fun WooPosTotalsScreen(
         StateChangeAnimated(visible = state is WooPosTotalsViewState.Loading) {
             if (state is WooPosTotalsViewState.Loading) {
                 TotalsLoading()
+            }
+        }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.ReceiptSending) {
+            if (state is WooPosTotalsViewState.ReceiptSending) {
+                WooPosTotalsPaymentReceiptScreen(
+                    state,
+                    onEmailAddressChanged = {},
+                    onSendReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnSendReceiptClicked) }
+                )
             }
         }
 
