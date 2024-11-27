@@ -104,8 +104,13 @@ class ProductInventoryViewModel @Inject constructor(
         }
     }
 
+    fun onProductUniqueGlobalIdChanged(globalUniqueId: String) {
+        onDataChanged(globalUniqueId = globalUniqueId)
+    }
+
     fun onDataChanged(
         sku: String? = inventoryData.sku,
+        globalUniqueId: String? = inventoryData.globalUniqueId,
         backorderStatus: ProductBackorderStatus? = inventoryData.backorderStatus,
         isSoldIndividually: Boolean? = inventoryData.isSoldIndividually,
         isStockManaged: Boolean? = inventoryData.isStockManaged,
@@ -115,6 +120,7 @@ class ProductInventoryViewModel @Inject constructor(
         viewState = viewState.copy(
             inventoryData = InventoryData(
                 sku = sku,
+                globalUniqueId = globalUniqueId,
                 backorderStatus = backorderStatus,
                 isSoldIndividually = isSoldIndividually,
                 isStockManaged = isStockManaged,

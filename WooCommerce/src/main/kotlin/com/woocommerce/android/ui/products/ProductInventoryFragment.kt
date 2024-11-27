@@ -220,6 +220,10 @@ class ProductInventoryFragment :
 
         with(binding.productGlobalUniqueId) {
             visibility = if (featureIsEnabled) View.VISIBLE else View.GONE
+
+            setOnTextChangedListener {
+                viewModel.onProductUniqueGlobalIdChanged(it.toString())
+            }
         }
     }
 
