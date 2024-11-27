@@ -123,7 +123,7 @@ fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val marginBetweenButtons = 32.dp.toAdaptivePadding()
+            val marginBetweenButtons = 16.dp.toAdaptivePadding()
             if (state.isReceiptAvailable) {
                 WooPosButton(
                     modifier = Modifier
