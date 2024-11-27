@@ -248,7 +248,7 @@ class WooPosItemsViewModelTest {
             // THEN
             verify(fromChildToParentEventSender).sendToParent(
                 ChildToParentEvent.ItemClickedInProductSelector(
-                    WooPosItemNavigationData.SimpleProductData(
+                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
                         id = product.id
                     )
                 )
@@ -836,7 +836,6 @@ class WooPosItemsViewModelTest {
                     id = 1,
                     name = "Product 1",
                     numOfVariations = 10,
-                    variationIds = emptyList()
                 )
             )
         )

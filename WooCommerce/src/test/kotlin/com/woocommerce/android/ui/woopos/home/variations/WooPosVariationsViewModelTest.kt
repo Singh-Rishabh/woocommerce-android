@@ -6,6 +6,9 @@ import androidx.lifecycle.asLiveData
 import app.cash.turbine.test
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
+import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsDataSource
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsUIEvents
@@ -41,6 +44,7 @@ class WooPosVariationsViewModelTest {
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
     private val getProductById: WooPosGetProductById = mock()
+    private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val variationsDataSource: WooPosVariationsDataSource = mock()
     private val priceFormat: WooPosFormatPrice = mock {
         onBlocking { invoke(any()) }.thenReturn("$10.0")
@@ -51,7 +55,12 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then loading state is displayed`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(
+            childrenToParentEventSender,
+            getProductById,
+            variationsDataSource,
+            priceFormat
+        )
         wooPosVariationsViewModel.init(1L)
 
         assertThat(
@@ -65,7 +74,12 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch product`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(
+            childrenToParentEventSender,
+            getProductById,
+            variationsDataSource,
+            priceFormat
+        )
         wooPosVariationsViewModel.init(1L)
 
         verify(getProductById).invoke(1L)
@@ -75,7 +89,12 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch variation`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(
+            childrenToParentEventSender,
+            getProductById,
+            variationsDataSource,
+            priceFormat
+        )
         wooPosVariationsViewModel.init(1L)
 
         verify(variationsDataSource).fetchVariations(eq(1L), any())
@@ -85,7 +104,12 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch variation with forceRefresh set to true`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(
+            childrenToParentEventSender,
+            getProductById,
+            variationsDataSource,
+            priceFormat
+        )
         wooPosVariationsViewModel.init(1L)
 
         verify(variationsDataSource).fetchVariations(1L, forceRefresh = true)
@@ -107,7 +131,12 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
 
@@ -134,7 +163,12 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
 
@@ -161,7 +195,12 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
 
@@ -189,7 +228,12 @@ class WooPosVariationsViewModelTest {
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
 
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.onUIEvent(
@@ -215,7 +259,12 @@ class WooPosVariationsViewModelTest {
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             val states: MutableList<WooPosVariationsViewState> = mutableListOf()
             wooPosVariationsViewModel.viewState.asLiveData().observeForever {
                 states.add(it)
@@ -239,7 +288,12 @@ class WooPosVariationsViewModelTest {
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(1L))
 
@@ -259,7 +313,12 @@ class WooPosVariationsViewModelTest {
             Result.failure(Throwable())
         )
 
-        wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+        wooPosVariationsViewModel = WooPosVariationsViewModel(
+            childrenToParentEventSender,
+            getProductById,
+            variationsDataSource,
+            priceFormat
+        )
         wooPosVariationsViewModel.init(1L)
 
         wooPosVariationsViewModel.viewState.test {
@@ -278,7 +337,12 @@ class WooPosVariationsViewModelTest {
             whenever(variationsDataSource.fetchVariations(any(), any())).thenReturn(
                 Result.failure(Throwable())
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             val states: MutableList<WooPosVariationsViewState> = mutableListOf()
             wooPosVariationsViewModel.viewState.asLiveData().observeForever {
                 states.add(it)
@@ -311,7 +375,12 @@ class WooPosVariationsViewModelTest {
             whenever(variationsDataSource.loadMore(any())).thenReturn(
                 Result.failure(Throwable())
             )
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
@@ -328,7 +397,12 @@ class WooPosVariationsViewModelTest {
                 Result.failure(Throwable())
             )
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -346,7 +420,12 @@ class WooPosVariationsViewModelTest {
             )
             whenever(variationsDataSource.canLoadMore()).thenReturn(false)
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -373,7 +452,12 @@ class WooPosVariationsViewModelTest {
             )
             whenever(variationsDataSource.canLoadMore()).thenReturn(true)
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -403,7 +487,12 @@ class WooPosVariationsViewModelTest {
             )
             whenever(variationsDataSource.canLoadMore()).thenReturn(true)
 
-            wooPosVariationsViewModel = WooPosVariationsViewModel(getProductById, variationsDataSource, priceFormat)
+            wooPosVariationsViewModel = WooPosVariationsViewModel(
+                childrenToParentEventSender,
+                getProductById,
+                variationsDataSource,
+                priceFormat
+            )
             wooPosVariationsViewModel.init(1L)
             wooPosVariationsViewModel.loadMore(1L)
 
@@ -412,4 +501,27 @@ class WooPosVariationsViewModelTest {
                 assertFalse(value.loadingMore)
             }
         }
+
+    @Test
+    fun `given OnItemClicked event, when onUIEvent is called, then onVariationClicked is triggered`() = runTest {
+        // Arrange
+        val productId = 1L
+        val variationId = 2L
+        wooPosVariationsViewModel = WooPosVariationsViewModel(
+            childrenToParentEventSender,
+            getProductById,
+            variationsDataSource,
+            priceFormat
+        )
+
+        // Act
+        wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.OnItemClicked(productId, variationId))
+
+        // Assert
+        verify(childrenToParentEventSender).sendToParent(
+            ChildToParentEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.Variation(productId, variationId)
+            )
+        )
+    }
 }
