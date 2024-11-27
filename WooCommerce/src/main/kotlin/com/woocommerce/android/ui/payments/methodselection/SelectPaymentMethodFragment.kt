@@ -211,9 +211,12 @@ class SelectPaymentMethodFragment : BaseFragment(R.layout.fragment_select_paymen
 
                 is SkipScreenInPosAndNavigateToCardReaderPaymentFlow -> {
                     if (findNavController().currentDestination?.id == R.id.selectPaymentMethodFragment) {
+                        // as we open the dialog, we want to make the UI was still invisible behind it
+                        // but we need to keep it in back stack as IPP logic works with returning notice back
+                        binding.snackRoot.isVisible = false
                         findNavController().navigate(
                             SelectPaymentMethodFragmentDirections
-                                .actionWooPosSelectPaymentMethodFragmentToCardReaderPaymentFlow(
+                                .actionSelectPaymentMethodFragmentToCardReaderPaymentFlow(
                                     event.cardReaderFlowParam,
                                     event.cardReaderType
                                 )
