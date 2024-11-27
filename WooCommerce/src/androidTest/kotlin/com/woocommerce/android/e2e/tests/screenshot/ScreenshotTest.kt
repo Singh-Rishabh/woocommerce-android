@@ -1,7 +1,6 @@
 package com.woocommerce.android.e2e.tests.screenshot
 
 import android.Manifest
-import android.util.Log
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
@@ -21,15 +20,12 @@ import com.woocommerce.android.notifications.WooNotificationBuilder
 import com.woocommerce.android.ui.main.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import tools.fastlane.screengrab.Screengrab
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy
-import tools.fastlane.screengrab.cleanstatusbar.CleanStatusBar
 import tools.fastlane.screengrab.locale.LocaleTestRule
-import java.util.concurrent.TimeoutException
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -65,25 +61,12 @@ class ScreenshotTest : TestBase(failOnUnmatchedWireMockRequests = false) {
     @get:Rule(order = 8)
     var activityRule = ActivityScenarioRule(MainActivity::class.java)
 
-    @Inject lateinit var wooNotificationBuilder: WooNotificationBuilder
+    @Inject
+    lateinit var wooNotificationBuilder: WooNotificationBuilder
 
     @Before
     fun setUp() {
-        try {
-            CleanStatusBar.enableWithDefaults()
-        } catch (e: RuntimeException) {
-            if (e.cause is TimeoutException) {
-                Log.w("ScreenshotTest", e)
-            } else {
-                throw e
-            }
-        }
         rule.inject()
-    }
-
-    @After
-    fun tearDown() {
-        CleanStatusBar.disable()
     }
 
     @Test
