@@ -1,7 +1,11 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.model.Product
+import com.woocommerce.android.model.ProductVariation
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditRepository
+import com.woocommerce.android.ui.orders.creation.configuration.ProductConfiguration
+import com.woocommerce.android.ui.products.variations.VariationDetailRepository
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
@@ -10,6 +14,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import java.math.BigDecimal
 import java.util.Date
 import javax.inject.Inject
 
@@ -64,12 +69,10 @@ class WooPosTotalsRepository @Inject constructor(
                 val itemData = itemClickedDataList.find { it.id == id }!!
                 when (itemData) {
                     is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> createSimpleProductOrderItem(
-                        id,
                         quantity,
                         itemData
                     )
                     is WooPosItemsViewModel.ItemClickedData.Variation -> createVariationOrderItem(
-                        id,
                         quantity,
                         itemData
                     )
@@ -78,14 +81,13 @@ class WooPosTotalsRepository @Inject constructor(
     }
 
     private suspend fun createSimpleProductOrderItem(
-        id: Long,
         quantity: Int,
         itemData: WooPosItemsViewModel.ItemClickedData.SimpleProduct
     ): Order.Item {
         val productResult = getProductById(itemData.id)!!
         return Order.Item.EMPTY.copy(
             itemId = 0L,
-            productId = id,
+            productId = itemData.id,
             variationId = 0L,
             quantity = quantity.toFloat(),
             total = EMPTY_TOTALS_SUBTOTAL_VALUE,
@@ -96,7 +98,6 @@ class WooPosTotalsRepository @Inject constructor(
     }
 
     private suspend fun createVariationOrderItem(
-        id: Long,
         quantity: Int,
         itemData: WooPosItemsViewModel.ItemClickedData.Variation
     ): Order.Item {
@@ -107,12 +108,14 @@ class WooPosTotalsRepository @Inject constructor(
         )!!
         return Order.Item.EMPTY.copy(
             itemId = 0L,
-            productId = id,
+            productId = itemData.productId,
             variationId = variationResult.remoteVariationId,
             quantity = quantity.toFloat(),
             total = EMPTY_TOTALS_SUBTOTAL_VALUE,
             subtotal = EMPTY_TOTALS_SUBTOTAL_VALUE,
-            attributesList = emptyList(),
+            attributesList = variationResult.attributes
+                .filterNot { it.name.isNullOrEmpty() || it.option.isNullOrEmpty() }
+                .map { Order.Item.Attribute(it.name!!, it.option!!) },
             name = variationResult.getName(productResult),
         )
     }

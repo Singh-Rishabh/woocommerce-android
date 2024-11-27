@@ -44,6 +44,7 @@ class ProductListHandler @Inject constructor(private val repository: ProductSele
     }.flatMapLatest { it }
 
     suspend fun loadFromCacheAndFetch(
+        forceRefresh: Boolean = false,
         searchQuery: String = "",
         filters: Map<ProductFilterOption, String> = emptyMap(),
         searchType: SearchType,
@@ -67,7 +68,7 @@ class ProductListHandler @Inject constructor(private val repository: ProductSele
                 }
             }
         } else {
-            fetchProducts()
+            fetchProducts(forceRefresh)
         }
     }
 
@@ -83,8 +84,8 @@ class ProductListHandler @Inject constructor(private val repository: ProductSele
         }
     }
 
-    private suspend fun fetchProducts(): Result<Unit> {
-        return repository.fetchProducts(offset.value, PAGE_SIZE, productFilters.value).onSuccess {
+    private suspend fun fetchProducts(forceRefresh: Boolean = false): Result<Unit> {
+        return repository.fetchProducts(forceRefresh, offset.value, PAGE_SIZE, productFilters.value).onSuccess {
             canLoadMore.set(it)
             offset.value += PAGE_SIZE
         }.map { }
