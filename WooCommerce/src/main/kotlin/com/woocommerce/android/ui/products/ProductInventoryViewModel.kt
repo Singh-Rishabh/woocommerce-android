@@ -164,6 +164,7 @@ class ProductInventoryViewModel @Inject constructor(
     @Parcelize
     data class InventoryData(
         val sku: String? = null,
+        val globalUniqueId: String? = null,
         val isStockManaged: Boolean? = null,
         val isSoldIndividually: Boolean? = null,
         val stockStatus: ProductStockStatus? = null,
