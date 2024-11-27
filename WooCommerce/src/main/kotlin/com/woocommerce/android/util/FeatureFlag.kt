@@ -7,7 +7,6 @@ import android.content.Context
  */
 enum class FeatureFlag {
     DB_DOWNGRADE,
-    INBOX,
     WC_SHIPPING_BANNER,
     BETTER_CUSTOMER_SEARCH_M2,
     ORDER_CREATION_AUTO_TAX_RATE,
@@ -35,7 +34,6 @@ enum class FeatureFlag {
             PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
-            INBOX,
             SHOW_INBOX_CTA,
             GOOGLE_ADS_M1,
             CUSTOM_FIELDS,
