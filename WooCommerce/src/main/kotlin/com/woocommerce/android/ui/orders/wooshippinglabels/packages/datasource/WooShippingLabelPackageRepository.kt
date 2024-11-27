@@ -22,23 +22,23 @@ class WooShippingLabelPackageRepository @Inject constructor(
             ?: WooResult(error)
     }
 
-    data class StorePackages(
-        val savedPackages: List<Package>,
-        val carrierPackages: List<Carrier>
+    data class StorePackagesDAO(
+        val savedPackages: List<PackageDAO>,
+        val carrierPackages: List<CarrierDAO>
     )
 
-    data class Package(
+    data class PackageDAO(
         val id: String,
         val name: String,
         val dimensions: String
     )
 
-    data class Carrier(
-        val packageGroup: List<CarrierPackageGroup>
+    data class CarrierDAO(
+        val packageGroup: List<CarrierPackageGroupDAO>
     )
 
-    data class CarrierPackageGroup(
+    data class CarrierPackageGroupDAO(
         val description: String,
-        val packages: List<Package>
+        val packages: List<PackageDAO>
     )
 }
