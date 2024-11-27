@@ -69,6 +69,7 @@ fun WooPosTotalsPaymentReceiptScreen(
 @Composable
 fun PreviewWooPosTotalsPaymentReceiptScreen() {
     WooPosTotalsPaymentReceiptScreen(
+        state = WooPosTotalsViewState.ReceiptSending("email hint"),
         onEmailAddressChanged = {},
         onSendReceiptClicked = {},
     )

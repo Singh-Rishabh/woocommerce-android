@@ -81,6 +81,10 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
                 createOrderDraft(dataState.value.itemClickedDataList)
             }
+            WooPosTotalsUIEvent.OnSendReceiptClicked -> TODO()
+            WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
+                uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+            }
         }
     }
 
