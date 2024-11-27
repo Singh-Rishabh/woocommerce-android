@@ -33,7 +33,7 @@ class WooShippingLabelPackageRepositoryTest : BaseUnitTest() {
 
     @Test
     fun `fetchAllStorePackages returns WooResult with result`() = testBlocking {
-        val storePackagesDAO = WooShippingLabelPackageRepository.StorePackagesDAO(
+        val storePackagesDAO = StorePackagesDAO(
             savedPackages = listOf(),
             carrierPackages = listOf()
         )

@@ -1,9 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository.CarrierDAO
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository.CarrierPackageGroupDAO
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository.PackageDAO
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository.StorePackagesDAO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CarrierPackageGroupDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CarrierPredefinedPackagesDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.PackageResponse
