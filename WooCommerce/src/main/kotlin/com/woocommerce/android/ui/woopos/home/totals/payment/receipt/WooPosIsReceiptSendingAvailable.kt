@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.receipt
+package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
 
 import com.woocommerce.android.extensions.semverCompareTo
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
