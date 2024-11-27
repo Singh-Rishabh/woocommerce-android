@@ -107,6 +107,13 @@ class ProductInventoryFragment :
                     binding.productSku.text = it
                 }
             }
+
+            new.inventoryData.globalUniqueId?.takeIfNotEqualTo(old?.inventoryData?.globalUniqueId) {
+                if (binding.productGlobalUniqueId.text != it) {
+                    binding.productGlobalUniqueId.text = it
+                }
+            }
+
             new.inventoryData.stockQuantity?.takeIfNotEqualTo(old?.inventoryData?.stockQuantity) {
                 val quantity = StringUtils.formatCountDecimal(it, forInput = true)
 

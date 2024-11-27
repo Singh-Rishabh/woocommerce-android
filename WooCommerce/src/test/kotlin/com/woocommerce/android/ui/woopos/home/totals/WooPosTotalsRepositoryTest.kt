@@ -5,6 +5,8 @@ import com.woocommerce.android.ui.orders.creation.OrderCreateEditRepository
 import com.woocommerce.android.ui.products.ProductHelper
 import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
+import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.util.DateUtils
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -20,6 +22,7 @@ import org.mockito.kotlin.whenever
 class WooPosTotalsRepositoryTest {
     private val orderCreateEditRepository: OrderCreateEditRepository = mock()
     private val getProductById: WooPosGetProductById = mock()
+    private val getVariationById: WooPosGetVariationById = mock()
 
     private val dateUtils: DateUtils = mock()
 
@@ -36,12 +39,13 @@ class WooPosTotalsRepositoryTest {
         repository = WooPosTotalsRepository(
             orderCreateEditRepository,
             dateUtils,
-            getProductById
+            getProductById,
+            getVariationById
         )
-        val productIds = emptyList<Long>()
+        val itemClickedData = emptyList<WooPosItemsViewModel.ItemClickedData>()
 
         // WHEN
-        val result = runCatching { repository.createOrderWithProducts(productIds) }
+        val result = runCatching { repository.createOrderWithProducts(itemClickedData) }
 
         // THEN
         assertThat(result.exceptionOrNull()).isInstanceOf(IllegalStateException::class.java)
@@ -53,16 +57,27 @@ class WooPosTotalsRepositoryTest {
         repository = WooPosTotalsRepository(
             orderCreateEditRepository,
             dateUtils,
-            getProductById
+            getProductById,
+            getVariationById
         )
-        val productIds = listOf(1L, 2L, 3L)
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 2L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 3L
+            )
+        )
 
         whenever(getProductById(1L)).thenReturn(product1)
         whenever(getProductById(2L)).thenReturn(product1)
         whenever(getProductById(3L)).thenReturn(product1)
 
         // WHEN
-        repository.createOrderWithProducts(productIds = productIds)
+        repository.createOrderWithProducts(itemClickedData)
 
         // THEN
         val orderCapture = argumentCaptor<Order>()
@@ -82,14 +97,19 @@ class WooPosTotalsRepositoryTest {
         repository = WooPosTotalsRepository(
             orderCreateEditRepository,
             dateUtils,
-            getProductById
+            getProductById,
+            getVariationById
         )
-        val productIds = listOf(1L)
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            )
+        )
 
         whenever(getProductById(1L)).thenReturn(product1)
 
         // WHEN
-        repository.createOrderWithProducts(productIds = productIds)
+        repository.createOrderWithProducts(itemClickedData)
 
         // THEN
         val orderCapture = argumentCaptor<Order>()
@@ -108,16 +128,36 @@ class WooPosTotalsRepositoryTest {
         repository = WooPosTotalsRepository(
             orderCreateEditRepository,
             dateUtils,
-            getProductById
+            getProductById,
+            getVariationById
         )
-        val productIds = listOf(1L, 1L, 2L, 3L, 3L, 3L)
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 2L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 3L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 3L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 3L
+            )
+        )
 
         whenever(getProductById(1L)).thenReturn(product1)
         whenever(getProductById(2L)).thenReturn(product1)
         whenever(getProductById(3L)).thenReturn(product1)
 
         // WHEN
-        repository.createOrderWithProducts(productIds = productIds)
+        repository.createOrderWithProducts(itemClickedData)
 
         // THEN
         val orderCapture = argumentCaptor<Order>()
@@ -136,14 +176,25 @@ class WooPosTotalsRepositoryTest {
         repository = WooPosTotalsRepository(
             orderCreateEditRepository,
             dateUtils,
-            getProductById
+            getProductById,
+            getVariationById
         )
-        val productIds = listOf(1L, -1L, 3L)
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = -1L
+            ),
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 3L
+            )
+        )
         val mockOrder: Order = mock()
         whenever(orderCreateEditRepository.createOrUpdateOrder(any(), eq(""))).thenReturn(Result.success(mockOrder))
 
         // WHEN
-        val result = runCatching { repository.createOrderWithProducts(productIds) }
+        val result = runCatching { repository.createOrderWithProducts(itemClickedData) }
 
         // THEN
         assertThat(result.isFailure).isTrue()
