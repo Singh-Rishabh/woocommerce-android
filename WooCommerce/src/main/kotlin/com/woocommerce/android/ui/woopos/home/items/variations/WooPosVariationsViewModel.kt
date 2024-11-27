@@ -3,7 +3,10 @@ package com.woocommerce.android.ui.woopos.home.items.variations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
+import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,6 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WooPosVariationsViewModel @Inject constructor(
+    private val fromChildToParentEventSender: WooPosChildrenToParentEventSender,
     private val getProductById: WooPosGetProductById,
     private val variationsDataSource: WooPosVariationsDataSource,
     private val priceFormat: WooPosFormatPrice,
@@ -65,6 +69,7 @@ class WooPosVariationsViewModel @Inject constructor(
                                 WooPosItem.Variation(
                                     id = it.remoteVariationId,
                                     name = it.getName(product),
+                                    productId = it.remoteProductId,
                                     price = priceFormat(it.price),
                                     imageUrl = it.image?.source
                                 )
@@ -124,7 +129,23 @@ class WooPosVariationsViewModel @Inject constructor(
             is WooPosVariationsUIEvents.VariationsLoadingErrorRetryButtonClicked -> {
                 fetchVariations(event.productId, withPullToRefresh = false, withCart = false)
             }
+
+            is WooPosVariationsUIEvents.OnItemClicked -> {
+                onVariationClicked(event.productId, event.variationId)
+            }
         }
+    }
+
+    private fun onVariationClicked(productId: Long, variationId: Long) {
+        sendEventToParent(
+            ChildToParentEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.Variation(productId, variationId)
+            )
+        )
+    }
+
+    private fun sendEventToParent(event: ChildToParentEvent) {
+        viewModelScope.launch { fromChildToParentEventSender.sendToParent(event) }
     }
 
     private fun onEndOfVariationsListReached(productId: Long) {

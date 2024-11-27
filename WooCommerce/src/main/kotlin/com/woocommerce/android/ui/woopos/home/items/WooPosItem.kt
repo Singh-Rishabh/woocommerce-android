@@ -23,6 +23,7 @@ sealed class WooPosItem(
     data class Variation(
         override val id: Long,
         override val name: String,
+        val productId: Long,
         val price: String,
         val imageUrl: String?,
     ) : WooPosItem(id, name)

@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items
 
+import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
@@ -108,7 +110,7 @@ class WooPosItemsViewModel @Inject constructor(
         when (event.item) {
             is SimpleProduct -> {
                 onItemClicked(
-                    WooPosItemNavigationData.SimpleProductData(
+                    ItemClickedData.SimpleProduct(
                         id = event.item.id
                     )
                 )
@@ -122,19 +124,14 @@ class WooPosItemsViewModel @Inject constructor(
                                 id = event.item.id,
                                 name = event.item.name,
                                 numOfVariations = event.item.numOfVariations,
-                                variationIds = event.item.variationIds
                             )
                         )
                     )
                 }
             }
 
-            is WooPosItem.Variation -> {
-                onItemClicked(
-                    WooPosItemNavigationData.SimpleProductData(
-                        id = event.item.id
-                    )
-                )
+            else -> {
+                // Do nothing
             }
         }
     }
@@ -279,7 +276,7 @@ class WooPosItemsViewModel @Inject constructor(
         )
     }
 
-    private fun onItemClicked(itemData: WooPosItemNavigationData) {
+    private fun onItemClicked(itemData: ItemClickedData) {
         sendEventToParent(ChildToParentEvent.ItemClickedInProductSelector(itemData))
     }
 
@@ -294,4 +291,10 @@ class WooPosItemsViewModel @Inject constructor(
     private fun Product.isVariable() =
         productType == ProductType.VARIABLE ||
             productType == ProductType.VARIATION
+
+    @Parcelize
+    sealed class ItemClickedData(open val id: Long) : Parcelable {
+        data class SimpleProduct(override val id: Long) : ItemClickedData(id)
+        data class Variation(val productId: Long, override val id: Long) : ItemClickedData(id)
+    }
 }

@@ -1,6 +1,9 @@
 *** PLEASE FOLLOW THIS FORMAT: [<priority indicator, more stars = higher priority>] <description> [<PR URL>]
 *** Use [*****] to indicate smoke tests of all critical flows should be run on the final APK before release (e.g. major library or targetSdk updates).
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
+21.3
+-----
+
 -----
 21.2
 - [Internal] Changed a way how authenticated web view opened in the IPP flows [https://github.com/woocommerce/woocommerce-android/pull/12908]
@@ -13,6 +16,7 @@
 - [**] Enables creating a new WP.com account during Jetpack activation flow [https://github.com/woocommerce/woocommerce-android/issues/11114]
 - [*] Renamed Deposits to Payouts [https://github.com/woocommerce/woocommerce-android/pull/12961]
 - [*] Switched to use `/wp/v2` for media uploads on Jetpack sites, this fixes media upload issues caused by XMLRPC problems [https://github.com/woocommerce/woocommerce-android/pull/12938]
+- [*] Fixed UI glitch when updating card reader firmware fails [https://github.com/woocommerce/woocommerce-android/pull/12912]
 
 21.1
 -----
