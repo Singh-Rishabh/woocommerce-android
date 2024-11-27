@@ -123,11 +123,10 @@ class WooPosTotalsViewModel @Inject constructor(
                     is WooPosCardReaderPaymentStatus.Success -> {
                         val state = uiState.value
                         check(state is WooPosTotalsViewState.Totals)
-                        val orderTotalText =
-                            resourceProvider.getString(
-                                R.string.woopos_success_screen_total,
-                                state.orderTotalText
-                            )
+                        val orderTotalText = resourceProvider.getString(
+                            R.string.woopos_success_screen_total,
+                            state.orderTotalText
+                        )
                         uiState.value = WooPosTotalsViewState.PaymentSuccess(
                             orderTotalText = orderTotalText,
                             isReceiptAvailable = isReceiptSendingAvailable()
