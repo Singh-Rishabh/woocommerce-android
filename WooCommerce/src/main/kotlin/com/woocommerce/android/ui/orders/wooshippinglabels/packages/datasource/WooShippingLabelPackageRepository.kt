@@ -24,7 +24,7 @@ class WooShippingLabelPackageRepository @Inject constructor(
 
     data class StorePackages(
         val savedPackages: List<Package>,
-        val carrierPackages: List<CarrierGroup>
+        val carrierPackages: List<Carrier>
     )
 
     data class Package(
@@ -33,7 +33,11 @@ class WooShippingLabelPackageRepository @Inject constructor(
         val dimensions: String
     )
 
-    data class CarrierGroup(
+    data class Carrier(
+        val packageGroup: List<CarrierPackageGroup>
+    )
+
+    data class CarrierPackageGroup(
         val description: String,
         val packages: List<Package>
     )
