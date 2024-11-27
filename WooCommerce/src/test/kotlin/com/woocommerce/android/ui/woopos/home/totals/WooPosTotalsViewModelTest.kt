@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
@@ -61,7 +62,9 @@ class WooPosTotalsViewModelTest {
         on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable = mock()
+    private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable = mock {
+        onBlocking { invoke() }.thenReturn(false)
+    }
 
     private companion object {
         private const val EMPTY_ORDER_ID = -1L
@@ -537,7 +540,14 @@ class WooPosTotalsViewModelTest {
         val paymentStatusFlow = MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Unknown)
         whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
 
+        val resourceProvider: ResourceProvider = mock {
+            on { getString(R.string.woopos_success_screen_total, "$3.00") }.thenReturn(
+                "A payment of $3.00 was successfully made"
+            )
+        }
+
         val viewModel = createViewModel(
+            resourceProvider = resourceProvider,
             savedState = savedState,
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
@@ -553,7 +563,7 @@ class WooPosTotalsViewModelTest {
         val state = viewModel.state.value
         assertThat(state).isEqualTo(
             WooPosTotalsViewState.PaymentSuccess(
-                orderTotalText = "$3.00",
+                orderTotalText = "A payment of $3.00 was successfully made",
                 isReceiptAvailable = false,
             )
         )
@@ -668,6 +678,25 @@ class WooPosTotalsViewModelTest {
 
         // THEN
         verify(cardReaderFacade, never()).collectPayment(any())
+    }
+
+    @Test
+    fun `when OnStartReceiptFlowClicked is triggered, then update state to ReceiptSending with empty email`() = runTest {
+        // GIVEN
+        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+            on { events }.thenReturn(mock())
+        }
+        val savedState = createMockSavedStateHandle()
+        val viewModel = createViewModel(
+            savedState = savedState,
+            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+        )
+
+        // WHEN
+        viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
+
+        // THEN
+        assertThat(viewModel.state.value).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
     }
 
     private fun createViewModel(
