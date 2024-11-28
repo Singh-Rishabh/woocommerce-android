@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import org.mockito.kotlin.whenever
@@ -10,14 +11,19 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.mockito.Mockito.*
+import org.mockito.kotlin.mock
+import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
 
-    private val packageRepository: WooShippingLabelPackageRepository = mock(WooShippingLabelPackageRepository::class.java)
-    private val fetchPredefinedPackagesFromStore = FetchPredefinedPackagesFromStore(packageRepository)
+    private val packageRepository: WooShippingLabelPackageRepository = mock()
+    private val selectedSite: SelectedSite = mock()
+    private val fetchPredefinedPackagesFromStore = FetchPredefinedPackagesFromStore(
+        selectedSite,
+        packageRepository
+    )
 
     @Test
     fun `invoke should return StorePredefinedPackages with carrier and saved packages`() = testBlocking {
@@ -51,9 +57,11 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 )
             )
         )
-        whenever(packageRepository.fetchAllStorePackages()).thenReturn(WooResult(storePackages))
+        val site = SiteModel().apply { id = 1 }
+        whenever(selectedSite.getOrNull()).thenReturn(site)
+        whenever(packageRepository.fetchAllStorePackages(site)).thenReturn(WooResult(storePackages))
 
-        val result = fetchPredefinedPackagesFromStore()
+        val result = fetchPredefinedPackagesFromStore()!!
 
         assertThat(result.savedPackageSelection.packages).containsExactly(
             PackageData(
@@ -96,9 +104,11 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
     @Test
     fun `invoke should return empty StorePredefinedPackages when fetchAllStorePackages returns error`() = testBlocking {
         val error = WooError(WooErrorType.GENERIC_ERROR, BaseRequest.GenericErrorType.UNKNOWN)
-        whenever(packageRepository.fetchAllStorePackages()).thenReturn(WooResult(error))
+        val site = SiteModel().apply { id = 1 }
+        whenever(selectedSite.getOrNull()).thenReturn(site)
+        whenever(packageRepository.fetchAllStorePackages(site)).thenReturn(WooResult(error))
 
-        val result = fetchPredefinedPackagesFromStore()
+        val result = fetchPredefinedPackagesFromStore()!!
 
         assertThat(result.savedPackageSelection.packages).isEmpty()
         assertThat(result.carrierPackageSelection.carrierPackages).isEmpty()
