@@ -2,17 +2,19 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.viewmodel.BaseUnitTest
-import org.mockito.kotlin.whenever
-import org.wordpress.android.fluxc.network.BaseRequest
-import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
-import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.network.BaseRequest
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -27,36 +29,7 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
 
     @Test
     fun `invoke should return StorePredefinedPackages with carrier and saved packages`() = testBlocking {
-        val storePackages = StorePackagesDAO(
-            savedPackages = listOf(
-                PackageDAO(
-                    id = "1",
-                    name = "Saved Package 1",
-                    dimensions = "dimensions"
-                ),
-                PackageDAO(
-                    id = "2",
-                    name = "Saved Package 2",
-                    dimensions = "dimensions"
-                )
-            ),
-            carrierPackages = mapOf(
-                CarrierType.USPS to CarrierDAO(
-                    packageGroup = listOf(
-                        CarrierPackageGroupDAO(
-                            description = "Group 1",
-                            packages = listOf(
-                                PackageDAO(
-                                    id = "1",
-                                    name = "Carrier Package 1",
-                                    dimensions = "dimensions"
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
+        val storePackages = generatePackagesData()
         val site = SiteModel().apply { id = 1 }
         whenever(selectedSite.getOrNull()).thenReturn(site)
         whenever(packageRepository.fetchAllStorePackages(site)).thenReturn(WooResult(storePackages))
@@ -113,4 +86,35 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
         assertThat(result.savedPackageSelection.packages).isEmpty()
         assertThat(result.carrierPackageSelection.carrierPackages).isEmpty()
     }
+
+    private fun generatePackagesData() = StorePackagesDAO(
+        savedPackages = listOf(
+            PackageDAO(
+                id = "1",
+                name = "Saved Package 1",
+                dimensions = "dimensions"
+            ),
+            PackageDAO(
+                id = "2",
+                name = "Saved Package 2",
+                dimensions = "dimensions"
+            )
+        ),
+        carrierPackages = mapOf(
+            CarrierType.USPS to CarrierDAO(
+                packageGroup = listOf(
+                    CarrierPackageGroupDAO(
+                        description = "Group 1",
+                        packages = listOf(
+                            PackageDAO(
+                                id = "1",
+                                name = "Carrier Package 1",
+                                dimensions = "dimensions"
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
 }
