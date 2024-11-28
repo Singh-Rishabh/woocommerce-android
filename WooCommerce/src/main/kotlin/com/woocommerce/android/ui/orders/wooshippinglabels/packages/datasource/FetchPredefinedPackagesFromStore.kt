@@ -17,18 +17,16 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
     suspend operator fun invoke(): StorePredefinedPackages? {
         val site = selectedSite.getOrNull() ?: return null
         val storePackages = packageRepository.fetchAllStorePackages(site)
+            .takeIf { it.isError.not() }
+            ?.model
+            ?: return null
 
         val carrierPackages = storePackages
-            .takeIf { it.isError.not() }
-            ?.model
-            ?.filterCarrierData()
-            ?: emptyMap()
+            .filterCarrierData()
 
         val savedPackages = storePackages
-            .takeIf { it.isError.not() }
-            ?.model
-            ?.savedPackages
-            ?.map { packageDAO ->
+            .savedPackages
+            .map { packageDAO ->
                 PackageData(
                     type = PackageType.BOX,
                     name = packageDAO.name,
@@ -38,7 +36,7 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                     height = "",
                     isSelected = false
                 )
-            } ?: emptyList()
+            }
 
         return StorePredefinedPackages(
             carrierPackageSelection = CarrierPackageSelection(carrierPackages),
