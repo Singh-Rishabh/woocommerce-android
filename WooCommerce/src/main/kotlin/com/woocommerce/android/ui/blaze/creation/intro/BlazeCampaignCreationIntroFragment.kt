@@ -38,6 +38,11 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
         handleResults()
     }
 
+    override fun onStop() {
+        super.onStop()
+        WooDialog.onCleared()
+    }
+
     private fun handleEvents() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
