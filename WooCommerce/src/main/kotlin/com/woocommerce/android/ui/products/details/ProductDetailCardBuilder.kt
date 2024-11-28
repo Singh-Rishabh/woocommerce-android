@@ -530,22 +530,21 @@ class ProductDetailCardBuilder(
     }
 
     // Builds "One time shipping" description label. This label is affected by:
-    // - Free trial state:
-    //     Checked with `supportsOneTimeShipping`. If free trial is set, one time shipping is automatically disabled.
-    //     In this case we show nothing.
-    // - One time shipping toggle state:
-    //     This is checked with `.oneTimeShipping`. If one time shipping is allowed, it can still be toggled on/off.
-    //     In this case we either show "One time shipping: Enabled" or "One time shipping: Disabled"
+    // - Support state: Checked with `supportsOneTimeShipping`. One time shipping may not be supported,
+    //   for example during free trials.
+    // - Toggle state: Checked with `oneTimeShipping`. When shipping is supported, it can be toggled on/off.
+    //
+    // We only show "Enabled" when shipping is both supported AND enabled.
+    // In all other cases (not supported, or supported but disabled), we show nothing.
     private fun buildOneTimeShippingDescription(subscription: SubscriptionDetails?): String {
         if (subscription == null) return ""
 
         return when {
-            !subscription.supportsOneTimeShipping -> ""
-            subscription.oneTimeShipping -> resources.getString(string.subscription_one_time_shipping_enabled)
-            else -> resources.getString(string.subscription_one_time_shipping_disabled)
+            subscription.supportsOneTimeShipping && subscription.oneTimeShipping ->
+                resources.getString(string.subscription_one_time_shipping_enabled)
+            else -> ""
         }
     }
-
     // enable editing external product link
     private fun Product.externalLink(): ProductProperty? {
         return if (this.productType == EXTERNAL) {
