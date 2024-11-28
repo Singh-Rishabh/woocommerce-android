@@ -18,9 +18,9 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
-import kotlinx.coroutines.launch
 
 @HiltViewModel
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
