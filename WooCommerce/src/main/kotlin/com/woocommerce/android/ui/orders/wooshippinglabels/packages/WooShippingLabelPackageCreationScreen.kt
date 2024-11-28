@@ -26,9 +26,10 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CARRIER
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CUSTOM
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.SAVED
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingCarrierPackageScreen
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingCustomPackageCreationScreen
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingSavedPackageScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCarrierPackageScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCustomPackageCreationScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingSavedPackageScreen
 
 @Composable
 fun WooShippingLabelPackageCreationScreen(

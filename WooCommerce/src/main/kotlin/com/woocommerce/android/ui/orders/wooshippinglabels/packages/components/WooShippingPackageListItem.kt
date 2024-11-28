@@ -15,7 +15,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 
 @Composable
 fun WooSavedPackageListItem(

@@ -1,6 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import javax.inject.Inject
 

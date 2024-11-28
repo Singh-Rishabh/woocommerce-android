@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
 import android.os.Parcelable
 import com.woocommerce.android.R
