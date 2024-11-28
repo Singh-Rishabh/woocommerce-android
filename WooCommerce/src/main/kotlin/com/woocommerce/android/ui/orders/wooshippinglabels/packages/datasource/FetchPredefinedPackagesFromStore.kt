@@ -6,7 +6,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageDa
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import javax.inject.Inject
 
-class FetchCarrierPackagesFromStore @Inject constructor(
+class FetchPredefinedPackagesFromStore @Inject constructor(
     private val packageRepository: WooShippingLabelPackageRepository
 ) {
     suspend operator fun invoke(): Map<Carrier, List<CarrierPackageGroup>> {
