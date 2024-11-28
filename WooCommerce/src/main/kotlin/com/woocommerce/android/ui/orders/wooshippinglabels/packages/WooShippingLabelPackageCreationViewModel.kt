@@ -6,7 +6,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
@@ -27,8 +26,7 @@ import kotlinx.coroutines.launch
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val resourceProvider: ResourceProvider,
-    private val fetchSavedPackages: FetchSavedPackagesFromStore,
-    private val fetchCarrierPackages: FetchPredefinedPackagesFromStore
+    private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore
 ) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
@@ -56,9 +54,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     init {
         launch {
             _viewState.update { viewState ->
+                val predefinedPackages = fetchPredefinedPackages()
+
                 viewState.copy(
-                    savedPackageSelection = SavedPackageSelection(fetchSavedPackages()),
-                    carrierPackageSection = CarrierPackageSelection(fetchCarrierPackages())
+                    savedPackageSelection = predefinedPackages.savedPackageSelection,
+                    carrierPackageSection = predefinedPackages.carrierPackageSelection
                 )
             }
         }
