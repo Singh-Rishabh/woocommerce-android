@@ -16,31 +16,15 @@ class FetchCarrierPackagesFromStore @Inject constructor(
             .takeIf { it.isError.not() }
             ?.model
             ?.let { response ->
-                val uspsPackages = response.carrierPackages
-                    .parseCarrierData(CarrierType.USPS)
-                    .let {
-                        Pair(
-                            Carrier(
-                                id = "usps",
-                                name = "USPS",
-                                logoRes = R.drawable.usps_logo
-                            ), it
-                        )
-                    }
+                mapOf(
+                    response.carrierPackages
+                        .parseCarrierData(CarrierType.USPS)
+                        .let { uspsCarrier to it },
 
-                val dhlPackages = response.carrierPackages
-                    .parseCarrierData(CarrierType.DHL)
-                    .let {
-                        Pair(
-                            Carrier(
-                                id = "dhl",
-                                name = "DHL Express",
-                                logoRes = R.drawable.dhl_logo
-                            ), it
-                        )
-                }
-
-                mapOf(uspsPackages, dhlPackages)
+                    response.carrierPackages
+                        .parseCarrierData(CarrierType.DHL)
+                        .let { dhlCarrier to it }
+                )
             } ?: emptyMap()
     }
 
@@ -65,5 +49,19 @@ class FetchCarrierPackagesFromStore @Inject constructor(
                 )
             }
         } ?: emptyList()
+    }
+
+    companion object {
+        private val uspsCarrier = Carrier(
+            id = "usps",
+            name = "USPS",
+            logoRes = R.drawable.usps_logo
+        )
+
+        private val dhlCarrier = Carrier(
+            id = "dhl",
+            name = "DHL Express",
+            logoRes = R.drawable.dhl_logo
+        )
     }
 }
