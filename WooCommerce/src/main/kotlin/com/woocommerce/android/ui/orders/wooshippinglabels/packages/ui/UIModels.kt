@@ -46,6 +46,12 @@ sealed class Carrier(
 }
 
 @Parcelize
+data class StorePredefinedPackages(
+    val carrierPackageSelection: CarrierPackageSelection,
+    val savedPackageSelection: SavedPackageSelection
+) : Parcelable
+
+@Parcelize
 data class CarrierPackageSelection(
     val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
 ) : Parcelable {
