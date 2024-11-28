@@ -88,38 +88,41 @@ class WooPosVariationsViewModel @Inject constructor(
         }
 
     fun loadMore(productId: Long) {
-        viewModelScope.launch {
-            val updatedState = _viewState.updateAndGet { currentState ->
-                if (currentState is WooPosVariationsViewState.Content && variationsDataSource.canLoadMore()) {
-                    currentState.copy(paginationState = PaginationState.Loading)
+        val updatedState = _viewState.updateAndGet { currentState ->
+            if (shouldStartLoading(currentState)) {
+                (currentState as WooPosVariationsViewState.Content).copy(paginationState = PaginationState.Loading)
+            } else {
+                currentState
+            }
+        }
+
+        if (!isLoadingStateValid(updatedState)) {
+            return
+        }
+
+        loadMoreJob?.cancel()
+        loadMoreJob = viewModelScope.launch {
+            val result = variationsDataSource.loadMore(productId)
+            _viewState.update { current ->
+                if (current is WooPosVariationsViewState.Content) {
+                    current.copy(paginationState = determinePaginationState(result))
                 } else {
-                    currentState
-                }
-            }
-
-            if (
-                updatedState !is WooPosVariationsViewState.Content ||
-                updatedState.paginationState != PaginationState.Loading
-            ) {
-                return@launch
-            }
-
-            loadMoreJob?.cancel()
-            loadMoreJob = this.launch {
-                val result = variationsDataSource.loadMore(productId)
-                _viewState.update { current ->
-                    if (current is WooPosVariationsViewState.Content) {
-                        if (result.isSuccess) {
-                            current.copy(paginationState = PaginationState.None)
-                        } else {
-                            current.copy(paginationState = PaginationState.Error)
-                        }
-                    } else {
-                        current
-                    }
+                    current
                 }
             }
         }
+    }
+
+    private fun shouldStartLoading(currentState: WooPosVariationsViewState?): Boolean {
+        return currentState is WooPosVariationsViewState.Content && variationsDataSource.canLoadMore()
+    }
+
+    private fun isLoadingStateValid(state: WooPosVariationsViewState?): Boolean {
+        return state is WooPosVariationsViewState.Content && state.paginationState == PaginationState.Loading
+    }
+
+    private fun determinePaginationState(result: Result<*>): PaginationState {
+        return if (result.isSuccess) PaginationState.None else PaginationState.Error
     }
 
     fun onUIEvent(event: WooPosVariationsUIEvents) {
