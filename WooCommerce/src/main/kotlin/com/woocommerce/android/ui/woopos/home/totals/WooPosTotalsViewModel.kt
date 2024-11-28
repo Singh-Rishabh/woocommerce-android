@@ -25,6 +25,7 @@ import com.woocommerce.android.util.WooLog.T
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -135,6 +136,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
                         cardReaderPaymentController?.onBackPressed()
+                        cardReaderPaymentController?.onCleared()
                         uiState.value = InitialState
                     }
 
