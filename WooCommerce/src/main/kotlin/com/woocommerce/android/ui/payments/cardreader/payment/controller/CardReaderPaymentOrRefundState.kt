@@ -6,7 +6,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
 
 sealed class CardReaderPaymentOrRefundState {
     sealed class CardReaderPaymentState : CardReaderPaymentOrRefundState() {
-        data class LoadingData(override val onCancel: () -> Unit) : CardReaderPaymentState(), Cancelable
+        data class LoadingData(val onCancel: () -> Unit) : CardReaderPaymentState()
 
         data object ReFetchingOrder : CardReaderPaymentState()
 
@@ -22,8 +22,8 @@ sealed class CardReaderPaymentOrRefundState {
             data class ExternalReaderCollectPaymentState(
                 override val amountWithCurrencyLabel: String,
                 override val cardReaderHint: Int? = null,
-                override val onCancel: (() -> Unit)
-            ) : CollectingPayment(amountWithCurrencyLabel, cardReaderHint), Cancelable
+                val onCancel: (() -> Unit)
+            ) : CollectingPayment(amountWithCurrencyLabel, cardReaderHint)
         }
 
         sealed class ProcessingPayment(
@@ -34,8 +34,8 @@ sealed class CardReaderPaymentOrRefundState {
 
             data class ExternalReaderProcessingPayment(
                 override val amountWithCurrencyLabel: String,
-                override val onCancel: () -> Unit
-            ) : ProcessingPayment(amountWithCurrencyLabel), Cancelable
+                val onCancel: () -> Unit
+            ) : ProcessingPayment(amountWithCurrencyLabel)
         }
 
         data class PrintingReceipt(val amountWithCurrencyLabel: String) : CardReaderPaymentState()
@@ -113,8 +113,7 @@ sealed class CardReaderPaymentOrRefundState {
                     onCancel = onCancel,
                     onRetry = onRetry,
                     cta = cta,
-                ),
-                    CardReaderPaymentOrRefundState.Cancelable
+                )
                 data class NonCancelable(
                     override val errorType: PaymentFlowError,
                     override val onRetry: (() -> Unit),
@@ -153,8 +152,7 @@ sealed class CardReaderPaymentOrRefundState {
                     onCancel = onCancel,
                     onRetry = onRetry,
                     cta = cta,
-                ),
-                    CardReaderPaymentOrRefundState.Cancelable
+                )
                 data class NonCancelable(
                     override val errorType: PaymentFlowError,
                     override val onRetry: (() -> Unit),
@@ -173,13 +171,13 @@ sealed class CardReaderPaymentOrRefundState {
     }
 
     sealed class CardReaderInteracRefundState : CardReaderPaymentOrRefundState() {
-        data class LoadingData(override val onCancel: () -> Unit) : CardReaderInteracRefundState(), Cancelable
+        data class LoadingData(val onCancel: () -> Unit) : CardReaderInteracRefundState()
 
         data class CollectingInteracRefund(
             val amountWithCurrencyLabel: String,
-            override val onCancel: () -> Unit,
+            val onCancel: () -> Unit,
             @StringRes val cardReaderHint: Int? = null,
-        ) : CardReaderInteracRefundState(), Cancelable
+        ) : CardReaderInteracRefundState()
 
         data class ProcessingInteracRefund(
             val amountWithCurrencyLabel: String,
@@ -204,8 +202,7 @@ sealed class CardReaderPaymentOrRefundState {
                 onRetry = onRetry,
                 onCancel = onCancel,
                 cta = cta,
-            ),
-                CardReaderPaymentOrRefundState.Cancelable
+            )
             data class NonCancelable(
                 override val errorType: InteracRefundFlowError,
                 override val onRetry: (() -> Unit),
@@ -228,8 +225,4 @@ sealed class CardReaderPaymentOrRefundState {
         @StringRes val label: Int,
         val onCallToActionTapped: () -> Unit,
     )
-
-    interface Cancelable {
-        val onCancel: () -> Unit
-    }
 }
