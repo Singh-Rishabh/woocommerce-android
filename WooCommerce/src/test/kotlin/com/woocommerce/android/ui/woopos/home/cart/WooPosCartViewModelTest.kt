@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceive
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.captureValues
@@ -22,6 +23,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -526,6 +528,84 @@ class WooPosCartViewModelTest {
         val finalState = states.last()
         val finalItem = (finalState.body as WooPosCartState.Body.WithItems).itemsInCart.first()
         assertThat(finalItem.isAppearanceAnimationPlayed).isTrue
+    }
+
+    @Test
+    fun `when simple product added to cart, then should track analytics event with product type simple`() = runTest {
+        // GIVEN
+        val product = ProductTestUtils.generateProduct(
+            productId = 23L,
+            productName = "title",
+            amount = "10.0"
+        ).copy(firstImageUrl = "url")
+
+        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
+        val sut = createSut()
+        sut.state.captureValues()
+
+        // WHEN
+        parentToChildrenEventsMutableFlow.emit(
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    id = product.remoteId
+                )
+            )
+        )
+
+        // THEN
+        verify(analyticsTracker).track(
+            argThat {
+                this == WooPosAnalyticsEvent.Event.ItemAddedToCart &&
+                    (
+                        this as WooPosAnalyticsEvent.Event.ItemAddedToCart
+                        ).properties[WooPosAnalyticsEventConstant.PRODUCT_TYPE] == "simple"
+            }
+        )
+    }
+
+    @Test
+    fun `when variation added to cart, then should track analytics event with product type variation`() = runTest {
+        // GIVEN
+        val variation = ProductTestUtils.generateProductVariation(
+            productId = 23L,
+            amount = "10.0",
+        )
+        val product = ProductTestUtils.generateProduct(
+            productId = 23L,
+            productName = "title",
+            amount = "10.0"
+        ).copy(firstImageUrl = "url")
+
+        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+        whenever(
+            getVariationsById(any(), any())
+        ).thenReturn(variation)
+        whenever(getProductById(any())).thenReturn(product)
+        val sut = createSut()
+        sut.state.captureValues()
+
+        // WHEN
+        parentToChildrenEventsMutableFlow.emit(
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.Variation(
+                    id = variation.remoteProductId,
+                    productId = variation.remoteProductId
+                )
+            )
+        )
+
+        // THEN
+        verify(analyticsTracker).track(
+            argThat {
+                this == WooPosAnalyticsEvent.Event.ItemAddedToCart &&
+                    (
+                        this as WooPosAnalyticsEvent.Event.ItemAddedToCart
+                        ).properties[WooPosAnalyticsEventConstant.PRODUCT_TYPE] == "variation"
+            }
+        )
     }
 
     private fun createSut(): WooPosCartViewModel {
