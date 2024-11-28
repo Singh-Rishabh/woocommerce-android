@@ -26,6 +26,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
 fun WooPosPaginationErrorScreen(
@@ -55,8 +56,8 @@ private fun WooPosPaginationErrorScreenContent(
         modifier = modifier
             .fillMaxWidth()
             .height(112.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .padding(16.dp),
+            .clip(RoundedCornerShape(16.dp))
+            .padding(16.dp.toAdaptivePadding()),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -72,7 +73,7 @@ private fun WooPosPaginationErrorScreenContent(
                 tint = Color.Unspecified,
             )
 
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(24.dp.toAdaptivePadding()))
 
             Text(
                 text = message,
@@ -90,7 +91,7 @@ private fun WooPosPaginationErrorScreenContent(
                 onClick = primaryButton.click,
                 modifier = Modifier
                     .height(50.dp)
-                    .clip(RoundedCornerShape(8.dp))
+                    .clip(RoundedCornerShape(16.dp))
             )
         }
     }
