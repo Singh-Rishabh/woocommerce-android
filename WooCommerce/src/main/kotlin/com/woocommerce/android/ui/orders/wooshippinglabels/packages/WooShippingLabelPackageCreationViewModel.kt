@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
@@ -47,11 +48,13 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         )
 
     init {
-        _viewState.update { viewState ->
-            viewState.copy(
-                savedPackageSelection = SavedPackageSelection(fetchSavedPackages()),
-                carrierPackageSection = CarrierPackageSelection(fetchCarrierPackages())
-            )
+        launch {
+            _viewState.update { viewState ->
+                viewState.copy(
+                    savedPackageSelection = SavedPackageSelection(fetchSavedPackages()),
+                    carrierPackageSection = CarrierPackageSelection(fetchCarrierPackages())
+                )
+            }
         }
     }
 
