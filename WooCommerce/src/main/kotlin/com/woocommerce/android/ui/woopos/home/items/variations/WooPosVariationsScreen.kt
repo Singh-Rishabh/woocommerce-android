@@ -86,6 +86,9 @@ fun WooPosVariationsScreen(
     WooPosVariationsScreens(
         modifier,
         onBackClicked,
+        onItemClicked = { productId, variationId ->
+            viewModel.onUIEvent(WooPosVariationsUIEvents.OnItemClicked(productId, variationId))
+        },
         onEndOfItemListReached = {
             viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(variableProductData.id))
         },
@@ -109,6 +112,7 @@ fun WooPosVariationsScreen(
 private fun WooPosVariationsScreens(
     modifier: Modifier,
     onBackClicked: () -> Unit,
+    onItemClicked: (Long, Long) -> Unit,
     onEndOfItemListReached: () -> Unit,
     onPullToRefresh: () -> Unit,
     onRetryClicked: () -> Unit,
@@ -160,7 +164,12 @@ private fun WooPosVariationsScreens(
                         ItemList(
                             state = itemsState,
                             listState = rememberLazyListState(),
-                            onItemClicked = {}
+                            onItemClicked = {
+                                onItemClicked(
+                                    (it as WooPosItem.Variation).productId,
+                                    it.id
+                                )
+                            }
                         ) {
                             onEndOfItemListReached()
                         }
@@ -270,18 +279,21 @@ fun WooPosVariationsScreenPreview() {
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
                         "Product 1, Product 1, Product 1, Product 1, Product 1",
+                    productId = 1,
                     price = "10.0$",
                     imageUrl = null,
                 ),
                 WooPosItem.Variation(
                     2,
                     name = "Product 2",
+                    productId = 1,
                     price = "2000.00$",
                     imageUrl = null,
                 ),
                 WooPosItem.Variation(
                     3,
                     name = "Product 3",
+                    productId = 1,
                     price = "1.0$",
                     imageUrl = null,
                 ),
@@ -294,6 +306,7 @@ fun WooPosVariationsScreenPreview() {
         WooPosVariationsScreens(
             modifier = Modifier,
             onBackClicked = {},
+            onItemClicked = { _, _ -> },
             onEndOfItemListReached = {},
             onPullToRefresh = {},
             onRetryClicked = {},
@@ -301,7 +314,6 @@ fun WooPosVariationsScreenPreview() {
                 id = 0,
                 name = "Variable Product",
                 numOfVariations = 20,
-                variationIds = emptyList()
             ),
             state = productState,
             snackbarHostState = SnackbarHostState()

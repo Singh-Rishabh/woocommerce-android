@@ -1,2 +1,0 @@
-21.1:
-Pembaruan terkini kami menghadirkan penyempurnaan penting untuk memperlancar pengalaman WooCommerce Anda! Kami memperbaiki izin pengeditan untuk pesanan yang menggunakan mata uang berbeda, mengoptimalkan tampilan hub pembayaran, mengaktifkan fitur berbagi tanda terima dengan mudah via Google SMS, dan memperbaiki pemilihan rentang tanggal agar sesuai dengan zona waktu Anda. Nikmati pengoperasian yang lebih baik!

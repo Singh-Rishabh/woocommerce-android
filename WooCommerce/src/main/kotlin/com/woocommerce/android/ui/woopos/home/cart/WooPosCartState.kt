@@ -30,9 +30,14 @@ data class WooPosCartState(
                 val price: String,
                 val imageUrl: String?,
                 val isAppearanceAnimationPlayed: Boolean,
+                val productType: ProductType,
             ) : Parcelable {
                 @Parcelize
-                data class Id(val productId: Long, val itemNumber: Int) : Parcelable
+                data class Id(
+                    val productId: Long,
+                    val variationId: Long,
+                    val itemNumber: Int
+                ) : Parcelable
             }
 
             override val amountOfItems: Int
@@ -50,4 +55,8 @@ data class WooPosCartState(
 
 enum class WooPosCartStatus {
     EDITABLE, CHECKOUT, EMPTY,
+}
+
+enum class ProductType {
+    Simple, Variation
 }
