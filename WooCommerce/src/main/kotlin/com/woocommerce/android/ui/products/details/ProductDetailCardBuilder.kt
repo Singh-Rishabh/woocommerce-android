@@ -483,7 +483,7 @@ class ProductDetailCardBuilder(
                 ),
                 Pair(
                     resources.getString(string.subscription_one_time_shipping),
-                    if (subscription?.oneTimeShipping == true) {
+                    if (subscription?.supportsOneTimeShipping == true) {
                         resources.getString(string.subscription_one_time_shipping_enabled)
                     } else {
                         ""
