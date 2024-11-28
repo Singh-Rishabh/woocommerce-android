@@ -2005,7 +2005,7 @@
     <string name="product_tax_status_taxable">Taxable</string>
     <string name="product_tax_status_shipping">Shipping</string>
     <string name="product_sku">SKU</string>
-    <string name="product_global_unique_id_hint">GTIN, UPC, EAN, ISBN</string>
+    <string name="product_global_unique_id">GTIN, UPC, EAN, ISBN</string>
     <string name="product_sku_summary">Helps to easily identify this product</string>
     <string name="product_global_unique_id_summary">Enter a barcode or any other identifier unique to this product. It can help you list this product on other channels or marketplaces.</string>
     <string name="product_stock_status">Stock status</string>
