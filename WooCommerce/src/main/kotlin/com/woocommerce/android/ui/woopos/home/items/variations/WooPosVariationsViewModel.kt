@@ -38,11 +38,41 @@ class WooPosVariationsViewModel @Inject constructor(
             initialValue = _viewState.value,
         )
 
+    private var flowJob: Job? = null
     private var fetchJob: Job? = null
     private var loadMoreJob: Job? = null
 
     fun init(productId: Long) {
+        resetState()
+        startCollectingVariationsFlow(productId)
         fetchVariations(productId = productId, withPullToRefresh = false, withCart = true)
+    }
+
+    private fun resetState() {
+        flowJob?.cancel()
+        _viewState.value = WooPosVariationsViewState.Loading(withCart = true)
+    }
+
+    private fun startCollectingVariationsFlow(productId: Long) {
+        flowJob?.cancel()
+        flowJob = viewModelScope.launch {
+            variationsDataSource.getVariationsFlow(productId).collect { variationList ->
+                val product = getProductById(productId)
+                _viewState.value = WooPosVariationsViewState.Content(
+                    items = variationList.filter { it.price != null }
+                        .map {
+                            WooPosItem.Variation(
+                                id = it.remoteVariationId,
+                                name = it.getName(product),
+                                productId = it.remoteProductId,
+                                price = priceFormat(it.price),
+                                imageUrl = it.image?.source
+                            )
+                        },
+                    reloadingProductsWithPullToRefresh = false,
+                )
+            }
+        }
     }
 
     private fun fetchVariations(productId: Long, withPullToRefresh: Boolean, withCart: Boolean) {
@@ -54,26 +84,8 @@ class WooPosVariationsViewModel @Inject constructor(
         fetchJob?.cancel()
 
         fetchJob = viewModelScope.launch {
-            val product = getProductById(productId)
-
             val result = variationsDataSource.fetchVariations(productId, forceRefresh = true)
-            if (result.isSuccess) {
-                variationsDataSource.getVariationsFlow(productId).collect { variationList ->
-                    _viewState.value = WooPosVariationsViewState.Content(
-                        items = variationList.filter { it.price != null }
-                            .map {
-                                WooPosItem.Variation(
-                                    id = it.remoteVariationId,
-                                    name = it.getName(product),
-                                    productId = it.remoteProductId,
-                                    price = priceFormat(it.price),
-                                    imageUrl = it.image?.source
-                                )
-                            },
-                        reloadingProductsWithPullToRefresh = false,
-                    )
-                }
-            } else {
+            if (result.isFailure) {
                 _viewState.value = WooPosVariationsViewState.Error()
             }
         }
