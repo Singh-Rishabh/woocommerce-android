@@ -28,23 +28,28 @@ class WooShippingLabelPackageMapper @Inject constructor() {
         }
     }
 
-    private fun mapCarrierPackages(carrierPackagesResponse: CarrierPredefinedPackagesDTO?): List<CarrierDAO> {
-        val usps = mutableListOf<CarrierPackageGroupDAO>().apply {
+    private fun mapCarrierPackages(
+        carrierPackagesResponse: CarrierPredefinedPackagesDTO?
+    ): Map<CarrierType, CarrierDAO> {
+        val uspsPackages = mutableListOf<CarrierPackageGroupDAO>().apply {
             carrierPackagesResponse?.usps?.let { usps ->
                 usps.flatBoxes?.toCarrierGroup()?.let { add(it) }
                 usps.boxes?.toCarrierGroup()?.let { add(it) }
                 usps.expressBoxes?.toCarrierGroup()?.let { add(it) }
                 usps.envelopes?.toCarrierGroup()?.let { add(it) }
             }
-        }.let { CarrierDAO(USPS, it) }
+        }.let { CarrierDAO(it) }
 
-        val dhl = mutableListOf<CarrierPackageGroupDAO>().apply {
+        val dhlPackages = mutableListOf<CarrierPackageGroupDAO>().apply {
             carrierPackagesResponse?.dhlExpress?.let { dhl ->
                 dhl.domesticAndInternationalPackages?.toCarrierGroup()?.let { add(it) }
             }
-        }.let { CarrierDAO(DHL, it) }
+        }.let { CarrierDAO(it) }
 
-        return listOf(usps, dhl)
+        return mapOf(
+            USPS to uspsPackages,
+            DHL to dhlPackages
+        )
     }
 
     private fun CarrierPackageGroupDTO.toCarrierGroup() = CarrierPackageGroupDAO(

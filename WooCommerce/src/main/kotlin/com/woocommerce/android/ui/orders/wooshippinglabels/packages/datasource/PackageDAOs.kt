@@ -2,7 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 data class StorePackagesDAO(
     val savedPackages: List<PackageDAO>,
-    val carrierPackages: List<CarrierDAO>
+    val carrierPackages: Map<CarrierType, CarrierDAO>
 )
 
 data class PackageDAO(
@@ -12,7 +12,6 @@ data class PackageDAO(
 )
 
 data class CarrierDAO(
-    val type: CarrierType,
     val packageGroup: List<CarrierPackageGroupDAO>
 )
 
