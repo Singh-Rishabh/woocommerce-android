@@ -15,34 +15,34 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
     private val packageRepository: WooShippingLabelPackageRepository
 ) {
     suspend operator fun invoke(): StorePredefinedPackages? {
-        val site = selectedSite.getOrNull() ?: return null
-        val storePackages = packageRepository.fetchAllStorePackages(site)
-            .takeIf { it.isError.not() }
+        val storePackages = selectedSite.getOrNull()
+            ?.let { packageRepository.fetchAllStorePackages(it) }
+            ?.takeIf { it.isError.not() }
             ?.model
             ?: return null
 
-        val carrierPackages = storePackages
-            .filterCarrierData()
-
-        val savedPackages = storePackages
-            .savedPackages
-            .map { packageDAO ->
-                PackageData(
-                    type = PackageType.BOX,
-                    name = packageDAO.name,
-                    description = "",
-                    length = "",
-                    width = "",
-                    height = "",
-                    isSelected = false
-                )
-            }
-
         return StorePredefinedPackages(
-            carrierPackageSelection = CarrierPackageSelection(carrierPackages),
-            savedPackageSelection = SavedPackageSelection(savedPackages)
+            savedPackageSelection = storePackages
+                .filterSavedData()
+                .let { SavedPackageSelection(it) },
+            carrierPackageSelection = storePackages
+                .filterCarrierData()
+                .let { CarrierPackageSelection(it) }
         )
     }
+
+    private fun StorePackagesDAO.filterSavedData() =
+        savedPackages.map { packageDAO ->
+            PackageData(
+                type = PackageType.BOX,
+                name = packageDAO.name,
+                description = "",
+                length = "",
+                width = "",
+                height = "",
+                isSelected = false
+            )
+        }
 
     private fun StorePackagesDAO.filterCarrierData() = mapOf(
         carrierPackages
