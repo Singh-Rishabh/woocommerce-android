@@ -61,7 +61,7 @@ internal class ProductListHandlerTest : BaseUnitTest() {
 
         handler.loadMore()
 
-        verify(repo).fetchProducts(false,25, 25, emptyMap())
+        verify(repo).fetchProducts(false, 25, 25, emptyMap())
 
         handler.productsFlow.test {
             val products = awaitItem()
