@@ -128,7 +128,7 @@ class WooPosCartViewModel @Inject constructor(
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> handleBackFromCheckoutToCartClicked()
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInItemsSelector(event)
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> handleOrderSuccessfullyPaid()
-                    is ParentToChildrenEvent.CheckoutClicked -> handleCheckoutClicked()
+                    is ParentToChildrenEvent.CheckoutClicked -> Unit
                 }
             }
         }
@@ -162,7 +162,7 @@ class WooPosCartViewModel @Inject constructor(
             _state.value = updateStateWithNewItem(itemClicked.await())
             WooPosAnalyticsEvent.Event.ItemAddedToCart.addProperties(
                 mapOf(
-                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.toAnalyticsString()
+                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.productTypeForAnalytics()
                 )
             )
             analyticsTracker.track(WooPosAnalyticsEvent.Event.ItemAddedToCart)
@@ -171,10 +171,6 @@ class WooPosCartViewModel @Inject constructor(
 
     private fun handleOrderSuccessfullyPaid() {
         _state.value = WooPosCartState()
-    }
-
-    private fun handleCheckoutClicked() {
-        // Do nothing
     }
 
     private fun getItemNumber(): Int {
@@ -289,7 +285,7 @@ class WooPosCartViewModel @Inject constructor(
         )
 }
 
-private fun WooPosItemsViewModel.ItemClickedData.toAnalyticsString(): String {
+private fun WooPosItemsViewModel.ItemClickedData.productTypeForAnalytics(): String {
     return when (this) {
         is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
         is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"

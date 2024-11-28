@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.moremenu
 
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
+import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.notifications.UnseenReviewsCountHandler
 import com.woocommerce.android.tools.SelectedSite
@@ -519,5 +520,24 @@ class MoreMenuViewModelTests : BaseUnitTest() {
             .isEqualTo(MoreMenuItemButton.State.Loading)
         assertThat(items.first { it.title == R.string.more_menu_button_inbox }.state)
             .isEqualTo(MoreMenuItemButton.State.Loading)
+    }
+
+    @Test
+    fun `when WooPOS button clicked, then VALUE_MORE_MENU_POS tracking is triggered`() = testBlocking {
+        // GIVEN
+        setup {
+            whenever(isWooPosEnabled()).thenReturn(true)
+        }
+
+        // WHEN
+        val state = viewModel.moreMenuViewState.captureValues().last()
+        val posButton = state.menuSections.flatMap { it.items }.first { it.title == R.string.more_menu_button_woo_pos }
+        posButton.onClick()
+
+        // THEN
+        verify(analyticsTrackerWrapper).track(
+            AnalyticsEvent.HUB_MENU_OPTION_TAPPED,
+            mapOf("option" to "pointOfSale")
+        )
     }
 }

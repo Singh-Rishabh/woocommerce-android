@@ -34,16 +34,17 @@ Read more about [OAuth2][oauth] and the [WordPress.com REST endpoint][wp-api].
 
 ### Configuration Files
 
-#### Main `gradle.properties`
+#### `secrets.properties`
+
+The `secrets.properties` file is used to store sensitive information that should not be checked into version control. This file is located at `~/.configure/woocommerce-android/secrets.properties`.
 
 | Property                   | Description |
 |:---------------------------|:------------|
-|wc.oauth.app_id            | Required to build the app. See [OAuth2 Authentication](#oauth2-authentication)|
+| wc.oauth.app_id            | Required to build the app. See [OAuth2 Authentication](#oauth2-authentication)|
 | wc.oauth.app_secret        | Required to build the app. See [OAuth2 Authentication](#oauth2-authentication) |
 | wc.zendesk_app_id          | Used for Zendesk integration. Can be ignored.|
 | wc.zendesk.domain          | Used for Zendesk integration. Can be ignored.|
 | wc.zendesk.oauth_client_id | Used for Zendesk integration. Can be ignored.|
-| wc.reset_db_on_downgrade   | Debug/Beta builds: If `true` will drop all tables and recreate the db if a database downgrade is detected. |
 | wc.sentry.dsn              | Used for Sentry integration. Can be ignored.|
 
 ### Using detekt

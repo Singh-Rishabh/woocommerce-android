@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-06 13:54:04+0000
+Translation-Revision-Date: 2024-11-13 13:54:03+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: sv_SE
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Kuvert</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Låda</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Lägg till paket</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Spara detta som en ny paketmall</string>
+    <string name="woo_shipping_labels_package_creation_height">Höjd</string>
+    <string name="woo_shipping_labels_package_creation_width">Bredd</string>
+    <string name="woo_shipping_labels_package_creation_length">Längd</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Pakettyp</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Sparad</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Schemalägg upphämtning</string>
+    <string name="shipping_label_purchased_track_shipment">Spåra leverans</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Lär dig hur man skriver ut från din mobila enhet</string>
+    <string name="shipping_label_purchased_request_refund">Begär återbetalning</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Fraktbolag</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Anpassat</string>
+    <string name="shipping_label_purchased_note">Obs: Återanvändning av en utskriven fraktetikett är ett brott mot våra användarvillkor och kan leda till åtal.</string>
+    <string name="shipping_label_purchased_message">Härifrån kan du skriva ut fraktetiketten igen eller ändra storlek på fraktetiketten.</string>
+    <string name="shipping_label_purchased_title">Din fraktetikett är klar att skrivas ut.</string>
+    <string name="order_detail_edit_store_currency_mismatch">Du kan bara redigera den här beställningen på webben, eftersom den använder %1$s och din webbplats valuta är %2$s</string>
     <string name="shipping_label_shipping_rates_sort_option_fastest">Snabbast</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">Billigast</string>
     <string name="shipping_label_shipping_service_title">Frakttjänst</string>
@@ -561,7 +580,6 @@ Language: sv_SE
     <string name="blaze_campaign_creation_new_intro_benefit_2_title">Global räckvidd på ett enkelt sätt</string>
     <string name="blaze_campaign_creation_new_intro_benefit_1_subtitle_updated">Lansera annonser på några minuter – ingen erfarenhet eller stor budget behövs, från bara $5 per dag.</string>
     <string name="blaze_campaign_creation_new_intro_benefit_1_title">Snabb start, stor påverkan</string>
-    <string name="order_creation_coupon_button">Rabattkod</string>
     <string name="order_creation_gift_card_text_field_hint">Ange kod</string>
     <string name="theme_preview_activate_theme_button_settings">Använd %1$s</string>
     <string name="blaze_campaign_creation_new_intro_description">Vårt verktyg är utformat för att ge handlare möjlighet att snabbt och enkelt skapa annonskampanjer för maximal trafikökning.</string>
@@ -572,6 +590,7 @@ Language: sv_SE
     <string name="order_creation_expand_collapse_order_totals">Expandera/minimera beställningssummor</string>
     <string name="order_creation_collect_payment_button">Ta emot betalning</string>
     <string name="order_creation_gift_card_text_error">Koden bör vara i formatet XXXX-XXXX-XXXX-XXXX</string>
+    <string name="order_creation_coupon_button">Rabattkoder</string>
     <string name="theme_picker_error_message">Misslyckades att ladda teman.</string>
     <string name="configuration_complete">Konfiguration slutförd</string>
     <string name="theme_picker_loading_current_theme_failed">Kunde inte ladda ditt nuvarande tema</string>

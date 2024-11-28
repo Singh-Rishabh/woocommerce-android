@@ -151,7 +151,7 @@ android {
         coreLibraryDesugaringEnabled true
     }
 
-    flavorDimensions "buildType"
+    flavorDimensions = ["buildType"]
 
     productFlavors {
         // Used for release/beta builds. Usually shouldn't be build locally.
@@ -214,6 +214,29 @@ android {
 
     testOptions {
         animationsDisabled = true
+    }
+
+    signingConfigs {
+        if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !secretProperties.containsKey(it) } == 0) {
+            logger.info("App signing properties found in secrets.properties, configuring signing for release builds.")
+            release {
+                storeFile = rootProject.file(secretProperties.get("uploadStoreFile"))
+                storePassword = secretProperties.get("uploadStorePassword")
+                keyAlias = secretProperties.get("uploadKeyAlias")
+                keyPassword = secretProperties.get("uploadKeyPassword")
+            }
+            android.buildTypes.release.signingConfig = android.signingConfigs.release
+        }
+
+        if (secretProperties.containsKey("debugStoreFile")) {
+            logger.info("Debug signing properties found in secrets.properties, configuring signing for debug builds.")
+            def sharedDebugStore = file(secretProperties.get("debugStoreFile").replaceFirst("^~", System.getProperty("user.home")))
+            if (sharedDebugStore.exists()) {
+                debug {
+                    storeFile sharedDebugStore
+                }
+            }
+        }
     }
 }
 
@@ -507,9 +530,7 @@ task copyGoogleServicesExampleFile(type: Copy) {
 
 // Add properties named "wc.xxx" to our BuildConfig
 android.buildTypes.all { buildType ->
-    def inputFile = checkGradlePropertiesFile()
-    def properties = loadPropertiesFromFile(inputFile)
-    properties.any { property ->
+    (secretProperties + developerProperties).any { property ->
         if (property.key.toLowerCase().startsWith("wc.")) {
             buildType.buildConfigField "String", property.key.replace("wc.", "").replace(".", "_").toUpperCase(),
                     "\"${property.value}\""
@@ -519,14 +540,6 @@ android.buildTypes.all { buildType ->
                     "${property.value}"
         }
     }
-
-    buildConfigField "String",
-            "IAP_TESTING_SANDBOX_URL",
-            "\"${project.properties.getOrDefault('iap_testing_sandbox_url', '')}\""
-
-    buildConfigField "String",
-            "JITM_TESTING_JSON_FILE_NAME",
-            "\"${project.properties.getOrDefault('jitm_testing_json_file_name', '')}\""
 
     // If Google services file doesn't exist, copy example file.
     if (!file("google-services.json").exists()) {
@@ -539,20 +552,6 @@ android.buildTypes.all { buildType ->
     }
 }
 
-task printVersionName {
-    doLast {
-        println android.defaultConfig.versionName
-    }
-}
-
-def checkGradlePropertiesFile() {
-    def inputFile = file("${rootDir}/gradle.properties")
-    if (!inputFile.exists()) {
-        throw new StopActionException("Build configuration file gradle.properties doesn't exist, follow README instructions")
-    }
-    return inputFile
-}
-
 static def loadPropertiesFromFile(inputFile) {
     def properties = new Properties()
     inputFile.withInputStream { stream ->
@@ -562,35 +561,7 @@ static def loadPropertiesFromFile(inputFile) {
 }
 
 def isLeakCanaryEnabled() {
-    return project.properties.getOrDefault('enableLeakCanary', 'true') == 'true'
-}
-
-// For app signing
-if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !project.hasProperty(it) } == 0) {
-    android {
-        signingConfigs {
-            release {
-                storeFile = rootProject.file(project.uploadStoreFile)
-                storePassword = project.uploadStorePassword
-                keyAlias = project.uploadKeyAlias
-                keyPassword = project.uploadKeyPassword
-            }
-        }
-    }
-    android.buildTypes.release.signingConfig = android.signingConfigs.release
-}
-
-if (project.hasProperty("debugStoreFile")) {
-    def sharedDebugStore = file(project.debugStoreFile.replaceFirst("^~", System.getProperty("user.home")))
-    if (sharedDebugStore.exists()) {
-        android {
-            signingConfigs {
-                debug {
-                    storeFile sharedDebugStore
-                }
-            }
-        }
-    }
+    return developerProperties.get("enable_leak_canary") ?: true
 }
 
 apply from: '../config/gradle/build_optimization.gradle'

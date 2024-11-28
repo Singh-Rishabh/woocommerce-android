@@ -18,11 +18,43 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
+ext {
+    secretProperties = loadPropertiesWithFallback(
+            logger,
+            file("${rootDir}/defaults.properties"),
+            file("${System.getProperty("user.home")}/.configure/woocommerce-android/secrets/secrets.properties")
+    )
+    userEnabledTracking = secretProperties.get('measureBuildsEnabled')?.toBoolean() ?: false
+
+    developerProperties = loadPropertiesWithFallback(
+            logger,
+            file("${rootDir}/developer.properties-example"),
+            file("${rootDir}/developer.properties")
+    )
+}
+
 measureBuilds {
-    enable = findProperty('tracksEnabled')?.toBoolean() ?: false
+    enable = userEnabledTracking
     automatticProject = MeasureBuildsExtension.AutomatticProject.WooCommerce
     attachGradleScanId = true
-    authToken = findProperty('appsMetricsToken')
+    authToken = secretProperties.get('appsMetricsToken')
+}
+
+static def loadPropertiesWithFallback(Logger logger, File fallbackFile, File primaryFile) {
+    if (primaryFile.exists()) {
+        return readPropertiesFromFile(primaryFile)
+    } else {
+        logger.warn("Primary properties file not found: ${primaryFile}. Using fallback: ${fallbackFile}.")
+        return readPropertiesFromFile(fallbackFile)
+    }
+}
+
+static def readPropertiesFromFile(File file) {
+    def properties = new Properties()
+    file.withInputStream { stream ->
+        properties.load(stream)
+    }
+    return properties
 }
 
 allprojects {
@@ -51,7 +83,7 @@ subprojects {
     }
 }
 
-def detektAll = tasks.register("detektAll", Detekt) {
+tasks.register("detektAll", Detekt) {
     description = "Custom DETEKT build for all modules"
     parallel = true
     ignoreFailures = false
@@ -69,27 +101,12 @@ def detektAll = tasks.register("detektAll", Detekt) {
     }
 }
 
-def detektAutoCorrectPrompt = tasks.register("detektAutoCorrectPrompt") {
-    doLast {
-        def detektTask = detektAll.get()
-        if (detektTask.state.failure != null && !detektTask.autoCorrect) {
-            println ".-----------------------------------------------------------------------------------------------------------------------------------.\n" +
-                    "| 🛠  Did you know: you can ask Detekt to automatically resolve some of the issues by running `./gradlew detektAll --auto-correct` |\n" +
-                    "'-----------------------------------------------------------------------------------------------------------------------------------'"
-        }
-    }
-}
-
-detektAll.configure {
-    finalizedBy detektAutoCorrectPrompt
-}
-
 dependencies {
     detektPlugins(libs.detekt.formatting)
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
 }
 
 /**
@@ -101,70 +118,6 @@ tasks.register("installGitHooks", Copy) {
     from new File(rootProject.rootDir, 'tools/team-props/git-hooks')
     into { new File(rootProject.rootDir, '.git/hooks') }
     fileMode 0777
-}
-
-// Onboarding and dev env setup tasks
-task checkBundler(type: Exec) {
-    doFirst {
-        println "Check Bundler"
-    }
-
-    workingDir = './'
-    executable "sh"
-    args "-c", "if ! type 'bundle' > /dev/null; then gem install bundler; fi"
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    //extension method checkBundler.output() can be used to obtain the output:
-    ext.output = {
-        return standardOutput.toString()
-    }
-}
-
-task checkBundle(type: Exec, dependsOn: checkBundler) {
-    doFirst {
-        println "Check Bundle"
-    }
-
-    workingDir = './'
-    executable "sh"
-    args "-c", "bundle check --path=\${BUNDLE_PATH:-vendor/bundle} > /dev/null || bundle install --jobs=3 --retry=3 --path=\${BUNDLE_PATH:-vendor/bundle}"
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    //extension method checkBundle.output() can be used to obtain the output:
-    ext.output = {
-        return standardOutput.toString()
-    }
-}
-
-task applyCredentials(type: Exec, dependsOn: checkBundle) {
-    doFirst {
-        println "Apply credentials for this branch"
-    }
-
-    workingDir = './'
-    executable "sh"
-    args "-c", "FASTLANE_SKIP_UPDATE_CHECK=1 FASTLANE_ENV_PRINTER=1 bundle exec fastlane run configure_apply force:true"
-
-    //store the output instead of printing to the console:
-    standardOutput = new ByteArrayOutputStream()
-
-    //extension method checkBundle.output() can be used to obtain the output:
-    ext.output = {
-        return standardOutput.toString()
-    }
-}
-
-tasks.register("configureApply") {
-    group = 'Onboarding'
-    description = 'Install dependencies for debug and production builds'
-    dependsOn applyCredentials
-    doLast {
-        println("Done")
-    }
 }
 
 apply from: './config/gradle/jacoco.gradle'
