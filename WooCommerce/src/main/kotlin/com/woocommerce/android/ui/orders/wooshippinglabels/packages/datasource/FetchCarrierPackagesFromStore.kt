@@ -15,41 +15,40 @@ class FetchCarrierPackagesFromStore @Inject constructor(
         return packageRepository.fetchAllStorePackages()
             .takeIf { it.isError.not() }
             ?.model
-            ?.let { response ->
-                mapOf(
-                    response.carrierPackages
-                        .parseCarrierData(CarrierType.USPS)
-                        .let { uspsCarrier to it },
-
-                    response.carrierPackages
-                        .parseCarrierData(CarrierType.DHL)
-                        .let { dhlCarrier to it }
-                )
-            } ?: emptyMap()
+            ?.filterCarrierData()
+            ?: emptyMap()
     }
+
+    private fun StorePackagesDAO.filterCarrierData() = mapOf(
+        carrierPackages
+            .parseCarrierData(CarrierType.USPS)
+            .let { uspsCarrier to it },
+
+        carrierPackages
+            .parseCarrierData(CarrierType.DHL)
+            .let { dhlCarrier to it }
+    )
 
     private fun Map<CarrierType, CarrierDAO>.parseCarrierData(
         carrierType: CarrierType
-    ) : List<CarrierPackageGroup> {
-        return this[carrierType]?.let {
-            return it.packageGroup.map { group ->
-                CarrierPackageGroup(
-                    groupName = group.description,
-                    packages = group.packages.map { packageItem ->
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = packageItem.name,
-                            description = "",
-                            length = "",
-                            width = "",
-                            height = "",
-                            isSelected = false
-                        )
-                    }
-                )
-            }
-        } ?: emptyList()
-    }
+    ) = get(carrierType)?.let {
+        it.packageGroup.map { group ->
+            CarrierPackageGroup(
+                groupName = group.description,
+                packages = group.packages.map { packageItem ->
+                    PackageData(
+                        type = PackageType.BOX,
+                        name = packageItem.name,
+                        description = "",
+                        length = "",
+                        width = "",
+                        height = "",
+                        isSelected = false
+                    )
+                }
+            )
+        }
+    } ?: emptyList()
 
     companion object {
         private val uspsCarrier = Carrier(
