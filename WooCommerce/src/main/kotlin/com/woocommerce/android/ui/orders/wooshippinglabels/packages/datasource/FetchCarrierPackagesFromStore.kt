@@ -7,93 +7,70 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import javax.inject.Inject
 
-class FetchCarrierPackagesFromStore @Inject constructor() {
+class FetchCarrierPackagesFromStore @Inject constructor(
+    private val packageRepository: WooShippingLabelPackageRepository
+) {
     @Suppress("LongMethod")
-    operator fun invoke(): Map<Carrier, List<CarrierPackageGroup>> {
-        // This is a mocked response.
-        // When fully implemented, this will be sorted from the Shipping plugin API.
-        return mapOf(
-            Carrier(
-                id = "dhl",
-                name = "DHL Express",
-                logoRes = R.drawable.dhl_logo
-            ) to listOf(
-                CarrierPackageGroup(
-                    groupName = "Group 1",
-                    packages = listOf(
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = "Package 1 - Carrier 1",
-                            description = "Description 1",
-                            length = "10",
-                            width = "10",
-                            height = "10",
-                            isSelected = false
-                        ),
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = "Package 2 - Carrier 1",
-                            description = "Description 2",
-                            length = "20",
-                            width = "20",
-                            height = "20",
-                            isSelected = false
+    suspend operator fun invoke(): Map<Carrier, List<CarrierPackageGroup>> {
+        return packageRepository.fetchAllStorePackages()
+            .takeIf { it.isError.not() }
+            ?.model
+            ?.let { response ->
+                val map = mutableMapOf<Carrier, List<CarrierPackageGroup>>()
+                val uspsPackages = response.carrierPackages[CarrierType.USPS]?.let {
+                    it.packageGroup.map { group ->
+                        CarrierPackageGroup(
+                            groupName = group.description,
+                            packages = group.packages.map { packageItem ->
+                                PackageData(
+                                    type = PackageType.BOX,
+                                    name = packageItem.name,
+                                    description = "",
+                                    length = "",
+                                    width = "",
+                                    height = "",
+                                    isSelected = false
+                                )
+                            }
                         )
+                    }
+                }.let {
+                    Pair(
+                        Carrier(
+                            id = "usps",
+                            name = "USPS",
+                            logoRes = R.drawable.usps_logo
+                        ), it ?: emptyList()
                     )
-                ),
-                CarrierPackageGroup(
-                    groupName = "Group 2",
-                    packages = listOf(
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = "Package 3 - Carrier 1",
-                            description = "Description 3",
-                            length = "30",
-                            width = "30",
-                            height = "30",
-                            isSelected = false
-                        ),
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = "Package 4 - Carrier 1",
-                            description = "Description 4",
-                            length = "40",
-                            width = "40",
-                            height = "40",
-                            isSelected = false
+                }
+                val dhlPackages = response.carrierPackages[CarrierType.DHL]?.let {
+                    it.packageGroup.map { group ->
+                        CarrierPackageGroup(
+                            groupName = group.description,
+                            packages = group.packages.map { packageItem ->
+                                PackageData(
+                                    type = PackageType.BOX,
+                                    name = packageItem.name,
+                                    description = "",
+                                    length = "",
+                                    width = "",
+                                    height = "",
+                                    isSelected = false
+                                )
+                            }
                         )
+                    }
+                }.let {
+                    Pair(
+                        Carrier(
+                            id = "dhl",
+                            name = "DHL Express",
+                            logoRes = R.drawable.dhl_logo
+                        ), it ?: emptyList()
                     )
-                )
-            ),
-            Carrier(
-                id = "usps",
-                name = "USPS",
-                logoRes = R.drawable.usps_logo
-            ) to listOf(
-                CarrierPackageGroup(
-                    groupName = "Group 2",
-                    packages = listOf(
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = "Package 1 - Carrier 2",
-                            description = "Description 1",
-                            length = "10",
-                            width = "10",
-                            height = "10",
-                            isSelected = false
-                        ),
-                        PackageData(
-                            type = PackageType.BOX,
-                            name = "Package 2 Carrier - 2",
-                            description = "Description 2",
-                            length = "20",
-                            width = "20",
-                            height = "20",
-                            isSelected = false
-                        )
-                    )
-                )
-            )
-        )
+                }
+
+                mapOf(uspsPackages, dhlPackages)
+            } ?: emptyMap()
     }
 }
