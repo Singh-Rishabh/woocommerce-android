@@ -253,7 +253,7 @@ class WooPosItemsViewModel @Inject constructor(
             _viewState.value = if (result.isSuccess) {
                 result.getOrThrow().toContentState()
             } else {
-                WooPosItemsViewState.Error()
+                currentState.copy(paginationState = PaginationState.Error)
             }
         }
     }
