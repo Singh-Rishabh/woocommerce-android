@@ -12,6 +12,7 @@ data class PackageDAO(
 )
 
 data class CarrierDAO(
+    val type: CarrierType,
     val packageGroup: List<CarrierPackageGroupDAO>
 )
 
@@ -19,3 +20,8 @@ data class CarrierPackageGroupDAO(
     val description: String,
     val packages: List<PackageDAO>
 )
+
+enum class CarrierType {
+    USPS,
+    DHL
+}

@@ -1,5 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.CarrierType.DHL
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.CarrierType.USPS
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CarrierPackageGroupDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CarrierPredefinedPackagesDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.PackageResponse
@@ -34,13 +36,13 @@ class WooShippingLabelPackageMapper @Inject constructor() {
                 usps.expressBoxes?.toCarrierGroup()?.let { add(it) }
                 usps.envelopes?.toCarrierGroup()?.let { add(it) }
             }
-        }.let { CarrierDAO(it) }
+        }.let { CarrierDAO(USPS, it) }
 
         val dhl = mutableListOf<CarrierPackageGroupDAO>().apply {
             carrierPackagesResponse?.dhlExpress?.let { dhl ->
                 dhl.domesticAndInternationalPackages?.toCarrierGroup()?.let { add(it) }
             }
-        }.let { CarrierDAO(it) }
+        }.let { CarrierDAO(DHL, it) }
 
         return listOf(usps, dhl)
     }
