@@ -545,6 +545,7 @@ class ProductDetailCardBuilder(
             else -> ""
         }
     }
+
     // enable editing external product link
     private fun Product.externalLink(): ProductProperty? {
         return if (this.productType == EXTERNAL) {
