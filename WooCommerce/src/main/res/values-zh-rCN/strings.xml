@@ -1,11 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-05 09:54:11+0000
+Translation-Revision-Date: 2024-11-12 09:54:04+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: zh_CN
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">信封</string>
+    <string name="woo_shipping_labels_package_creation_box_type">箱子</string>
+    <string name="woo_shipping_labels_package_creation_add_package">添加包裹</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">将其保存为新的包裹模板</string>
+    <string name="woo_shipping_labels_package_creation_height">高度</string>
+    <string name="woo_shipping_labels_package_creation_width">宽度</string>
+    <string name="woo_shipping_labels_package_creation_length">长度</string>
+    <string name="woo_shipping_labels_package_creation_package_type">包裹类型</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">已保存</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">承运商</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">自定义</string>
+    <string name="shipping_label_purchased_request_refund">请求退款</string>
+    <string name="shipping_label_purchased_schedule_pick_up">预约取件</string>
+    <string name="shipping_label_purchased_track_shipment">跟踪货物</string>
+    <string name="shipping_label_purchased_learn_how_to_print">了解如何从您的移动设备打印</string>
+    <string name="shipping_label_purchased_note">注意：重复使用打印的标签违反了我们的服务条款，并可能导致刑事指控。</string>
+    <string name="shipping_label_purchased_message">在此处，您可以再次打印运输标签或更改标签的纸张尺寸。</string>
+    <string name="shipping_label_purchased_title">您的运输标签已可供打印</string>
+    <string name="order_detail_edit_store_currency_mismatch">很抱歉，您只能在网页上编辑此订单，因为它使用的是 %1$s，而您站点的货币是 %2$s</string>
     <string name="shipping_label_shipping_service_title">运输服务</string>
     <string name="shipping_label_shipping_rates_sort_option_fastest">速度最快</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">费用最低</string>

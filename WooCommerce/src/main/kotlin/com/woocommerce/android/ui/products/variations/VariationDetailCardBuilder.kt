@@ -322,6 +322,7 @@ class VariationDetailCardBuilder(
                 ViewInventory(
                     InventoryData(
                         sku = this.sku,
+                        globalUniqueId = this.globalUniqueId,
                         isStockManaged = this.isStockManaged,
                         stockStatus = this.stockStatus,
                         stockQuantity = this.stockQuantity,

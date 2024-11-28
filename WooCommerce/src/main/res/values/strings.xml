@@ -365,6 +365,8 @@
     <string name="login_site_credentials_fetching_site">Fetching site…</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">Unable to login because application password creation is not approved.</string>
     <string name="login_app_login_malformed_link">We couldn\'t process your app login request</string>
+    <string name="login_jetpack_connection_create_account">If you don\'t have an account, we\'ll use this email to create one.</string>
+
     <!--
         My Store View
     -->
@@ -1266,7 +1268,7 @@
     <string name="shipping_label_shipment_details_title">Shipment details</string>
     <string name="shipping_label_shipment_details_order_details">Order details</string>
     <string name="shipping_label_shipment_details_shipment_cost">Shipment cost</string>
-    <string name="shipping_label_shipment_details_mark_order_complete">Mark this order as complete and notify the customer</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">After purchasing a label, mark this order as complete and notify the customer.</string>
     <string name="shipping_label_shipment_details_purchase_label">Purchase Label · %1$s </string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">Purchase Label</string>
     <string name="shipping_label_shipping_rates_sort_option_cheapest">Cheapest</string>
@@ -1543,23 +1545,23 @@
     <string name="card_reader_tap_to_pay_not_available_error_android_version">To use Tap To Pay on Android, you need Android 10 or newer. To accept in-person payments, please update Android or purchase a Bluetooth card reader.</string>
     <string name="card_reader_tap_to_pay_not_available_error_gms">To use Tap To Pay on Android, your device needs Google Play Services. To accept in-person payments, please install Google Play Services or purchase a Bluetooth card reader.</string>
     <string name="card_reader_tap_to_pay_not_available_error_country">Unfortunately, Tap To Pay on Android is not available in your country yet. Stay tuned!</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">Available funds</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">Pending funds</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">Funds become available after pending for %d days.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">Funds become available after pending for %d day.</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">LAST DEPOSIT</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">Available funds are deposited automatically, every day.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">Available funds are deposited automatically, every %s.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">Available funds are deposited automatically, every month on the %s.</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">Learn more about when you\'ll receive your funds</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">Collapse/expand deposit summary</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">Estimated</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">Paid</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">Pending</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">In transit</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">Canceled</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">Failed</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">Unknown</string>
+    <string name="card_reader_hub_payout_summary_available_funds">Available funds</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">Pending funds</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">Funds become available after pending for %d days.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">Funds become available after pending for %d day.</string>
+    <string name="card_reader_hub_payout_funds_payout_title">LAST PAYOUT</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">Available funds are paid out automatically, every day.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">Available funds are paid out automatically, every %s.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">Available funds are paid out automatically, every month on the %s.</string>
+    <string name="card_reader_hub_payout_summary_learn_more">Learn more about when you\'ll receive your funds</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">Collapse/expand payout summary</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">Estimated</string>
+    <string name="card_reader_hub_payout_summary_status_paid">Paid</string>
+    <string name="card_reader_hub_payout_summary_status_pending">Pending</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">In transit</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">Canceled</string>
+    <string name="card_reader_hub_payout_summary_status_failed">Failed</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">Unknown</string>
     <!--
            Card Reader Tap To Pay Explanation
         -->
@@ -2003,7 +2005,9 @@
     <string name="product_tax_status_taxable">Taxable</string>
     <string name="product_tax_status_shipping">Shipping</string>
     <string name="product_sku">SKU</string>
+    <string name="product_global_unique_id_hint">GTIN, UPC, EAN, ISBN</string>
     <string name="product_sku_summary">Helps to easily identify this product</string>
+    <string name="product_global_unique_id_summary">Enter a barcode or any other identifier unique to this product. It can help you list this product on other channels or marketplaces.</string>
     <string name="product_stock_status">Stock status</string>
     <string name="product_type">Product type</string>
     <string name="product_category">Category</string>
@@ -3427,7 +3431,7 @@
     <string name="login_magic_link_auto_sent">We just sent you a magic link to your e-mail address. Please tap the link in the email to log in.</string>
     <string name="login_magic_link_button">Log in with magic link</string>
 
-    <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
+    <string name="username_not_registered_wpcom">We can\'t find a WordPress.com account connected to this username. You can enter an email to create a new account.</string>
     <string name="login_magic_links_label">We\'ll email you a link that\'ll log you in instantly, no password needed.</string>
     <string name="login_get_link_by_email">Get a login link by email</string>
     <string name="signup_magic_link_message">We’ve emailed you a signup link to create your new WordPress.com account. Check your email on this device, and tap the link in the email you receive from WordPress.com.</string>
@@ -3510,6 +3514,7 @@
     <string name="or_use_password">Use password to sign in</string>
     <string name="login_magic_links_sent_label_short">Check your email on this device!</string>
     <string name="login_magic_links_email_sent">We just sent a magic link to</string>
+    <string name="login_magic_links_email_sent_double_check_email">Ensure your email is correct and double check your spam folder.</string>
     <string name="login_magic_links_email_sent_to_unknown_email">We just sent a magic link to your account\'s email address</string>
     <string name="login_site_picker_try_another_address">Try another address</string>
     <string name="or_use_password_below_qr_code_scan_option">Or log in with password</string>
@@ -4176,6 +4181,9 @@
     <string name="blaze_campaign_creation_new_intro_learn_item_3"><![CDATA[<b>Set your budget:</b> Decide on your spend and campaign length.]]></string>
     <string name="blaze_campaign_creation_new_intro_learn_item_4"><![CDATA[<b>Quick review:</b> Submit your ad for a fast moderator check.]]></string>
     <string name="blaze_campaign_creation_new_intro_learn_item_5"><![CDATA[<b>Go live:</b> Watch as your promotion begins and track its success.]]></string>
+    <string name="blaze_campaign_creation_no_product_modal_title">No products found</string>
+    <string name="blaze_campaign_creation_no_product_modal_body">You currently don\'t have a product available for promotion. Would you like to create a product now?</string>
+    <string name="blaze_campaign_creation_no_product_modal_cta">Create Product</string>
 
     <string name="order_configuration_product_selection">Select product %s</string>
     <string name="order_configuration_product_selection_control">Product selection</string>
@@ -4377,4 +4385,5 @@
     <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
     <string name="woo_shipping_labels_package_creation_box_type">Box</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
+    <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
 </resources>
