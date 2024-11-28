@@ -162,7 +162,7 @@ class WooPosCartViewModel @Inject constructor(
             _state.value = updateStateWithNewItem(itemClicked.await())
             WooPosAnalyticsEvent.Event.ItemAddedToCart.addProperties(
                 mapOf(
-                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.toAnalyticsString()
+                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.productTypeForAnalytics()
                 )
             )
             analyticsTracker.track(WooPosAnalyticsEvent.Event.ItemAddedToCart)
@@ -289,7 +289,7 @@ class WooPosCartViewModel @Inject constructor(
         )
 }
 
-private fun WooPosItemsViewModel.ItemClickedData.toAnalyticsString(): String {
+private fun WooPosItemsViewModel.ItemClickedData.productTypeForAnalytics(): String {
     return when (this) {
         is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
         is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
