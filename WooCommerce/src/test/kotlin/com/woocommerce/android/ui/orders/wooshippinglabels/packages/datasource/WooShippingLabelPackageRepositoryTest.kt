@@ -35,7 +35,7 @@ class WooShippingLabelPackageRepositoryTest : BaseUnitTest() {
     fun `fetchAllStorePackages returns WooResult with result`() = testBlocking {
         val storePackagesDAO = StorePackagesDAO(
             savedPackages = listOf(),
-            carrierPackages = listOf()
+            carrierPackages = mapOf()
         )
         val packageResponse = mock<PackageResponse>()
         whenever(packageRestClient.fetchShippingLabelPackages(siteModel)).thenReturn(WooPayload(packageResponse))

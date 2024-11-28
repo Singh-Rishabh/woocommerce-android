@@ -7,11 +7,13 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.SavedPackageSelection
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StorePredefinedPackages
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -27,8 +29,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
     private lateinit var sut: WooShippingLabelPackageCreationViewModel
     private val resourceProvider: ResourceProvider = mock()
-    private val fetchSavedPackages: FetchSavedPackagesFromStore = mock()
-    private val fetchCarrierPackages: FetchPredefinedPackagesFromStore = mock()
+    private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore = mock()
 
     @Before
     fun setUp() {
@@ -42,12 +43,10 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             resourceProvider.getString(R.string.woo_shipping_labels_package_creation_tab_saved)
         ).thenReturn("Saved")
 
-        whenever(fetchSavedPackages()).thenReturn(emptyList())
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
             resourceProvider,
-            fetchSavedPackages,
-            fetchCarrierPackages
+            fetchPredefinedPackages
         )
     }
 
@@ -159,13 +158,19 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             height = "20",
             isSelected = false
         )
-        whenever(fetchSavedPackages()).thenReturn(listOf(package1, package2))
+        whenever(fetchPredefinedPackages()).thenReturn(
+            StorePredefinedPackages(
+                carrierPackageSelection = CarrierPackageSelection(emptyMap()),
+                savedPackageSelection = SavedPackageSelection(
+                    listOf(package1, package2)
+                )
+            )
+        )
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
             resourceProvider,
-            fetchSavedPackages,
-            fetchCarrierPackages
+            fetchPredefinedPackages
         )
         sut.viewState.observeForever { lastViewState = it }
         sut.onSavedPackageSelected(package1, true)
@@ -179,7 +184,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `onCarrierPackageSelected selects only one package at a time`() = testBlocking {
         var lastViewState: ViewState? = null
-        val carrier = Carrier(id = "dhl", name = "DHL Express", logoRes = R.drawable.dhl_logo)
+        val carrier: Carrier = Carrier.DHL
         val package1 = PackageData(
             type = PackageType.BOX,
             name = "Package 1",
@@ -206,13 +211,19 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
                 )
             )
         )
-        whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
+        whenever(fetchPredefinedPackages()).thenReturn(
+            StorePredefinedPackages(
+                carrierPackageSelection = CarrierPackageSelection(carrierPackages),
+                savedPackageSelection = SavedPackageSelection(
+                    emptyList()
+                )
+            )
+        )
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
             resourceProvider,
-            fetchSavedPackages,
-            fetchCarrierPackages
+            fetchPredefinedPackages
         )
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
@@ -229,8 +240,8 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     @Suppress("LongMethod")
     fun `onCarrierPackageSelected selects only one package at a time with multiple carriers`() = testBlocking {
         var lastViewState: ViewState? = null
-        val carrier1 = Carrier(id = "dhl", name = "DHL Express", logoRes = R.drawable.dhl_logo)
-        val carrier2 = Carrier(id = "usps", name = "USPS", logoRes = R.drawable.usps_logo)
+        val carrier1: Carrier = Carrier.DHL
+        val carrier2: Carrier = Carrier.USPS
         val package1 = PackageData(
             type = PackageType.BOX,
             name = "Package 1 - Carrier 1",
@@ -281,13 +292,19 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
                 )
             )
         )
-        whenever(fetchCarrierPackages()).thenReturn(carrierPackages)
+        whenever(fetchPredefinedPackages()).thenReturn(
+            StorePredefinedPackages(
+                carrierPackageSelection = CarrierPackageSelection(carrierPackages),
+                savedPackageSelection = SavedPackageSelection(
+                    emptyList()
+                )
+            )
+        )
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
             resourceProvider,
-            fetchSavedPackages,
-            fetchCarrierPackages
+            fetchPredefinedPackages
         )
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
