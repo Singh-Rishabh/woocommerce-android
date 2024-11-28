@@ -147,14 +147,14 @@ class ProductInventoryViewModelTest : BaseUnitTest() {
             viewModel.onProductUniqueGlobalIdChanged(invalidGlobalUniqueId)
 
             assertThat(actual?.inventoryData?.globalUniqueId).isEqualTo(invalidGlobalUniqueId)
-            assertThat(actual?.globalUniqueIdErrorMessage).
-            isEqualTo(string.product_inventory_update_global_unique_id_error)
+            assertThat(actual?.globalUniqueIdErrorMessage)
+                .isEqualTo(string.product_inventory_update_global_unique_id_error)
 
             viewModel.onProductUniqueGlobalIdChanged(validGlobalUniqueId)
 
             assertThat(actual?.inventoryData?.globalUniqueId).isEqualTo(validGlobalUniqueId)
             assertThat(actual?.globalUniqueIdErrorMessage).isEqualTo(0)
-    }
+        }
 
     fun `Test that a discard dialog isn't shown if no data changed`() =
         testBlocking {
