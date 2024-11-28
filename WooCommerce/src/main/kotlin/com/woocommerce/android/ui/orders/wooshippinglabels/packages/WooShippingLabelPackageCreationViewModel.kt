@@ -53,13 +53,13 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     init {
         launch {
-            _viewState.update { viewState ->
-                val predefinedPackages = fetchPredefinedPackages()
-
-                viewState.copy(
-                    savedPackageSelection = predefinedPackages.savedPackageSelection,
-                    carrierPackageSection = predefinedPackages.carrierPackageSelection
-                )
+            fetchPredefinedPackages()?.let {
+                _viewState.update { viewState ->
+                    viewState.copy(
+                        savedPackageSelection = it.savedPackageSelection,
+                        carrierPackageSection = it.carrierPackageSelection
+                    )
+                }
             }
         }
     }

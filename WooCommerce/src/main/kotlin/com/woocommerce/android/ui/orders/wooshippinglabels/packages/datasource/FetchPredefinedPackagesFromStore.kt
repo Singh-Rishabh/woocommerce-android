@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
@@ -10,10 +11,12 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StorePred
 import javax.inject.Inject
 
 class FetchPredefinedPackagesFromStore @Inject constructor(
+    private val selectedSite: SelectedSite,
     private val packageRepository: WooShippingLabelPackageRepository
 ) {
-    suspend operator fun invoke(): StorePredefinedPackages {
-        val storePackages = packageRepository.fetchAllStorePackages()
+    suspend operator fun invoke(): StorePredefinedPackages? {
+        val site = selectedSite.getOrNull() ?: return null
+        val storePackages = packageRepository.fetchAllStorePackages(site)
 
         val carrierPackages = storePackages
             .takeIf { it.isError.not() }
