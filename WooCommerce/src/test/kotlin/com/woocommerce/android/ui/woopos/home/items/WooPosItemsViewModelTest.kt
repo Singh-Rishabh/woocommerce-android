@@ -347,7 +347,7 @@ class WooPosItemsViewModelTest {
     }
 
     @Test
-    fun `given error from load more, when list end reached, then state is Error`() = runTest {
+    fun `given error from load more, when list end reached, then state is pagination error`() = runTest {
         // GIVEN
         val products = listOf(
             ProductTestUtils.generateProduct(
@@ -373,8 +373,8 @@ class WooPosItemsViewModelTest {
         viewModel.onUIEvent(WooPosItemsUIEvent.EndOfItemsListReached)
         viewModel.viewState.test {
             // THEN
-            val value = awaitItem()
-            assertThat(value).isInstanceOf(WooPosItemsViewState.Error::class.java)
+            val value = awaitItem() as ContentViewState
+            assertThat(value.paginationState).isInstanceOf(PaginationState.Error::class.java)
         }
     }
 
