@@ -184,7 +184,7 @@ private fun MainItemsList(
 
                 is WooPosItemsViewState.Empty -> ProductsEmptyList()
 
-                is WooPosItemsViewState.Error -> ProductsError(modifier = Modifier.width(640.dp)) { onRetryClicked() }
+                is WooPosItemsViewState.Error -> ProductsError { onRetryClicked() }
             }
         }
         PullRefreshIndicator(
@@ -307,13 +307,13 @@ fun ProductsEmptyList() {
 }
 
 @Composable
-fun ProductsError(modifier: Modifier, onRetryClicked: () -> Unit) {
+fun ProductsError(onRetryClicked: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         WooPosErrorScreen(
-            modifier = modifier,
+            modifier = Modifier.width(640.dp),
             message = stringResource(id = R.string.woopos_products_loading_error_title),
             reason = stringResource(id = R.string.woopos_products_loading_error_message),
             primaryButton = Button(
