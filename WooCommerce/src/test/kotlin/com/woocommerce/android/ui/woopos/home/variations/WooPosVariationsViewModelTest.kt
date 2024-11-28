@@ -17,7 +17,9 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsV
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -73,7 +75,21 @@ class WooPosVariationsViewModelTest {
 
     @Test
     fun `given view model init, then API call is made to fetch product`() = runTest {
-        whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(emptyFlow())
+        whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+            flow {
+                emit(
+                    listOf(
+                        ProductTestUtils.generateProductVariation(1L, 2L),
+                        ProductTestUtils.generateProductVariation(1L, 3L),
+                        ProductTestUtils.generateProductVariation(1L, 4L),
+                    )
+                )
+            }
+        )
+
+        whenever(variationsDataSource.fetchVariations(any(), any())).thenReturn(
+            Result.success(Unit)
+        )
 
         wooPosVariationsViewModel = WooPosVariationsViewModel(
             childrenToParentEventSender,
@@ -120,13 +136,16 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, when variation fetched successfully, then view state is updated with variation content`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProductVariation(1L, 2L),
-                        ProductTestUtils.generateProductVariation(1L, 3L),
-                        ProductTestUtils.generateProductVariation(1L, 4L),
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
                     )
-                )
+                }
             )
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
@@ -152,13 +171,16 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, when variation fetched successfully, then filter out variations with price null`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProductVariation(1L, 2L, amount = ""),
-                        ProductTestUtils.generateProductVariation(1L, 3L),
-                        ProductTestUtils.generateProductVariation(1L, 4L),
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L, amount = ""),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
                     )
-                )
+                }
             )
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
@@ -183,14 +205,17 @@ class WooPosVariationsViewModelTest {
     @Test
     fun `given view model init, when variation fetched successfully, then view state is updated with proper variation content`() =
         runTest {
-            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProductVariation(1L, 2L),
-                        ProductTestUtils.generateProductVariation(1L, 3L),
-                        ProductTestUtils.generateProductVariation(1L, 4L),
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
                     )
-                )
+                }
             )
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
@@ -307,6 +332,12 @@ class WooPosVariationsViewModelTest {
 
     @Test
     fun `given view state is Error, when fetch variations, then view state is updated with error state`() = runTest {
+        whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+            flow {
+                delay(100)
+                emit(emptyList())
+            }
+        )
         whenever(getProductById.invoke(any())).thenReturn(
             ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
         )
@@ -332,6 +363,18 @@ class WooPosVariationsViewModelTest {
     @Test
     fun `given view state is Error, when pull to refreshed, then view state is updated with proper variation content`() =
         runTest {
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
+                    )
+                }
+            )
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
@@ -361,21 +404,25 @@ class WooPosVariationsViewModelTest {
     fun `when end of list reached, then load more called`() =
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProductVariation(1L, 2L),
-                        ProductTestUtils.generateProductVariation(1L, 3L),
-                        ProductTestUtils.generateProductVariation(1L, 4L),
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
                     )
-                )
+                }
             )
+
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
             )
-            whenever(variationsDataSource.canLoadMore()).thenReturn(true)
-            whenever(variationsDataSource.loadMore(any())).thenReturn(
-                Result.failure(Throwable())
+            whenever(variationsDataSource.fetchVariations(any(), any())).thenReturn(
+                Result.success(Unit)
             )
+            whenever(variationsDataSource.canLoadMore()).thenReturn(true)
             wooPosVariationsViewModel = WooPosVariationsViewModel(
                 childrenToParentEventSender,
                 getProductById,
@@ -383,7 +430,9 @@ class WooPosVariationsViewModelTest {
                 priceFormat
             )
             wooPosVariationsViewModel.init(1L)
+            advanceUntilIdle()
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
+
 
             verify(variationsDataSource).loadMore(1L)
         }
@@ -436,14 +485,17 @@ class WooPosVariationsViewModelTest {
     @Test
     fun `given more items to load, when load more is success, then pagination state is updated to None `() =
         runTest {
-            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProductVariation(1L, 2L),
-                        ProductTestUtils.generateProductVariation(1L, 3L),
-                        ProductTestUtils.generateProductVariation(1L, 4L),
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
                     )
-                )
+                }
             )
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
@@ -460,6 +512,7 @@ class WooPosVariationsViewModelTest {
                 priceFormat
             )
             wooPosVariationsViewModel.init(1L)
+            advanceUntilIdle()
             wooPosVariationsViewModel.loadMore(1L)
             val states: MutableList<WooPosVariationsViewState> = mutableListOf()
             wooPosVariationsViewModel.viewState.asLiveData().observeForever {
@@ -474,14 +527,17 @@ class WooPosVariationsViewModelTest {
     @Test
     fun `given load more call fails, when load more is called, then pagination state is updated to Error`() =
         runTest {
-            whenever(variationsDataSource.getVariationsFlow(1L)).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProductVariation(1L, 2L),
-                        ProductTestUtils.generateProductVariation(1L, 3L),
-                        ProductTestUtils.generateProductVariation(1L, 4L),
+            whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
+                flow {
+                    delay(100)
+                    emit(
+                        listOf(
+                            ProductTestUtils.generateProductVariation(1L, 2L),
+                            ProductTestUtils.generateProductVariation(1L, 3L),
+                            ProductTestUtils.generateProductVariation(1L, 4L),
+                        )
                     )
-                )
+                }
             )
             whenever(getProductById.invoke(any())).thenReturn(
                 ProductTestUtils.generateProduct(1L, isVariable = true, productType = "variable")
@@ -498,6 +554,7 @@ class WooPosVariationsViewModelTest {
                 priceFormat
             )
             wooPosVariationsViewModel.init(1L)
+            advanceUntilIdle()
             wooPosVariationsViewModel.loadMore(1L)
 
             wooPosVariationsViewModel.viewState.test {
