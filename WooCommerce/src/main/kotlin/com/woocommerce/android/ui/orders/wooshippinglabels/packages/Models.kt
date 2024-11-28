@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 
 import android.os.Parcelable
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import kotlinx.parcelize.Parcelize
 
@@ -26,11 +27,23 @@ data class CarrierPackageGroup(
 ) : Parcelable
 
 @Parcelize
-data class Carrier(
+sealed class Carrier(
     val id: String,
     val name: String,
     val logoRes: Int? = null,
-) : Parcelable
+) : Parcelable {
+    data object USPS : Carrier(
+        id = "usps",
+        name = "USPS",
+        logoRes = R.drawable.usps_logo
+    )
+
+    data object DHL : Carrier(
+        id = "dhl",
+        name = "DHL",
+        logoRes = R.drawable.dhl_logo
+    )
+}
 
 @Parcelize
 data class CarrierPackageSelection(

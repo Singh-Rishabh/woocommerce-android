@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
-import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
@@ -10,7 +9,6 @@ import javax.inject.Inject
 class FetchCarrierPackagesFromStore @Inject constructor(
     private val packageRepository: WooShippingLabelPackageRepository
 ) {
-    @Suppress("LongMethod")
     suspend operator fun invoke(): Map<Carrier, List<CarrierPackageGroup>> {
         return packageRepository.fetchAllStorePackages()
             .takeIf { it.isError.not() }
@@ -22,11 +20,11 @@ class FetchCarrierPackagesFromStore @Inject constructor(
     private fun StorePackagesDAO.filterCarrierData() = mapOf(
         carrierPackages
             .parseCarrierData(CarrierType.USPS)
-            .let { uspsCarrier to it },
+            .let { Carrier.USPS to it },
 
         carrierPackages
             .parseCarrierData(CarrierType.DHL)
-            .let { dhlCarrier to it }
+            .let { Carrier.DHL to it }
     )
 
     private fun Map<CarrierType, CarrierDAO>.parseCarrierData(
@@ -49,18 +47,4 @@ class FetchCarrierPackagesFromStore @Inject constructor(
             )
         }
     } ?: emptyList()
-
-    companion object {
-        private val uspsCarrier = Carrier(
-            id = "usps",
-            name = "USPS",
-            logoRes = R.drawable.usps_logo
-        )
-
-        private val dhlCarrier = Carrier(
-            id = "dhl",
-            name = "DHL Express",
-            logoRes = R.drawable.dhl_logo
-        )
-    }
 }
