@@ -16,61 +16,54 @@ class FetchCarrierPackagesFromStore @Inject constructor(
             .takeIf { it.isError.not() }
             ?.model
             ?.let { response ->
-                val map = mutableMapOf<Carrier, List<CarrierPackageGroup>>()
-                val uspsPackages = response.carrierPackages[CarrierType.USPS]?.let {
-                    it.packageGroup.map { group ->
-                        CarrierPackageGroup(
-                            groupName = group.description,
-                            packages = group.packages.map { packageItem ->
-                                PackageData(
-                                    type = PackageType.BOX,
-                                    name = packageItem.name,
-                                    description = "",
-                                    length = "",
-                                    width = "",
-                                    height = "",
-                                    isSelected = false
-                                )
-                            }
+                val uspsPackages = response.carrierPackages
+                    .parseCarrierData(CarrierType.USPS)
+                    .let {
+                        Pair(
+                            Carrier(
+                                id = "usps",
+                                name = "USPS",
+                                logoRes = R.drawable.usps_logo
+                            ), it
                         )
                     }
-                }.let {
-                    Pair(
-                        Carrier(
-                            id = "usps",
-                            name = "USPS",
-                            logoRes = R.drawable.usps_logo
-                        ), it ?: emptyList()
-                    )
-                }
-                val dhlPackages = response.carrierPackages[CarrierType.DHL]?.let {
-                    it.packageGroup.map { group ->
-                        CarrierPackageGroup(
-                            groupName = group.description,
-                            packages = group.packages.map { packageItem ->
-                                PackageData(
-                                    type = PackageType.BOX,
-                                    name = packageItem.name,
-                                    description = "",
-                                    length = "",
-                                    width = "",
-                                    height = "",
-                                    isSelected = false
-                                )
-                            }
+
+                val dhlPackages = response.carrierPackages
+                    .parseCarrierData(CarrierType.DHL)
+                    .let {
+                        Pair(
+                            Carrier(
+                                id = "dhl",
+                                name = "DHL Express",
+                                logoRes = R.drawable.dhl_logo
+                            ), it
                         )
-                    }
-                }.let {
-                    Pair(
-                        Carrier(
-                            id = "dhl",
-                            name = "DHL Express",
-                            logoRes = R.drawable.dhl_logo
-                        ), it ?: emptyList()
-                    )
                 }
 
                 mapOf(uspsPackages, dhlPackages)
             } ?: emptyMap()
+    }
+
+    private fun Map<CarrierType, CarrierDAO>.parseCarrierData(
+        carrierType: CarrierType
+    ) : List<CarrierPackageGroup> {
+        return this[carrierType]?.let {
+            return it.packageGroup.map { group ->
+                CarrierPackageGroup(
+                    groupName = group.description,
+                    packages = group.packages.map { packageItem ->
+                        PackageData(
+                            type = PackageType.BOX,
+                            name = packageItem.name,
+                            description = "",
+                            length = "",
+                            width = "",
+                            height = "",
+                            isSelected = false
+                        )
+                    }
+                )
+            }
+        } ?: emptyList()
     }
 }
