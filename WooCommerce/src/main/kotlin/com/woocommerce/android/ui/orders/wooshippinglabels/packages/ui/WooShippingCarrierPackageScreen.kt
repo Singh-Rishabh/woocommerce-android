@@ -226,11 +226,7 @@ fun WooShippingCarrierPackageScreenPreview() {
     WooThemeWithBackground {
         WooShippingCarrierPackageScreen(
             carrierPackages = mapOf(
-                Carrier(
-                    id = "dhl",
-                    name = "DHL Express",
-                    logoRes = R.drawable.dhl_logo
-                ) to listOf(
+                Carrier.DHL to listOf(
                     CarrierPackageGroup(
                         groupName = "Group 1",
                         packages = listOf(
@@ -278,11 +274,7 @@ fun WooShippingCarrierPackageScreenPreview() {
                         )
                     )
                 ),
-                Carrier(
-                    id = "usps",
-                    name = "USPS",
-                    logoRes = R.drawable.usps_logo
-                ) to listOf(
+                Carrier.USPS to listOf(
                     CarrierPackageGroup(
                         groupName = "Group 2",
                         packages = listOf(
