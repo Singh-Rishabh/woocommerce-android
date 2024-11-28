@@ -58,7 +58,7 @@ class BlazeCampaignCreationIntroFragment : BaseFragment() {
                     navigateToProductSelectorScreen()
                 }
 
-                is BlazeCampaignCreationIntroViewModel.ShowNoProductCTA -> {
+                is BlazeCampaignCreationIntroViewModel.ShowNoProductDialog -> {
                     WooDialog.showDialog(
                         activity = requireActivity(),
                         titleId = R.string.blaze_campaign_creation_no_product_modal_title,

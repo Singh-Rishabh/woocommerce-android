@@ -60,7 +60,7 @@ class BlazeCampaignCreationIntroViewModel @Inject constructor(
                     products.isNotEmpty() -> triggerEvent(ShowProductSelector)
                     else -> {
                         WooLog.w(WooLog.T.BLAZE, "No products available to create a campaign")
-                        triggerEvent(ShowNoProductCTA)
+                        triggerEvent(ShowNoProductDialog)
                     }
                 }
             }
@@ -92,6 +92,6 @@ class BlazeCampaignCreationIntroViewModel @Inject constructor(
 
     object ShowProductSelector : MultiLiveEvent.Event()
     data class ShowCampaignCreationForm(val productId: Long, val source: BlazeFlowSource) : MultiLiveEvent.Event()
-    object ShowNoProductCTA : MultiLiveEvent.Event()
+    object ShowNoProductDialog : MultiLiveEvent.Event()
     object NavigateToAddProduct : MultiLiveEvent.Event()
 }

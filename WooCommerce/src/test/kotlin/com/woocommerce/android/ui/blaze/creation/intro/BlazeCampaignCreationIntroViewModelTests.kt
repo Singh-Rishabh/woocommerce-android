@@ -122,7 +122,7 @@ class BlazeCampaignCreationIntroViewModelTests : BaseUnitTest() {
             viewModel.onContinueClick()
 
             val event = viewModel.event.value
-            assertThat(event).isEqualTo(BlazeCampaignCreationIntroViewModel.ShowNoProductCTA)
+            assertThat(event).isEqualTo(BlazeCampaignCreationIntroViewModel.ShowNoProductDialog)
         }
 
     @Test
