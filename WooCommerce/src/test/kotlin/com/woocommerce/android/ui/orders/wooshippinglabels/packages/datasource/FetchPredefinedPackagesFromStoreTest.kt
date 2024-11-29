@@ -38,14 +38,12 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
         assertThat(result.savedPackageSelection.packages).containsExactly(
             PackageData(
                 name = "Saved Package 1",
-                description = "",
                 dimensions = "dimensions",
                 isSelected = false,
                 isLetter = false
             ),
             PackageData(
                 name = "Saved Package 2",
-                description = "",
                 dimensions = "dimensions",
                 isSelected = false,
                 isLetter = false
@@ -57,7 +55,6 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 packages = listOf(
                     PackageData(
                         name = "Carrier Package 1",
-                        description = "",
                         dimensions = "dimensions",
                         isSelected = false,
                         isLetter = false

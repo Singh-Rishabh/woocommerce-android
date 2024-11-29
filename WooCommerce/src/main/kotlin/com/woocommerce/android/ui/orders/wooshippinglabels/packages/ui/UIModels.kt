@@ -8,11 +8,16 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class PackageData(
     val name: String,
-    val description: String,
     val dimensions: String,
     val isSelected: Boolean,
     val isLetter: Boolean
-) : Parcelable
+) : Parcelable {
+    val descriptionResId: Int
+        get() = when (isLetter) {
+            true -> R.string.woo_shipping_labels_package_creation_envelope_type
+            false -> R.string.woo_shipping_labels_package_creation_box_type
+        }
+}
 
 @Parcelize
 data class PredefinedPackage(
@@ -40,7 +45,6 @@ data class CustomPackageCreationData(
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
         name = "",
-        description = "",
         dimensions = "$length x $width x $height $dimensionUnit",
         isSelected = true,
         isLetter = type == PackageType.ENVELOPE

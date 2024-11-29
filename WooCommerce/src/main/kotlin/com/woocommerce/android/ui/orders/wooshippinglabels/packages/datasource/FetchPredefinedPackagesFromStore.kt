@@ -34,7 +34,6 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
         savedPackages.map { packageDAO ->
             PackageData(
                 name = packageDAO.name,
-                description = "",
                 dimensions = packageDAO.dimensions,
                 isSelected = false,
                 isLetter = packageDAO.isLetter
@@ -60,7 +59,6 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                 packages = group.packages.map { packageItem ->
                     PackageData(
                         name = packageItem.name,
-                        description = "",
                         dimensions = packageItem.dimensions,
                         isSelected = false,
                         isLetter = packageItem.isLetter

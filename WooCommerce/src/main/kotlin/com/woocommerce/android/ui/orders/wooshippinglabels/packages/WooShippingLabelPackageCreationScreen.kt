@@ -127,21 +127,18 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     savedPackages = listOf(
                         PackageData(
                             name = "Small Flat Rate Box",
-                            description = "USPS Priority Mail Flat Rate Boxes",
                             dimensions = "10 x 10 x 10 cm",
                             isSelected = true,
                             isLetter = true
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
-                            description = "Custom package",
                             dimensions = "20 x 20 x 20 cm",
                             isSelected = false,
                             isLetter = false
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
-                            description = "DHL Express",
                             dimensions = "30 x 30 x 30 cm",
                             isSelected = false,
                             isLetter = false
