@@ -16,19 +16,32 @@ class WooPosTotalsPaymentReceiptRepository @Inject constructor(
     private val orderMapper: OrderMapper,
 ) {
     suspend fun sendReceiptByEmail(orderId: Long, email: String): Result<Unit> = withContext(Dispatchers.IO) {
-        val order = getOrderById(orderId) ?: return@withContext Result.failure(Exception("Order not found"))
-        val updatedCustomer = order.customer?.copy(email = email) ?: Order.Customer.EMPTY.copy(email = email)
-        val updatedOrder = order.copy(customer = updatedCustomer)
-        val updateOrderResult = orderCreateEditRepository.createOrUpdateOrder(updatedOrder)
+        val order = getOrderById(orderId)
+        if (order == null) {
+            return@withContext Result.failure(Exception("Failed to get order"))
+        }
 
-        if (updateOrderResult.isFailure) return@withContext Result.failure(Exception("Failed to update order"))
+        if (updateOrderWithEmail(order, email).isFailure) {
+            return@withContext Result.failure(Exception("Failed to update order with email"))
+        }
 
+        return@withContext triggerOrderReceiptSending(orderId)
+    }
+
+    private suspend fun triggerOrderReceiptSending(orderId: Long): Result<Unit> {
         val sendOrderResult = orderStore.sendOrderReceipt(selectedSite.get(), orderId)
-        return@withContext if (sendOrderResult.isError) {
+        return if (sendOrderResult.isError) {
             Result.failure(Exception("Failed to send order receipt"))
         } else {
             Result.success(Unit)
         }
+    }
+
+    private suspend fun updateOrderWithEmail(order: Order, email: String): Result<Order> {
+        val updatedCustomer = order.customer?.copy(email = email) ?: Order.Customer.EMPTY.copy(email = email)
+        return orderCreateEditRepository.createOrUpdateOrder(
+            order = order.copy(customer = updatedCustomer)
+        )
     }
 
     private suspend fun getOrderById(orderId: Long) =
