@@ -1226,6 +1226,13 @@ class ProductDetailViewModel @Inject constructor(
         productType: ProductType,
         isVirtual: Boolean
     ) {
+        // Reset subscription data that might have existed to null when changing type to non-subscription product type.
+        // This avoids any Product Details card conflicts after conversion (e.g: displaying Subscription-related info
+        // in a non-subscription product)
+        if (productType != ProductType.SUBSCRIPTION) {
+            viewState = viewState.copy(subscriptionDraft = null)
+        }
+
         updateProductDraft(type = productType.value, isVirtual = isVirtual)
 
         viewState.productAggregateDraft?.let { productAggregateDraft ->
@@ -2731,7 +2738,7 @@ class ProductDetailViewModel @Inject constructor(
             }
         )
 
-        fun copy(subscriptionDraft: SubscriptionDetails) = copy(
+        fun copy(subscriptionDraft: SubscriptionDetails?) = copy(
             productAggregateDraft = productAggregateDraft?.copy(subscription = subscriptionDraft)
         )
 
