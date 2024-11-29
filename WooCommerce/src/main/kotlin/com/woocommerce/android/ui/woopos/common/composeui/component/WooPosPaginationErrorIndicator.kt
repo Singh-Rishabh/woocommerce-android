@@ -29,14 +29,14 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
-fun WooPosPaginationErrorScreen(
+fun WooPosPaginationErrorIndicator(
     modifier: Modifier = Modifier,
     icon: Painter = painterResource(id = R.drawable.woo_pos_ic_error),
     message: String,
     primaryButton: Button,
 ) {
     WooPosCard {
-        WooPosPaginationErrorScreenContent(
+        WooPosPaginationErrorIndicatorContent(
             modifier = modifier,
             icon = icon,
             message = message,
@@ -46,7 +46,7 @@ fun WooPosPaginationErrorScreen(
 }
 
 @Composable
-private fun WooPosPaginationErrorScreenContent(
+private fun WooPosPaginationErrorIndicatorContent(
     modifier: Modifier,
     icon: Painter,
     message: String,
@@ -101,7 +101,7 @@ private fun WooPosPaginationErrorScreenContent(
 @WooPosPreview
 fun WooPosPaginationErrorScreenPreview() {
     WooPosTheme {
-        WooPosPaginationErrorScreen(
+        WooPosPaginationErrorIndicator(
             message = "Error loading products",
             primaryButton = Button(
                 text = "Load more",
