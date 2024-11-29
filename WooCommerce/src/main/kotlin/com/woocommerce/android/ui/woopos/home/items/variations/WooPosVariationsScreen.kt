@@ -140,9 +140,7 @@ private fun WooPosVariationsScreens(
                     )
                 }
 
-                is WooPosVariationsViewState.Loading -> ItemsLoadingIndicator(
-                    minOf(10, variableProductData.numOfVariations)
-                )
+                is WooPosVariationsViewState.Loading -> ItemsLoadingIndicator()
 
                 is WooPosVariationsViewState.Error -> {
                     VariationsError(modifier = Modifier.width(640.dp)) {
