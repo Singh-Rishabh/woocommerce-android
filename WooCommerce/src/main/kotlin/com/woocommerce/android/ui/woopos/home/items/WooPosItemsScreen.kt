@@ -165,7 +165,7 @@ private fun MainItemsList(
                             onSimpleProductsBannerLearnMoreClicked,
                             onSimpleProductsBannerClosed
                         )
-                        ItemList(
+                        WooPosItemList(
                             itemsState,
                             listState,
                             onItemClicked,
