@@ -140,7 +140,10 @@ private fun WooPosVariationsScreens(
                     )
                 }
 
-                is WooPosVariationsViewState.Loading -> ItemsLoadingIndicator()
+                is WooPosVariationsViewState.Loading -> {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ItemsLoadingIndicator()
+                }
 
                 is WooPosVariationsViewState.Error -> {
                     VariationsError(modifier = Modifier.width(640.dp)) {
