@@ -29,7 +29,10 @@ class WooPosTotalsPaymentReceiptRepositoryTest {
     private val orderMapper: OrderMapper = mock()
 
     private val repository = WooPosTotalsPaymentReceiptRepository(
-        selectedSite, orderStore, orderCreateEditRepository, orderMapper
+        selectedSite,
+        orderStore,
+        orderCreateEditRepository,
+        orderMapper,
     )
 
     @Test
@@ -92,7 +95,6 @@ class WooPosTotalsPaymentReceiptRepositoryTest {
         // THEN
         assertThat(result.isFailure).isTrue()
     }
-
 
     @Test
     fun `given receipt sending fails, when sendReceiptByEmail, then return failure`() = runTest {
