@@ -48,7 +48,7 @@ fun WooSavedPackageListItem(
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = packageData.dimensionsForDisplay,
+                    text = packageData.dimensions,
                     style = MaterialTheme.typography.body2
                 )
             }

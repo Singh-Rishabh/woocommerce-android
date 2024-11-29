@@ -234,18 +234,14 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 type = PackageType.BOX,
                                 name = "Package 1 - Carrier 1",
                                 description = "Description 1",
-                                length = "10",
-                                width = "10",
-                                height = "10",
+                                dimensions = "10 x 10 x 10 cm",
                                 isSelected = false
                             ),
                             PackageData(
                                 type = PackageType.BOX,
                                 name = "Package 2 - Carrier 1",
                                 description = "Description 2",
-                                length = "20",
-                                width = "20",
-                                height = "20",
+                                dimensions = "20 x 20 x 20 cm",
                                 isSelected = false
                             )
                         )
@@ -257,18 +253,14 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 type = PackageType.BOX,
                                 name = "Package 3 - Carrier 1",
                                 description = "Description 3",
-                                length = "30",
-                                width = "30",
-                                height = "30",
+                                dimensions = "30 x 30 x 30 cm",
                                 isSelected = false
                             ),
                             PackageData(
                                 type = PackageType.BOX,
                                 name = "Package 4 - Carrier 1",
                                 description = "Description 4",
-                                length = "40",
-                                width = "40",
-                                height = "40",
+                                dimensions = "40 x 40 x 40 cm",
                                 isSelected = false
                             )
                         )
@@ -282,18 +274,14 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 type = PackageType.BOX,
                                 name = "Package 1 - Carrier 2",
                                 description = "Description 1",
-                                length = "10",
-                                width = "10",
-                                height = "10",
+                                dimensions = "10 x 10 x 10 cm",
                                 isSelected = false
                             ),
                             PackageData(
                                 type = PackageType.BOX,
                                 name = "Package 2 Carrier - 2",
                                 description = "Description 2",
-                                length = "20",
-                                width = "20",
-                                height = "20",
+                                dimensions = "20 x 20 x 20 cm",
                                 isSelected = false
                             )
                         )

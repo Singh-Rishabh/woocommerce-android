@@ -84,27 +84,21 @@ fun WooShippingSavedPackageScreenPreview() {
                     type = PackageType.ENVELOPE,
                     name = "Small Flat Rate Box",
                     description = "USPS Priority Mail Flat Rate Boxes",
-                    length = "10",
-                    width = "10",
-                    height = "10",
+                    dimensions = "10 x 10 x 10 cm",
                     isSelected = true
                 ),
                 PackageData(
                     type = PackageType.BOX,
                     name = "Small Flat Rate Box",
                     description = "Custom package",
-                    length = "20",
-                    width = "20",
-                    height = "20",
+                    dimensions = "20 x 20 x 20 cm",
                     isSelected = false
                 ),
                 PackageData(
                     type = PackageType.BOX,
                     name = "Small Flat Rate Box",
                     description = "DHL Express",
-                    length = "30",
-                    width = "30",
-                    height = "30",
+                    dimensions = "30 x 30 x 30 cm",
                     isSelected = false
                 )
             ),
