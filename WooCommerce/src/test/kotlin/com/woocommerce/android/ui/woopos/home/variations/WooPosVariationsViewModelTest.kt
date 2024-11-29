@@ -433,7 +433,6 @@ class WooPosVariationsViewModelTest {
             advanceUntilIdle()
             wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
-
             verify(variationsDataSource).loadMore(1L)
         }
 
