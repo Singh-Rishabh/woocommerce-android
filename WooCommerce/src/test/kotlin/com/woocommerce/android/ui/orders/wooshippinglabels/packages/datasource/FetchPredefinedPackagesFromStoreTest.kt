@@ -39,14 +39,14 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
             PackageData(
                 name = "Saved Package 1",
                 description = "",
-                dimensions = "",
+                dimensions = "dimensions",
                 isSelected = false,
                 isLetter = false
             ),
             PackageData(
                 name = "Saved Package 2",
                 description = "",
-                dimensions = "",
+                dimensions = "dimensions",
                 isSelected = false,
                 isLetter = false
             )
@@ -58,7 +58,7 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                     PackageData(
                         name = "Carrier Package 1",
                         description = "",
-                        dimensions = "",
+                        dimensions = "dimensions",
                         isSelected = false,
                         isLetter = false
                     )
