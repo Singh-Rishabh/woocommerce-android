@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -14,24 +17,32 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 
 @Composable
 @Suppress("DestructuringDeclarationWithTooManyEntries")
-internal fun AddressSection(
-    shipFrom: Address,
-    shipTo: Address,
+internal fun AddressSectionPortrait(
+    shippingAddresses: WooShippingAddresses,
+    originAddresses: List<OriginShippingAddress>,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onShippingToAddressChange: (Address) -> Unit,
     modifier: Modifier = Modifier
 ) {
     RoundedCornerBoxWithBorder(modifier.fillMaxWidth()) {
@@ -47,6 +58,7 @@ internal fun AddressSection(
             ) = createRefs()
 
             val barrier = createEndBarrier(shipFromLabel, shipToLabel)
+            var expanded by remember { mutableStateOf(false) }
 
             Text(
                 text = stringResource(id = R.string.orderdetail_shipping_label_item_shipfrom),
@@ -63,7 +75,7 @@ internal fun AddressSection(
 
             )
             Text(
-                text = shipFrom.toShippingFromString().uppercase(),
+                text = shippingAddresses.shipFrom.toShippingFromString().uppercase(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 color = MaterialTheme.colors.primary,
@@ -82,7 +94,7 @@ internal fun AddressSection(
                     )
             )
             IconButton(
-                onClick = { },
+                onClick = { expanded = true },
                 modifier = Modifier
                     .constrainAs(shipFromSelect) {
                         top.linkTo(shipFromLabel.top)
@@ -98,6 +110,24 @@ internal fun AddressSection(
                     contentDescription = null,
                     tint = MaterialTheme.colors.primary
                 )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.sizeIn(minWidth = 150.dp)
+                ) {
+                    originAddresses.forEach { option ->
+                        DropdownMenuItem(onClick = {
+                            onShippingFromAddressChange(option)
+                            expanded = false
+                        }) {
+                            Text(
+                                text = option.toShippingFromString().uppercase(),
+                                style = MaterialTheme.typography.subtitle1,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                    }
+                }
             }
             Divider(
                 modifier = Modifier.constrainAs(divider) {
@@ -118,22 +148,24 @@ internal fun AddressSection(
                         bottom = dimensionResource(R.dimen.major_100)
                     )
             )
-            Text(
-                text = shipTo.toString(),
-                modifier = Modifier
-                    .constrainAs(shipToValue) {
-                        top.linkTo(shipToLabel.top)
-                        start.linkTo(barrier)
-                        end.linkTo(shipToEdit.start)
-                        width = androidx.constraintlayout.compose.Dimension.fillToConstraints
-                    }
-                    .padding(
-                        top = dimensionResource(R.dimen.major_100),
-                        bottom = dimensionResource(R.dimen.major_100),
-                        start = dimensionResource(R.dimen.major_100),
-                        end = dimensionResource(R.dimen.minor_100)
-                    )
-            )
+            shippingAddresses.shipTo?.let { shipTo ->
+                Text(
+                    text = shipTo.toString(),
+                    modifier = Modifier
+                        .constrainAs(shipToValue) {
+                            top.linkTo(shipToLabel.top)
+                            start.linkTo(barrier)
+                            end.linkTo(shipToEdit.start)
+                            width = androidx.constraintlayout.compose.Dimension.fillToConstraints
+                        }
+                        .padding(
+                            top = dimensionResource(R.dimen.major_100),
+                            bottom = dimensionResource(R.dimen.major_100),
+                            start = dimensionResource(R.dimen.major_100),
+                            end = dimensionResource(R.dimen.minor_100)
+                        )
+                )
+            }
             IconButton(
                 onClick = { },
                 modifier = Modifier
@@ -158,12 +190,18 @@ internal fun AddressSection(
 
 @Preview
 @Composable
-private fun AddressSectionPreview() {
+private fun AddressSectionPortraitPreview() {
     WooThemeWithBackground {
         Box(modifier = Modifier.padding(dimensionResource(R.dimen.major_100))) {
-            AddressSection(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo()
+            AddressSectionPortrait(
+                shippingAddresses = WooShippingAddresses(
+                    shipFrom = getShipFrom(),
+                    shipTo = getShipTo(),
+                    originAddresses = listOf(getShipFrom())
+                ),
+                originAddresses = listOf(getShipFrom()),
+                onShippingFromAddressChange = {},
+                onShippingToAddressChange = {}
             )
         }
     }
@@ -171,51 +209,23 @@ private fun AddressSectionPreview() {
 
 @Composable
 internal fun AddressSectionLandscape(
-    shipFrom: Address,
-    shipTo: Address,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onShippingToAddressChange: (Address) -> Unit,
     modifier: Modifier = Modifier
 ) {
     RoundedCornerBoxWithBorder(modifier) {
-        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-            Row(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(id = R.string.orderdetail_shipping_label_item_shipfrom),
-                    modifier = Modifier
-                        .padding(
-                            start = dimensionResource(R.dimen.major_100),
-                            top = dimensionResource(R.dimen.major_100),
-                            end = dimensionResource(R.dimen.major_100)
-                        )
-                )
-                Text(
-                    text = shipFrom.toShippingFromString().uppercase(),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier
-                        .padding(
-                            top = dimensionResource(R.dimen.major_100),
-                            end = dimensionResource(R.dimen.major_100),
-                            start = dimensionResource(R.dimen.major_100),
-                            bottom = dimensionResource(R.dimen.minor_100)
-                        )
-                        .weight(1f)
-                )
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier
-                        .padding(
-                            top = dimensionResource(R.dimen.minor_50),
-                            end = dimensionResource(R.dimen.minor_100)
-                        )
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.MoreHoriz,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary
-                    )
-                }
-            }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+        ) {
+            ShipFromSelection(
+                shipFrom = shippingAddresses.shipFrom,
+                originAddresses = shippingAddresses.originAddresses,
+                onShippingFromAddressChange = onShippingFromAddressChange,
+                modifier = Modifier.weight(1f)
+            )
             VerticalDivider()
             Row(modifier = Modifier.weight(1f)) {
                 Text(
@@ -227,17 +237,20 @@ internal fun AddressSectionLandscape(
                             bottom = dimensionResource(R.dimen.major_100)
                         )
                 )
-                Text(
-                    text = shipTo.toString(),
-                    modifier = Modifier
-                        .padding(
-                            top = dimensionResource(R.dimen.major_100),
-                            bottom = dimensionResource(R.dimen.major_100),
-                            start = dimensionResource(R.dimen.major_100),
-                            end = dimensionResource(R.dimen.minor_100)
-                        )
-                        .weight(1f)
-                )
+                shippingAddresses.shipTo?.let { shipTo ->
+                    Text(
+                        text = shipTo.toString(),
+                        modifier = Modifier
+                            .padding(
+                                top = dimensionResource(R.dimen.major_100),
+                                bottom = dimensionResource(R.dimen.major_100),
+                                start = dimensionResource(R.dimen.major_100),
+                                end = dimensionResource(R.dimen.minor_100)
+                            )
+                            .weight(1f)
+                    )
+                }
+
                 IconButton(
                     onClick = { },
                     modifier = Modifier
@@ -257,20 +270,92 @@ internal fun AddressSectionLandscape(
     }
 }
 
+@Composable
+private fun ShipFromSelection(
+    shipFrom: OriginShippingAddress,
+    originAddresses: List<OriginShippingAddress>,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    Row(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.orderdetail_shipping_label_item_shipfrom),
+            modifier = Modifier
+                .padding(
+                    start = dimensionResource(R.dimen.major_100),
+                    top = dimensionResource(R.dimen.major_100),
+                    end = dimensionResource(R.dimen.major_100)
+                )
+        )
+        Text(
+            text = shipFrom.toShippingFromString().uppercase(),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier
+                .padding(
+                    top = dimensionResource(R.dimen.major_100),
+                    end = dimensionResource(R.dimen.major_100),
+                    start = dimensionResource(R.dimen.major_100),
+                    bottom = dimensionResource(R.dimen.minor_100)
+                )
+                .weight(1f)
+        )
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier
+                .padding(
+                    top = dimensionResource(R.dimen.minor_50),
+                    end = dimensionResource(R.dimen.minor_100)
+                )
+        ) {
+            Icon(
+                imageVector = Icons.Filled.MoreHoriz,
+                contentDescription = null,
+                tint = MaterialTheme.colors.primary
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.sizeIn(minWidth = 150.dp)
+            ) {
+                originAddresses.forEach { option ->
+                    DropdownMenuItem(onClick = {
+                        onShippingFromAddressChange(option)
+                        expanded = false
+                    }) {
+                        Text(
+                            text = option.toShippingFromString().uppercase(),
+                            style = MaterialTheme.typography.subtitle1,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Preview(widthDp = 750, heightDp = 200)
 @Composable
 private fun AddressSectionLandscapePreview() {
     WooThemeWithBackground {
         Box(modifier = Modifier.padding(dimensionResource(R.dimen.major_100))) {
             AddressSectionLandscape(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo()
+                shippingAddresses = WooShippingAddresses(
+                    shipFrom = getShipFrom(),
+                    shipTo = getShipTo(),
+                    originAddresses = listOf(getShipFrom())
+                ),
+                onShippingFromAddressChange = {},
+                onShippingToAddressChange = {}
             )
         }
     }
 }
 
-internal fun getShipFrom() = Address(
+internal fun getShipFrom() = OriginShippingAddress(
     firstName = "first name",
     lastName = "last name",
     company = "Company",
@@ -280,8 +365,11 @@ internal fun getShipFrom() = Address(
     city = "City",
     postcode = "",
     email = "email",
-    country = Location("US", "USA"),
-    state = AmbiguousLocation.Defined(Location("CA", "California", "USA"))
+    country = "USA",
+    state = "California",
+    id = "id_1",
+    isDefault = true,
+    isVerified = true
 )
 
 internal fun getShipTo() = Address(

@@ -43,9 +43,11 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
@@ -61,8 +63,15 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onSelectPackageClick = viewModel::onSelectPackageClicked,
                 onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel,
                 shippableItems = viewState.shippableItems,
-                shippingLines = viewState.shippingLines
+                shippingLines = viewState.shippingLines,
+                shippingAddresses = viewState.shippingAddresses,
+                onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
+                onShippingToAddressChange = viewModel::onShippingToAddressChange
             )
+        }
+
+        WooShippingLabelCreationViewModel.WooShippingViewState.Error -> {
+            TODO()
         }
     }
 }
@@ -72,9 +81,12 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
 fun WooShippingLabelCreationScreen(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
-    modifier: Modifier = Modifier,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onShippingToAddressChange: (Address) -> Unit,
     onSelectPackageClick: () -> Unit,
-    onPurchaseShippingLabel: () -> Unit
+    onPurchaseShippingLabel: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     Box(modifier = Modifier.fillMaxSize()) {
@@ -83,7 +95,10 @@ fun WooShippingLabelCreationScreen(
             modifier = modifier,
             onSelectPackageClick = onSelectPackageClick,
             scaffoldState = scaffoldState,
-            shippingLines = shippingLines
+            shippingLines = shippingLines,
+            shippingAddresses = shippingAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -119,9 +134,12 @@ fun WooShippingLabelCreationScreen(
 private fun LabelCreationScreenWithBottomSheet(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
-    modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
-    scaffoldState: BottomSheetScaffoldState
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onShippingToAddressChange: (Address) -> Unit,
+    scaffoldState: BottomSheetScaffoldState,
+    modifier: Modifier = Modifier
 ) {
     BottomSheetScaffold(
         sheetContent = {
@@ -132,6 +150,9 @@ private fun LabelCreationScreenWithBottomSheet(
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
                 onMarkOrderCompleteChange = { markOrderComplete.value = it },
+                shippingAddresses = shippingAddresses,
+                onShippingFromAddressChange = onShippingFromAddressChange,
+                onShippingToAddressChange = onShippingToAddressChange,
                 modifier = Modifier.padding(bottom = 74.dp),
             )
         },
@@ -213,7 +234,14 @@ private fun WooShippingLabelCreationScreenPreview() {
             shippingLines = getShippingLines(),
             modifier = Modifier.fillMaxSize(),
             onSelectPackageClick = {},
-            onPurchaseShippingLabel = {}
+            onPurchaseShippingLabel = {},
+            shippingAddresses = WooShippingAddresses(
+                shipFrom = getShipFrom(),
+                shipTo = getShipTo(),
+                originAddresses = listOf(getShipFrom())
+            ),
+            onShippingFromAddressChange = {},
+            onShippingToAddressChange = {}
         )
     }
 }

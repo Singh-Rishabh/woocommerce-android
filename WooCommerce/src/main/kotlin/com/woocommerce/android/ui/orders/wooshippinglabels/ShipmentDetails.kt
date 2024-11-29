@@ -42,9 +42,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.appendWithIfNotEmpty
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
 
@@ -54,9 +56,12 @@ fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
+    shippingAddresses: WooShippingAddresses,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
     handlerModifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -103,6 +108,9 @@ fun ShipmentDetails(
         ShipmentDetailsLandscape(
             shippableItems = shippableItems,
             shippingLines = shippingLines,
+            shippingAddresses = shippingAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange,
             modifier = modifier
         )
     } else {
@@ -111,6 +119,9 @@ fun ShipmentDetails(
             shippingLines = shippingLines,
             markOrderComplete = markOrderComplete,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+            shippingAddresses = shippingAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange,
             modifier = modifier
         )
     }
@@ -120,6 +131,9 @@ fun ShipmentDetails(
 private fun ShipmentDetailsPortrait(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -134,8 +148,9 @@ private fun ShipmentDetailsPortrait(
 
         ) {
             OrderDetailsSection(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo(),
+                shippingAddresses = shippingAddresses,
+                onShippingFromAddressChange = onShippingFromAddressChange,
+                onShippingToAddressChange = onShippingToAddressChange,
                 totalItems = shippableItems.shippableItems.size,
                 totalItemsCost = shippableItems.formattedTotalPrice,
                 shippingLines = shippingLines
@@ -159,6 +174,9 @@ private fun ShipmentDetailsPortrait(
 private fun ShipmentDetailsLandscape(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -171,8 +189,9 @@ private fun ShipmentDetailsLandscape(
 
         ) {
             AddressSectionLandscape(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo(),
+                shippingAddresses = shippingAddresses,
+                onShippingFromAddressChange = onShippingFromAddressChange,
+                onShippingToAddressChange = onShippingToAddressChange,
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
             )
             Row(
@@ -222,8 +241,9 @@ private fun ShipmentDetailsSectionTitlePreview() {
 
 @Composable
 private fun OrderDetailsSection(
-    shipFrom: Address,
-    shipTo: Address,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onShippingToAddressChange: (Address) -> Unit,
     totalItems: Int,
     totalItemsCost: String,
     shippingLines: List<ShippingLineSummaryUI>,
@@ -235,9 +255,11 @@ private fun OrderDetailsSection(
             modifier = Modifier.padding(start = dimensionResource(R.dimen.major_100))
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.major_100)))
-        AddressSection(
-            shipFrom = shipFrom,
-            shipTo = shipTo,
+        AddressSectionPortrait(
+            shippingAddresses = shippingAddresses,
+            originAddresses = shippingAddresses.originAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange,
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
         )
         TotalCard(
@@ -284,7 +306,12 @@ fun ShipmentDetailsLandscapePreview() {
                     formattedTotalWeight = "8.5kg",
                     formattedTotalPrice = "$92.78"
                 ),
-                shippingLines = getShippingLines()
+                shippingLines = getShippingLines(),
+                shippingAddresses = WooShippingAddresses(
+                    shipFrom = getShipFrom(),
+                    shipTo = getShipTo(),
+                    originAddresses = listOf(getShipFrom())
+                )
             )
         }
     }
@@ -471,7 +498,13 @@ fun getShippingLines(number: Int = 3) = List(number) { i ->
     )
 }
 
-fun Address.toShippingFromString() = this.getEnvelopeAddress().replace("\n", " ")
+fun OriginShippingAddress.toShippingFromString() = StringBuilder()
+    .appendWithIfNotEmpty(this.address1)
+    .appendWithIfNotEmpty(this.address2)
+    .appendWithIfNotEmpty(this.city)
+    .appendWithIfNotEmpty(this.state)
+    .appendWithIfNotEmpty(this.postcode)
+    .toString()
 
 data class ShippingLineSummaryUI(
     val title: String,
