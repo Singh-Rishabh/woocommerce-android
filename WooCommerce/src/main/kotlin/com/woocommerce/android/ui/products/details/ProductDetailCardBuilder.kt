@@ -536,7 +536,7 @@ class ProductDetailCardBuilder(
     //
     // We only show "Enabled" when shipping is both supported AND enabled.
     // In all other cases (not supported, or supported but disabled), we show nothing.
-private fun buildOneTimeShippingDescription(subscription: SubscriptionDetails?) =
+    private fun buildOneTimeShippingDescription(subscription: SubscriptionDetails?) =
         if (subscription != null && subscription.supportsOneTimeShipping && subscription.oneTimeShipping) {
             resources.getString(string.subscription_one_time_shipping_enabled)
         } else {
