@@ -23,7 +23,8 @@ class WooShippingLabelPackageMapper @Inject constructor() {
             PackageDAO(
                 id = it.id.orEmpty(),
                 name = it.name.orEmpty(),
-                dimensions = it.dimensions.orEmpty()
+                dimensions = it.dimensions.orEmpty(),
+                isLetter = it.isLetter ?: false
             )
         }
     }
@@ -58,7 +59,8 @@ class WooShippingLabelPackageMapper @Inject constructor() {
             PackageDAO(
                 id = it.id.orEmpty(),
                 name = it.name.orEmpty(),
-                dimensions = it.dimensions.orEmpty()
+                dimensions = it.dimensions.orEmpty(),
+                isLetter = it.isLetter ?: false
             )
         } ?: emptyList()
     )

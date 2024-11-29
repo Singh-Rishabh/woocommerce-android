@@ -8,7 +8,8 @@ data class StorePackagesDAO(
 data class PackageDAO(
     val id: String,
     val name: String,
-    val dimensions: String
+    val dimensions: String,
+    val isLetter: Boolean
 )
 
 data class CarrierDAO(
