@@ -14,6 +14,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsIsReceiptSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -36,6 +37,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender,
     private val cardReaderFacade: WooPosCardReaderFacade,
     private val totalsRepository: WooPosTotalsRepository,
+    private val receiptRepository: WooPosTotalsReceiptRepository,
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
@@ -81,7 +83,7 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
                 createOrderDraft(dataState.value.itemClickedDataList)
             }
-            WooPosTotalsUIEvent.OnSendReceiptClicked -> TODO()
+            WooPosTotalsUIEvent.OnSendReceiptClicked -> { sendReceiptByEmail() }
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
             }
@@ -97,6 +99,16 @@ class WooPosTotalsViewModel @Inject constructor(
             val orderId = dataState.value.orderId
             check(orderId != EMPTY_ORDER_ID)
             cardReaderFacade.collectPayment(orderId)
+        }
+    }
+
+    private fun sendReceiptByEmail() {
+        val viewState = uiState.value as WooPosTotalsViewState.ReceiptSending
+        val email = viewState.email
+        val orderId = dataState.value.orderId
+        check(orderId != EMPTY_ORDER_ID)
+        viewModelScope.launch {
+            receiptRepository.sendReceiptByEmail(orderId, email)
         }
     }
 
