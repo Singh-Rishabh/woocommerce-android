@@ -231,18 +231,18 @@ fun WooShippingCarrierPackageScreenPreview() {
                         groupName = "Group 1",
                         packages = listOf(
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 1 - Carrier 1",
                                 description = "Description 1",
                                 dimensions = "10 x 10 x 10 cm",
-                                isSelected = false
+                                isSelected = false,
+                                isLetter = false
                             ),
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 2 - Carrier 1",
                                 description = "Description 2",
                                 dimensions = "20 x 20 x 20 cm",
-                                isSelected = false
+                                isSelected = false,
+                                isLetter = false
                             )
                         )
                     ),
@@ -250,18 +250,18 @@ fun WooShippingCarrierPackageScreenPreview() {
                         groupName = "Group 2",
                         packages = listOf(
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 3 - Carrier 1",
                                 description = "Description 3",
                                 dimensions = "30 x 30 x 30 cm",
-                                isSelected = false
+                                isSelected = false,
+                                isLetter = false
                             ),
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 4 - Carrier 1",
                                 description = "Description 4",
                                 dimensions = "40 x 40 x 40 cm",
-                                isSelected = false
+                                isSelected = false,
+                                isLetter = false
                             )
                         )
                     )
@@ -271,18 +271,18 @@ fun WooShippingCarrierPackageScreenPreview() {
                         groupName = "Group 2",
                         packages = listOf(
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 1 - Carrier 2",
                                 description = "Description 1",
                                 dimensions = "10 x 10 x 10 cm",
-                                isSelected = false
+                                isSelected = false,
+                                isLetter = false
                             ),
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 2 Carrier - 2",
                                 description = "Description 2",
                                 dimensions = "20 x 20 x 20 cm",
-                                isSelected = false
+                                isSelected = false,
+                                isLetter = false
                             )
                         )
                     )
