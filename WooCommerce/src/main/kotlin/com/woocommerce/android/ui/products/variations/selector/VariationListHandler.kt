@@ -11,7 +11,7 @@ class VariationListHandler @Inject constructor(private val repository: Variation
 
     private val mutex = Mutex()
     private var offset = 0
-    private var canLoadMore = true
+    private var canLoadMore = false
 
     fun getVariationsFlow(productId: Long) = repository.observeVariations(productId)
 
@@ -22,7 +22,6 @@ class VariationListHandler @Inject constructor(private val repository: Variation
     suspend fun fetchVariations(productId: Long, forceRefresh: Boolean = false): Result<Unit> = mutex.withLock {
         // Reset the offset
         offset = 0
-        canLoadMore = true
 
         if (forceRefresh) {
             loadVariations(productId)
