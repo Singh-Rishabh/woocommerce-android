@@ -72,6 +72,7 @@ class ProductSelectorRepository @Inject constructor(
         }
 
     suspend fun fetchProducts(
+        forceRefresh: Boolean = false,
         offset: Int,
         pageSize: Int,
         filterOptions: Map<ProductFilterOption, String>
@@ -81,7 +82,7 @@ class ProductSelectorRepository @Inject constructor(
             offset = offset,
             pageSize = pageSize,
             filterOptions = filterOptions,
-            forceRefresh = false,
+            forceRefresh = forceRefresh,
         )
             .let { result ->
                 if (result.isError) {
