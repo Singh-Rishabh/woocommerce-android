@@ -66,6 +66,9 @@ class ProductInventoryFragment :
             new.skuErrorMessage?.takeIfNotEqualTo(old?.skuErrorMessage) {
                 displaySkuError(it)
             }
+            new.globalUniqueIdErrorMessage?.takeIfNotEqualTo(old?.globalUniqueIdErrorMessage) {
+                displayGlobalUniqueIdErrorMessage(it)
+            }
             new.isStockManagementVisible?.takeIfNotEqualTo(old?.isStockManagementVisible) { isVisible ->
                 binding.stockManagementPanel.isVisible = isVisible
                 binding.soldIndividuallySwitch.isVisible = isVisible && new.isIndividualSaleSwitchVisible == true
@@ -148,6 +151,14 @@ class ProductInventoryFragment :
         }
     }
 
+    private fun displayGlobalUniqueIdErrorMessage(messageId: Int) {
+        if (messageId != 0) {
+            binding.productGlobalUniqueId.error = getString(messageId)
+        } else {
+            binding.productGlobalUniqueId.helperText = getString(R.string.product_global_unique_id_summary)
+        }
+    }
+
     private fun setupViews() {
         if (!isAdded) return
 
@@ -220,6 +231,10 @@ class ProductInventoryFragment :
 
         with(binding.productGlobalUniqueId) {
             visibility = if (featureIsEnabled) View.VISIBLE else View.GONE
+
+            setOnTextChangedListener {
+                viewModel.onProductUniqueGlobalIdChanged(it.toString())
+            }
         }
     }
 
