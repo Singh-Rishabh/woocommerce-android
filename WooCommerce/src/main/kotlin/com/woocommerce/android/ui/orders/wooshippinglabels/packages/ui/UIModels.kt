@@ -7,11 +7,11 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PackageData(
-    val type: PackageType,
     val name: String,
     val description: String,
     val dimensions: String,
     val isSelected: Boolean,
+    val isLetter: Boolean
 ) : Parcelable
 
 @Parcelize
@@ -39,11 +39,11 @@ data class CustomPackageCreationData(
         get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
-        type = type,
         name = "",
         description = "",
         dimensions = "$length x $width x $height $dimensionUnit",
-        isSelected = true
+        isSelected = true,
+        isLetter = type == PackageType.ENVELOPE
     )
 
     companion object {
