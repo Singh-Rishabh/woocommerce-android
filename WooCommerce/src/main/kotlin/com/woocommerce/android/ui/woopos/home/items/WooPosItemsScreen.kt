@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -312,7 +313,7 @@ fun ProductsError(onRetryClicked: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) {
         WooPosErrorScreen(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.width(640.dp),
             message = stringResource(id = R.string.woopos_products_loading_error_title),
             reason = stringResource(id = R.string.woopos_products_loading_error_message),
             primaryButton = Button(
