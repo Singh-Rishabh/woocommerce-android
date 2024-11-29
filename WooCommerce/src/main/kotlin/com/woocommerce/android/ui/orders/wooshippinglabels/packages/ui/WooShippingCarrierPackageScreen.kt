@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
 import kotlinx.coroutines.launch
 

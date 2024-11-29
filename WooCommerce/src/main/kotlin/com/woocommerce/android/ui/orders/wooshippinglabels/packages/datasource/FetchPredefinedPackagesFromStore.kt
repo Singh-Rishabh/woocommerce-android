@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
