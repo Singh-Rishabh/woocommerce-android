@@ -105,9 +105,9 @@ private fun WooPosPaginationErrorIndicatorContent(
 fun WooPosPaginationErrorScreenPreview() {
     WooPosTheme {
         WooPosPaginationErrorIndicator(
-            message = "Error loading products",
+            message = stringResource(id = R.string.woopos_items_pagination_error),
             primaryButton = Button(
-                text = "Load more",
+                text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
                 click = {}
             )
         )
