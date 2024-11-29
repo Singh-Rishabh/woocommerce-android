@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -28,6 +29,11 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.items.PaginationState
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
 
 @Composable
 fun WooPosPaginationErrorIndicator(
@@ -103,13 +109,55 @@ private fun WooPosPaginationErrorIndicatorContent(
 @Composable
 @WooPosPreview
 fun WooPosPaginationErrorScreenPreview() {
-    WooPosTheme {
-        WooPosPaginationErrorIndicator(
-            message = stringResource(id = R.string.woopos_items_pagination_error),
-            primaryButton = Button(
-                text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
-                click = {}
-            )
+    val itemsState =
+        WooPosItemsViewState.Content(
+            items = listOf(
+                SimpleProduct(
+                    1,
+                    name = "Product 1, Product 1, Product 1, " +
+                        "Product 1, Product 1, Product 1, Product 1, Product 1" +
+                        "Product 1, Product 1, Product 1, Product 1, Product 1",
+                    price = "10.0$",
+                    imageUrl = null,
+                ),
+                SimpleProduct(
+                    2,
+                    name = "Product 2",
+                    price = "2000.00$",
+                    imageUrl = null,
+                ),
+                VariableProduct(
+                    3,
+                    name = "Product 3",
+                    price = "2000.00$",
+                    imageUrl = null,
+                    numOfVariations = 20,
+                    variationIds = listOf()
+                ),
+            ),
+            paginationState = PaginationState.Error,
+            reloadingProductsWithPullToRefresh = true,
+            bannerState = WooPosItemsViewState.Content.BannerState(
+                isBannerHiddenByUser = true,
+                title = R.string.woopos_banner_simple_products_only_title,
+                message = R.string.woopos_banner_simple_products_only_message,
+                icon = R.drawable.info,
+            ),
         )
+    WooPosTheme {
+        WooPosItemList(
+            state = itemsState,
+            listState = rememberLazyListState(),
+            onItemClicked = {},
+            onEndOfProductsListReached = {}
+        ) {
+            WooPosPaginationErrorIndicator(
+                message = stringResource(id = R.string.woopos_items_pagination_error),
+                primaryButton = Button(
+                    text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
+                    click = {}
+                )
+            )
+        }
     }
 }
