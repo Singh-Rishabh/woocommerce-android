@@ -9,6 +9,7 @@ import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
@@ -75,11 +76,20 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
     }
 
     @Test
-    fun `invoke should return empty StorePredefinedPackages when fetchAllStorePackages returns error`() = testBlocking {
+    fun `invoke should return null StorePredefinedPackages when fetchAllStorePackages returns error`() = testBlocking {
         val error = WooError(WooErrorType.GENERIC_ERROR, BaseRequest.GenericErrorType.UNKNOWN)
         val site = SiteModel().apply { id = 1 }
         whenever(selectedSite.getOrNull()).thenReturn(site)
         whenever(packageRepository.fetchAllStorePackages(site)).thenReturn(WooResult(error))
+
+        val result = fetchPredefinedPackagesFromStore()
+
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `invoke should return null StorePredefinedPackages when site is not available`() = testBlocking {
+        whenever(selectedSite.getOrNull()).thenReturn(null)
 
         val result = fetchPredefinedPackagesFromStore()
 
