@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
@@ -38,22 +37,18 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
 
         assertThat(result.savedPackageSelection.packages).containsExactly(
             PackageData(
-                type = PackageType.BOX,
                 name = "Saved Package 1",
                 description = "",
-                length = "",
-                width = "",
-                height = "",
-                isSelected = false
+                dimensions = "",
+                isSelected = false,
+                isLetter = false
             ),
             PackageData(
-                type = PackageType.BOX,
                 name = "Saved Package 2",
                 description = "",
-                length = "",
-                width = "",
-                height = "",
-                isSelected = false
+                dimensions = "",
+                isSelected = false,
+                isLetter = false
             )
         )
         assertThat(result.carrierPackageSelection.carrierPackages[Carrier.USPS]).containsExactly(
@@ -61,13 +56,11 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 groupName = "Group 1",
                 packages = listOf(
                     PackageData(
-                        type = PackageType.BOX,
                         name = "Carrier Package 1",
                         description = "",
-                        length = "",
-                        width = "",
-                        height = "",
-                        isSelected = false
+                        dimensions = "",
+                        isSelected = false,
+                        isLetter = false
                     )
                 )
             )
@@ -100,12 +93,14 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
             PackageDAO(
                 id = "1",
                 name = "Saved Package 1",
-                dimensions = "dimensions"
+                dimensions = "dimensions",
+                isLetter = false
             ),
             PackageDAO(
                 id = "2",
                 name = "Saved Package 2",
-                dimensions = "dimensions"
+                dimensions = "dimensions",
+                isLetter = false
             )
         ),
         carrierPackages = mapOf(
@@ -117,7 +112,8 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                             PackageDAO(
                                 id = "1",
                                 name = "Carrier Package 1",
-                                dimensions = "dimensions"
+                                dimensions = "dimensions",
+                                isLetter = false
                             )
                         )
                     )

@@ -71,7 +71,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut.onAddCustomPackageClick()
 
-        assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData.asPackageData))
+        assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData.toPackageData()))
     }
 
     @Test
@@ -141,22 +141,18 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     fun `onSavedPackageSelected selects only one package at a time`() = testBlocking {
         var lastViewState: ViewState? = null
         val package1 = PackageData(
-            type = PackageType.BOX,
             name = "Package 1",
             description = "Description 1",
-            length = "10",
-            width = "10",
-            height = "10",
-            isSelected = false
+            dimensions = "10 x 10 x 10 cm",
+            isSelected = false,
+            isLetter = false
         )
         val package2 = PackageData(
-            type = PackageType.ENVELOPE,
             name = "Package 2",
             description = "Description 2",
-            length = "20",
-            width = "20",
-            height = "20",
-            isSelected = false
+            dimensions = "20 x 20 x 20 cm",
+            isSelected = false,
+            isLetter = true
         )
         whenever(fetchPredefinedPackages()).thenReturn(
             StorePredefinedPackages(
@@ -186,22 +182,18 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         var lastViewState: ViewState? = null
         val carrier: Carrier = Carrier.DHL
         val package1 = PackageData(
-            type = PackageType.BOX,
             name = "Package 1",
             description = "Description 1",
-            length = "10",
-            width = "10",
-            height = "10",
-            isSelected = false
+            dimensions = "10 x 10 x 10 cm",
+            isSelected = false,
+            isLetter = false
         )
         val package2 = PackageData(
-            type = PackageType.ENVELOPE,
             name = "Package 2",
             description = "Description 2",
-            length = "20",
-            width = "20",
-            height = "20",
-            isSelected = false
+            dimensions = "20 x 20 x 20 cm",
+            isSelected = false,
+            isLetter = true
         )
         val carrierPackages = mapOf(
             carrier to listOf(
@@ -243,40 +235,32 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         val carrier1: Carrier = Carrier.DHL
         val carrier2: Carrier = Carrier.USPS
         val package1 = PackageData(
-            type = PackageType.BOX,
             name = "Package 1 - Carrier 1",
             description = "Description 1",
-            length = "10",
-            width = "10",
-            height = "10",
-            isSelected = false
+            dimensions = "10 x 10 x 10 cm",
+            isSelected = false,
+            isLetter = false
         )
         val package2 = PackageData(
-            type = PackageType.ENVELOPE,
             name = "Package 2 - Carrier 1",
             description = "Description 2",
-            length = "20",
-            width = "20",
-            height = "20",
-            isSelected = false
+            dimensions = "20 x 20 x 20 cm",
+            isSelected = false,
+            isLetter = true
         )
         val package3 = PackageData(
-            type = PackageType.BOX,
             name = "Package 1 - Carrier 2",
             description = "Description 3",
-            length = "30",
-            width = "30",
-            height = "30",
-            isSelected = false
+            dimensions = "30 x 30 x 30 cm",
+            isSelected = false,
+            isLetter = false
         )
         val package4 = PackageData(
-            type = PackageType.ENVELOPE,
             name = "Package 2 - Carrier 2",
             description = "Description 4",
-            length = "40",
-            width = "40",
-            height = "40",
-            isSelected = false
+            dimensions = "40 x 40 x 40 cm",
+            isSelected = false,
+            isLetter = true
         )
         val carrierPackages = mapOf(
             carrier1 to listOf(
