@@ -99,7 +99,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onAddCustomPackageClick() {
         _viewState.value.customPackageCreationData
-            .asPackageData
+            .toPackageData()
             .let { triggerEvent(PackageSelected(it)) }
     }
 
