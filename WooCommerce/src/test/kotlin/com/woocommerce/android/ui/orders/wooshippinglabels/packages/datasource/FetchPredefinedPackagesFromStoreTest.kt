@@ -81,10 +81,9 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
         whenever(selectedSite.getOrNull()).thenReturn(site)
         whenever(packageRepository.fetchAllStorePackages(site)).thenReturn(WooResult(error))
 
-        val result = fetchPredefinedPackagesFromStore()!!
+        val result = fetchPredefinedPackagesFromStore()
 
-        assertThat(result.savedPackageSelection.packages).isEmpty()
-        assertThat(result.carrierPackageSelection.carrierPackages).isEmpty()
+        assertThat(result).isNull()
     }
 
     private fun generatePackagesData() = StorePackagesDAO(
