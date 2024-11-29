@@ -3,8 +3,10 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
+import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.util.CurrencyFormatter
@@ -13,6 +15,8 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +25,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val orderDetailRepository: OrderDetailRepository,
     private val getShippableItems: GetShippableItems,
-    private val currencyFormatter: CurrencyFormatter
+    private val currencyFormatter: CurrencyFormatter,
+    private val observeOriginAddresses: ObserveOriginAddresses
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
     private val storeOptions = StoreOptionsModel(
@@ -35,8 +40,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     val viewState: MutableStateFlow<WooShippingViewState> = MutableStateFlow(WooShippingViewState.Loading)
 
     init {
-        launch {
-            orderDetailRepository.getOrderById(navArgs.orderId)?.let { order ->
+        launch { observeShippingLabelInformation() }
+    }
+
+    private suspend fun observeShippingLabelInformation() {
+        flowOf(orderDetailRepository.getOrderById(navArgs.orderId))
+            .combine(observeOriginAddresses()) { order, originAddresses ->
+                if (order == null) {
+                    return@combine WooShippingViewState.Error
+                }
+                val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 val items = getShippableItems(order)
                 shippableItems.value = items
 
@@ -46,15 +59,47 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
                 val shippingLineSummary = getShippingLinesSummary(order)
 
-                viewState.value = WooShippingViewState.DataState(
+                return@combine WooShippingViewState.DataState(
                     shippableItems = ShippableItemsUI(
                         shippableItems = shippableItemsUI,
                         formattedTotalWeight = formattedTotalWeight,
                         formattedTotalPrice = formattedTotalPrice
                     ),
-                    shippingLines = shippingLineSummary
+                    shippingLines = shippingLineSummary,
+                    shippingAddresses = WooShippingAddresses(
+                        shipFrom = selectedOriginAddress,
+                        originAddresses = originAddresses,
+                        shipTo = order.shippingAddress
+                    )
                 )
+            }.collect {
+                viewState.value = it
             }
+    }
+
+    private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress {
+        return (viewState as? WooShippingViewState.DataState)?.let {
+            it.shippingAddresses.shipFrom
+        } ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.first()
+    }
+
+    fun onShippingFromAddressChange(address: OriginShippingAddress) {
+        (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
+            viewState.value = currentData.copy(
+                shippingAddresses = currentData.shippingAddresses.copy(
+                    shipFrom = address
+                )
+            )
+        }
+    }
+
+    fun onShippingToAddressChange(address: Address) {
+        (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
+            viewState.value = currentData.copy(
+                shippingAddresses = currentData.shippingAddresses.copy(
+                    shipTo = address
+                )
+            )
         }
     }
 
@@ -92,10 +137,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data object LabelPurchased : Event()
 
     sealed class WooShippingViewState {
+        data object Error : WooShippingViewState()
         data object Loading : WooShippingViewState()
         data class DataState(
             val shippableItems: ShippableItemsUI,
-            val shippingLines: List<ShippingLineSummaryUI>
+            val shippingLines: List<ShippingLineSummaryUI>,
+            val shippingAddresses: WooShippingAddresses,
         ) : WooShippingViewState()
     }
 }
+
+data class WooShippingAddresses(
+    val shipFrom: OriginShippingAddress,
+    val shipTo: Address?,
+    val originAddresses: List<OriginShippingAddress>
+)
