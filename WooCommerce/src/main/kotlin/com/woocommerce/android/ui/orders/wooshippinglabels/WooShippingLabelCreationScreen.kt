@@ -60,7 +60,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
             WooShippingLabelCreationScreen(
                 onSelectPackageClick = viewModel::onSelectPackageClicked,
                 onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel,
-                shippableItems = viewState.shippableItems
+                shippableItems = viewState.shippableItems,
+                shippingLines = viewState.shippingLines
             )
         }
     }
@@ -70,6 +71,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
 @Composable
 fun WooShippingLabelCreationScreen(
     shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     onPurchaseShippingLabel: () -> Unit
@@ -80,7 +82,8 @@ fun WooShippingLabelCreationScreen(
             shippableItems = shippableItems,
             modifier = modifier,
             onSelectPackageClick = onSelectPackageClick,
-            scaffoldState = scaffoldState
+            scaffoldState = scaffoldState,
+            shippingLines = shippingLines
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -115,6 +118,7 @@ fun WooShippingLabelCreationScreen(
 @Composable
 private fun LabelCreationScreenWithBottomSheet(
     shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState
@@ -123,10 +127,12 @@ private fun LabelCreationScreenWithBottomSheet(
         sheetContent = {
             val markOrderComplete = remember { mutableStateOf(false) }
             ShipmentDetails(
-                modifier = Modifier.padding(bottom = 74.dp),
+                shippableItems = shippableItems,
+                shippingLines = shippingLines,
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it }
+                onMarkOrderCompleteChange = { markOrderComplete.value = it },
+                modifier = Modifier.padding(bottom = 74.dp),
             )
         },
         sheetPeekHeight = 132.dp,
@@ -204,6 +210,7 @@ private fun WooShippingLabelCreationScreenPreview() {
                 formattedTotalWeight = "8.5kg",
                 formattedTotalPrice = "$92.78"
             ),
+            shippingLines = getShippingLines(),
             modifier = Modifier.fillMaxSize(),
             onSelectPackageClick = {},
             onPurchaseShippingLabel = {}
