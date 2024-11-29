@@ -400,6 +400,62 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 @WooPosPreview
+fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
+    val productState = MutableStateFlow(
+        WooPosItemsViewState.Content(
+            items = listOf(
+                SimpleProduct(
+                    1,
+                    name = "Product 1, Product 1, Product 1, " +
+                        "Product 1, Product 1, Product 1, Product 1, Product 1" +
+                        "Product 1, Product 1, Product 1, Product 1, Product 1",
+                    price = "10.0$",
+                    imageUrl = null,
+                ),
+                SimpleProduct(
+                    2,
+                    name = "Product 2",
+                    price = "2000.00$",
+                    imageUrl = null,
+                ),
+                VariableProduct(
+                    3,
+                    name = "Product 3",
+                    price = "2000.00$",
+                    imageUrl = null,
+                    numOfVariations = 20,
+                    variationIds = listOf()
+                ),
+            ),
+            paginationState = PaginationState.Error,
+            reloadingProductsWithPullToRefresh = true,
+            bannerState = WooPosItemsViewState.Content.BannerState(
+                isBannerHiddenByUser = true,
+                title = R.string.woopos_banner_simple_products_only_title,
+                message = R.string.woopos_banner_simple_products_only_message,
+                icon = R.drawable.info,
+            ),
+        )
+    )
+    WooPosTheme {
+        WooPosItemsScreen(
+            modifier = modifier,
+            itemsStateFlow = productState,
+            listState = rememberLazyListState(),
+            onItemClicked = {},
+            onEndOfItemListReached = {},
+            onPullToRefresh = {},
+            onRetryClicked = {},
+            onSimpleProductsBannerClosed = {},
+            onSimpleProductsBannerLearnMoreClicked = {},
+            onToolbarInfoIconClicked = {},
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+@WooPosPreview
 fun WooPosItemsScreenLoadingPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Loading(
