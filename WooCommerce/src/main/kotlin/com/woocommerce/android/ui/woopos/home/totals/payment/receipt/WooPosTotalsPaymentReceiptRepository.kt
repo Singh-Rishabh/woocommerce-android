@@ -38,7 +38,8 @@ class WooPosTotalsPaymentReceiptRepository @Inject constructor(
     }
 
     private suspend fun updateOrderWithEmail(order: Order, email: String): Result<Order> {
-        val updatedCustomer = order.customer?.copy(email = email) ?: Order.Customer.EMPTY.copy(email = email)
+        val updatedBillingAddress = order.billingAddress.copy(email = email)
+        val updatedCustomer = order.customer?.copy(billingAddress = updatedBillingAddress)
         return orderCreateEditRepository.createOrUpdateOrder(
             order = order.copy(customer = updatedCustomer)
         )
