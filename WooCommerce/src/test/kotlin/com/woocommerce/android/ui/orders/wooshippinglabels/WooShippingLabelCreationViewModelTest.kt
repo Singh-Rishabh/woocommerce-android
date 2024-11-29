@@ -56,6 +56,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val savedState: SavedStateHandle =
         WooShippingLabelCreationFragmentArgs(orderId = orderId).toSavedStateHandle()
 
+    private val observeOriginAddresses: ObserveOriginAddresses = mock()
+
     private lateinit var sut: WooShippingLabelCreationViewModel
 
     fun createViewModel() {
@@ -63,6 +65,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             orderDetailRepository = orderDetailRepository,
             getShippableItems = getShippableItems,
             currencyFormatter = currencyFormatter,
+            observeOriginAddresses = observeOriginAddresses,
             savedState = savedState
         )
     }
