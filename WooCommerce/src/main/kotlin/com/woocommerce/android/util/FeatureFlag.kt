@@ -16,6 +16,8 @@ enum class FeatureFlag {
     REVAMP_WOO_SHIPPING,
     OBJECTIVE_SECTION,
     POS_NON_SIMPLE_PRODUCT_TYPES,
+    POS_CASH_PAYMENTS,
+    POS_RECEIPTS,
     PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT;
 
     fun isEnabled(context: Context? = null): Boolean {
@@ -29,6 +31,8 @@ enum class FeatureFlag {
             ORDER_CREATION_AUTO_TAX_RATE,
             REVAMP_WOO_SHIPPING,
             POS_NON_SIMPLE_PRODUCT_TYPES,
+            POS_CASH_PAYMENTS,
+            POS_RECEIPTS,
             PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
