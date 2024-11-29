@@ -34,11 +34,11 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
     private fun StorePackagesDAO.filterSavedData() =
         savedPackages.map { packageDAO ->
             PackageData(
-                type = PackageType.BOX,
                 name = packageDAO.name,
                 description = "",
                 dimensions = packageDAO.dimensions,
-                isSelected = false
+                isSelected = false,
+                isLetter = packageDAO.isLetter
             )
         }
 
@@ -60,11 +60,11 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                 groupName = group.description,
                 packages = group.packages.map { packageItem ->
                     PackageData(
-                        type = PackageType.BOX,
                         name = packageItem.name,
                         description = "",
                         dimensions = packageItem.dimensions,
-                        isSelected = false
+                        isSelected = false,
+                        isLetter = packageItem.isLetter
                     )
                 }
             )
