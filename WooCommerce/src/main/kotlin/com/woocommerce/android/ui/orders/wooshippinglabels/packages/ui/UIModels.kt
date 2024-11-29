@@ -10,14 +10,51 @@ data class PackageData(
     val type: PackageType,
     val name: String,
     val description: String,
+    val dimensions: String,
+    val isSelected: Boolean,
+) : Parcelable
+
+@Parcelize
+data class PredefinedPackage(
+    val boxWeight: Double,
+    val isFlatRate: Boolean,
+    val id: String,
+    val name: String,
+    val dimensions: String,
+    val maxWeight: Double,
+    val isLetter: Boolean,
+    val groupId: String,
+    val canShipInternational: Boolean
+) : Parcelable
+
+@Parcelize
+data class CustomPackageCreationData(
+    val type: PackageType,
     val length: String,
     val width: String,
     val height: String,
-    val isSelected: Boolean,
-    val dimensionUnit: String = "cm"
+    val saveAsTemplate: Boolean
 ) : Parcelable {
-    val dimensionsForDisplay: String
-        get() = "$length x $width x $height $dimensionUnit"
+    val isValid: Boolean
+        get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
+
+    fun toPackageData(dimensionUnit: String = "cm") = PackageData(
+        type = type,
+        name = "",
+        description = "",
+        dimensions = "$length x $width x $height $dimensionUnit",
+        isSelected = true
+    )
+
+    companion object {
+        val EMPTY = CustomPackageCreationData(
+            type = PackageType.BOX,
+            length = "",
+            width = "",
+            height = "",
+            saveAsTemplate = false
+        )
+    }
 }
 
 @Parcelize
@@ -67,37 +104,4 @@ data class SavedPackageSelection(
 ) : Parcelable {
     val hasSelection: Boolean
         get() = packages.find { it.isSelected } != null
-}
-
-@Parcelize
-data class CustomPackageCreationData(
-    val type: PackageType,
-    val length: String,
-    val width: String,
-    val height: String,
-    val saveAsTemplate: Boolean
-) : Parcelable {
-    val isValid: Boolean
-        get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
-
-    val asPackageData: PackageData
-        get() = PackageData(
-            type = type,
-            name = "",
-            description = "",
-            length = length,
-            width = width,
-            height = height,
-            isSelected = true
-        )
-
-    companion object {
-        val EMPTY = CustomPackageCreationData(
-            type = PackageType.BOX,
-            length = "",
-            width = "",
-            height = "",
-            saveAsTemplate = false
-        )
-    }
 }
