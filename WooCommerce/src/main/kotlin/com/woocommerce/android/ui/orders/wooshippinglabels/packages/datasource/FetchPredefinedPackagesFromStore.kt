@@ -37,9 +37,7 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                 type = PackageType.BOX,
                 name = packageDAO.name,
                 description = "",
-                length = "",
-                width = "",
-                height = "",
+                dimensions = packageDAO.dimensions,
                 isSelected = false
             )
         }
@@ -65,9 +63,7 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                         type = PackageType.BOX,
                         name = packageItem.name,
                         description = "",
-                        length = "",
-                        width = "",
-                        height = "",
+                        dimensions = packageItem.dimensions,
                         isSelected = false
                     )
                 }
