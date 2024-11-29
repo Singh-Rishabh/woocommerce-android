@@ -87,6 +87,9 @@ class WooPosTotalsViewModel @Inject constructor(
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
             }
+            is WooPosTotalsUIEvent.OnEmailChanged -> {
+                uiState.value = WooPosTotalsViewState.ReceiptSending(email = event.email)
+            }
         }
     }
 
