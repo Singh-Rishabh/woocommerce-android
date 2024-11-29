@@ -325,7 +325,7 @@ fun ProductsError(onRetryClicked: () -> Unit) {
 }
 
 @Composable
-fun ProductsPaginationError(onRetryClicked: () -> Unit) {
+private fun ProductsPaginationError(onRetryClicked: () -> Unit) {
     WooPosPaginationErrorIndicator(
         message = stringResource(id = R.string.woopos_items_pagination_error),
         primaryButton = Button(
