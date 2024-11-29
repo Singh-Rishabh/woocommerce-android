@@ -12,7 +12,7 @@ class WooPosIsReceiptSendingAvailableTest {
     private val isReceiptsEnabled: WooPosIsReceiptsEnabled = mock()
     private val getWooCoreVersion: GetWooCorePluginCachedVersion = mock()
 
-    private val receiptSendingAvailable = WooPosTotalsIsReceiptSendingAvailable(
+    private val receiptSendingAvailable = WooPosTotalsPaymentReceiptIsSendingAvailable(
         isReceiptsEnabled = isReceiptsEnabled,
         getWooCoreVersion = getWooCoreVersion
     )

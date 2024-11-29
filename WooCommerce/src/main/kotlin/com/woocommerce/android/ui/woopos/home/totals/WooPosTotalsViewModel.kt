@@ -13,8 +13,8 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsIsReceiptSendingAvailable
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsReceiptRepository
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -37,11 +37,11 @@ class WooPosTotalsViewModel @Inject constructor(
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender,
     private val cardReaderFacade: WooPosCardReaderFacade,
     private val totalsRepository: WooPosTotalsRepository,
-    private val receiptRepository: WooPosTotalsReceiptRepository,
+    private val receiptRepository: WooPosTotalsPaymentReceiptRepository,
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
-    private val isReceiptSendingAvailable: WooPosTotalsIsReceiptSendingAvailable,
+    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingAvailable,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -83,7 +83,7 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
                 createOrderDraft(dataState.value.itemClickedDataList)
             }
-            WooPosTotalsUIEvent.OnSendReceiptClicked -> { sendReceiptByEmail() }
+            WooPosTotalsUIEvent.OnSendReceiptClicked -> sendReceiptByEmail()
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
             }
