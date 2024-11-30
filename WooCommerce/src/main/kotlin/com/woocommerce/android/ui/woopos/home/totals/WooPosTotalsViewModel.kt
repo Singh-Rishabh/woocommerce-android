@@ -90,7 +90,6 @@ class WooPosTotalsViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
         when (event) {
-            is WooPosTotalsUIEvent.CollectPaymentClicked -> collectPayment()
             is WooPosTotalsUIEvent.OnNewTransactionClicked -> {
                 viewModelScope.launch {
                     childrenToParentEventSender.sendToParent(
@@ -176,6 +175,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         dataState.value = dataState.value.copy(orderId = order.id)
                         uiState.value = buildWooPosTotalsViewState(order)
                         analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
+                        collectPayment()
                     },
                     onFailure = { error ->
                         WooLog.e(T.POS, "Order creation failed - $error")
