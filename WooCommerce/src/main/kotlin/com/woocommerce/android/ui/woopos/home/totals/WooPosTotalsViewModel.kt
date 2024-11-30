@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,9 +26,14 @@ import com.woocommerce.android.util.WooLog.T
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -74,13 +80,15 @@ class WooPosTotalsViewModel @Inject constructor(
             savedState[KEY_TTP_PAYMENT_IN_PROGRESS] = value
         }
 
+    private var paymentScope: CoroutineScope? = null
     private var cardReaderPaymentController: CardReaderPaymentController? = null
 
     private fun createCardReaderPaymentController(orderId: Long) {
+        paymentScope = CoroutineScope(viewModelScope.coroutineContext + SupervisorJob() + Dispatchers.Main.immediate)
         cardReaderPaymentController = cardReaderPaymentControllerFactory.create(
             orderId = orderId,
             paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS,
-            coroutineScope = viewModelScope,
+            coroutineScope = paymentScope!!,
             isTTPPaymentInProgress = ::isTTPPaymentInProgress,
         )
     }
@@ -137,6 +145,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
                         cardReaderPaymentController?.onBackPressed()
                         cardReaderPaymentController?.onCleared()
+                        paymentScope?.cancel()
                         uiState.value = InitialState
                     }
 
@@ -210,6 +219,7 @@ class WooPosTotalsViewModel @Inject constructor(
     }
 
     override fun onCleared() {
+        paymentScope?.cancel()
         cardReaderPaymentController?.onCleared()
     }
 
