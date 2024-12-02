@@ -6,5 +6,5 @@ sealed class WooPosTotalsUIEvent {
     data object RetryOrderCreationClicked : WooPosTotalsUIEvent()
     data object OnStartReceiptFlowClicked : WooPosTotalsUIEvent()
     data object OnSendReceiptClicked : WooPosTotalsUIEvent()
-    data object OnTakeCashPaymentClicked: WooPosTotalsUIEvent()
+    data object OnTakeCashPaymentClicked : WooPosTotalsUIEvent()
 }
