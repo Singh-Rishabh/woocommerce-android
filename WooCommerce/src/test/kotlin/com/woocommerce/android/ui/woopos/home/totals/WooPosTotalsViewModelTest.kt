@@ -642,7 +642,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given reader not connected, when VM checkout clicked, then should show error`() = runTest {
+    fun `given reader not connected, when checkout clicked, then should show error`() = runTest {
         // GIVEN
         val readerStatus: StateFlow<CardReaderStatus> =
             MutableStateFlow<CardReaderStatus>(CardReaderStatus.NotConnected())
@@ -705,6 +705,67 @@ class WooPosTotalsViewModelTest {
             assertThat(subtitle).isEqualTo("To process this payment, please connect your reader.")
             assertThat(actionButonLable).isEqualTo("Connect to reader")
         }
+    }
+
+    @Test
+    fun `given reader connected, when checkout clicked, then should hide error`() {
+        // GIVEN
+        val readerStatus: StateFlow<CardReaderStatus> =
+            MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
+        whenever(cardReaderManager.readerStatus).thenReturn(readerStatus)
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title))
+            .thenReturn("Reader not connected")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle))
+            .thenReturn("To process this payment, please connect your reader.")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label))
+            .thenReturn("Connect to reader")
+
+        val productIds = listOf(1L, 2L, 3L)
+        val order = Order.getEmptyOrder(
+            dateCreated = Date(),
+            dateModified = Date()
+        ).copy(
+            totalTax = BigDecimal("2.00"),
+            items = listOf(
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                ),
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                ),
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                )
+            ),
+            productsTotal = BigDecimal("3.00"),
+            total = BigDecimal("5.00"),
+        )
+        val totalsRepository: WooPosTotalsRepository = mock {
+            onBlocking {
+                createOrderWithProducts(productIds = productIds)
+            }.thenReturn(Result.success(order))
+        }
+        val priceFormat: WooPosFormatPrice = mock {
+            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
+            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
+            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
+        }
+        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
+        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+            on { events }.thenReturn(parentToChildrenEventFlow)
+        }
+
+        // WHEN
+        val viewModel = createViewModel(
+            totalsRepository = totalsRepository,
+            priceFormat = priceFormat,
+            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+        )
+
+        // THEN
+        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
+        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        assertThat(state.error).isNull()
     }
 
     private fun createViewModel(
