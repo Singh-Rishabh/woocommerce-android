@@ -28,7 +28,7 @@ fun WooPosTotalsPaymentCashScreen(
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column (
+        Column(
             modifier = Modifier
                 .width(540.dp),
         ) {
