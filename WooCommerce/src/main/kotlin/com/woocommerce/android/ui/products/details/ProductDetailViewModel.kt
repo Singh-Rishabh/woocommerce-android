@@ -2740,7 +2740,7 @@ class ProductDetailViewModel @Inject constructor(
             }
         )
 
-        fun copy(subscriptionDraft: SubscriptionDetails) = copy(
+        fun copy(subscriptionDraft: SubscriptionDetails?) = copy(
             productAggregateDraft = productAggregateDraft?.copy(subscription = subscriptionDraft)
         )
 
