@@ -20,7 +20,7 @@ sealed class WooPosTotalsViewState : Parcelable {
             val subtitle: String,
             val actionButonLable: String,
             val onAction: () -> Unit,
-        ): Parcelable
+        ) : Parcelable
     }
 
     data class PaymentSuccess(var orderTotalText: String) : WooPosTotalsViewState()
