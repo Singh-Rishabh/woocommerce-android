@@ -703,7 +703,7 @@ class WooPosTotalsViewModelTest {
         with(state.error!!) {
             assertThat(title).isEqualTo("Reader not connected")
             assertThat(subtitle).isEqualTo("To process this payment, please connect your reader.")
-            assertThat(actionButonLable).isEqualTo("Connect to reader")
+            assertThat(actionButonLabel).isEqualTo("Connect to reader")
         }
     }
 

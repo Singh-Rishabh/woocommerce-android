@@ -18,7 +18,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         data class Error(
             val title: String,
             val subtitle: String,
-            val actionButonLable: String,
+            val actionButonLabel: String,
             val onAction: () -> Unit,
         ) : Parcelable
     }

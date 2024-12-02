@@ -108,7 +108,7 @@ class WooPosTotalsViewModel @Inject constructor(
                             error = WooPosTotalsViewState.Totals.Error(
                                 title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
                                 subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
-                                actionButonLable = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label),
+                                actionButonLabel = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label),
                                 onAction = { cardReaderFacade.connectToReader() }
                             )
                         )
