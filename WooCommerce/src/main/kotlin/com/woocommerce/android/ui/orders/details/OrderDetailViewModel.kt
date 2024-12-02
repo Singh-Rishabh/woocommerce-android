@@ -322,10 +322,6 @@ class OrderDetailViewModel @Inject constructor(
         triggerEvent(MultiLiveEvent.Event.Exit)
     }
 
-    fun getOrderMetadata(): List<WCMetaData> = runBlocking {
-        orderDetailRepository.getOrderMetadata(navArgs.orderId)
-    }
-
     fun onRefreshRequested() {
         tracker.trackOrderDetailPulledToRefresh()
         viewState = viewState.copy(isRefreshing = true)
