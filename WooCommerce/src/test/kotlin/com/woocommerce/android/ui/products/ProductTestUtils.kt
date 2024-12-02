@@ -5,10 +5,13 @@ import com.woocommerce.android.model.ProductAttribute
 import com.woocommerce.android.model.ProductCategory
 import com.woocommerce.android.model.ProductTag
 import com.woocommerce.android.model.ProductVariation
+import com.woocommerce.android.model.SubscriptionDetails
+import com.woocommerce.android.model.SubscriptionPeriod
 import com.woocommerce.android.model.toAppModel
 import com.woocommerce.android.ui.products.ProductStatus.DRAFT
 import org.wordpress.android.fluxc.model.WCProductModel
 import org.wordpress.android.fluxc.model.WCProductVariationModel
+import java.math.BigDecimal
 import java.sql.Date
 import java.time.Instant
 
@@ -196,4 +199,17 @@ object ProductTestUtils {
             return this
         }
     }
+
+    fun generateProductSubscriptionDetails() = SubscriptionDetails(
+        price = BigDecimal.TEN,
+        period = SubscriptionPeriod.Month,
+        periodInterval = 1,
+        length = null,
+        signUpFee = null,
+        trialPeriod = null,
+        trialLength = null,
+        oneTimeShipping = true,
+        paymentsSyncDate = null
+    )
+
 }

@@ -19,6 +19,7 @@ import com.woocommerce.android.ui.media.MediaFileUploadHandler
 import com.woocommerce.android.ui.products.ParameterRepository
 import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductTestUtils
+import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.products.addons.AddonRepository
 import com.woocommerce.android.ui.products.categories.ProductCategoriesRepository
 import com.woocommerce.android.ui.products.models.ProductProperty
@@ -1242,6 +1243,81 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             Assertions.assertThat(viewState.draftPassword).isNull()
             verify(productRepository, never()).fetchProductPassword(any())
         }
+
+    @Test
+    fun `When converting from subscription to simple product, subscription data is cleared`() = testBlocking {
+        // GIVEN
+        val subscriptionProduct = productAggregate.copy(
+            product = productAggregate.product.copy(
+                type = ProductType.SUBSCRIPTION.value
+            ),
+            subscription = ProductTestUtils.generateProductSubscriptionDetails()
+        )
+        doReturn(subscriptionProduct).whenever(productRepository).getProductAggregate(any())
+        viewModel.productDetailViewStateData.observeForever { _, _ -> }
+        viewModel.start()
+
+        // Verify initial state has subscription data
+        Assertions.assertThat(viewModel.getProduct().subscriptionDraft).isNotNull()
+
+        // WHEN
+        viewModel.onProductTypeChanged(ProductType.SIMPLE, false)
+
+        // THEN
+        Assertions.assertThat(viewModel.getProduct().subscriptionDraft).isNull()
+    }
+
+    @Test
+    fun `When converting from simple to subscription product, default subscription data is added`() = testBlocking {
+        // GIVEN
+        val simpleProduct = productAggregate.copy(
+            product = productAggregate.product.copy(
+                type = ProductType.SIMPLE.value,
+                regularPrice = BigDecimal("10.00")
+            ),
+            subscription = null
+        )
+        doReturn(simpleProduct).whenever(productRepository).getProductAggregate(any())
+        viewModel.productDetailViewStateData.observeForever { _, _ -> }
+        viewModel.start()
+
+        // Verify initial state has no subscription data
+        Assertions.assertThat(viewModel.getProduct().subscriptionDraft).isNull()
+
+        // WHEN
+        viewModel.onProductTypeChanged(ProductType.SUBSCRIPTION, false)
+
+        // THEN
+        viewModel.getProduct().subscriptionDraft?.let {
+            Assertions.assertThat(it.price).isEqualTo(simpleProduct.product.regularPrice)
+            Assertions.assertThat(it.period)
+                .isEqualTo(ProductTestUtils.generateProductSubscriptionDetails().period)
+            Assertions.assertThat(it.periodInterval)
+                .isEqualTo(ProductTestUtils.generateProductSubscriptionDetails().periodInterval)
+        } ?: Assertions.fail("Subscription draft should not be null")
+    }
+
+    @Test
+    fun `When converting from simple subscription to variable subscription product, subscription data is preserved`() = testBlocking {
+        // GIVEN
+        val subscriptionProduct = productAggregate.copy(
+            product = productAggregate.product.copy(
+                type = ProductType.SUBSCRIPTION.value
+            ),
+            subscription = ProductTestUtils.generateProductSubscriptionDetails()
+        )
+        doReturn(subscriptionProduct).whenever(productRepository).getProductAggregate(any())
+        viewModel.productDetailViewStateData.observeForever { _, _ -> }
+        viewModel.start()
+
+        val originalSubscription = viewModel.getProduct().subscriptionDraft
+
+        // WHEN
+        viewModel.onProductTypeChanged(ProductType.VARIABLE_SUBSCRIPTION, false)
+
+        // THEN
+        Assertions.assertThat(viewModel.getProduct().subscriptionDraft).isEqualTo(originalSubscription)
+    }
 
     private val productsDraft
         get() = viewModel.productDetailViewStateData.liveData.value?.productDraft
