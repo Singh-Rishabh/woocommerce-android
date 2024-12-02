@@ -428,6 +428,10 @@ class ProductDetailCardBuilder(
             inventory[resources.getString(string.product_sku)] = this.sku
         }
 
+        if (this.globalUniqueId.isNotEmpty()) {
+            inventory[resources.getString(string.product_global_unique_id)] = this.globalUniqueId
+        }
+
         if (productType == SIMPLE || productType == VARIABLE) {
             if (this.isStockManaged) {
                 inventory[resources.getString(string.product_stock_quantity)] =
