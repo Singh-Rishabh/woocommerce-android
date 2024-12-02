@@ -42,6 +42,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonLarge
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
@@ -151,6 +152,15 @@ private fun TotalsLoaded(
             Spacer(modifier = Modifier.weight(1f))
 
             TotalsGrid(state)
+
+            if (state.isCashPaymentAvailable) {
+                Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+
+                WooPosButton(
+                    text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                    onClick = { onUIEvent(WooPosTotalsUIEvent.OnTakeCashPaymentClicked) },
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
         }
