@@ -117,11 +117,22 @@ private fun TotalsLoaded(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+            val error = state.error
+            if (error != null) {
+                Spacer(modifier = Modifier.weight(1f))
+                WooPosErrorScreen(
+                    modifier = Modifier.weight(1f),
+                    message = error.title,
+                    reason = error.subtitle,
+                    primaryButton = Button(
+                        text = error.actionButonLabel,
+                        click = error.onAction
+                    ),
+                    adaptToScreenHeight = true,
+                )
+            }
 
-            TotalsGrid(state)
-
-            Spacer(modifier = Modifier.weight(1f))
+            TotalsGrid(modifier = Modifier.weight(1f), state = state)
 
             Text(
                 text = state.paymentStateText,
@@ -132,9 +143,10 @@ private fun TotalsLoaded(
 }
 
 @Composable
-private fun TotalsGrid(state: WooPosTotalsViewState.Totals) {
+private fun TotalsGrid(modifier: Modifier = Modifier,
+                       state: WooPosTotalsViewState.Totals) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(24.dp.toAdaptivePadding())
             .width(382.dp)
     ) {
@@ -260,6 +272,29 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
                 paymentStateText = "Payment state"
+            ),
+            onUIEvent = {}
+        )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
+    WooPosTheme {
+        WooPosTotalsScreen(
+            modifier = modifier,
+            state = WooPosTotalsViewState.Totals(
+                orderSubtotalText = "$420.00",
+                orderTotalText = "$462.00",
+                orderTaxText = "$42.00",
+                paymentStateText = "Payment state",
+                error = WooPosTotalsViewState.Totals.Error(
+                    title = "Reader not connected",
+                    subtitle = "To process this payment, please connect your reader.",
+                    actionButonLabel = "Connect to a reader",
+                    onAction = {}
+                )
             ),
             onUIEvent = {}
         )
