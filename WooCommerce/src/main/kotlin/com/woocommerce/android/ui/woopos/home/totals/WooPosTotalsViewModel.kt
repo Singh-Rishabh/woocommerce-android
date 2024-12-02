@@ -215,11 +215,6 @@ class WooPosTotalsViewModel @Inject constructor(
         )
     }
 
-    override fun onCleared() {
-        paymentScope?.cancel()
-        cardReaderPaymentController?.onCleared()
-    }
-
     @Parcelize
     private data class TotalsDataState(
         val orderId: Long = EMPTY_ORDER_ID,
