@@ -483,8 +483,8 @@ class ProductDetailCardBuilder(
                     viewModel.getShippingClassByRemoteShippingClassId(currentProduct.shippingClassId)
                 )
 
-                // Only add "One time shipping" info if product is subscription type
-                if (currentProduct.productType == SUBSCRIPTION) {
+                // Only add "One time shipping" info if product is Subscription types
+                if (currentProduct.productType == SUBSCRIPTION || currentProduct.productType == VARIABLE_SUBSCRIPTION) {
                     put(
                         resources.getString(string.subscription_one_time_shipping),
                         buildOneTimeShippingDescription(subscription)
