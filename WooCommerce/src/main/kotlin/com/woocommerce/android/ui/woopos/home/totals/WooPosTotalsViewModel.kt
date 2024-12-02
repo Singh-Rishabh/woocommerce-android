@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,18 +26,14 @@ import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
-import kotlin.text.get
 
 private const val KEY_TTP_PAYMENT_IN_PROGRESS = "ttp_payment_in_progress"
 
