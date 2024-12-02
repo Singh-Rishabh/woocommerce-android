@@ -631,7 +631,7 @@ class WooPosTotalsViewModelTest {
         }
 
         // WHEN
-        val viewModel = createViewModel(
+        createViewModel(
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
