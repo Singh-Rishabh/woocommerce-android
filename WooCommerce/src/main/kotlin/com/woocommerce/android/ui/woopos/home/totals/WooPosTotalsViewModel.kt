@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund
@@ -57,11 +58,12 @@ class WooPosTotalsViewModel @Inject constructor(
         private val InitialState = WooPosTotalsViewState.Loading
     }
 
-    private val uiState = savedState.getStateFlow<WooPosTotalsViewState>(
-        scope = viewModelScope,
-        initialValue = InitialState,
-        key = "woo_pos_totals_view_state"
-    )
+    private val uiState: MutableStateFlow<WooPosTotalsViewState> =
+        savedState.getStateFlow<WooPosTotalsViewState>(
+            scope = viewModelScope,
+            initialValue = InitialState,
+            key = "woo_pos_totals_view_state"
+        )
 
     val state: StateFlow<WooPosTotalsViewState> = uiState
 
@@ -92,6 +94,35 @@ class WooPosTotalsViewModel @Inject constructor(
 
     init {
         listenUpEvents()
+        observeCardReaderStatus()
+    }
+
+    private fun observeCardReaderStatus() {
+        viewModelScope.launch {
+            cardReaderFacade.readerStatus.collect { status ->
+                when (status) {
+                    is CardReaderStatus.NotConnected -> {
+                        val state = uiState.value
+                        if (state !is WooPosTotalsViewState.Totals) return@collect
+                        uiState.value = state.copy(
+                            error = WooPosTotalsViewState.Totals.Error(
+                                title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
+                                subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
+                                actionButonLable = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label),
+                                onAction = { cardReaderFacade.connectToReader() }
+                            )
+                        )
+                    }
+                    else -> {
+                        val state = uiState.value
+                        if (state !is WooPosTotalsViewState.Totals) return@collect
+                        uiState.value = state.copy(error = null)
+                        // now if order is created, collect payment
+                        // TODO: @samiuelson
+                    }
+                }
+            }
+        }
     }
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {

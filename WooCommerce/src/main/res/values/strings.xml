@@ -4297,6 +4297,10 @@
     <string name="woopos_totals_order_creation_error">Couldn\'t create order</string>
     <string name="woopos_success_screen_total">A payment of %1$s was successfully made</string>
 
+    <string name="woopos_success_totals_error_reader_not_connected_title">Reader not connected</string>
+    <string name="woopos_success_totals_error_reader_not_connected_subtitle">To process this payment, please connect your reader.</string>
+    <string name="woopos_success_totals_error_reader_not_connected_cta_button_label">Connect to reader</string>
+
     <string name="woopos_floating_toolbar_overlay_menu_content_description">Dimmed background. Tap to close the menu.</string>
     <string name="woopos_floating_toolbar_card_reader_connected_status_content_description">Card reader connected</string>
     <string name="woopos_floating_toolbar_card_reader_not_connected_status_content_description">Card reader not connected. Double tap to connect</string>

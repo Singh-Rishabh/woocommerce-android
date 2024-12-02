@@ -12,7 +12,16 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderTaxText: String,
         val orderTotalText: String,
         val paymentStateText: String,
-    ) : WooPosTotalsViewState()
+        val error: Error? = null,
+    ) : WooPosTotalsViewState() {
+        @Parcelize
+        data class Error(
+            val title: String,
+            val subtitle: String,
+            val actionButonLable: String,
+            val onAction: () -> Unit,
+        ): Parcelable
+    }
 
     data class PaymentSuccess(var orderTotalText: String) : WooPosTotalsViewState()
 
