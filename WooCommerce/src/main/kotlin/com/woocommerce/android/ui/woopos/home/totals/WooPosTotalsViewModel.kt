@@ -104,14 +104,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     is CardReaderStatus.NotConnected -> {
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
-                        uiState.value = state.copy(
-                            error = WooPosTotalsViewState.Totals.Error(
-                                title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
-                                subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
-                                actionButonLabel = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label),
-                                onAction = { cardReaderFacade.connectToReader() }
-                            )
-                        )
+                        uiState.value = state.copy(error = buildTotalsReaderNotConnectedError())
                     }
                     else -> {
                         val state = uiState.value
@@ -239,12 +232,7 @@ class WooPosTotalsViewModel @Inject constructor(
         val totalAmount = order.total
         val error = when (cardReaderFacade.readerStatus.value) {
             is Connected -> null
-            else -> WooPosTotalsViewState.Totals.Error(
-                title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
-                subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
-                actionButonLabel = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label),
-                onAction = { cardReaderFacade.connectToReader() }
-            )
+            else -> buildTotalsReaderNotConnectedError()
         }
 
         return WooPosTotalsViewState.Totals(
@@ -255,6 +243,15 @@ class WooPosTotalsViewModel @Inject constructor(
             error = error
         )
     }
+
+    private fun buildTotalsReaderNotConnectedError(): WooPosTotalsViewState.Totals.Error = WooPosTotalsViewState.Totals.Error(
+        title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
+        subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
+        actionButonLabel = resourceProvider.getString(
+            R.string.woopos_success_totals_error_reader_not_connected_cta_button_label
+        ),
+        onAction = { cardReaderFacade.connectToReader() }
+    )
 
     @Parcelize
     private data class TotalsDataState(

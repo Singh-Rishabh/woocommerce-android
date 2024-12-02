@@ -825,7 +825,7 @@ class WooPosTotalsViewModelTest {
         (viewModel.state.value as WooPosTotalsViewState.Totals).error!!.onAction()
 
         // THEN
-       verify(cardReaderFacade).connectToReader()
+        verify(cardReaderFacade).connectToReader()
     }
 
     private fun createViewModel(

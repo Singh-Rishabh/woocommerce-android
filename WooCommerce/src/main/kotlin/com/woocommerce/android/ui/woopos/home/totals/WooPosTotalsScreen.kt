@@ -175,8 +175,10 @@ private fun TotalsError(
 }
 
 @Composable
-private fun TotalsGrid(modifier: Modifier = Modifier,
-                       state: WooPosTotalsViewState.Totals) {
+private fun TotalsGrid(
+    modifier: Modifier = Modifier,
+    state: WooPosTotalsViewState.Totals
+) {
     Column(
         modifier = modifier
             .padding(24.dp.toAdaptivePadding())
@@ -338,6 +340,7 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
         )
     }
 }
+
 @Composable
 @WooPosPreview
 fun TotalsErrorPreview() {
