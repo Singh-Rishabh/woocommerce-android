@@ -237,12 +237,22 @@ class WooPosTotalsViewModel @Inject constructor(
         val subtotalAmount = order.productsTotal
         val taxAmount = order.totalTax
         val totalAmount = order.total
+        val error = when (cardReaderFacade.readerStatus.value) {
+            is Connected -> null
+            else -> WooPosTotalsViewState.Totals.Error(
+                title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
+                subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
+                actionButonLabel = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label),
+                onAction = { cardReaderFacade.connectToReader() }
+            )
+        }
 
         return WooPosTotalsViewState.Totals(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            paymentStateText = ""
+            paymentStateText = "",
+            error = error
         )
     }
 
