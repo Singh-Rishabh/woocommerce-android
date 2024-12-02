@@ -11,6 +11,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderSubtotalText: String,
         val orderTaxText: String,
         val orderTotalText: String,
+        val isCashPaymentAvailable: Boolean,
     ) : WooPosTotalsViewState()
 
     data class PaymentSuccess(

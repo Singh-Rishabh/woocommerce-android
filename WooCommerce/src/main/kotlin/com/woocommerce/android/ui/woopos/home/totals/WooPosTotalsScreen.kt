@@ -296,6 +296,24 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
+                isCashPaymentAvailable = false
+            ),
+            onUIEvent = {}
+        )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
+    WooPosTheme {
+        WooPosTotalsScreen(
+            modifier = Modifier,
+            state = WooPosTotalsViewState.Totals(
+                orderSubtotalText = "$420.00",
+                orderTotalText = "$462.00",
+                orderTaxText = "$42.00",
+                isCashPaymentAvailable = true
             ),
             onUIEvent = {}
         )

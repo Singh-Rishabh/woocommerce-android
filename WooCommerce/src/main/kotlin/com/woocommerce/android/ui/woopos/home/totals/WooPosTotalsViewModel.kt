@@ -8,6 +8,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -40,6 +41,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
     private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable,
+    private val isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -181,6 +183,7 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
+            isCashPaymentAvailable = isCashPaymentsEnabled()
         )
     }
 
