@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
-import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connecting
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.NotConnected
@@ -102,7 +101,9 @@ class WooPosTotalsViewModel @Inject constructor(
 
     private fun observeCardReaderStatus() {
         viewModelScope.launch {
-            cardReaderFacade.readerStatus.combine(dataState){status, data -> Pair(status, data)}.collect { (status, data) ->
+            cardReaderFacade.readerStatus.combine(
+                dataState
+            ) { status, data -> Pair(status, data) }.collect { (status, data) ->
                 when (status) {
                     is NotConnected, is Connecting -> {
                         val state = uiState.value
