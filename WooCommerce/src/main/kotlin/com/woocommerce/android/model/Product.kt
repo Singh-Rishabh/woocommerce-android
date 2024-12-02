@@ -56,6 +56,7 @@ data class Product(
     val isStockManaged: Boolean,
     val stockQuantity: Double,
     val sku: String,
+    val globalUniqueId: String,
     val shippingClass: String,
     val shippingClassId: Long,
     val isDownloadable: Boolean,
@@ -116,6 +117,7 @@ data class Product(
             isSoldIndividually == product.isSoldIndividually &&
             reviewsAllowed == product.reviewsAllowed &&
             sku == product.sku &&
+            globalUniqueId == product.globalUniqueId &&
             slug == product.slug &&
             type == product.type &&
             name.fastStripHtml() == product.name.fastStripHtml() &&
@@ -292,6 +294,7 @@ data class Product(
                 shortDescription = updatedProduct.shortDescription,
                 name = updatedProduct.name,
                 sku = updatedProduct.sku,
+                globalUniqueId = updatedProduct.globalUniqueId,
                 slug = updatedProduct.slug,
                 status = updatedProduct.status,
                 catalogVisibility = updatedProduct.catalogVisibility,
@@ -415,6 +418,7 @@ fun Product.toDataModel(storedProductModel: WCProductModel? = null): WCProductMo
         it.shortDescription = shortDescription
         it.name = name
         it.sku = sku
+        it.globalUniqueId = globalUniqueId
         it.slug = slug
         it.status = status.toString()
         it.catalogVisibility = catalogVisibility.toString()
@@ -513,6 +517,7 @@ fun WCProductModel.toAppModel(): Product {
         isStockManaged = this.manageStock,
         stockQuantity = this.stockQuantity,
         sku = this.sku,
+        globalUniqueId = this.globalUniqueId,
         slug = this.slug,
         length = this.length.toFloatOrNull() ?: 0f,
         width = this.width.toFloatOrNull() ?: 0f,

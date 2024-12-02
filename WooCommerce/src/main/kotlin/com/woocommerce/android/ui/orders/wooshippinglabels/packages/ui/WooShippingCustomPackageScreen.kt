@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

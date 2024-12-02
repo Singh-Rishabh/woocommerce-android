@@ -20,6 +20,7 @@ import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -107,8 +108,16 @@ class WooPosCartViewModel @Inject constructor(
     }
 
     private fun goToTotals() {
-        val productIds = (_state.value.body as WooPosCartState.Body.WithItems).itemsInCart.map { it.id.productId }
-        sendEventToParent(ChildToParentEvent.CheckoutClicked(productIds))
+        val itemClickedDataList = (_state.value.body as WooPosCartState.Body.WithItems).itemsInCart.map {
+            when (it.productType) {
+                ProductType.Simple -> WooPosItemsViewModel.ItemClickedData.SimpleProduct(it.id.productId)
+                ProductType.Variation -> WooPosItemsViewModel.ItemClickedData.Variation(
+                    productId = it.id.productId,
+                    id = it.id.variationId
+                )
+            }
+        }
+        sendEventToParent(ChildToParentEvent.CheckoutClicked(itemClickedDataList))
         _state.value = _state.value.copy(cartStatus = CHECKOUT)
     }
 
@@ -117,7 +126,7 @@ class WooPosCartViewModel @Inject constructor(
             parentToChildrenEventReceiver.events.collect { event ->
                 when (event) {
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> handleBackFromCheckoutToCartClicked()
-                    is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInProductSelector(event)
+                    is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInItemsSelector(event)
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> handleOrderSuccessfullyPaid()
                     is ParentToChildrenEvent.CheckoutClicked -> Unit
                 }
@@ -129,17 +138,21 @@ class WooPosCartViewModel @Inject constructor(
         _state.value = _state.value.copy(cartStatus = EDITABLE)
     }
 
-    private fun handleItemClickedInProductSelector(event: ParentToChildrenEvent.ItemClickedInProductSelector) {
+    private fun handleItemClickedInItemsSelector(event: ParentToChildrenEvent.ItemClickedInProductSelector) {
         viewModelScope.launch {
             val itemClicked = async {
+                val product = getProductById(
+                    when (event.itemData) {
+                        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> event.itemData.id
+                        is WooPosItemsViewModel.ItemClickedData.Variation -> event.itemData.productId
+                    }
+                )!!
                 when (event.itemData) {
                     is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> {
-                        val product = getProductById(event.itemData.id)!!
                         val itemNumber = getItemNumber()
                         product.toCartListItem(itemNumber)
                     }
                     is WooPosItemsViewModel.ItemClickedData.Variation -> {
-                        val product = getProductById(event.itemData.productId)!!
                         val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
                         val itemNumber = getItemNumber()
                         productVariation.toCartListItem(itemNumber, product)
@@ -147,6 +160,11 @@ class WooPosCartViewModel @Inject constructor(
                 }
             }
             _state.value = updateStateWithNewItem(itemClicked.await())
+            WooPosAnalyticsEvent.Event.ItemAddedToCart.addProperties(
+                mapOf(
+                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.productTypeForAnalytics()
+                )
+            )
             analyticsTracker.track(WooPosAnalyticsEvent.Event.ItemAddedToCart)
         }
     }
@@ -237,11 +255,16 @@ class WooPosCartViewModel @Inject constructor(
 
     private suspend fun Product.toCartListItem(itemNumber: Int): WooPosCartState.Body.WithItems.Item =
         WooPosCartState.Body.WithItems.Item(
-            id = WooPosCartState.Body.WithItems.Item.Id(productId = remoteId, itemNumber = itemNumber),
+            id = WooPosCartState.Body.WithItems.Item.Id(
+                productId = remoteId,
+                variationId = 0L,
+                itemNumber = itemNumber
+            ),
             name = name,
             price = formatPrice(price),
             imageUrl = firstImageUrl,
             isAppearanceAnimationPlayed = false,
+            productType = ProductType.Simple,
         )
 
     private suspend fun ProductVariation.toCartListItem(
@@ -249,10 +272,22 @@ class WooPosCartViewModel @Inject constructor(
         product: Product
     ): WooPosCartState.Body.WithItems.Item =
         WooPosCartState.Body.WithItems.Item(
-            id = WooPosCartState.Body.WithItems.Item.Id(productId = remoteVariationId, itemNumber = itemNumber),
+            id = WooPosCartState.Body.WithItems.Item.Id(
+                productId = product.remoteId,
+                variationId = remoteVariationId,
+                itemNumber = itemNumber
+            ),
             name = getName(product),
             price = formatPrice(price),
             imageUrl = image?.source,
             isAppearanceAnimationPlayed = false,
+            productType = ProductType.Variation,
         )
+}
+
+private fun WooPosItemsViewModel.ItemClickedData.productTypeForAnalytics(): String {
+    return when (this) {
+        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
+        is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
+    }
 }

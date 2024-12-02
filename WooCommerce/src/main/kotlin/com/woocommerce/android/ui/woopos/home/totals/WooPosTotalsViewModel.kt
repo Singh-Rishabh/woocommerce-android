@@ -12,6 +12,8 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosIsReceiptSendingAvailable
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -37,6 +39,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
+    private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -76,7 +79,11 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
-                createOrderDraft(dataState.value.productIds)
+                createOrderDraft(dataState.value.itemClickedDataList)
+            }
+            WooPosTotalsUIEvent.OnSendReceiptClicked -> TODO()
+            WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
+                uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
             }
         }
     }
@@ -98,8 +105,8 @@ class WooPosTotalsViewModel @Inject constructor(
             parentToChildrenEventReceiver.events.collect { event ->
                 when (event) {
                     is ParentToChildrenEvent.CheckoutClicked -> {
-                        dataState.value = dataState.value.copy(productIds = event.productIds)
-                        createOrderDraft(dataState.value.productIds)
+                        dataState.value = dataState.value.copy(itemClickedDataList = event.itemClickedDataList)
+                        createOrderDraft(dataState.value.itemClickedDataList)
                     }
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
@@ -120,7 +127,14 @@ class WooPosTotalsViewModel @Inject constructor(
                     is WooPosCardReaderPaymentStatus.Success -> {
                         val state = uiState.value
                         check(state is WooPosTotalsViewState.Totals)
-                        uiState.value = WooPosTotalsViewState.PaymentSuccess(orderTotalText = state.orderTotalText)
+                        val orderTotalText = resourceProvider.getString(
+                            R.string.woopos_success_screen_total,
+                            state.orderTotalText
+                        )
+                        uiState.value = WooPosTotalsViewState.PaymentSuccess(
+                            orderTotalText = orderTotalText,
+                            isReceiptAvailable = isReceiptSendingAvailable()
+                        )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
                     is WooPosCardReaderPaymentStatus.Failure,
@@ -130,11 +144,11 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private fun createOrderDraft(productIds: List<Long>) {
+    private fun createOrderDraft(itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>) {
         viewModelScope.launch {
             uiState.value = WooPosTotalsViewState.Loading
 
-            totalsRepository.createOrderWithProducts(productIds = productIds)
+            totalsRepository.createOrderWithProducts(itemClickedDataList = itemClickedDataList)
                 .fold(
                     onSuccess = { order ->
                         dataState.value = dataState.value.copy(orderId = order.id)
@@ -173,6 +187,6 @@ class WooPosTotalsViewModel @Inject constructor(
     @Parcelize
     private data class TotalsDataState(
         val orderId: Long = EMPTY_ORDER_ID,
-        val productIds: List<Long> = emptyList()
+        val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData> = emptyList()
     ) : Parcelable
 }
