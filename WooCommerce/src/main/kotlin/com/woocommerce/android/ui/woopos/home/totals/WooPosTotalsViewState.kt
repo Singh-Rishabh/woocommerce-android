@@ -28,7 +28,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         val changeDue: String,
         val total: String,
         val canBeOrderBeCompleted: Boolean,
-    )
+    ) : WooPosTotalsViewState()
 
     data class Error(val message: String) : WooPosTotalsViewState()
 }
