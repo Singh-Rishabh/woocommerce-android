@@ -211,5 +211,4 @@ object ProductTestUtils {
         oneTimeShipping = true,
         paymentsSyncDate = null
     )
-
 }
