@@ -47,6 +47,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.payment.cash.WooPosTotalsPaymentCashScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 import kotlinx.coroutines.delay
@@ -93,6 +94,16 @@ private fun WooPosTotalsScreen(
                     state,
                     onEmailAddressChanged = {},
                     onSendReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnSendReceiptClicked) }
+                )
+            }
+        }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.CashPayment) {
+            if (state is WooPosTotalsViewState.CashPayment) {
+                WooPosTotalsPaymentCashScreen(
+                    state,
+                    onAmountChanged = { },
+                    onCompleteOrderClicked = { },
                 )
             }
         }
