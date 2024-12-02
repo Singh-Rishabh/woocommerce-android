@@ -28,6 +28,7 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -37,6 +38,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlin.text.get
 
 private const val KEY_TTP_PAYMENT_IN_PROGRESS = "ttp_payment_in_progress"
 
@@ -84,7 +86,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private var cardReaderPaymentController: CardReaderPaymentController? = null
 
     private fun createCardReaderPaymentController(orderId: Long) {
-        paymentScope = CoroutineScope(viewModelScope.coroutineContext + SupervisorJob() + Dispatchers.Main.immediate)
+        paymentScope = CoroutineScope(SupervisorJob(viewModelScope.coroutineContext[Job]))
         cardReaderPaymentController = cardReaderPaymentControllerFactory.create(
             orderId = orderId,
             paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS,
