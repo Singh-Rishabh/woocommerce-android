@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
+import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connecting
+import com.woocommerce.android.cardreader.connection.CardReaderStatus.NotConnected
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
@@ -32,6 +34,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -99,19 +102,20 @@ class WooPosTotalsViewModel @Inject constructor(
 
     private fun observeCardReaderStatus() {
         viewModelScope.launch {
-            cardReaderFacade.readerStatus.collect { status ->
+            cardReaderFacade.readerStatus.combine(dataState){status, data -> Pair(status, data)}.collect { (status, data) ->
                 when (status) {
-                    is CardReaderStatus.NotConnected -> {
+                    is NotConnected, is Connecting -> {
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
                         uiState.value = state.copy(error = buildTotalsReaderNotConnectedError())
                     }
-                    else -> {
+                    is Connected -> {
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
                         uiState.value = state.copy(error = null)
-                        // now if order is created, collect payment
-                        // TODO: @samiuelson
+                        if (data.orderId != EMPTY_ORDER_ID) {
+                            collectPayment()
+                        }
                     }
                 }
             }
