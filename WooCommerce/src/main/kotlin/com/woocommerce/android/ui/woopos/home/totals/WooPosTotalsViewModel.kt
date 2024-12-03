@@ -1,6 +1,8 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
+import androidx.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -81,7 +83,8 @@ class WooPosTotalsViewModel @Inject constructor(
             savedState[KEY_TTP_PAYMENT_IN_PROGRESS] = value
         }
 
-    private var paymentScope: CoroutineScope? = null
+    @VisibleForTesting(otherwise = PRIVATE)
+    internal var paymentScope: CoroutineScope? = null
     private var cardReaderPaymentController: CardReaderPaymentController? = null
 
     private fun createCardReaderPaymentController(orderId: Long) {
@@ -109,6 +112,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
                         uiState.value = state.copy(error = buildTotalsReaderNotConnectedError())
+                        cancelPaymentAction()
                     }
                     is Connected -> {
                         val state = uiState.value
@@ -121,6 +125,12 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun cancelPaymentAction() {
+        cardReaderPaymentController?.onCleared()
+        cardReaderPaymentController?.onBackPressed()
+        paymentScope?.cancel()
     }
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
@@ -169,9 +179,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
-                        cardReaderPaymentController?.onBackPressed()
-                        cardReaderPaymentController?.onCleared()
-                        paymentScope?.cancel()
+                        cancelPaymentAction()
                         uiState.value = InitialState
                     }
 
