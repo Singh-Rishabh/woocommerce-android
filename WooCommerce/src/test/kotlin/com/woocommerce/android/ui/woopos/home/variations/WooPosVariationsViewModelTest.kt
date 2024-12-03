@@ -77,6 +77,7 @@ class WooPosVariationsViewModelTest {
     fun `given view model init, then API call is made to fetch product`() = runTest {
         whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
             flow {
+                emit(emptyList())
                 emit(
                     listOf(
                         ProductTestUtils.generateProductVariation(1L, 2L),
@@ -137,6 +138,7 @@ class WooPosVariationsViewModelTest {
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flow {
+                    emit(emptyList())
                     delay(100)
                     emit(
                         listOf(
@@ -172,6 +174,7 @@ class WooPosVariationsViewModelTest {
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flow {
+                    emit(emptyList())
                     delay(100)
                     emit(
                         listOf(
@@ -207,6 +210,7 @@ class WooPosVariationsViewModelTest {
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flow {
+                    emit(emptyList())
                     delay(100)
                     emit(
                         listOf(
@@ -405,6 +409,7 @@ class WooPosVariationsViewModelTest {
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flow {
+                    emit(emptyList())
                     delay(100)
                     emit(
                         listOf(
@@ -486,6 +491,7 @@ class WooPosVariationsViewModelTest {
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flow {
+                    emit(emptyList())
                     delay(100)
                     emit(
                         listOf(
@@ -528,6 +534,7 @@ class WooPosVariationsViewModelTest {
         runTest {
             whenever(variationsDataSource.getVariationsFlow(any())).thenReturn(
                 flow {
+                    emit(emptyList())
                     delay(100)
                     emit(
                         listOf(
