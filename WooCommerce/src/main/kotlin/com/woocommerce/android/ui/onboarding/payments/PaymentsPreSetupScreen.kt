@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.URL_ANNOTATION_TAG
-import com.woocommerce.android.ui.compose.annotatedStringRes
+import com.woocommerce.android.ui.compose.annotatedStringResLegacy
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedButton
@@ -107,7 +107,7 @@ private fun PaymentsPreSetupContent(
             color = colorResource(id = R.color.woo_purple_50)
         )
 
-        val bodyText = annotatedStringRes(
+        val bodyText = annotatedStringResLegacy(
             stringResId = if (isWooPaymentsTask) {
                 R.string.store_onboarding_wcpay_setup_description
             } else {

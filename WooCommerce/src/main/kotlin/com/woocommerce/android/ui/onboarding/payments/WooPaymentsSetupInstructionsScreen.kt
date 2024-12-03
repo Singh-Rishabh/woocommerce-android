@@ -39,7 +39,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.R.color
 import com.woocommerce.android.R.string
 import com.woocommerce.android.ui.compose.URL_ANNOTATION_TAG
-import com.woocommerce.android.ui.compose.annotatedStringRes
+import com.woocommerce.android.ui.compose.annotatedStringResLegacy
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -124,7 +124,7 @@ private fun WooPaymentsSetupInstructionsContent(
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.major_100))
         )
 
-        val text = annotatedStringRes(stringResId = R.string.store_onboarding_wcpay_instructions_content_step_1_content)
+        val text = annotatedStringResLegacy(stringResId = R.string.store_onboarding_wcpay_instructions_content_step_1_content)
         WooPaymentsSetupInstructionsStep(stepNumber = 1) {
             ClickableText(
                 text = text,
@@ -217,7 +217,7 @@ private fun WooPaymentsSetupInstructionsFooter(
                     .align(Alignment.CenterVertically)
                     .padding(end = 8.dp)
             )
-            val text = annotatedStringRes(stringResId = R.string.store_onboarding_wcpay_instructions_content_learn_more)
+            val text = annotatedStringResLegacy(stringResId = R.string.store_onboarding_wcpay_instructions_content_learn_more)
             ClickableText(
                 text = text,
                 style = MaterialTheme.typography.subtitle2

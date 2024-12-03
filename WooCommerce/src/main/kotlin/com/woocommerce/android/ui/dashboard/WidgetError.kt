@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.URL_ANNOTATION_TAG
-import com.woocommerce.android.ui.compose.annotatedStringRes
+import com.woocommerce.android.ui.compose.annotatedStringResLegacy
 import com.woocommerce.android.ui.compose.component.WCOutlinedButton
 
 @Composable
@@ -46,7 +46,7 @@ fun WidgetError(
             style = MaterialTheme.typography.h6
         )
 
-        val errorMessage = annotatedStringRes(R.string.dynamic_dashboard_widget_error_description)
+        val errorMessage = annotatedStringResLegacy(R.string.dynamic_dashboard_widget_error_description)
 
         ClickableText(
             modifier = Modifier.padding(horizontal = 32.dp),

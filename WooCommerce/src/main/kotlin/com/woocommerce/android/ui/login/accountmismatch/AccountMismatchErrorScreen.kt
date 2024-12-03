@@ -50,7 +50,7 @@ import com.woocommerce.android.AppUrls
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
 import com.woocommerce.android.ui.compose.URL_ANNOTATION_TAG
-import com.woocommerce.android.ui.compose.annotatedStringRes
+import com.woocommerce.android.ui.compose.annotatedStringResLegacy
 import com.woocommerce.android.ui.compose.component.ProgressDialog
 import com.woocommerce.android.ui.compose.component.ToolbarWithHelpButton
 import com.woocommerce.android.ui.compose.component.WCColoredButton
@@ -201,7 +201,7 @@ fun AccountMismatchErrorScreen(viewState: ViewState.MainState, modifier: Modifie
         )
 
         if (viewState.showJetpackTermsConsent) {
-            val consent = annotatedStringRes(stringResId = R.string.login_jetpack_connection_consent)
+            val consent = annotatedStringResLegacy(stringResId = R.string.login_jetpack_connection_consent)
             val context = LocalContext.current
             ClickableText(
                 text = consent,

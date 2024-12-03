@@ -50,7 +50,7 @@ import com.woocommerce.android.R.dimen
 import com.woocommerce.android.R.drawable
 import com.woocommerce.android.R.string
 import com.woocommerce.android.ui.compose.URL_ANNOTATION_TAG
-import com.woocommerce.android.ui.compose.annotatedStringRes
+import com.woocommerce.android.ui.compose.annotatedStringResLegacy
 import com.woocommerce.android.ui.compose.component.ProgressIndicator
 import com.woocommerce.android.ui.compose.component.ToolbarWithHelpButton
 import com.woocommerce.android.ui.compose.component.WCColoredButton
@@ -139,7 +139,7 @@ private fun DomainDashboard(
                     imageVector = ImageVector.vectorResource(id = drawable.ic_info_outline_20dp),
                     contentDescription = stringResource(string.domains_learn_more)
                 )
-                val text = annotatedStringRes(stringResId = string.domains_learn_more)
+                val text = annotatedStringResLegacy(stringResId = string.domains_learn_more)
                 ClickableText(
                     modifier = Modifier.padding(start = dimensionResource(id = dimen.minor_100)),
                     text = text,
