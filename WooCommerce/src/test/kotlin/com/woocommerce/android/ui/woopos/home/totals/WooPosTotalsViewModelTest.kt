@@ -50,6 +50,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -547,50 +548,14 @@ class WooPosTotalsViewModelTest {
     fun `given there is no internet, then trigger proper event`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
-        val productIds = listOf(1L, 2L, 3L)
-        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
-        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
-            on { events }.thenReturn(parentToChildrenEventFlow)
-        }
-        val order = Order.getEmptyOrder(
-            dateCreated = Date(),
-            dateModified = Date()
-        ).copy(
-            totalTax = BigDecimal("2.00"),
-            items = listOf(
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                )
-            ),
-            productsTotal = BigDecimal("3.00"),
-            total = BigDecimal("5.00"),
-        )
-        val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(productIds = productIds) }.thenReturn(
-                Result.success(order)
-            )
-        }
-        val priceFormat: WooPosFormatPrice = mock {
-            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
-            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
-            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
-        }
+        val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
 
         // WHEN
-        createViewModel(
-            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
-            totalsRepository = totalsRepository,
-            priceFormat = priceFormat,
-        )
+        createViewModelAndSetupForSuccessfulOrderCreation()
 
         // THEN
-        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.NoInternet)
+        verify(childrenToParentEventSender, atLeastOnce()).sendToParent(ChildToParentEvent.NoInternet)
     }
 
     @org.junit.Test
@@ -796,7 +761,7 @@ class WooPosTotalsViewModelTest {
         val mockCardReaderPaymentController: CardReaderPaymentController = mock()
         val factory: CardReaderPaymentControllerFactory = mock()
         whenever(factory.create(any(), any(), any(), any())).thenReturn(mockCardReaderPaymentController)
-        createViewModelAndSetupForSuccessfulOrderCreation(paymentControllerFactory = factory)
+        createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
 
         readerStatus.value = CardReaderStatus.Connected(mock())
 
@@ -814,7 +779,7 @@ class WooPosTotalsViewModelTest {
         val mockCardReaderPaymentController: CardReaderPaymentController = mock()
         val factory: CardReaderPaymentControllerFactory = mock()
         whenever(factory.create(any(), any(), any(), any())).thenReturn(mockCardReaderPaymentController)
-        val vm = createViewModelAndSetupForSuccessfulOrderCreation(paymentControllerFactory = factory)
+        val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
 
         // WHEN
         readerStatus.value = CardReaderStatus.NotConnected()
@@ -826,7 +791,7 @@ class WooPosTotalsViewModelTest {
     }
 
     private fun createViewModelAndSetupForSuccessfulOrderCreation(
-        paymentControllerFactory: CardReaderPaymentControllerFactory = this@WooPosTotalsViewModelTest.paymentControllerFactory
+        controllerFactory: CardReaderPaymentControllerFactory = paymentControllerFactory
     ): WooPosTotalsViewModel {
         whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title))
             .thenReturn("Reader not connected")
@@ -875,7 +840,7 @@ class WooPosTotalsViewModelTest {
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
-            cardReaderPaymentControllerFactory = paymentControllerFactory,
+            cardReaderPaymentControllerFactory = controllerFactory,
         )
     }
 
