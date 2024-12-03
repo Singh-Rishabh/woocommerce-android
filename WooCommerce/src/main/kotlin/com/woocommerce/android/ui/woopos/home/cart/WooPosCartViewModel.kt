@@ -20,6 +20,7 @@ import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -159,6 +160,11 @@ class WooPosCartViewModel @Inject constructor(
                 }
             }
             _state.value = updateStateWithNewItem(itemClicked.await())
+            WooPosAnalyticsEvent.Event.ItemAddedToCart.addProperties(
+                mapOf(
+                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.productTypeForAnalytics()
+                )
+            )
             analyticsTracker.track(WooPosAnalyticsEvent.Event.ItemAddedToCart)
         }
     }
@@ -277,4 +283,11 @@ class WooPosCartViewModel @Inject constructor(
             isAppearanceAnimationPlayed = false,
             productType = ProductType.Variation,
         )
+}
+
+private fun WooPosItemsViewModel.ItemClickedData.productTypeForAnalytics(): String {
+    return when (this) {
+        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
+        is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
+    }
 }
