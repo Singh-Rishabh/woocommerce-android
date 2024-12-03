@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-15 13:54:03+0000
+Translation-Revision-Date: 2024-11-12 09:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: de
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Umschlag</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Karton</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Paket hinzufügen</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Als neues Paket-Template speichern</string>
+    <string name="woo_shipping_labels_package_creation_height">Höhe</string>
+    <string name="woo_shipping_labels_package_creation_width">Breite</string>
+    <string name="woo_shipping_labels_package_creation_length">Länge</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Paketart</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Gespeichert</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Versanddienstleister</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Individuell</string>
+    <string name="shipping_label_purchased_request_refund">Rückerstattung anfordern</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Abholung planen</string>
+    <string name="shipping_label_purchased_track_shipment">Sendung verfolgen</string>
+    <string name="shipping_label_purchased_learn_how_to_print">So druckst du von deinem Mobilgerät aus</string>
+    <string name="shipping_label_purchased_note">Hinweis: Das Wiederverwenden eines ausgedruckten Etiketts ist ein Verstoß gegen unsere Geschäftsbedingungen und kann strafrechtliche Konsequenzen nach sich ziehen.</string>
+    <string name="shipping_label_purchased_message">Hier kannst du das Versandetikett erneut drucken oder das Papierformat des Etiketts ändern.</string>
+    <string name="shipping_label_purchased_title">Dein Versandetikett kann jetzt gedruckt werden</string>
+    <string name="order_detail_edit_store_currency_mismatch">Leider kannst du diese Bestellung nur im Web bearbeiten, da %1$s verwendet wird und die Währung deiner Website %2$s ist</string>
+    <string name="shipping_label_shipping_service_title">Versanddienst</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Etikett kaufen</string>
+    <string name="shipping_label_shipment_details_purchase_label">Etikett kaufen · %1$s </string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Schnellste</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Günstigste</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Versandkosten</string>
+    <string name="shipping_label_shipment_details_order_details">Bestelldetails</string>
+    <string name="shipping_label_shipment_details_title">Versanddetails</string>
+    <string name="shipping_label_select_package_description">Gib die Abmessungen deines Pakets ein oder wähle eine Paketoption, um die verfügbaren Versandtarife zu sehen.</string>
+    <string name="shipping_label_select_package_title">Paket auswählen, damit Versandtarife angezeigt werden</string>
+    <string name="shipping_label_select_package_button">Paket auswählen</string>
+    <string name="shipping_label_hazmat_title">Versendest du Gefahrgut oder gefährliche Stoffe?</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Diese Bestellung als abgeschlossen markieren und den Kunden benachrichtigen</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Artikelkarte einklappen/aufklappen</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="no">Nein.</string>
+    <string name="sorted_by">Sortiert nach %s</string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">Meine Auswahl für zukünftige Kampagnen speichern</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;Gut für:&lt;/b&gt; %s</string>
+    <string name="blaze_campaign_objective_select_objective_label">Ziel %s auswählen</string>
     <string name="custom_fields_empty_view_title">Keine individuellen Felder gefunden</string>
     <string name="custom_fields_empty_view_message">Individuelle Felder sind optionale Metadaten, die zusätzliche Informationen beinhalten oder das individuelle Einkaufserlebnis in deinem Shop optimieren können.</string>
     <string name="blaze_campaign_created_success_feedback_request">Wir möchten mehr über dein Erlebnis mit Blaze erfahren</string>
@@ -497,6 +536,7 @@ Language: de
     <string name="blaze_campaign_edit_ad_change_image_button">Bild ändern</string>
     <string name="blaze_campaign_budget_duration_bottom_sheet_apply_button">Übernehmen</string>
     <string name="blaze_campaign_budget_duration_bottom_sheet_duration">%1$s Tage</string>
+    <string name="blaze_campaign_budget_impressions_info">Aufrufe geben die Häufigkeit an, mit der deine Werbung potenziellen Kunden angezeigt wird.\n\n\n        Auch wenn aufgrund von schwankendem Internet-Traffic und Nutzerverhalten keine genauen Zahlen garantiert werden können, versuchen wir, die tatsächlichen Aufrufe deiner Werbeanzeige so genau wie möglich mit deiner Zielzahl abzugleichen.\n\n\n        Denke daran, dass es bei Aufrufen um die Sichtbarkeit geht und nicht um vom Betrachter ausgeführte Aktionen.</string>
     <string name="blaze_campaign_budget_impressions_done_button">Fertig</string>
     <string name="blaze_campaign_budget_impressions_title">Aufrufe</string>
     <string name="blaze_campaign_budget_update_button">Update</string>
@@ -506,7 +546,6 @@ Language: de
     <string name="blaze_campaign_budget_toolbar_title">Dein Budget festlegen</string>
     <string name="blaze_campaign_preview_target_default_value">Alle</string>
     <string name="blaze_campaign_preview_days_duration">%1$s Tage seit %2$s</string>
-    <string name="blaze_campaign_budget_impressions_info">Aufrufe geben die Häufigkeit an, mit der deine Werbung potenziellen Kunden angezeigt wird.\n\n\n        Auch wenn aufgrund von schwankendem Internet-Traffic und Nutzerverhalten keine genauen Zahlen garantiert werden können, versuchen wir, die tatsächlichen Aufrufe deiner Werbeanzeige so genau wie möglich mit deiner Zielzahl abzugleichen.\n\n\n        Denke daran, dass es bei Aufrufen um die Sichtbarkeit geht und nicht um vom Betrachter ausgeführte Aktionen.</string>
     <string name="blaze_campaign_budget_daily_spend">%1$s täglich</string>
     <string name="blaze_campaign_budget_duration_bottom_sheet_start_date">Startdatum</string>
     <string name="product_creation_survey_button_dont_show_again">Nicht erneut anzeigen</string>
@@ -551,7 +590,7 @@ Language: de
     <string name="order_creation_collect_payment_button">Zahlung empfangen</string>
     <string name="order_creation_gift_card_text_error">Der Code muss folgendes Format haben: XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">Code eingeben</string>
-    <string name="order_creation_coupon_button">Gutschein</string>
+    <string name="order_creation_coupon_button">Gutscheine</string>
     <string name="theme_picker_error_message">Themes konnten nicht geladen werden.</string>
     <string name="configuration_complete">Konfiguration abgeschlossen</string>
     <string name="scan_to_update_inventory_undo_snackbar">Mengenaktualisierung rückgängig gemacht</string>
@@ -3628,6 +3667,7 @@ Language: de
     <string name="taxes">Steuern</string>
     <string name="payment">Zahlung</string>
     <string name="shipping">Versand</string>
+    <string name="total">Insgesamt</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Bestellungen</string>

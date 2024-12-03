@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-15 09:54:07+0000
+Translation-Revision-Date: 2024-11-12 09:54:04+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: zh_CN
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">信封</string>
+    <string name="woo_shipping_labels_package_creation_box_type">箱子</string>
+    <string name="woo_shipping_labels_package_creation_add_package">添加包裹</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">将其保存为新的包裹模板</string>
+    <string name="woo_shipping_labels_package_creation_height">高度</string>
+    <string name="woo_shipping_labels_package_creation_width">宽度</string>
+    <string name="woo_shipping_labels_package_creation_length">长度</string>
+    <string name="woo_shipping_labels_package_creation_package_type">包裹类型</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">已保存</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">承运商</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">自定义</string>
+    <string name="shipping_label_purchased_request_refund">请求退款</string>
+    <string name="shipping_label_purchased_schedule_pick_up">预约取件</string>
+    <string name="shipping_label_purchased_track_shipment">跟踪货物</string>
+    <string name="shipping_label_purchased_learn_how_to_print">了解如何从您的移动设备打印</string>
+    <string name="shipping_label_purchased_note">注意：重复使用打印的标签违反了我们的服务条款，并可能导致刑事指控。</string>
+    <string name="shipping_label_purchased_message">在此处，您可以再次打印运输标签或更改标签的纸张尺寸。</string>
+    <string name="shipping_label_purchased_title">您的运输标签已可供打印</string>
+    <string name="order_detail_edit_store_currency_mismatch">很抱歉，您只能在网页上编辑此订单，因为它使用的是 %1$s，而您站点的货币是 %2$s</string>
+    <string name="shipping_label_shipping_service_title">运输服务</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">速度最快</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">费用最低</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">购买标签</string>
+    <string name="shipping_label_shipment_details_purchase_label">购买标签 · %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">将订单标注为已完成并通知客户</string>
+    <string name="shipping_label_shipment_details_shipment_cost">运输费用</string>
+    <string name="shipping_label_shipment_details_order_details">订单详细信息</string>
+    <string name="shipping_label_shipment_details_title">配送详细信息</string>
+    <string name="shipping_label_select_package_description">输入您的包裹尺寸或选择一个承运商包裹选项，查看适用的运费。</string>
+    <string name="shipping_label_select_package_title">选择一个包裹以获取运费</string>
+    <string name="shipping_label_select_package_button">选择一个包裹</string>
+    <string name="shipping_label_hazmat_title">您是否要运输危险品或危险物质？</string>
+    <string name="shipping_label_package_details_items_expand_content_description">折叠/展开商品卡</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">按 1%s 排序</string>
+    <string name="no">不</string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">保存我的选择，以备将来活动使用</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;适合：&lt;/b&gt;%s</string>
+    <string name="blaze_campaign_objective_select_objective_label">选择目标 %s</string>
     <string name="custom_fields_empty_view_title">未找到自定义字段</string>
     <string name="custom_fields_empty_view_message">自定义字段是可选的元数据，用于显示额外信息或自定义您商店的购物体验。</string>
     <string name="blaze_campaign_created_success_feedback_request">使用 Blaze 的体验如何</string>
@@ -3634,6 +3673,7 @@ Language: zh_CN
     <string name="taxes">税费</string>
     <string name="payment">付款</string>
     <string name="shipping">配送</string>
+    <string name="total">合计</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">订单</string>

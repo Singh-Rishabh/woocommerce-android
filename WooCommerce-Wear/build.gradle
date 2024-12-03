@@ -3,6 +3,7 @@ import io.sentry.android.gradle.extensions.InstrumentationFeature
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.dagger.hilt)
     alias(libs.plugins.ksp)
@@ -77,18 +78,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
+        sourceCompatibility libs.versions.java.get()
+        targetCompatibility libs.versions.java.get()
     }
     buildFeatures {
         buildConfig true
         compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.androidx.compose.compiler.get()
     }
     packaging {
         resources {
@@ -120,6 +115,29 @@ android {
         jalapeno {
             applicationId "com.woocommerce.android.prealpha"
             dimension "buildType"
+        }
+    }
+
+    signingConfigs {
+        if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !secretProperties.containsKey(it) } == 0) {
+            logger.info("App signing properties found in secrets.properties, configuring signing for release builds.")
+            release {
+                storeFile = rootProject.file(secretProperties.get("uploadStoreFile"))
+                storePassword = secretProperties.get("uploadStorePassword")
+                keyAlias = secretProperties.get("uploadKeyAlias")
+                keyPassword = secretProperties.get("uploadKeyPassword")
+            }
+            android.buildTypes.release.signingConfig = android.signingConfigs.release
+        }
+
+        if (secretProperties.containsKey("debugStoreFile")) {
+            logger.info("Debug signing properties found in secrets.properties, configuring signing for debug builds.")
+            def sharedDebugStore = file(secretProperties.get("debugStoreFile").replaceFirst("^~", System.getProperty("user.home")))
+            if (sharedDebugStore.exists()) {
+                debug {
+                    storeFile sharedDebugStore
+                }
+            }
         }
     }
 }
@@ -218,18 +236,8 @@ dependencies {
     lintChecks(libs.android.security.lint)
 }
 
-def checkGradlePropertiesFile() {
-    def inputFile = file("${rootDir}/gradle.properties")
-    if (!inputFile.exists()) {
-        throw new StopActionException("Build configuration file gradle.properties doesn't exist, follow README instructions")
-    }
-    return inputFile
-}
-
 android.buildTypes.all { buildType ->
-    def inputFile = checkGradlePropertiesFile()
-    def properties = loadPropertiesFromFile(inputFile)
-    properties.any { property ->
+    (secretProperties + developerProperties).any { property ->
         if (property.key.toLowerCase().startsWith("wc.")) {
             buildType.buildConfigField "String", property.key.replace("wc.", "").replace(".", "_").toUpperCase(),
                     "\"${property.value}\""
@@ -247,32 +255,4 @@ static def loadPropertiesFromFile(inputFile) {
         properties.load(stream)
     }
     return properties
-}
-
-// For app signing
-if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !project.hasProperty(it) } == 0) {
-    android {
-        signingConfigs {
-            release {
-                storeFile = rootProject.file(project.uploadStoreFile)
-                storePassword = project.uploadStorePassword
-                keyAlias = project.uploadKeyAlias
-                keyPassword = project.uploadKeyPassword
-            }
-        }
-    }
-    android.buildTypes.release.signingConfig = android.signingConfigs.release
-}
-
-if (project.hasProperty("debugStoreFile")) {
-    def sharedDebugStore = file(project.debugStoreFile.replaceFirst("^~", System.getProperty("user.home")))
-    if (sharedDebugStore.exists()) {
-        android {
-            signingConfigs {
-                debug {
-                    storeFile sharedDebugStore
-                }
-            }
-        }
-    }
 }

@@ -38,14 +38,8 @@
     $ cd woocommerce-android
     ```
 
-1. Generate the developer oauth2 tokens. These values get copied into the main `gradle.properties` file in the next step. See the [OAuth2 Authentication](docs/project-overview.md#oauth2-authentication) section for details.
-1. Generate the `gradle.properties` file for this app:
-
-    ```bash
-    $ cp ./gradle.properties-example ./gradle.properties
-    ```
-
-1. Open and modify the newly created `gradle.properties` files. See the [Configuration Files](docs/project-overview.md#configuration-files) section for a breakdown of the properties.
+1. Create a new `~/.configure/woocommerce-android/secrets.properties` file. See the [Configuration Files](docs/project-overview.md#configuration-files) section for a breakdown of the properties.
+1. Generate the developer oauth2 tokens. These values get copied into the `~/.configure/woocommerce-android/secrets.properties` file in the next step. See the [OAuth2 Authentication](docs/project-overview.md#oauth2-authentication) section for details.
 1. In Android Studio, open the project from the local repository. This will auto-generate `local.properties` with the SDK location.
 1. Optional: Go to Tools → Device Manager and create an emulated device.
 1. Run. (Creates a default virtual device if you skipped the previous step)
@@ -84,7 +78,6 @@ $ ./gradlew :WooCommerce:connectedVanillaDebugAndroidTest # assemble, install an
     - [Right to Left Layout Guidelines](docs/right-to-left-layout-guidelines.md)
 - Quality & Testing
     - [Beta Testing](https://woocommercehalo.wordpress.com/setup/join-android-beta/)
-    - [Issue Triage](docs/issue-triage.md)
 - Features
     - [Feature Flags](docs/feature-flags.md)
 

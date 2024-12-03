@@ -254,16 +254,12 @@
             app:destination="@id/billingAddressEditingFragment" />
         <action
             android:id="@+id/action_orderDetailFragment_to_cardReaderFlow"
-            app:destination="@id/paymentFlow">
+            app:destination="@id/nav_graph_payment_flow">
             <argument
                 android:name="cardReaderFlowParam"
                 app:argType="com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam"
                 app:nullable="false" />
         </action>
-        <action
-            android:id="@+id/action_orderDetailFragment_to_customOrderFieldsFragment"
-            app:destination="@id/customOrderFieldsFragment" />
-
         <action
             android:id="@+id/action_orderDetailFragment_to_orderCreationFragment"
             app:destination="@id/nav_graph_order_creations"
@@ -660,17 +656,6 @@
             android:name="storedAddress"
             app:argType="com.woocommerce.android.model.Address" />
     </fragment>
-    <fragment
-        android:id="@+id/customOrderFieldsFragment"
-        android:name="com.woocommerce.android.ui.orders.details.customfields.CustomOrderFieldsFragment">
-        <argument
-            android:name="orderId"
-            app:argType="long" />
-        <argument
-            android:name="remoteNoteId"
-            android:defaultValue="0L"
-            app:argType="long" />
-    </fragment>
     <action
         android:id="@+id/action_global_item_selector_dialog"
         app:destination="@id/itemSelectorDialog" />
@@ -749,5 +734,26 @@
         <argument
             android:name="orderId"
             app:argType="long" />
+
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelPackageCreationFragment"
+            app:destination="@id/wooShippingLabelPackageCreationFragment" />
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelPurchasedFragment"
+            app:destination="@id/wooShippingLabelPurchasedFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/wooShippingLabelPackageCreationFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment"
+        android:label="WooShippingLabelPackageCreationFragment" >
+
+        <action
+            android:id="@+id/action_wooShippingLabelPackageCreationFragment_to_itemSelectorDialog"
+            app:destination="@id/itemSelectorDialog" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/wooShippingLabelPurchasedFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
+        android:label="WooShippingLabelPurchasedFragment" />
 </navigation>

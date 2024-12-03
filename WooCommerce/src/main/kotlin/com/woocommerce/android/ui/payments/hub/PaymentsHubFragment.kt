@@ -15,6 +15,7 @@ import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import com.google.android.material.textview.MaterialTextView
 import com.woocommerce.android.NavGraphMainDirections
+import com.woocommerce.android.NavGraphPaymentFlowDirections
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.databinding.FragmentPaymentsHubBinding
@@ -91,7 +92,7 @@ class PaymentsHubFragment : BaseFragment(R.layout.fragment_payments_hub) {
                 }
                 is PaymentsHubViewModel.PaymentsHubEvents.NavigateToPurchaseCardReaderFlow -> {
                     findNavController().navigate(
-                        NavGraphMainDirections.actionGlobalWPComWebViewFragment(
+                        NavGraphPaymentFlowDirections.actionGlobalWPComWebViewFragment(
                             urlToLoad = event.url,
                             title = resources.getString(event.titleRes)
                         )
@@ -123,7 +124,11 @@ class PaymentsHubFragment : BaseFragment(R.layout.fragment_payments_hub) {
                     )
                 }
                 is PaymentsHubViewModel.PaymentsHubEvents.OpenGenericWebView -> {
-                    ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
+                    ChromeCustomTabUtils.launchUrl(
+                        context = requireContext(),
+                        url = event.url,
+                        height = ChromeCustomTabUtils.Height.Partial.ThreeQuarters,
+                    )
                 }
                 is PaymentsHubViewModel.PaymentsHubEvents.ShowToastString -> {
                     ToastUtils.showToast(context, event.message)

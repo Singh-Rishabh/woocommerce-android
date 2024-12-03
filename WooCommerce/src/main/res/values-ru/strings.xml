@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-15 09:54:11+0000
+Translation-Revision-Date: 2024-11-13 15:54:04+0000
 Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);
 Generator: GlotPress/2.4.0-alpha
 Language: ru
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Конверт</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Коробка</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Добавить упаковку</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Сохранить как новый шаблон упаковки</string>
+    <string name="woo_shipping_labels_package_creation_height">Высота</string>
+    <string name="woo_shipping_labels_package_creation_width">Ширина</string>
+    <string name="woo_shipping_labels_package_creation_length">Длина</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Тип упаковки</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Сохранено</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Перевозчик</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Произвольный</string>
+    <string name="shipping_label_purchased_request_refund">Запросить возврат средств</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Запланировать самовывоз</string>
+    <string name="shipping_label_purchased_track_shipment">Отслеживать доставку</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Как распечатывать файлы с мобильного устройства</string>
+    <string name="shipping_label_purchased_note">Примечание. Повторное использование напечатанной этикетки запрещается условиями предоставления услуг и может повлечь уголовное преследование.</string>
+    <string name="shipping_label_purchased_message">Здесь вы можете заново напечатать транспортную этикетку или изменить формат бумаги для этикетки.</string>
+    <string name="shipping_label_purchased_title">Ваша транспортная этикетка готова к печати</string>
+    <string name="order_detail_edit_store_currency_mismatch">К сожалению, этот заказ можно редактировать только в Интернете, так как он сделан в %1$s, а валюта вашего сайта — %2$s</string>
+    <string name="shipping_label_shipping_service_title">Служба доставки</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">По скорости</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Купить этикетку</string>
+    <string name="shipping_label_shipment_details_purchase_label">Купить этикетку · %1$s </string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">По стоимости</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Отметить заказ как выполненный и уведомить заказчика</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Стоимость доставки</string>
+    <string name="shipping_label_select_package_description">Введите размеры посылки или выберите одну из упаковок перевозчика, чтобы узнать доступные тарифы на доставку.</string>
+    <string name="shipping_label_select_package_title">Выберите упаковку, чтобы узнать тарифы</string>
+    <string name="shipping_label_select_package_button">Выберите упаковку</string>
+    <string name="shipping_label_hazmat_title">Имеются ли в вашем отправлении опасные товары или материалы?</string>
+    <string name="shipping_label_shipment_details_order_details">Сведения о заказе</string>
+    <string name="shipping_label_shipment_details_title">Сведения о доставке</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Свернуть/развернуть карточку товара</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="no">Нет</string>
+    <string name="sorted_by">Отсортировано по 1%s</string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">Сохранить выбор для будущих кампаний</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;Подходит для:&lt;/b&gt; %s</string>
+    <string name="blaze_campaign_objective_select_objective_label">Выбрать цель %s</string>
     <string name="custom_fields_empty_view_title">Пользовательские поля не найдены</string>
     <string name="custom_fields_empty_view_message">Пользовательские поля предназначены для отображения произвольных метаданных, содержащих дополнительную информацию или персонализирующих покупки в магазине.</string>
     <string name="blaze_campaign_created_success_feedback_request">Вам понравилось работать с Blaze?</string>
@@ -551,7 +590,7 @@ Language: ru
     <string name="order_creation_collect_payment_button">Получение платежа</string>
     <string name="order_creation_gift_card_text_error">Код должен вводиться в формате XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">Введите код</string>
-    <string name="order_creation_coupon_button">Купон</string>
+    <string name="order_creation_coupon_button">Купоны</string>
     <string name="theme_picker_error_message">Не удалось загрузить темы.</string>
     <string name="configuration_complete">Настройка выполнена</string>
     <string name="scan_to_update_inventory_undo_snackbar">Обновление количества отменено</string>
@@ -3627,6 +3666,7 @@ Language: ru
     <string name="taxes">Налоги</string>
     <string name="payment">Оплата</string>
     <string name="shipping">Доставка</string>
+    <string name="total">Итого</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Заказы</string>

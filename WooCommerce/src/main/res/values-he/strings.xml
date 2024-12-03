@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-15 13:54:04+0000
+Translation-Revision-Date: 2024-11-14 09:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: he_IL
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">מעטפה</string>
+    <string name="woo_shipping_labels_package_creation_box_type">קופסה</string>
+    <string name="woo_shipping_labels_package_creation_add_package">להוסיף חבילה</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">יש לשמור את התבנית הזו כתבנית חבילה חדשה</string>
+    <string name="woo_shipping_labels_package_creation_height">גובה</string>
+    <string name="woo_shipping_labels_package_creation_width">רוחב</string>
+    <string name="woo_shipping_labels_package_creation_length">אורך</string>
+    <string name="woo_shipping_labels_package_creation_package_type">סוג חבילה</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">נשמר</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">חברת שילוח</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">התאמה אישית</string>
+    <string name="shipping_label_purchased_request_refund">לבקש החזר כספי</string>
+    <string name="shipping_label_purchased_schedule_pick_up">לתזמן איסוף</string>
+    <string name="shipping_label_purchased_track_shipment">מעקב אחר משלוח</string>
+    <string name="shipping_label_purchased_learn_how_to_print">ללמוד כיצד להדפיס באמצעות המכשיר הנייד שלך</string>
+    <string name="shipping_label_purchased_note">הערה: שימוש חוזר בתווית שהודפסה הוא הפרה של תנאי השימוש שלנו ועשוי להוביל לכתב אישום.</string>
+    <string name="shipping_label_purchased_message">מכאן אפשר להדפיס את תווית המשלוח שוב או לשנות את גודל הנייר של התווית.</string>
+    <string name="shipping_label_purchased_title">תווית המשלוח שלך מוכנה להדפסה</string>
+    <string name="order_detail_edit_store_currency_mismatch">מצטערים, אפשר לערוך את ההזמנה הזאת רק באתר האינטרנט, מאחר שהיא משתמשת במטבע ⁦%1$s⁩ והאתר שלך מוגדר למטבע ⁦%2$s⁩</string>
+    <string name="shipping_label_shipping_service_title">שירות משלוחים</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">המהיר ביותר</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">הזול ביותר</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">לרכוש תווית</string>
+    <string name="shipping_label_shipment_details_purchase_label">לרכוש תווית   ⁦%1$s⁩ </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">לסמן את ההזמנה כ\'הושלמה\' ולהודיע ללקוח</string>
+    <string name="shipping_label_shipment_details_shipment_cost">עלות משלוח</string>
+    <string name="shipping_label_shipment_details_order_details">פרטי הזמנה</string>
+    <string name="shipping_label_shipment_details_title">פרטי המשלוח</string>
+    <string name="shipping_label_select_package_description">יש להזין את ממדי החבילה או לבחור אפשרות של חבילת ספק כדי להציג את תעריפי המשלוח.</string>
+    <string name="shipping_label_select_package_title">יש לבחור חבילה כדי להציג את תעריפי המשלוח</string>
+    <string name="shipping_label_select_package_button">יש לבחור חבילה</string>
+    <string name="shipping_label_hazmat_title">המשלוח שלך כולל סחורות מסוכנות או חומרים מסוכנים?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">לכווץ/להרחיב את כרטיס הפריטים</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">ממוין לפי 1%s</string>
+    <string name="no">לא</string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">לשמור את הבחירה שלי עבור קמפיינים עתידיים</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;מומלץ עבור:&lt;/b&gt; %s</string>
+    <string name="blaze_campaign_objective_select_objective_label">לבחור מטרה %s</string>
     <string name="custom_fields_empty_view_title">לא נמצאו שדות מותאמים</string>
     <string name="custom_fields_empty_view_message">שדות מותאמים הם מטא-נתונים אופציונליים שיכולים להציג מידע נוסף או להתאים אישית את חוויית הקניות בחנות שלך.</string>
     <string name="blaze_campaign_created_success_feedback_request">איך הייתה החוויה שלך עם Blaze</string>
@@ -551,7 +590,7 @@ Language: he_IL
     <string name="order_creation_collect_payment_button">לגבות תשלום</string>
     <string name="order_creation_gift_card_text_error">הקוד אמור להיות בפורמט XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">יש להזין קוד</string>
-    <string name="order_creation_coupon_button">קופון</string>
+    <string name="order_creation_coupon_button">קופונים</string>
     <string name="theme_picker_error_message">העלאת ערכות העיצוב נכשלה.</string>
     <string name="configuration_complete">הושלמו הגדרות התצורה</string>
     <string name="scan_to_update_inventory_undo_snackbar">עדכון הכמות בוטל</string>
@@ -3634,6 +3673,7 @@ Language: he_IL
     <string name="taxes">מיסים</string>
     <string name="payment">תשלום</string>
     <string name="shipping">משלוח</string>
+    <string name="total">סה\"כ</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">הזמנות</string>

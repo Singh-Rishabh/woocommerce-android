@@ -19,7 +19,6 @@ import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.util.Locale
 import java.util.UUID
 
 class AnalyticsTracker private constructor(
@@ -91,7 +90,7 @@ class AnalyticsTracker private constructor(
             return
         }
 
-        val eventName = stat.name.lowercase(Locale.getDefault())
+        val eventName = stat.name.lowercase()
 
         val user = username ?: getAnonID() ?: generateNewAnonID()
 
@@ -103,12 +102,13 @@ class AnalyticsTracker private constructor(
 
         val propertiesJson = JSONObject(properties.buildFinalProperties(stat.siteless))
         val eventPrefix = if (stat.isPosEvent) POS_EVENTS_PREFIX else EVENTS_PREFIX
-        tracksClient?.track(eventPrefix + eventName, propertiesJson, user, userType)
+        val fullEventName = eventPrefix + eventName
+        tracksClient?.track(fullEventName, propertiesJson, user, userType)
 
         if (propertiesJson.length() > 0) {
-            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $eventName, Properties: $propertiesJson")
+            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $fullEventName, Properties: $propertiesJson")
         } else {
-            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $eventName")
+            WooLog.i(T.UTILS, "\uD83D\uDD35 Tracked: $fullEventName")
         }
     }
 
@@ -248,6 +248,7 @@ class AnalyticsTracker private constructor(
         const val KEY_SUCCESS = "success"
         const val KEY_TIME_TAKEN = "time_taken"
         const val KEY_IS_EDITING = "is_editing"
+        const val KEY_POS_ONBOARDING_STATE = "onboarding_state"
 
         const val KEY_SORT_ORDER = "order"
         const val VALUE_DEVICE_TYPE_REGULAR = "regular"
@@ -478,6 +479,9 @@ class AnalyticsTracker private constructor(
         const val VALUE_MORE_MENU_UPGRADES = "upgrades"
         const val VALUE_MORE_MENU_CUSTOMERS = "customers"
 
+        // We have to call in non consistent way to match the iOS naming
+        const val VALUE_MORE_MENU_POS = "pointOfSale"
+
         const val VALUE_MORE_MENU_PAYMENTS_BADGE_VISIBLE = "badge_visible"
 
         // -- Inbox note actions
@@ -520,6 +524,7 @@ class AnalyticsTracker private constructor(
         // -- Jetpack Setup
         const val KEY_JETPACK_SETUP_IS_ALREADY_CONNECTED = "is_already_connected"
         const val KEY_JETPACK_SETUP_REQUIRES_CONNECTION_ONLY = "requires_connection_only"
+        const val KEY_IS_SIGN_UP = "is_signup"
         const val VALUE_JETPACK_SETUP_STEP_EMAIL_ADDRESS = "email_address"
         const val VALUE_JETPACK_SETUP_STEP_PASSWORD = "password"
         const val VALUE_JETPACK_SETUP_STEP_MAGIC_LINK = "magic_link"

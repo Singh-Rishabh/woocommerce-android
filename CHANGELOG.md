@@ -1,6 +1,16 @@
 <!--
 Contains editorialized release notes. Raw release notes should go into `RELEASE-NOTES.txt`.
 -->
+
+## 21.2
+Seamless updates are here! Smoother Jetpack activation with new account creation. Say goodbye to bugs: order refresh, shipping edits, and receipt fetch issues are fixed. We've renamed Deposits to Payouts and improved media uploads for Jetpack sites. Update now for a better WooCommerce experience!
+
+## 21.1
+Our latest update brings key enhancements to streamline your WooCommerce experience! We’ve fixed editing permissions for orders in different currencies, optimized the payments hub view, enabled easy receipt sharing via Google SMS, and fixed date range selection to correctly use your timezone. Enjoy smoother operations!
+
+## 21.0
+Enjoy a smoother experience with improved design throughout the app. Plus, now your product images load faster and look even better with new AVIF format support. Update now for a cleaner, sharper WooCommerce app experience!
+
 ## 20.8
 We’ve improved your WooCommerce app experience with some key updates! The "Learn More" link for the Pay in Person option in payment settings is now fixed, and we've streamlined the Blaze campaign creation process by adding an objective selection feature. Update now to enjoy a smoother workflow!
 

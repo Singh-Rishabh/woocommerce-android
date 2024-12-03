@@ -26,6 +26,7 @@ import com.woocommerce.android.tools.NetworkStatus
 import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
+import com.woocommerce.android.ui.orders.OrderNavigationTarget.EditOrder
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.PreviewReceipt
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.StartWooShippingLabelCreationFlow
 import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWithOtherValue
@@ -169,7 +170,6 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         wcShippingBannerVisible = false,
         isRefreshing = false,
         isOrderDetailSkeletonShown = false,
-        isCustomFieldsButtonShown = true,
     )
 
     private val getOrderSubscriptions: GetOrderSubscriptions = mock()
@@ -184,6 +184,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
     private val getShippingMethodsWithOtherValue: GetShippingMethodsWithOtherValue = mock()
     private val refreshShippingMethods: RefreshShippingMethods = mock()
+    private val isStoreCurrencyMatch: IsStoreCurrencyMatch = mock()
 
     private fun createViewModel() {
         createViewModel(newSavedState = savedState)
@@ -212,6 +213,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
                 paymentReceiptHelper,
                 analyticsTracker,
                 refreshShippingMethods,
+                isStoreCurrencyMatch,
                 getShippingMethodsWithOtherValue,
             )
         )
@@ -1648,6 +1650,9 @@ class OrderDetailViewModelTest : BaseUnitTest() {
             doReturn(order).whenever(orderDetailRepository).fetchOrderById(any())
             doReturn(false).whenever(orderDetailRepository).fetchOrderNotes(any())
             doReturn(false).whenever(addonsRepository).containsAddonsFrom(any())
+            whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+                CurrencyMatchResult(isMatch = true, storeCurrency = "USD")
+            )
             viewModel.start()
 
             // When
@@ -2426,5 +2431,60 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.onCreateShippingLabelButtonTapped()
 
         assertThat(viewModel.event.value).isInstanceOf(OrderNavigationTarget.StartShippingLabelCreationFlow::class.java)
+    }
+
+    @Test
+    fun `given order and store currency mismatch, when edit clicked, then trigger snackbar event`() = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = false, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        assertThat(viewModel.event.value).isInstanceOf(ShowSnackbar::class.java)
+    }
+
+    @Test
+    fun `given order and store currency mismatch, when edit clicked, then track proper event`() = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = false, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        verify(orderDetailTracker).trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
+    }
+
+    @Test
+    fun `given order and store currency are same, when edit clicked, then trigger EditOrder event`() = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = true, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
+        assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
     }
 }

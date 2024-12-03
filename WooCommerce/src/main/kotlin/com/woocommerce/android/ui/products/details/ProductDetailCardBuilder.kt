@@ -82,7 +82,6 @@ import com.woocommerce.android.ui.products.subscriptions.expirationDisplayValue
 import com.woocommerce.android.ui.products.subscriptions.trialDisplayValue
 import com.woocommerce.android.ui.products.variations.VariationRepository
 import com.woocommerce.android.util.CurrencyFormatter
-import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.PriceUtils
 import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -428,6 +427,10 @@ class ProductDetailCardBuilder(
             inventory[resources.getString(string.product_sku)] = this.sku
         }
 
+        if (this.globalUniqueId.isNotEmpty()) {
+            inventory[resources.getString(string.product_global_unique_id)] = this.globalUniqueId
+        }
+
         if (productType == SIMPLE || productType == VARIABLE) {
             if (this.isStockManaged) {
                 inventory[resources.getString(string.product_stock_quantity)] =
@@ -454,6 +457,7 @@ class ProductDetailCardBuilder(
                 ViewProductInventory(
                     InventoryData(
                         sku = this.sku,
+                        globalUniqueId = this.globalUniqueId,
                         isStockManaged = this.isStockManaged,
                         stockStatus = this.stockStatus,
                         stockQuantity = this.stockQuantity,
@@ -482,11 +486,7 @@ class ProductDetailCardBuilder(
                 ),
                 Pair(
                     resources.getString(string.subscription_one_time_shipping),
-                    if (subscription?.oneTimeShipping == true) {
-                        resources.getString(string.subscription_one_time_shipping_enabled)
-                    } else {
-                        ""
-                    }
+                    buildOneTimeShippingDescription(subscription)
                 )
             )
 
@@ -531,6 +531,20 @@ class ProductDetailCardBuilder(
             null
         }
     }
+
+    // Builds "One time shipping" description label. This label is affected by:
+    // - Support state: Checked with `supportsOneTimeShipping`. One time shipping may not be supported,
+    //   for example during free trials.
+    // - Toggle state: Checked with `oneTimeShipping`. When shipping is supported, it can be toggled on/off.
+    //
+    // We only show "Enabled" when shipping is both supported AND enabled.
+    // In all other cases (not supported, or supported but disabled), we show nothing.
+    private fun buildOneTimeShippingDescription(subscription: SubscriptionDetails?) =
+        if (subscription != null && subscription.supportsOneTimeShipping && subscription.oneTimeShipping) {
+            resources.getString(string.subscription_one_time_shipping_enabled)
+        } else {
+            ""
+        }
 
     // enable editing external product link
     private fun Product.externalLink(): ProductProperty? {
@@ -1007,8 +1021,7 @@ class ProductDetailCardBuilder(
     }
 
     private suspend fun Product.customFields(): ProductProperty? {
-        if (!FeatureFlag.CUSTOM_FIELDS.isEnabled() ||
-            remoteId == ProductDetailViewModel.DEFAULT_ADD_NEW_PRODUCT_ID ||
+        if (remoteId == ProductDetailViewModel.DEFAULT_ADD_NEW_PRODUCT_ID ||
             !customFieldsRepository.hasDisplayableCustomFields(this.remoteId)
         ) {
             return null

@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.details
 
-import android.content.Context
 import androidx.annotation.StringRes
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
@@ -34,6 +33,8 @@ import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.ProductImageMap.OnProductFetchedListener
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
+import com.woocommerce.android.ui.orders.CurrencyMatchResult
+import com.woocommerce.android.ui.orders.IsStoreCurrencyMatch
 import com.woocommerce.android.ui.orders.OrderNavigationTarget
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderNote
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderShipmentTracking
@@ -57,7 +58,6 @@ import com.woocommerce.android.ui.orders.creation.shipping.GetShippingMethodsWit
 import com.woocommerce.android.ui.orders.creation.shipping.RefreshShippingMethods
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingLineDetails
 import com.woocommerce.android.ui.orders.creation.shipping.ShippingMethodsRepository
-import com.woocommerce.android.ui.orders.details.customfields.CustomOrderFieldsHelper
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
@@ -85,9 +85,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.wordpress.android.fluxc.model.OrderAttributionInfo
-import org.wordpress.android.fluxc.model.metadata.WCMetaData
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.OptimisticUpdateResult
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.RemoteUpdateResult
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -116,6 +114,7 @@ class OrderDetailViewModel @Inject constructor(
     private val paymentReceiptHelper: PaymentReceiptHelper,
     private val analyticsTracker: AnalyticsTrackerWrapper,
     private val refreshShippingMethods: RefreshShippingMethods,
+    private val isStoreCurrencyMatch: IsStoreCurrencyMatch,
     getShippingMethodsWithOtherValue: GetShippingMethodsWithOtherValue
 ) : ScopedViewModel(savedState), OnProductFetchedListener {
     private val navArgs: OrderDetailFragmentArgs by savedState.navArgs()
@@ -266,7 +265,6 @@ class OrderDetailViewModel @Inject constructor(
         loadOrderNotes()
         displayProductAndShippingDetails()
         displayCustomAmounts()
-        checkOrderMetaData()
     }
 
     private suspend fun fetchOrder(showSkeleton: Boolean) {
@@ -310,13 +308,6 @@ class OrderDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun checkOrderMetaData() {
-        viewState = viewState.copy(
-            isCustomFieldsButtonShown = FeatureFlag.CUSTOM_FIELDS.isEnabled() ||
-                orderDetailRepository.orderHasMetadata(navArgs.orderId)
-        )
-    }
-
     /**
      * User clicked the button to view custom fields
      */
@@ -325,19 +316,8 @@ class OrderDetailViewModel @Inject constructor(
         triggerEvent(OrderNavigationTarget.ViewCustomFields(navArgs.orderId))
     }
 
-    /**
-     * User tapped an actionable custom field
-     */
-    fun onCustomFieldClicked(context: Context, value: String) {
-        CustomOrderFieldsHelper.handleMetadataValue(context, value)
-    }
-
     fun onBackPressed() {
         triggerEvent(MultiLiveEvent.Event.Exit)
-    }
-
-    fun getOrderMetadata(): List<WCMetaData> = runBlocking {
-        orderDetailRepository.getOrderMetadata(navArgs.orderId)
     }
 
     fun onRefreshRequested() {
@@ -371,6 +351,17 @@ class OrderDetailViewModel @Inject constructor(
     }
 
     fun onEditClicked() {
+        launch {
+            val isCurrencyMatch = isStoreCurrencyMatch(order.currency)
+            if (!isCurrencyMatch.isMatch) {
+                handleEditClickWhenCurrencyMismatch(isCurrencyMatch)
+            } else {
+                handleEditClick()
+            }
+        }
+    }
+
+    private fun handleEditClick() {
         tracker.trackEditButtonTapped(order.feesLines.size, order.shippingLines.size)
         val firstGiftCard = giftCards.value?.firstOrNull()
         triggerEvent(
@@ -378,6 +369,16 @@ class OrderDetailViewModel @Inject constructor(
                 orderId = order.id,
                 giftCard = firstGiftCard?.code,
                 appliedDiscount = firstGiftCard?.used
+            )
+        )
+    }
+
+    private fun handleEditClickWhenCurrencyMismatch(isCurrencyMatch: CurrencyMatchResult) {
+        tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
+        triggerEvent(
+            ShowSnackbar(
+                message = string.order_detail_edit_store_currency_mismatch,
+                args = arrayOf(order.currency, isCurrencyMatch.storeCurrency.orEmpty())
             )
         )
     }

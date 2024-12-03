@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.blaze.Device
 import com.woocommerce.android.ui.blaze.Interest
 import com.woocommerce.android.ui.blaze.Language
 import com.woocommerce.android.ui.blaze.Location
+import com.woocommerce.android.ui.blaze.creation.ad.BlazeCampaignCreationEditAdViewModel.EditAdResult
 import com.woocommerce.android.ui.blaze.creation.preview.BlazeCampaignCreationPreviewViewModel.AdDetailsUi
 import com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType
 import com.woocommerce.android.util.CurrencyFormatter
@@ -45,6 +46,7 @@ class BlazeCampaignCreationPreviewViewModelTests : BaseUnitTest() {
             productId = PRODUCT_ID,
             tagLine = "",
             description = "",
+            ctaText = "",
             budget = BlazeRepository.Budget(
                 totalBudget = 10f,
                 spentBudget = 0f,
@@ -81,6 +83,7 @@ class BlazeCampaignCreationPreviewViewModelTests : BaseUnitTest() {
         on { observeInterests() } doReturn flowOf(interests)
         on { observeLanguages() } doReturn flowOf(languages)
         on { observeObjectives() } doReturn flowOf(objectives)
+        onBlocking { fetchAdSuggestions(any()) } doReturn Result.success(emptyList())
     }
     private val analyticsTracker: AnalyticsTrackerWrapper = mock()
     private lateinit var viewModel: BlazeCampaignCreationPreviewViewModel
@@ -105,6 +108,7 @@ class BlazeCampaignCreationPreviewViewModelTests : BaseUnitTest() {
             BlazeRepository.AiSuggestionForAd(
                 tagLine = "Ad suggestion 1",
                 description = "Ad suggestion 1 description",
+                ctaText = "Shop now"
             )
         )
         setup {
@@ -197,9 +201,10 @@ class BlazeCampaignCreationPreviewViewModelTests : BaseUnitTest() {
 
         val newTagline = "New tagline"
         val newDescription = "New description"
+        val newCtaText = "New CTA"
         val newImage = BlazeCampaignImage.LocalImage("new_image")
         val state = viewModel.viewState.runAndCaptureValues {
-            viewModel.onAdUpdated(newTagline, newDescription, newImage)
+            viewModel.onAdUpdated(EditAdResult(newTagline, newDescription, newImage, newCtaText))
         }.last()
 
         val adDetailsUi = state.adDetails as AdDetailsUi.AdDetails

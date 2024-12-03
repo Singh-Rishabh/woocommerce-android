@@ -424,16 +424,6 @@ class OrderDetailFragment :
             new.wcShippingBannerVisible?.takeIfNotEqualTo(old?.wcShippingBannerVisible) {
                 showInstallWcShippingBanner(it)
             }
-            new.isCustomFieldsButtonShown?.takeIfNotEqualTo(old?.isCustomFieldsButtonShown) {
-                binding.customFieldsCard.root.isVisible = it
-                if (it && !FeatureFlag.CUSTOM_FIELDS.isEnabled()) {
-                    // When the feature flag is disabled, keep the original text and hide the icon
-                    with(binding.customFieldsCard.customFieldsButton) {
-                        icon = null
-                        text = getString(R.string.orderdetail_view_custom_fields)
-                    }
-                }
-            }
             new.isAIThankYouNoteButtonShown.takeIfNotEqualTo(old?.isAIThankYouNoteButtonShown) {
                 binding.orderDetailsAICard.isVisible = it
             }
@@ -502,7 +492,12 @@ class OrderDetailFragment :
                     WooThemeWithBackground {
                         ShippingLineSection(
                             shippingLineDetails = shippingLines,
-                            formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
+                            formatCurrency = { amount ->
+                                currencyFormatter.formatCurrency(
+                                    amount,
+                                    currencyCode = viewModel.order.currency
+                                )
+                            },
                             modifier = Modifier.padding(bottom = 1.dp)
                         )
                     }

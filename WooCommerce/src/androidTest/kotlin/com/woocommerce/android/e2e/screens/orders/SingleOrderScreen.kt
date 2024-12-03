@@ -6,6 +6,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withParentIndex
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.woocommerce.android.R
 import com.woocommerce.android.e2e.helpers.util.NestedScrollViewExtension
@@ -14,7 +15,7 @@ import com.woocommerce.android.e2e.helpers.util.ProductData
 import com.woocommerce.android.e2e.helpers.util.Screen
 import org.hamcrest.Matchers
 
-class SingleOrderScreen : Screen(R.id.toolbar) {
+class SingleOrderScreen : Screen(R.id.orderDetail_container) {
     fun goBackToOrdersScreen(): OrderListScreen {
         if (isElementDisplayed(R.id.orderDetail_container)) {
             pressBack()
@@ -43,7 +44,7 @@ class SingleOrderScreen : Screen(R.id.toolbar) {
     }
 
     fun assertOrderId(orderId: Int): SingleOrderScreen {
-        Espresso.onView(withId(R.id.toolbar))
+        Espresso.onView(Matchers.allOf(withId(R.id.toolbar), withParentIndex(0)))
             .check(ViewAssertions.matches(hasDescendant(withText("Order #$orderId"))))
             .check(ViewAssertions.matches(isDisplayed()))
         return this
@@ -136,6 +137,7 @@ class SingleOrderScreen : Screen(R.id.toolbar) {
     }
 
     fun tapOnCollectPayment(): PaymentSelectionScreen {
+        scrollTo(R.id.paymentInfo_collectCardPresentPaymentButton)
         clickOn(R.id.paymentInfo_collectCardPresentPaymentButton)
         return PaymentSelectionScreen()
     }

@@ -7,17 +7,17 @@ import android.content.Context
  */
 enum class FeatureFlag {
     DB_DOWNGRADE,
-    INBOX,
     WC_SHIPPING_BANNER,
     BETTER_CUSTOMER_SEARCH_M2,
     ORDER_CREATION_AUTO_TAX_RATE,
     NEW_SHIPPING_SUPPORT,
-    GOOGLE_ADS_M1,
-    SHOW_INBOX_CTA,
     ENDLESS_CAMPAIGNS_SUPPORT,
-    CUSTOM_FIELDS,
     REVAMP_WOO_SHIPPING,
-    OBJECTIVE_SECTION;
+    OBJECTIVE_SECTION,
+    POS_NON_SIMPLE_PRODUCT_TYPES,
+    POS_CASH_PAYMENTS,
+    POS_RECEIPTS,
+    PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT;
 
     fun isEnabled(context: Context? = null): Boolean {
         return when (this) {
@@ -28,13 +28,13 @@ enum class FeatureFlag {
             WC_SHIPPING_BANNER,
             BETTER_CUSTOMER_SEARCH_M2,
             ORDER_CREATION_AUTO_TAX_RATE,
-            REVAMP_WOO_SHIPPING -> PackageUtils.isDebugBuild()
+            REVAMP_WOO_SHIPPING,
+            POS_NON_SIMPLE_PRODUCT_TYPES,
+            POS_CASH_PAYMENTS,
+            POS_RECEIPTS,
+            PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
-            INBOX,
-            SHOW_INBOX_CTA,
-            GOOGLE_ADS_M1,
-            CUSTOM_FIELDS,
             ENDLESS_CAMPAIGNS_SUPPORT,
             OBJECTIVE_SECTION -> true
         }

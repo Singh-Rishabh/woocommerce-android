@@ -1,11 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-10-16 17:54:03+0000
+Translation-Revision-Date: 2024-11-14 09:54:03+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: nl
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_package_creation_envelope_type">Envelop</string>
+    <string name="woo_shipping_labels_package_creation_box_type">Doos</string>
+    <string name="woo_shipping_labels_package_creation_add_package">Pakket toevoegen</string>
+    <string name="woo_shipping_labels_package_creation_save_package_option">Opslaan als nieuwe pakketsjabloon</string>
+    <string name="woo_shipping_labels_package_creation_height">Hoogte</string>
+    <string name="woo_shipping_labels_package_creation_width">Breedte</string>
+    <string name="woo_shipping_labels_package_creation_length">Lengte</string>
+    <string name="woo_shipping_labels_package_creation_package_type">Pakkettype</string>
+    <string name="woo_shipping_labels_package_creation_tab_saved">Opgeslagen</string>
+    <string name="woo_shipping_labels_package_creation_tab_carrier">Bezorgservice</string>
+    <string name="woo_shipping_labels_package_creation_tab_custom">Aangepast</string>
+    <string name="shipping_label_purchased_request_refund">Terugbetaling aanvragen</string>
+    <string name="shipping_label_purchased_schedule_pick_up">Een afhaaltijd plannen</string>
+    <string name="shipping_label_purchased_track_shipment">Verzending volgen</string>
+    <string name="shipping_label_purchased_learn_how_to_print">Leer hoe je kan printen vanaf je mobiele apparaat</string>
+    <string name="shipping_label_purchased_note">Let op: een afgedrukt label hergebruiken is een overtreding van onze servicevoorwaarden en kan leiden tot strafrechtelijke vervolging.</string>
+    <string name="shipping_label_purchased_message">Vanuit hier kan je het verzendlabel opnieuw afdrukken of het papierformaat van het label wijzigen.</string>
+    <string name="shipping_label_purchased_title">Je verzendlabel kan worden afgedrukt</string>
+    <string name="order_detail_edit_store_currency_mismatch">U kunt deze bestelling alleen op het web bewerken, omdat het web gebruikmaakt van %1$s en uw site gebruikmaakt van %2$s</string>
+    <string name="shipping_label_shipping_service_title">Bezorgservice</string>
+    <string name="shipping_label_shipping_rates_sort_option_fastest">Snelste</string>
+    <string name="shipping_label_shipping_rates_sort_option_cheapest">Voordeligste</string>
+    <string name="shipping_label_shipment_details_purchase_label_disabled">Label aanschaffen</string>
+    <string name="shipping_label_shipment_details_purchase_label">Label aanschaffen %1$s </string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Markeer deze bestelling als voltooid en informeer de klant</string>
+    <string name="shipping_label_shipment_details_shipment_cost">Verzendkosten</string>
+    <string name="shipping_label_shipment_details_order_details">Bestelgegevens</string>
+    <string name="shipping_label_shipment_details_title">Verzendingsgegevens</string>
+    <string name="shipping_label_select_package_description">Voer de afmetingen van je pakket in of kies een optie voor een pakket via vervoerder om de beschikbare verzendkosten te bekijken.</string>
+    <string name="shipping_label_select_package_title">Selecteer een pakket om de verzendkosten te bekijken</string>
+    <string name="shipping_label_select_package_button">Een pakket selecteren</string>
+    <string name="shipping_label_hazmat_title">Ben je van plan om gevaarlijke goederen of materialen te verzenden?</string>
+    <string name="shipping_label_package_details_items_expand_content_description">Artikelenkaart in-/uitvouwen</string>
+    <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
+    <string name="sorted_by">Gesorteerd op 1%s</string>
+    <string name="no">Nee</string>
+    <string name="blaze_campaign_objective_save_selection_switch_label">Sla mijn selectie op voor toekomstige campagnes</string>
+    <string name="blaze_campaign_objective_good_for">&lt;b&gt;Goed voor:&lt;/b&gt; %s</string>
+    <string name="blaze_campaign_objective_select_objective_label">Doel selecteren %s</string>
     <string name="custom_fields_empty_view_title">Geen aangepaste velden gevonden</string>
     <string name="custom_fields_empty_view_message">Aangepaste velden zijn optionele metadata om extra informatie weer te geven of de winkelervaring voor je winkel aan te passen.</string>
     <string name="blaze_campaign_created_success_feedback_request">Hoe was je ervaring met Blaze?</string>
@@ -551,7 +590,7 @@ Language: nl
     <string name="order_creation_collect_payment_button">Betaling innen</string>
     <string name="order_creation_gift_card_text_error">De code moet de volgende indeling hebben: XXXX-XXXX-XXXX-XXXX</string>
     <string name="order_creation_gift_card_text_field_hint">Voer code in</string>
-    <string name="order_creation_coupon_button">Coupon</string>
+    <string name="order_creation_coupon_button">Coupons</string>
     <string name="theme_picker_error_message">Thema\'s laden mislukt.</string>
     <string name="configuration_complete">Configuratie voltooid</string>
     <string name="scan_to_update_inventory_undo_snackbar">Aantal bijwerken ongedaan gemaakt</string>
@@ -3634,6 +3673,7 @@ Language: nl
     <string name="taxes">Belastingen</string>
     <string name="payment">Betaling</string>
     <string name="shipping">Verzending</string>
+    <string name="total">Totaal</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
     <string name="orders">Bestellingen</string>

@@ -278,6 +278,7 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     ORDER_DETAIL_EDIT_FLOW_FAILED,
     ORDER_DETAIL_EDIT_FLOW_CANCELED,
     ORDER_EDIT_BUTTON_TAPPED,
+    ORDER_EDIT_BUTTON_TAPPED_WHILE_DISABLED_FOR_CURRENCY_CONFLICT,
     PLUGINS_NOT_SYNCED_YET,
 
     // -- Order Creation
@@ -420,6 +421,16 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     CARD_PRESENT_ONBOARDING_CTA_FAILED,
     CARD_PRESENT_PAYMENT_GATEWAY_SELECTED,
 
+    // As we reuse IPP onboarding for POS
+    // the tracking happens in the IPP part of the code
+    PAYMENTS_ONBOARDING_SHOWN {
+        override val isPosEvent: Boolean = true
+    },
+
+    PAYMENTS_ONBOARDING_DISMISSED {
+        override val isPosEvent: Boolean = true
+    },
+
     // -- Cash on Delivery - onboarding
     ENABLE_CASH_ON_DELIVERY_SUCCESS,
     ENABLE_CASH_ON_DELIVERY_FAILED,
@@ -528,7 +539,7 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     PAYMENTS_HUB_TAP_TO_PAY_FEEDBACK_TAPPED,
     PAYMENTS_HUB_TAP_TO_PAY_ABOUT_TAPPED,
 
-    // -- Payments Hub - Deposit Summary
+    // -- Payments Hub - Payout Summary (Previously called Deposit summary)
     PAYMENTS_HUB_DEPOSIT_SUMMARY_SHOWN,
     PAYMENTS_HUB_DEPOSIT_SUMMARY_EXPANDED,
     PAYMENTS_HUB_DEPOSIT_SUMMARY_ERROR,
@@ -1032,6 +1043,7 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     BLAZE_CREATION_EDIT_DESTINATION_SAVE_TAPPED,
     BLAZE_CAMPAIGN_CREATION_FEEDBACK,
     BLAZE_CAMPAIGN_OBJECTIVE_SAVED,
+    BLAZE_SUGGESTIONS_LOADING_FAILED,
 
     // Hazmat Shipping Declaration
     CONTAINS_HAZMAT_CHECKED,
