@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
@@ -715,7 +716,10 @@ class WooPosTotalsViewModelTest {
             viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
 
             // THEN
-            assertThat(viewModel.state.value).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
+            viewModel.state.test {
+                val state = awaitItem()
+                assertThat(state).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
+            }
         }
 
     @Test
