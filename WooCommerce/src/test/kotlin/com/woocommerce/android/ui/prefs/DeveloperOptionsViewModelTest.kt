@@ -38,15 +38,7 @@ class DeveloperOptionsViewModelTest : BaseUnitTest() {
         }
 
         assertThat(simulatedReaderRow).isNotNull
-    }
-
-    @Test
-    fun `when dev options screen accessed, then enable simulated reader icon is displayed`() {
-        val simulatedReaderRow = captureViewState()?.rows?.find {
-            it.icon == R.drawable.img_card_reader_connecting
-        }
-
-        assertThat(simulatedReaderRow).isNotNull
+        assertThat(simulatedReaderRow?.icon).isEqualTo(R.drawable.img_card_reader)
     }
 
     @Test
