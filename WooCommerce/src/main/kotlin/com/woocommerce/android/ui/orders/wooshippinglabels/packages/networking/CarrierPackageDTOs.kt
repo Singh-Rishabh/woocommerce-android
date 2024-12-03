@@ -39,7 +39,6 @@ class CarrierPackageGroupDTO {
 class PredefinedPackageDTO {
     val id: String? = null
     val name: String? = null
-    val dimensions: String? = null
 
     @SerializedName("inner_dimensions")
     val innerDimensions: String? = null
