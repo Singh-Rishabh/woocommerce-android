@@ -359,6 +359,7 @@ dependencies {
     implementation(libs.google.play.services.wearable)
 
     // Debug dependencies
+    debugImplementation project(":libs:apifaker")
     debugImplementation(libs.facebook.flipper.main)
     debugImplementation(libs.facebook.soloader)
     debugImplementation(libs.facebook.flipper.network.plugin) {
