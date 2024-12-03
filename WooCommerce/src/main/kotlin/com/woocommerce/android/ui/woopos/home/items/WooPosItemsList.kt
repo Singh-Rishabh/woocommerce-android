@@ -71,7 +71,7 @@ fun ItemList(
             when (product) {
                 is SimpleProduct -> {
                     ProductItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         item = product,
                         onItemClicked = onItemClicked
                     )
@@ -79,7 +79,7 @@ fun ItemList(
 
                 is VariableProduct -> {
                     VariableProductItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         item = product,
                         onItemClicked = onItemClicked
                     )
@@ -87,7 +87,7 @@ fun ItemList(
 
                 is Variation -> {
                     VariationItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         item = product,
                         onItemClicked = onItemClicked
                     )
