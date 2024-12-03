@@ -37,10 +37,12 @@ fun WooPosPaymentProcessingScreen(
 @WooPosPreview
 @Composable
 fun WooPosPaymentProcessingScreenPreview() {
-    WooPosPaymentProcessingScreen(
-        state = WooPosTotalsViewState.PaymentProcessing(
-            title = "Processing payment",
-            subtitle = "Please wait...",
+    WooPosTheme {
+        WooPosPaymentProcessingScreen(
+            state = WooPosTotalsViewState.PaymentProcessing(
+                title = "Processing payment",
+                subtitle = "Please wait...",
+            )
         )
-    )
+    }
 }
