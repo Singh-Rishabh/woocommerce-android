@@ -110,6 +110,7 @@ private fun TotalsLoaded(
 ) {
     Column(
         modifier = Modifier
+            .background(WooPosTheme.colors.totalsBackground)
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -121,7 +122,7 @@ private fun TotalsLoaded(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1.1f)
-                    .background(WooPosTheme.colors.errorBackground)
+                    .background(WooPosTheme.colors.totalsErrorBackground)
             ) {
                 TotalsError(modifier = Modifier, error = error)
             }
