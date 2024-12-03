@@ -19,6 +19,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracR
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentOrderHelper
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentControllerFactory
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentStateProvider
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
@@ -828,22 +829,90 @@ class WooPosTotalsViewModelTest {
         verify(cardReaderFacade).connectToReader()
     }
 
+    @Test
+    fun `given order draft created, when reader connects, then start payment automatically`() = runTest {
+        // GIVEN
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.NotConnected())
+        whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title))
+            .thenReturn("Reader not connected")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle))
+            .thenReturn("To process this payment, please connect your reader.")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label))
+            .thenReturn("Connect to reader")
+
+        val productIds = listOf(1L, 2L, 3L)
+        val orderId = 23L
+        val order = Order.getEmptyOrder(
+            dateCreated = Date(),
+            dateModified = Date()
+        ).copy(
+            id = orderId,
+            totalTax = BigDecimal("2.00"),
+            items = listOf(
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                ),
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                ),
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                )
+            ),
+            productsTotal = BigDecimal("3.00"),
+            total = BigDecimal("5.00"),
+        )
+        val totalsRepository: WooPosTotalsRepository = mock {
+            onBlocking {
+                createOrderWithProducts(productIds = productIds)
+            }.thenReturn(Result.success(order))
+        }
+        val priceFormat: WooPosFormatPrice = mock {
+            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
+            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
+            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
+        }
+        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
+        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+            on { events }.thenReturn(parentToChildrenEventFlow)
+        }
+        val mockCardReaderPaymentController: CardReaderPaymentController = mock()
+        val factory: CardReaderPaymentControllerFactory = mock()
+        whenever(factory.create(any(), any(), any(), any())).thenReturn(mockCardReaderPaymentController)
+
+        // WHEN
+        val vm = createViewModel(
+            totalsRepository = totalsRepository,
+            priceFormat = priceFormat,
+            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+            cardReaderPaymentControllerFactory = factory,
+        )
+
+        readerStatus.value = CardReaderStatus.Connected(mock())
+
+        // THEN
+        verify(mockCardReaderPaymentController).start()
+    }
+
     private fun createViewModel(
         resourceProvider: ResourceProvider = this.resourceProvider,
         parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock(),
         totalsRepository: WooPosTotalsRepository = mock(),
         priceFormat: WooPosFormatPrice = mock(),
         savedState: SavedStateHandle = SavedStateHandle(),
+        cardReaderPaymentControllerFactory: CardReaderPaymentControllerFactory = paymentControllerFactory,
     ) = WooPosTotalsViewModel(
-        resourceProvider,
-        parentToChildrenEventReceiver,
-        childrenToParentEventSender,
-        cardReaderFacade,
-        totalsRepository,
-        priceFormat,
-        analyticsTracker,
-        networkStatus,
-        cardReaderPaymentControllerFactory = paymentControllerFactory,
-        savedState,
+        resourceProvider = resourceProvider,
+        parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+        childrenToParentEventSender = childrenToParentEventSender,
+        cardReaderFacade = cardReaderFacade,
+        totalsRepository = totalsRepository,
+        priceFormat = priceFormat,
+        analyticsTracker = analyticsTracker,
+        networkStatus = networkStatus,
+        cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
+        savedState = savedState,
     )
 }
