@@ -100,7 +100,7 @@ class WooPosVariationsViewModel @Inject constructor(
             is WooPosVariationsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
         }
 
-    fun loadMore(productId: Long) {
+    private fun loadMore(productId: Long) {
         val updatedState = _viewState.updateAndGet { currentState ->
             if (shouldStartLoading(currentState)) {
                 (currentState as WooPosVariationsViewState.Content).copy(paginationState = PaginationState.Loading)

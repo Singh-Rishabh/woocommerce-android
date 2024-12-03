@@ -458,7 +458,7 @@ class WooPosVariationsViewModelTest {
                 priceFormat
             )
             wooPosVariationsViewModel.init(1L)
-            wooPosVariationsViewModel.loadMore(1L)
+            wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
             verify(variationsDataSource, never()).loadMore(1L)
         }
@@ -481,7 +481,7 @@ class WooPosVariationsViewModelTest {
                 priceFormat
             )
             wooPosVariationsViewModel.init(1L)
-            wooPosVariationsViewModel.loadMore(1L)
+            wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
             verify(variationsDataSource, never()).loadMore(1L)
         }
@@ -518,7 +518,7 @@ class WooPosVariationsViewModelTest {
             )
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
-            wooPosVariationsViewModel.loadMore(1L)
+            wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
             val states: MutableList<WooPosVariationsViewState> = mutableListOf()
             wooPosVariationsViewModel.viewState.asLiveData().observeForever {
                 states.add(it)
@@ -561,7 +561,7 @@ class WooPosVariationsViewModelTest {
             )
             wooPosVariationsViewModel.init(1L)
             advanceUntilIdle()
-            wooPosVariationsViewModel.loadMore(1L)
+            wooPosVariationsViewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
 
             wooPosVariationsViewModel.viewState.test {
                 val value = awaitItem() as WooPosVariationsViewState.Content
