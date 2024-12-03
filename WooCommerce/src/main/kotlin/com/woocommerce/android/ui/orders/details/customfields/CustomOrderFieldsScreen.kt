@@ -21,6 +21,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.ripple
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -156,7 +157,7 @@ private fun clickableTextValueItem(value: String) {
             color = colorResource(R.color.color_text_link)
         ),
         modifier = Modifier.clickable(
-            indication = rememberRipple(
+            indication = ripple(
                 bounded = true,
                 color = colorResource(id = R.color.color_ripple_overlay)
             ),

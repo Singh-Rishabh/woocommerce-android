@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material.ripple
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -300,7 +301,7 @@ private fun CloseButton(onDismissClick: () -> Unit, modifier: Modifier = Modifie
                 onClick = onDismissClick,
                 role = Role.Button,
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false, radius = dimensionResource(id = R.dimen.major_150))
+                indication = ripple(bounded = false, radius = dimensionResource(id = R.dimen.major_150))
             )
     ) {
         Icon(
