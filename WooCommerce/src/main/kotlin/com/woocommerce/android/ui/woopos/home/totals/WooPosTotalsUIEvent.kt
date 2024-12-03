@@ -7,4 +7,5 @@ sealed class WooPosTotalsUIEvent {
     data object OnStartReceiptFlowClicked : WooPosTotalsUIEvent()
     data object OnSendReceiptClicked : WooPosTotalsUIEvent()
     data object OnTakeCashPaymentClicked : WooPosTotalsUIEvent()
+    data class OnEmailChanged(val email: String) : WooPosTotalsUIEvent()
 }

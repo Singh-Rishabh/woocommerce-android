@@ -12,7 +12,8 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosIsReceiptSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -63,9 +64,10 @@ class WooPosTotalsViewModelTest {
         on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val isReceiptSendingAvailable: WooPosIsReceiptSendingAvailable = mock {
+    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingAvailable = mock {
         onBlocking { invoke() }.thenReturn(false)
     }
+    private val receiptRepository: WooPosTotalsPaymentReceiptRepository = mock()
 
     private companion object {
         private const val EMPTY_ORDER_ID = -1L
@@ -774,16 +776,17 @@ class WooPosTotalsViewModelTest {
         isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled = mock(),
         savedState: SavedStateHandle = SavedStateHandle(),
     ) = WooPosTotalsViewModel(
-        resourceProvider,
-        parentToChildrenEventReceiver,
-        childrenToParentEventSender,
-        cardReaderFacade,
-        totalsRepository,
-        priceFormat,
-        analyticsTracker,
-        networkStatus,
-        isReceiptSendingAvailable,
+        resourceProvider = resourceProvider,
+        parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+        childrenToParentEventSender = childrenToParentEventSender,
+        cardReaderFacade = cardReaderFacade,
+        receiptRepository = receiptRepository,
+        totalsRepository = totalsRepository,
+        priceFormat = priceFormat,
+        analyticsTracker = analyticsTracker,
+        networkStatus = networkStatus,
+        isReceiptSendingAvailable = isReceiptSendingAvailable,
         isCashPaymentsEnabled,
-        savedState
+        savedState = savedState,
     )
 }
