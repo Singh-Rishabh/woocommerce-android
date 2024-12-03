@@ -98,7 +98,6 @@ android-billingclient-ktx = { group = "com.android.billingclient", name = "billi
 android-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "android-desugar" }
 android-security-lint = { group = "com.android.security.lint", name = "lint", version.ref = "android-security-lint" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose" }
-androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
 androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidx-arch-core" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidx-browser" }
