@@ -4303,6 +4303,8 @@
 
     <string name="woopos_success_totals_payment_processing_title">Processing payment</string>
     <string name="woopos_success_totals_payment_processing_subtitle">Please wait…</string>
+    <string name="woopos_success_totals_payment_failed_title">Payment failed</string>
+    <string name="woopos_success_totals_payment_failed_subtitle">Unfortunately, this payment has been declined.</string>
 
     <string name="woopos_floating_toolbar_overlay_menu_content_description">Dimmed background. Tap to close the menu.</string>
     <string name="woopos_floating_toolbar_card_reader_connected_status_content_description">Card reader connected</string>

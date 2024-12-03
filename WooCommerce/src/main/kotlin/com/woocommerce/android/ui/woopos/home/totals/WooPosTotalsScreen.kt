@@ -45,6 +45,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 
@@ -88,9 +89,19 @@ private fun WooPosTotalsScreen(
                 )
             }
         }
+
         StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentProcessing) {
             if (state is WooPosTotalsViewState.PaymentProcessing) {
                 WooPosPaymentProcessingScreen(state)
+            }
+        }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentFailed) {
+            if (state is WooPosTotalsViewState.PaymentFailed) {
+                WooPosPaymentFailedScreen(
+                    state = state,
+                    onUIEvent = onUIEvent,
+                )
             }
         }
     }

@@ -147,6 +147,9 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
                 createOrderDraft(dataState.value.productIds)
             }
+
+            WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked -> TODO()
+            WooPosTotalsUIEvent.RetryFailedTransactionClicked -> TODO()
         }
     }
 
@@ -212,15 +215,8 @@ class WooPosTotalsViewModel @Inject constructor(
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,
                     CardReaderPaymentState.ReFetchingOrder -> {
-                        uiState.value = PaymentProcessing(
-                            title = resourceProvider.getString(
-                                R.string.woopos_success_totals_payment_processing_title
-                            ),
-                            subtitle = resourceProvider.getString(
-                                R.string.woopos_success_totals_payment_processing_subtitle
-                            )
-                        )
-                        childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
+                        uiState.value = buildPaymentProcessingState()
+                        childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentProcessing)
                     }
                     is CardReaderPaymentState.PaymentSuccessful -> {
                         uiState.value =
@@ -230,7 +226,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
                     is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
-                        // TODO: show full screen payment failed screen
+                        uiState.value = buildPaymentFailedState()
                     }
                     is CardReaderPaymentOrRefundState.CardReaderInteracRefundState -> {
                         throw IllegalStateException("Interac refund is not supported in POS")
@@ -248,6 +244,24 @@ class WooPosTotalsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun buildPaymentFailedState(): PaymentFailed = PaymentFailed(
+        title = resourceProvider.getString(
+            R.string.woopos_success_totals_payment_failed_title
+        ),
+        subtitle = resourceProvider.getString(
+            R.string.woopos_success_totals_payment_failed_subtitle
+        )
+    )
+
+    private fun buildPaymentProcessingState(): PaymentProcessing = PaymentProcessing(
+        title = resourceProvider.getString(
+            R.string.woopos_success_totals_payment_processing_title
+        ),
+        subtitle = resourceProvider.getString(
+            R.string.woopos_success_totals_payment_processing_subtitle
+        )
+    )
 
     private fun createOrderDraft(productIds: List<Long>) {
         viewModelScope.launch {
