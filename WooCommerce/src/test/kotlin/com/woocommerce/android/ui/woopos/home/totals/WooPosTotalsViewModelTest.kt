@@ -597,7 +597,7 @@ class WooPosTotalsViewModelTest {
                 Order.Item.EMPTY.copy(subtotal = BigDecimal("1.00")),
             ),
             total = BigDecimal("3.00"),
-            productsTotal = BigDecimal("1.00"),
+            productsTotal = BigDecimal("5.00"),
         )
 
         val totalsRepository: WooPosTotalsRepository = mock {
@@ -609,12 +609,19 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("1.00")) }.thenReturn("$1.00")
             onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("$2.00")
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("$3.00")
+            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
+        }
+        val resourceProvider: ResourceProvider = mock {
+            on { getString(R.string.woopos_success_screen_total, "$3.00") }.thenReturn(
+                "A payment of $3.00 was successfully made"
+            )
         }
 
         val paymentStatusFlow = MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Unknown)
         whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
 
         val viewModel = createViewModel(
+            resourceProvider = resourceProvider,
             savedState = savedState,
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
