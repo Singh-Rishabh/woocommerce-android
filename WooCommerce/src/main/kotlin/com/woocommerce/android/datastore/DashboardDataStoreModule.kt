@@ -33,7 +33,7 @@ object DashboardDataStoreModule {
             appContext.dataStoreFile("dashboard_configuration_${site.id}")
         },
         corruptionHandler = ReplaceFileCorruptionHandler {
-            crashLogging.recordEvent("Corrupted data store: Dashboard")
+            crashLogging.recordEvent("Corrupted data store. DataStore Type: DASHBOARD")
             DashboardDataModel.getDefaultInstance()
         },
         scope = CoroutineScope(siteCoroutineScope.coroutineContext + Dispatchers.IO),
