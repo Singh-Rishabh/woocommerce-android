@@ -15,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.updateAndGet
@@ -56,7 +57,7 @@ class WooPosVariationsViewModel @Inject constructor(
     private fun startCollectingVariationsFlow(productId: Long) {
         flowJob?.cancel()
         flowJob = viewModelScope.launch {
-            variationsDataSource.getVariationsFlow(productId).collect { variationList ->
+            variationsDataSource.getVariationsFlow(productId).drop(1).collect { variationList ->
                 val product = getProductById(productId)
                 _viewState.value = WooPosVariationsViewState.Content(
                     items = variationList.filter { it.price != null }
