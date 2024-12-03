@@ -108,11 +108,10 @@ fun WooPosItemList(
                 }
             }
             PaginationState.None -> {
-                // no op
+                item {
+                    Spacer(modifier = Modifier.height(104.dp))
+                }
             }
-        }
-        item {
-            Spacer(modifier = Modifier.height(104.dp))
         }
     }
     InfiniteListHandler(listState, state) {

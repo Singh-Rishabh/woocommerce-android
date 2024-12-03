@@ -99,6 +99,7 @@ private fun WooPosVariationsScreens(
         itemState.value.reloadingProductsWithPullToRefresh,
         onPullToRefresh
     )
+    val listState = rememberLazyListState()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -120,11 +121,10 @@ private fun WooPosVariationsScreens(
             )
             when (val itemsState = itemState.value) {
                 is WooPosVariationsViewState.Content -> {
-                    val lazyListState = rememberLazyListState()
                     Spacer(modifier = Modifier.height(16.dp))
                     WooPosItemList(
                         state = itemsState,
-                        listState = lazyListState,
+                        listState = listState,
                         onItemClicked = {
                             onItemClicked(
                                 (it as WooPosItem.Variation).productId,
