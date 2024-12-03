@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -101,17 +100,16 @@ class WooPosVariationsViewModel @Inject constructor(
         }
 
     private fun loadMore(productId: Long) {
-        val updatedState = _viewState.updateAndGet { currentState ->
-            if (shouldStartLoading(currentState)) {
-                (currentState as WooPosVariationsViewState.Content).copy(paginationState = PaginationState.Loading)
-            } else {
-                currentState
-            }
-        }
-
-        if (!isLoadingStateValid(updatedState)) {
+        val currentState = _viewState.value
+        if (currentState !is WooPosVariationsViewState.Content) {
             return
         }
+
+        if (!variationsDataSource.canLoadMore()) {
+            return
+        }
+
+        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
 
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
@@ -124,14 +122,6 @@ class WooPosVariationsViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun shouldStartLoading(currentState: WooPosVariationsViewState?): Boolean {
-        return currentState is WooPosVariationsViewState.Content && variationsDataSource.canLoadMore()
-    }
-
-    private fun isLoadingStateValid(state: WooPosVariationsViewState?): Boolean {
-        return state is WooPosVariationsViewState.Content && state.paginationState == PaginationState.Loading
     }
 
     private fun determinePaginationState(result: Result<*>): PaginationState {
