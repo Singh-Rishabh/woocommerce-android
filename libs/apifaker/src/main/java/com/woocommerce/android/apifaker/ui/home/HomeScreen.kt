@@ -28,9 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.woocommerce.android.apifaker.models.ApiType.Custom
-import com.woocommerce.android.apifaker.models.ApiType.WPApi
-import com.woocommerce.android.apifaker.models.ApiType.WPCom
+import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
 import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.ui.Screen
@@ -114,9 +112,9 @@ private fun EndpointItem(
         Column(Modifier.padding(8.dp)) {
             Text(
                 text = when (request.type) {
-                    WPApi -> "WordPress API"
-                    WPCom -> "WordPress.com API"
-                    is Custom -> "Host: ${request.type.host}"
+                    ApiType.WPApi -> "WordPress API"
+                    ApiType.WPCom -> "WordPress.com API"
+                    is ApiType.Custom -> "Host: ${request.type.host}"
                 },
                 style = MaterialTheme.typography.subtitle1
             )
@@ -134,13 +132,13 @@ private fun HomeScreenPreview() {
     HomeScreen(
         endpoints = listOf(
             Request(
-                type = WPApi,
+                type = ApiType.WPApi,
                 httpMethod = HttpMethod.GET,
                 path = "/wc/v3/products",
                 body = "",
             ),
             Request(
-                type = WPCom,
+                type = ApiType.WPCom,
                 httpMethod = HttpMethod.POST,
                 path = "/v1.1/me/sites",
                 body = ""
