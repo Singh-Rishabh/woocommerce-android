@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowP
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentControllerFactory
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
@@ -202,41 +203,45 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
 
                 when (paymentState) {
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData -> {
+                    is CardReaderPaymentState.LoadingData -> {
                         // TODO: show loading state within the totals pane
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.CollectingPayment -> {
+                    is CardReaderPaymentState.CollectingPayment -> {
                         // TODO: show "tap or swipe" state within the totals pane
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.ProcessingPayment,
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentCapturing,
-                    CardReaderPaymentOrRefundState.CardReaderPaymentState.ReFetchingOrder -> {
+                    is CardReaderPaymentState.ProcessingPayment,
+                    is CardReaderPaymentState.PaymentCapturing,
+                    CardReaderPaymentState.ReFetchingOrder -> {
                         uiState.value = PaymentProcessing(
-                            title = resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title),
-                            subtitle = resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle)
+                            title = resourceProvider.getString(
+                                R.string.woopos_success_totals_payment_processing_title
+                            ),
+                            subtitle = resourceProvider.getString(
+                                R.string.woopos_success_totals_payment_processing_subtitle
+                            )
                         )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentSuccessful -> {
+                    is CardReaderPaymentState.PaymentSuccessful -> {
                         uiState.value =
                             PaymentSuccess(
                                 orderTotalText = paymentState.amountWithCurrencyLabel
                             )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
+                    is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
                         // TODO: show full screen payment failed screen
                     }
                     is CardReaderPaymentOrRefundState.CardReaderInteracRefundState -> {
                         throw IllegalStateException("Interac refund is not supported in POS")
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment->{
+                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment -> {
                         throw IllegalStateException("Built-in reader is not supported in POS")
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PrintingReceipt -> {
+                    is CardReaderPaymentState.PrintingReceipt -> {
                         throw IllegalStateException("PrintingReceipt is not supported in POS")
                     }
-                    CardReaderPaymentOrRefundState.CardReaderPaymentState.SharingReceipt -> {
+                    CardReaderPaymentState.SharingReceipt -> {
                         throw IllegalStateException("SharingReceipt is not supported in POS")
                     }
                 }
