@@ -11,7 +11,7 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
@@ -63,7 +63,7 @@ class WooPosTotalsViewModelTest {
         on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingAvailable = mock {
+    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingSupported = mock {
         onBlocking { invoke() }.thenReturn(false)
     }
     private val receiptRepository: WooPosTotalsPaymentReceiptRepository = mock()
@@ -624,7 +624,7 @@ class WooPosTotalsViewModelTest {
         viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
 
         // THEN
-        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.NoInternet)
+        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.ToastMessageDisplayed)
     }
 
     @Test

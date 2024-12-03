@@ -8,12 +8,13 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -24,6 +25,9 @@ import com.woocommerce.android.util.WooLog.T
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -41,7 +45,8 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
-    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingAvailable,
+    private val isReceiptSendingSupported: WooPosTotalsPaymentReceiptIsSendingSupported,
+    private val isReceiptsEnabled: WooPosIsReceiptsEnabled,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -49,6 +54,10 @@ class WooPosTotalsViewModel @Inject constructor(
         private const val EMPTY_ORDER_ID = -1L
         private const val KEY_STATE = "woo_pos_totals_data_state"
         private val InitialState = WooPosTotalsViewState.Loading
+    }
+
+    private val isReceiptSendingSupportedValue: Deferred<Boolean> by lazy {
+        viewModelScope.async((Dispatchers.IO)) { isReceiptSendingSupported() }
     }
 
     private val uiState = savedState.getStateFlow<WooPosTotalsViewState>(
@@ -68,6 +77,8 @@ class WooPosTotalsViewModel @Inject constructor(
     init {
         listenUpEvents()
         listenToPaymentsStatus()
+
+        initIsReceiptSendingSupportedValue()
     }
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
@@ -85,7 +96,13 @@ class WooPosTotalsViewModel @Inject constructor(
             }
             WooPosTotalsUIEvent.OnSendReceiptClicked -> sendReceiptByEmail()
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
-                uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+                viewModelScope.launch {
+                    if (isReceiptSendingSupportedValue.await()) {
+                        uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+                    } else {
+                        uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+                    }
+                }
             }
             is WooPosTotalsUIEvent.OnEmailChanged -> {
                 uiState.value = WooPosTotalsViewState.ReceiptSending(email = event.email)
@@ -96,7 +113,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private fun collectPayment() {
         if (!networkStatus.isConnected()) {
             viewModelScope.launch {
-                childrenToParentEventSender.sendToParent(ChildToParentEvent.NoInternet)
+                childrenToParentEventSender.sendToParent(ChildToParentEvent.ToastMessageDisplayed)
             }
         } else {
             val orderId = dataState.value.orderId
@@ -148,7 +165,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         )
                         uiState.value = WooPosTotalsViewState.PaymentSuccess(
                             orderTotalText = orderTotalText,
-                            isReceiptAvailable = isReceiptSendingAvailable()
+                            isReceiptAvailable = isReceiptsEnabled()
                         )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
@@ -197,6 +214,12 @@ class WooPosTotalsViewModel @Inject constructor(
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
         )
+    }
+
+    private fun initIsReceiptSendingSupportedValue() {
+        viewModelScope.launch {
+            isReceiptSendingSupportedValue.await()
+        }
     }
 
     @Parcelize
