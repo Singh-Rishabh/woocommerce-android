@@ -6,6 +6,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -63,9 +64,10 @@ class WooPosTotalsViewModelTest {
         on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingSupported = mock {
+    private val isReceiptSendingSupported: WooPosTotalsPaymentReceiptIsSendingSupported = mock {
         onBlocking { invoke() }.thenReturn(false)
     }
+    private val isReceiptsEnabled: WooPosIsReceiptsEnabled = mock()
     private val receiptRepository: WooPosTotalsPaymentReceiptRepository = mock()
 
     private companion object {
@@ -614,9 +616,12 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
             onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
         }
+        val resourceProvider = mock<ResourceProvider>()
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
 
         // WHEN
         val viewModel = createViewModel(
+            resourceProvider = resourceProvider,
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
@@ -624,7 +629,11 @@ class WooPosTotalsViewModelTest {
         viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
 
         // THEN
-        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.ToastMessageDisplayed)
+        verify(childrenToParentEventSender).sendToParent(
+            ChildToParentEvent.ToastMessageDisplayed(
+                message = "No internet"
+            )
+        )
     }
 
     @Test
@@ -717,7 +726,8 @@ class WooPosTotalsViewModelTest {
         priceFormat = priceFormat,
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
-        isReceiptSendingAvailable = isReceiptSendingAvailable,
+        isReceiptSendingSupported = isReceiptSendingSupported,
+        isReceiptsEnabled = isReceiptsEnabled,
         savedState = savedState,
     )
 }
