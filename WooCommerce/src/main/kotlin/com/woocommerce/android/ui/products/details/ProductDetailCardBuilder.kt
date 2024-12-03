@@ -82,7 +82,6 @@ import com.woocommerce.android.ui.products.subscriptions.expirationDisplayValue
 import com.woocommerce.android.ui.products.subscriptions.trialDisplayValue
 import com.woocommerce.android.ui.products.variations.VariationRepository
 import com.woocommerce.android.util.CurrencyFormatter
-import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.PriceUtils
 import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -1022,8 +1021,7 @@ class ProductDetailCardBuilder(
     }
 
     private suspend fun Product.customFields(): ProductProperty? {
-        if (!FeatureFlag.CUSTOM_FIELDS.isEnabled() ||
-            remoteId == ProductDetailViewModel.DEFAULT_ADD_NEW_PRODUCT_ID ||
+        if (remoteId == ProductDetailViewModel.DEFAULT_ADD_NEW_PRODUCT_ID ||
             !customFieldsRepository.hasDisplayableCustomFields(this.remoteId)
         ) {
             return null
