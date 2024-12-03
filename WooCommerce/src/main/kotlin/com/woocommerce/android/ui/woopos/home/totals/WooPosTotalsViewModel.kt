@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -100,7 +101,14 @@ class WooPosTotalsViewModel @Inject constructor(
                     if (isReceiptSendingSupportedValue.await()) {
                         uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
                     } else {
-                        uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+                        childrenToParentEventSender.sendToParent(
+                            ChildToParentEvent.ToastMessageDisplayed(
+                                message = resourceProvider.getString(
+                                    R.string.woopos_receipt_sending_not_supported,
+                                    WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL,
+                                )
+                            )
+                        )
                     }
                 }
             }
