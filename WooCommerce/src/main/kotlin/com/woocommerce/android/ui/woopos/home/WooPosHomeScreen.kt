@@ -55,7 +55,7 @@ fun WooPosHomeScreen(
         viewModel.toastEvent.collect { message ->
             ToastUtils.showToast(
                 context,
-                context.getString(message.message),
+                message,
                 ToastUtils.Duration.LONG
             )
         }

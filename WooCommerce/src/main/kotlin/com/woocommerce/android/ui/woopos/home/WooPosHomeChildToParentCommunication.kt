@@ -32,7 +32,7 @@ sealed class ChildToParentEvent {
         data object FullScreen : ProductsStatusChanged()
         data object WithCart : ProductsStatusChanged()
     }
-    data object NoInternet : ChildToParentEvent()
+    data class ToastMessageDisplayed(val message: String) : ChildToParentEvent()
 }
 
 interface WooPosChildrenToParentEventReceiver {

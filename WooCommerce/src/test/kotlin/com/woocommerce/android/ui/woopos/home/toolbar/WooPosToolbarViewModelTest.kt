@@ -191,7 +191,7 @@ class WooPosToolbarViewModelTest {
         viewModel.onUiEvent(WooPosToolbarUIEvent.OnCardReaderStatusClicked)
 
         // THEN
-        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.NoInternet)
+        verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.ToastMessageDisplayed)
     }
 
     @Test

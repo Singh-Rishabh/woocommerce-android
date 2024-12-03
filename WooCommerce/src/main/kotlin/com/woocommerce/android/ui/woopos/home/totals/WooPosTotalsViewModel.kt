@@ -113,7 +113,11 @@ class WooPosTotalsViewModel @Inject constructor(
     private fun collectPayment() {
         if (!networkStatus.isConnected()) {
             viewModelScope.launch {
-                childrenToParentEventSender.sendToParent(ChildToParentEvent.ToastMessageDisplayed)
+                childrenToParentEventSender.sendToParent(
+                    ChildToParentEvent.ToastMessageDisplayed(
+                        message = resourceProvider.getString(R.string.woopos_no_internet_message)
+                    )
+                )
             }
         } else {
             val orderId = dataState.value.orderId
