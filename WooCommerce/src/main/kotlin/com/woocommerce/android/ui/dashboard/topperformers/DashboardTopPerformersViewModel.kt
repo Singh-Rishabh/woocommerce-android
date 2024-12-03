@@ -150,7 +150,7 @@ class DashboardTopPerformersViewModel @AssistedInject constructor(
                 onEditCustomRangeTapped()
             } else {
                 appPrefsWrapper.setActiveTopPerformersTab(SelectionType.CUSTOM.name)
-                analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_TAB_SELECTED)
+                analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED)
             }
         }
     }

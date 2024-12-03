@@ -134,7 +134,7 @@ class DashboardStatsViewModel @AssistedInject constructor(
             } else {
                 appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
                 analyticsTrackerWrapper.track(
-                    AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_TAB_SELECTED
+                    AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED
                 )
             }
         }
