@@ -260,6 +260,7 @@ class ProductDetailFragment :
         handleResult<InventoryData>(BaseProductEditorFragment.KEY_INVENTORY_DIALOG_RESULT) {
             viewModel.updateProductDraft(
                 sku = it.sku,
+                globalUniqueId = it.globalUniqueId,
                 soldIndividually = it.isSoldIndividually,
                 stockStatus = it.stockStatus,
                 stockQuantity = it.stockQuantity,

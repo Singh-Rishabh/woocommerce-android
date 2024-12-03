@@ -13,6 +13,7 @@ import com.woocommerce.android.extensions.expand
 import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.ui.products.ProductItemSelectorDialog.ProductItemSelectorDialogListener
+import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.util.setupTabletSecondPaneToolbar
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -65,6 +66,9 @@ class ProductInventoryFragment :
             new.skuErrorMessage?.takeIfNotEqualTo(old?.skuErrorMessage) {
                 displaySkuError(it)
             }
+            new.globalUniqueIdErrorMessage?.takeIfNotEqualTo(old?.globalUniqueIdErrorMessage) {
+                displayGlobalUniqueIdErrorMessage(it)
+            }
             new.isStockManagementVisible?.takeIfNotEqualTo(old?.isStockManagementVisible) { isVisible ->
                 binding.stockManagementPanel.isVisible = isVisible
                 binding.soldIndividuallySwitch.isVisible = isVisible && new.isIndividualSaleSwitchVisible == true
@@ -106,6 +110,13 @@ class ProductInventoryFragment :
                     binding.productSku.text = it
                 }
             }
+
+            new.inventoryData.globalUniqueId?.takeIfNotEqualTo(old?.inventoryData?.globalUniqueId) {
+                if (binding.productGlobalUniqueId.text != it) {
+                    binding.productGlobalUniqueId.text = it
+                }
+            }
+
             new.inventoryData.stockQuantity?.takeIfNotEqualTo(old?.inventoryData?.stockQuantity) {
                 val quantity = StringUtils.formatCountDecimal(it, forInput = true)
 
@@ -140,6 +151,14 @@ class ProductInventoryFragment :
         }
     }
 
+    private fun displayGlobalUniqueIdErrorMessage(messageId: Int) {
+        if (messageId != 0) {
+            binding.productGlobalUniqueId.error = getString(messageId)
+        } else {
+            binding.productGlobalUniqueId.helperText = getString(R.string.product_global_unique_id_summary)
+        }
+    }
+
     private fun setupViews() {
         if (!isAdded) return
 
@@ -148,6 +167,8 @@ class ProductInventoryFragment :
                 viewModel.onSkuChanged(it.toString())
             }
         }
+
+        setupProductUniqueGlobalIdView()
 
         with(binding.manageStockSwitch) {
             setOnCheckedChangeListener { _, isChecked ->
@@ -203,6 +224,18 @@ class ProductInventoryFragment :
                 }
             }
         )
+    }
+
+    private fun setupProductUniqueGlobalIdView() {
+        val featureIsEnabled = FeatureFlag.PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT.isEnabled()
+
+        with(binding.productGlobalUniqueId) {
+            visibility = if (featureIsEnabled) View.VISIBLE else View.GONE
+
+            setOnTextChangedListener {
+                viewModel.onProductUniqueGlobalIdChanged(it.toString())
+            }
+        }
     }
 
     private fun enableManageStockStatus(isStockManaged: Boolean, isStockStatusVisible: Boolean) {

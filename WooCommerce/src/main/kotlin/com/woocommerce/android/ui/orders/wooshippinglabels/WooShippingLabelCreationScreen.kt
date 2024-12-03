@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -25,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -46,15 +49,29 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
-    WooShippingLabelCreationScreen(
-        onSelectPackageClick = viewModel::onSelectPackageClicked,
-        onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel
-    )
+    when (val viewState = viewModel.viewState.collectAsState().value) {
+        WooShippingLabelCreationViewModel.WooShippingViewState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is WooShippingLabelCreationViewModel.WooShippingViewState.DataState -> {
+            WooShippingLabelCreationScreen(
+                onSelectPackageClick = viewModel::onSelectPackageClicked,
+                onPurchaseShippingLabel = viewModel::onPurchaseShippingLabel,
+                shippableItems = viewState.shippableItems,
+                shippingLines = viewState.shippingLines
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooShippingLabelCreationScreen(
+    shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     onPurchaseShippingLabel: () -> Unit
@@ -62,11 +79,20 @@ fun WooShippingLabelCreationScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     Box(modifier = Modifier.fillMaxSize()) {
         LabelCreationScreenWithBottomSheet(
+            shippableItems = shippableItems,
             modifier = modifier,
             onSelectPackageClick = onSelectPackageClick,
-            scaffoldState = scaffoldState
+            scaffoldState = scaffoldState,
+            shippingLines = shippingLines
         )
-        val elevation = if (scaffoldState.bottomSheetState.isCollapsed) { 0.dp } else { 4.dp }
+        val isDarkTheme = isSystemInDarkTheme()
+        val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
+        val elevation = when {
+            isDarkTheme && isCollapsed -> { 7.dp }
+            !isDarkTheme && isCollapsed -> { 0.dp }
+            isDarkTheme && !isCollapsed -> { 16.dp }
+            else -> { 8.dp }
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -91,6 +117,8 @@ fun WooShippingLabelCreationScreen(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LabelCreationScreenWithBottomSheet(
+    shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit,
     scaffoldState: BottomSheetScaffoldState
@@ -99,10 +127,12 @@ private fun LabelCreationScreenWithBottomSheet(
         sheetContent = {
             val markOrderComplete = remember { mutableStateOf(false) }
             ShipmentDetails(
-                modifier = Modifier.padding(bottom = 74.dp),
+                shippableItems = shippableItems,
+                shippingLines = shippingLines,
                 scaffoldState = scaffoldState,
                 markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it }
+                onMarkOrderCompleteChange = { markOrderComplete.value = it },
+                modifier = Modifier.padding(bottom = 74.dp),
             )
         },
         sheetPeekHeight = 132.dp,
@@ -131,11 +161,7 @@ private fun LabelCreationScreenWithBottomSheet(
             Column(modifier.verticalScroll(rememberScrollState())) {
                 val isExpanded = remember { mutableStateOf(false) }
                 ShippingProductsCard(
-                    shippableItems = ShippableItems(
-                        shippableItems = generateItems(6),
-                        totalWeight = "8.5kg",
-                        totalPrice = "$92.78"
-                    ),
+                    shippableItems = shippableItems,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
@@ -179,6 +205,12 @@ private fun LabelCreationScreenWithBottomSheet(
 private fun WooShippingLabelCreationScreenPreview() {
     WooThemeWithBackground {
         WooShippingLabelCreationScreen(
+            shippableItems = ShippableItemsUI(
+                shippableItems = generateItems(6),
+                formattedTotalWeight = "8.5kg",
+                formattedTotalPrice = "$92.78"
+            ),
+            shippingLines = getShippingLines(),
             modifier = Modifier.fillMaxSize(),
             onSelectPackageClick = {},
             onPurchaseShippingLabel = {}
@@ -291,18 +323,19 @@ private fun PackageCardPreview() {
     }
 }
 
-data class ShippableItem(
+data class ShippableItemUI(
+    val itemId: Long,
     val productId: Long,
     val title: String,
-    val description: String,
-    val weight: String,
-    val price: String,
-    val quantity: Int,
+    val formattedSize: String,
+    val formattedWeight: String,
+    val formattedPrice: String,
+    val quantity: Float,
     val imageUrl: String? = null
 )
 
-data class ShippableItems(
-    val shippableItems: List<ShippableItem>,
-    val totalWeight: String,
-    val totalPrice: String
+data class ShippableItemsUI(
+    val shippableItems: List<ShippableItemUI>,
+    val formattedTotalWeight: String,
+    val formattedTotalPrice: String
 )

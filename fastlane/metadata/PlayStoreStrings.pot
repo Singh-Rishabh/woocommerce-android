@@ -16,17 +16,16 @@ msgid "In this update, we’ve made a few small bug fixes and enhancements to en
 msgstr ""
 
 #. translators: Release notes for this version to be displayed in the Play Store. Limit to 500 characters including spaces and commas!
+msgctxt "release_note_212"
+msgid ""
+"21.2:\n"
+"Seamless updates are here! Smoother Jetpack activation with new account creation. Say goodbye to bugs: order refresh, shipping edits, and receipt fetch issues are fixed. We've renamed Deposits to Payouts and improved media uploads for Jetpack sites. Update now for a better WooCommerce experience!\n"
+msgstr ""
+
 msgctxt "release_note_211"
 msgid ""
 "21.1:\n"
 "Our latest update brings key enhancements to streamline your WooCommerce experience! We’ve fixed editing permissions for orders in different currencies, optimized the payments hub view, enabled easy receipt sharing via Google SMS, and fixed date range selection to correctly use your timezone. Enjoy smoother operations!\n"
-msgstr ""
-
-msgctxt "release_note_210"
-msgid ""
-"21.0:\n"
-"Enjoy a smoother experience with improved design throughout the app. Plus, now your product images load faster and look even better with new AVIF format support. Update now for a cleaner, sharper WooCommerce app experience!\n"
-"\n"
 msgstr ""
 
 #. translators: Short description of the app to be displayed in the Play Store. Limit to 80 characters including spaces and commas!
