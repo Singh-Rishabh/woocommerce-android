@@ -2005,7 +2005,7 @@
     <string name="product_tax_status_taxable">Taxable</string>
     <string name="product_tax_status_shipping">Shipping</string>
     <string name="product_sku">SKU</string>
-    <string name="product_global_unique_id_hint">GTIN, UPC, EAN, ISBN</string>
+    <string name="product_global_unique_id">GTIN, UPC, EAN, ISBN</string>
     <string name="product_sku_summary">Helps to easily identify this product</string>
     <string name="product_global_unique_id_summary">Enter a barcode or any other identifier unique to this product. It can help you list this product on other channels or marketplaces.</string>
     <string name="product_stock_status">Stock status</string>
@@ -2114,6 +2114,7 @@
     <string name="product_inventory_quantity">Quantity</string>
     <string name="product_inventory_quantity_summary">How many items are in stock</string>
     <string name="product_inventory_update_sku_error">SKU already in use by another product</string>
+    <string name="product_inventory_update_global_unique_id_error">Please enter only numbers and hyphens</string>
     <string name="product_inventory_update_stock_quantity_error">Please enter a number</string>
     <string name="product_pricing_update_sale_price_error">Sale price must be less than regular price</string>
     <string name="product_pricing_scheduled_sale_price_error">You must set the sale price if a sale is scheduled</string>
@@ -4280,6 +4281,7 @@
     <string name="woopos_payment_successful_label">Payment successful</string>
     <string name="woopos_payment_successful_checkmark_icon_content_description">Payment successful checkmark icon</string>
     <string name="woopos_new_order_button">New order</string>
+    <string name="woopos_receipt_button">Receipt</string>
     <string name="woopos_payment_subtotal_label">Subtotal</string>
     <string name="woopos_payment_tax_label">Taxes</string>
     <string name="woopos_payment_total_label">Total</string>
