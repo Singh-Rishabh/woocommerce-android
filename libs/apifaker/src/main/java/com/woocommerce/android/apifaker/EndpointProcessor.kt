@@ -81,7 +81,9 @@ internal class EndpointProcessor @Inject constructor(
             requestBody.writeTo(buffer)
 
             buffer.readUtf8()
-        } else ""
+        } else {
+            ""
+        }
     }
 
     private data class EndpointData(

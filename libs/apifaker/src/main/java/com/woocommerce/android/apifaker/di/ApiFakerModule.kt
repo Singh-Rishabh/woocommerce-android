@@ -15,19 +15,17 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class ApiFakerModule {
-    companion object {
-        @Provides
-        @Singleton
-        internal fun providesDatabase(context: Context) = ApiFakerDatabase.buildDb(context)
+object ApiFakerModule {
+    @Provides
+    @Singleton
+    internal fun providesDatabase(context: Context) = ApiFakerDatabase.buildDb(context)
 
-        @Provides
-        internal fun providesEndpointDao(db: ApiFakerDatabase) = db.endpointDao
+    @Provides
+    internal fun providesEndpointDao(db: ApiFakerDatabase) = db.endpointDao
 
-        @Provides
-        @IntoSet
-        @Named("interceptors")
-        internal fun providesInterceptor(endpointProcessor: EndpointProcessor): Interceptor =
-            ApiFakerInterceptor(endpointProcessor)
-    }
+    @Provides
+    @IntoSet
+    @Named("interceptors")
+    internal fun providesInterceptor(endpointProcessor: EndpointProcessor): Interceptor =
+        ApiFakerInterceptor(endpointProcessor)
 }

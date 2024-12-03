@@ -5,9 +5,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.MockedEndpoint
+import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
 import kotlinx.coroutines.flow.Flow
 

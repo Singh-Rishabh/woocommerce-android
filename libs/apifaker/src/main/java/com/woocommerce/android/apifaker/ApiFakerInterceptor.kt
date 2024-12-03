@@ -10,6 +10,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import javax.inject.Inject
 
 internal class ApiFakerInterceptor @Inject constructor(private val endpointProcessor: EndpointProcessor) : Interceptor {
+    @Suppress("TooGenericExceptionCaught", "SwallowedException")
     override fun intercept(chain: Chain): Response {
         Log.d(LOG_TAG, "Intercepting request: ${chain.request().url}")
         val request = chain.request()
@@ -21,10 +22,7 @@ internal class ApiFakerInterceptor @Inject constructor(private val endpointProce
         }
 
         return if (fakeResponse != null) {
-            Log.d(
-                LOG_TAG, "Fake request: ${chain.request().url}:\n" +
-                    "$fakeResponse"
-            )
+            Log.d(LOG_TAG, "Fake request: ${chain.request().url}:\n$fakeResponse")
             Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
