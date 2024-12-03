@@ -45,6 +45,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 
 @Composable
@@ -85,6 +86,11 @@ private fun WooPosTotalsScreen(
                     errorMessage = state.message,
                     onUIEvent = onUIEvent
                 )
+            }
+        }
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentProcessing) {
+            if (state is WooPosTotalsViewState.PaymentProcessing) {
+                WooPosPaymentProcessingScreen(state)
             }
         }
     }

@@ -110,7 +110,11 @@ class WooPosHomeViewModel @Inject constructor(
                         )
                         sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
                     }
-
+                    is ChildToParentEvent.PaymentProcessing -> {
+                        _state.value = _state.value.copy(
+                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.Paid
+                        )
+                    }
                     is ChildToParentEvent.OrderSuccessfullyPaid -> {
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.Paid

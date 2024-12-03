@@ -20,6 +20,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.*
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -199,12 +200,45 @@ class WooPosTotalsViewModel @Inject constructor(
                         paymentStateText = paymentState.javaClass.simpleName
                     )
                 }
-                if (paymentState is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentSuccessful) {
-                    uiState.value =
-                        WooPosTotalsViewState.PaymentSuccess(
-                            orderTotalText = paymentState.amountWithCurrencyLabel
+
+                when (paymentState) {
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.LoadingData -> {
+                        // TODO: show loading state within the totals pane
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.CollectingPayment -> {
+                        // TODO: show "tap or swipe" state within the totals pane
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.ProcessingPayment,
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentCapturing,
+                    CardReaderPaymentOrRefundState.CardReaderPaymentState.ReFetchingOrder -> {
+                        uiState.value = PaymentProcessing(
+                            title = resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title),
+                            subtitle = resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle)
                         )
-                    childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
+                        childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentSuccessful -> {
+                        uiState.value =
+                            PaymentSuccess(
+                                orderTotalText = paymentState.amountWithCurrencyLabel
+                            )
+                        childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
+                        // TODO: show full screen payment failed screen
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState -> {
+                        throw IllegalStateException("Interac refund is not supported in POS")
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment->{
+                        throw IllegalStateException("Built-in reader is not supported in POS")
+                    }
+                    is CardReaderPaymentOrRefundState.CardReaderPaymentState.PrintingReceipt -> {
+                        throw IllegalStateException("PrintingReceipt is not supported in POS")
+                    }
+                    CardReaderPaymentOrRefundState.CardReaderPaymentState.SharingReceipt -> {
+                        throw IllegalStateException("SharingReceipt is not supported in POS")
+                    }
                 }
             }
         }

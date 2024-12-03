@@ -23,6 +23,18 @@ sealed class WooPosTotalsViewState : Parcelable {
         ) : Parcelable
     }
 
+    data class PaymentProcessing(
+        val title: String,
+        val subtitle: String,
+    ) : WooPosTotalsViewState()
+
+    data class PaymentFailed(
+        val title: String,
+        val subtitle: String,
+        val actionButtonLabel: String,
+        val onAction: () -> Unit,
+    ) : WooPosTotalsViewState()
+
     data class PaymentSuccess(var orderTotalText: String) : WooPosTotalsViewState()
 
     data class Error(val message: String) : WooPosTotalsViewState()
