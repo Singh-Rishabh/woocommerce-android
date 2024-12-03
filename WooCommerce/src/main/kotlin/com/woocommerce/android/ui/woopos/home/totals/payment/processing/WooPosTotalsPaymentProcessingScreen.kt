@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 
@@ -30,4 +31,15 @@ fun WooPosPaymentProcessingScreen(
             Text(text = state.subtitle)
         }
     }
+}
+
+@WooPosPreview
+@Composable
+fun WooPosPaymentProcessingScreenPreview() {
+    WooPosPaymentProcessingScreen(
+        state = WooPosTotalsViewState.PaymentProcessing(
+            title = "Processing payment",
+            subtitle = "Please wait...",
+        )
+    )
 }
