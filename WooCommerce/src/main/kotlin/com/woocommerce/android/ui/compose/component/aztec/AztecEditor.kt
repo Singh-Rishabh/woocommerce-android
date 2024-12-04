@@ -9,6 +9,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -17,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -36,10 +39,15 @@ import com.google.android.material.textfield.TextInputLayout
 import com.woocommerce.android.databinding.ViewAztecBinding
 import com.woocommerce.android.databinding.ViewAztecOutlinedBinding
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.AztecContentChangeWatcher.AztecTextChangeObserver
 import org.wordpress.aztec.AztecText
@@ -290,6 +298,15 @@ private fun InternalAztecEditor(
     }
 
     val focusState = remember { MutableStateFlow(false) }
+    val isImeVisible = rememberUpdatedState(WindowInsets.isImeVisible)
+
+    LaunchedEffect(Unit) {
+        handleFocus(
+            focusState = focusState,
+            imeVisibility = isImeVisible,
+            bringIntoViewRequester = bringIntoViewRequester
+        )
+    }
 
     // `key` is needed to force re-creating the AndroidView when a new Aztec instance is created
     key(aztec) {
@@ -354,6 +371,25 @@ private fun InternalAztecEditor(
             modifier = modifier
                 .bringIntoViewRequester(bringIntoViewRequester)
         )
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+private suspend fun handleFocus(
+    focusState: StateFlow<Boolean>,
+    imeVisibility: State<Boolean>,
+    bringIntoViewRequester: BringIntoViewRequester,
+) = coroutineScope {
+    launch {
+        // Use collectLatest to make sure the nested collection is cancelled when the focus state changes
+        focusState.collectLatest { hasFocus ->
+            if (!hasFocus) return@collectLatest
+            bringIntoViewRequester.bringIntoView()
+
+            snapshotFlow { imeVisibility.value }
+                .filter { it }
+                .collect { bringIntoViewRequester.bringIntoView() }
+        }
     }
 }
 
