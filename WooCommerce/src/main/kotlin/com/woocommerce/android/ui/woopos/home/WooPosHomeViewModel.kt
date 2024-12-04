@@ -81,6 +81,7 @@ class WooPosHomeViewModel @Inject constructor(
         }
     }
 
+    @Suppress("LongMethod")
     private fun listenBottomEvents() {
         viewModelScope.launch {
             childrenToParentEventReceiver.events.collect { event ->

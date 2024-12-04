@@ -857,7 +857,8 @@ class WooPosTotalsViewModelTest {
         val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
         paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
         paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable(
-            errorType = PaymentFlowError.NoNetwork, {})
+            errorType = PaymentFlowError.NoNetwork, {}
+        )
         assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
 
         // WHEN
@@ -869,7 +870,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given payment failed, when exit order clicked, then should inform home about the situation`() = runTest{
+    fun `given payment failed, when exit order clicked, then should inform home about the situation`() = runTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
             .thenReturn("Processing payment")
@@ -894,7 +895,8 @@ class WooPosTotalsViewModelTest {
         val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
         paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
         paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable(
-            errorType = PaymentFlowError.NoNetwork, {})
+            errorType = PaymentFlowError.NoNetwork, {}
+        )
         assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
 
         // WHEN
