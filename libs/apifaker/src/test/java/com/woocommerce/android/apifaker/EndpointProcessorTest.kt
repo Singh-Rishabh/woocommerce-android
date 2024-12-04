@@ -3,6 +3,8 @@ package com.woocommerce.android.apifaker
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
+import com.woocommerce.android.apifaker.models.MockedEndpoint
+import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.util.JSONObjectProvider
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -79,12 +81,12 @@ class EndpointProcessorTest {
     @Test
     fun `when processing a POST Jetpack Tunnel endpoint, then extract data correctly`() {
         val body = """
-            "path": "/wc/v3/products",
+            "path": "/wc/v3/products&_method=post",
             "body": "test body"
         """.trimIndent()
 
         val jsonObject = mock<JSONObject> {
-            on { getString("path") } doReturn "/wc/v3/products"
+            on { getString("path") } doReturn "/wc/v3/products&_method=post"
             on { optString("body") } doReturn "test body"
         }
         whenever(jsonObjectProvider.parseString(body)).thenReturn(jsonObject)
@@ -172,5 +174,42 @@ class EndpointProcessorTest {
             path = "/an/endpoint",
             body = body
         )
+    }
+
+    @Test
+    fun `when processing a jetpack tunnel endpoint, then wrap body if necessary`() {
+        val mockEndpoint = MockedEndpoint(
+            request = com.woocommerce.android.apifaker.models.Request(
+                id = 0,
+                type = ApiType.WPApi,
+                httpMethod = HttpMethod.GET,
+                path = "/wc/v3/products",
+                body = null
+            ),
+            response = Response(
+                endpointId = 0,
+                statusCode = 200,
+                body = "{\"key\":\"value\"}"
+            )
+        )
+        whenever(
+            endpointDaoMock.queryEndpoint(
+                type = mockEndpoint.request.type,
+                httpMethod = mockEndpoint.request.httpMethod!!,
+                path = mockEndpoint.request.path,
+                body = mockEndpoint.request.body.orEmpty()
+            )
+        ).thenReturn(mockEndpoint)
+
+        val request = Request.Builder()
+            .method(mockEndpoint.request.httpMethod.name, null)
+            .url(
+                "https://public-api.wordpress.com/rest/v1.1/jetpack-blogs/161477129/rest-api/" +
+                    "?path=${mockEndpoint.request.path}&_method=${mockEndpoint.request.httpMethod.name}"
+            )
+            .build()
+
+        val response = endpointProcessor.fakeRequestIfNeeded(request)
+        assert(response?.body == "{\"data\": {\"key\":\"value\"}}")
     }
 }

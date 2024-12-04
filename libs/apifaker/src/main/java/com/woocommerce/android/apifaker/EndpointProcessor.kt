@@ -5,6 +5,7 @@ import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.util.JSONObjectProvider
+import okhttp3.HttpUrl
 import okhttp3.Request
 import okio.Buffer
 import javax.inject.Inject
@@ -25,34 +26,41 @@ internal class EndpointProcessor @Inject constructor(
         }
 
         return with(endpointData) {
-            endpointDao.queryEndpoint(apiType, request.httpMethod, path.trimEnd('/'), body.orEmpty())
-        }?.response
+            endpointDao.queryEndpoint(apiType, endpointData.httpMethod, path.trimEnd('/'), body.orEmpty())
+        }?.response?.let {
+            it.copy(body = it.body?.wrapBodyIfNecessary(request.url))
+        }
     }
 
     private fun Request.extractDataFromWPComEndpoint(): EndpointData {
         val originalBody = readBody()
         return if (url.encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX))) {
-            val (path, body) = if (method == "GET") {
-                Pair(
+            val (path, method, body) = if (method == "GET") {
+                Triple(
                     url.queryParameter("path")!!.substringBefore("&"),
+                    url.queryParameter("_method") ?: "GET",
                     null
                 )
             } else {
                 val jsonObject = jsonObjectProvider.parseString(originalBody)
-                Pair(
-                    jsonObject.getString("path").substringBefore("&"),
+                val pathParts = jsonObject.getString("path").split("&")
+                Triple(
+                    pathParts[0],
+                    pathParts.getOrNull(1)?.split("=")?.getOrNull(1) ?: "POST",
                     jsonObject.optString("body")
                 )
             }
 
             EndpointData(
                 apiType = ApiType.WPApi,
+                httpMethod = HttpMethod.valueOf(method.uppercase()),
                 path = path,
                 body = body
             )
         } else {
             EndpointData(
                 apiType = ApiType.WPCom,
+                httpMethod = httpMethod,
                 path = url.encodedPath.substringAfter("/rest"),
                 body = originalBody
             )
@@ -62,6 +70,7 @@ internal class EndpointProcessor @Inject constructor(
     private fun Request.extractDataFromWPApiEndpoint(): EndpointData {
         return EndpointData(
             apiType = ApiType.WPApi,
+            httpMethod = httpMethod,
             path = url.encodedPath.substringAfter("/wp-json"),
             body = readBody()
         )
@@ -70,6 +79,7 @@ internal class EndpointProcessor @Inject constructor(
     private fun Request.extractDataFromCustomEndpoint(): EndpointData {
         return EndpointData(
             apiType = ApiType.Custom(host = url.host),
+            httpMethod = httpMethod,
             path = url.encodedPath,
             body = readBody()
         )
@@ -87,12 +97,24 @@ internal class EndpointProcessor @Inject constructor(
         }
     }
 
+    private fun String.wrapBodyIfNecessary(url: HttpUrl): String {
+        return if (url.host == WPCOM_HOST &&
+            url.encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX)) &&
+            !startsWith("{\"data\":")
+        ) {
+            "{\"data\": $this}"
+        } else {
+            this
+        }
+    }
+
     private val Request.httpMethod
         get() = HttpMethod.valueOf(this.method.uppercase())
 
     private data class EndpointData(
         val apiType: ApiType,
         val path: String,
+        val httpMethod: HttpMethod,
         val body: String?
     )
 }
