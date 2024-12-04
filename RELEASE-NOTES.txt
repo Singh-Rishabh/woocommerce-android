@@ -9,6 +9,7 @@
 - [*] Blaze Campaign Intro screen now offers creating a new product if the site has no products yet [https://github.com/woocommerce/woocommerce-android/pull/13001]
 - [Internal] Updated androidx-lifecycle to 2.8.7. [https://github.com/woocommerce/woocommerce-android/pull/13046/]
 - [*] When entering a wrong WordPress.com account for login, retrying will bring the step back to the email input screen [https://github.com/woocommerce/woocommerce-android/pull/13024]
+- [Internal] Updated androidx-compose-bom to 2024.09.00 [https://github.com/woocommerce/woocommerce-android/pull/13060]
 
 -----
 21.2
