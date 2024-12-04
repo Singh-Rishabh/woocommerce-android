@@ -75,8 +75,8 @@ fun annotatedStringResLegacy(@StringRes stringResId: Int, vararg args: Any): Ann
  * Creates an [AnnotatedString] from the passed String resource.
  *
  * @param stringResId The resource ID of the string to be converted to an [AnnotatedString].
- * @param onUrlClick Allows overriding the default behavior of URL clicks, by default it will open the URL in an external
- * browser.
+ * @param onUrlClick Allows overriding the default behavior of URL clicks, by default it will open the URL in an
+ * external browser.
  * @param args The arguments to be used in the string resource.
  */
 @Composable
