@@ -31,10 +31,6 @@ class WooPosVariationsDataSource @Inject constructor(
         }
     }
 
-    fun getVariationsFlow(productId: Long): Flow<List<ProductVariation>> {
-        return handler.getVariationsFlow(productId)
-    }
-
     fun canLoadMore(): Boolean {
         return handler.canLoadMore()
     }
@@ -67,18 +63,6 @@ class WooPosVariationsDataSource @Inject constructor(
             )
         }
     }.flowOn(Dispatchers.IO)
-
-    suspend fun fetchVariations(productId: Long, forceRefresh: Boolean = true): Result<Unit> {
-        val result = handler.fetchVariations(productId, forceRefresh = forceRefresh)
-        return if (result.isSuccess) {
-            Result.success(Unit)
-        } else {
-            result.logFailure()
-            Result.failure(
-                result.exceptionOrNull() ?: Exception("Unknown error while loading more variations")
-            )
-        }
-    }
 
     suspend fun loadMore(productId: Long): Result<List<ProductVariation>> = withContext(Dispatchers.IO) {
         val result = handler.loadMore(productId)
