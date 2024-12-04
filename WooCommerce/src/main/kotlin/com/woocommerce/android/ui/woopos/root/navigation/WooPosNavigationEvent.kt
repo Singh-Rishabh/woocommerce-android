@@ -4,4 +4,8 @@ sealed class WooPosNavigationEvent {
     data object ExitPosClicked : WooPosNavigationEvent()
     data object BackFromSplashClicked : WooPosNavigationEvent()
     data object OpenHomeFromSplash : WooPosNavigationEvent()
+    data class OpenCashPayment(
+        val orderId: Long,
+        val total: String,
+    ) : WooPosNavigationEvent()
 }

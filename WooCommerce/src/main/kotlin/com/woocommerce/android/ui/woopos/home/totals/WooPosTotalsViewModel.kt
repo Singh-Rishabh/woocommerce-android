@@ -90,16 +90,6 @@ class WooPosTotalsViewModel @Inject constructor(
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
             }
-            WooPosTotalsUIEvent.OnTakeCashPaymentClicked -> {
-                viewModelScope.launch {
-                    uiState.value = WooPosTotalsViewState.CashPayment(
-                        enteredAmount = "",
-                        changeDue = priceFormat(BigDecimal.ZERO),
-                        total = priceFormat(dataState.value.orderTotal!!),
-                        canBeOrderBeCompleted = false
-                    )
-                }
-            }
             is WooPosTotalsUIEvent.OnEmailChanged -> {
                 uiState.value = WooPosTotalsViewState.ReceiptSending(email = event.email)
             }

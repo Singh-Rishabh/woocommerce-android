@@ -23,12 +23,5 @@ sealed class WooPosTotalsViewState : Parcelable {
         val email: String,
     ) : WooPosTotalsViewState()
 
-    data class CashPayment(
-        val enteredAmount: String,
-        val changeDue: String,
-        val total: String,
-        val canBeOrderBeCompleted: Boolean,
-    ) : WooPosTotalsViewState()
-
     data class Error(val message: String) : WooPosTotalsViewState()
 }

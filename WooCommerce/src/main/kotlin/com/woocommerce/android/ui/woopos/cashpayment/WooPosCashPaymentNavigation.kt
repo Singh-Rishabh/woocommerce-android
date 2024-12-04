@@ -6,13 +6,18 @@ import androidx.compose.animation.fadeIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.woocommerce.android.ui.woopos.home.WooPosHomeScreen
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import java.io.Serializable
 
 private const val ROUTE = "cash_payment"
 
-fun NavController.navigateToCashPaymentScreen() {
-    navigate(ROUTE)
+data class WooPosCashPaymentNavigationState(
+    val orderId: Long,
+    val total: String,
+): Serializable
+
+fun NavController.navigateToCashPaymentScreen(navigationState: WooPosCashPaymentNavigationState) {
+    navigate("$ROUTE/$navigationState")
 }
 
 fun NavGraphBuilder.cashPaymentScreen(
@@ -30,6 +35,16 @@ fun NavGraphBuilder.cashPaymentScreen(
             )
         }
     ) {
-        WooPosHomeScreen(onNavigationEvent)
+        WooPosCashPaymentScreen(
+            state = WooPosCashPaymentState(
+                enteredAmount = "5$",
+                changeDue = "5$",
+                total = "10$",
+                canBeOrderBeCompleted = true,
+            ),
+            onAmountChanged = {},
+            onCompleteOrderClicked = {},
+            onBackClicked = {},
+        )
     }
 }

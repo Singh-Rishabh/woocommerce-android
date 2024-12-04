@@ -39,7 +39,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.woopos.cashpayment.WooPosTotalsPaymentCashScreen
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
@@ -94,17 +93,6 @@ private fun WooPosTotalsScreen(
                     state,
                     onEmailAddressChanged = { onUIEvent(WooPosTotalsUIEvent.OnEmailChanged(it)) },
                     onSendReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnSendReceiptClicked) }
-                )
-            }
-        }
-
-        StateChangeAnimated(visible = state is WooPosTotalsViewState.CashPayment) {
-            if (state is WooPosTotalsViewState.CashPayment) {
-                WooPosTotalsPaymentCashScreen(
-                    state,
-                    onAmountChanged = { },
-                    onCompleteOrderClicked = { },
-                    onBackClicked = { },
                 )
             }
         }
