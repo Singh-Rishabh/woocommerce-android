@@ -4,8 +4,11 @@
 21.3
 -----
 - [*] "One time shipping" label in Product Subscriptions now matches its availability state correctly. [https://github.com/woocommerce/woocommerce-android/pull/13021]
+- [*] "One time shipping" label should not be shown in Simple product after conversion from Subscriptions product. [https://github.com/woocommerce/woocommerce-android/pull/13032]
 - [Internal] Refactored IPP Payment flow to allow customizing payment collection UI in POS [https://github.com/woocommerce/woocommerce-android/pull/13014]
 - [*] Blaze Campaign Intro screen now offers creating a new product if the site has no products yet [https://github.com/woocommerce/woocommerce-android/pull/13001]
+- [Internal] Updated androidx-lifecycle to 2.8.7. [https://github.com/woocommerce/woocommerce-android/pull/13046/]
+- [*] When entering a wrong WordPress.com account for login, retrying will bring the step back to the email input screen [https://github.com/woocommerce/woocommerce-android/pull/13024]
 
 -----
 21.2
