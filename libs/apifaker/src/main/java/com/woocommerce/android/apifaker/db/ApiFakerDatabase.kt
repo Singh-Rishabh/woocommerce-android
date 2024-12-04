@@ -13,7 +13,7 @@ import com.woocommerce.android.apifaker.models.Response
         Request::class,
         Response::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(
