@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -39,13 +40,12 @@ fun WooPosPaymentFailedScreen(
         modifier = Modifier
             .background(color = WooPosTheme.colors.homeBackground)
             .fillMaxSize()
-            .padding(vertical = 96.dp.toAdaptivePadding(), horizontal = 295.dp.toAdaptivePadding()),
+            .padding(vertical = 96.dp.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(96.dp.toAdaptivePadding()))
         Icon(
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier.size(84.dp),
             painter = painterResource(id = R.drawable.woo_pos_ic_error_x),
             contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
             tint = Color.Unspecified,
@@ -64,13 +64,15 @@ fun WooPosPaymentFailedScreen(
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
             text = stringResource(R.string.woo_pos_payment_failed_try_another_payment_method),
-            modifier = Modifier.height(80.dp)
+            modifier = Modifier
+                .height(80.dp)
+                .width(604.dp)
         ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
         Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
         WooPosOutlinedButton(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp),
+                .height(80.dp)
+                .width(604.dp),
             content = {
                 Text(
                     color = MaterialTheme.colors.primary,
@@ -80,6 +82,7 @@ fun WooPosPaymentFailedScreen(
                 )
             }
         ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
+        Spacer(modifier = Modifier.height(80.dp.toAdaptivePadding()))
     }
 }
 
