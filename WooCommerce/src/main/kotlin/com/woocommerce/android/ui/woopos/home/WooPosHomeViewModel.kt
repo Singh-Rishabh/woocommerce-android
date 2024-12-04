@@ -96,6 +96,7 @@ class WooPosHomeViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
                         )
+                        sendEventToChildren(ParentToChildrenEvent.BackFromCheckoutToCartClicked)
                     }
 
                     is ChildToParentEvent.ItemClickedInProductSelector -> {
