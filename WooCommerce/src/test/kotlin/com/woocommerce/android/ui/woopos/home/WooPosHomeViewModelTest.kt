@@ -307,6 +307,25 @@ class WooPosHomeViewModelTest {
         assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
     }
 
+    @Test
+    fun `give home screen is at checkout, processing payment, when payment fails, then should show full screen totals state`() = runTest {
+        // GIVEN
+        val events = MutableSharedFlow<ChildToParentEvent>()
+        whenever(childrenToParentEventReceiver.events).thenReturn(events)
+
+        val viewModel: WooPosHomeViewModel = createViewModel()
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
+        events.emit(ChildToParentEvent.PaymentProcessing)
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
+
+        // WHEN
+        events.emit(ChildToParentEvent.PaymentFailed)
+
+        // THEN
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
+    }
+
     private fun createViewModel() = WooPosHomeViewModel(
         childrenToParentEventReceiver,
         parentToChildrenEventSender,
