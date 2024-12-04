@@ -181,8 +181,7 @@ private fun EndpointItem(
                             style = MaterialTheme.typography.subtitle1,
                             fontWeight = FontWeight.SemiBold
                         )
-                        val pathLine = endpoint.request.httpMethod?.let { "$it " }.orEmpty() +
-                                endpoint.request.path
+                        val pathLine = endpoint.request.httpMethod?.let { "$it " }.orEmpty() + endpoint.request.path
                         Text(
                             text = pathLine,
                             style = MaterialTheme.typography.body1

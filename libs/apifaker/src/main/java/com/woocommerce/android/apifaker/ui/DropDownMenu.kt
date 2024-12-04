@@ -33,7 +33,8 @@ internal fun <T> DropDownMenu(
         OutlinedTextField(
             readOnly = true,
             label = { Text(label) },
-            value = formatter(currentValue), onValueChange = {},
+            value = formatter(currentValue),
+            onValueChange = {},
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(
                     expanded = expanded

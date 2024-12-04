@@ -24,11 +24,11 @@ object ApiFakerModule {
     @Provides
     internal fun providesEndpointDao(db: ApiFakerDatabase) = db.endpointDao
 
-        @Provides
-        @IntoSet
-        @Named("interceptors")
-        internal fun providesInterceptor(
-            apiFakerConfig: ApiFakerConfig,
-            endpointProcessor: EndpointProcessor
-        ): Interceptor = ApiFakerInterceptor(apiFakerConfig, endpointProcessor)
-    }
+    @Provides
+    @IntoSet
+    @Named("interceptors")
+    internal fun providesInterceptor(
+        apiFakerConfig: ApiFakerConfig,
+        endpointProcessor: EndpointProcessor
+    ): Interceptor = ApiFakerInterceptor(apiFakerConfig, endpointProcessor)
+}

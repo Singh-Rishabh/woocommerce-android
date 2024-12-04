@@ -19,11 +19,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -250,7 +250,6 @@ private fun EndpointTypeField(
     }
 }
 
-
 @Composable
 private fun HttpMethodField(
     method: HttpMethod?,
@@ -317,8 +316,11 @@ private fun RequestBodyField(
             label = { Text(text = "Body") },
             value = body.orEmpty(),
             placeholder = { Text(text = "An empty value will match everything") },
-            textStyle = if (body != null) LocalTextStyle.current
-            else LocalTextStyle.current.copy(color = Color.Gray),
+            textStyle = if (body != null) {
+                LocalTextStyle.current
+            } else {
+                LocalTextStyle.current.copy(color = Color.Gray)
+            },
             onValueChange = onBodyChanged,
             modifier = Modifier
                 .fillMaxWidth()
