@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -64,7 +63,6 @@ import com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorView
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import org.wordpress.android.fluxc.network.UserAgent
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AccountMismatchErrorScreen(viewModel: AccountMismatchErrorViewModel) {
     val webViewNavigator = rememberWebViewNavigator()

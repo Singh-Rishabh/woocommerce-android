@@ -275,7 +275,7 @@ fun ExpandableProductCard(
                 }
                 .fillMaxWidth(),
             enter = slideInVertically() + expandVertically(expandFrom = Alignment.Top) +
-                    fadeIn(initialAlpha = 0.3f),
+                fadeIn(initialAlpha = 0.3f),
             exit = fadeOut() + shrinkVertically()
         ) {
             ExtendedProductCardContent(
