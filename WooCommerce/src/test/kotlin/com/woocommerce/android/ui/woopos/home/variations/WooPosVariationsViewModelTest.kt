@@ -26,6 +26,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.eq
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -100,7 +101,7 @@ class WooPosVariationsViewModelTest {
         )
         wooPosVariationsViewModel.init(1L)
 
-        verify(getProductById).invoke(1L)
+        verify(getProductById, times(3)).invoke(1L)
     }
 
     @Test
@@ -356,6 +357,7 @@ class WooPosVariationsViewModelTest {
             priceFormat
         )
         wooPosVariationsViewModel.init(1L)
+        advanceUntilIdle()
 
         wooPosVariationsViewModel.viewState.test {
             // THEN
