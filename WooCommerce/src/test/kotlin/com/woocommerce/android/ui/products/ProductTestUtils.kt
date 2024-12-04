@@ -199,16 +199,4 @@ object ProductTestUtils {
             return this
         }
     }
-
-    fun generateProductSubscriptionDetails() = SubscriptionDetails(
-        price = BigDecimal.TEN,
-        period = SubscriptionPeriod.Month,
-        periodInterval = 1,
-        length = null,
-        signUpFee = null,
-        trialPeriod = null,
-        trialLength = null,
-        oneTimeShipping = true,
-        paymentsSyncDate = null
-    )
 }

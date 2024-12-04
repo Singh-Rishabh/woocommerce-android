@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.blaze.IsBlazeEnabled
 import com.woocommerce.android.ui.customfields.CustomFieldsRepository
 import com.woocommerce.android.ui.media.MediaFileUploadHandler
 import com.woocommerce.android.ui.products.ParameterRepository
+import com.woocommerce.android.ui.products.ProductHelper
 import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.products.ProductType
@@ -1245,7 +1246,7 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             product = productAggregate.product.copy(
                 type = ProductType.SUBSCRIPTION.value
             ),
-            subscription = ProductTestUtils.generateProductSubscriptionDetails()
+            subscription = ProductHelper.getDefaultSubscriptionDetails()
         )
         doReturn(subscriptionProduct).whenever(productRepository).getProductAggregate(any())
         viewModel.start()
@@ -1283,9 +1284,9 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         viewModel.getProduct().subscriptionDraft?.let {
             Assertions.assertThat(it.price).isEqualTo(simpleProduct.product.regularPrice)
             Assertions.assertThat(it.period)
-                .isEqualTo(ProductTestUtils.generateProductSubscriptionDetails().period)
+                .isEqualTo(ProductHelper.getDefaultSubscriptionDetails().period)
             Assertions.assertThat(it.periodInterval)
-                .isEqualTo(ProductTestUtils.generateProductSubscriptionDetails().periodInterval)
+                .isEqualTo(ProductHelper.getDefaultSubscriptionDetails().periodInterval)
         } ?: Assertions.fail("Subscription draft should not be null")
     }
 
@@ -1296,7 +1297,7 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             product = productAggregate.product.copy(
                 type = ProductType.SUBSCRIPTION.value
             ),
-            subscription = ProductTestUtils.generateProductSubscriptionDetails()
+            subscription = ProductHelper.getDefaultSubscriptionDetails()
         )
         doReturn(subscriptionProduct).whenever(productRepository).getProductAggregate(any())
         viewModel.start()
