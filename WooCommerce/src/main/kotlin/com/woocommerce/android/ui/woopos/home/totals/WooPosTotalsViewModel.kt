@@ -151,19 +151,18 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
                 createOrderDraft(dataState.value.productIds)
             }
-
-            WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked -> TODO()
-            WooPosTotalsUIEvent.RetryFailedTransactionClicked -> {
+            WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked -> viewModelScope.launch {
+                childrenToParentEventSender.sendToParent(ChildToParentEvent.ExitOrderAfterFailedTransactionClicked)
+            }
+            WooPosTotalsUIEvent.RetryFailedTransactionClicked -> viewModelScope.launch {
                 cancelPaymentAction()
-                viewModelScope.launch {
-                    childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
-                    if (order == null) {
-                        uiState.value = InitialState
-                        childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
-                    } else {
-                        uiState.value = buildWooPosTotalsViewState(order!!)
-                        collectPayment()
-                    }
+                childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
+                if (order == null) {
+                    uiState.value = InitialState
+                    childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
+                } else {
+                    uiState.value = buildWooPosTotalsViewState(order!!)
+                    collectPayment()
                 }
             }
         }
@@ -205,6 +204,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector,
+                    ParentToChildrenEvent.OrderCardPaymentAborted,
                     ParentToChildrenEvent.OrderSuccessfullyPaid -> Unit
                 }
             }

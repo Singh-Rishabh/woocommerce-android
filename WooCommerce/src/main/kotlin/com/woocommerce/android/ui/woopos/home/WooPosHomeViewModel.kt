@@ -104,6 +104,12 @@ class WooPosHomeViewModel @Inject constructor(
                         )
                     }
 
+                    is ChildToParentEvent.ExitOrderAfterFailedTransactionClicked -> {
+                        _state.value = _state.value.copy(
+                            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
+                        )
+                        sendEventToChildren(ParentToChildrenEvent.OrderCardPaymentAborted)
+                    }
                     is ChildToParentEvent.NewTransactionClicked -> {
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
