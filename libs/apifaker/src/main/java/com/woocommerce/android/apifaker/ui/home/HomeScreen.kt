@@ -76,7 +76,8 @@ private fun HomeScreen(
                 },
                 actions = {
                     Switch(checked = isEnabled, onCheckedChange = onMockingToggleChanged)
-                }
+                },
+                backgroundColor = MaterialTheme.colors.surface
             )
         }
     ) { paddingValues ->
