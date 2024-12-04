@@ -6,11 +6,6 @@ class CustomPackageCreationResponse {
     val custom: List<CustomPackageDTO>? = null
 }
 
-data class CustomPackageCreationRequest(
-    val custom: List<CustomPackageCreationData>? = null,
-    val predefined: String = "{}"
-)
-
 data class CustomPackageCreationData(
     val name: String? = null,
     @SerializedName("is_letter") val isLetter: Boolean? = null,
