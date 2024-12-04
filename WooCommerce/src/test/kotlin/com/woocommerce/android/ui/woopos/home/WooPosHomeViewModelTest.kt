@@ -273,6 +273,23 @@ class WooPosHomeViewModelTest {
         assertTrue(viewModel.state.value.screenPositionState is WooPosHomeState.ScreenPositionState.Checkout)
     }
 
+    @Test
+    fun `give home screen is at checkout, when exit order clicked after failed payment, then should show cart`() = runTest {
+        // GIVEN
+        val events = MutableSharedFlow<ChildToParentEvent>()
+        whenever(childrenToParentEventReceiver.events).thenReturn(events)
+
+        val viewModel: WooPosHomeViewModel = createViewModel()
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
+
+        // WHEN
+        events.emit(ChildToParentEvent.ExitOrderAfterFailedTransactionClicked)
+
+        // THEN
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Cart.Visible)
+    }
+
     private fun createViewModel() = WooPosHomeViewModel(
         childrenToParentEventReceiver,
         parentToChildrenEventSender,
