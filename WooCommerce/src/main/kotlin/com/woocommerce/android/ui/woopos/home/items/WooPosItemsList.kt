@@ -96,28 +96,23 @@ fun WooPosItemList(
             }
         }
 
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(104.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                when (state.paginationState) {
-                    PaginationState.Error -> {
-                        onErrorWhilePaginating()
-                    }
-                    PaginationState.Loading -> {
-                        ItemsLoadingItem()
-                    }
-                    PaginationState.None -> {
-                        Spacer(modifier = Modifier.height(0.dp))
-                    }
+        when (state.paginationState) {
+            PaginationState.Error -> {
+                item {
+                    onErrorWhilePaginating()
                 }
             }
+            PaginationState.Loading -> {
+                item {
+                    ItemsLoadingItem()
+                }
+            }
+            PaginationState.None -> {
+            }
         }
+
         item {
-            Spacer(modifier = Modifier.height(54.dp))
+            Spacer(modifier = Modifier.height(104.dp))
         }
     }
     InfiniteListHandler(listState, state) {
