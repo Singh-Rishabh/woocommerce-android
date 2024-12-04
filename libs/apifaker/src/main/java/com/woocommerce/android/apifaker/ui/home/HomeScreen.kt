@@ -17,7 +17,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.DismissDirection
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.FractionalThreshold
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -143,7 +142,8 @@ private fun EndpointItem(
         state = dismissState,
         directions = setOf(DismissDirection.EndToStart),
         dismissThresholds = {
-            FractionalThreshold(0.3f)
+            @Suppress("DEPRECATION")
+            androidx.compose.material.FractionalThreshold(0.3f)
         },
         modifier = modifier,
         background = {
@@ -182,7 +182,7 @@ private fun EndpointItem(
                             fontWeight = FontWeight.SemiBold
                         )
                         val pathLine = endpoint.request.httpMethod?.let { "$it " }.orEmpty() +
-                            endpoint.request.path
+                                endpoint.request.path
                         Text(
                             text = pathLine,
                             style = MaterialTheme.typography.body1
