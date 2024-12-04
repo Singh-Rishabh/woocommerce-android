@@ -21,7 +21,9 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.*
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentFailed
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentProcessing
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentSuccess
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
