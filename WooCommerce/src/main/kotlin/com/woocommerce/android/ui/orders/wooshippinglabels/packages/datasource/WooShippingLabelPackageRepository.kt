@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.WooShippingLabelPackageRestClient
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
@@ -16,6 +17,16 @@ class WooShippingLabelPackageRepository @Inject constructor(
     suspend fun fetchAllStorePackages(
         site: SiteModel = selectedSite.get()
     ) = with(packageRestClient.fetchShippingLabelPackages(site)) {
+        result.takeIf { isError.not() }
+            ?.let { packageMapper(it) }
+            ?.let { WooResult(it) }
+            ?: WooResult(error)
+    }
+
+    suspend fun createCustomPackage(
+        site: SiteModel = selectedSite.get(),
+        requestData: List<CustomPackageCreationData>
+    ) = with(packageRestClient.postNewCustomPackage(site, requestData)) {
         result.takeIf { isError.not() }
             ?.let { packageMapper(it) }
             ?.let { WooResult(it) }
