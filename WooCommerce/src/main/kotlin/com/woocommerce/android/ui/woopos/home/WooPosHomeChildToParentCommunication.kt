@@ -25,6 +25,7 @@ sealed class ChildToParentEvent {
     data object NewTransactionClicked : ChildToParentEvent()
     data object PaymentProcessing : ChildToParentEvent()
     data object PaymentFailed : ChildToParentEvent()
+    data object RetryFailedPaymentClicked : ChildToParentEvent()
     data object OrderSuccessfullyPaid : ChildToParentEvent()
     data object ExitPosClicked : ChildToParentEvent()
     data object ProductsDialogInfoIconClicked : ChildToParentEvent()

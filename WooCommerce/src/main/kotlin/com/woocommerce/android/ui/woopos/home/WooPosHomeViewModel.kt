@@ -117,7 +117,11 @@ class WooPosHomeViewModel @Inject constructor(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals
                         )
                     }
-
+                    is ChildToParentEvent.RetryFailedPaymentClicked -> {
+                        _state.value = _state.value.copy(
+                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
+                        )
+                    }
                     ChildToParentEvent.ExitPosClicked -> {
                         _state.value = _state.value.copy(
                             exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = true)

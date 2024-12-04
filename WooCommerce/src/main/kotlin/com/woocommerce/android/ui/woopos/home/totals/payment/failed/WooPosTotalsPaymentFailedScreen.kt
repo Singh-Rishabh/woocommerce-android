@@ -78,7 +78,7 @@ fun WooPosPaymentFailedScreen(
                     text = stringResource(R.string.woo_pos_payment_failed_exit_order)
                 )
             }
-        ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
+        ) { onUIEvent(WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked) }
         Spacer(modifier = Modifier.height(80.dp.toAdaptivePadding()))
     }
 }

@@ -75,11 +75,13 @@ class WooPosTotalsViewModel @Inject constructor(
 
     val state: StateFlow<WooPosTotalsViewState> = uiState
 
-    private var dataState: MutableStateFlow<TotalsDataState> = savedState.getStateFlow(
+    private val dataState: MutableStateFlow<TotalsDataState> = savedState.getStateFlow(
         scope = viewModelScope,
         initialValue = TotalsDataState(),
         key = KEY_STATE,
     )
+
+    private var order: Order? = null
 
     private var isTTPPaymentInProgress: Boolean
         get() = savedState.get<Boolean>(KEY_TTP_PAYMENT_IN_PROGRESS) == true
@@ -151,7 +153,19 @@ class WooPosTotalsViewModel @Inject constructor(
             }
 
             WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked -> TODO()
-            WooPosTotalsUIEvent.RetryFailedTransactionClicked -> TODO()
+            WooPosTotalsUIEvent.RetryFailedTransactionClicked -> {
+                cancelPaymentAction()
+                viewModelScope.launch {
+                    childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
+                    if (order == null) {
+                        uiState.value = InitialState
+                        childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
+                    } else {
+                        uiState.value = buildWooPosTotalsViewState(order!!)
+                        collectPayment()
+                    }
+                }
+            }
         }
     }
 
@@ -275,6 +289,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     onSuccess = { order ->
                         dataState.value = dataState.value.copy(orderId = order.id)
                         uiState.value = buildWooPosTotalsViewState(order)
+                        this@WooPosTotalsViewModel.order = order
                         analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
                         collectPayment()
                     },
