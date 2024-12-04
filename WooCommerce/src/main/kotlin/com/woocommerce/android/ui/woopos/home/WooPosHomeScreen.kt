@@ -89,18 +89,18 @@ private fun WooPosHomeScreen(
             WooPosHomeState.ScreenPositionState.Cart.Hidden -> screenWidthDp
 
             is WooPosHomeState.ScreenPositionState.Cart.Visible,
-            WooPosHomeState.ScreenPositionState.Checkout.NotPaid -> productsWidthDp
+            WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals -> productsWidthDp
 
-            WooPosHomeState.ScreenPositionState.Checkout.Paid -> productsWidthDp - cartWidthDp
+            WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> productsWidthDp - cartWidthDp
         },
         label = "productsWidthAnimatedDp"
     )
 
     val totalsWidthAnimatedDp by animateDpAsState(
         when (state.screenPositionState) {
-            is WooPosHomeState.ScreenPositionState.Checkout.Paid -> screenWidthDp
+            is WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> screenWidthDp
             is WooPosHomeState.ScreenPositionState.Cart,
-            WooPosHomeState.ScreenPositionState.Checkout.NotPaid -> totalsWidthDp
+            WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals -> totalsWidthDp
         },
         label = "totalsWidthAnimatedDp"
     )
@@ -261,7 +261,7 @@ fun WooPosHomeCheckoutScreenPreview() {
     WooPosTheme {
         WooPosHomeScreen(
             state = WooPosHomeState(
-                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.NotPaid,
+                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals,
                 productsInfoDialog = ProductsInfoDialog(isVisible = false),
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
@@ -277,7 +277,7 @@ fun WooPosHomeCheckoutPaidScreenPreview() {
     WooPosTheme {
         WooPosHomeScreen(
             state = WooPosHomeState(
-                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.Paid,
+                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals,
                 productsInfoDialog = ProductsInfoDialog(isVisible = false),
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),

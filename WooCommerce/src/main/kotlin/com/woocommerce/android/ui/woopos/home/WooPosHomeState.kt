@@ -26,10 +26,10 @@ data class WooPosHomeState(
         @Parcelize
         sealed class Checkout : ScreenPositionState() {
             @Parcelize
-            data object NotPaid : Checkout()
+            data object CartWithTotals : Checkout()
 
             @Parcelize
-            data object Paid : Checkout()
+            data object FullScreenTotals : Checkout()
         }
     }
 

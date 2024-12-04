@@ -45,14 +45,14 @@ class WooPosHomeViewModel @Inject constructor(
         return when (event) {
             WooPosHomeUIEvent.SystemBackClicked -> {
                 when (_state.value.screenPositionState) {
-                    WooPosHomeState.ScreenPositionState.Checkout.NotPaid -> {
+                    WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals -> {
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
                         )
                         sendEventToChildren(ParentToChildrenEvent.BackFromCheckoutToCartClicked)
                     }
 
-                    WooPosHomeState.ScreenPositionState.Checkout.Paid -> {
+                    WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> {
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
                         )
@@ -87,7 +87,7 @@ class WooPosHomeViewModel @Inject constructor(
                 when (event) {
                     is ChildToParentEvent.CheckoutClicked -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.NotPaid
+                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
                         )
                         sendEventToChildren(ParentToChildrenEvent.CheckoutClicked(event.productIds))
                     }
@@ -112,12 +112,12 @@ class WooPosHomeViewModel @Inject constructor(
                     }
                     is ChildToParentEvent.PaymentProcessing -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.Paid
+                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals
                         )
                     }
                     is ChildToParentEvent.OrderSuccessfullyPaid -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.Paid
+                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals
                         )
                     }
 
@@ -160,8 +160,8 @@ class WooPosHomeViewModel @Inject constructor(
                         WooPosHomeState.ScreenPositionState.Cart.Visible
 
                     WooPosHomeState.ScreenPositionState.Cart.Visible,
-                    WooPosHomeState.ScreenPositionState.Checkout.NotPaid,
-                    WooPosHomeState.ScreenPositionState.Checkout.Paid -> screenPosition
+                    WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals,
+                    WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> screenPosition
                 }
             }
         }
