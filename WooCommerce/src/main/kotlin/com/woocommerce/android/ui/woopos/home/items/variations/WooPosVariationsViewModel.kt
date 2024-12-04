@@ -15,7 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,36 +42,44 @@ class WooPosVariationsViewModel @Inject constructor(
     private var fetchJob: Job? = null
     private var loadMoreJob: Job? = null
 
-    fun init(productId: Long) {
+    fun init(productId: Long, withPullToRefresh: Boolean = false, withCart: Boolean = true) {
         resetState()
         startCollectingVariationsFlow(productId)
-        fetchVariations(productId = productId, withPullToRefresh = false, withCart = true)
+        fetchVariations(productId = productId, withPullToRefresh = withPullToRefresh, withCart = withCart)
     }
 
     private fun resetState() {
         flowJob?.cancel()
+        variationsDataSource.resetLoadMoreState()
         _viewState.value = WooPosVariationsViewState.Loading(withCart = true)
     }
 
     private fun startCollectingVariationsFlow(productId: Long) {
         flowJob?.cancel()
         flowJob = viewModelScope.launch {
-            variationsDataSource.getVariationsFlow(productId).drop(1).collect { variationList ->
-                val product = getProductById(productId)
-                _viewState.value = WooPosVariationsViewState.Content(
-                    items = variationList.filter { it.price != null }
-                        .map {
-                            WooPosItem.Variation(
-                                id = it.remoteVariationId,
-                                name = it.getName(product),
-                                productId = it.remoteProductId,
-                                price = priceFormat(it.price),
-                                imageUrl = it.image?.source
-                            )
-                        },
-                    reloadingProductsWithPullToRefresh = false,
-                )
-            }
+            variationsDataSource.getVariationsFlow(productId)
+                .map { variationList ->
+                    if (variationList.isEmpty() && fetchJob?.isActive == true) {
+                        WooPosVariationsViewState.Loading(withCart = true)
+                    } else if (variationList.isEmpty()) {
+                        WooPosVariationsViewState.Error()
+                    } else {
+                        WooPosVariationsViewState.Content(
+                            items = variationList.filter { it.price != null }.map {
+                                WooPosItem.Variation(
+                                    id = it.remoteVariationId,
+                                    name = it.getName(getProductById(productId)),
+                                    productId = it.remoteProductId,
+                                    price = priceFormat(it.price),
+                                    imageUrl = it.image?.source
+                                )
+                            }
+                        )
+                    }
+                }
+                .collect { state ->
+                    _viewState.value = state
+                }
         }
     }
 
@@ -84,10 +92,7 @@ class WooPosVariationsViewModel @Inject constructor(
         fetchJob?.cancel()
 
         fetchJob = viewModelScope.launch {
-            val result = variationsDataSource.fetchVariations(productId, forceRefresh = true)
-            if (result.isFailure) {
-                _viewState.value = WooPosVariationsViewState.Error()
-            }
+            variationsDataSource.fetchVariations(productId, forceRefresh = true)
         }
     }
 
@@ -139,7 +144,7 @@ class WooPosVariationsViewModel @Inject constructor(
             }
 
             is WooPosVariationsUIEvents.VariationsLoadingErrorRetryButtonClicked -> {
-                fetchVariations(event.productId, withPullToRefresh = false, withCart = false)
+                init(event.productId, withPullToRefresh = false, withCart = false)
             }
 
             is WooPosVariationsUIEvents.OnItemClicked -> {

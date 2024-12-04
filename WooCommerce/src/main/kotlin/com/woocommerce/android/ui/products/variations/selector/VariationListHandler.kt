@@ -41,4 +41,8 @@ class VariationListHandler @Inject constructor(private val repository: Variation
             offset += PAGE_SIZE
         }.map { }
     }
+
+    fun resetLoadMoreState() {
+        canLoadMore = false
+    }
 }
