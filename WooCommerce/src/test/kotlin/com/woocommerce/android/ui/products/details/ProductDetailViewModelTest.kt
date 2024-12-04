@@ -1254,7 +1254,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             subscription = ProductTestUtils.generateProductSubscriptionDetails()
         )
         doReturn(subscriptionProduct).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         // Verify initial state has subscription data
@@ -1278,7 +1277,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             subscription = null
         )
         doReturn(simpleProduct).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         // Verify initial state has no subscription data
@@ -1307,7 +1305,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             subscription = ProductTestUtils.generateProductSubscriptionDetails()
         )
         doReturn(subscriptionProduct).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         val originalSubscription = viewModel.getProduct().subscriptionDraft
