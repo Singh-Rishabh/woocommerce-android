@@ -229,6 +229,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
                     is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
                         uiState.value = buildPaymentFailedState()
+                        childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentFailed)
                     }
                     is CardReaderPaymentOrRefundState.CardReaderInteracRefundState -> {
                         throw IllegalStateException("Interac refund is not supported in POS")
