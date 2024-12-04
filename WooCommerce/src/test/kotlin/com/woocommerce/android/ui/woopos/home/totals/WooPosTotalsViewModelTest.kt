@@ -283,7 +283,12 @@ class WooPosTotalsViewModelTest {
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
                 on { events }.thenReturn(mock())
             }
+            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+                .thenReturn("Payment failed")
+            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_subtitle))
+                .thenReturn("Unfortunately, this payment has been declined.")
             val savedState = createMockSavedStateHandle()
+
             val viewModel = createViewModel(
                 savedState = savedState,
                 parentToChildrenEventReceiver = parentToChildrenEventReceiver,
