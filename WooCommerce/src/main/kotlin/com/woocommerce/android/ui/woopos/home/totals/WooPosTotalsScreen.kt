@@ -136,7 +136,7 @@ private fun TotalsLoaded(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1.1f)
                 .background(WooPosTheme.colors.totalsErrorBackground)
         ) {
             val error = state.error
@@ -151,7 +151,7 @@ private fun TotalsLoaded(
                 }
             }
         }
-        TotalsGrid(modifier = Modifier.weight(1f), state = state)
+        TotalsGrid(modifier = Modifier.weight(.9f), state = state)
     }
 }
 
