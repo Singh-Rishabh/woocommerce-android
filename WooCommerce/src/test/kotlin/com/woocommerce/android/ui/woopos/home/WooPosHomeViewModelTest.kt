@@ -326,6 +326,27 @@ class WooPosHomeViewModelTest {
         assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
     }
 
+    @Test
+    fun `give home screen is at checkout, failed payment, when retry payment clicked, then should show cart with totals`() = runTest {
+        // GIVEN
+        val events = MutableSharedFlow<ChildToParentEvent>()
+        whenever(childrenToParentEventReceiver.events).thenReturn(events)
+
+        val viewModel: WooPosHomeViewModel = createViewModel()
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
+        events.emit(ChildToParentEvent.PaymentProcessing)
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
+        events.emit(ChildToParentEvent.PaymentFailed)
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
+
+        // WHEN
+        events.emit(ChildToParentEvent.RetryFailedPaymentClicked)
+
+        // THEN
+        assertThat(viewModel.state.value.screenPositionState).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
+    }
+
     private fun createViewModel() = WooPosHomeViewModel(
         childrenToParentEventReceiver,
         parentToChildrenEventSender,
