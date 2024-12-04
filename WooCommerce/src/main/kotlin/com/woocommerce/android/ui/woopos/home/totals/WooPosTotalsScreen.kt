@@ -49,25 +49,40 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 import kotlinx.coroutines.delay
+import java.math.BigDecimal
 
 @Composable
-fun WooPosTotalsScreen(modifier: Modifier = Modifier) {
+fun WooPosTotalsScreen(
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: WooPosTotalsViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState().value
-    WooPosTotalsScreen(modifier, state, viewModel::onUIEvent)
+    WooPosTotalsScreen(
+        modifier = modifier,
+        state = state,
+        onUIEvent = viewModel::onUIEvent,
+        onNavigationEvent = onNavigationEvent
+    )
 }
 
 @Composable
 private fun WooPosTotalsScreen(
     modifier: Modifier = Modifier,
     state: WooPosTotalsViewState,
-    onUIEvent: (WooPosTotalsUIEvent) -> Unit
+    onUIEvent: (WooPosTotalsUIEvent) -> Unit,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(modifier = modifier) {
         StateChangeAnimated(visible = state is WooPosTotalsViewState.Totals) {
             if (state is WooPosTotalsViewState.Totals) {
-                TotalsLoaded(state = state, onUIEvent = onUIEvent)
+                TotalsLoaded(
+                    state = state,
+                    onUIEvent = onUIEvent,
+                    onNavigationEvent = onNavigationEvent,
+                )
             }
         }
 
@@ -125,7 +140,8 @@ private fun StateChangeAnimated(
 @Composable
 private fun TotalsLoaded(
     state: WooPosTotalsViewState.Totals,
-    onUIEvent: (WooPosTotalsUIEvent) -> Unit
+    onUIEvent: (WooPosTotalsUIEvent) -> Unit,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     var isButtonVisible by remember { mutableStateOf(false) }
 
@@ -158,7 +174,14 @@ private fun TotalsLoaded(
 
                 WooPosButton(
                     text = stringResource(R.string.woopos_payment_take_cash_payment_label),
-                    onClick = { onUIEvent(WooPosTotalsUIEvent.OnTakeCashPaymentClicked) },
+                    onClick = {
+                        onNavigationEvent(
+                            WooPosNavigationEvent.OpenCashPayment(
+                                total = BigDecimal(100),
+                                orderId = 1
+                            )
+                        )
+                    },
                 )
             }
 
@@ -308,7 +331,8 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderTaxText = "$42.00",
                 isCashPaymentAvailable = false
             ),
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
@@ -325,7 +349,8 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
                 orderTaxText = "$42.00",
                 isCashPaymentAvailable = true
             ),
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
@@ -336,7 +361,8 @@ fun WooPosTotalsScreenLoadingPreview() {
     WooPosTheme {
         WooPosTotalsScreen(
             state = WooPosTotalsViewState.Loading,
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
