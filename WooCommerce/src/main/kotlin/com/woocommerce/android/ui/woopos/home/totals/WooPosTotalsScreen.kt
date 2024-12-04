@@ -133,15 +133,22 @@ private fun TotalsLoaded(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        val error = state.error
-        if (error != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1.1f)
-                    .background(WooPosTheme.colors.totalsErrorBackground)
-            ) {
-                TotalsError(modifier = Modifier, error = error)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(WooPosTheme.colors.totalsErrorBackground)
+        ) {
+            val error = state.error
+            when {
+                error != null -> TotalsError(modifier = Modifier, error = error)
+                else -> {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = state.paymentStateText,
+                        style = MaterialTheme.typography.body1,
+                    )
+                }
             }
         }
         TotalsGrid(modifier = Modifier.weight(1f), state = state)
@@ -229,10 +236,6 @@ private fun TotalsGrid(
             styleTwo = MaterialTheme.typography.h4,
             fontWeightOne = FontWeight.Medium,
             fontWeightTwo = FontWeight.Bold,
-        )
-        Text(
-            text = state.paymentStateText,
-            style = MaterialTheme.typography.body1,
         )
     }
 }
