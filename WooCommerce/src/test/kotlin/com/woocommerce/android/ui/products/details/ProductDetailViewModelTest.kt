@@ -978,7 +978,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         doReturn(
             productAggregate.copy(product = productAggregate.product.copy(regularPrice = BigDecimal(99)))
         ).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         viewModel.updateProductDraft(sku = "E9999999")
@@ -991,7 +990,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         doReturn(
             productAggregate.copy(product = productAggregate.product.copy(salePrice = BigDecimal(99)))
         ).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         viewModel.updateProductDraft(sku = "E9999999")
@@ -1004,7 +1002,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         doReturn(
             productAggregate.copy(product = productAggregate.product.copy(regularPrice = BigDecimal(99)))
         ).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         viewModel.updateProductDraft(regularPrice = BigDecimal(0))
@@ -1017,7 +1014,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         doReturn(
             productAggregate.copy(product = productAggregate.product.copy(regularPrice = BigDecimal(99)))
         ).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         viewModel.updateProductDraft(salePrice = BigDecimal(0))
@@ -1030,7 +1026,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         doReturn(
             productAggregate.copy(product = productAggregate.product.copy(regularPrice = BigDecimal(99)))
         ).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         viewModel.updateProductDraft(regularPrice = null)
@@ -1043,7 +1038,6 @@ class ProductDetailViewModelTest : BaseUnitTest() {
         doReturn(
             productAggregate.copy(product = productAggregate.product.copy(regularPrice = BigDecimal(99)))
         ).whenever(productRepository).getProductAggregate(any())
-        viewModel.productDetailViewStateData.observeForever { _, _ -> }
         viewModel.start()
 
         viewModel.updateProductDraft(salePrice = null)
