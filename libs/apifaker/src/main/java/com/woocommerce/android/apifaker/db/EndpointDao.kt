@@ -20,7 +20,7 @@ internal interface EndpointDao {
     fun observeEndpoints(): Flow<List<MockedEndpoint>>
 
     @Query("Select COUNT(*) FROM Request")
-    suspend fun endpointsCount(): Int
+    fun observeEndpointsCount(): Flow<Int>
 
     @Transaction
     @Query(
@@ -51,6 +51,4 @@ internal interface EndpointDao {
         val id = insertRequest(request)
         insertResponse(response.copy(endpointId = id))
     }
-
-    suspend fun isEmpty() = endpointsCount() == 0
 }

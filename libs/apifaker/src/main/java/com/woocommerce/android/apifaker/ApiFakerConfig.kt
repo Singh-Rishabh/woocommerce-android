@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -19,15 +20,18 @@ private const val PREFERENCE_KEY = "api_faker_enabled"
 @Singleton
 internal class ApiFakerConfig @Inject constructor(
     context: Context,
-    private val endpointDao: EndpointDao
+    endpointDao: EndpointDao
 ) {
     private val configScope = CoroutineScope(Dispatchers.Main)
     private val preferences = context.getSharedPreferences(PREF_FILE_NAME, Context.MODE_PRIVATE)
 
     private val prefFlow = preferences.prefFlow(PREFERENCE_KEY, false)
 
-    val enabled = prefFlow.map {
-        it && !endpointDao.isEmpty()
+    val enabled = combine(
+        prefFlow,
+        endpointDao.observeEndpointsCount().map { it == 0 }
+    ) { pref, isEmpty ->
+        pref && !isEmpty
     }.stateIn(configScope, SharingStarted.Eagerly, false)
 
     fun setStatus(enabled: Boolean) {
