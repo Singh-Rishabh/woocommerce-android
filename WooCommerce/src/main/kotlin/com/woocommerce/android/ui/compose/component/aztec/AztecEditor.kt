@@ -9,8 +9,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -19,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +28,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalTextInputService
-import androidx.compose.ui.text.InternalTextApi
-import androidx.compose.ui.text.input.TextInputService
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -42,16 +36,10 @@ import com.google.android.material.textfield.TextInputLayout
 import com.woocommerce.android.databinding.ViewAztecBinding
 import com.woocommerce.android.databinding.ViewAztecOutlinedBinding
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.wordpress.aztec.Aztec
 import org.wordpress.aztec.AztecContentChangeWatcher.AztecTextChangeObserver
 import org.wordpress.aztec.AztecText
@@ -257,7 +245,6 @@ private fun InternalAztecEditor(
 ) {
     val localContext = LocalContext.current
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val textInputService = LocalTextInputService.current
 
     val viewsHolder = remember(localContext, enableSourceEditor) { aztecViewsProvider(localContext) }
     val listener = remember { createToolbarListener { state.toggleHtmlEditor() } }
@@ -303,16 +290,6 @@ private fun InternalAztecEditor(
     }
 
     val focusState = remember { MutableStateFlow(false) }
-    val isImeVisible = rememberUpdatedState(WindowInsets.isImeVisible)
-
-    LaunchedEffect(Unit) {
-        handleFocus(
-            focusState = focusState,
-            imeVisibility = isImeVisible,
-            bringIntoViewRequester = bringIntoViewRequester,
-            textInputService = textInputService
-        )
-    }
 
     // `key` is needed to force re-creating the AndroidView when a new Aztec instance is created
     key(aztec) {
@@ -377,43 +354,6 @@ private fun InternalAztecEditor(
             modifier = modifier
                 .bringIntoViewRequester(bringIntoViewRequester)
         )
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class, InternalTextApi::class)
-private suspend fun handleFocus(
-    focusState: StateFlow<Boolean>,
-    imeVisibility: State<Boolean>,
-    bringIntoViewRequester: BringIntoViewRequester,
-    textInputService: TextInputService?
-) = coroutineScope {
-    launch(Dispatchers.Main.immediate) {
-        // In Compose, text fields use input sessions to manage the input, when focus moves to a non-input field
-        // the session is closed and this hides the keyboard.
-        // This behavior doesn't work well when focus moves to a non-Compose input field, like the Aztec editor.
-        // see: https://issuetracker.google.com/issues/318530776 and https://issuetracker.google.com/issues/363544352
-        // To get around the issue, we are using the internal API to start/stop the input session.
-        // This is safe to do because even if the API changes, we can remove the logic temporarily until the bug is
-        // fixed, as this bug is not critical for the editor.
-        focusState.collect {
-            if (it) {
-                textInputService?.startInput()
-            } else {
-                textInputService?.stopInput()
-            }
-        }
-    }
-
-    launch {
-        // Use collectLatest to make sure the nested collection is cancelled when the focus state changes
-        focusState.collectLatest { hasFocus ->
-            if (!hasFocus) return@collectLatest
-            bringIntoViewRequester.bringIntoView()
-
-            snapshotFlow { imeVisibility.value }
-                .filter { it }
-                .collect { bringIntoViewRequester.bringIntoView() }
-        }
     }
 }
 
