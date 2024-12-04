@@ -12,12 +12,27 @@ class WooShippingLabelPackageRestClient @Inject constructor(
     suspend fun fetchShippingLabelPackages(
         site: SiteModel
     ): WooPayload<PackageResponse> {
-        val url = "/wcshipping/v1/packages"
-
         return wooNetwork.executeGetGsonRequest(
             site = site,
-            path = url,
+            path = URL,
             clazz = PackageResponse::class.java,
         ).toWooPayload()
+    }
+
+    suspend fun postNewCustomPackage(
+        site: SiteModel,
+        name: String,
+        dimensions: String,
+        isLetter: Boolean
+    ): WooPayload<PackageResponse> {
+        return wooNetwork.executePostGsonRequest(
+            site = site,
+            path = URL,
+            clazz = PackageResponse::class.java,
+        ).toWooPayload()
+    }
+
+    companion object {
+        private const val URL = "/wcshipping/v1/packages"
     }
 }
