@@ -17,10 +17,10 @@ import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.store.WCProductStore
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FetchProductBySKUTest : BaseUnitTest() {
+class FetchProductByIdentifierTest : BaseUnitTest() {
     private val repo: ProductListRepository = mock()
     private val checkDigitRemoverFactory: CheckDigitRemoverFactory = mock()
-    private val sut = FetchProductBySKU(repo, checkDigitRemoverFactory)
+    private val sut = FetchProductByIdentifier(repo, checkDigitRemoverFactory)
 
     @Test
     fun `given barcode scan result, when product found, should return success`() = testBlocking {

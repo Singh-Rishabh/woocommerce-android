@@ -47,7 +47,7 @@ import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductStockStatus
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.products.ProductType
-import com.woocommerce.android.ui.products.inventory.FetchProductBySKU
+import com.woocommerce.android.ui.products.inventory.FetchProductByIdentifier
 import com.woocommerce.android.ui.products.models.SiteParameters
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel
 import com.woocommerce.android.util.captureValues
@@ -105,7 +105,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
     protected lateinit var totalsHelper: OrderCreateEditTotalsHelper
     private lateinit var getShippingMethodsWithOtherValue: GetShippingMethodsWithOtherValue
     protected lateinit var feedbackRepository: FeedbackRepository
-    protected lateinit var fetchProductBySKU: FetchProductBySKU
+    protected lateinit var fetchProductByIdentifier: FetchProductByIdentifier
 
     protected val defaultOrderValue = Order.getEmptyOrder(Date(), Date()).copy(id = 123)
 
@@ -216,7 +216,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 feedbackState = FeatureFeedbackSettings.FeedbackState.UNANSWERED
             )
         }
-        fetchProductBySKU = mock()
+        fetchProductByIdentifier = mock()
     }
 
     protected abstract val tracksFlow: String
@@ -605,7 +605,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(ProductTestUtils.generateProduct())
             )
             var isUpdatingOrderDraft: Boolean? = null
@@ -624,7 +624,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -652,7 +652,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -684,7 +684,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 productId = 10L,
                 customStatus = ProductStatus.PENDING.name
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(createOrderItemUseCase.invoke(10L)).thenReturn(
@@ -707,7 +707,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -740,7 +740,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 customStatus = ProductStatus.PUBLISH.name,
                 amount = ""
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(createOrderItemUseCase.invoke(10L)).thenReturn(
@@ -774,7 +774,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 productId = 10L,
                 customStatus = ProductStatus.PENDING.name
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -801,7 +801,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 productId = 10L,
                 customStatus = ProductStatus.PENDING.name
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -832,7 +832,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 productId = 10L,
                 customStatus = ProductStatus.PENDING.name
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -857,7 +857,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 productId = 10L,
                 customStatus = ProductStatus.PENDING.name
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -890,7 +890,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 customStatus = ProductStatus.PUBLISH.name,
                 amount = ""
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -922,7 +922,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 customStatus = ProductStatus.PUBLISH.name,
                 amount = ""
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -948,7 +948,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 customStatus = ProductStatus.PUBLISH.name,
                 amount = ""
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -975,7 +975,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 productId = 10L,
                 customStatus = ProductStatus.PENDING.name,
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -999,7 +999,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 customStatus = ProductStatus.PUBLISH.name,
                 amount = ""
             )
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(product)
             )
             whenever(productRestrictions.isProductRestricted(product)).thenReturn(true)
@@ -1023,7 +1023,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
             )
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1053,7 +1053,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
             )
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1080,7 +1080,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1106,7 +1106,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1140,7 +1140,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 .thenReturn("You cannot add variable product directly. Please select a specific variation")
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1166,7 +1166,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 .thenReturn("You cannot add variable product directly. Please select a specific variation")
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1239,7 +1239,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 .thenReturn("Product with SKU $skuCode not found. Unable to add to the order")
             createSut()
             val scannedStatus = CodeScannerStatus.Success(skuCode, BarcodeFormat.FormatQRCode)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatQRCode)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatQRCode)).thenReturn(
                 Result.failure(Exception())
             )
 
@@ -1262,7 +1262,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 .thenReturn("Product with SKU $skuCode not found. Unable to add to the order")
             createSut()
             val scannedStatus = CodeScannerStatus.Success(skuCode, BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.failure(Exception())
             )
 
@@ -1287,11 +1287,11 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
                 .thenReturn("Product with SKU $skuCode not found. Unable to add to the order")
             createSut()
             val scannedStatus = CodeScannerStatus.Success(skuCode, BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.failure(Exception())
             )
             whenever(
-                fetchProductBySKU.invoke(skuCode, BarcodeFormat.FormatUPCA)
+                fetchProductByIdentifier.invoke(skuCode, BarcodeFormat.FormatUPCA)
             ).thenReturn(Result.failure(Exception()))
 
             sut.handleBarcodeScannedStatus(scannedStatus)
@@ -1306,7 +1306,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1340,7 +1340,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1458,7 +1458,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1481,7 +1481,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1508,7 +1508,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.failure(Exception())
             )
             sut.handleBarcodeScannedStatus(scannedStatus)
@@ -1525,7 +1525,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.failure(Exception())
             )
 
@@ -1547,7 +1547,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.failure(Exception())
             )
 
@@ -1574,7 +1574,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
             ).thenReturn("You cannot add variable product directly. Please select a specific variation")
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1603,7 +1603,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatQRCode)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatQRCode)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatQRCode)).thenReturn(
                 Result.failure(Exception())
             )
 
@@ -1625,7 +1625,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -1656,7 +1656,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
         testBlocking {
             createSut()
             val scannedStatus = CodeScannerStatus.Success("12345", BarcodeFormat.FormatUPCA)
-            whenever(fetchProductBySKU.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
+            whenever(fetchProductByIdentifier.invoke("12345", BarcodeFormat.FormatUPCA)).thenReturn(
                 Result.success(
                     ProductTestUtils.generateProduct(
                         productId = 10L,
@@ -2168,7 +2168,7 @@ abstract class UnifiedOrderEditViewModelTest : BaseUnitTest() {
             dateUtils = mock(),
             getShippingMethodsWithOtherValue = getShippingMethodsWithOtherValue,
             feedbackRepository = feedbackRepository,
-            fetchProductBySKU = fetchProductBySKU,
+            fetchProductByIdentifier = fetchProductByIdentifier,
         )
     }
 

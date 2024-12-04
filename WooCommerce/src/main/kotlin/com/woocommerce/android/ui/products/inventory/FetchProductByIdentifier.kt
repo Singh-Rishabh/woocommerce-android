@@ -7,7 +7,7 @@ import com.woocommerce.android.ui.products.list.ProductListRepository
 import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 
-class FetchProductBySKU @Inject constructor(
+class FetchProductByIdentifier @Inject constructor(
     private val productRepository: ProductListRepository,
     private val checkDigitRemoverFactory: CheckDigitRemoverFactory,
 ) {
