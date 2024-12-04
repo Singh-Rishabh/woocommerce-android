@@ -6,6 +6,20 @@ class CustomPackageCreationResponse {
     val custom: List<CustomPackageDTO>? = null
 }
 
+data class CustomPackageCreationRequest(
+    val custom: List<CustomPackageCreationData>? = null,
+    val predefined: String = "{}"
+)
+
+data class CustomPackageCreationData(
+    val name: String? = null,
+    @SerializedName("is_letter") val isLetter: Boolean? = null,
+    @SerializedName("inner_dimensions") val innerDimensions: String? = null,
+    @SerializedName("box_weight") val boxWeight: Double? = null,
+    @SerializedName("is_user_defined") val isUserDefined: Boolean? = null,
+    @SerializedName("max_weight") val maxWeight: Double? = null
+)
+
 class PackageResponse {
     val storeOptions: PackageStoreOptionsDTO? = null
     val packages: PackagesInfoDTO? = null
