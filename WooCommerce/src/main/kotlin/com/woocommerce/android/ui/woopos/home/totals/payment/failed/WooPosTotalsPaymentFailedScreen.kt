@@ -4,14 +4,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
+import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsUIEvent
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 
@@ -20,26 +35,51 @@ fun WooPosPaymentFailedScreen(
     state: WooPosTotalsViewState.PaymentFailed,
     onUIEvent: (WooPosTotalsUIEvent) -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
-            .background(color = WooPosTheme.colors.paymentProcessingBackground)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+            .background(color = WooPosTheme.colors.homeBackground)
+            .fillMaxSize()
+            .padding(vertical = 96.dp.toAdaptivePadding(), horizontal = 295.dp.toAdaptivePadding()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(text = state.title)
-            Text(text = state.subtitle)
-            WooPosButton(text = "Try another payment method") {
-                onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked)
+        Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
+        Icon(
+            modifier = Modifier.size(64.dp),
+            painter = painterResource(id = R.drawable.woo_pos_ic_error_x),
+            contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
+            tint = Color.Unspecified,
+        )
+        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Text(
+            text = state.title,
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Text(
+            text = state.subtitle,
+            style = MaterialTheme.typography.h6
+        )
+        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        WooPosButton(
+            text = stringResource(R.string.woo_pos_payment_failed_try_another_payment_method),
+            modifier = Modifier.height(80.dp)
+        ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
+        Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+        WooPosOutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp),
+            content = {
+                Text(
+                    color = MaterialTheme.colors.primary,
+                    style = MaterialTheme.typography.h5,
+                    fontWeight = FontWeight.Bold,
+                    text = stringResource(R.string.woo_pos_payment_failed_exit_order)
+                )
             }
-            WooPosButton(text = "Exit order") {
-                onUIEvent(WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked)
-            }
-        }
+        ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
     }
 }
 
@@ -50,7 +90,7 @@ fun WooPosPaymentFailedScreenPreview() {
         WooPosPaymentFailedScreen(
             state = WooPosTotalsViewState.PaymentFailed(
                 title = "Payment failed",
-                subtitle = "Please try again",
+                subtitle = "Unfortunately, this payment has been declined.",
             ),
             onUIEvent = {}
         )
