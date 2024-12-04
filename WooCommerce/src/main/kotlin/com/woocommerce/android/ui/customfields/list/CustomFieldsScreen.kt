@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -49,12 +48,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.UrlAnnotation
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.woocommerce.android.R
@@ -288,26 +287,21 @@ private fun CustomFieldItem(
 
             if (customField.contentType != CustomFieldContentType.TEXT) {
                 val text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = MaterialTheme.colors.primary)) {
-                        pushUrlAnnotation(UrlAnnotation(customField.value))
-                        append(customField.value)
-                    }
+                    pushLink(
+                        LinkAnnotation.Url(
+                            url = customField.value,
+                            styles = TextLinkStyles(style = SpanStyle(color = MaterialTheme.colors.primary)),
+                            linkInteractionListener = { onValueClicked(customField) }
+                        )
+                    )
+                    append(customField.value)
                 }
-                ClickableText(
+                Text(
                     text = text,
-                    style = MaterialTheme.typography.body2.copy(
-                        color = MaterialTheme.colors.onSurface
-                    ),
+                    style = MaterialTheme.typography.body2,
+                    color = MaterialTheme.colors.onSurface,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    onClick = { offset ->
-                        text.getUrlAnnotations(
-                            start = offset,
-                            end = offset
-                        ).firstOrNull()?.let { _ ->
-                            onValueClicked(customField)
-                        }
-                    }
+                    overflow = TextOverflow.Ellipsis
                 )
             } else {
                 Text(
