@@ -36,7 +36,7 @@ internal class EndpointProcessor @Inject constructor(
 
     private fun Request.extractDataFromWPComEndpoint(): EndpointData {
         val originalBody = readBody()
-        return if (url.encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX))) {
+        return if (url.isJetpackTunnelRequest) {
             val (path, method, body) = if (method == "GET") {
                 Triple(
                     url.queryParameter("path")!!.substringBefore("&"),
@@ -89,11 +89,22 @@ internal class EndpointProcessor @Inject constructor(
         )
     }
 
-    private fun HttpUrl.checkQueryParameters(queryParameters: List<QueryParameter>): Boolean {
-        if (queryParameters.isEmpty()) return true
+    private fun HttpUrl.checkQueryParameters(mockedQueryParameters: List<QueryParameter>): Boolean {
+        if (mockedQueryParameters.isEmpty()) return true
 
-        return queryParameters.all { queryParameter ->
-            queryParameter(queryParameter.name) == queryParameter.value
+        val requestQueryParameters = if (isJetpackTunnelRequest) {
+            queryParameter("query")?.let {
+                val json = jsonObjectProvider.parseString(it)
+                json.keys().asSequence().map { key ->
+                    key to json.getString(key)
+                }.toMap()
+            } ?: emptyMap()
+        } else {
+            queryParameterNames.associateWith { queryParameter(it) }
+        }
+
+        return mockedQueryParameters.all { queryParameter ->
+            requestQueryParameters[queryParameter.name] == queryParameter.value
         }
     }
 
@@ -110,8 +121,7 @@ internal class EndpointProcessor @Inject constructor(
     }
 
     private fun String.wrapBodyIfNecessary(url: HttpUrl): String {
-        return if (url.host == WPCOM_HOST &&
-            url.encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX)) &&
+        return if (url.isJetpackTunnelRequest &&
             !startsWith("{\"data\":")
         ) {
             "{\"data\": $this}"
@@ -122,6 +132,9 @@ internal class EndpointProcessor @Inject constructor(
 
     private val Request.httpMethod
         get() = HttpMethod.valueOf(this.method.uppercase())
+
+    private val HttpUrl.isJetpackTunnelRequest
+        get() = host == WPCOM_HOST && encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX))
 
     private data class EndpointData(
         val apiType: ApiType,
