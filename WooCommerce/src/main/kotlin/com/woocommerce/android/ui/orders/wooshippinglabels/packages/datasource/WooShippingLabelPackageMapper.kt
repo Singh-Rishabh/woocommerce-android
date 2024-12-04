@@ -4,6 +4,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.C
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.CarrierType.USPS
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CarrierPackageGroupDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CarrierPredefinedPackagesDTO
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationResponse
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.PackageResponse
 import javax.inject.Inject
@@ -16,6 +17,17 @@ class WooShippingLabelPackageMapper @Inject constructor() {
             savedPackages = mapSavedPackages(savedPackagesResponse),
             carrierPackages = mapCarrierPackages(response.packages?.predefined)
         )
+    }
+
+    operator fun invoke(resopnse: CustomPackageCreationResponse): List<PackageDAO> {
+        return resopnse.custom?.map {
+            PackageDAO(
+                id = it.id.orEmpty(),
+                name = it.name.orEmpty(),
+                dimensions = it.dimensions.orEmpty(),
+                isLetter = it.isLetter ?: false
+            )
+        } ?: emptyList()
     }
 
     private fun mapSavedPackages(savedResponse: List<CustomPackageDTO>): List<PackageDAO> {
