@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.cash
+package com.woocommerce.android.ui.woopos.cashpayment
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
