@@ -4318,6 +4318,8 @@
     <string name="woopos_variations_screen_pagination_error">"Failed to load more items. Please try again."</string>
     <string name="woopos_variations_loading_error_title">Error loading variations</string>
 
+    <string name="woopos_cash_payment_title">Cash payment</string>
+
 
     <string name="customers_details_customer_section">Customer</string>
     <string name="customers_details_orders_section">Orders</string>
