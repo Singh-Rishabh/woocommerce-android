@@ -513,6 +513,37 @@ class WooPosCartViewModelTest {
         assertThat(finalItem.isAppearanceAnimationPlayed).isTrue
     }
 
+    @Test
+    fun `given non-empty cart, when card payment is aborted, then should clear the cart`() = runTest {
+        // GIVEN
+        val product = ProductTestUtils.generateProduct(
+            productId = 23L,
+            productName = "title",
+            amount = "10.0"
+        ).copy(firstImageUrl = "url")
+
+        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
+        val sut = createSut()
+        val states = sut.state.captureValues()
+
+        parentToChildrenEventsMutableFlow.emit(
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = product.remoteId)
+            )
+        )
+
+        // WHEN
+        parentToChildrenEventsMutableFlow.emit(ParentToChildrenEvent.OrderCardPaymentAborted)
+
+        // THEN
+        val toolbar = states.last().toolbar
+        assertThat(toolbar.backIconVisible).isFalse()
+        assertThat(toolbar.itemsCount).isNull()
+        assertThat(toolbar.isClearAllButtonVisible).isFalse()
+    }
+
     private fun createSut(): WooPosCartViewModel {
         return WooPosCartViewModel(
             childrenToParentEventSender,
