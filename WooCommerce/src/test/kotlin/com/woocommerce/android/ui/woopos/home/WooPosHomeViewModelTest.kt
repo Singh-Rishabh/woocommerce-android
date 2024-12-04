@@ -274,7 +274,7 @@ class WooPosHomeViewModelTest {
     }
 
     @Test
-    fun `give home screen is at checkout, when exit order clicked after failed payment, then should show cart`() = runTest {
+    fun `given home screen is at checkout, when exit order clicked after failed payment, then should show cart`() = runTest {
         // GIVEN
         val events = MutableSharedFlow<ChildToParentEvent>()
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
@@ -291,7 +291,7 @@ class WooPosHomeViewModelTest {
     }
 
     @Test
-    fun `give home screen is at checkout, when payment processing started, then should show full screen totals state`() = runTest {
+    fun `given home screen is at checkout, when payment processing started, then should show full screen totals state`() = runTest {
         // GIVEN
         val events = MutableSharedFlow<ChildToParentEvent>()
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
@@ -308,7 +308,7 @@ class WooPosHomeViewModelTest {
     }
 
     @Test
-    fun `give home screen is at checkout, processing payment, when payment fails, then should show full screen totals state`() = runTest {
+    fun `given home screen is at checkout, processing payment, when payment fails, then should show full screen totals state`() = runTest {
         // GIVEN
         val events = MutableSharedFlow<ChildToParentEvent>()
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
@@ -327,7 +327,7 @@ class WooPosHomeViewModelTest {
     }
 
     @Test
-    fun `give home screen is at checkout, failed payment, when retry payment clicked, then should show cart with totals`() = runTest {
+    fun `given home screen is at checkout, failed payment, when retry payment clicked, then should show cart with totals`() = runTest {
         // GIVEN
         val events = MutableSharedFlow<ChildToParentEvent>()
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
