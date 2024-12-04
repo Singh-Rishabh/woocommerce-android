@@ -242,17 +242,11 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = buildPaymentFailedState()
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentFailed)
                     }
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState -> {
-                        throw IllegalStateException("Interac refund is not supported in POS")
-                    }
-                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment -> {
-                        throw IllegalStateException("Built-in reader is not supported in POS")
-                    }
-                    is CardReaderPaymentState.PrintingReceipt -> {
-                        throw IllegalStateException("PrintingReceipt is not supported in POS")
-                    }
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState,
+                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment,
+                    is CardReaderPaymentState.PrintingReceipt,
                     CardReaderPaymentState.SharingReceipt -> {
-                        throw IllegalStateException("SharingReceipt is not supported in POS")
+                        throw IllegalArgumentException("Payment state: $paymentState not compatible with POS")
                     }
                 }
             }
