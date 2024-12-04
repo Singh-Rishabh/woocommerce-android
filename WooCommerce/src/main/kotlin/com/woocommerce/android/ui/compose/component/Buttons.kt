@@ -35,7 +35,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,8 +66,7 @@ fun WCColoredButton(
     shape: Shape = MaterialTheme.shapes.small,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val contentColor by colors.contentColor(enabled = enabled)
-    val rippleConfiguration = RippleConfiguration(color = contentColor)
+    val rippleConfiguration = RippleConfiguration(color = rippleColor)
 
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfiguration) {
         Button(
