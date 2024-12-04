@@ -25,10 +25,12 @@ fun ApiFakerNavHost(
         }
         composable(
             EndpointDetails.baseRoute,
-            arguments = listOf(navArgument("endpointId") {
-                type = NavType.LongType
-                defaultValue = -1
-            })
+            arguments = listOf(
+                navArgument("endpointId") {
+                    type = NavType.LongType
+                    defaultValue = -1
+                }
+            )
         ) {
             TODO()
         }
