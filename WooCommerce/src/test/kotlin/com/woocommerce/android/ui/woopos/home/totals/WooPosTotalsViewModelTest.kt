@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
-import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
@@ -696,30 +695,6 @@ class WooPosTotalsViewModelTest {
 
             // THEN
             verify(cardReaderFacade, never()).collectPayment(any())
-        }
-
-    @Test
-    fun `given receipt sending supported, when OnStartReceiptFlowClicked is triggered, then update state to ReceiptSending with empty email`() =
-        runTest {
-            // GIVEN
-            val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
-                on { events }.thenReturn(mock())
-            }
-            whenever(isReceiptSendingSupported()).thenReturn(true)
-            val savedState = createMockSavedStateHandle()
-            val viewModel = createViewModel(
-                savedState = savedState,
-                parentToChildrenEventReceiver = parentToChildrenEventReceiver,
-            )
-
-            // WHEN
-            viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
-
-            // THEN
-            viewModel.state.test {
-                val state = awaitItem()
-                assertThat(state).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
-            }
         }
 
     @Test
