@@ -124,7 +124,6 @@ class OrdersRealAPI : TestBase() {
 
     @Retry(numberOfTimes = 1)
     @Test
-    @Ignore
     fun e2eRealApiOrderDetails() {
         try {
             OrderListScreen()
