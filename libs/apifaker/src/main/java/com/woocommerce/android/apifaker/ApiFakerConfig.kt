@@ -28,7 +28,7 @@ internal class ApiFakerConfig @Inject constructor(
 
     val enabled = prefFlow.map {
         it && !endpointDao.isEmpty()
-    }.stateIn(configScope, SharingStarted.WhileSubscribed(), false)
+    }.stateIn(configScope, SharingStarted.Eagerly, false)
 
     fun setStatus(enabled: Boolean) {
         preferences.edit().putBoolean(PREFERENCE_KEY, enabled).apply()
