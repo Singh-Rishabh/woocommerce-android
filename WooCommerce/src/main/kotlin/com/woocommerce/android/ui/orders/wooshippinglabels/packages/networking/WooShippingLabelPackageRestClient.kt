@@ -21,14 +21,13 @@ class WooShippingLabelPackageRestClient @Inject constructor(
 
     suspend fun postNewCustomPackage(
         site: SiteModel,
-        name: String,
-        dimensions: String,
-        isLetter: Boolean
-    ): WooPayload<PackageResponse> {
+        requestData: List<CustomPackageCreationData>
+    ): WooPayload<CustomPackageCreationResponse> {
         return wooNetwork.executePostGsonRequest(
             site = site,
             path = URL,
-            clazz = PackageResponse::class.java,
+            body = mapOf("custom" to requestData),
+            clazz = CustomPackageCreationResponse::class.java,
         ).toWooPayload()
     }
 
