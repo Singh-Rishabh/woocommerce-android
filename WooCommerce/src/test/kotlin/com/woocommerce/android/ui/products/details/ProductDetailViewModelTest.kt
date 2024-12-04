@@ -208,8 +208,7 @@ class ProductDetailViewModelTest : BaseUnitTest() {
                             resources.getString(R.string.product_dimensions),
                             productWithParameters.productDraft?.getSizeWithUnits(siteParams.dimensionUnit) ?: ""
                         ),
-                        Pair(resources.getString(R.string.product_shipping_class), ""),
-                        Pair(resources.getString(R.string.subscription_one_time_shipping), "")
+                        Pair(resources.getString(R.string.product_shipping_class), "")
                     ),
                     R.drawable.ic_gridicons_shipping,
                     true
