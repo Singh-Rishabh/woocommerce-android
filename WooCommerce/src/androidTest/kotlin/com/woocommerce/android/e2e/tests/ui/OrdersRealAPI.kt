@@ -21,7 +21,6 @@ import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before
 import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -122,7 +121,6 @@ class OrdersRealAPI : TestBase() {
             .assertOrdersCount(2)
     }
 
-    @Retry(numberOfTimes = 1)
     @Test
     fun e2eRealApiOrderDetails() {
         try {
