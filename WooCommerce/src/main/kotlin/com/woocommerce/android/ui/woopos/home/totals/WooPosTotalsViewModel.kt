@@ -222,11 +222,8 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
 
                 when (paymentState) {
+                    is CardReaderPaymentState.CollectingPayment,
                     is CardReaderPaymentState.LoadingData -> {
-                        // TODO: show loading state within the totals pane
-                    }
-                    is CardReaderPaymentState.CollectingPayment -> {
-                        // TODO: show "tap or swipe" state within the totals pane
                     }
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,

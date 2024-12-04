@@ -855,14 +855,17 @@ class WooPosTotalsViewModelTest {
             )
         whenever(mockCardReaderPaymentController.paymentState).thenReturn(paymentState)
         val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
-
-        // WHEN
         paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
         paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable(
             errorType = PaymentFlowError.NoNetwork, {})
+        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
+
+        // WHEN
+        paymentState.value = CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState("") {}
+        vm.onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked)
 
         // THEN
-        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
+        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
     }
 
     @Test
