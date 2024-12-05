@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -90,15 +92,17 @@ private fun DashboardWidgets(
     val widgetModifier = Modifier
         .fillMaxWidth()
         .padding(horizontal = 16.dp)
+    val nestedScrollInterop = rememberNestedScrollInteropConnection()
+
     if (numberOfColumns == 1) {
-        Column(
-            modifier = modifier,
+        LazyColumn(
+            modifier = modifier.nestedScroll(nestedScrollInterop),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            widgetUiModels.forEach {
-                AnimatedVisibility(it.isVisible) {
+            items(widgetUiModels) { widget ->
+                AnimatedVisibility(widget.isVisible) {
                     DashboardWidgetCard(
-                        it,
+                        widget,
                         mainActivityViewModel,
                         dashboardViewModel,
                         blazeCampaignCreationDispatcher,
@@ -108,7 +112,6 @@ private fun DashboardWidgets(
             }
         }
     } else {
-        val nestedScrollInterop = rememberNestedScrollInteropConnection()
         LazyVerticalStaggeredGrid(
             modifier = modifier.nestedScroll(nestedScrollInterop),
             columns = StaggeredGridCells.Adaptive(400.dp),
