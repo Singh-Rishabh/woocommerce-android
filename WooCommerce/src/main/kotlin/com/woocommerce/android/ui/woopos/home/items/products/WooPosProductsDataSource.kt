@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.items.products
 
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductStatus
-import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.products.selector.ProductListHandler
 import com.woocommerce.android.ui.woopos.featureflags.IsNonSimpleProductTypesEnabled
 import com.woocommerce.android.util.WooLog
@@ -40,7 +39,7 @@ class WooPosProductsDataSource @Inject constructor(
         val result = handler.loadFromCacheAndFetch(
             forceRefresh = forceRefreshProducts,
             searchType = ProductListHandler.SearchType.DEFAULT,
-            includeType = listOf(WCProductStore.IncludeType.Simple, WCProductStore.IncludeType.Variable),
+            includeType = listOf(WCProductStore.IncludeType.Simple),
             filters = mapOf(WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value)
         )
 
