@@ -17,7 +17,6 @@ import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_FEEDBACK_ACTION
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_FEEDBACK_CONTEXT
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_ANALYTICS_HUB_FEEDBACK
-import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_COUPONS_FEEDBACK
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_FEEDBACK_CANCELED
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_FEEDBACK_GENERAL_CONTEXT
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_FEEDBACK_OPENED

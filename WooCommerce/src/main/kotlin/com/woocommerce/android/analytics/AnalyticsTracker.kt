@@ -360,7 +360,6 @@ class AnalyticsTracker private constructor(
         const val VALUE_FEEDBACK_GIVEN = "gave_feedback"
         const val VALUE_SHIPPING_LABELS_M4_FEEDBACK = "shipping_labels_m4"
         const val VALUE_PRODUCT_ADDONS_FEEDBACK = "product_addons"
-        const val VALUE_COUPONS_FEEDBACK = "coupons"
         const val VALUE_ANALYTICS_HUB_FEEDBACK = "analytics_hub"
         const val VALUE_ORDER_SHIPPING_LINES_FEEDBACK = "order_shipping_lines"
         const val VALUE_STATE_ON = "on"
