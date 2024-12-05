@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.map
-import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.cardreader.CardReaderManager
 import com.woocommerce.android.cardreader.payments.PaymentData
@@ -68,7 +67,6 @@ class CardReaderPaymentViewModel @Inject constructor(
         }
 
     private val paymentController = CardReaderPaymentController(
-        scope = viewModelScope,
         cardReaderManager = cardReaderManager,
         orderRepository = orderRepository,
         selectedSite = selectedSite,
@@ -128,7 +126,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     fun onPrintResult(result: PrintJobResult) = paymentController.onPrintResult(result)
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
-    public override fun onCleared() = paymentController.onCleared()
+    public override fun onCleared() = paymentController.stop()
 
     fun onBackPressed() = paymentController.onBackPressed()
 }

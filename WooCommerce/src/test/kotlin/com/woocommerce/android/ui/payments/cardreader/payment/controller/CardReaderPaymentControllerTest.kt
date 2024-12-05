@@ -83,7 +83,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -210,7 +209,6 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         cardReaderFlowParam: CardReaderFlowParam.PaymentOrRefund = paymentParam,
     ) {
         controller = CardReaderPaymentController(
-            scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
             orderRepository = orderRepository,
             selectedSite = selectedSite,
@@ -263,6 +261,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         testBlocking {
             whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
                 flow {
+                    delay(1) // Ensure CardReaderDisplayMessage is emitted after flow is at CollectingPayment state
                     emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_CARD))
                 }
             }
@@ -272,6 +271,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
+            advanceUntilIdle()
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
@@ -282,6 +282,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         testBlocking {
             whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
                 flow {
+                    delay(1) // Ensure CardReaderDisplayMessage is emitted after flow is at CollectingPayment state
                     emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_OR_SWIPE_CARD))
                 }
             }
@@ -291,6 +292,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
+            advanceUntilIdle()
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
@@ -301,6 +303,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         testBlocking {
             whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
                 flow {
+                    delay(1) // Ensure CardReaderDisplayMessage is emitted after flow is at CollectingPayment state
                     emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(SWIPE_CARD))
                 }
             }
@@ -310,6 +313,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
 
             controller.start()
+            advanceUntilIdle()
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
@@ -2411,7 +2415,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            controller.onCleared()
+            controller.stop()
 
             verify(cardReaderManager).cancelPayment(any())
         }
@@ -2430,7 +2434,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 }
             controller.start()
 
-            controller.onCleared()
+            controller.stop()
 
             verify(cardReaderManager, never()).cancelPayment(any())
         }
@@ -3642,7 +3646,6 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     private fun setupControllerForInteracRefund() {
         val param = CardReaderFlowParam.PaymentOrRefund.Refund(ORDER_ID, refundAmount = BigDecimal(10.72))
         controller = CardReaderPaymentController(
-            scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
             orderRepository = orderRepository,
             selectedSite = selectedSite,

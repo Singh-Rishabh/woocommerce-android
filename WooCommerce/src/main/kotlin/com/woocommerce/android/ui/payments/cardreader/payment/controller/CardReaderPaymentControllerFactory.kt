@@ -20,7 +20,6 @@ import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.util.CurrencyFormatter
-import kotlinx.coroutines.CoroutineScope
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import javax.inject.Inject
 import kotlin.reflect.KMutableProperty0
@@ -50,10 +49,8 @@ class CardReaderPaymentControllerFactory @Inject constructor(
     fun create(
         orderId: Long,
         paymentType: PaymentType,
-        coroutineScope: CoroutineScope,
         isTTPPaymentInProgress: KMutableProperty0<Boolean>,
     ): CardReaderPaymentController = CardReaderPaymentController(
-        scope = coroutineScope,
         cardReaderManager = cardReaderManager,
         orderRepository = orderRepository,
         selectedSite = selectedSite,
