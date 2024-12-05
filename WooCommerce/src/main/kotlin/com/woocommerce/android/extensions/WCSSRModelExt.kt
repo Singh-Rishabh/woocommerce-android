@@ -122,7 +122,7 @@ private fun formatEnvironmentData(data: JSONObject): String {
 
     val postMaxSize = data.optString("php_post_max_size", MISSING_VALUE)
     if (postMaxSize != MISSING_VALUE) {
-        sb.append("WP Memory Limit: ${postMaxSize.readableFileSize()}\n")
+        sb.append("PHP Post Max Size: ${postMaxSize.readableFileSize()}\n")
     }
 
     sb.append("PHP Time Limit: ${data.optString("php_max_execution_time", MISSING_VALUE)} s\n")
@@ -133,7 +133,7 @@ private fun formatEnvironmentData(data: JSONObject): String {
 
     val maxUploadSize = data.optString("max_upload_size", MISSING_VALUE)
     if (maxUploadSize != MISSING_VALUE) {
-        sb.append("WP Memory Limit: ${maxUploadSize.readableFileSize()}\n")
+        sb.append("Max Upload Size: ${maxUploadSize.readableFileSize()}\n")
     }
 
     sb.append("Default Timezone: ${data.optString("default_timezone", MISSING_VALUE)}\n")
