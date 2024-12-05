@@ -61,9 +61,6 @@ object AppUrls {
         "https://automattic.survey.fm/order-creation-shipping-lines-survey-production"
     }
 
-    // Will be used later when the feature is fully launched.
-    const val COUPONS_SURVEY = "https://automattic.survey.fm/woo-app-coupon-management-production"
-
     const val WOOCOMMERCE_USER_ROLES =
         "https://woocommerce.com/posts/a-guide-to-woocommerce-user-roles-permissions-and-security/"
     const val SHIPPING_LABEL_CUSTOMS_ITN = "https://pe.usps.com/text/imm/immc5_010.htm"

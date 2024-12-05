@@ -54,7 +54,6 @@ class FeedbackSurveyFragment : BaseFragment(R.layout.fragment_feedback_survey) {
             SurveyType.STORE_ONBOARDING -> VALUE_FEEDBACK_STORE_SETUP_CONTEXT
             SurveyType.ORDER_CREATION -> VALUE_SIMPLE_PAYMENTS_FEEDBACK
             SurveyType.SHIPPING_LABELS -> VALUE_SHIPPING_LABELS_M4_FEEDBACK
-            SurveyType.COUPONS -> VALUE_COUPONS_FEEDBACK
             SurveyType.ADDONS -> VALUE_PRODUCT_ADDONS_FEEDBACK
             SurveyType.ANALYTICS_HUB -> VALUE_ANALYTICS_HUB_FEEDBACK
             SurveyType.PAYMENTS_HUB_TAP_TO_PAY -> VALUE_TAP_TO_PAY_FEEDBACK
