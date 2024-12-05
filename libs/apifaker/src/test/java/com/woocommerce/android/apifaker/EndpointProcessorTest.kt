@@ -81,12 +81,12 @@ class EndpointProcessorTest {
     @Test
     fun `when processing a POST Jetpack Tunnel endpoint, then extract data correctly`() {
         val body = """
-            "path": "/wc/v3/products&_method=post",
+            "path": "/wc/v3/products&_method=put",
             "body": "test body"
         """.trimIndent()
 
         val jsonObject = mock<JSONObject> {
-            on { getString("path") } doReturn "/wc/v3/products&_method=post"
+            on { getString("path") } doReturn "/wc/v3/products&_method=put"
             on { optString("body") } doReturn "test body"
         }
         whenever(jsonObjectProvider.parseString(body)).thenReturn(jsonObject)
@@ -100,7 +100,7 @@ class EndpointProcessorTest {
 
         verify(endpointDaoMock).queryEndpoint(
             type = ApiType.WPApi,
-            httpMethod = HttpMethod.POST,
+            httpMethod = HttpMethod.PUT,
             path = "/wc/v3/products",
             body = "test body"
         )
@@ -177,7 +177,7 @@ class EndpointProcessorTest {
     }
 
     @Test
-    fun `when processing a jetpack tunnel endpoint, then wrap body if necessary`() {
+    fun `when processing a GET jetpack tunnel endpoint, then wrap body if necessary`() {
         val mockEndpoint = MockedEndpoint(
             request = com.woocommerce.android.apifaker.models.Request(
                 id = 0,

@@ -44,9 +44,11 @@ internal class EndpointProcessor @Inject constructor(
             } else {
                 val jsonObject = jsonObjectProvider.parseString(originalBody)
                 val pathParts = jsonObject.getString("path").split("&")
+                val path = pathParts[0]
+                val method = pathParts.firstOrNull { it.startsWith("_method") }?.split("=")?.getOrNull(1) ?: "POST"
                 Triple(
-                    pathParts[0],
-                    pathParts.getOrNull(1)?.split("=")?.getOrNull(1) ?: "POST",
+                    path,
+                    method,
                     jsonObject.optString("body")
                 )
             }
