@@ -38,7 +38,7 @@ internal class ApiFakerConfig @Inject constructor(
         preferences.edit().putBoolean(PREFERENCE_KEY, enabled).apply()
     }
 
-    private fun SharedPreferences.prefFlow(key: String, defaultValue: Boolean) = callbackFlow<Boolean> {
+    private fun SharedPreferences.prefFlow(key: String, defaultValue: Boolean) = callbackFlow {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, listenerKey ->
             if (listenerKey == key) {
                 trySend(getBoolean(key, defaultValue))
