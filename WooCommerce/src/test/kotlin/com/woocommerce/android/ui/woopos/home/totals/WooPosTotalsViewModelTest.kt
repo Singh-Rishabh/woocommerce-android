@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -152,7 +153,7 @@ class WooPosTotalsViewModelTest {
                 orderSubtotalText = "$3.00",
                 orderTaxText = "$2.00",
                 orderTotalText = "$5.00",
-                cashPaymentAvailability = true,
+                cashPaymentAvailability = CashPaymentAvailability.Available(123L)
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -465,7 +466,7 @@ class WooPosTotalsViewModelTest {
                 orderSubtotalText = "3.00$",
                 orderTaxText = "2.00$",
                 orderTotalText = "5.00$",
-                cashPaymentAvailability = false,
+                cashPaymentAvailability = CashPaymentAvailability.Unavailable
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -710,64 +711,6 @@ class WooPosTotalsViewModelTest {
         assertThat(viewModel.state.value).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
     }
 
-    @Test
-    fun `when OnTakeCashPaymentClicked is triggered, then state updates to CashPayment with formatted values`() = runTest {
-        // GIVEN
-        val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
-        )
-        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
-        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
-            on { events }.thenReturn(parentToChildrenEventFlow)
-        }
-        val order = Order.getEmptyOrder(
-            dateCreated = Date(),
-            dateModified = Date()
-        ).copy(
-            totalTax = BigDecimal("2.00"),
-            items = listOf(
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                )
-            ),
-            productsTotal = BigDecimal("3.00"),
-            total = BigDecimal("5.00"),
-        )
-        val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(Result.success(order))
-        }
-        val priceFormat: WooPosFormatPrice = mock {
-            onBlocking { invoke(BigDecimal.ZERO) }.thenReturn("$0.00")
-            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
-            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
-            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
-        }
-
-        val viewModel = createViewModel(
-            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
-            totalsRepository = totalsRepository,
-            priceFormat = priceFormat
-        )
-
-        advanceUntilIdle()
-
-        // WHEN
-        viewModel.onUIEvent(WooPosTotalsUIEvent.OnTakeCashPaymentClicked)
-
-        // THEN
-        val state = viewModel.state.value as WooPosTotalsViewState.CashPayment
-        assertThat(state.enteredAmount).isEqualTo("")
-        assertThat(state.changeDue).isEqualTo("$0.00")
-        assertThat(state.total).isEqualTo("5.00$")
-        assertThat(state.canBeOrderBeCompleted).isEqualTo(false)
-    }
-
     private fun createViewModel(
         resourceProvider: ResourceProvider = mock(),
         parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock(),
@@ -786,7 +729,7 @@ class WooPosTotalsViewModelTest {
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         isReceiptSendingAvailable = isReceiptSendingAvailable,
-        isCashPaymentsEnabled,
+        isCashPaymentsEnabled = isCashPaymentsEnabled,
         savedState = savedState,
     )
 }
