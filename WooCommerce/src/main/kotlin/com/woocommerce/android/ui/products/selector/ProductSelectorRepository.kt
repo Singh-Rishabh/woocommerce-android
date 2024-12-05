@@ -75,13 +75,15 @@ class ProductSelectorRepository @Inject constructor(
         forceRefresh: Boolean = false,
         offset: Int,
         pageSize: Int,
-        filterOptions: Map<ProductFilterOption, String>
+        filterOptions: Map<ProductFilterOption, String>,
+        includeType: List<WCProductStore.IncludeType>,
     ): Result<Boolean> {
         return productStore.fetchProducts(
             site = selectedSite.get(),
             offset = offset,
             pageSize = pageSize,
             filterOptions = filterOptions,
+            includeTypes = includeType,
             forceRefresh = forceRefresh,
         )
             .let { result ->

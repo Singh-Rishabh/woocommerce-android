@@ -94,7 +94,8 @@ class ProductListRepository @Inject constructor(
             offset = offset,
             sortType = sortType ?: productSortingChoice,
             filterOptions = productFilterOptions,
-            excludedProductIds = excludedProductIds.orEmpty()
+            excludedProductIds = excludedProductIds.orEmpty(),
+            includeTypes = emptyList()
         ).let { result ->
             if (result.isError) {
                 AnalyticsTracker.track(

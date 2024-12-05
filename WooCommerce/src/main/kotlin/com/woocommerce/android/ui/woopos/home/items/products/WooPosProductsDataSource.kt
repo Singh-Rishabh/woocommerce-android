@@ -40,15 +40,8 @@ class WooPosProductsDataSource @Inject constructor(
         val result = handler.loadFromCacheAndFetch(
             forceRefresh = forceRefreshProducts,
             searchType = ProductListHandler.SearchType.DEFAULT,
-            filters =
-            if (isNonSimpleProductTypesEnabled()) {
-                mapOf(WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value)
-            } else {
-                mapOf(
-                    WCProductStore.ProductFilterOption.TYPE to ProductType.SIMPLE.value,
-                    WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value
-                )
-            }
+            includeType = listOf(WCProductStore.IncludeType.Simple, WCProductStore.IncludeType.Variable),
+            filters = mapOf(WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value)
         )
 
         if (result.isSuccess) {
