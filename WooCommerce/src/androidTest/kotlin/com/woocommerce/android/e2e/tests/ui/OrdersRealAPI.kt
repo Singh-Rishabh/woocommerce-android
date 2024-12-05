@@ -70,11 +70,7 @@ class OrdersRealAPI : TestBase() {
 
     @After
     fun tearDown() {
-        OrderListScreen()
-            .leaveOrClearSearchMode()
-
-        WelcomeScreen
-            .logoutIfNeeded(composeTestRule)
+        WelcomeScreen.logoutIfNeeded(composeTestRule)
     }
 
     @Retry(numberOfTimes = 1)
