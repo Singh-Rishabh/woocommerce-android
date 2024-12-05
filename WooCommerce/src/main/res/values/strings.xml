@@ -996,7 +996,6 @@
     <string name="orderdetail_shipping_label_create_shipping_label">Create shipping label</string>
     <string name="orderdetail_shipping_label_notice">Learn more about creating labels with your mobile device</string>
     <string name="orderdetail_custom_fields">Custom fields</string>
-    <string name="orderdetail_view_custom_fields">View custom fields</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨Create thank-you note</string>
     <string name="receipt_preview_print_menu_item">Print</string>
     <string name="receipt_preview_send_menu_item">Send</string>
@@ -1545,23 +1544,23 @@
     <string name="card_reader_tap_to_pay_not_available_error_android_version">To use Tap To Pay on Android, you need Android 10 or newer. To accept in-person payments, please update Android or purchase a Bluetooth card reader.</string>
     <string name="card_reader_tap_to_pay_not_available_error_gms">To use Tap To Pay on Android, your device needs Google Play Services. To accept in-person payments, please install Google Play Services or purchase a Bluetooth card reader.</string>
     <string name="card_reader_tap_to_pay_not_available_error_country">Unfortunately, Tap To Pay on Android is not available in your country yet. Stay tuned!</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">Available funds</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">Pending funds</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">Funds become available after pending for %d days.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">Funds become available after pending for %d day.</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">LAST DEPOSIT</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">Available funds are deposited automatically, every day.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">Available funds are deposited automatically, every %s.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">Available funds are deposited automatically, every month on the %s.</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">Learn more about when you\'ll receive your funds</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">Collapse/expand deposit summary</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">Estimated</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">Paid</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">Pending</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">In transit</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">Canceled</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">Failed</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">Unknown</string>
+    <string name="card_reader_hub_payout_summary_available_funds">Available funds</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">Pending funds</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">Funds become available after pending for %d days.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">Funds become available after pending for %d day.</string>
+    <string name="card_reader_hub_payout_funds_payout_title">LAST PAYOUT</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">Available funds are paid out automatically, every day.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">Available funds are paid out automatically, every %s.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">Available funds are paid out automatically, every month on the %s.</string>
+    <string name="card_reader_hub_payout_summary_learn_more">Learn more about when you\'ll receive your funds</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">Collapse/expand payout summary</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">Estimated</string>
+    <string name="card_reader_hub_payout_summary_status_paid">Paid</string>
+    <string name="card_reader_hub_payout_summary_status_pending">Pending</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">In transit</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">Canceled</string>
+    <string name="card_reader_hub_payout_summary_status_failed">Failed</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">Unknown</string>
     <!--
            Card Reader Tap To Pay Explanation
         -->
@@ -2005,7 +2004,9 @@
     <string name="product_tax_status_taxable">Taxable</string>
     <string name="product_tax_status_shipping">Shipping</string>
     <string name="product_sku">SKU</string>
+    <string name="product_global_unique_id">GTIN, UPC, EAN, ISBN</string>
     <string name="product_sku_summary">Helps to easily identify this product</string>
+    <string name="product_global_unique_id_summary">Enter a barcode or any other identifier unique to this product. It can help you list this product on other channels or marketplaces.</string>
     <string name="product_stock_status">Stock status</string>
     <string name="product_type">Product type</string>
     <string name="product_category">Category</string>
@@ -2112,6 +2113,7 @@
     <string name="product_inventory_quantity">Quantity</string>
     <string name="product_inventory_quantity_summary">How many items are in stock</string>
     <string name="product_inventory_update_sku_error">SKU already in use by another product</string>
+    <string name="product_inventory_update_global_unique_id_error">Please enter only numbers and hyphens</string>
     <string name="product_inventory_update_stock_quantity_error">Please enter a number</string>
     <string name="product_pricing_update_sale_price_error">Sale price must be less than regular price</string>
     <string name="product_pricing_scheduled_sale_price_error">You must set the sale price if a sale is scheduled</string>
@@ -3427,7 +3429,7 @@
     <string name="login_magic_link_auto_sent">We just sent you a magic link to your e-mail address. Please tap the link in the email to log in.</string>
     <string name="login_magic_link_button">Log in with magic link</string>
 
-    <string name="username_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this username. You can enter an email to create a new account.</string>
+    <string name="username_not_registered_wpcom">We can\'t find a WordPress.com account connected to this username. You can enter an email to create a new account.</string>
     <string name="login_magic_links_label">We\'ll email you a link that\'ll log you in instantly, no password needed.</string>
     <string name="login_get_link_by_email">Get a login link by email</string>
     <string name="signup_magic_link_message">We’ve emailed you a signup link to create your new WordPress.com account. Check your email on this device, and tap the link in the email you receive from WordPress.com.</string>
@@ -4177,6 +4179,9 @@
     <string name="blaze_campaign_creation_new_intro_learn_item_3"><![CDATA[<b>Set your budget:</b> Decide on your spend and campaign length.]]></string>
     <string name="blaze_campaign_creation_new_intro_learn_item_4"><![CDATA[<b>Quick review:</b> Submit your ad for a fast moderator check.]]></string>
     <string name="blaze_campaign_creation_new_intro_learn_item_5"><![CDATA[<b>Go live:</b> Watch as your promotion begins and track its success.]]></string>
+    <string name="blaze_campaign_creation_no_product_modal_title">No products found</string>
+    <string name="blaze_campaign_creation_no_product_modal_body">You currently don\'t have a product available for promotion. Would you like to create a product now?</string>
+    <string name="blaze_campaign_creation_no_product_modal_cta">Create Product</string>
 
     <string name="order_configuration_product_selection">Select product %s</string>
     <string name="order_configuration_product_selection_control">Product selection</string>
@@ -4273,6 +4278,7 @@
     <string name="woopos_payment_successful_label">Payment successful</string>
     <string name="woopos_payment_successful_checkmark_icon_content_description">Payment successful checkmark icon</string>
     <string name="woopos_new_order_button">New order</string>
+    <string name="woopos_receipt_button">Receipt</string>
     <string name="woopos_payment_subtotal_label">Subtotal</string>
     <string name="woopos_payment_tax_label">Taxes</string>
     <string name="woopos_payment_total_label">Total</string>
@@ -4377,4 +4383,5 @@
     <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
     <string name="woo_shipping_labels_package_creation_box_type">Box</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
+    <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
 </resources>

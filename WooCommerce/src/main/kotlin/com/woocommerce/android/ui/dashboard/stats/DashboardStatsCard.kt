@@ -98,7 +98,7 @@ fun DashboardStatsCard(
                     currencyFormatter = viewModel.currencyFormatter,
                     usageTracksEventEmitter = viewModel.usageTracksEventEmitter,
                     onAddCustomRangeClick = viewModel::onAddCustomRangeClicked,
-                    onTabSelected = viewModel::onTabSelected,
+                    onTabSelected = viewModel::onRangeChanged,
                     onChartDateSelected = viewModel::onChartDateSelected
                 )
             }

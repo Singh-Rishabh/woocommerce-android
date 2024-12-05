@@ -151,7 +151,7 @@ android {
         coreLibraryDesugaringEnabled true
     }
 
-    flavorDimensions "buildType"
+    flavorDimensions = ["buildType"]
 
     productFlavors {
         // Used for release/beta builds. Usually shouldn't be build locally.
@@ -429,7 +429,6 @@ dependencies {
 
     // ViewModel and LiveData
     implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.androidx.lifecycle.process)
 
@@ -549,12 +548,6 @@ android.buildTypes.all { buildType ->
     // Print warning message if example Google services file is used.
     if ((file("google-services.json").text) == (file("google-services.json-example").text)) {
         println("WARNING: You're using the example google-services.json file. Google login will fail.")
-    }
-}
-
-task printVersionName {
-    doLast {
-        println android.defaultConfig.versionName
     }
 }
 

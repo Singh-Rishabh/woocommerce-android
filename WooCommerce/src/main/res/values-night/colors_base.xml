@@ -37,7 +37,6 @@
     <color name="color_accent_3">@color/woo_blue_30</color>
 
     <color name="inverted_surface_overlay">@color/color_surface</color>
-    <color name="color_text_link">@color/woo_pink_30</color>
 
     <!--
         App colors
@@ -211,20 +210,20 @@
     <!--
     Deposit summary
     -->
-    <color name="deposit_summary_status_estimated_background">@color/woo_gray_80</color>
-    <color name="deposit_summary_status_estimated_text">@color/woo_gray_5</color>
-    <color name="deposit_summary_status_pending_background">@color/woo_yellow_70</color>
-    <color name="deposit_summary_status_pending_text">@color/woo_yellow_10</color>
-    <color name="deposit_summary_status_in_transit_background">@color/woo_orange_70</color>
-    <color name="deposit_summary_status_in_transit_text">@color/woo_orange_5</color>
-    <color name="deposit_summary_status_paid_background">@color/woo_green_50</color>
-    <color name="deposit_summary_status_paid_text">@color/woo_green_0</color>
-    <color name="deposit_summary_status_canceled_background">@color/woo_purple_80</color>
-    <color name="deposit_summary_status_canceled_text">@color/woo_purple_15</color>
-    <color name="deposit_summary_status_failed_background">@color/woo_red_70</color>
-    <color name="deposit_summary_status_failed_text">@color/woo_red_5</color>
-    <color name="deposit_summary_status_unknown_background">@color/woo_gray_80</color>
-    <color name="deposit_summary_status_unknown_text">@color/woo_gray_6</color>
+    <color name="payout_summary_status_estimated_background">@color/woo_gray_80</color>
+    <color name="payout_summary_status_estimated_text">@color/woo_gray_5</color>
+    <color name="payout_summary_status_pending_background">@color/woo_yellow_70</color>
+    <color name="payout_summary_status_pending_text">@color/woo_yellow_10</color>
+    <color name="payout_summary_status_in_transit_background">@color/woo_orange_70</color>
+    <color name="payout_summary_status_in_transit_text">@color/woo_orange_5</color>
+    <color name="payout_summary_status_paid_background">@color/woo_green_50</color>
+    <color name="payout_summary_status_paid_text">@color/woo_green_0</color>
+    <color name="payout_summary_status_canceled_background">@color/woo_purple_80</color>
+    <color name="payout_summary_status_canceled_text">@color/woo_purple_15</color>
+    <color name="payout_summary_status_failed_background">@color/woo_red_70</color>
+    <color name="payout_summary_status_failed_text">@color/woo_red_5</color>
+    <color name="payout_summary_status_unknown_background">@color/woo_gray_80</color>
+    <color name="payout_summary_status_unknown_text">@color/woo_gray_6</color>
 
     <!--
     Blaze
