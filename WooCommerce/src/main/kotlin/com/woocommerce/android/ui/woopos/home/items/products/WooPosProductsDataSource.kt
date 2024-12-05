@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.woopos.home.items.products
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.selector.ProductListHandler
-import com.woocommerce.android.ui.woopos.featureflags.IsNonSimpleProductTypesEnabled
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +20,6 @@ import javax.inject.Singleton
 @Singleton
 class WooPosProductsDataSource @Inject constructor(
     private val handler: ProductListHandler,
-    private val isNonSimpleProductTypesEnabled: IsNonSimpleProductTypesEnabled,
 ) {
     private var productCache: List<Product> = emptyList()
     private val cacheMutex = Mutex()
