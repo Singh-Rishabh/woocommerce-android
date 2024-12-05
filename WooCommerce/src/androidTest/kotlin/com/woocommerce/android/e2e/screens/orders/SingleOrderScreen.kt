@@ -16,7 +16,7 @@ import org.hamcrest.Matchers
 
 class SingleOrderScreen : Screen(R.id.orderDetail_container) {
     fun goBackToOrdersScreen(): OrderListScreen {
-        if (isElementDisplayed(R.id.orderDetail_container)) {
+        if (!isElementDisplayed(R.id.order_list_view_root) && isElementDisplayed(R.id.orderDetail_container)) {
             pressBack()
         }
 
