@@ -42,14 +42,9 @@ fun WooPosCashPaymentScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(
-                start = 16.dp.toAdaptivePadding(),
-                end = 16.dp.toAdaptivePadding(),
-                top = 40.dp.toAdaptivePadding(),
-                bottom = 0.dp.toAdaptivePadding(),
-            )
     ) {
         Toolbar(onBackClicked)
+
         when (state) {
             is WooPosCashPaymentState.Collecting -> {
                 Collecting(
@@ -141,6 +136,7 @@ private fun Toolbar(onBackClicked: () -> Unit) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top = 40.dp.toAdaptivePadding())
             .height(40.dp)
     ) {
         val (backButton, title) = createRefs()
@@ -152,6 +148,7 @@ private fun Toolbar(onBackClicked: () -> Unit) {
                     top.linkTo(parent.top)
                     centerVerticallyTo(parent)
                 }
+                .padding(start = 8.dp.toAdaptivePadding())
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
@@ -161,7 +158,7 @@ private fun Toolbar(onBackClicked: () -> Unit) {
             )
         }
 
-        val iconTitlePadding = 16.dp.toAdaptivePadding()
+        val iconTitlePadding = 8.dp.toAdaptivePadding()
         Text(
             text = stringResource(R.string.woopos_cash_payment_title),
             style = MaterialTheme.typography.h4,
