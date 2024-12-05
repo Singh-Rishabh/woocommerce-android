@@ -102,7 +102,7 @@ private fun CommonItemLayout(
                 contentDescription = null,
                 colorFilter = item.iconTint?.let { ColorFilter.tint(colorResource(id = it)) },
                 modifier = Modifier
-                    .size(84.dp)
+                    .size(72.dp)
             )
 
             Text(
