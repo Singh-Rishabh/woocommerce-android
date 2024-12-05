@@ -25,6 +25,7 @@ import com.woocommerce.android.tools.SiteConnectionType
 import com.woocommerce.android.tools.connectionType
 import com.woocommerce.android.ui.analytics.ranges.StatsTimeRangeSelection.SelectionType
 import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardEvent.OpenEditWidgets
+import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardEvent.RefreshJitm
 import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.NewWidgetsCard
 import com.woocommerce.android.ui.dashboard.data.DashboardRepository
 import com.woocommerce.android.ui.prefs.privacy.banner.domain.ShouldShowPrivacyBanner
@@ -170,6 +171,7 @@ class DashboardViewModel @Inject constructor(
         usageTracksEventEmitter.interacted()
         analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_PULLED_TO_REFRESH)
         _refreshTrigger.tryEmit(RefreshEvent(isForced = true))
+        triggerEvent(RefreshJitm)
     }
 
     fun onResume() {
@@ -355,6 +357,8 @@ class DashboardViewModel @Inject constructor(
         data object FeedbackPositiveAction : DashboardEvent()
 
         data object FeedbackNegativeAction : DashboardEvent()
+
+        data object RefreshJitm : DashboardEvent()
     }
 
     data class RefreshEvent(val isForced: Boolean = false)
