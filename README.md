@@ -38,7 +38,7 @@
     $ cd woocommerce-android
     ```
 
-1. Create a new `~/.configure/woocommerce-android/secrets.properties` file. See the [Configuration Files](docs/project-overview.md#configuration-files) section for a breakdown of the properties.
+1. Copy `defaults.properties` to `~/.configure/woocommerce-android/secrets/secrets.properties`. See the [Configuration Files](docs/project-overview.md#configuration-files) section for a breakdown of the properties.
 1. Generate the developer oauth2 tokens. These values get copied into the `~/.configure/woocommerce-android/secrets.properties` file in the next step. See the [OAuth2 Authentication](docs/project-overview.md#oauth2-authentication) section for details.
 1. In Android Studio, open the project from the local repository. This will auto-generate `local.properties` with the SDK location.
 1. Optional: Go to Tools → Device Manager and create an emulated device.
