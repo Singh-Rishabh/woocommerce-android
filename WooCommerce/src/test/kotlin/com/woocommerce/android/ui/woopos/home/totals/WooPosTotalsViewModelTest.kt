@@ -41,6 +41,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.UiStringParser
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,6 +98,7 @@ class WooPosTotalsViewModelTest {
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker = mock()
     private val cardReaderConfigProvider: CardReaderCountryConfigProvider = mock()
     private val paymentReceiptShare: PaymentReceiptShare = mock()
+    private val uiStringParser: UiStringParser = mock()
     private val paymentControllerFactory = CardReaderPaymentControllerFactory(
         cardReaderManager = cardReaderManager,
         orderRepository = orderRepository,
@@ -840,8 +842,7 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Please wait…")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
             .thenReturn("Payment failed")
-        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_subtitle))
-            .thenReturn("Unfortunately, this payment has been declined.")
+        whenever(uiStringParser.asString(any())).thenReturn("Unfortunately, this payment has been declined.")
 
         whenever(networkStatus.isConnected()).thenReturn(true)
         val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
@@ -878,8 +879,7 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Please wait…")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
             .thenReturn("Payment failed")
-        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_subtitle))
-            .thenReturn("Unfortunately, this payment has been declined.")
+        whenever(uiStringParser.asString(any())).thenReturn("Unfortunately, this payment has been declined.")
 
         whenever(networkStatus.isConnected()).thenReturn(true)
         val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
@@ -977,6 +977,7 @@ class WooPosTotalsViewModelTest {
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
+        uiStringParser = uiStringParser,
         savedState = savedState,
     )
 }

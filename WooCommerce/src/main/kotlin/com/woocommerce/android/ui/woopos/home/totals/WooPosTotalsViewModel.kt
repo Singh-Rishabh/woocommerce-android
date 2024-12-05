@@ -28,6 +28,7 @@ import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
+import com.woocommerce.android.util.UiStringParser
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -57,6 +58,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
     private val cardReaderPaymentControllerFactory: CardReaderPaymentControllerFactory,
+    private val uiStringParser: UiStringParser,
     private val savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -239,7 +241,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
                     is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
-                        uiState.value = buildPaymentFailedState()
+                        uiState.value = buildPaymentFailedState(paymentState)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentFailed)
                     }
                     is CardReaderPaymentOrRefundState.CardReaderInteracRefundState,
@@ -253,13 +255,11 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private fun buildPaymentFailedState(): PaymentFailed = PaymentFailed(
+    private fun buildPaymentFailedState(state: CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment): PaymentFailed = PaymentFailed(
         title = resourceProvider.getString(
             R.string.woopos_success_totals_payment_failed_title
         ),
-        subtitle = resourceProvider.getString(
-            R.string.woopos_success_totals_payment_failed_subtitle
-        )
+        subtitle = uiStringParser.asString(state.errorType.message)
     )
 
     private fun buildPaymentProcessingState(): PaymentProcessing = PaymentProcessing(
