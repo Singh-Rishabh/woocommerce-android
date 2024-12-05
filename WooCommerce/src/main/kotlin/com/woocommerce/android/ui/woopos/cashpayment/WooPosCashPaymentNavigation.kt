@@ -7,18 +7,11 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
-import java.io.Serializable
-import java.math.BigDecimal
 
 private const val ROUTE = "cash_payment"
 
-data class WooPosCashPaymentNavigationState(
-    val orderId: Long,
-    val total: BigDecimal,
-): Serializable
-
-fun NavController.navigateToCashPaymentScreen(navigationState: WooPosCashPaymentNavigationState) {
-    navigate("$ROUTE/$navigationState")
+fun NavController.navigateToCashPaymentScreen(orderId: Long) {
+    navigate("$ROUTE/$orderId")
 }
 
 fun NavGraphBuilder.cashPaymentScreen(

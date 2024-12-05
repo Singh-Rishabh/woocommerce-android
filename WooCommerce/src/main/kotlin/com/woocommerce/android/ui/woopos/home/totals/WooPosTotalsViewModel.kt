@@ -203,7 +203,11 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            isCashPaymentAvailable = isCashPaymentsEnabled()
+            cashPaymentAvailability = if (isCashPaymentsEnabled()) {
+                WooPosTotalsViewState.Totals.CashPaymentAvailability.Available(order.id)
+            } else {
+                WooPosTotalsViewState.Totals.CashPaymentAvailability.Unavailable
+            }
         )
     }
 

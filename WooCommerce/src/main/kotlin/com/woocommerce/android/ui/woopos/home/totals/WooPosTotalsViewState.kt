@@ -11,8 +11,14 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderSubtotalText: String,
         val orderTaxText: String,
         val orderTotalText: String,
-        val isCashPaymentAvailable: Boolean,
-    ) : WooPosTotalsViewState()
+        val cashPaymentAvailability: CashPaymentAvailability,
+    ) : WooPosTotalsViewState() {
+        @Parcelize
+        sealed class CashPaymentAvailability : Parcelable {
+            data class Available(val orderId: Long) : CashPaymentAvailability()
+            object Unavailable : CashPaymentAvailability()
+        }
+    }
 
     data class PaymentSuccess(
         val orderTotalText: String,

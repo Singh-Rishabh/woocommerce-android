@@ -152,7 +152,7 @@ class WooPosTotalsViewModelTest {
                 orderSubtotalText = "$3.00",
                 orderTaxText = "$2.00",
                 orderTotalText = "$5.00",
-                isCashPaymentAvailable = true,
+                cashPaymentAvailability = true,
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -465,7 +465,7 @@ class WooPosTotalsViewModelTest {
                 orderSubtotalText = "3.00$",
                 orderTaxText = "2.00$",
                 orderTotalText = "5.00$",
-                isCashPaymentAvailable = false,
+                cashPaymentAvailability = false,
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
