@@ -442,7 +442,6 @@ dependencies {
     testImplementation(libs.cashapp.turbine)
 
     implementation(libs.apache.commons.text)
-    implementation(libs.commons.io)
 
     implementation(libs.tinder.statemachine)
 

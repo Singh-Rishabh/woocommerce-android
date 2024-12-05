@@ -42,7 +42,6 @@ bumptech-glide = '4.16.0'
 cashapp-turbine = '1.0.0'
 coil = '2.1.0'
 commons-fileupload = '1.5'
-commons-io = '2.11.0'
 dependency-analysis = '1.28.0'
 detekt = '1.23.5'
 facebook-flipper = '0.176.1'
@@ -172,7 +171,6 @@ cashapp-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 commons-fileupload = { group = "commons-fileupload", name = "commons-fileupload", version.ref = "commons-fileupload" }
-commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 facebook-flipper-main = { group = "com.facebook.flipper", name = "flipper", version.ref = "facebook-flipper" }
 facebook-flipper-network-plugin = { group = "com.facebook.flipper", name = "flipper-network-plugin", version.ref = "facebook-flipper" }
