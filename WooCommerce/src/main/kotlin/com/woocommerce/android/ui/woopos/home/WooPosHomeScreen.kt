@@ -206,7 +206,8 @@ private fun WooPosHomeScreenCart(modifier: Modifier) {
 @Composable
 private fun WooPosHomeScreenTotals(
     modifier: Modifier,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit
+) {
     if (isPreviewMode()) {
         WooPosTotalsScreenPreview(modifier)
     } else {

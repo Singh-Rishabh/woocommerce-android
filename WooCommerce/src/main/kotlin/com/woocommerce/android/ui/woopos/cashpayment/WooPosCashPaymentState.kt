@@ -16,4 +16,3 @@ sealed class WooPosCashPaymentState : Parcelable {
 
     object Initiating : WooPosCashPaymentState()
 }
-

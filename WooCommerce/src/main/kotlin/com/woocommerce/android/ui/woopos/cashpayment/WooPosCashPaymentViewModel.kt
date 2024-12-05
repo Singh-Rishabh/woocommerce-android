@@ -40,5 +40,9 @@ class WooPosCashPaymentViewModel @Inject constructor(
     }
 
     fun onUIEvent(event: WooPosCashPaymentUIEvent) {
+        when (event) {
+            is WooPosCashPaymentUIEvent.AmountChanged -> TODO()
+            WooPosCashPaymentUIEvent.CompleteOrderClicked -> TODO()
+        }
     }
 }
