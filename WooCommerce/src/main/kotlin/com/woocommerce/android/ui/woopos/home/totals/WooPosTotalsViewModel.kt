@@ -255,7 +255,9 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private fun buildPaymentFailedState(state: CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment): PaymentFailed = PaymentFailed(
+    private fun buildPaymentFailedState(
+        state: CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
+    ): PaymentFailed = PaymentFailed(
         title = resourceProvider.getString(
             R.string.woopos_success_totals_payment_failed_title
         ),
