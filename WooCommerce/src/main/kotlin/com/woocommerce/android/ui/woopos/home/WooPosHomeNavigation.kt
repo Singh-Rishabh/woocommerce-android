@@ -1,8 +1,10 @@
 package com.woocommerce.android.ui.woopos.home
 
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -27,7 +29,16 @@ fun NavGraphBuilder.homeScreen(
                     easing = FastOutSlowInEasing
                 )
             )
-        }
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> -fullWidth },
+                animationSpec = spring(
+                    dampingRatio = 0.8f,
+                    stiffness = 200f
+                )
+            )
+        },
     ) {
         WooPosHomeScreen(onNavigationEvent)
     }

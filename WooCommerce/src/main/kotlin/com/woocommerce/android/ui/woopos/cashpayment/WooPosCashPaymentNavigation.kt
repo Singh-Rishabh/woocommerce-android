@@ -1,8 +1,8 @@
 package com.woocommerce.android.ui.woopos.cashpayment
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -25,14 +25,23 @@ fun NavGraphBuilder.cashPaymentScreen(
             navArgument("orderId") { type = NavType.LongType }
         ),
         enterTransition = {
-            fadeIn(
-                animationSpec = tween(
-                    durationMillis = 300,
-                    delayMillis = 200,
-                    easing = FastOutSlowInEasing
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+                animationSpec = spring(
+                    dampingRatio = 0.8f,
+                    stiffness = 200f
                 )
             )
-        }
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> fullWidth },
+                animationSpec = spring(
+                    dampingRatio = 0.8f,
+                    stiffness = 200f
+                )
+            )
+        },
     ) { backStackEntry ->
         WooPosCashPaymentScreen(
             onNavigationEvent = onNavigationEvent,
