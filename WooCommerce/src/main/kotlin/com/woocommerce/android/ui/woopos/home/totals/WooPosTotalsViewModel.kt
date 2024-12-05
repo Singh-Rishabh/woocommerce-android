@@ -166,7 +166,6 @@ class WooPosTotalsViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        super.onCleared()
         cardReaderPaymentController?.stop()
     }
 
