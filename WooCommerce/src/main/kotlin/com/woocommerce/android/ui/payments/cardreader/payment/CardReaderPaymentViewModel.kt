@@ -118,9 +118,6 @@ class CardReaderPaymentViewModel @Inject constructor(
     fun retry(orderId: Long, billingEmail: String, paymentData: PaymentData, amountLabel: String) =
         paymentController.retry(orderId, billingEmail, paymentData, amountLabel)
 
-    @VisibleForTesting
-    fun reFetchOrder() = paymentController.reFetchOrder()
-
     fun onViewCreated() = paymentController.onViewCreated()
 
     fun onPrintResult(result: PrintJobResult) = paymentController.onPrintResult(result)
