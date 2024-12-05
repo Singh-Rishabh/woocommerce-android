@@ -9,6 +9,7 @@
 - [Internal] Refactored IPP Payment flow to allow customizing payment collection UI in POS [https://github.com/woocommerce/woocommerce-android/pull/13014]
 - [*] Blaze Campaign Intro screen now offers creating a new product if the site has no products yet [https://github.com/woocommerce/woocommerce-android/pull/13001]
 - [*] When entering a wrong WordPress.com account for login, retrying will bring the step back to the email input screen [https://github.com/woocommerce/woocommerce-android/pull/13024]
+- [Internal] Replaces a function in WCSSRExt that then removes the need for commons-io dependency. [https://github.com/woocommerce/woocommerce-android/pull/13073]
 
 
 -----
