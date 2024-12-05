@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.cashpayment
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -10,15 +11,53 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+
+@Composable
+fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
+    val viewModel = hiltViewModel<WooPosCashPaymentViewModel>()
+    val state = viewModel.state.collectAsState().value
+
+    WooPosCashPaymentScreen(
+        state = state,
+        onAmountChanged = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.AmountChanged(it)) },
+        onCompleteOrderClicked = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked) },
+        onBackClicked = { },
+    )
+}
 
 @Composable
 fun WooPosCashPaymentScreen(
     state: WooPosCashPaymentState,
+    onAmountChanged: (String) -> Unit,
+    onCompleteOrderClicked: () -> Unit,
+    onBackClicked: () -> Unit,
+) {
+    when (state) {
+        is WooPosCashPaymentState.Collecting -> {
+            CashPaymentCollecting(
+                state = state,
+                onAmountChanged = onAmountChanged,
+                onCompleteOrderClicked = onCompleteOrderClicked,
+                onBackClicked = onBackClicked,
+            )
+        }
+        WooPosCashPaymentState.Finishing -> TODO()
+        WooPosCashPaymentState.Initiating -> {
+
+        }
+    }
+}
+
+@Composable
+private fun CashPaymentCollecting(
+    state: WooPosCashPaymentState.Collecting,
     onAmountChanged: (String) -> Unit,
     onCompleteOrderClicked: () -> Unit,
     onBackClicked: () -> Unit,
@@ -135,7 +174,7 @@ fun PaymentCashToolbar(onBackClicked: () -> Unit) {
 fun WooPosTotalsPaymentCashScreenScreen() {
     WooPosTheme {
         WooPosCashPaymentScreen(
-            state = WooPosCashPaymentState(
+            state = WooPosCashPaymentState.Collecting(
                 enteredAmount = "5$",
                 changeDue = "5$",
                 total = "10$",

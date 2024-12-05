@@ -5,13 +5,15 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
-private const val ROUTE = "cash_payment"
+private const val ROUTE = "cash_payment/{orderId}"
 
 fun NavController.navigateToCashPaymentScreen(orderId: Long) {
-    navigate("$ROUTE/$orderId")
+    navigate("cash_payment/$orderId")
 }
 
 fun NavGraphBuilder.cashPaymentScreen(
@@ -19,6 +21,9 @@ fun NavGraphBuilder.cashPaymentScreen(
 ) {
     composable(
         route = ROUTE,
+        arguments = listOf(
+            navArgument("orderId") { type = NavType.LongType }
+        ),
         enterTransition = {
             fadeIn(
                 animationSpec = tween(
@@ -28,17 +33,9 @@ fun NavGraphBuilder.cashPaymentScreen(
                 )
             )
         }
-    ) {
+    ) { backStackEntry ->
         WooPosCashPaymentScreen(
-            state = WooPosCashPaymentState(
-                enteredAmount = "5$",
-                changeDue = "5$",
-                total = "10$",
-                canBeOrderBeCompleted = true,
-            ),
-            onAmountChanged = {},
-            onCompleteOrderClicked = {},
-            onBackClicked = {},
+            onNavigationEvent = onNavigationEvent,
         )
     }
 }
