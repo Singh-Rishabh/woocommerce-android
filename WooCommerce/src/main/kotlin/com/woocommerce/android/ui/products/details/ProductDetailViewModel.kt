@@ -1229,13 +1229,22 @@ class ProductDetailViewModel @Inject constructor(
         updateProductDraft(type = productType.value, isVirtual = isVirtual)
 
         viewState.productAggregateDraft?.let { productAggregateDraft ->
-            if (productType == ProductType.SUBSCRIPTION && productAggregateDraft.subscription == null) {
-                viewState = viewState.copy(
-                    subscriptionDraft = ProductHelper.getDefaultSubscriptionDetails().copy(
-                        price = productAggregateDraft.product.regularPrice
-                    )
-                )
-            }
+            viewState = viewState.copy(
+                subscriptionDraft = when {
+                    // If converting to subscription product, set the default subscription details
+                    productType == ProductType.SUBSCRIPTION && productAggregateDraft.subscription == null ->
+                        ProductHelper.getDefaultSubscriptionDetails().copy(
+                            price = productAggregateDraft.product.regularPrice
+                        )
+
+                    // If converting to non-subscription products, reset subscription data that might have existed
+                    // (e.g: if the original product is of subscription type).
+                    // This avoids any Product Details card conflicts that can happen after conversion.
+                    productType !in setOf(ProductType.SUBSCRIPTION, ProductType.VARIABLE_SUBSCRIPTION) -> null
+
+                    else -> viewState.subscriptionDraft
+                }
+            )
         }
     }
 
@@ -2731,7 +2740,7 @@ class ProductDetailViewModel @Inject constructor(
             }
         )
 
-        fun copy(subscriptionDraft: SubscriptionDetails) = copy(
+        fun copy(subscriptionDraft: SubscriptionDetails?) = copy(
             productAggregateDraft = productAggregateDraft?.copy(subscription = subscriptionDraft)
         )
 
