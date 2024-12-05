@@ -5,8 +5,8 @@
 <p align="center">A Jetpack-powered mobile app for WooCommerce.</p>
 
 <p align="center">
-    <a href="https://circleci.com/gh/woocommerce/woocommerce-android">
-        <img src="https://circleci.com/gh/woocommerce/woocommerce-android.svg?style=shield" alt="CircleCI">
+    <a href="https://buildkite.com/automattic/woocommerce-android">
+        <img src="https://badge.buildkite.com/3ac8789ce5bc81e2d078d32ee8e526efbdb7c1ef3b19c70be3.svg?branch=trunk">
     </a>
     <a href="https://github.com/woocommerce/woocommerce-android/releases">
         <img alt="Release" src="https://img.shields.io/github/v/tag/woocommerce/woocommerce-android?label=release&sort=semver">
