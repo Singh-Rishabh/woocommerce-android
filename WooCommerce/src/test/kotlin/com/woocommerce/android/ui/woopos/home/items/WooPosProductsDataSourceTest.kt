@@ -1,8 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items
 
-import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductTestUtils
-import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.products.selector.ProductListHandler
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -15,9 +13,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.wordpress.android.fluxc.store.WCProductStore
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -70,14 +66,13 @@ class WooPosProductsDataSourceTest {
     )
 
     private val handler: ProductListHandler = mock()
-    private val isNonSimpleProductTypesEnabled: IsNonSimpleProductTypesEnabled = mock()
 
     @Test
     fun `given force refresh, when loadSimpleProducts called, then should clear cache`() = runTest {
         // GIVEN
         whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
         whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+        val sut = WooPosProductsDataSource(handler)
 
         // Pre-populate the cache
         sut.loadSimpleProducts(forceRefreshProducts = false).first()
@@ -101,8 +96,8 @@ class WooPosProductsDataSourceTest {
         // GIVEN
         whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
         whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+        whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+        val sut = WooPosProductsDataSource(handler)
 
         // WHEN
         sut.loadSimpleProducts(forceRefreshProducts = false).first()
@@ -120,8 +115,8 @@ class WooPosProductsDataSourceTest {
             // GIVEN
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
@@ -143,14 +138,16 @@ class WooPosProductsDataSourceTest {
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
             val exception = Exception("Remote load failed")
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
 
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             // Prepopulate the cache by calling loadSimpleProducts once
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
 
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.failure(exception))
+            whenever(
+                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())
+            ).thenReturn(Result.failure(exception))
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -174,7 +171,7 @@ class WooPosProductsDataSourceTest {
                 flowOf(sampleProducts + additionalProducts)
             )
             whenever(handler.loadMore()).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
 
@@ -199,7 +196,7 @@ class WooPosProductsDataSourceTest {
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
             val exception = Exception("Load more failed")
             whenever(handler.loadMore()).thenReturn(Result.failure(exception))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
 
@@ -223,9 +220,11 @@ class WooPosProductsDataSourceTest {
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(emptyList()))
             val exception = Exception("Remote load failed")
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.failure(exception))
+            whenever(
+                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())
+            ).thenReturn(Result.failure(exception))
 
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -245,8 +244,8 @@ class WooPosProductsDataSourceTest {
             // GIVEN
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(emptyList()))
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -285,8 +284,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -322,8 +321,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
@@ -360,8 +359,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -399,8 +398,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
@@ -436,8 +435,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -474,8 +473,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
@@ -484,47 +483,4 @@ class WooPosProductsDataSourceTest {
             val remoteResult = flow[1] as WooPosProductsDataSource.ProductsResult.Remote
             assertThat(remoteResult.productsResult.getOrNull()?.any { it.remoteId == 1L }).isFalse()
         }
-
-    @Test
-    fun `given non-simple product types feature disabled, when loadSimpleProducts called, then add filter to display only simple products`() = runTest {
-        // GIVEN
-        whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-        whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        whenever(isNonSimpleProductTypesEnabled.invoke()).thenReturn(false)
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
-
-        // WHEN
-        sut.loadSimpleProducts(forceRefreshProducts = true).first()
-
-        // THEN
-        verify(handler).loadFromCacheAndFetch(
-            forceRefresh = true,
-            searchType = ProductListHandler.SearchType.DEFAULT,
-            filters = mapOf(
-                WCProductStore.ProductFilterOption.TYPE to ProductType.SIMPLE.value,
-                WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value
-            )
-        )
-    }
-
-    @Test
-    fun `given non-simple product types feature enabled, when loadSimpleProducts called, then do not add filter to display only simple products`() = runTest {
-        // GIVEN
-        whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-        whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        whenever(isNonSimpleProductTypesEnabled.invoke()).thenReturn(true)
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
-
-        // WHEN
-        sut.loadSimpleProducts(forceRefreshProducts = true).first()
-
-        // THEN
-        verify(handler).loadFromCacheAndFetch(
-            forceRefresh = true,
-            searchType = ProductListHandler.SearchType.DEFAULT,
-            filters = mapOf(
-                WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value
-            )
-        )
-    }
 }
