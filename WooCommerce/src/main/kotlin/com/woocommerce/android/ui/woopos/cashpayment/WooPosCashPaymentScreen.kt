@@ -28,7 +28,7 @@ fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) 
         state = state,
         onAmountChanged = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.AmountChanged(it)) },
         onCompleteOrderClicked = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked) },
-        onBackClicked = { },
+        onBackClicked = { onNavigationEvent(WooPosNavigationEvent.BackFromCashPayment) },
     )
 }
 
@@ -39,28 +39,39 @@ fun WooPosCashPaymentScreen(
     onCompleteOrderClicked: () -> Unit,
     onBackClicked: () -> Unit,
 ) {
-    when (state) {
-        is WooPosCashPaymentState.Collecting -> {
-            CashPaymentCollecting(
-                state = state,
-                onAmountChanged = onAmountChanged,
-                onCompleteOrderClicked = onCompleteOrderClicked,
-                onBackClicked = onBackClicked,
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 16.dp.toAdaptivePadding(),
+                end = 16.dp.toAdaptivePadding(),
+                top = 40.dp.toAdaptivePadding(),
+                bottom = 0.dp.toAdaptivePadding(),
             )
-        }
-        WooPosCashPaymentState.Finishing -> TODO()
-        WooPosCashPaymentState.Initiating -> {
+    ) {
+        Toolbar(onBackClicked)
+        when (state) {
+            is WooPosCashPaymentState.Collecting -> {
+                Collecting(
+                    state = state,
+                    onAmountChanged = onAmountChanged,
+                    onCompleteOrderClicked = onCompleteOrderClicked,
+                )
+            }
 
+            WooPosCashPaymentState.Finishing -> TODO()
+            WooPosCashPaymentState.Initiating -> {
+
+            }
         }
     }
 }
 
 @Composable
-private fun CashPaymentCollecting(
+private fun Collecting(
     state: WooPosCashPaymentState.Collecting,
     onAmountChanged: (String) -> Unit,
     onCompleteOrderClicked: () -> Unit,
-    onBackClicked: () -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -69,8 +80,6 @@ private fun CashPaymentCollecting(
             modifier = Modifier
                 .width(540.dp)
         ) {
-            PaymentCashToolbar(onBackClicked)
-
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
@@ -128,7 +137,7 @@ private fun CashPaymentCollecting(
 }
 
 @Composable
-fun PaymentCashToolbar(onBackClicked: () -> Unit) {
+private fun Toolbar(onBackClicked: () -> Unit) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()

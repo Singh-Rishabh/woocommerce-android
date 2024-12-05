@@ -15,5 +15,6 @@ fun NavHostController.handleNavigationEvent(
 
         is WooPosNavigationEvent.OpenHomeFromSplash -> navigateToHomeScreen()
         is WooPosNavigationEvent.OpenCashPayment -> navigateToCashPaymentScreen(event.orderId)
+        WooPosNavigationEvent.BackFromCashPayment -> popBackStack()
     }
 }
