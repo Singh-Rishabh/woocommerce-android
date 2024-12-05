@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.products.inventory
 
+import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
@@ -64,6 +65,12 @@ class FetchProductByIdentifier @Inject constructor(
             productRepository.searchProductListByGlobalUniqueId(
                 globalUniqueId = codeScannerResultCode
             )?.firstOrNull()
+        }
+
+        if (product != null) {
+            tracker.track(
+                AnalyticsEvent.PRODUCT_SEARCH_VIA_GLOBAL_UNIQUE_IDENTIFIER_SUCCESS
+            )
         }
 
         return product

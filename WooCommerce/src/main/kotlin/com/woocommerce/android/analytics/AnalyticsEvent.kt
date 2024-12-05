@@ -339,9 +339,10 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     PRODUCT_QUICK_INVENTORY_VIEW_PRODUCT_DETAILS_TAPPED,
     PRODUCT_QUICK_INVENTORY_UPDATE_BOTTOM_SHEET_SHOWN,
 
-    // -- Product Search Via SKU
+    // -- Product Search Via SKU or Global Unique Identifier
     PRODUCT_SEARCH_VIA_SKU_SUCCESS,
     PRODUCT_SEARCH_VIA_SKU_FAILURE,
+    PRODUCT_SEARCH_VIA_GLOBAL_UNIQUE_IDENTIFIER_SUCCESS,
 
     // -- Refunds
     CREATE_ORDER_REFUND_NEXT_BUTTON_TAPPED,
