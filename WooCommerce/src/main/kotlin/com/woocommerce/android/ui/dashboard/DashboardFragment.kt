@@ -26,7 +26,6 @@ import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.databinding.FragmentDashboardBinding
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.getColorCompat
 import com.woocommerce.android.extensions.handleNotice
 import com.woocommerce.android.extensions.handleResult
@@ -200,10 +199,10 @@ class DashboardFragment :
         dashboardViewModel.jetpackBenefitsBannerState.observe(viewLifecycleOwner) { jetpackBenefitsBanner ->
             onVisitorStatsUnavailable(jetpackBenefitsBanner)
         }
-        dashboardViewModel.dashboardWidgets.observe(viewLifecycleOwner) { widgets ->
+        dashboardViewModel.dashboardCardsState.observe(viewLifecycleOwner) { state ->
             // Show banners only if onboarding list is NOT displayed
             if (
-                widgets.none {
+                state.widgets.none {
                     (it as? DashboardWidgetUiModel.ConfigurableWidget)?.widget?.type == DashboardWidget.Type.ONBOARDING
                 }
             ) {
@@ -212,9 +211,6 @@ class DashboardFragment :
         }
         dashboardViewModel.hasNewWidgets.observe(viewLifecycleOwner) { hasNewWidgets ->
             editButtonBadge.isVisible = hasNewWidgets
-        }
-        dashboardViewModel.isRefreshingOnBackground.observe(viewLifecycleOwner) { isRefreshing ->
-            binding.myStoreRefreshLayout.isRefreshing = isRefreshing
         }
     }
 

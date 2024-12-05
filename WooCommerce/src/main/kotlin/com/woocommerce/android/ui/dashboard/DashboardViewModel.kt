@@ -105,18 +105,31 @@ class DashboardViewModel @Inject constructor(
         feedbackPrefs.userFeedbackIsDueObservable
     ) { configurableWidgets, hasNewWidgets, userFeedbackIsDue ->
         mapWidgetsToUiModels(configurableWidgets, hasNewWidgets, userFeedbackIsDue)
-    }.asLiveData()
+    }
 
     val hasNewWidgets = dashboardRepository.hasNewWidgets.asLiveData()
 
     private val refreshingOnBackground = MutableStateFlow(-1)
 
     val isRefreshingOnBackground = refreshingOnBackground.map { it > -1 }.asLiveData()
-    fun displayRefreshingIndicator() { refreshingOnBackground.value += 1 }
+    fun displayRefreshingIndicator() {
+        refreshingOnBackground.value += 1
+    }
+
     fun hideRefreshingIndicator() {
         val value = (refreshingOnBackground.value - 1).coerceAtLeast(-1)
         refreshingOnBackground.value = value
     }
+
+    val dashboardCardsState = combine(
+        dashboardWidgets,
+        refreshingOnBackground.map { it > -1 }
+    ) { widgets, isRefreshing ->
+        DashboardCardsState(
+            widgets = widgets,
+            isRefreshing = isRefreshing
+        )
+    }.asLiveData()
 
     init {
         ConnectionChangeReceiver.getEventBus().register(this)
@@ -364,4 +377,9 @@ class DashboardViewModel @Inject constructor(
             action = action
         )
     }
+
+    data class DashboardCardsState(
+        val widgets: List<DashboardWidgetUiModel>,
+        val isRefreshing: Boolean
+    )
 }

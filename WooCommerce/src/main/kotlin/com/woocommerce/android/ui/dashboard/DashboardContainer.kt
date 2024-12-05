@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +19,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
@@ -58,25 +63,37 @@ import com.woocommerce.android.ui.dashboard.stock.DashboardProductStockCard
 import com.woocommerce.android.ui.dashboard.topperformers.DashboardTopPerformersWidgetCard
 import com.woocommerce.android.ui.main.MainActivityViewModel
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DashboardContainer(
     mainActivityViewModel: MainActivityViewModel,
     dashboardViewModel: DashboardViewModel,
     blazeCampaignCreationDispatcher: BlazeCampaignCreationDispatcher,
-    windowSizeClass: WindowSizeClass
+    windowSizeClass: WindowSizeClass,
 ) {
-    dashboardViewModel.dashboardWidgets.observeAsState().value?.let { widgets ->
-        DashboardWidgets(
-            widgetUiModels = widgets,
-            mainActivityViewModel = mainActivityViewModel,
-            dashboardViewModel = dashboardViewModel,
-            blazeCampaignCreationDispatcher = blazeCampaignCreationDispatcher,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.surface)
-                .padding(vertical = dimensionResource(id = R.dimen.major_100)),
-            numberOfColumns = if (windowSizeClass != WindowSizeClass.Compact) 2 else 1
-        )
+    dashboardViewModel.dashboardCardsState.observeAsState().value?.let { state ->
+
+        val pullRefreshState = rememberPullRefreshState(state.isRefreshing, dashboardViewModel::onPullToRefresh)
+        Box(Modifier.pullRefresh(pullRefreshState)) {
+            DashboardWidgets(
+                widgetUiModels = state.widgets,
+                mainActivityViewModel = mainActivityViewModel,
+                dashboardViewModel = dashboardViewModel,
+                blazeCampaignCreationDispatcher = blazeCampaignCreationDispatcher,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.surface)
+                    .padding(vertical = dimensionResource(id = R.dimen.major_100)),
+                numberOfColumns = if (windowSizeClass != WindowSizeClass.Compact) 2 else 1
+            )
+
+            PullRefreshIndicator(
+                refreshing = state.isRefreshing,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                contentColor = MaterialTheme.colors.primary,
+            )
+        }
     }
 }
 
