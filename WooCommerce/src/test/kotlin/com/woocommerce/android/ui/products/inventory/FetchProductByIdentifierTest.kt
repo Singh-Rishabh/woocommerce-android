@@ -1,5 +1,8 @@
 package com.woocommerce.android.ui.products.inventory
 
+import com.woocommerce.android.analytics.AnalyticsEvent
+import com.woocommerce.android.analytics.AnalyticsTracker
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemover
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper
@@ -21,7 +24,8 @@ import org.wordpress.android.fluxc.store.WCProductStore
 class FetchProductByIdentifierTest : BaseUnitTest() {
     private val repo: ProductListRepository = mock()
     private val checkDigitRemoverFactory: CheckDigitRemoverFactory = mock()
-    private val sut = FetchProductByIdentifier(repo, checkDigitRemoverFactory)
+    private val analyticsTracker: AnalyticsTrackerWrapper = mock()
+    private val sut = FetchProductByIdentifier(repo, checkDigitRemoverFactory, analyticsTracker)
 
     @Test
     fun `given barcode scan result, when product found, should return success`() = testBlocking {
@@ -87,6 +91,28 @@ class FetchProductByIdentifierTest : BaseUnitTest() {
         ).thenReturn(ProductTestUtils.generateProductList())
 
         val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
+
+        assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `given barcode scan result, when product found when searching by global unique id, should track event`() = testBlocking {
+        whenever(
+            repo.searchProductList(
+                searchQuery = "123",
+                skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
+            )
+        ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(ProductTestUtils.generateProductList())
+
+        val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
+
+        verify(analyticsTracker).track(
+            AnalyticsEvent.PRODUCT_SEARCH_VIA_GLOBAL_UNIQUE_IDENTIFIER_SUCCESS
+        )
 
         assertTrue(result.isSuccess)
     }
