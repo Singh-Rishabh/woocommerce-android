@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.products.inventory
 
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper
@@ -10,6 +11,7 @@ import javax.inject.Inject
 class FetchProductByIdentifier @Inject constructor(
     private val productRepository: ProductListRepository,
     private val checkDigitRemoverFactory: CheckDigitRemoverFactory,
+    private val tracker: AnalyticsTrackerWrapper
 ) {
     suspend operator fun invoke(
         codeScannerResultCode: String,
