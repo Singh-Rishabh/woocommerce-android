@@ -273,7 +273,10 @@ private fun PathField(
     onPathChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
         OutlinedTextField(
             label = { Text(text = "Path") },
             value = path,
@@ -311,7 +314,10 @@ private fun RequestBodyField(
     onBodyChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
+    ) {
         OutlinedTextField(
             label = { Text(text = "Body") },
             value = body.orEmpty(),
