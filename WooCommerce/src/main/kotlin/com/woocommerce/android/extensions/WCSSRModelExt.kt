@@ -37,7 +37,7 @@ fun WCSSRModel.formatResult(): String {
     sb.append(HEADING_SSR)
 
     // Environment
-    environment?.let { it ->
+    environment?.let {
         try {
             sb.append(formatEnvironmentData(JSONObject(it)))
         } catch (e: JSONException) {
