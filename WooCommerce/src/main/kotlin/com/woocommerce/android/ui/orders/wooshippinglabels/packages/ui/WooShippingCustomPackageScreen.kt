@@ -35,6 +35,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
 
     WooShippingCustomPackageCreationScreen(
         packageType = packageType,
+        packageName = viewState?.customPackageCreationData?.name.orEmpty(),
         packageHeight = viewState?.customPackageCreationData?.height.orEmpty(),
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
@@ -45,6 +46,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
         onLengthChange = viewModel::onLengthChange,
         onWidthChange = viewModel::onWidthChange,
         onHeightChange = viewModel::onHeightChange,
+        onPackageNameChange = viewModel::onPackageNameChange,
         onSavePackageChanged = viewModel::onSavePackageChanged
     )
 }
@@ -52,6 +54,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
 @Composable
 fun WooShippingCustomPackageCreationScreen(
     modifier: Modifier = Modifier,
+    packageName: String,
     packageType: String,
     packageLength: String,
     packageWidth: String,
@@ -63,6 +66,7 @@ fun WooShippingCustomPackageCreationScreen(
     onLengthChange: (String) -> Unit,
     onWidthChange: (String) -> Unit,
     onHeightChange: (String) -> Unit,
+    onPackageNameChange: (String) -> Unit,
     onSavePackageChanged: (Boolean) -> Unit
 ) {
     Column(
@@ -140,6 +144,7 @@ fun WooShippingCustomPackageCreationScreen(
 fun PreviewWooShippingCustomPackageCreationScreen() {
     WooThemeWithBackground {
         WooShippingCustomPackageCreationScreen(
+            packageName = "Custom Package",
             packageType = "Box",
             packageLength = "10",
             packageWidth = "10",
@@ -151,6 +156,7 @@ fun PreviewWooShippingCustomPackageCreationScreen() {
             onLengthChange = {},
             onWidthChange = {},
             onHeightChange = {},
+            onPackageNameChange = {},
             onSavePackageChanged = {}
         )
     }
