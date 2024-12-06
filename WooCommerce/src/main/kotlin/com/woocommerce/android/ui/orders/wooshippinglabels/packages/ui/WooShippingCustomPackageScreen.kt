@@ -63,7 +63,7 @@ fun WooShippingCustomPackageCreationScreen(
     packageHeight: String,
     isAddPackageEnabled: Boolean,
     isSaveAsTemplateChecked: Boolean,
-    onAddPackageClick: () -> Unit,
+    onAddPackageClick: (saveAsTemplate: Boolean) -> Unit,
     onPackageTypeClick: () -> Unit,
     onLengthChange: (String) -> Unit,
     onWidthChange: (String) -> Unit,
@@ -153,7 +153,7 @@ fun WooShippingCustomPackageCreationScreen(
         Button(
             modifier = modifier.fillMaxWidth(),
             enabled = isAddPackageEnabled,
-            onClick = onAddPackageClick
+            onClick = { onAddPackageClick(isSaveAsTemplateChecked) }
         ) {
             Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
         }
