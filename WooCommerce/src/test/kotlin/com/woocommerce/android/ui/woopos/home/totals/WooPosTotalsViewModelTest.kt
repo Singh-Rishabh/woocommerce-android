@@ -7,6 +7,7 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -142,6 +143,9 @@ class WooPosTotalsViewModelTest {
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
+            isCashPaymentsEnabled = mock {
+                onBlocking { invoke() }.thenReturn(true)
+            }
         )
 
         // THEN
@@ -149,7 +153,8 @@ class WooPosTotalsViewModelTest {
             WooPosTotalsViewState.Totals(
                 orderSubtotalText = "$3.00",
                 orderTaxText = "$2.00",
-                orderTotalText = "$5.00"
+                orderTotalText = "$5.00",
+                isCashPaymentAvailable = true,
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -451,6 +456,9 @@ class WooPosTotalsViewModelTest {
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
+            isCashPaymentsEnabled = mock {
+                onBlocking { invoke() }.thenReturn(false)
+            }
         )
 
         // THEN
@@ -458,7 +466,8 @@ class WooPosTotalsViewModelTest {
             WooPosTotalsViewState.Totals(
                 orderSubtotalText = "3.00$",
                 orderTaxText = "2.00$",
-                orderTotalText = "5.00$"
+                orderTotalText = "5.00$",
+                isCashPaymentAvailable = false,
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -731,11 +740,70 @@ class WooPosTotalsViewModelTest {
             )
         }
 
+    @Test
+    fun `when OnTakeCashPaymentClicked is triggered, then state updates to CashPayment with formatted values`() = runTest {
+        // GIVEN
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+        )
+        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
+        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+            on { events }.thenReturn(parentToChildrenEventFlow)
+        }
+        val order = Order.getEmptyOrder(
+            dateCreated = Date(),
+            dateModified = Date()
+        ).copy(
+            totalTax = BigDecimal("2.00"),
+            items = listOf(
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                ),
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                ),
+                Order.Item.EMPTY.copy(
+                    subtotal = BigDecimal("1.00"),
+                )
+            ),
+            productsTotal = BigDecimal("3.00"),
+            total = BigDecimal("5.00"),
+        )
+        val totalsRepository: WooPosTotalsRepository = mock {
+            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(Result.success(order))
+        }
+        val priceFormat: WooPosFormatPrice = mock {
+            onBlocking { invoke(BigDecimal.ZERO) }.thenReturn("$0.00")
+            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
+            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
+            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
+        }
+
+        val viewModel = createViewModel(
+            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+            totalsRepository = totalsRepository,
+            priceFormat = priceFormat
+        )
+
+        advanceUntilIdle()
+
+        // WHEN
+        viewModel.onUIEvent(WooPosTotalsUIEvent.OnTakeCashPaymentClicked)
+
+        // THEN
+        val state = viewModel.state.value as WooPosTotalsViewState.CashPayment
+        assertThat(state.enteredAmount).isEqualTo("")
+        assertThat(state.changeDue).isEqualTo("$0.00")
+        assertThat(state.total).isEqualTo("5.00$")
+        assertThat(state.canBeOrderBeCompleted).isEqualTo(false)
+    }
+
     private fun createViewModel(
         resourceProvider: ResourceProvider = mock(),
         parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock(),
         totalsRepository: WooPosTotalsRepository = mock(),
         priceFormat: WooPosFormatPrice = mock(),
+        isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled = mock(),
         savedState: SavedStateHandle = SavedStateHandle(),
     ) = WooPosTotalsViewModel(
         resourceProvider = resourceProvider,
@@ -749,6 +817,7 @@ class WooPosTotalsViewModelTest {
         networkStatus = networkStatus,
         isReceiptSendingSupported = isReceiptSendingSupported,
         isReceiptsEnabled = isReceiptsEnabled,
+        isCashPaymentsEnabled = isCashPaymentsEnabled,
         savedState = savedState,
     )
 }

@@ -95,7 +95,7 @@ fun DashboardTopPerformersWidgetCard(
                     topPerformersState = topPerformersState,
                     selectedDateRange = selectedDateRange,
                     lastUpdateState = lastUpdateState,
-                    onTabSelected = topPerformersViewModel::onTabSelected,
+                    onTabSelected = topPerformersViewModel::onRangeChanged,
                     onEditCustomRangeTapped = topPerformersViewModel::onEditCustomRangeTapped
                 )
             }

@@ -8,6 +8,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +50,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val networkStatus: WooPosNetworkStatus,
     private val isReceiptSendingSupported: WooPosTotalsPaymentReceiptIsSendingSupported,
     private val isReceiptsEnabled: WooPosIsReceiptsEnabled,
+    private val isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -110,6 +113,16 @@ class WooPosTotalsViewModel @Inject constructor(
                             )
                         )
                     }
+                }
+            }
+            WooPosTotalsUIEvent.OnTakeCashPaymentClicked -> {
+                viewModelScope.launch {
+                    uiState.value = WooPosTotalsViewState.CashPayment(
+                        enteredAmount = "",
+                        changeDue = priceFormat(BigDecimal.ZERO),
+                        total = priceFormat(dataState.value.orderTotal!!),
+                        canBeOrderBeCompleted = false
+                    )
                 }
             }
             is WooPosTotalsUIEvent.OnEmailChanged -> {
@@ -195,7 +208,10 @@ class WooPosTotalsViewModel @Inject constructor(
             totalsRepository.createOrderWithProducts(itemClickedDataList = itemClickedDataList)
                 .fold(
                     onSuccess = { order ->
-                        dataState.value = dataState.value.copy(orderId = order.id)
+                        dataState.value = dataState.value.copy(
+                            orderId = order.id,
+                            orderTotal = order.total
+                        )
                         uiState.value = buildWooPosTotalsViewState(order)
                         analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
                     },
@@ -225,6 +241,7 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
+            isCashPaymentAvailable = isCashPaymentsEnabled()
         )
     }
 
@@ -237,6 +254,7 @@ class WooPosTotalsViewModel @Inject constructor(
     @Parcelize
     private data class TotalsDataState(
         val orderId: Long = EMPTY_ORDER_ID,
+        val orderTotal: BigDecimal? = null,
         val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData> = emptyList()
     ) : Parcelable
 }

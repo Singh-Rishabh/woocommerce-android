@@ -996,7 +996,6 @@
     <string name="orderdetail_shipping_label_create_shipping_label">Create shipping label</string>
     <string name="orderdetail_shipping_label_notice">Learn more about creating labels with your mobile device</string>
     <string name="orderdetail_custom_fields">Custom fields</string>
-    <string name="orderdetail_view_custom_fields">View custom fields</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨Create thank-you note</string>
     <string name="receipt_preview_print_menu_item">Print</string>
     <string name="receipt_preview_send_menu_item">Send</string>
@@ -4287,6 +4286,7 @@
     <string name="woopos_payment_total_label">Total</string>
     <string name="woopos_payment_collect_payment_label">Collect card payment</string>
     <string name="woopos_receipt_sending_not_supported">Please update WooCommerce to version %s or later</string>
+    <string name="woopos_payment_take_cash_payment_label">Take cash payment</string>
     <string name="woopos_products_empty_list">No products</string>
     <string name="woopos_reader_connect_now_button">Connect now</string>
     <string name="woopos_totals_main_error_label">Couldn\'t load totals</string>
