@@ -180,8 +180,7 @@ class WooPosTotalsViewModel @Inject constructor(
         cancelPaymentAction()
         val order = totalsRepository.getOrderById(dataState.value.orderId)
         if (order == null) {
-            uiState.value = InitialState
-            childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
+            returnToCart()
         } else {
             uiState.value = buildWooPosTotalsViewState(order)
             collectPayment()
@@ -231,16 +230,9 @@ class WooPosTotalsViewModel @Inject constructor(
     private fun listenToPaymentState() {
         viewModelScope.launch {
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
-                val totalsState = uiState.value
-                if (totalsState is WooPosTotalsViewState.Totals) {
-                    uiState.value = totalsState.copy(
-                        paymentStateText = paymentState.javaClass.simpleName
-                    )
-                }
-
                 when (paymentState) {
                     is CardReaderPaymentState.CollectingPayment,
-                    is CardReaderPaymentState.LoadingData -> {}
+                    is CardReaderPaymentState.LoadingData -> handlePaymentState(paymentState)
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,
@@ -271,6 +263,28 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun handlePaymentState(paymentState: CardReaderPaymentOrRefundState) {
+        val totalsState = uiState.value
+        if (totalsState is WooPosTotalsViewState.Totals) {
+            uiState.value = totalsState.copy(
+                paymentStateText = paymentState.javaClass.simpleName
+            )
+        } else {
+            val order = totalsRepository.getOrderById(dataState.value.orderId)
+            if (order == null) {
+                returnToCart()
+            } else {
+                uiState.value =
+                    buildWooPosTotalsViewState(order, paymentState as CardReaderPaymentState)
+                childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
+            }
+        }
+    }
+
+    private suspend fun returnToCart() {
+        childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
     }
 
     private fun buildPaymentFailedState(
@@ -330,7 +344,10 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun buildWooPosTotalsViewState(order: Order): WooPosTotalsViewState.Totals {
+    private suspend fun buildWooPosTotalsViewState(
+        order: Order,
+        paymentState: CardReaderPaymentState? = null
+    ): WooPosTotalsViewState.Totals {
         val subtotalAmount = order.productsTotal
         val taxAmount = order.totalTax
         val totalAmount = order.total
@@ -343,7 +360,7 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            paymentStateText = "",
+            paymentStateText = paymentState?.javaClass?.simpleName ?: "",
             error = error
         )
     }
