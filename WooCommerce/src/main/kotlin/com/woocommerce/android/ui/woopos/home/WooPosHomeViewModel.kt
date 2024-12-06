@@ -59,7 +59,6 @@ class WooPosHomeViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Cart.Visible
                         )
-                        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
                     }
 
                     is ScreenPositionState.Cart -> {
@@ -113,7 +112,6 @@ class WooPosHomeViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Cart.Visible
                         )
-                        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
                     }
 
                     is ChildToParentEvent.OrderSuccessfullyPaid -> onOrderSuccessfullyPaid()

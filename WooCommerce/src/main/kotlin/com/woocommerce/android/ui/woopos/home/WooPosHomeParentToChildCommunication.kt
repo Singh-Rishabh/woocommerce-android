@@ -27,6 +27,7 @@ sealed class ParentToChildrenEvent {
         val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
     ) : ParentToChildrenEvent()
     data object OrderSuccessfullyPaid : ParentToChildrenEvent()
+
 }
 
 interface WooPosParentToChildrenEventReceiver {

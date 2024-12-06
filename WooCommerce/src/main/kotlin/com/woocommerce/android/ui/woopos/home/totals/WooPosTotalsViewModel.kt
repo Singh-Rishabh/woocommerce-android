@@ -131,9 +131,10 @@ class WooPosTotalsViewModel @Inject constructor(
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
                         uiState.value = InitialState
                     }
+
                     ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState()
 
-                    is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
+                    is ParentToChildrenEvent.ItemClickedInProductSelector-> Unit
                 }
             }
         }
