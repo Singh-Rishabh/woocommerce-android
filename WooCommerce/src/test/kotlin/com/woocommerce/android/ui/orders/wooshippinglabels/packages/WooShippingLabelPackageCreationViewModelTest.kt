@@ -77,7 +77,22 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut.onAddCustomPackageClick(saveAsTemplate = false)
 
+        verify(packageRepository, times(0)).createCustomPackage(any(), any())
         assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData.toPackageData()))
+    }
+
+    @Test
+    fun `onAddPackageClick triggers createCustomPackage when saveAsTemplate is true`() = testBlocking {
+        sut.onAddCustomPackageClick(saveAsTemplate = true)
+
+        verify(packageRepository, times(1)).createCustomPackage(any(), any())
+    }
+
+    @Test
+    fun `onAddPackageClick skips createCustomPackage when saveAsTemplate is false`() = testBlocking {
+        sut.onAddCustomPackageClick(saveAsTemplate = false)
+
+        verify(packageRepository, times(0)).createCustomPackage(any(), any())
     }
 
     @Test
