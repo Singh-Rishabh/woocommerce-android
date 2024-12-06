@@ -232,7 +232,8 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
                 when (paymentState) {
                     is CardReaderPaymentState.CollectingPayment,
-                    is CardReaderPaymentState.LoadingData -> handlePaymentState(paymentState)
+                    is CardReaderPaymentState.LoadingData ->
+                        handlePaymentState(paymentState as CardReaderPaymentState)
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,
@@ -265,7 +266,7 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handlePaymentState(paymentState: CardReaderPaymentOrRefundState) {
+    private suspend fun handlePaymentState(paymentState: CardReaderPaymentState) {
         val totalsState = uiState.value
         if (totalsState is WooPosTotalsViewState.Totals) {
             uiState.value = totalsState.copy(
