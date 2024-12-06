@@ -11,6 +11,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -126,7 +128,14 @@ fun WooShippingCustomPackageCreationScreen(
                     text = stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option),
                     modifier = modifier.align(Alignment.CenterVertically)
                 )
-                Checkbox(checked = isSaveAsTemplateChecked, onCheckedChange = onSavePackageChanged)
+                Checkbox(
+                    checked = isSaveAsTemplateChecked,
+                    onCheckedChange = onSavePackageChanged,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colors.primary,
+                        uncheckedColor = MaterialTheme.colors.onSurface
+                    ),
+                )
             }
             if (isSaveAsTemplateChecked) {
                 Column(modifier = modifier) {
