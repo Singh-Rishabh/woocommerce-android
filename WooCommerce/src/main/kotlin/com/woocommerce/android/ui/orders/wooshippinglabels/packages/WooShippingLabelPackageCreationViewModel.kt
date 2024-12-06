@@ -6,6 +6,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationRequestData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
@@ -26,7 +28,8 @@ import javax.inject.Inject
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val resourceProvider: ResourceProvider,
-    private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore
+    private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore,
+    private val packageRepository: WooShippingLabelPackageRepository
 ) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
@@ -97,9 +100,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             ?.let { triggerEvent(PackageSelected(it)) }
     }
 
-    fun onAddCustomPackageClick() {
-        _viewState.value.customPackageCreationData
-            .toPackageData()
+    fun onAddCustomPackageClick(saveAsTemplate: Boolean) {
+        val customPackage = _viewState.value.customPackageCreationData
+        if (saveAsTemplate) { customPackage.submitToStore() }
+
+        customPackage.toPackageData()
             .let { triggerEvent(PackageSelected(it)) }
     }
 
@@ -168,6 +173,23 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         indexOf(originalPackage)
             .takeIf { it != -1 }
             ?.let { set(it, updatedPackage) }
+    }
+
+    private fun CustomPackageCreationData.submitToStore() {
+        launch {
+            packageRepository.createCustomPackage(
+                requestData = this@submitToStore.let {
+                    CustomPackageCreationRequestData(
+                        name = it.name,
+                        isLetter = it.type == PackageType.ENVELOPE,
+                        innerDimensions = it.dimensions,
+                        boxWeight = 0.0,
+                        isUserDefined = true,
+                        maxWeight = 0.0
+                    )
+                }.let { listOf(it) }
+            )
+        }
     }
 
     @Parcelize
