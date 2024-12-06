@@ -834,7 +834,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given payment failed, when retry clicked, then should retry`() {
+    fun `given payment failed, when retry clicked, then should retry`() = runTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
             .thenReturn("Processing payment")
@@ -906,7 +906,7 @@ class WooPosTotalsViewModelTest {
         verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.ExitOrderAfterFailedTransactionClicked)
     }
 
-    private fun createViewModelAndSetupForSuccessfulOrderCreation(
+    private suspend fun createViewModelAndSetupForSuccessfulOrderCreation(
         controllerFactory: CardReaderPaymentControllerFactory = paymentControllerFactory
     ): WooPosTotalsViewModel {
         whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title))
@@ -952,6 +952,7 @@ class WooPosTotalsViewModelTest {
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
             on { events }.thenReturn(parentToChildrenEventFlow)
         }
+        whenever(totalsRepository.getOrderById(orderId)).thenReturn(order)
         return createViewModel(
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,

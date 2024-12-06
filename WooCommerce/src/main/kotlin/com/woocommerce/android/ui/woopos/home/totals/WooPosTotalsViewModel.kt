@@ -69,7 +69,7 @@ class WooPosTotalsViewModel @Inject constructor(
     }
 
     private val uiState: MutableStateFlow<WooPosTotalsViewState> =
-        savedState.getStateFlow<WooPosTotalsViewState>(
+        savedState.getStateFlow(
             scope = viewModelScope,
             initialValue = InitialState,
             key = "woo_pos_totals_view_state"
@@ -82,8 +82,6 @@ class WooPosTotalsViewModel @Inject constructor(
         initialValue = TotalsDataState(),
         key = KEY_STATE,
     )
-
-    private var order: Order? = null
 
     private var isTTPPaymentInProgress: Boolean
         get() = savedState.get<Boolean>(KEY_TTP_PAYMENT_IN_PROGRESS) == true
@@ -159,11 +157,12 @@ class WooPosTotalsViewModel @Inject constructor(
             WooPosTotalsUIEvent.RetryFailedTransactionClicked -> viewModelScope.launch {
                 cancelPaymentAction()
                 childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
+                val order = totalsRepository.getOrderById(dataState.value.orderId)
                 if (order == null) {
                     uiState.value = InitialState
                     childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
                 } else {
-                    uiState.value = buildWooPosTotalsViewState(order!!)
+                    uiState.value = buildWooPosTotalsViewState(order)
                     collectPayment()
                 }
             }
@@ -181,8 +180,6 @@ class WooPosTotalsViewModel @Inject constructor(
             if (cardReaderFacade.readerStatus.value is Connected) {
                 val state = uiState.value
                 check(state is WooPosTotalsViewState.Totals)
-                val orderId = dataState.value.orderId
-                check(orderId != EMPTY_ORDER_ID)
                 check(uiState.value is WooPosTotalsViewState.Totals)
                 createCardReaderPaymentController(dataState.value.orderId)
                 cardReaderPaymentController?.start()
@@ -282,7 +279,6 @@ class WooPosTotalsViewModel @Inject constructor(
                     onSuccess = { order ->
                         dataState.value = dataState.value.copy(orderId = order.id)
                         uiState.value = buildWooPosTotalsViewState(order)
-                        this@WooPosTotalsViewModel.order = order
                         analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
                         collectPayment()
                     },

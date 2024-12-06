@@ -1,6 +1,8 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.model.OrderMapper
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditRepository
 import com.woocommerce.android.ui.products.ProductHelper
 import com.woocommerce.android.ui.products.ProductType
@@ -16,12 +18,16 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.wordpress.android.fluxc.store.WCOrderStore
 
 class WooPosTotalsRepositoryTest {
     private val orderCreateEditRepository: OrderCreateEditRepository = mock()
     private val getProductById: WooPosGetProductById = mock()
 
     private val dateUtils: DateUtils = mock()
+    private val orderStore: WCOrderStore = mock()
+    private val selectedSite: SelectedSite = mock()
+    private val orderMapper: OrderMapper = mock()
 
     private lateinit var repository: WooPosTotalsRepository
 
@@ -33,11 +39,7 @@ class WooPosTotalsRepositoryTest {
     @Test
     fun `given empty product list, when createOrderWithProducts called, then return error`() = runTest {
         // GIVEN
-        repository = WooPosTotalsRepository(
-            orderCreateEditRepository,
-            dateUtils,
-            getProductById
-        )
+        repository = createRepository()
         val productIds = emptyList<Long>()
 
         // WHEN
@@ -50,11 +52,7 @@ class WooPosTotalsRepositoryTest {
     @Test
     fun `given product ids without duplicates, when createOrderWithProducts, then items all quantity one`() = runTest {
         // GIVEN
-        repository = WooPosTotalsRepository(
-            orderCreateEditRepository,
-            dateUtils,
-            getProductById
-        )
+        repository = createRepository()
         val productIds = listOf(1L, 2L, 3L)
 
         whenever(getProductById(1L)).thenReturn(product1)
@@ -79,11 +77,7 @@ class WooPosTotalsRepositoryTest {
     @Test
     fun `given product id, when createOrderWithProducts, then item name matches original product`() = runTest {
         // GIVEN
-        repository = WooPosTotalsRepository(
-            orderCreateEditRepository,
-            dateUtils,
-            getProductById
-        )
+        repository = createRepository()
         val productIds = listOf(1L)
 
         whenever(getProductById(1L)).thenReturn(product1)
@@ -105,11 +99,7 @@ class WooPosTotalsRepositoryTest {
     @Test
     fun `given product ids with duplicates, when createOrderWithProducts, then items quantity is correct`() = runTest {
         // GIVEN
-        repository = WooPosTotalsRepository(
-            orderCreateEditRepository,
-            dateUtils,
-            getProductById
-        )
+        repository = createRepository()
         val productIds = listOf(1L, 1L, 2L, 3L, 3L, 3L)
 
         whenever(getProductById(1L)).thenReturn(product1)
@@ -133,11 +123,7 @@ class WooPosTotalsRepositoryTest {
     @Test
     fun `given product ids, when createOrder with some invalid ids, then return failure`() = runTest {
         // GIVEN
-        repository = WooPosTotalsRepository(
-            orderCreateEditRepository,
-            dateUtils,
-            getProductById
-        )
+        repository = createRepository()
         val productIds = listOf(1L, -1L, 3L)
         val mockOrder: Order = mock()
         whenever(orderCreateEditRepository.createOrUpdateOrder(any(), eq(""))).thenReturn(Result.success(mockOrder))
@@ -151,4 +137,13 @@ class WooPosTotalsRepositoryTest {
         assertThat(result.exceptionOrNull()?.message).isEqualTo("Invalid product ID: -1")
         verify(orderCreateEditRepository, never()).createOrUpdateOrder(any(), eq(""))
     }
+
+    private fun createRepository() = WooPosTotalsRepository(
+        orderCreateEditRepository,
+        dateUtils,
+        getProductById,
+        orderStore,
+        selectedSite,
+        orderMapper,
+    )
 }
