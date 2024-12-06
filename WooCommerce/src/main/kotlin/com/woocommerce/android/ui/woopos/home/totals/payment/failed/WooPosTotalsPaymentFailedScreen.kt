@@ -60,25 +60,27 @@ fun WooPosPaymentFailedScreen(
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
-            text = stringResource(R.string.woo_pos_payment_failed_try_another_payment_method),
+            text = state.retryPaymentButtonLabel,
             modifier = Modifier
                 .height(80.dp)
                 .width(604.dp)
         ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
-        Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
-        WooPosOutlinedButton(
-            modifier = Modifier
-                .height(80.dp)
-                .width(604.dp),
-            content = {
-                Text(
-                    color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.h5,
-                    fontWeight = FontWeight.Bold,
-                    text = stringResource(R.string.woo_pos_payment_failed_exit_order)
-                )
-            }
-        ) { onUIEvent(WooPosTotalsUIEvent.ExitOrderAfterFailedTransactionClicked) }
+        if (state.isReturnToCheckoutButtonVisible) {
+            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            WooPosOutlinedButton(
+                modifier = Modifier
+                    .height(80.dp)
+                    .width(604.dp),
+                content = {
+                    Text(
+                        color = MaterialTheme.colors.primary,
+                        style = MaterialTheme.typography.h5,
+                        fontWeight = FontWeight.Bold,
+                        text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout)
+                    )
+                }
+            ) { onUIEvent(WooPosTotalsUIEvent.GoBackToCheckoutAfterFailedPayment) }
+        }
         Spacer(modifier = Modifier.height(80.dp.toAdaptivePadding()))
     }
 }
@@ -91,6 +93,8 @@ fun WooPosPaymentFailedScreenPreview() {
             state = WooPosTotalsViewState.PaymentFailed(
                 title = "Payment failed",
                 subtitle = "Unfortunately, this payment has been declined.",
+                retryPaymentButtonLabel = "Try again",
+                isReturnToCheckoutButtonVisible = true,
             ),
             onUIEvent = {}
         )

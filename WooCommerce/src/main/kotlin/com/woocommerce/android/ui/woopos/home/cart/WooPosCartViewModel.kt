@@ -120,8 +120,7 @@ class WooPosCartViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInProductSelector(event)
 
-                    is ParentToChildrenEvent.OrderSuccessfullyPaid,
-                    is ParentToChildrenEvent.OrderCardPaymentAborted -> clearCart()
+                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> clearCart()
 
                     is ParentToChildrenEvent.CheckoutClicked -> Unit
                 }

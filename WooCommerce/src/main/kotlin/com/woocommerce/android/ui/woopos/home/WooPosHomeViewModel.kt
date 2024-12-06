@@ -106,18 +106,13 @@ class WooPosHomeViewModel @Inject constructor(
                         )
                     }
 
-                    is ChildToParentEvent.ExitOrderAfterFailedTransactionClicked -> {
-                        _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
-                        )
-                        sendEventToChildren(ParentToChildrenEvent.OrderCardPaymentAborted)
-                    }
                     is ChildToParentEvent.NewTransactionClicked -> {
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
                         )
                         sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
                     }
+
                     is ChildToParentEvent.PaymentProcessing,
                     is ChildToParentEvent.OrderSuccessfullyPaid,
                     is ChildToParentEvent.PaymentFailed -> {
@@ -125,11 +120,14 @@ class WooPosHomeViewModel @Inject constructor(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals
                         )
                     }
+
+                    is ChildToParentEvent.GoBackToCheckoutAfterFailedPayment,
                     is ChildToParentEvent.RetryFailedPaymentClicked -> {
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
                         )
                     }
+
                     ChildToParentEvent.ExitPosClicked -> {
                         _state.value = _state.value.copy(
                             exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = true)

@@ -274,7 +274,7 @@ class WooPosHomeViewModelTest {
     }
 
     @Test
-    fun `given home screen is at checkout, when exit order clicked after failed payment, then should show cart`() = runTest {
+    fun `given home screen is at checkout, when go back to checkout clicked after failed payment, then should show cart with totals`() = runTest {
         // GIVEN
         val events = MutableSharedFlow<ChildToParentEvent>()
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
@@ -286,12 +286,12 @@ class WooPosHomeViewModelTest {
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
 
         // WHEN
-        events.emit(ChildToParentEvent.ExitOrderAfterFailedTransactionClicked)
+        events.emit(ChildToParentEvent.GoBackToCheckoutAfterFailedPayment)
 
         // THEN
         assertThat(
             viewModel.state.value.screenPositionState
-        ).isEqualTo(WooPosHomeState.ScreenPositionState.Cart.Visible)
+        ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
     }
 
     @Test

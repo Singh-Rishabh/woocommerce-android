@@ -31,6 +31,8 @@ sealed class WooPosTotalsViewState : Parcelable {
     data class PaymentFailed(
         val title: String,
         val subtitle: String,
+        val retryPaymentButtonLabel: String,
+        val isReturnToCheckoutButtonVisible: Boolean = false,
     ) : WooPosTotalsViewState()
 
     data class PaymentSuccess(var orderTotalText: String) : WooPosTotalsViewState()
