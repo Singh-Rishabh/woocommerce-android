@@ -40,7 +40,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
         isAddPackageEnabled = viewState?.customPackageCreationData?.isValid ?: false,
-        isPackageNameFieldEnabled = viewState?.customPackageCreationData?.saveAsTemplate ?: false,
+        isSaveAsTemplateChecked = viewState?.customPackageCreationData?.saveAsTemplate ?: false,
         onAddPackageClick = viewModel::onAddCustomPackageClick,
         onPackageTypeClick = viewModel::onPackageTypeSpinnerClick,
         onLengthChange = viewModel::onLengthChange,
@@ -60,7 +60,7 @@ fun WooShippingCustomPackageCreationScreen(
     packageWidth: String,
     packageHeight: String,
     isAddPackageEnabled: Boolean,
-    isPackageNameFieldEnabled: Boolean,
+    isSaveAsTemplateChecked: Boolean,
     onAddPackageClick: () -> Unit,
     onPackageTypeClick: () -> Unit,
     onLengthChange: (String) -> Unit,
@@ -126,9 +126,9 @@ fun WooShippingCustomPackageCreationScreen(
                     text = stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option),
                     modifier = modifier.align(Alignment.CenterVertically)
                 )
-                Checkbox(checked = false, onCheckedChange = onSavePackageChanged)
+                Checkbox(checked = isSaveAsTemplateChecked, onCheckedChange = onSavePackageChanged)
             }
-            if (isPackageNameFieldEnabled) {
+            if (isSaveAsTemplateChecked) {
                 Column(modifier = modifier) {
                     WCOutlinedTextField(
                         value = packageName,
@@ -162,7 +162,7 @@ fun PreviewWooShippingCustomPackageCreationScreen() {
             packageWidth = "10",
             packageHeight = "10",
             isAddPackageEnabled = true,
-            isPackageNameFieldEnabled = true,
+            isSaveAsTemplateChecked = true,
             onAddPackageClick = {},
             onPackageTypeClick = {},
             onLengthChange = {},
