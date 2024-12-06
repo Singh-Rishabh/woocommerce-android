@@ -2,11 +2,13 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
@@ -21,8 +23,13 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.wordpress.android.fluxc.model.SiteModel
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
@@ -30,6 +37,10 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     private lateinit var sut: WooShippingLabelPackageCreationViewModel
     private val resourceProvider: ResourceProvider = mock()
     private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore = mock()
+    private val packageRepository: WooShippingLabelPackageRepository = mock()
+    private val selectedSite: SelectedSite = mock {
+        on { getOrNull() } doReturn SiteModel().apply { siteId = 123 }
+    }
 
     @Before
     fun setUp() {
@@ -45,8 +56,10 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
+            selectedSite,
             resourceProvider,
-            fetchPredefinedPackages
+            fetchPredefinedPackages,
+            packageRepository
         )
     }
 
@@ -69,9 +82,24 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onSavePackageChanged(true)
         sut.onPackageTypeSelected(PackageType.ENVELOPE)
 
-        sut.onAddCustomPackageClick()
+        sut.onAddCustomPackageClick(savePackageAsTemplate = false)
 
+        verify(packageRepository, times(0)).createCustomPackage(any(), any())
         assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData.toPackageData()))
+    }
+
+    @Test
+    fun `onAddPackageClick triggers createCustomPackage when saveAsTemplate is true`() = testBlocking {
+        sut.onAddCustomPackageClick(savePackageAsTemplate = true)
+
+        verify(packageRepository, times(1)).createCustomPackage(any(), any())
+    }
+
+    @Test
+    fun `onAddPackageClick skips createCustomPackage when saveAsTemplate is false`() = testBlocking {
+        sut.onAddCustomPackageClick(savePackageAsTemplate = false)
+
+        verify(packageRepository, times(0)).createCustomPackage(any(), any())
     }
 
     @Test
@@ -163,8 +191,10 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
+            selectedSite,
             resourceProvider,
-            fetchPredefinedPackages
+            fetchPredefinedPackages,
+            packageRepository
         )
         sut.viewState.observeForever { lastViewState = it }
         sut.onSavedPackageSelected(package1, true)
@@ -210,8 +240,10 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
+            selectedSite,
             resourceProvider,
-            fetchPredefinedPackages
+            fetchPredefinedPackages,
+            packageRepository
         )
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
@@ -279,8 +311,10 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
 
         sut = WooShippingLabelPackageCreationViewModel(
             SavedStateHandle(),
+            selectedSite,
             resourceProvider,
-            fetchPredefinedPackages
+            fetchPredefinedPackages,
+            packageRepository
         )
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
