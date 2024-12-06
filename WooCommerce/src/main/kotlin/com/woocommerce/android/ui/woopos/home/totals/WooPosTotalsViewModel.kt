@@ -278,7 +278,7 @@ class WooPosTotalsViewModel @Inject constructor(
                 returnToCart()
             } else {
                 uiState.value =
-                    buildWooPosTotalsViewState(order, paymentState as CardReaderPaymentState)
+                    buildWooPosTotalsViewState(order, paymentState)
                 childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
             }
         }

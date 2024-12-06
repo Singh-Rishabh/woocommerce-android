@@ -959,7 +959,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given payment failed, when exit order clicked, then should inform home about the situation`() = runTest {
+    fun `given payment failed, when go back to checkout clicked, then should inform home about the situation`() = runTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
             .thenReturn("Processing payment")
