@@ -40,11 +40,11 @@ class WooPosVariationsViewModel @Inject constructor(
     private var fetchJob: Job? = null
     private var loadMoreJob: Job? = null
 
-    fun init(productId: Long, withPullToRefresh: Boolean = false, withCart: Boolean = true) {
+    fun init(productId: Long) {
         loadVariations(
             productId = productId,
-            withPullToRefresh = withPullToRefresh,
-            withCart = withCart,
+            withPullToRefresh = false,
+            withCart = true,
             forceRefresh = false
         )
     }
