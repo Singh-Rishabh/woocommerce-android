@@ -135,6 +135,13 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
+    fun onPackageNameChange(name: String) {
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(name = name)
+            it.copy(customPackageCreationData = newPackageData)
+        }
+    }
+
     fun onSavePackageChanged(checked: Boolean) {
         _viewState.update {
             val newPackageData = it.customPackageCreationData.copy(saveAsTemplate = checked)
