@@ -76,10 +76,6 @@ class WooPosVariationsDataSource @Inject constructor(
             )
         }
     }
-
-    fun resetLoadMoreState() {
-        handler.resetLoadMoreState()
-    }
 }
 
 private fun Result<Unit>.logFailure() {
