@@ -109,16 +109,19 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
             ),
             createCustomPackageScreen = {
                 WooShippingCustomPackageCreationScreen(
+                    packageName = "Custom Package Name",
                     packageType = "Envelope",
                     packageLength = "10",
                     packageWidth = "10",
                     packageHeight = "10",
                     isAddPackageEnabled = true,
+                    isPackageNameFieldEnabled = true,
                     onAddPackageClick = {},
                     onPackageTypeClick = {},
                     onLengthChange = {},
                     onWidthChange = {},
                     onHeightChange = {},
+                    onPackageNameChange = {},
                     onSavePackageChanged = { }
                 )
             },
