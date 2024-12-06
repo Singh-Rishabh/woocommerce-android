@@ -133,9 +133,9 @@ private fun Collecting(
             Spacer(modifier = Modifier.height(16.dp))
 
             WooPosButton(
-                text = "Mark completed",
+                text = state.button.text,
                 onClick = onCompleteOrderClicked,
-                enabled = state.canBeOrderBeCompleted,
+                enabled = state.button.status == WooPosCashPaymentState.Collecting.Button.Status.ENABLED,
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -196,7 +196,10 @@ fun WooPosTotalsPaymentCashScreenScreen() {
                 enteredAmount = "5$",
                 changeDue = "5$",
                 total = "10$",
-                canBeOrderBeCompleted = true,
+                button = WooPosCashPaymentState.Collecting.Button(
+                    text = "Complete order",
+                    status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
+                )
             ),
             onAmountChanged = {},
             onCompleteOrderClicked = {},

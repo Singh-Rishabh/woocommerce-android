@@ -6,7 +6,7 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -43,17 +43,16 @@ class WooPosCashPaymentRepository @Inject constructor(
             newStatus = statusModel,
             newPaymentMethodId = CASH_ON_DELIVERY_PAYMENT_TYPE,
             codGateway?.title ?: "Pay in Person",
-        ).filter { result ->
-            result is WCOrderStore.UpdateOrderResult.RemoteUpdateResult
-        }.map { result ->
-            val remoteResult = result as WCOrderStore.UpdateOrderResult.RemoteUpdateResult
-            if (remoteResult.event.isError) {
-                WooLog.e(T.POS, "Order completion failed - ${remoteResult.event.error.message}")
-                Result.failure(Exception(remoteResult.event.error.message))
-            } else {
-                Result.success(Unit)
-            }
-        }.first()
+        )
+            .filterIsInstance<WCOrderStore.UpdateOrderResult.RemoteUpdateResult>()
+            .map { result ->
+                if (result.event.isError) {
+                    WooLog.e(T.POS, "Order completion failed - ${result.event.error.message}")
+                    Result.failure(Exception(result.event.error.message))
+                } else {
+                    Result.success(Unit)
+                }
+            }.first()
     }
 
     private companion object {
