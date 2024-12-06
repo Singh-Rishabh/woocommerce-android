@@ -4,7 +4,7 @@ import android.util.LruCache
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class VariationsLRUCache<K, V>(private val maxSize: Int) {
+class VariationsLRUCache<K, V>(maxSize: Int) {
 
     private val cache = LruCache<K, V>(maxSize)
     private val mutex = Mutex()
