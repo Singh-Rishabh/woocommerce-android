@@ -132,7 +132,7 @@ fun WooShippingCustomPackageCreationScreen(
                 WCOutlinedTextField(
                     value = packageName,
                     onValueChange = onPackageNameChange,
-                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_height),
+                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_name),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = modifier.fillMaxWidth()
