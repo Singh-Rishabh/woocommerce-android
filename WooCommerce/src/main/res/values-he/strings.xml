@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-14 09:54:04+0000
+Translation-Revision-Date: 2024-11-26 15:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: he_IL
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woopos_variations_loading_error_title">שגיאה בטעינת הסוגים</string>
+    <string name="woopos_variations_screen_pagination_error">\"הטעינה של פריטים נוספים נכשלה. יש לנסות שוב.\"</string>
+    <string name="woopos_variations_back_content_description">חזרה</string>
+    <string name="woopos_items_list_variable_product_variations">⁦%1$d⁩ סוגים</string>
+    <string name="woopos_variation_item_content_description">סוג %s, מחיר %s</string>
+    <string name="woopos_variable_product_item_content_description">מוצר עם סוגים %s, מחיר %s</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">התיאור לא יכול להיות ריק</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">קריאות לפעולה</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">תיאור האתר לא יכול להיות ריק</string>
+    <string name="login_magic_links_email_sent_double_check_email">יש לוודא שכתובת האימייל שלך נכונה ולבדוק שוב את התיבה של דואר הזבל.</string>
+    <string name="username_not_registered_wpcom">לא הצלחנו לאתר חשבון WordPress.com שמקושר לשם המשתמש הזה. באפשרותך להזין אימייל כדי ליצור חשבון חדש.</string>
+    <string name="product_global_unique_id_summary">יש להזין ברקוד או כל מזהה אחר ייחודי למוצר הזה. הנתון יעזור לך לרשום את המוצר הזה בערוצים או בשווקים אחרים.</string>
+    <string name="product_global_unique_id_hint">GTIN, ‏UPC, ‏EAN, ‏ISBN</string>
+    <string name="card_reader_hub_payout_funds_payout_title">תשלום אחרון</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">לאחר רכישת תווית, יש לסמן את ההזמנה כ\'הושלמה\' ולהודיע ללקוח.</string>
+    <string name="login_jetpack_connection_create_account">אם אין לך חשבון, אנחנו נשתמש בכתובת האימייל הזאת כדי ליצור אחד.</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">מעטפה</string>
     <string name="woo_shipping_labels_package_creation_box_type">קופסה</string>
     <string name="woo_shipping_labels_package_creation_add_package">להוסיף חבילה</string>
@@ -30,7 +46,6 @@ Language: he_IL
     <string name="shipping_label_shipping_rates_sort_option_cheapest">הזול ביותר</string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">לרכוש תווית</string>
     <string name="shipping_label_shipment_details_purchase_label">לרכוש תווית   ⁦%1$s⁩ </string>
-    <string name="shipping_label_shipment_details_mark_order_complete">לסמן את ההזמנה כ\'הושלמה\' ולהודיע ללקוח</string>
     <string name="shipping_label_shipment_details_shipment_cost">עלות משלוח</string>
     <string name="shipping_label_shipment_details_order_details">פרטי הזמנה</string>
     <string name="shipping_label_shipment_details_title">פרטי המשלוח</string>
@@ -559,7 +574,6 @@ Language: he_IL
     <string name="blaze_campaign_preview_details_language">שפה</string>
     <string name="blaze_campaign_preview_details_budget">תקציב</string>
     <string name="blaze_campaign_preview_details_section_title">פרטים</string>
-    <string name="blaze_campaign_preview_shop_now_button">לרכישה כעת</string>
     <string name="blaze_campaign_preview_edit_ad">לערוך את הפרסומת</string>
     <string name="blaze_campaign_screen_fragment_title">תצוגה מקדימה</string>
     <string name="disabled">נָכֶה</string>
@@ -585,7 +599,6 @@ Language: he_IL
     <string name="blaze_campaign_creation_product_selector_title">מוכן לקידום</string>
     <string name="blaze_campaign_creation_new_intro_title">בדרך זו מיליונים יראו את המוצרים שלך</string>
     <string name="theme_preview_activate_theme_button_settings">להשתמש ב-⁦%1$s⁩</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">הפקדה אחרונה</string>
     <string name="order_creation_expand_collapse_order_totals">להרחיב / לכווץ סכומי הזמנות</string>
     <string name="order_creation_collect_payment_button">לגבות תשלום</string>
     <string name="order_creation_gift_card_text_error">הקוד אמור להיות בפורמט XXXX-XXXX-XXXX-XXXX</string>
@@ -667,9 +680,9 @@ Language: he_IL
     <string name="product_downloadable_files_add_documents_from_device">מסמכים וקבצים אחרים במכשיר</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨ליצור פתק תודות</string>
     <string name="custom_amounts_tax_label">לגבות מיסים</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">כספים זמינים יופקדו באופן אוטומטי, מדי %s.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">כספים זמינים יופקדו באופן אוטומטי, מדי יום.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">כספים ייעשו זמינים לאחר תקופת המתנה בת %d ימים.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">יתרות זמינות משולמות באופן אוטומטי בכל %s.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">יתרות זמינות משולמות באופן אוטומטי בכל יום.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">היתרות יהיו זמינות לאחר תקופת המתנה בת %d ימים.</string>
     <string name="product_variation_picker_title">נא לבחור וריאציה</string>
     <string name="configuration_variable_update">לבחור סוג</string>
     <string name="configuration_children_issue"> \" %1$s \" -&gt; %2$s </string>
@@ -708,19 +721,19 @@ Language: he_IL
     <string name="product_subscription_period">פרק זמן</string>
     <string name="product_subscription_interval">תדירות החיוב</string>
     <string name="product_sale">מבצע</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">לא ידוע</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">נכשל</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">בוטל</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">במעבר</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">בהמתנה</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">שולם</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">משוער</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">לכווץ/להרחיב סיכום פיקדון</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">למידע נוסף על עיתוי הזמינות של הכספים שלך</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">כספים זמינים יופקדו באופן אוטומטי, ביום ה-%s של כל חודש.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">כספים ייעשו זמינים לאחר תקופת המתנה בת יום %d.</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">כספים בהמתנה לאישור</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">כספים זמינים</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">לא ידוע</string>
+    <string name="card_reader_hub_payout_summary_status_failed">נכשל</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">בוטל</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">במעבר</string>
+    <string name="card_reader_hub_payout_summary_status_pending">בהמתנה</string>
+    <string name="card_reader_hub_payout_summary_status_paid">שולם</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">משוער</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">לכווץ/להרחיב את סיכום התשלום</string>
+    <string name="card_reader_hub_payout_summary_learn_more">למידע נוסף על המועד לקבלת היתרות שלך</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">יתרות זמינות משולמות באופן אוטומטי בכל חודש ביום ה-%s.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">היתרות יהיו זמינות לאחר תקופת המתנה בת יום %d.</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">יתרות בהמתנה לאישור</string>
+    <string name="card_reader_hub_payout_summary_available_funds">יתרות זמינות</string>
     <string name="order_creation_payment_tax_label">מיסים</string>
     <string name="order_creation_payment_products">מוצרים</string>
     <string name="order_creation_payment_header">סכומים כוללים לתשלום</string>

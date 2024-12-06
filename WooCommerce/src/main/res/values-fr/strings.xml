@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-13 15:54:03+0000
+Translation-Revision-Date: 2024-11-27 11:54:03+0000
 Plural-Forms: nplurals=2; plural=n > 1;
 Generator: GlotPress/2.4.0-alpha
 Language: fr
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woopos_variations_loading_error_title">Erreur lors du chargement des variantes</string>
+    <string name="woopos_variations_screen_pagination_error">« Échec du chargement d’éléments supplémentaires. Veuillez réessayer. »</string>
+    <string name="woopos_variations_back_content_description">Retour</string>
+    <string name="woopos_items_list_variable_product_variations">%1$d variantes</string>
+    <string name="woopos_variation_item_content_description">Variante %s, prix %s</string>
+    <string name="woopos_variable_product_item_content_description">Produit variable %s, prix %s</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">La description ne peut pas être vide</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">Appel à l’action</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">La description ne peut pas être vide</string>
+    <string name="login_magic_links_email_sent_double_check_email">Assurez-vous que votre adresse e-mail est correcte et vérifiez votre dossier de courrier indésirable.</string>
+    <string name="username_not_registered_wpcom">Nous n’avons pas trouvé de compte WordPress.com relié à cet identifiant. Vous pouvez saisir une adresse e-mail pour créer un nouveau compte.</string>
+    <string name="product_global_unique_id_summary">Saisissez un code-barres ou tout autre identifiant unique à ce produit. Cela peut vous aider à lister ce produit sur d’autres canaux ou places de marché.</string>
+    <string name="product_global_unique_id_hint">GTIN, UPC, EAN, ISBN</string>
+    <string name="card_reader_hub_payout_funds_payout_title">DERNIER PAIEMENT</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Après l’achat d’une étiquette, marquez cette commande comme terminée et informez-en le client.</string>
+    <string name="login_jetpack_connection_create_account">Si vous n’avez pas de compte, nous utiliserons cette adresse e-mail pour en créer un.</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Enveloppe</string>
     <string name="woo_shipping_labels_package_creation_box_type">Boîte</string>
     <string name="woo_shipping_labels_package_creation_add_package">Ajouter un colis</string>
@@ -30,7 +46,6 @@ Language: fr
     <string name="shipping_label_shipping_rates_sort_option_cheapest">Le moins cher</string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">Acheter une étiquette</string>
     <string name="shipping_label_shipment_details_purchase_label">Acheter une étiquette · %1$s </string>
-    <string name="shipping_label_shipment_details_mark_order_complete">Marquer cette commande comme terminée et informer le client</string>
     <string name="shipping_label_shipment_details_shipment_cost">Frais d’expédition</string>
     <string name="shipping_label_shipment_details_order_details">Détails de la commande</string>
     <string name="shipping_label_shipment_details_title">Détails de l’expédition</string>
@@ -559,7 +574,6 @@ Language: fr
     <string name="blaze_campaign_preview_details_language">Langue</string>
     <string name="blaze_campaign_preview_details_budget">Budget</string>
     <string name="blaze_campaign_preview_details_section_title">Détails</string>
-    <string name="blaze_campaign_preview_shop_now_button">Acheter maintenant</string>
     <string name="blaze_campaign_preview_edit_ad">Modifier la publicité</string>
     <string name="blaze_campaign_screen_fragment_title">Aperçu</string>
     <string name="disabled">Désactivé</string>
@@ -585,7 +599,6 @@ Language: fr
     <string name="blaze_campaign_creation_product_selector_title">Prêt à promouvoir</string>
     <string name="blaze_campaign_creation_new_intro_title">Faire en sorte que vos produits soient vus par des millions de personnes</string>
     <string name="theme_preview_activate_theme_button_settings">Utiliser %1$s</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">DERNIER DÉPÔT</string>
     <string name="order_creation_expand_collapse_order_totals">Développer / réduire les totaux de commande</string>
     <string name="order_creation_collect_payment_button">Percevoir le paiement</string>
     <string name="order_creation_gift_card_text_error">Le code doit respecter le format XXXX-XXXX-XXXX-XXXX</string>
@@ -667,9 +680,9 @@ Language: fr
     <string name="product_downloadable_files_add_documents_from_device">Documents et autres fichiers sur l’appareil</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨ Créer un mot de remerciement</string>
     <string name="custom_amounts_tax_label">Facturer les taxes</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">Les fonds disponibles sont versés automatiquement, chaque %s.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">Les fonds disponibles sont versés automatiquement, chaque jour.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">Les fonds sont disponibles après avoir passé %d jours en attente.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">Les fonds disponibles sont versés automatiquement, chaque %s.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">Les fonds disponibles sont versés automatiquement, chaque jour.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">Les fonds sont disponibles après avoir passé %d jours en attente.</string>
     <string name="product_variation_picker_title">Sélectionner une variante</string>
     <string name="configuration_variable_update">Sélectionner la variante</string>
     <string name="configuration_children_issue"> \" %1$s \" -&gt; %2$s </string>
@@ -708,19 +721,19 @@ Language: fr
     <string name="product_subscription_period">Période</string>
     <string name="product_subscription_interval">Intervalle de facturation</string>
     <string name="product_sale">Promo</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">Inconnu</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">Échec</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">Annulé</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">En transit</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">En attente</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">Payé</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">Estimé</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">Réduire/développer le récapitulatif du dépôt</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">En savoir plus sur le moment où vous recevrez vos fonds</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">Les fonds disponibles sont versés automatiquement, tous les %s du mois.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">Les fonds sont disponibles après avoir passé %d jour en attente.</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">Fonds en attente</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">Fonds disponibles</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">Inconnu</string>
+    <string name="card_reader_hub_payout_summary_status_failed">Échec</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">Annulé</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">En transit</string>
+    <string name="card_reader_hub_payout_summary_status_pending">En attente</string>
+    <string name="card_reader_hub_payout_summary_status_paid">Payé</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">Estimé</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">Réduire / développer le récapitulatif du paiement</string>
+    <string name="card_reader_hub_payout_summary_learn_more">En savoir plus sur le moment où vous recevrez vos fonds</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">Les fonds disponibles sont versés automatiquement, tous les %s du mois.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">Les fonds sont disponibles après avoir passé %d jour en attente.</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">Fonds en attente</string>
+    <string name="card_reader_hub_payout_summary_available_funds">Fonds disponibles</string>
     <string name="order_creation_payment_tax_label">Taxes</string>
     <string name="order_creation_payment_products">Produits</string>
     <string name="order_creation_payment_header">Totaux des paiements</string>

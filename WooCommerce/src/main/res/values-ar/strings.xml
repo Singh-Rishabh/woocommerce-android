@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-11 18:54:04+0000
+Translation-Revision-Date: 2024-11-28 14:54:04+0000
 Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;
 Generator: GlotPress/2.4.0-alpha
 Language: ar
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woopos_variations_loading_error_title">خطأ في تحميل الأشكال</string>
+    <string name="woopos_variations_screen_pagination_error">\"فشل تحميل مزيد من العناصر. يرجى المحاولة مرة أخرى\".</string>
+    <string name="woopos_variations_back_content_description">رجوع</string>
+    <string name="woopos_items_list_variable_product_variations">⁦%1$d⁩ من الأشكال</string>
+    <string name="woopos_variation_item_content_description">الشكل %s، الشعر %s</string>
+    <string name="woopos_variable_product_item_content_description">المنتج المتغير %s، السعر %s</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">يتعذر أن يكون الوصف فارغًا</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">حثّ على المبادرة</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">يتعذر أن يكون الشعار فارغًا</string>
+    <string name="login_magic_links_email_sent_double_check_email">تأكد من أن بريدك الإلكتروني صحيح وتحقق مجددًا من مجلد البريد المزعج.</string>
+    <string name="username_not_registered_wpcom">لا يمكننا العثور على حساب ووردبريس.كوم متصلاً باسم المستخدم هذا. يمكنك إدخال بريد إلكتروني لإنشاء حساب جديد.</string>
+    <string name="product_global_unique_id_summary">أدخل كود المرور أو أي معرِّف آخر فريد لهذا المنتج. قد يساعدك ذلك على إدراج هذا المنتج على القنوات الأخرى أو الأسواق.</string>
+    <string name="product_global_unique_id_hint">GTIN، وUPC، وEAN، وISBN</string>
+    <string name="card_reader_hub_payout_funds_payout_title">آخر المدفوعات</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">بعد شراء ملصق، ضع علامة على هذا الطلب على أنه مكتمل وأخطر العميل بذلك.</string>
+    <string name="login_jetpack_connection_create_account">إذا لم يكن لديك حساب، فإننا سنستخدم هذا البريد الإلكتروني لإنشاء واحد.</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">ظرف</string>
     <string name="woo_shipping_labels_package_creation_box_type">صندوق</string>
     <string name="woo_shipping_labels_package_creation_add_package">إضافة طرد</string>
@@ -30,7 +46,6 @@ Language: ar
     <string name="shipping_label_shipping_rates_sort_option_cheapest">الأرخص</string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">ملصق الشراء</string>
     <string name="shipping_label_shipment_details_purchase_label">ملصق الشراء · ⁦%1$s⁩ </string>
-    <string name="shipping_label_shipment_details_mark_order_complete">وضع علامة على هذا الطلب على أنه مكتمل وإخطار العميل</string>
     <string name="shipping_label_shipment_details_shipment_cost">تكلفة الشحنة</string>
     <string name="shipping_label_shipment_details_order_details">تفاصيل الطلب</string>
     <string name="shipping_label_shipment_details_title">تفاصيل الشحنة</string>
@@ -559,7 +574,6 @@ Language: ar
     <string name="blaze_campaign_preview_details_language">اللغة</string>
     <string name="blaze_campaign_preview_details_budget">الميزانية</string>
     <string name="blaze_campaign_preview_details_section_title">تفاصيل</string>
-    <string name="blaze_campaign_preview_shop_now_button">التسوق الآن</string>
     <string name="blaze_campaign_preview_edit_ad">تحرير الإعلان</string>
     <string name="blaze_campaign_screen_fragment_title">معاينة</string>
     <string name="disabled">تعطيل المزامنة</string>
@@ -585,7 +599,6 @@ Language: ar
     <string name="blaze_campaign_creation_product_selector_title">جاهز للترويج</string>
     <string name="blaze_campaign_creation_new_intro_title">تمكين الملايين من مشاهدة منتجاتك</string>
     <string name="theme_preview_activate_theme_button_settings">استخدام ⁦%1$s⁩</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">الوديعة الأخيرة</string>
     <string name="order_creation_expand_collapse_order_totals">توسيع إجماليات طلبات الطي</string>
     <string name="order_creation_collect_payment_button">تحصيل المدفوعات</string>
     <string name="order_creation_gift_card_text_error">ينبغي أن يكون الكود بتنسيق XXXX-XXXX-XXXX-XXXX</string>
@@ -667,9 +680,9 @@ Language: ar
     <string name="product_downloadable_files_add_documents_from_device">الوثائق والملفات الأخرى على الجهاز</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨ إنشاء ملحوظة \"تقديم الشكر إليك\"</string>
     <string name="custom_amounts_tax_label">فرض الضرائب</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">يتم إيداع الأموال المتوافرة تلقائيًا في كل %s.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">يتم إيداع الأموال المتوافرة تلقائيًا في كل يوم.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">تصبح الأموال متوافرة بعد تعليقها لمدة %d من الأيام.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">يتم دفع الأموال المتوفرة تلقائيًا في كل %s.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">يتم دفع الأموال المتوفرة تلقائيًا في كل يوم.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">تصبح الأموال متوفرة بعد تعليقها لمدة %d من الأيام.</string>
     <string name="product_variation_picker_title">تحديد شكل</string>
     <string name="configuration_variable_update">اختيار الشكل</string>
     <string name="configuration_children_issue"> \" %1$s \" -&gt; %2$s </string>
@@ -708,19 +721,19 @@ Language: ar
     <string name="product_subscription_period">الفترة</string>
     <string name="product_subscription_interval">الفاصل الزمني للفوترة</string>
     <string name="product_sale">تخفيض</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">غير معروف</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">فشل</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">تم الإلغاء</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">قيد النقل</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">معلق</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">مدفوع</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">المقدَّر</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">طي/توسيع ملخص الإيداع</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">معرفة المزيد حول موعد الحصول على أموالك</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">يتم إيداع الأموال المتوافرة تلقائيًا في كل شهر على %s.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">تصبح الأموال متوافرة بعد تعليقها لمدة %d من الأيام.</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">الأموال المعلّقة</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">الأموال المتوافرة</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">غير معروف</string>
+    <string name="card_reader_hub_payout_summary_status_failed">فشل</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">تم الإلغاء</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">قيد النقل</string>
+    <string name="card_reader_hub_payout_summary_status_pending">معلق</string>
+    <string name="card_reader_hub_payout_summary_status_paid">مدفوع</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">المقدَّر</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">طي/توسيع ملخص المدفوعات</string>
+    <string name="card_reader_hub_payout_summary_learn_more">معرفة المزيد حول موعد الحصول على أموالك</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">يتم دفع الأموال المتوفرة تلقائيًا في كل شهر على %s.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">تصبح الأموال متوافرة بعد تعليقها لمدة %d من الأيام.</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">الأموال المعلّقة</string>
+    <string name="card_reader_hub_payout_summary_available_funds">الأموال المتوفرة</string>
     <string name="order_creation_payment_tax_label">الضرائب</string>
     <string name="order_creation_payment_products">المنتجات</string>
     <string name="order_creation_payment_header">إجماليات المدفوعات</string>

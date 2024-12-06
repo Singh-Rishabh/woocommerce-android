@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-13 11:54:03+0000
+Translation-Revision-Date: 2024-11-26 13:54:03+0000
 Plural-Forms: nplurals=1; plural=0;
 Generator: GlotPress/2.4.0-alpha
 Language: zh_TW
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woopos_variations_loading_error_title">載入款式時發生錯誤</string>
+    <string name="woopos_variations_screen_pagination_error">「無法載入更多項目， 請再試一次。」</string>
+    <string name="woopos_variations_back_content_description">返回</string>
+    <string name="woopos_items_list_variable_product_variations">%1$d 種款式</string>
+    <string name="woopos_variation_item_content_description">款式 %s，價格 %s</string>
+    <string name="woopos_variable_product_item_content_description">多款式商品 %s，價格 %s</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">說明不得空白</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">行動呼籲</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">標語不得空白</string>
+    <string name="login_magic_links_email_sent_double_check_email">請確定電子郵件地址是否正確，並再次查看垃圾郵件資料夾。</string>
+    <string name="username_not_registered_wpcom">我們找不到此使用者名稱所連結的 WordPress.com 帳號。 請輸入電子郵件地址建立新帳號。</string>
+    <string name="product_global_unique_id_summary">請輸入條碼或此商品任一不重複識別碼， 這可協助你將此商品上架於其他通路或市集。</string>
+    <string name="product_global_unique_id_hint">GTIN、UPC、EAN、ISBN</string>
+    <string name="card_reader_hub_payout_funds_payout_title">上次款項</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">購買標籤後，將此訂單標示為完成並通知顧客。</string>
+    <string name="login_jetpack_connection_create_account">如果你沒有帳號，系統會使用此電子郵件地址建立帳號。</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">信封</string>
     <string name="woo_shipping_labels_package_creation_box_type">包裝箱</string>
     <string name="woo_shipping_labels_package_creation_add_package">新增包裹</string>
@@ -30,7 +46,6 @@ Language: zh_TW
     <string name="shipping_label_shipping_rates_sort_option_cheapest">最便宜</string>
     <string name="shipping_label_shipment_details_purchase_label_disabled">購買標籤</string>
     <string name="shipping_label_shipment_details_purchase_label">購買標籤 · %1$s </string>
-    <string name="shipping_label_shipment_details_mark_order_complete">將此訂單標示為完成並通知客戶</string>
     <string name="shipping_label_shipment_details_shipment_cost">貨運費用</string>
     <string name="shipping_label_shipment_details_order_details">訂單詳細資料</string>
     <string name="shipping_label_shipment_details_title">貨運詳細資料</string>
@@ -559,7 +574,6 @@ Language: zh_TW
     <string name="blaze_campaign_preview_details_language">語言</string>
     <string name="blaze_campaign_preview_details_budget">預算</string>
     <string name="blaze_campaign_preview_details_section_title">詳細資料</string>
-    <string name="blaze_campaign_preview_shop_now_button">立即選購</string>
     <string name="blaze_campaign_preview_edit_ad">編輯廣告</string>
     <string name="blaze_campaign_screen_fragment_title">預覽</string>
     <string name="disabled">殘障人士</string>
@@ -585,7 +599,6 @@ Language: zh_TW
     <string name="blaze_campaign_creation_product_selector_title">準備展開宣傳</string>
     <string name="blaze_campaign_creation_new_intro_title">讓數百萬使用者看見你的產品</string>
     <string name="theme_preview_activate_theme_button_settings">使用 %1$s</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">上次存款</string>
     <string name="order_creation_expand_collapse_order_totals">展開收合的訂單總額</string>
     <string name="order_creation_collect_payment_button">收取款項</string>
     <string name="order_creation_gift_card_text_error">序號必須採用 XXXX-XXXX-XXXX-XXXX 格式。</string>
@@ -667,9 +680,9 @@ Language: zh_TW
     <string name="product_downloadable_files_add_documents_from_device">裝置上的文件和其他檔案</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨建立感謝信</string>
     <string name="custom_amounts_tax_label">收取稅金</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">可用款項將自動於每%s存入。</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">可用款項將自動於每天存入。</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">待確認款項 %d 天後即可使用。</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">每%s會自動發放可用款項。</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">每天會自動發放可用款項。</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">%d 天後即可使用待確認款項。</string>
     <string name="product_variation_picker_title">選取款式</string>
     <string name="configuration_variable_update">選擇款式</string>
     <string name="configuration_children_issue"> 「%1$s」-&gt; %2$s </string>
@@ -708,19 +721,19 @@ Language: zh_TW
     <string name="product_subscription_period">期間</string>
     <string name="product_subscription_interval">帳單間隔</string>
     <string name="product_sale">特價</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">未知</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">失敗</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">已取消</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">運送中</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">待確認</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">已付費</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">估計值</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">收合/展開存款摘要</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">深入瞭解何時會收到款項</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">可用款項將自動於每月 %s存入。</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">待確認款項 %d 天後即可使用。</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">待確認款項</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">可用款項</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">不明</string>
+    <string name="card_reader_hub_payout_summary_status_failed">失敗</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">已取消</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">運送中</string>
+    <string name="card_reader_hub_payout_summary_status_pending">待確認</string>
+    <string name="card_reader_hub_payout_summary_status_paid">已付費</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">估計值</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">收合/展開款項摘要</string>
+    <string name="card_reader_hub_payout_summary_learn_more">深入了解何時會收到款項</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">每月 %s 日會自動發放可用款項。</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">%d 天後即可使用待確認款項。</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">待確認款項</string>
+    <string name="card_reader_hub_payout_summary_available_funds">可用款項</string>
     <string name="order_creation_payment_tax_label">稅金</string>
     <string name="order_creation_payment_products">產品</string>
     <string name="order_creation_payment_header">付款總金額</string>

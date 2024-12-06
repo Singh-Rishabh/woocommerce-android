@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2024-11-12 09:54:04+0000
+Translation-Revision-Date: 2024-11-26 09:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: de
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woopos_variations_loading_error_title">Beim Laden der Varianten ist ein Fehler aufgetreten</string>
+    <string name="woopos_variations_screen_pagination_error">„Es ist ein Fehler beim Laden weiterer Artikel aufgetreten. Bitte versuche es erneut.“</string>
+    <string name="woopos_variations_back_content_description">Zurück</string>
+    <string name="woopos_items_list_variable_product_variations">%1$d Varianten</string>
+    <string name="woopos_variation_item_content_description">Variante: %s, Preis: %s</string>
+    <string name="woopos_variable_product_item_content_description">Variables Produkt: %s, Preis: %s</string>
+    <string name="blaze_campaign_edit_ad_change_description_empty_error">Beschreibung darf nicht leer sein</string>
+    <string name="blaze_campaign_edit_ad_change_cta_text_title">Call-to-Action</string>
+    <string name="blaze_campaign_edit_ad_change_tagline_empty_error">Untertitel darf nicht leer sein</string>
+    <string name="login_magic_links_email_sent_double_check_email">Stelle sicher, dass deine E-Mail-Adresse korrekt ist, und überprüfe deinen Spam-Ordner.</string>
+    <string name="username_not_registered_wpcom">Wir können kein WordPress.com-Konto finden, das mit diesem Benutzernamen verknüpft ist. Gib eine E-Mail-Adresse ein, um ein neues Konto zu erstellen.</string>
+    <string name="product_global_unique_id_summary">Gib einen Barcode oder einen anderen eindeutigen Identifikator für dieses Produkt ein. So kannst du dieses Produkt auch über andere Kanäle oder Marktplätze anbieten.</string>
+    <string name="product_global_unique_id_hint">GTIN, UPC, EAN, ISBN</string>
+    <string name="card_reader_hub_payout_funds_payout_title">LETZTE AUSZAHLUNG</string>
+    <string name="shipping_label_shipment_details_mark_order_complete">Markiere diese Bestellung nach dem Kauf des Etiketts als abgeschlossen und benachrichtige den Kunden.</string>
+    <string name="login_jetpack_connection_create_account">Wenn du noch kein Konto hast, benutzen wir diese E-Mail-Adresse, um ein neues zu erstellen.</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Umschlag</string>
     <string name="woo_shipping_labels_package_creation_box_type">Karton</string>
     <string name="woo_shipping_labels_package_creation_add_package">Paket hinzufügen</string>
@@ -37,7 +53,6 @@ Language: de
     <string name="shipping_label_select_package_title">Paket auswählen, damit Versandtarife angezeigt werden</string>
     <string name="shipping_label_select_package_button">Paket auswählen</string>
     <string name="shipping_label_hazmat_title">Versendest du Gefahrgut oder gefährliche Stoffe?</string>
-    <string name="shipping_label_shipment_details_mark_order_complete">Diese Bestellung als abgeschlossen markieren und den Kunden benachrichtigen</string>
     <string name="shipping_label_package_details_items_expand_content_description">Artikelkarte einklappen/aufklappen</string>
     <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
     <string name="no">Nein.</string>
@@ -559,7 +574,6 @@ Language: de
     <string name="blaze_campaign_preview_details_language">Sprache</string>
     <string name="blaze_campaign_preview_details_budget">Budget</string>
     <string name="blaze_campaign_preview_details_section_title">Details</string>
-    <string name="blaze_campaign_preview_shop_now_button">Jetzt einkaufen</string>
     <string name="blaze_campaign_screen_fragment_title">Vorschau</string>
     <string name="blaze_campaign_preview_edit_ad">Werbung bearbeiten</string>
     <string name="disabled">Deaktiviert</string>
@@ -585,7 +599,6 @@ Language: de
     <string name="blaze_campaign_creation_product_selector_title">Bereit zum Bewerben</string>
     <string name="blaze_campaign_creation_new_intro_title">Präsentiere deine Produkte Millionen von Interessenten</string>
     <string name="theme_preview_activate_theme_button_settings">Verwende %1$s</string>
-    <string name="card_reader_hub_deposit_funds_deposits_title">LETZTE AUSZAHLUNG</string>
     <string name="order_creation_expand_collapse_order_totals">Bestellsumme aufklappen/zuklappen</string>
     <string name="order_creation_collect_payment_button">Zahlung empfangen</string>
     <string name="order_creation_gift_card_text_error">Der Code muss folgendes Format haben: XXXX-XXXX-XXXX-XXXX</string>
@@ -667,9 +680,9 @@ Language: de
     <string name="product_downloadable_files_add_documents_from_device">Dokumente und andere Dateien auf dem Gerät</string>
     <string name="orderdetail_ai_create_thank_you_note_button">✨ Dankeschön-Nachricht erstellen</string>
     <string name="custom_amounts_tax_label">Steuern erheben</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_weekly">Verfügbares Guthaben wird automatisch an jedem %s ausgezahlt.</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_daily">Verfügbares Guthaben wird automatisch jeden Tag ausgezahlt.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_plural">Guthaben, das seit %d Tagen aussteht, wird zur Verfügung gestellt.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_weekly">Verfügbares Guthaben wird automatisch an jedem %s ausgezahlt.</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_daily">Verfügbares Guthaben wird automatisch jeden Tag ausgezahlt.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_plural">Guthaben, das seit %d Tagen aussteht, wird zur Verfügung gestellt.</string>
     <string name="product_variation_picker_title">Variante auswählen</string>
     <string name="configuration_children_issue"> „%1$s“ -&gt; %2$s </string>
     <string name="configuration_variable_selection"> Bitte wähle eine Variante aus </string>
@@ -708,21 +721,21 @@ Language: de
     <string name="product_subscription_period">Periode</string>
     <string name="product_subscription_interval">Zahlungsintervall</string>
     <string name="product_sale">Angebot</string>
-    <string name="card_reader_hub_deposit_summary_status_unknown">Unbekannt</string>
-    <string name="card_reader_hub_deposit_summary_status_failed">Fehlgeschlagen</string>
-    <string name="card_reader_hub_deposit_summary_status_canceled">Abgebrochen</string>
-    <string name="card_reader_hub_deposit_summary_status_in_transit">Unterwegs</string>
-    <string name="card_reader_hub_deposit_summary_status_pending">Ausstehend</string>
-    <string name="card_reader_hub_deposit_summary_status_paid">Bezahlt</string>
-    <string name="card_reader_hub_deposit_summary_status_estimated">Geschätzt</string>
-    <string name="card_reader_hub_deposit_summary_collapse_expand_content_description">Zusammenfassung der Auszahlungen aus-/einblenden</string>
-    <string name="card_reader_hub_deposit_summary_learn_more">Weitere Informationen zum Erhalt deiner Zahlungen</string>
-    <string name="card_reader_hub_deposit_summary_pending_funds">Ausstehendes Guthaben</string>
-    <string name="card_reader_hub_deposit_summary_available_funds">Verfügbares Guthaben</string>
+    <string name="card_reader_hub_payout_summary_status_unknown">Unbekannt</string>
+    <string name="card_reader_hub_payout_summary_status_failed">Fehlgeschlagen</string>
+    <string name="card_reader_hub_payout_summary_status_canceled">Abgebrochen</string>
+    <string name="card_reader_hub_payout_summary_status_in_transit">Unterwegs</string>
+    <string name="card_reader_hub_payout_summary_status_pending">Ausstehend</string>
+    <string name="card_reader_hub_payout_summary_status_paid">Bezahlt</string>
+    <string name="card_reader_hub_payout_summary_status_estimated">Geschätzt</string>
+    <string name="card_reader_hub_payout_summary_collapse_expand_content_description">Zusammenfassung der Auszahlungen aus-/einblenden</string>
+    <string name="card_reader_hub_payout_summary_learn_more">Weitere Informationen zum Erhalt deiner Zahlungen</string>
     <string name="order_creation_payment_tax_label">Steuern</string>
     <string name="order_creation_payment_products">Produkte</string>
-    <string name="card_reader_hub_deposit_summary_available_deposit_time_monthly">Verfügbares Guthaben wird automatisch am %s jedes Monats ausgezahlt.</string>
-    <string name="card_reader_hub_deposit_summary_funds_available_after_one">Guthaben, das seit %d Tag aussteht, wird zur Verfügung gestellt.</string>
+    <string name="card_reader_hub_payout_summary_pending_funds">Ausstehendes Guthaben</string>
+    <string name="card_reader_hub_payout_summary_available_funds">Verfügbares Guthaben</string>
+    <string name="card_reader_hub_payout_summary_available_payout_time_monthly">Verfügbares Guthaben wird automatisch am %s jedes Monats ausgezahlt.</string>
+    <string name="card_reader_hub_payout_summary_funds_available_after_one">Guthaben, das seit %d Tag aussteht, wird zur Verfügung gestellt.</string>
     <string name="order_creation_payment_header">Zahlungsübersicht</string>
     <string name="email_or_username">E-Mail-Adresse oder Benutzername</string>
     <string name="custom_amounts_creation_error">Bestellung mit individuellem Betrag konnte nicht erstellt werden</string>
