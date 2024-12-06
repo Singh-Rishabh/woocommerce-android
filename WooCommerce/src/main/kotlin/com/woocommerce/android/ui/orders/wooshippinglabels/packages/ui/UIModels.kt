@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
 import android.os.Parcelable
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import kotlinx.parcelize.Parcelize
 
@@ -38,10 +39,14 @@ data class CustomPackageCreationData(
     val length: String,
     val width: String,
     val height: String,
-    val saveAsTemplate: Boolean
+    val saveAsTemplate: Boolean,
+    val name: String? = null
 ) : Parcelable {
     val isValid: Boolean
-        get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
+        get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty() && isTemplateConfigured
+
+    private val isTemplateConfigured: Boolean
+        get() = name?.let { it.isNotEmpty() && saveAsTemplate } ?: true
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
         name = "",
