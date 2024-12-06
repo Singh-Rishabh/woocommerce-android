@@ -66,7 +66,7 @@ fun WooPosCashPaymentScreen(
                 )
             }
 
-            WooPosCashPaymentState.Finishing -> TODO()
+            WooPosCashPaymentState.Complete -> TODO()
             WooPosCashPaymentState.Initiating -> {
                 // show nothing
             }

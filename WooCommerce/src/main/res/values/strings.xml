@@ -4319,6 +4319,7 @@
     <string name="woopos_variations_loading_error_title">Error loading variations</string>
 
     <string name="woopos_cash_payment_title">Cash payment</string>
+    <string name="woopos_complete_cash_order_button">Complete order</string>
 
 
     <string name="customers_details_customer_section">Customer</string>
