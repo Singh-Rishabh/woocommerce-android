@@ -37,11 +37,10 @@ class WooPosVariationsViewModel @Inject constructor(
             initialValue = _viewState.value,
         )
 
-    private var flowJob: Job? = null
+    private var fetchJob: Job? = null
     private var loadMoreJob: Job? = null
 
     fun init(productId: Long, withPullToRefresh: Boolean = false, withCart: Boolean = true) {
-        resetState()
         loadVariations(
             productId = productId,
             withPullToRefresh = withPullToRefresh,
@@ -50,18 +49,14 @@ class WooPosVariationsViewModel @Inject constructor(
         )
     }
 
-    private fun resetState() {
-        flowJob?.cancel()
-        variationsDataSource.resetLoadMoreState()
-    }
-
     private fun loadVariations(
         productId: Long,
         forceRefresh: Boolean,
         withPullToRefresh: Boolean,
         withCart: Boolean,
     ) {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             _viewState.value = if (withPullToRefresh) {
                 buildProductsReloadingState()
             } else {
