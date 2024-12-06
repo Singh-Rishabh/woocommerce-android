@@ -14,10 +14,8 @@ The "**Website URL**", "**Redirect URLs**", and "**Javascript Origins**" fields 
 the mobile apps. Just use "**[https://localhost](https://localhost)**".
 
 Once you've created your application in the [applications manager][wp-com-apps], you'll
-need to create a `secrets.properties` file. While in the root directory of the repository, use the 
-command `cp defaults.properties ~/.configure/woocommerce-android/secrets/secrets.properties` to 
-generate the `secrets.properties` file. Open the newly create file and update the `wc.oauth.app_id` 
-and `wc.oauth.app_secret` fields. Then you can compile and run the app on a device or an emulator and 
+need to update the `wc.oauth.app_id` and `wc.oauth.app_secret` fields in `secrets.properties`.
+See [setup instructions][setup] for more details about secrets file. Then you can compile and run the app on a device or an emulator and 
 try to login with a WordPress.com account. Note that authenticating to WordPress.com via Google is 
 not supported in development builds of the app, only in the official release.
 
@@ -85,3 +83,4 @@ that can't be shared publicly. More documentation and guides can be found on the
 [google-ident]: https://cloud.google.com/identity-platform/docs/
 [detekt]: https://detekt.github.io/detekt/
 [jetpack]: https://wordpress.org/plugins/jetpack/
+[setup]: ../README.md#-setup-instructions
