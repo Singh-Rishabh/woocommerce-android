@@ -42,10 +42,12 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonLarge
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.payment.cash.WooPosTotalsPaymentCashScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 import kotlinx.coroutines.delay
@@ -92,6 +94,16 @@ private fun WooPosTotalsScreen(
                     state,
                     onEmailAddressChanged = { onUIEvent(WooPosTotalsUIEvent.OnEmailChanged(it)) },
                     onSendReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnSendReceiptClicked) }
+                )
+            }
+        }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.CashPayment) {
+            if (state is WooPosTotalsViewState.CashPayment) {
+                WooPosTotalsPaymentCashScreen(
+                    state,
+                    onAmountChanged = { },
+                    onCompleteOrderClicked = { },
                 )
             }
         }
@@ -151,6 +163,15 @@ private fun TotalsLoaded(
             Spacer(modifier = Modifier.weight(1f))
 
             TotalsGrid(state)
+
+            if (state.isCashPaymentAvailable) {
+                Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+
+                WooPosButton(
+                    text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                    onClick = { onUIEvent(WooPosTotalsUIEvent.OnTakeCashPaymentClicked) },
+                )
+            }
 
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -296,6 +317,24 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
+                isCashPaymentAvailable = false
+            ),
+            onUIEvent = {}
+        )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
+    WooPosTheme {
+        WooPosTotalsScreen(
+            modifier = Modifier,
+            state = WooPosTotalsViewState.Totals(
+                orderSubtotalText = "$420.00",
+                orderTotalText = "$462.00",
+                orderTaxText = "$42.00",
+                isCashPaymentAvailable = true
             ),
             onUIEvent = {}
         )
