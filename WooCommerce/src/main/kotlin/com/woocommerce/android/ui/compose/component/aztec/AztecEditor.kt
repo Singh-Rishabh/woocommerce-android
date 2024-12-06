@@ -31,9 +31,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalTextInputService
-import androidx.compose.ui.text.InternalTextApi
-import androidx.compose.ui.text.input.TextInputService
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -42,7 +39,6 @@ import com.google.android.material.textfield.TextInputLayout
 import com.woocommerce.android.databinding.ViewAztecBinding
 import com.woocommerce.android.databinding.ViewAztecOutlinedBinding
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -257,7 +253,6 @@ private fun InternalAztecEditor(
 ) {
     val localContext = LocalContext.current
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val textInputService = LocalTextInputService.current
 
     val viewsHolder = remember(localContext, enableSourceEditor) { aztecViewsProvider(localContext) }
     val listener = remember { createToolbarListener { state.toggleHtmlEditor() } }
@@ -309,8 +304,7 @@ private fun InternalAztecEditor(
         handleFocus(
             focusState = focusState,
             imeVisibility = isImeVisible,
-            bringIntoViewRequester = bringIntoViewRequester,
-            textInputService = textInputService
+            bringIntoViewRequester = bringIntoViewRequester
         )
     }
 
@@ -380,30 +374,12 @@ private fun InternalAztecEditor(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, InternalTextApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 private suspend fun handleFocus(
     focusState: StateFlow<Boolean>,
     imeVisibility: State<Boolean>,
     bringIntoViewRequester: BringIntoViewRequester,
-    textInputService: TextInputService?
 ) = coroutineScope {
-    launch(Dispatchers.Main.immediate) {
-        // In Compose, text fields use input sessions to manage the input, when focus moves to a non-input field
-        // the session is closed and this hides the keyboard.
-        // This behavior doesn't work well when focus moves to a non-Compose input field, like the Aztec editor.
-        // see: https://issuetracker.google.com/issues/318530776 and https://issuetracker.google.com/issues/363544352
-        // To get around the issue, we are using the internal API to start/stop the input session.
-        // This is safe to do because even if the API changes, we can remove the logic temporarily until the bug is
-        // fixed, as this bug is not critical for the editor.
-        focusState.collect {
-            if (it) {
-                textInputService?.startInput()
-            } else {
-                textInputService?.stopInput()
-            }
-        }
-    }
-
     launch {
         // Use collectLatest to make sure the nested collection is cancelled when the focus state changes
         focusState.collectLatest { hasFocus ->
