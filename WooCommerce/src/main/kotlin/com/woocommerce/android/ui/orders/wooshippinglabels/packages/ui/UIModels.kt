@@ -45,6 +45,9 @@ data class CustomPackageCreationData(
     val isValid: Boolean
         get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty() && isTemplateConfigured
 
+    val dimensions: String
+        get() = "$length x $width x $height"
+
     private val isTemplateConfigured: Boolean
         get() {
             if (saveAsTemplate.not()) return true
