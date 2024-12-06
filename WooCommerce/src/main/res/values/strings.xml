@@ -4285,6 +4285,7 @@
     <string name="woopos_payment_tax_label">Taxes</string>
     <string name="woopos_payment_total_label">Total</string>
     <string name="woopos_payment_collect_payment_label">Collect card payment</string>
+    <string name="woopos_payment_take_cash_payment_label">Take cash payment</string>
     <string name="woopos_products_empty_list">No products</string>
     <string name="woopos_reader_connect_now_button">Connect now</string>
     <string name="woopos_totals_main_error_label">Couldn\'t load totals</string>
