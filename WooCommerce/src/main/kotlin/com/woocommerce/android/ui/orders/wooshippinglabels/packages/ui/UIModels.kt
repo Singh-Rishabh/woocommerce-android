@@ -46,7 +46,11 @@ data class CustomPackageCreationData(
         get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty() && isTemplateConfigured
 
     private val isTemplateConfigured: Boolean
-        get() = name?.let { it.isNotEmpty() && saveAsTemplate } ?: true
+        get() {
+            if (saveAsTemplate.not()) return true
+
+            return name.isNotNullOrEmpty()
+        }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
         name = "",
