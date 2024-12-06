@@ -786,7 +786,7 @@ class WooPosTotalsViewModelTest {
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         isReceiptSendingAvailable = isReceiptSendingAvailable,
-        isCashPaymentsEnabled,
+        isCashPaymentsEnabled = isCashPaymentsEnabled,
         savedState = savedState,
     )
 }
