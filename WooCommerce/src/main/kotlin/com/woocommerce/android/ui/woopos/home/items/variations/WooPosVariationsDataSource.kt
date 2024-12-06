@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -19,7 +20,7 @@ class WooPosVariationsDataSource @Inject constructor(
     private val handler: VariationListHandler
 ) {
     private val variationCache = VariationsLRUCache<Long, List<ProductVariation>>(maxSize = 50)
-    private val cacheMutex = kotlinx.coroutines.sync.Mutex()
+    private val cacheMutex = Mutex()
 
     private suspend fun getCachedVariations(productId: Long): List<ProductVariation> {
         return cacheMutex.withLock { variationCache.get(productId) ?: emptyList() }
