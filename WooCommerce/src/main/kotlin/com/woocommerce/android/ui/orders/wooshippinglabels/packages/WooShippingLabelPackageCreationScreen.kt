@@ -115,7 +115,7 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     packageWidth = "10",
                     packageHeight = "10",
                     isAddPackageEnabled = true,
-                    isPackageNameFieldEnabled = true,
+                    isSaveAsTemplateChecked = true,
                     onAddPackageClick = {},
                     onPackageTypeClick = {},
                     onLengthChange = {},
