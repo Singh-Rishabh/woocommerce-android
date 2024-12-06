@@ -128,15 +128,17 @@ fun WooShippingCustomPackageCreationScreen(
                 )
                 Checkbox(checked = false, onCheckedChange = onSavePackageChanged)
             }
-            Column(modifier = modifier) {
-                WCOutlinedTextField(
-                    value = packageName,
-                    onValueChange = onPackageNameChange,
-                    label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_name),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    modifier = modifier.fillMaxWidth()
-                )
+            if (isPackageNameFieldEnabled) {
+                Column(modifier = modifier) {
+                    WCOutlinedTextField(
+                        value = packageName,
+                        onValueChange = onPackageNameChange,
+                        label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_name),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        modifier = modifier.fillMaxWidth()
+                    )
+                }
             }
         }
         Button(
