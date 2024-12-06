@@ -53,8 +53,9 @@ fun WooPosVariationsScreen(
     variableProductData: VariableProductData,
     onBackClicked: () -> Unit
 ) {
-    val viewModel: WooPosVariationsViewModel = hiltViewModel()
-
+    val viewModel: WooPosVariationsViewModel = hiltViewModel(
+        key = variableProductData.id.toString()
+    )
     LaunchedEffect(variableProductData.id) {
         viewModel.init(variableProductData.id)
     }
