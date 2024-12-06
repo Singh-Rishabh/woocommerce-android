@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationRequestData
@@ -23,10 +24,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import org.wordpress.android.fluxc.model.SiteModel
 
 @HiltViewModel
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
+    private val selectedSite: SelectedSite,
     private val resourceProvider: ResourceProvider,
     private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore,
     private val packageRepository: WooShippingLabelPackageRepository
@@ -100,9 +103,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             ?.let { triggerEvent(PackageSelected(it)) }
     }
 
-    fun onAddCustomPackageClick(saveAsTemplate: Boolean) {
+    fun onAddCustomPackageClick(savePackageAsTemplate: Boolean) {
         val customPackage = _viewState.value.customPackageCreationData
-        if (saveAsTemplate) { customPackage.submitToStore() }
+        selectedSite.getOrNull()
+            ?.takeIf { savePackageAsTemplate }
+            ?.let { customPackage.submitToStore(it) }
 
         customPackage.toPackageData()
             .let { triggerEvent(PackageSelected(it)) }
@@ -175,9 +180,10 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             ?.let { set(it, updatedPackage) }
     }
 
-    private fun CustomPackageCreationData.submitToStore() {
+    private fun CustomPackageCreationData.submitToStore(site: SiteModel) {
         launch {
             packageRepository.createCustomPackage(
+                site = site,
                 requestData = this@submitToStore.let {
                     CustomPackageCreationRequestData(
                         name = it.name,
