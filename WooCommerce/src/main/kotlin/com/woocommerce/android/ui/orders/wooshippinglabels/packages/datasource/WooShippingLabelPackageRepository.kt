@@ -1,7 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationRequestData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.WooShippingLabelPackageRestClient
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
@@ -25,7 +25,7 @@ class WooShippingLabelPackageRepository @Inject constructor(
 
     suspend fun createCustomPackage(
         site: SiteModel = selectedSite.get(),
-        requestData: List<CustomPackageCreationData>
+        requestData: List<CustomPackageCreationRequestData>
     ) = with(packageRestClient.postNewCustomPackage(site, requestData)) {
         result.takeIf { isError.not() }
             ?.let { packageMapper(it) }

@@ -21,7 +21,7 @@ class WooShippingLabelPackageRestClient @Inject constructor(
 
     suspend fun postNewCustomPackage(
         site: SiteModel,
-        requestData: List<CustomPackageCreationData>
+        requestData: List<CustomPackageCreationRequestData>
     ): WooPayload<CustomPackageCreationResponse> {
         return wooNetwork.executePostGsonRequest(
             site = site,

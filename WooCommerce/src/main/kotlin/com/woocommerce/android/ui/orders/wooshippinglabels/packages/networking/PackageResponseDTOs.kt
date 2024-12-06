@@ -6,7 +6,7 @@ class CustomPackageCreationResponse {
     val custom: List<CustomPackageDTO>? = null
 }
 
-data class CustomPackageCreationData(
+data class CustomPackageCreationRequestData(
     val name: String? = null,
     @SerializedName("is_letter") val isLetter: Boolean? = null,
     @SerializedName("inner_dimensions") val innerDimensions: String? = null,
