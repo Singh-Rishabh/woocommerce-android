@@ -278,9 +278,9 @@ class WooPosTotalsViewModel @Inject constructor(
     ): PaymentFailed {
         val isRetryAvailable = state.onRetry != null
         val retryButtonLabel = if (isRetryAvailable) {
-                resourceProvider.getString(R.string.woo_pos_payment_failed_try_again)
+            resourceProvider.getString(R.string.woo_pos_payment_failed_try_again)
         } else {
-                resourceProvider.getString(R.string.woo_pos_payment_failed_try_another_payment_method)
+            resourceProvider.getString(R.string.woo_pos_payment_failed_try_another_payment_method)
         }
         return PaymentFailed(
             title = resourceProvider.getString(
