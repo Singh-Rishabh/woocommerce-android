@@ -42,15 +42,25 @@ import com.woocommerce.android.ui.woopos.home.toolbar.WooPosFloatingToolbar
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreen
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreenPreview
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import kotlinx.coroutines.delay
 import org.wordpress.android.util.ToastUtils
 
 @Composable
 fun WooPosHomeScreen(
+    isPaymentCompletedViaCash: Boolean,
     onNavigationEvent: (WooPosNavigationEvent) -> Unit
 ) {
     val viewModel: WooPosHomeViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState().value
     val context = LocalContext.current
+
+    LaunchedEffect(isPaymentCompletedViaCash) {
+        if (isPaymentCompletedViaCash) {
+            delay(300)
+            viewModel.onUIEvent(WooPosHomeUIEvent.OnPaymentCompletedViaCash)
+        }
+    }
+
     LaunchedEffect(viewModel.toastEvent) {
         viewModel.toastEvent.collect { message ->
             ToastUtils.showToast(

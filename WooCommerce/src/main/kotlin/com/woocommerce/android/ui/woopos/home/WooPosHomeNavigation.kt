@@ -10,6 +10,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
+const val HOME_PAYMENT_COMPLETED_VIA_CASH_KEY = "home_payment_completed_via_cash_key"
 private const val HOME_ROUTE = "home"
 
 fun NavController.navigateToHomeScreen() {
@@ -39,7 +40,11 @@ fun NavGraphBuilder.homeScreen(
                 )
             )
         },
-    ) {
-        WooPosHomeScreen(onNavigationEvent)
+    ) { entry ->
+        val isPaymentCompletedViaCash = entry.savedStateHandle.get<Boolean>(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY) == true
+        WooPosHomeScreen(
+            isPaymentCompletedViaCash = isPaymentCompletedViaCash,
+            onNavigationEvent = onNavigationEvent,
+        )
     }
 }

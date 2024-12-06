@@ -40,7 +40,8 @@ fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) 
         state = state,
         onAmountChanged = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.AmountChanged(it)) },
         onCompleteOrderClicked = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked) },
-        onBackClicked = { onNavigationEvent(WooPosNavigationEvent.BackFromCashPayment) },
+        onBackClicked = { onNavigationEvent(WooPosNavigationEvent.BackFromCashPayment(successfullyPaid = false)) },
+        onOrderComplete = { onNavigationEvent(WooPosNavigationEvent.BackFromCashPayment(successfullyPaid = true)) },
     )
 }
 
@@ -50,6 +51,7 @@ fun WooPosCashPaymentScreen(
     onAmountChanged: (String) -> Unit,
     onCompleteOrderClicked: () -> Unit,
     onBackClicked: () -> Unit,
+    onOrderComplete: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -66,7 +68,7 @@ fun WooPosCashPaymentScreen(
                 )
             }
 
-            WooPosCashPaymentState.Complete -> TODO()
+            WooPosCashPaymentState.Complete -> onOrderComplete()
             WooPosCashPaymentState.Initiating -> {
                 // show nothing
             }
@@ -86,6 +88,7 @@ private fun Collecting(
         Column(
             modifier = Modifier
                 .width(540.dp)
+                .padding(32.dp)
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
@@ -204,6 +207,7 @@ fun WooPosTotalsPaymentCashScreenScreen() {
             onAmountChanged = {},
             onCompleteOrderClicked = {},
             onBackClicked = {},
+            onOrderComplete = {},
         )
     }
 }

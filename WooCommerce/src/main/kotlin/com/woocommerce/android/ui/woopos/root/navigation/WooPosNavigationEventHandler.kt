@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.root.navigation
 import androidx.activity.ComponentActivity
 import androidx.navigation.NavHostController
 import com.woocommerce.android.ui.woopos.cashpayment.navigateToCashPaymentScreen
+import com.woocommerce.android.ui.woopos.home.HOME_PAYMENT_COMPLETED_VIA_CASH_KEY
 import com.woocommerce.android.ui.woopos.home.navigateToHomeScreen
 
 fun NavHostController.handleNavigationEvent(
@@ -15,6 +16,11 @@ fun NavHostController.handleNavigationEvent(
 
         is WooPosNavigationEvent.OpenHomeFromSplash -> navigateToHomeScreen()
         is WooPosNavigationEvent.OpenCashPayment -> navigateToCashPaymentScreen(event.orderId)
-        WooPosNavigationEvent.BackFromCashPayment -> popBackStack()
+        is WooPosNavigationEvent.BackFromCashPayment -> {
+            previousBackStackEntry
+                ?.savedStateHandle
+                ?.set(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY, event.successfullyPaid)
+            popBackStack()
+        }
     }
 }

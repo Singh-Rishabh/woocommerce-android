@@ -131,9 +131,9 @@ class WooPosTotalsViewModel @Inject constructor(
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
                         uiState.value = InitialState
                     }
+                    ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState()
 
-                    is ParentToChildrenEvent.ItemClickedInProductSelector,
-                    ParentToChildrenEvent.OrderSuccessfullyPaid -> Unit
+                    is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                 }
             }
         }
@@ -144,16 +144,6 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderFacade.paymentStatus.collect { status ->
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
-                        val state = uiState.value
-                        check(state is WooPosTotalsViewState.Totals)
-                        val orderTotalText = resourceProvider.getString(
-                            R.string.woopos_success_screen_total,
-                            state.orderTotalText
-                        )
-                        uiState.value = WooPosTotalsViewState.PaymentSuccess(
-                            orderTotalText = orderTotalText,
-                            isReceiptAvailable = isReceiptSendingAvailable()
-                        )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
                     is WooPosCardReaderPaymentStatus.Failure,
@@ -191,6 +181,21 @@ class WooPosTotalsViewModel @Inject constructor(
                         )
                     }
                 )
+        }
+    }
+
+    private fun showSuccessfulPaymentState() {
+        viewModelScope.launch {
+            val state = uiState.value
+            check(state is WooPosTotalsViewState.Totals)
+            val orderTotalText = resourceProvider.getString(
+                R.string.woopos_success_screen_total,
+                state.orderTotalText
+            )
+            uiState.value = WooPosTotalsViewState.PaymentSuccess(
+                orderTotalText = orderTotalText,
+                isReceiptAvailable = isReceiptSendingAvailable()
+            )
         }
     }
 
