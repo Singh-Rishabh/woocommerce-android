@@ -18,8 +18,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.instanceOf
 
-class ProductListScreen : Screen {
-    constructor() : super(R.id.productsRecycler)
+class ProductListScreen : Screen(R.id.productsRecycler) {
 
     fun scrollToProduct(productTitle: String): ProductListScreen {
         scrollToListItem(productTitle, R.id.productsRecycler)
