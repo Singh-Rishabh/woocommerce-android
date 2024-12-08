@@ -121,8 +121,8 @@ class ProductListScreen : Screen(R.id.productsRecycler) {
     }
 
     fun leaveSearchMode(): ProductListScreen {
-        var isProductDetailsErrorDisplayed = Screen.isElementDisplayed(R.id.productDetailsErrorImage)
-        var isSearchTextBarDisplayed = Screen.isElementDisplayed(androidx.appcompat.R.id.search_src_text)
+        val isProductDetailsErrorDisplayed = Screen.isElementDisplayed(R.id.productDetailsErrorImage)
+        val isSearchTextBarDisplayed = Screen.isElementDisplayed(androidx.appcompat.R.id.search_src_text)
 
         if (isProductDetailsErrorDisplayed && isSearchTextBarDisplayed) {
             clearSearchBar(androidx.appcompat.R.id.search_src_text)
