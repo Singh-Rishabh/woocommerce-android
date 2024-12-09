@@ -41,6 +41,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
         packageHeight = viewState?.customPackageCreationData?.height.orEmpty(),
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
+        packageWeight = viewState?.customPackageCreationData?.weight.orEmpty(),
         isAddPackageEnabled = viewState?.customPackageCreationData?.isValid ?: false,
         isSaveAsTemplateChecked = viewState?.customPackageCreationData?.saveAsTemplate ?: false,
         onAddPackageClick = viewModel::onAddCustomPackageClick,
@@ -48,6 +49,7 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
         onLengthChange = viewModel::onLengthChange,
         onWidthChange = viewModel::onWidthChange,
         onHeightChange = viewModel::onHeightChange,
+        onWeightChange = viewModel::onWeightChange,
         onPackageNameChange = viewModel::onPackageNameChange,
         onSavePackageChanged = viewModel::onSavePackageChanged
     )
@@ -61,6 +63,7 @@ fun WooShippingCustomPackageCreationScreen(
     packageLength: String,
     packageWidth: String,
     packageHeight: String,
+    packageWeight: String,
     isAddPackageEnabled: Boolean,
     isSaveAsTemplateChecked: Boolean,
     onAddPackageClick: (saveAsTemplate: Boolean) -> Unit,
@@ -68,6 +71,7 @@ fun WooShippingCustomPackageCreationScreen(
     onLengthChange: (String) -> Unit,
     onWidthChange: (String) -> Unit,
     onHeightChange: (String) -> Unit,
+    onWeightChange: (String) -> Unit,
     onPackageNameChange: (String) -> Unit,
     onSavePackageChanged: (Boolean) -> Unit
 ) {
@@ -170,6 +174,7 @@ fun PreviewWooShippingCustomPackageCreationScreen() {
             packageLength = "10",
             packageWidth = "10",
             packageHeight = "10",
+            packageWeight = "10",
             isAddPackageEnabled = true,
             isSaveAsTemplateChecked = true,
             onAddPackageClick = {},
@@ -177,6 +182,7 @@ fun PreviewWooShippingCustomPackageCreationScreen() {
             onLengthChange = {},
             onWidthChange = {},
             onHeightChange = {},
+            onWeightChange = {},
             onPackageNameChange = {},
             onSavePackageChanged = {}
         )
