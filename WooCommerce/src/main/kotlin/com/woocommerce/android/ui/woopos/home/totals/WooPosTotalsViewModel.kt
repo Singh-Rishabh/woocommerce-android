@@ -224,7 +224,7 @@ class WooPosTotalsViewModel @Inject constructor(
             )
             uiState.value = WooPosTotalsViewState.PaymentSuccess(
                 orderTotalText = orderTotalText,
-                isReceiptAvailable = isReceiptSendingAvailable()
+                isReceiptAvailable = isReceiptsEnabled()
             )
         }
     }
