@@ -21,7 +21,14 @@ fun NavController.navigateToHomeScreenAfterSuccessfulCashPayment() {
     previousBackStackEntry
         ?.savedStateHandle
         ?.set(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY, true)
-    popBackStack()
+
+    navigate(HOME_ROUTE) {
+        launchSingleTop = true
+        restoreState = true
+        popUpTo(HOME_ROUTE) {
+            inclusive = false
+        }
+    }
 }
 
 fun NavGraphBuilder.homeScreen(
