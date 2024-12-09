@@ -11,6 +11,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,15 +37,18 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
 
     WooShippingCustomPackageCreationScreen(
         packageType = packageType,
+        packageName = viewState?.customPackageCreationData?.name.orEmpty(),
         packageHeight = viewState?.customPackageCreationData?.height.orEmpty(),
         packageLength = viewState?.customPackageCreationData?.length.orEmpty(),
         packageWidth = viewState?.customPackageCreationData?.width.orEmpty(),
         isAddPackageEnabled = viewState?.customPackageCreationData?.isValid ?: false,
+        isSaveAsTemplateChecked = viewState?.customPackageCreationData?.saveAsTemplate ?: false,
         onAddPackageClick = viewModel::onAddCustomPackageClick,
         onPackageTypeClick = viewModel::onPackageTypeSpinnerClick,
         onLengthChange = viewModel::onLengthChange,
         onWidthChange = viewModel::onWidthChange,
         onHeightChange = viewModel::onHeightChange,
+        onPackageNameChange = viewModel::onPackageNameChange,
         onSavePackageChanged = viewModel::onSavePackageChanged
     )
 }
@@ -51,16 +56,19 @@ fun WooShippingCustomPackageCreationScreen(viewModel: WooShippingLabelPackageCre
 @Composable
 fun WooShippingCustomPackageCreationScreen(
     modifier: Modifier = Modifier,
+    packageName: String,
     packageType: String,
     packageLength: String,
     packageWidth: String,
     packageHeight: String,
     isAddPackageEnabled: Boolean,
-    onAddPackageClick: () -> Unit,
+    isSaveAsTemplateChecked: Boolean,
+    onAddPackageClick: (saveAsTemplate: Boolean) -> Unit,
     onPackageTypeClick: () -> Unit,
     onLengthChange: (String) -> Unit,
     onWidthChange: (String) -> Unit,
     onHeightChange: (String) -> Unit,
+    onPackageNameChange: (String) -> Unit,
     onSavePackageChanged: (Boolean) -> Unit
 ) {
     Column(
@@ -120,13 +128,32 @@ fun WooShippingCustomPackageCreationScreen(
                     text = stringResource(id = R.string.woo_shipping_labels_package_creation_save_package_option),
                     modifier = modifier.align(Alignment.CenterVertically)
                 )
-                Checkbox(checked = false, onCheckedChange = onSavePackageChanged)
+                Checkbox(
+                    checked = isSaveAsTemplateChecked,
+                    onCheckedChange = onSavePackageChanged,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colors.primary,
+                        uncheckedColor = MaterialTheme.colors.onSurface
+                    ),
+                )
+            }
+            if (isSaveAsTemplateChecked) {
+                Column(modifier = modifier) {
+                    WCOutlinedTextField(
+                        value = packageName,
+                        onValueChange = onPackageNameChange,
+                        label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_name),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        modifier = modifier.fillMaxWidth()
+                    )
+                }
             }
         }
         Button(
             modifier = modifier.fillMaxWidth(),
             enabled = isAddPackageEnabled,
-            onClick = onAddPackageClick
+            onClick = { onAddPackageClick(isSaveAsTemplateChecked) }
         ) {
             Text(stringResource(id = R.string.woo_shipping_labels_package_creation_add_package))
         }
@@ -138,16 +165,19 @@ fun WooShippingCustomPackageCreationScreen(
 fun PreviewWooShippingCustomPackageCreationScreen() {
     WooThemeWithBackground {
         WooShippingCustomPackageCreationScreen(
+            packageName = "Custom Package",
             packageType = "Box",
             packageLength = "10",
             packageWidth = "10",
             packageHeight = "10",
             isAddPackageEnabled = true,
+            isSaveAsTemplateChecked = true,
             onAddPackageClick = {},
             onPackageTypeClick = {},
             onLengthChange = {},
             onWidthChange = {},
             onHeightChange = {},
+            onPackageNameChange = {},
             onSavePackageChanged = {}
         )
     }
