@@ -37,7 +37,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 
 @Composable
-@Suppress("DestructuringDeclarationWithTooManyEntries")
+@Suppress("DestructuringDeclarationWithTooManyEntries", "UnusedParameter")
 internal fun AddressSectionPortrait(
     shippingAddresses: WooShippingAddresses,
     originAddresses: List<OriginShippingAddress>,
@@ -208,6 +208,7 @@ private fun AddressSectionPortraitPreview() {
 }
 
 @Composable
+@Suppress("UnusedParameter")
 internal fun AddressSectionLandscape(
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,

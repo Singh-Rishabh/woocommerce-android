@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 class ObserveOriginAddresses @Inject constructor() {
+    @Suppress("MagicNumber")
     suspend operator fun invoke(): Flow<List<OriginShippingAddress>> {
         delay(200)
         val addresses = listOf(
