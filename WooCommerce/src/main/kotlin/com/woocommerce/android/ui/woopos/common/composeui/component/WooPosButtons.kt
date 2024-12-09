@@ -86,7 +86,7 @@ fun WooPosButtonLarge(
 }
 
 @Composable
-fun WooPosOutlinedButton(
+fun WooPosOutlinedButtonSmall(
     modifier: Modifier = Modifier,
     text: String,
     shape: RoundedCornerShape = RoundedCornerShape(4.dp),
@@ -119,6 +119,40 @@ fun WooPosOutlinedButton(
 }
 
 @Composable
+fun WooPosOutlinedButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        onClick = onClick,
+        border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.background,
+            contentColor = MaterialTheme.colors.onBackground,
+        ),
+        elevation = ButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            focusedElevation = 0.dp
+        )
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
 @WooPosPreview
 fun WooPosButtonsPreview() {
     WooPosTheme {
@@ -135,7 +169,7 @@ fun WooPosButtonsPreview() {
             Spacer(modifier = Modifier.height(16.dp))
 
             WooPosOutlinedButton(
-                text = "Button Outlined",
+                text = "Button Outlined Small",
                 onClick = {},
             )
 
@@ -153,6 +187,13 @@ fun WooPosButtonsPreview() {
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.onBackground
                 ),
+                onClick = {},
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WooPosOutlinedButton(
+                text = "Button Outlined",
                 onClick = {},
             )
         }
