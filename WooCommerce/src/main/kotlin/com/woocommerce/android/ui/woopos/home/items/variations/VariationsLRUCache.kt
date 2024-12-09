@@ -20,22 +20,4 @@ class VariationsLRUCache<K, V>(maxSize: Int) {
             cache.put(key, value)
         }
     }
-
-    suspend fun remove(key: K) {
-        mutex.withLock {
-            cache.remove(key)
-        }
-    }
-
-    suspend fun clear() {
-        mutex.withLock {
-            cache.evictAll()
-        }
-    }
-
-    suspend fun containsKey(key: K): Boolean {
-        return mutex.withLock {
-            cache.get(key) != null
-        }
-    }
 }
