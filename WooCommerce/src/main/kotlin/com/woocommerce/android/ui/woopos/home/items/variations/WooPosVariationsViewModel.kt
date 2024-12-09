@@ -39,6 +39,7 @@ class WooPosVariationsViewModel @Inject constructor(
         )
 
     private var fetchJob: Job? = null
+
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     internal var loadMoreJob: Job? = null
 
