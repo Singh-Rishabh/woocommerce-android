@@ -20,7 +20,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
     savedState: SavedStateHandle,
 ) : ViewModel() {
-    private val orderId = savedState.get<Long>("orderId")!!
+    private val orderId = savedState.get<Long>(CASH_ROUTE_ORDER_ID_KEY)!!
 
     private val _state = savedState.getStateFlow<WooPosCashPaymentState>(
         scope = viewModelScope,
