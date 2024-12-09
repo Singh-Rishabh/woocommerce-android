@@ -760,7 +760,7 @@ class WooPosTotalsViewModelTest {
         networkStatus = networkStatus,
         isReceiptSendingSupported = isReceiptSendingSupported,
         isReceiptsEnabled = isReceiptsEnabled,
-        isCashPaymentsEnabled = isCashPaymentsEnabled = isCashPaymentsEnabled,
+        isCashPaymentsEnabled = isCashPaymentsEnabled,
         savedState = savedState,
     )
 }
