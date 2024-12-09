@@ -5,10 +5,12 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
@@ -45,6 +47,24 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             totalTax = BigDecimal.ZERO,
         )
     }
+    private val defaultOriginAddresses = listOf(
+        OriginShippingAddress(
+            firstName = "first name",
+            lastName = "last name",
+            company = "Company",
+            phone = "",
+            address1 = "A huge address that should be truncated",
+            address2 = "",
+            city = "San Francisco",
+            postcode = "",
+            email = "email",
+            country = "USA",
+            state = "California",
+            id = "id_1",
+            isDefault = false,
+            isVerified = true
+        )
+    )
     private val orderDetailRepository: OrderDetailRepository = mock()
     private val getShippableItems: GetShippableItems = mock()
     private val currencyFormatter: CurrencyFormatter = mock {
@@ -77,6 +97,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
 
         createViewModel()
 
@@ -93,6 +114,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
 
         createViewModel()
 
