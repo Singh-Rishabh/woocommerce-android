@@ -144,6 +144,16 @@ fun WooShippingCustomPackageCreationScreen(
             if (isSaveAsTemplateChecked) {
                 Column(modifier = modifier) {
                     WCOutlinedTextField(
+                        value = packageWeight,
+                        onValueChange = onWeightChange,
+                        label = stringResource(id = R.string.woo_shipping_labels_package_creation_weight),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                        modifier = modifier.fillMaxWidth()
+                    )
+                }
+                Column(modifier = modifier) {
+                    WCOutlinedTextField(
                         value = packageName,
                         onValueChange = onPackageNameChange,
                         label = stringResource(id = R.string.woo_shipping_labels_package_creation_package_name),
