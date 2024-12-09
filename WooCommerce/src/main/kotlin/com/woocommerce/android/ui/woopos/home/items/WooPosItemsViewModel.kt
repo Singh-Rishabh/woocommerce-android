@@ -183,7 +183,13 @@ class WooPosItemsViewModel @Inject constructor(
                             result.productsResult.isSuccess -> {
                                 val products = result.productsResult.getOrThrow()
                                 if (products.isNotEmpty()) {
-                                    products.toContentState()
+                                    products.toContentState(
+                                        paginationState = if (loadMoreProductsJob?.isActive == true) {
+                                            PaginationState.Loading
+                                        } else {
+                                            PaginationState.None
+                                        }
+                                    )
                                 } else {
                                     WooPosItemsViewState.Empty()
                                 }
@@ -205,7 +211,9 @@ class WooPosItemsViewModel @Inject constructor(
             is WooPosItemsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
         }
 
-    private suspend fun List<Product>.toContentState() = WooPosItemsViewState.Content(
+    private suspend fun List<Product>.toContentState(
+        paginationState: PaginationState = PaginationState.None
+    ) = WooPosItemsViewState.Content(
         items = map { product ->
             if (product.isVariable()) {
                 VariableProduct(
@@ -225,7 +233,7 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
         },
-        paginationState = PaginationState.None,
+        paginationState = paginationState,
         reloadingProductsWithPullToRefresh = false,
         bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
