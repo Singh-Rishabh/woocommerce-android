@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsV
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -210,6 +211,31 @@ class WooPosVariationsViewModelTest {
         viewModel.viewState.test {
             val state = awaitItem() as WooPosVariationsViewState.Content
             assertThat(state.paginationState).isEqualTo(PaginationState.Error)
+        }
+    }
+
+    @Test
+    fun `given fetching variations first page and load more call is also happening, when view model created, then view state updated correctly`() = runTest {
+        // GIVEN
+        val variations = listOf(
+            ProductTestUtils.generateProductVariation(1, 1, "10.0"),
+            ProductTestUtils.generateProductVariation(2, 1, "20.0")
+        )
+        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+            flowOf(FetchResult.Remote(Result.success(variations)))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        val activeJob = Job()
+        viewModel.loadMoreJob = activeJob
+        viewModel.init(1L)
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
+
+        viewModel.viewState.test {
+            // THEN
+            val state = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(state.paginationState).isEqualTo(PaginationState.Loading)
         }
     }
 
