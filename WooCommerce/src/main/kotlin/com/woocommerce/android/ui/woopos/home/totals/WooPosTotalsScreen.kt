@@ -140,7 +140,7 @@ private fun TotalsLoaded(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            when(val readerStatus = state.readerStatus) {
+            when (val readerStatus = state.readerStatus) {
                 is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
                     ReaderDisconnected(modifier = Modifier, status = readerStatus)
                 }

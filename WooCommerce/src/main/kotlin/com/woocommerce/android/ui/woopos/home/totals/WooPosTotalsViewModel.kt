@@ -275,10 +275,10 @@ class WooPosTotalsViewModel @Inject constructor(
         val totalsState = uiState.value
         if (totalsState is WooPosTotalsViewState.Totals) {
             uiState.value = totalsState.copy(
-                        readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
-                            title = "Ready for payment",
-                            subtitle = "Tap, swipe or insert card"
-                        )
+                readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
+                    title = "Ready for payment",
+                    subtitle = "Tap, swipe or insert card"
+                )
             )
         } else {
             val order = totalsRepository.getOrderById(dataState.value.orderId)
@@ -296,10 +296,10 @@ class WooPosTotalsViewModel @Inject constructor(
         if (totalsState is WooPosTotalsViewState.Totals) {
             uiState.value = totalsState.copy(
                 readerStatus =
-                        WooPosTotalsViewState.ReaderStatus.Preparing(
-                            title = "Getting ready",
-                            subtitle = "Preparing reader for payment"
-                        )
+                WooPosTotalsViewState.ReaderStatus.Preparing(
+                    title = "Getting ready",
+                    subtitle = "Preparing reader for payment"
+                )
             )
         } else {
             val order = totalsRepository.getOrderById(dataState.value.orderId)
