@@ -21,24 +21,12 @@ data class PackageData(
 }
 
 @Parcelize
-data class PredefinedPackage(
-    val boxWeight: Double,
-    val isFlatRate: Boolean,
-    val id: String,
-    val name: String,
-    val dimensions: String,
-    val maxWeight: Double,
-    val isLetter: Boolean,
-    val groupId: String,
-    val canShipInternational: Boolean
-) : Parcelable
-
-@Parcelize
 data class CustomPackageCreationData(
     val type: PackageType,
     val length: String,
     val width: String,
     val height: String,
+    val weight: String,
     val saveAsTemplate: Boolean,
     val name: String? = null
 ) : Parcelable {
@@ -68,6 +56,7 @@ data class CustomPackageCreationData(
             length = "",
             width = "",
             height = "",
+            weight = "",
             saveAsTemplate = false
         )
     }
