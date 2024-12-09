@@ -73,12 +73,16 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             length = "10",
             width = "10",
             height = "10",
+            weight = "20",
+            name = "Test Package",
             saveAsTemplate = true
         )
 
         sut.onLengthChange("10")
         sut.onWidthChange("10")
         sut.onHeightChange("10")
+        sut.onWeightChange("20")
+        sut.onPackageNameChange("Test Package")
         sut.onSavePackageChanged(true)
         sut.onPackageTypeSelected(PackageType.ENVELOPE)
 
