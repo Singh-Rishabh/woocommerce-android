@@ -146,38 +146,54 @@ private fun TotalsLoaded(
                 }
                 is WooPosTotalsViewState.ReaderStatus.Preparing,
                 is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
-                    WooPosCircularLoadingIndicator(modifier = Modifier.size(64.dp))
-                    Text(
-                        text = readerStatus.title,
-                        style = MaterialTheme.typography.h4,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = readerStatus.subtitle,
-                        style = MaterialTheme.typography.h2
-                    )
+                    PreparingReader(readerStatus)
                 }
                 is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
-                    Icon(
-                        modifier = Modifier.size(64.dp),
-                        painter = painterResource(id = R.drawable.woopos_ic_collect_payment),
-                        contentDescription = "Collect Payment",
-                        tint = Color.Unspecified,
-                    )
-                    Text(
-                        text = readerStatus.title,
-                        style = MaterialTheme.typography.h4,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = readerStatus.subtitle,
-                        style = MaterialTheme.typography.h2
-                    )
+                    ReaderReadyForPayment(readerStatus)
                 }
             }
         }
         TotalsGrid(modifier = Modifier.weight(.9f), state = state)
     }
+}
+
+@Composable
+private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
+    WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
+    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.title,
+        style = MaterialTheme.typography.h5,
+        fontWeight = FontWeight.Medium
+    )
+    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.subtitle,
+        style = MaterialTheme.typography.h4,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStatus) {
+    Icon(
+        modifier = Modifier.size(164.dp),
+        painter = painterResource(id = R.drawable.woopos_ic_collect_payment),
+        contentDescription = "Collect Payment",
+        tint = Color.Unspecified,
+    )
+    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.title,
+        style = MaterialTheme.typography.h5,
+        fontWeight = FontWeight.Medium
+    )
+    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.subtitle,
+        style = MaterialTheme.typography.h4,
+        fontWeight = FontWeight.Bold
+    )
 }
 
 @Composable
@@ -422,5 +438,25 @@ fun WooPosTotalsErrorScreenPreview() {
             errorMessage = "An error occurred. Please try again.",
             onUIEvent = {}
         )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun PreparingReaderPReview() {
+    val readerStatus = WooPosTotalsViewState.ReaderStatus.Preparing(
+        title = "Getting ready",
+        subtitle = "Preparing reader for payment"
+    )
+    WooPosTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(WooPosTheme.colors.totalsErrorBackground),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            PreparingReader(readerStatus)
+        }
     }
 }
