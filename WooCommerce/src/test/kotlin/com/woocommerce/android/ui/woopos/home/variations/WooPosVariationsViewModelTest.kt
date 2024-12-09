@@ -240,6 +240,28 @@ class WooPosVariationsViewModelTest {
     }
 
     @Test
+    fun `given fetching variations first page and load more call is not happening, when view model created, then view state updated correctly`() = runTest {
+        // GIVEN
+        val variations = listOf(
+            ProductTestUtils.generateProductVariation(1, 1, "10.0"),
+            ProductTestUtils.generateProductVariation(2, 1, "20.0")
+        )
+        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+            flowOf(FetchResult.Remote(Result.success(variations)))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.init(1L)
+
+        viewModel.viewState.test {
+            // THEN
+            val state = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(state.paginationState).isEqualTo(PaginationState.None)
+        }
+    }
+
+    @Test
     fun `given variation clicked, when item clicked, then send event to parent`() = runTest {
         // GIVEN
         val viewModel = createViewModel()
