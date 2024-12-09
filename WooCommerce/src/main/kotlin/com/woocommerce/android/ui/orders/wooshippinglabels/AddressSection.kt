@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -148,35 +149,31 @@ internal fun AddressSectionPortrait(
                         bottom = dimensionResource(R.dimen.major_100)
                     )
             )
-            shippingAddresses.shipTo?.let { shipTo ->
-                Text(
-                    text = shipTo.toString(),
-                    modifier = Modifier
-                        .constrainAs(shipToValue) {
-                            top.linkTo(shipToLabel.top)
-                            start.linkTo(barrier)
-                            end.linkTo(shipToEdit.start)
-                            width = androidx.constraintlayout.compose.Dimension.fillToConstraints
-                        }
-                        .padding(
-                            top = dimensionResource(R.dimen.major_100),
-                            bottom = dimensionResource(R.dimen.major_100),
-                            start = dimensionResource(R.dimen.major_100),
-                            end = dimensionResource(R.dimen.minor_100)
-                        )
-                )
-            }
+            Text(
+                text = shippingAddresses.shipTo.toString(),
+                modifier = Modifier
+                    .constrainAs(shipToValue) {
+                        top.linkTo(shipToLabel.top)
+                        start.linkTo(barrier)
+                        end.linkTo(shipToEdit.start)
+                        width = androidx.constraintlayout.compose.Dimension.fillToConstraints
+                    }
+                    .padding(
+                        top = dimensionResource(R.dimen.major_100),
+                        bottom = dimensionResource(R.dimen.major_100),
+                        start = dimensionResource(R.dimen.major_100),
+                        end = dimensionResource(R.dimen.minor_100)
+                    )
+            )
             IconButton(
                 onClick = { },
                 modifier = Modifier
                     .constrainAs(shipToEdit) {
                         top.linkTo(shipToLabel.top)
                         end.linkTo(parent.end)
+                        bottom.linkTo(shipToLabel.bottom)
                     }
-                    .padding(
-                        top = dimensionResource(R.dimen.major_100),
-                        end = dimensionResource(R.dimen.minor_100)
-                    )
+                    .padding(end = dimensionResource(R.dimen.minor_100))
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_edit_pencil),
@@ -238,27 +235,34 @@ internal fun AddressSectionLandscape(
                             bottom = dimensionResource(R.dimen.major_100)
                         )
                 )
-                shippingAddresses.shipTo?.let { shipTo ->
-                    Text(
-                        text = shipTo.toString(),
-                        modifier = Modifier
-                            .padding(
-                                top = dimensionResource(R.dimen.major_100),
-                                bottom = dimensionResource(R.dimen.major_100),
-                                start = dimensionResource(R.dimen.major_100),
-                                end = dimensionResource(R.dimen.minor_100)
-                            )
-                            .weight(1f)
-                    )
-                }
 
-                IconButton(
-                    onClick = { },
+                Text(
+                    text = shippingAddresses.shipTo.toString(),
                     modifier = Modifier
+                        .padding(
+                            top = dimensionResource(R.dimen.major_100),
+                            bottom = dimensionResource(R.dimen.major_100),
+                            start = dimensionResource(R.dimen.major_100),
+                            end = dimensionResource(R.dimen.minor_100)
+                        )
+                        .weight(1f)
+                )
+
+                val iconModifier = if (shippingAddresses.shipTo == Address.EMPTY) {
+                    Modifier
+                        .padding(end = dimensionResource(R.dimen.minor_100))
+                        .align(Alignment.CenterVertically)
+                } else {
+                    Modifier
                         .padding(
                             top = dimensionResource(R.dimen.minor_100),
                             end = dimensionResource(R.dimen.minor_100)
                         )
+                }
+
+                IconButton(
+                    onClick = { },
+                    modifier = iconModifier
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_edit_pencil),
