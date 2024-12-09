@@ -163,7 +163,8 @@ private fun TotalsLoaded(
                     bottom.linkTo(parent.bottom, margin = totalsGridBottomMarin)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
-                })
+                }
+        )
 
         AnimatedVisibility(
             visible = isButtonVisible,
