@@ -149,6 +149,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
 data class WooShippingAddresses(
     val shipFrom: OriginShippingAddress,
-    val shipTo: Address?,
+    val shipTo: Address,
     val originAddresses: List<OriginShippingAddress>
 )
