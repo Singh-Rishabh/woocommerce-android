@@ -114,6 +114,7 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     packageLength = "10",
                     packageWidth = "10",
                     packageHeight = "10",
+                    packageWeight = "10",
                     isAddPackageEnabled = true,
                     isSaveAsTemplateChecked = true,
                     onAddPackageClick = {},
@@ -121,8 +122,9 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     onLengthChange = {},
                     onWidthChange = {},
                     onHeightChange = {},
+                    onWeightChange = {},
                     onPackageNameChange = {},
-                    onSavePackageChanged = { }
+                    onSavePackageChanged = {}
                 )
             },
             createSavedPackageScreen = {
