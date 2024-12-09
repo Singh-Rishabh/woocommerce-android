@@ -54,9 +54,9 @@ fun WooPosHomeScreen(
     val state = viewModel.state.collectAsState().value
     val context = LocalContext.current
 
-    LaunchedEffect(isPaymentCompletedViaCash) {
+    LaunchedEffect(Unit) {
         if (isPaymentCompletedViaCash) {
-            delay(300)
+            delay(800)
             viewModel.onUIEvent(WooPosHomeUIEvent.OnPaymentCompletedViaCash)
         }
     }

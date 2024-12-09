@@ -11,7 +11,7 @@ import androidx.navigation.compose.composable
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
 const val HOME_ROUTE = "home"
-private const val HOME_PAYMENT_COMPLETED_VIA_CASH_KEY = "home_payment_completed_via_cash_key"
+const val HOME_PAYMENT_COMPLETED_VIA_CASH_KEY = "home_payment_completed_via_cash_key"
 
 fun NavController.navigateToHomeScreen() {
     navigate(HOME_ROUTE)
@@ -22,13 +22,7 @@ fun NavController.navigateToHomeScreenAfterSuccessfulCashPayment() {
         ?.savedStateHandle
         ?.set(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY, true)
 
-    navigate(HOME_ROUTE) {
-        launchSingleTop = true
-        restoreState = true
-        popUpTo(HOME_ROUTE) {
-            inclusive = false
-        }
-    }
+    popBackStack()
 }
 
 fun NavGraphBuilder.homeScreen(
@@ -56,7 +50,12 @@ fun NavGraphBuilder.homeScreen(
             )
         },
     ) { entry ->
-        val isPaymentCompletedViaCash = entry.savedStateHandle.get<Boolean>(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY) == true
+        val savedStateHandle = entry.savedStateHandle
+        val isPaymentCompletedViaCash = savedStateHandle.get<Boolean>(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY) == true
+        if (isPaymentCompletedViaCash) {
+            savedStateHandle[HOME_PAYMENT_COMPLETED_VIA_CASH_KEY] = false
+        }
+
         WooPosHomeScreen(
             isPaymentCompletedViaCash = isPaymentCompletedViaCash,
             onNavigationEvent = onNavigationEvent,
