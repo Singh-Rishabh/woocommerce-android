@@ -515,7 +515,8 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given payment status is success, when payment flow started, then OrderSuccessfullyPaid event and update state to PaymentSuccess`() =
+    @Suppress("LongMethod")
+    fun `given payment status is success, when payment flow started, then OrderSuccessfullyPaid event and PaymentSuccess`() =
         runTest {
             // GIVEN
             whenever(networkStatus.isConnected()).thenReturn(true)
@@ -576,7 +577,6 @@ class WooPosTotalsViewModelTest {
             // WHEN
             viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
             parentToChildrenEventFlow.value = OrderSuccessfullyPaid
-
 
             // THEN
             val state = viewModel.state.value
