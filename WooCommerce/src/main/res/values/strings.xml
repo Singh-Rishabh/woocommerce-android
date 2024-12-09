@@ -4300,6 +4300,8 @@
     <string name="woopos_success_totals_error_reader_not_connected_title">Reader not connected</string>
     <string name="woopos_success_totals_error_reader_not_connected_subtitle">To process this payment, please connect your reader.</string>
     <string name="woopos_success_totals_error_reader_not_connected_cta_button_label">Connect to reader</string>
+    <string name="woopos_totals_reader_getting_ready">Getting ready</string>
+    <string name="woopos_totals_reader_checking_order">Checking order</string>
 
     <string name="woopos_success_totals_payment_processing_title">Processing payment</string>
     <string name="woopos_success_totals_payment_processing_subtitle">Please wait…</string>

@@ -11,16 +11,50 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderSubtotalText: String,
         val orderTaxText: String,
         val orderTotalText: String,
-        val paymentStateText: String,
-        val error: Error? = null,
-    ) : WooPosTotalsViewState() {
+        val readerStatus: ReaderStatus,
+    ) : WooPosTotalsViewState()
+
+    sealed class ReaderStatus(
+        open val title: String,
+        open val subtitle: String,
+    ) : Parcelable {
         @Parcelize
-        data class Error(
-            val title: String,
-            val subtitle: String,
+        data class Preparing(
+            override val title: String,
+            override val subtitle: String,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+
+        @Parcelize
+        data class CheckingOrder(
+            override val title: String,
+            override val subtitle: String,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+
+        @Parcelize
+        data class ReadyForPayment(
+            override val title: String,
+            override val subtitle: String,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+
+        @Parcelize
+        data class Disconnected(
+            override val title: String,
+            override val subtitle: String,
             val actionButonLabel: String,
             val onAction: () -> Unit,
-        ) : Parcelable
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
     }
 
     data class PaymentProcessing(

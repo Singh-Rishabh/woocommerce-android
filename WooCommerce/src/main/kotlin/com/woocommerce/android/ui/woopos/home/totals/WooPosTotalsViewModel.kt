@@ -117,13 +117,13 @@ class WooPosTotalsViewModel @Inject constructor(
                     is NotConnected, is Connecting -> {
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
-                        uiState.value = state.copy(error = buildTotalsReaderNotConnectedError())
+                        uiState.value = state.copy(readerStatus = buildTotalsReaderNotConnectedError())
                         cancelPaymentAction()
                     }
                     is Connected -> {
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
-                        uiState.value = state.copy(error = null)
+                        uiState.value = state.copy(readerStatus = buildPreparingReaderStatusState())
                         if (data.orderId != EMPTY_ORDER_ID) {
                             collectPayment()
                         }
@@ -132,6 +132,11 @@ class WooPosTotalsViewModel @Inject constructor(
             }
         }
     }
+
+    private fun buildPreparingReaderStatusState() = WooPosTotalsViewState.ReaderStatus.Preparing(
+        title = resourceProvider.getString(R.string.woopos_totals_reader_getting_ready),
+        subtitle = resourceProvider.getString(R.string.woopos_totals_reader_checking_order)
+    )
 
     private fun cancelPaymentAction() {
         cardReaderPaymentController?.onCleared()
@@ -231,9 +236,9 @@ class WooPosTotalsViewModel @Inject constructor(
         viewModelScope.launch {
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
                 when (paymentState) {
-                    is CardReaderPaymentState.CollectingPayment,
+                    is CardReaderPaymentState.CollectingPayment -> handleCollectingPaymentState()
                     is CardReaderPaymentState.LoadingData ->
-                        handlePaymentState(paymentState as CardReaderPaymentState)
+                        handleReaderLoadingPaymentState()
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,
@@ -266,19 +271,42 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handlePaymentState(paymentState: CardReaderPaymentState) {
+    private suspend fun handleCollectingPaymentState() {
         val totalsState = uiState.value
         if (totalsState is WooPosTotalsViewState.Totals) {
             uiState.value = totalsState.copy(
-                paymentStateText = paymentState.javaClass.simpleName
+                        readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
+                            title = "Ready for payment",
+                            subtitle = "Tap, swipe or insert card"
+                        )
             )
         } else {
             val order = totalsRepository.getOrderById(dataState.value.orderId)
             if (order == null) {
                 returnToCart()
             } else {
-                uiState.value =
-                    buildWooPosTotalsViewState(order, paymentState)
+                uiState.value = buildWooPosTotalsViewState(order)
+                childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
+            }
+        }
+    }
+
+    private suspend fun handleReaderLoadingPaymentState() {
+        val totalsState = uiState.value
+        if (totalsState is WooPosTotalsViewState.Totals) {
+            uiState.value = totalsState.copy(
+                readerStatus =
+                        WooPosTotalsViewState.ReaderStatus.Preparing(
+                            title = "Getting ready",
+                            subtitle = "Preparing reader for payment"
+                        )
+            )
+        } else {
+            val order = totalsRepository.getOrderById(dataState.value.orderId)
+            if (order == null) {
+                returnToCart()
+            } else {
+                uiState.value = buildWooPosTotalsViewState(order)
                 childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
             }
         }
@@ -347,13 +375,12 @@ class WooPosTotalsViewModel @Inject constructor(
 
     private suspend fun buildWooPosTotalsViewState(
         order: Order,
-        paymentState: CardReaderPaymentState? = null
     ): WooPosTotalsViewState.Totals {
         val subtotalAmount = order.productsTotal
         val taxAmount = order.totalTax
         val totalAmount = order.total
-        val error = when (cardReaderFacade.readerStatus.value) {
-            is Connected -> null
+        val readerStatus = when (cardReaderFacade.readerStatus.value) {
+            is Connected -> buildPreparingReaderStatusState()
             else -> buildTotalsReaderNotConnectedError()
         }
 
@@ -361,13 +388,12 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            paymentStateText = paymentState?.javaClass?.simpleName ?: "",
-            error = error
+            readerStatus = readerStatus
         )
     }
 
-    private fun buildTotalsReaderNotConnectedError(): WooPosTotalsViewState.Totals.Error =
-        WooPosTotalsViewState.Totals.Error(
+    private fun buildTotalsReaderNotConnectedError(): WooPosTotalsViewState.ReaderStatus.Disconnected =
+        WooPosTotalsViewState.ReaderStatus.Disconnected(
             title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
             subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
             actionButonLabel = resourceProvider.getString(

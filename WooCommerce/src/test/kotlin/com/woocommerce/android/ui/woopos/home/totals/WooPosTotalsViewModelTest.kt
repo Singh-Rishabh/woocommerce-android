@@ -550,7 +550,7 @@ class WooPosTotalsViewModelTest {
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
         assertThat(state.orderTotalText).isEqualTo("$3.00")
-        assertThat(state.paymentStateText).isNotNull()
+        assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
     }
 
     @org.junit.Test
@@ -675,8 +675,8 @@ class WooPosTotalsViewModelTest {
         // THEN
         assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
-        assertThat(state.error).isNotNull()
-        with(state.error!!) {
+        assertThat(state.readerStatus).isNotNull()
+        with(state.readerStatus as WooPosTotalsViewState.ReaderStatus.Disconnected) {
             assertThat(title).isEqualTo("Reader not connected")
             assertThat(subtitle).isEqualTo("To process this payment, please connect your reader.")
             assertThat(actionButonLabel).isEqualTo("Connect to reader")
@@ -741,7 +741,7 @@ class WooPosTotalsViewModelTest {
         // THEN
         assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
-        assertThat(state.error).isNull()
+        assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
     }
 
     @Test
@@ -753,8 +753,9 @@ class WooPosTotalsViewModelTest {
 
         // WHEN
         val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
-
-        (viewModel.state.value as WooPosTotalsViewState.Totals).error!!.onAction()
+        assertThat(viewModel.state.value is WooPosTotalsViewState.Totals).isTrue()
+        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        (state.readerStatus as WooPosTotalsViewState.ReaderStatus.Disconnected).onAction()
 
         // THEN
         verify(cardReaderFacade).connectToReader()
