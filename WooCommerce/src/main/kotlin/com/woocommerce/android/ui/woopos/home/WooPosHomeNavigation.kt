@@ -1,10 +1,8 @@
 package com.woocommerce.android.ui.woopos.home
 
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
@@ -41,43 +39,15 @@ fun NavGraphBuilder.homeScreen(
             )
         },
         exitTransition = {
-            fadeOut(
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> -fullWidth },
             )
         },
         popEnterTransition = {
-            val successfullyPaid =
-                this.targetState.savedStateHandle.get<Boolean>(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY) == true
-            if (successfullyPaid) {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> fullWidth },
-                    animationSpec = spring(
-                        dampingRatio = 0.8f,
-                        stiffness = 200f
-                    )
-                )
-            } else {
-                slideInHorizontally(
-                    initialOffsetX = { fullWidth -> -fullWidth },
-                    animationSpec = spring(
-                        dampingRatio = 0.8f,
-                        stiffness = 200f
-                    )
-                )
-            }
-        },
-        popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = spring(
-                    dampingRatio = 0.8f,
-                    stiffness = 200f
-                )
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> -fullWidth },
             )
-        }
+        },
     ) { entry ->
         val isPaymentCompletedViaCash = entry.savedStateHandle.get<Boolean>(HOME_PAYMENT_COMPLETED_VIA_CASH_KEY) == true
         WooPosHomeScreen(

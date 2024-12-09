@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.woopos.cashpayment
 
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
@@ -28,19 +27,11 @@ fun NavGraphBuilder.cashPaymentScreen(
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = spring(
-                    dampingRatio = 0.8f,
-                    stiffness = 200f
-                )
             )
         },
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = spring(
-                    dampingRatio = 0.8f,
-                    stiffness = 200f
-                )
             )
         },
     ) { backStackEntry ->
