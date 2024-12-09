@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items.variations
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.model.ProductVariation
@@ -38,7 +39,8 @@ class WooPosVariationsViewModel @Inject constructor(
         )
 
     private var fetchJob: Job? = null
-    private var loadMoreJob: Job? = null
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var loadMoreJob: Job? = null
 
     fun init(productId: Long) {
         loadVariations(
@@ -85,6 +87,11 @@ class WooPosVariationsViewModel @Inject constructor(
                                                 price = priceFormat(it.price),
                                                 imageUrl = it.image?.source
                                             )
+                                        },
+                                        paginationState = if (loadMoreJob?.isActive == true) {
+                                            PaginationState.Loading
+                                        } else {
+                                            PaginationState.None
                                         }
                                     )
                                 } else {
