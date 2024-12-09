@@ -14,7 +14,7 @@ import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 private const val CASH_ROUTE = "$HOME_ROUTE/cash_payment/{orderId}"
 
 fun NavController.navigateToCashPaymentScreen(orderId: Long) {
-    navigate("cash_payment/$orderId")
+    navigate(CASH_ROUTE.replace("{orderId}", orderId.toString()))
 }
 
 fun NavGraphBuilder.cashPaymentScreen(
