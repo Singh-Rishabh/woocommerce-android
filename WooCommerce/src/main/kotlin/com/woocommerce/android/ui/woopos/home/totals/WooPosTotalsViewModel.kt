@@ -103,7 +103,7 @@ class WooPosTotalsViewModel @Inject constructor(
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 viewModelScope.launch {
                     if (isReceiptSendingSupportedValue.await()) {
-                        uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+                        uiState.value = ReceiptSending(email = "")
                     } else {
                         childrenToParentEventSender.sendToParent(
                             ChildToParentEvent.ToastMessageDisplayed(
