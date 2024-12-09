@@ -6,25 +6,25 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 
 @Composable
 fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
-    val infiniteTransition = rememberInfiniteTransition(
-        label = "RotationTransition"
-    )
+    val infiniteTransition = rememberInfiniteTransition(label = "RotationTransition")
     val animatedRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
@@ -35,8 +35,12 @@ fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
     )
 
     val backgroundColor = MaterialTheme.colors.primary
-    val centerCircleColor = MaterialTheme.colors.background
-    Canvas(modifier = modifier) {
+    Canvas(
+        modifier = modifier
+            .graphicsLayer {
+                compositingStrategy = CompositingStrategy.Offscreen
+            }
+    ) {
         val radius = size.width / 2
 
         drawCircle(
@@ -55,8 +59,9 @@ fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
         }
 
         drawCircle(
-            color = centerCircleColor,
+            color = Color.White,
             radius = radius * 0.4f,
+            blendMode = BlendMode.DstOut
         )
     }
 }

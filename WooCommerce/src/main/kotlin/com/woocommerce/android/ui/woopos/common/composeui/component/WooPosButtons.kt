@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonColors
@@ -28,13 +29,13 @@ fun WooPosButton(
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
     ),
-    enabled: Boolean = true,
+    state: WooPosButtonState = WooPosButtonState.ENABLED,
     onClick: () -> Unit,
 ) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
-        enabled = enabled,
+        enabled = state == WooPosButtonState.ENABLED,
         colors = colors,
         modifier = modifier
             .fillMaxWidth()
@@ -47,12 +48,23 @@ fun WooPosButton(
             focusedElevation = 0.dp
         )
     ) {
-        Text(
-            text = text,
-            color = MaterialTheme.colors.onPrimary,
-            style = MaterialTheme.typography.h5,
-            fontWeight = FontWeight.Bold,
-        )
+        when (state) {
+            WooPosButtonState.ENABLED,
+            WooPosButtonState.DISABLED -> {
+                Text(
+                    text = text,
+                    color = MaterialTheme.colors.onPrimary,
+                    style = MaterialTheme.typography.h5,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+
+            WooPosButtonState.LOADING -> {
+                WooPosCircularLoadingIndicator(
+                    modifier = Modifier.size(32.dp),
+                )
+            }
+        }
     }
 }
 
@@ -183,6 +195,22 @@ fun WooPosButtonsPreview() {
             Spacer(modifier = Modifier.height(16.dp))
 
             WooPosButton(
+                text = "Button Disabled",
+                onClick = {},
+                state = WooPosButtonState.DISABLED,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WooPosButton(
+                text = "Button Loading",
+                onClick = {},
+                state = WooPosButtonState.LOADING,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            WooPosButton(
                 text = "Button Black And White",
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = MaterialTheme.colors.onBackground
@@ -198,4 +226,8 @@ fun WooPosButtonsPreview() {
             )
         }
     }
+}
+
+enum class WooPosButtonState {
+    ENABLED, DISABLED, LOADING
 }

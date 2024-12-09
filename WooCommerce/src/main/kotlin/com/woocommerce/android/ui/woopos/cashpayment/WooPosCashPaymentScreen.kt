@@ -138,7 +138,6 @@ private fun Collecting(
             WooPosButton(
                 text = state.button.text,
                 onClick = onCompleteOrderClicked,
-                enabled = state.button.status == WooPosCashPaymentState.Collecting.Button.Status.ENABLED,
             )
 
             Spacer(modifier = Modifier.weight(1f))
