@@ -8,9 +8,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.woocommerce.android.ui.woopos.home.HOME_ROUTE
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
-private const val ROUTE = "cash_payment/{orderId}"
+private const val CASH_ROUTE = "$HOME_ROUTE/cash_payment/{orderId}"
 
 fun NavController.navigateToCashPaymentScreen(orderId: Long) {
     navigate("cash_payment/$orderId")
@@ -20,7 +21,7 @@ fun NavGraphBuilder.cashPaymentScreen(
     onNavigationEvent: (WooPosNavigationEvent) -> Unit
 ) {
     composable(
-        route = ROUTE,
+        route = CASH_ROUTE,
         arguments = listOf(
             navArgument("orderId") { type = NavType.LongType }
         ),

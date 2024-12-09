@@ -12,8 +12,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
+const val HOME_ROUTE = "home"
 private const val HOME_PAYMENT_COMPLETED_VIA_CASH_KEY = "home_payment_completed_via_cash_key"
-private const val HOME_ROUTE = "home"
 
 fun NavController.navigateToHomeScreen() {
     navigate(HOME_ROUTE)
@@ -71,7 +71,7 @@ fun NavGraphBuilder.homeScreen(
         },
         popExitTransition = {
             slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth }, // Default exit animation
+                targetOffsetX = { fullWidth -> fullWidth },
                 animationSpec = spring(
                     dampingRatio = 0.8f,
                     stiffness = 200f
