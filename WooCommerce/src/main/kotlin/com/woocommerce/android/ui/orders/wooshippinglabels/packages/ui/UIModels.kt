@@ -26,8 +26,8 @@ data class CustomPackageCreationData(
     val length: String,
     val width: String,
     val height: String,
-    val weight: String,
     val saveAsTemplate: Boolean,
+    val weight: String ? = null,
     val name: String? = null
 ) : Parcelable {
     val isValid: Boolean
@@ -40,7 +40,7 @@ data class CustomPackageCreationData(
         get() {
             if (saveAsTemplate.not()) return true
 
-            return name.isNotNullOrEmpty()
+            return name.isNotNullOrEmpty() && weight.isNotNullOrEmpty()
         }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(

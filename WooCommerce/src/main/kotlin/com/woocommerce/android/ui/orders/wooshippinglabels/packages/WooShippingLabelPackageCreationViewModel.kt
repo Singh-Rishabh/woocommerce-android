@@ -198,7 +198,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                         innerDimensions = it.dimensions,
                         boxWeight = 0.0,
                         isUserDefined = true,
-                        maxWeight = it.weight.toDoubleOrNull() ?: 0.0
+                        maxWeight = it.weight?.toDoubleOrNull() ?: 0.0
                     )
                 }.let { listOf(it) }
             )
