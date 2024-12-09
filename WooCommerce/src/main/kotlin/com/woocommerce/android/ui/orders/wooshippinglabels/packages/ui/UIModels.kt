@@ -27,7 +27,7 @@ data class CustomPackageCreationData(
     val width: String,
     val height: String,
     val saveAsTemplate: Boolean,
-    val weight: String ? = null,
+    val weight: String? = null,
     val name: String? = null
 ) : Parcelable {
     val isValid: Boolean
