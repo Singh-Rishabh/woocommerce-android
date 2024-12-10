@@ -231,14 +231,14 @@ fun WooShippingCarrierPackageScreenPreview() {
                         packages = listOf(
                             PackageData(
                                 name = "Package 1 - Carrier 1",
-                                dimensions = "10 x 10 x 10 cm",
+                                dimensions = "10 x 10 x 10",
                                 weight = "10",
                                 isSelected = false,
                                 isLetter = false
                             ),
                             PackageData(
                                 name = "Package 2 - Carrier 1",
-                                dimensions = "20 x 20 x 20 cm",
+                                dimensions = "20 x 20 x 20",
                                 weight = "20",
                                 isSelected = false,
                                 isLetter = false
@@ -250,14 +250,14 @@ fun WooShippingCarrierPackageScreenPreview() {
                         packages = listOf(
                             PackageData(
                                 name = "Package 3 - Carrier 1",
-                                dimensions = "30 x 30 x 30 cm",
+                                dimensions = "30 x 30 x 30",
                                 weight = "30",
                                 isSelected = false,
                                 isLetter = false
                             ),
                             PackageData(
                                 name = "Package 4 - Carrier 1",
-                                dimensions = "40 x 40 x 40 cm",
+                                dimensions = "40 x 40 x 40",
                                 weight = "40",
                                 isSelected = false,
                                 isLetter = false
@@ -271,14 +271,14 @@ fun WooShippingCarrierPackageScreenPreview() {
                         packages = listOf(
                             PackageData(
                                 name = "Package 1 - Carrier 2",
-                                dimensions = "10 x 10 x 10 cm",
+                                dimensions = "10 x 10 x 10",
                                 weight = "10",
                                 isSelected = false,
                                 isLetter = false
                             ),
                             PackageData(
                                 name = "Package 2 Carrier - 2",
-                                dimensions = "20 x 20 x 20 cm",
+                                dimensions = "20 x 20 x 20",
                                 weight = "20",
                                 isSelected = false,
                                 isLetter = false
