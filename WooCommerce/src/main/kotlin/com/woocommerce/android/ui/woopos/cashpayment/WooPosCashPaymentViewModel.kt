@@ -35,9 +35,12 @@ class WooPosCashPaymentViewModel @Inject constructor(
             val order = repository.getOrderById(orderId)!!
             _state.value = WooPosCashPaymentState.Collecting(
                 enteredAmount = null,
-                changeDue = priceFormat(BigDecimal.ZERO),
+                changeDue = "",
                 total = order.total,
-                totalText = priceFormat(order.total),
+                totalText = resourceProvider.getString(
+                    R.string.woopos_cash_payment_total,
+                    priceFormat(order.total)
+                ),
                 errorMessage = null,
                 currencySymbol = repository.getCurrencySymbol(),
                 currencyPosition = repository.getCurrencySymbolPosition(),
@@ -45,7 +48,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
                 numberOfDecimals = repository.getNumberOfDecimals(),
                 button = WooPosCashPaymentState.Collecting.Button(
                     text = resourceProvider.getString(R.string.woopos_complete_cash_order_button),
-                    status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
+                    status = WooPosCashPaymentState.Collecting.Button.Status.DISABLED
                 )
             )
         }
@@ -53,20 +56,38 @@ class WooPosCashPaymentViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosCashPaymentUIEvent) {
         when (event) {
-            is WooPosCashPaymentUIEvent.AmountChanged -> {
-                val stateBeforeChange = _state.value as? WooPosCashPaymentState.Collecting ?: return
-                val enteredAmount = event.newAmount ?: return
+            is WooPosCashPaymentUIEvent.AmountChanged -> handelAmountChange(event)
 
-                viewModelScope.launch {
-                    val total = stateBeforeChange.total
-                    val changeDue = priceFormat(total - enteredAmount)
-                    _state.value = stateBeforeChange.copy(
-                        enteredAmount = enteredAmount,
-                        changeDue = changeDue
-                    )
-                }
-            }
             WooPosCashPaymentUIEvent.CompleteOrderClicked -> handleOrderCompletion()
+        }
+    }
+
+    private fun handelAmountChange(event: WooPosCashPaymentUIEvent.AmountChanged) {
+        viewModelScope.launch {
+            val currentState = _state.value as? WooPosCashPaymentState.Collecting ?: return@launch
+            val enteredAmount = event.newAmount ?: return@launch
+
+            val changeDue = enteredAmount - currentState.total
+            val changeDueText = if (changeDue >= BigDecimal.ZERO) {
+                resourceProvider.getString(
+                    R.string.woopos_cash_payment_change_due,
+                    priceFormat(changeDue)
+                )
+            } else {
+                resourceProvider.getString(R.string.woopos_cash_payment_no_chang_due)
+            }
+
+            _state.value = currentState.copy(
+                enteredAmount = enteredAmount,
+                changeDue = changeDueText,
+                button = currentState.button.copy(
+                    status = if (changeDue >= BigDecimal.ZERO) {
+                        WooPosCashPaymentState.Collecting.Button.Status.ENABLED
+                    } else {
+                        WooPosCashPaymentState.Collecting.Button.Status.DISABLED
+                    }
+                )
+            )
         }
     }
 
@@ -84,8 +105,8 @@ class WooPosCashPaymentViewModel @Inject constructor(
                 _state.value = WooPosCashPaymentState.Complete
             } else {
                 val currentState = _state.value as? WooPosCashPaymentState.Collecting ?: return@launch
-                currentState
                 _state.value = currentState.copy(
+                    errorMessage = resourceProvider.getString(R.string.woopos_cash_payment_error_message),
                     button = currentState.button.copy(
                         status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
                     )
