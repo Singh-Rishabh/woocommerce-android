@@ -10,7 +10,9 @@ data class PackageDAO(
     val name: String,
     val dimensions: String,
     val weight: String,
-    val isLetter: Boolean
+    val isLetter: Boolean,
+    val dimensionUnit: String,
+    val weightUnit: String
 )
 
 data class CarrierDAO(
