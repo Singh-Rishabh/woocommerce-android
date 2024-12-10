@@ -1,3 +1,4 @@
+
 package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -177,6 +178,11 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given checkout started, when vm created, then order creation is started`() = runTest {
         // GIVEN
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
+
         val productIds = listOf(1L, 2L, 3L)
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -234,6 +240,11 @@ class WooPosTotalsViewModelTest {
     fun `given checkout started and successfully created order, when vm created, then totals state correctly calculated`() =
         runTest {
             // GIVEN
+            whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+                .thenReturn("Getting ready")
+            whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+                .thenReturn("Checking order")
+
             val productIds = listOf(1L, 2L, 3L)
             val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -309,6 +320,11 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given order creation fails, when vm created, then error state is shown`() = runTest {
         // GIVEN
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
+
         val productIds = listOf(1L, 2L, 3L)
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -415,6 +431,11 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `when order is created, then should track order creation success`() = runTest {
         // GIVEN
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
+
         val productIds = listOf(1L, 2L, 3L)
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -505,6 +526,11 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given reader connected, when order created, then payment collection started`() = runTest {
         // GIVEN
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
+
         whenever(networkStatus.isConnected()).thenReturn(true)
         val productIds = listOf(1L, 2L, 3L)
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
@@ -550,7 +576,7 @@ class WooPosTotalsViewModelTest {
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
         assertThat(state.orderTotalText).isEqualTo("$3.00")
-        assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
+        assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.Preparing::class.java)
     }
 
     @org.junit.Test
@@ -570,6 +596,8 @@ class WooPosTotalsViewModelTest {
     @org.junit.Test
     fun `given there is no internet, then collect payment method is not called`() = runTest {
         // GIVEN
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready)).thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order)).thenReturn("Checking order")
         whenever(networkStatus.isConnected()).thenReturn(false)
         val productIds = listOf(1L, 2L, 3L)
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(productIds))
@@ -695,6 +723,10 @@ class WooPosTotalsViewModelTest {
             .thenReturn("To process this payment, please connect your reader.")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label))
             .thenReturn("Connect to reader")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
 
         val productIds = listOf(1L, 2L, 3L)
         val order = Order.getEmptyOrder(
@@ -741,7 +773,7 @@ class WooPosTotalsViewModelTest {
         // THEN
         assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
-        assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
+        assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.Preparing::class.java)
     }
 
     @Test
@@ -831,6 +863,39 @@ class WooPosTotalsViewModelTest {
 
         // THEN
         assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
+    }
+
+    @Test
+    fun `given order draft created and reader connected, when reader is ready, should show ready for payment state`() = runTest {
+        // GIVEN
+        whenever(
+            resourceProvider.getString(
+                R.string.woopos_success_totals_payment_processing_title
+            )
+        ).thenReturn("Processing payment")
+        whenever(
+            resourceProvider.getString(
+                R.string.woopos_success_totals_payment_processing_subtitle
+            )
+        ).thenReturn("Please wait…")
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
+        val mockCardReaderPaymentController: CardReaderPaymentController = mock()
+        val factory: CardReaderPaymentControllerFactory = mock()
+        whenever(factory.create(any(), any(), any(), any())).thenReturn(mockCardReaderPaymentController)
+        val paymentState =
+            MutableStateFlow<CardReaderPaymentOrRefundState>(
+                CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState("") {}
+            )
+        whenever(mockCardReaderPaymentController.paymentState).thenReturn(paymentState)
+
+        // WHEN
+        val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
+
+        // THEN
+        val totalState = vm.state.value as WooPosTotalsViewState.Totals
+        assertThat(totalState.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
     }
 
     @Test
@@ -997,6 +1062,7 @@ class WooPosTotalsViewModelTest {
         verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.GoBackToCheckoutAfterFailedPayment)
     }
 
+    @Suppress("LongMethod")
     private suspend fun createViewModelAndSetupForSuccessfulOrderCreation(
         controllerFactory: CardReaderPaymentControllerFactory = paymentControllerFactory
     ): WooPosTotalsViewModel {
@@ -1006,6 +1072,18 @@ class WooPosTotalsViewModelTest {
             .thenReturn("To process this payment, please connect your reader.")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_cta_button_label))
             .thenReturn("Connect to reader")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
+            .thenReturn("Processing payment")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle))
+            .thenReturn("Please wait…")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_title))
+            .thenReturn("Ready for payment")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_subtitle))
+            .thenReturn("Tap, swipe or insert card")
 
         val productIds = listOf(1L, 2L, 3L)
         val orderId = 23L
