@@ -247,10 +247,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
-                        uiState.value =
-                            PaymentSuccess(
-                                orderTotalText = paymentState.amountWithCurrencyLabel
-                            )
+                        uiState.value = PaymentSuccess(orderTotalText = paymentState.amountWithCurrencyLabel)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
 
