@@ -46,10 +46,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private suspend fun observeShippingLabelInformation() {
         flowOf(orderDetailRepository.getOrderById(navArgs.orderId))
             .combine(observeOriginAddresses()) { order, originAddresses ->
-                if (order == null) {
+                val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
+                if (order == null || selectedOriginAddress == null) {
                     return@combine WooShippingViewState.Error
                 }
-                val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 val items = getShippableItems(order)
                 shippableItems.value = items
 
@@ -77,10 +77,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             }
     }
 
-    private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress {
+    private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress? {
         return (viewState as? WooShippingViewState.DataState)?.let {
             it.shippingAddresses.shipFrom
-        } ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.first()
+        } ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.firstOrNull()
     }
 
     fun onShippingFromAddressChange(address: OriginShippingAddress) {
