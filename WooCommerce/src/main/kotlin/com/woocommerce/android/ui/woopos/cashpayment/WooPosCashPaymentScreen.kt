@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.cashpayment
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -25,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
@@ -61,7 +66,9 @@ fun WooPosCashPaymentScreen(
     onBackClicked: () -> Unit,
     onOrderComplete: () -> Unit,
 ) {
-    Column {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
         Toolbar(onBackClicked)
 
         when (state) {
@@ -107,6 +114,8 @@ private fun Collecting(
 
         val totalBarrier = createStartBarrier(total, changeDue)
 
+        var inputText by remember { mutableStateOf(state.enteredAmount) }
+
         WooPosTypedInputField(
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -114,15 +123,18 @@ private fun Collecting(
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(totalBarrier, margin = 16.dp)
-                    width = androidx.constraintlayout.compose.Dimension.fillToConstraints // Fill the space between start and barrier
+                    width = Dimension.fillToConstraints
                 },
-            value = state.enteredAmount,
-            label = stringResource(R.string.cash_payments_cash_received),
+            value = inputText,
+            label = stringResource(R.string.woopos_cash_payment_enter_amount_label),
             valueMapper = NullableCurrencyTextFieldValueMapper.create(
                 decimalSeparator = state.decimalSeparator,
                 numberOfDecimals = state.numberOfDecimals
             ),
-            onValueChange = onAmountChanged,
+            onValueChange = {
+                onAmountChanged(it)
+                inputText = it
+            },
             visualTransformation = CurrencyVisualTransformation(
                 state.currencySymbol,
                 state.currencyPosition
@@ -140,14 +152,15 @@ private fun Collecting(
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .constrainAs(total) {
-                    top.linkTo(input.top, margin = 20.dp)
+                    top.linkTo(input.top)
+                    bottom.linkTo(input.bottom)
                     end.linkTo(parent.end)
                 }
         )
 
         Text(
             text = state.changeDue,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.subtitle2,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     bottom.linkTo(input.bottom)

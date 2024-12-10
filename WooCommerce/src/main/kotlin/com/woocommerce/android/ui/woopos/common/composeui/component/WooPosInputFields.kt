@@ -56,7 +56,7 @@ fun <T> WooPosTypedInputField(
         WCOutlinedTypedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = if (value == null || value.toString().isEmpty()) "" else label,
+            label = label,
             valueMapper = valueMapper,
             helperText = helperText,
             enabled = enabled,
@@ -80,7 +80,7 @@ fun <T> WooPosTypedInputField(
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.subtitle2,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .padding(start = 16.dp)
