@@ -159,6 +159,7 @@ private fun Collecting(
             text = state.changeDue,
             style = MaterialTheme.typography.subtitle2,
             color = WooPosTheme.colors.warning,
+            fontWeight = FontWeight.Normal,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     bottom.linkTo(input.bottom)

@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import com.woocommerce.android.ui.compose.component.TextFieldValueMapper
 import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import java.math.BigDecimal
 
 @Composable
@@ -49,6 +51,7 @@ fun <T> WooPosTypedInputField(
         unfocusedBorderColor = Color.Transparent,
         disabledBorderColor = Color.Transparent,
         errorBorderColor = Color.Transparent,
+        focusedLabelColor = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
     ),
     placeholderText: String? = null
 ) {
@@ -74,16 +77,16 @@ fun <T> WooPosTypedInputField(
             placeholderText = placeholderText,
         )
 
-        Spacer(modifier = Modifier.size(8.dp))
-
+        val errorTextStyle = MaterialTheme.typography.subtitle2
         if (errorMessage != null) {
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.subtitle2,
+                fontWeight = FontWeight.Normal,
+                style = errorTextStyle,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
-                    .padding(start = 16.dp)
+                    .padding(start = 16.dp.toAdaptivePadding())
             )
         }
     }
