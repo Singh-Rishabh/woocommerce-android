@@ -19,8 +19,10 @@ data class PackageData(
 ) : Parcelable {
     @IgnoredOnParcel
     val length: String
+
     @IgnoredOnParcel
     val width: String
+
     @IgnoredOnParcel
     val height: String
 

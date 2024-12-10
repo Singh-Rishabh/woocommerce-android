@@ -1,10 +1,9 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
-import kotlin.test.Test
 import org.assertj.core.api.Assertions.assertThat
+import kotlin.test.Test
 
 class PackageDataTest {
-
 
     @Test
     fun `length, width, and height are correctly set when dimensions are properly formatted`() {
