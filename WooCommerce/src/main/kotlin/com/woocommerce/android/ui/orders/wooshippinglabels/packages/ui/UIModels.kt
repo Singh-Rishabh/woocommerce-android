@@ -12,7 +12,9 @@ data class PackageData(
     val dimensions: String,
     val weight: String,
     val isSelected: Boolean,
-    val isLetter: Boolean
+    val isLetter: Boolean,
+    val dimensionUnit: String = "cm",
+    val weightUnit: String = "kg"
 ) : Parcelable {
     val descriptionResId: Int
         get() = when (isLetter) {
