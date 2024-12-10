@@ -276,8 +276,8 @@ class WooPosTotalsViewModel @Inject constructor(
         if (totalsState is WooPosTotalsViewState.Totals) {
             uiState.value = totalsState.copy(
                 readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
-                    title = "Ready for payment",
-                    subtitle = "Tap, swipe or insert card"
+                    title = resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_title),
+                    subtitle = resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_subtitle)
                 )
             )
         } else {
