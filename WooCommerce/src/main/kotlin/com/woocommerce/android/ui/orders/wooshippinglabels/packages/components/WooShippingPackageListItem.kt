@@ -51,8 +51,8 @@ fun WooSavedPackageListItem(
                 Text(
                     text = packageData.weight
                         .takeIf { it.isNotEmpty() }
-                        ?.let { "${packageData.dimensions} • $it" }
-                        ?: packageData.dimensions,
+                        ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                        ?: packageData.dimensionForDisplay,
                     style = MaterialTheme.typography.body2
                 )
             }

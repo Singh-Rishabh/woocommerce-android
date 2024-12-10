@@ -21,6 +21,12 @@ data class PackageData(
             true -> R.string.woo_shipping_labels_package_creation_envelope_type
             false -> R.string.woo_shipping_labels_package_creation_box_type
         }
+
+    val dimensionForDisplay
+        get() = "$dimensions $dimensionUnit"
+
+    val weightForDisplay
+        get() = "$weight $weightUnit"
 }
 
 @Parcelize
