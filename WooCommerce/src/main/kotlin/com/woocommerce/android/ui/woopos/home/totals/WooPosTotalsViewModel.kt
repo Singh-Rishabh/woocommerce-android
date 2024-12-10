@@ -297,8 +297,8 @@ class WooPosTotalsViewModel @Inject constructor(
             uiState.value = totalsState.copy(
                 readerStatus =
                 WooPosTotalsViewState.ReaderStatus.Preparing(
-                    title = "Getting ready",
-                    subtitle = "Preparing reader for payment"
+                    title = resourceProvider.getString(R.string.woopos_totals_reader_getting_ready),
+                    subtitle = resourceProvider.getString(R.string.woopos_totals_reader_preparing_reader_for_payment)
                 )
             )
         } else {
