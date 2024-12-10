@@ -27,8 +27,12 @@ class WooPosVariationsDataSource @Inject constructor(
         variationCache.put(productId, variations)
     }
 
-    fun canLoadMore(): Boolean {
-        return handler.canLoadMore()
+    suspend fun resetState() {
+        handler.resetState()
+    }
+
+    fun canLoadMore(numOfVariations: Int): Boolean {
+        return handler.canLoadMore(numOfVariations)
     }
 
     fun fetchFirstPage(

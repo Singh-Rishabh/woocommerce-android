@@ -129,7 +129,7 @@ class WooPosVariationsViewModelTest {
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
             flowOf(FetchResult.Remote(Result.success(variations)))
         )
-        whenever(variationsDataSource.canLoadMore()).thenReturn(false)
+        whenever(variationsDataSource.canLoadMore(any())).thenReturn(false)
         whenever(variationsDataSource.loadMore(any())).thenReturn(Result.success(emptyList()))
 
         val viewModel = createViewModel()
@@ -137,7 +137,7 @@ class WooPosVariationsViewModelTest {
         advanceUntilIdle()
 
         // WHEN
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L, 10))
         advanceUntilIdle()
         // THEN
         viewModel.viewState.test {
@@ -153,7 +153,7 @@ class WooPosVariationsViewModelTest {
             ProductTestUtils.generateProductVariation(1, 1, "10.0"),
         )
         whenever(variationsDataSource.loadMore(any())).thenReturn(Result.success(variations))
-        whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+        whenever(variationsDataSource.canLoadMore(any())).thenReturn(true)
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
             flow {
                 emit(
@@ -171,7 +171,7 @@ class WooPosVariationsViewModelTest {
 
         val viewModel = createViewModel()
         viewModel.init(1L)
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L, 10))
 
         // THEN
         viewModel.viewState.test {
@@ -185,7 +185,7 @@ class WooPosVariationsViewModelTest {
     fun `given load more fails, when end of list reached, then pagination state is error`() = runTest {
         // GIVEN
         whenever(variationsDataSource.loadMore(any())).thenReturn(Result.failure(Exception()))
-        whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+        whenever(variationsDataSource.canLoadMore(any())).thenReturn(true)
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
             flow {
                 emit(
@@ -204,7 +204,7 @@ class WooPosVariationsViewModelTest {
         val viewModel = createViewModel()
         viewModel.init(1L)
         advanceUntilIdle()
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L, 10))
         advanceUntilIdle()
 
         // THEN
@@ -230,7 +230,7 @@ class WooPosVariationsViewModelTest {
         val activeJob = Job()
         viewModel.loadMoreJob = activeJob
         viewModel.init(1L)
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L, 10))
 
         viewModel.viewState.test {
             // THEN

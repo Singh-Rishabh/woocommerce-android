@@ -44,6 +44,9 @@ class WooPosVariationsViewModel @Inject constructor(
     internal var loadMoreJob: Job? = null
 
     fun init(productId: Long) {
+        viewModelScope.launch {
+            variationsDataSource.resetState()
+        }
         loadVariations(
             productId = productId,
             withPullToRefresh = false,
@@ -134,13 +137,13 @@ class WooPosVariationsViewModel @Inject constructor(
             is WooPosVariationsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
         }
 
-    private fun loadMore(productId: Long) {
+    private fun loadMore(productId: Long, numOfVariations: Int) {
         val currentState = _viewState.value
         if (currentState !is WooPosVariationsViewState.Content) {
             return
         }
 
-        if (!variationsDataSource.canLoadMore()) {
+        if (!variationsDataSource.canLoadMore(numOfVariations)) {
             return
         }
 
@@ -170,7 +173,7 @@ class WooPosVariationsViewModel @Inject constructor(
     fun onUIEvent(event: WooPosVariationsUIEvents) {
         when (event) {
             is WooPosVariationsUIEvents.EndOfItemsListReached -> {
-                onEndOfVariationsListReached(event.productId)
+                onEndOfVariationsListReached(event.productId, event.numOfVariations)
             }
 
             is WooPosVariationsUIEvents.PullToRefreshTriggered -> {
@@ -199,7 +202,7 @@ class WooPosVariationsViewModel @Inject constructor(
         viewModelScope.launch { fromChildToParentEventSender.sendToParent(event) }
     }
 
-    private fun onEndOfVariationsListReached(productId: Long) {
-        loadMore(productId)
+    private fun onEndOfVariationsListReached(productId: Long, numOfVariations: Int) {
+        loadMore(productId, numOfVariations)
     }
 }

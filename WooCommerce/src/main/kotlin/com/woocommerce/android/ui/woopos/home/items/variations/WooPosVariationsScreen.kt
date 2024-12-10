@@ -32,9 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.flowWithLifecycle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
@@ -70,7 +67,12 @@ fun WooPosVariationsScreen(
             viewModel.onUIEvent(WooPosVariationsUIEvents.OnItemClicked(productId, variationId))
         },
         onEndOfItemListReached = {
-            viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(variableProductData.id))
+            viewModel.onUIEvent(
+                WooPosVariationsUIEvents.EndOfItemsListReached(
+                    variableProductData.id,
+                    variableProductData.numOfVariations
+                )
+            )
         },
         onPullToRefresh = {
             viewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(variableProductData.id))
