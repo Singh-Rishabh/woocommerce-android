@@ -133,18 +133,21 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                         PackageData(
                             name = "Small Flat Rate Box",
                             dimensions = "10 x 10 x 10 cm",
+                            weight = "10",
                             isSelected = true,
                             isLetter = true
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
                             dimensions = "20 x 20 x 20 cm",
+                            weight = "10",
                             isSelected = false,
                             isLetter = false
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
                             dimensions = "30 x 30 x 30 cm",
+                            weight = "10",
                             isSelected = false,
                             isLetter = false
                         )
