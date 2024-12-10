@@ -174,13 +174,15 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         var lastViewState: ViewState? = null
         val package1 = PackageData(
             name = "Package 1",
-            dimensions = "10 x 10 x 10 cm",
+            dimensions = "10 x 10 x 10",
+            weight = "10",
             isSelected = false,
             isLetter = false
         )
         val package2 = PackageData(
             name = "Package 2",
-            dimensions = "20 x 20 x 20 cm",
+            dimensions = "20 x 20 x 20",
+            weight = "20",
             isSelected = false,
             isLetter = true
         )
@@ -215,13 +217,15 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         val carrier: Carrier = Carrier.DHL
         val package1 = PackageData(
             name = "Package 1",
-            dimensions = "10 x 10 x 10 cm",
+            dimensions = "10 x 10 x 10",
+            weight = "10",
             isSelected = false,
             isLetter = false
         )
         val package2 = PackageData(
             name = "Package 2",
-            dimensions = "20 x 20 x 20 cm",
+            dimensions = "20 x 20 x 20",
+            weight = "20",
             isSelected = false,
             isLetter = true
         )
@@ -268,25 +272,29 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         val carrier2: Carrier = Carrier.USPS
         val package1 = PackageData(
             name = "Package 1 - Carrier 1",
-            dimensions = "10 x 10 x 10 cm",
+            dimensions = "10 x 10 x 10",
+            weight = "10",
             isSelected = false,
             isLetter = false
         )
         val package2 = PackageData(
             name = "Package 2 - Carrier 1",
-            dimensions = "20 x 20 x 20 cm",
+            dimensions = "20 x 20 x 20",
+            weight = "20",
             isSelected = false,
             isLetter = true
         )
         val package3 = PackageData(
             name = "Package 1 - Carrier 2",
-            dimensions = "30 x 30 x 30 cm",
+            dimensions = "30 x 30 x 30",
+            weight = "30",
             isSelected = false,
             isLetter = false
         )
         val package4 = PackageData(
             name = "Package 2 - Carrier 2",
-            dimensions = "40 x 40 x 40 cm",
+            dimensions = "40 x 40 x 40",
+            weight = "40",
             isSelected = false,
             isLetter = true
         )
