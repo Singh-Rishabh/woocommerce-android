@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 sealed class WooPosCashPaymentState : Parcelable {
     data class Collecting(
         val enteredAmount: String,
+        val errorMessage: String?,
         val changeDue: String,
         val total: String,
         val button: Button

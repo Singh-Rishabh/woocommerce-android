@@ -37,6 +37,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
                 enteredAmount = "",
                 changeDue = priceFormat(BigDecimal.ZERO),
                 total = priceFormat(order.total),
+                errorMessage = null,
                 button = WooPosCashPaymentState.Collecting.Button(
                     text = resourceProvider.getString(R.string.woopos_complete_cash_order_button),
                     status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED

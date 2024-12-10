@@ -13,6 +13,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ fun WooPosInputField(
     onValueChange: (String) -> Unit,
     label: String = "",
     errorMessage: String? = null,
+    textStyle: TextStyle = MaterialTheme.typography.h6,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     modifier: Modifier = Modifier,
@@ -34,11 +36,16 @@ fun WooPosInputField(
             value = value,
             onValueChange = onValueChange,
             label = {
-                Text(
-                    text = label,
-                    color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                )
+                if (value.isEmpty()) {
+                    Text(
+                        text = label,
+                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
+                        fontStyle = textStyle.fontStyle,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
             },
+            textStyle = textStyle,
             isError = errorMessage != null,
             keyboardOptions = keyboardOptions,
             visualTransformation = visualTransformation,
@@ -56,7 +63,7 @@ fun WooPosInputField(
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.subtitle2,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .padding(start = 16.dp)

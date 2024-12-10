@@ -1,19 +1,15 @@
 package com.woocommerce.android.ui.woopos.cashpayment
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -28,6 +24,8 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosInputField
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
@@ -82,66 +80,69 @@ private fun Collecting(
     onAmountChanged: (String) -> Unit,
     onCompleteOrderClicked: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize()
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 64.dp,
+                bottom = 16.dp,
+            )
     ) {
-        Column(
+        val (input, total, changeDue, button) = createRefs()
+        WooPosInputField(
+            value = state.enteredAmount,
+            onValueChange = onAmountChanged,
+            label = "Given amount",
+            errorMessage = state.errorMessage,
             modifier = Modifier
-                .width(540.dp)
-                .padding(32.dp)
-        ) {
-            Spacer(modifier = Modifier.weight(1f))
+                .constrainAs(input) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(total.start)
+                }
+                .height(72.dp)
+        )
 
-            Text(
-                text = "Cash payment",
-                style = MaterialTheme.typography.h2,
-            )
+        Text(
+            text = state.total,
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier
+                .constrainAs(total) {
+                    top.linkTo(input.top, margin = 20.dp)
+                    end.linkTo(parent.end)
+                }
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = "Change due",
+            style = MaterialTheme.typography.subtitle2,
+            modifier = Modifier
+                .constrainAs(changeDue) {
+                    bottom.linkTo(input.bottom)
+                    end.linkTo(parent.end)
+                }
+        )
 
-            Text(
-                text = "Total",
-                style = MaterialTheme.typography.h5,
-            )
+        val buttonTopMargin = 48.dp.toAdaptivePadding()
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = state.total,
-                style = MaterialTheme.typography.h6,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "Change due",
-                style = MaterialTheme.typography.h5,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = state.changeDue,
-                style = MaterialTheme.typography.h5,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            TextField(
-                value = state.enteredAmount,
-                onValueChange = onAmountChanged,
-                label = { Text("Given amount") },
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            WooPosButton(
-                text = state.button.text,
-                onClick = onCompleteOrderClicked,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-        }
+        WooPosButton(
+            text = state.button.text,
+            onClick = onCompleteOrderClicked,
+            state = when (state.button.status) {
+                WooPosCashPaymentState.Collecting.Button.Status.ENABLED -> WooPosButtonState.ENABLED
+                WooPosCashPaymentState.Collecting.Button.Status.DISABLED -> WooPosButtonState.DISABLED
+                WooPosCashPaymentState.Collecting.Button.Status.LOADING -> WooPosButtonState.LOADING
+            },
+            modifier = Modifier
+                .constrainAs(button) {
+                    top.linkTo(changeDue.bottom, margin = buttonTopMargin)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                }
+        )
     }
 }
 
@@ -191,15 +192,62 @@ private fun Toolbar(onBackClicked: () -> Unit) {
 
 @WooPosPreview
 @Composable
-fun WooPosTotalsPaymentCashScreenScreen() {
+fun WooPosTotalsPaymentCashScreen() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
                 enteredAmount = "5$",
+                errorMessage = null,
                 changeDue = "5$",
                 total = "10$",
                 button = WooPosCashPaymentState.Collecting.Button(
-                    text = "Complete order",
+                    text = "Mark order as complete",
+                    status = WooPosCashPaymentState.Collecting.Button.Status.DISABLED
+                )
+            ),
+            onAmountChanged = {},
+            onCompleteOrderClicked = {},
+            onBackClicked = {},
+            onOrderComplete = {},
+        )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun WooPosTotalsPaymentCashWithLabelScreen() {
+    WooPosTheme {
+        WooPosCashPaymentScreen(
+            state = WooPosCashPaymentState.Collecting(
+                enteredAmount = "",
+                errorMessage = null,
+                changeDue = "5$",
+                total = "10$",
+                button = WooPosCashPaymentState.Collecting.Button(
+                    text = "Mark order as complete",
+                    status = WooPosCashPaymentState.Collecting.Button.Status.LOADING
+                )
+            ),
+            onAmountChanged = {},
+            onCompleteOrderClicked = {},
+            onBackClicked = {},
+            onOrderComplete = {},
+        )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun WooPosTotalsPaymentCashWithErrorScreen() {
+    WooPosTheme {
+        WooPosCashPaymentScreen(
+            state = WooPosCashPaymentState.Collecting(
+                enteredAmount = "$20.00",
+                errorMessage = "Amount must be more or equal to total",
+                changeDue = "5$",
+                total = "10$",
+                button = WooPosCashPaymentState.Collecting.Button(
+                    text = "Mark order as complete",
                     status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
                 )
             ),
