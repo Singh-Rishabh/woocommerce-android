@@ -80,6 +80,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
             _state.value = currentState.copy(
                 enteredAmount = enteredAmount,
                 changeDue = changeDueText,
+                errorMessage = null,
                 button = currentState.button.copy(
                     status = if (changeDue >= BigDecimal.ZERO) {
                         WooPosCashPaymentState.Collecting.Button.Status.ENABLED
