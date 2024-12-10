@@ -96,13 +96,8 @@ private fun Collecting(
     onCompleteOrderClicked: () -> Unit,
 ) {
     ConstraintLayout(
-        modifier = Modifier
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                top = 64.dp,
-                bottom = 16.dp,
-            )
+        modifier = Modifier.padding(top = 48.dp.toAdaptivePadding())
+            .fillMaxWidth()
     ) {
         val (input, total, changeDue, button) = createRefs()
         val focusRequester = remember { FocusRequester() }
@@ -117,13 +112,14 @@ private fun Collecting(
 
         var inputText by remember { mutableStateOf(state.enteredAmount) }
 
+        val standardMargin = 16.dp.toAdaptivePadding()
         WooPosTypedInputField(
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .constrainAs(input) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
-                    end.linkTo(totalBarrier, margin = 16.dp)
+                    end.linkTo(totalBarrier, margin = standardMargin)
                     width = Dimension.fillToConstraints
                 },
             value = inputText,
@@ -155,7 +151,7 @@ private fun Collecting(
                 .constrainAs(total) {
                     top.linkTo(input.top)
                     bottom.linkTo(input.bottom)
-                    end.linkTo(parent.end)
+                    end.linkTo(parent.end, margin = standardMargin)
                 }
         )
 
@@ -166,7 +162,7 @@ private fun Collecting(
             modifier = Modifier
                 .constrainAs(changeDue) {
                     bottom.linkTo(input.bottom)
-                    end.linkTo(parent.end)
+                    end.linkTo(parent.end, margin = standardMargin)
                 }
         )
 
@@ -183,8 +179,9 @@ private fun Collecting(
             modifier = Modifier
                 .constrainAs(button) {
                     top.linkTo(changeDue.bottom, margin = buttonTopMargin)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
+                    end.linkTo(parent.end, margin = standardMargin)
+                    start.linkTo(parent.start, margin = standardMargin)
+                    width = Dimension.fillToConstraints
                 }
         )
     }
