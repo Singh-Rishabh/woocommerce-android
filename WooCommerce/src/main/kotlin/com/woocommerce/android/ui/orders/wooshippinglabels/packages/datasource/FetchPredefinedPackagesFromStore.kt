@@ -35,6 +35,7 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
             PackageData(
                 name = packageDAO.name,
                 dimensions = packageDAO.dimensions,
+                weight = packageDAO.weight,
                 isSelected = false,
                 isLetter = packageDAO.isLetter
             )
@@ -60,6 +61,7 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                     PackageData(
                         name = packageItem.name,
                         dimensions = packageItem.dimensions,
+                        weight = packageItem.weight,
                         isSelected = false,
                         isLetter = packageItem.isLetter
                     )
