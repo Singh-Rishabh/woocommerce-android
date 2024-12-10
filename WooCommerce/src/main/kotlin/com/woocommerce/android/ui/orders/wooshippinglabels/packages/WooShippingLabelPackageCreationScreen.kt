@@ -114,6 +114,7 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     packageLength = "10",
                     packageWidth = "10",
                     packageHeight = "10",
+                    packageWeight = "10",
                     isAddPackageEnabled = true,
                     isSaveAsTemplateChecked = true,
                     onAddPackageClick = {},
@@ -121,8 +122,9 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     onLengthChange = {},
                     onWidthChange = {},
                     onHeightChange = {},
+                    onWeightChange = {},
                     onPackageNameChange = {},
-                    onSavePackageChanged = { }
+                    onSavePackageChanged = {}
                 )
             },
             createSavedPackageScreen = {
@@ -130,19 +132,22 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     savedPackages = listOf(
                         PackageData(
                             name = "Small Flat Rate Box",
-                            dimensions = "10 x 10 x 10 cm",
+                            dimensions = "10 x 10 x 10",
+                            weight = "10",
                             isSelected = true,
                             isLetter = true
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
-                            dimensions = "20 x 20 x 20 cm",
+                            dimensions = "20 x 20 x 20",
+                            weight = "10",
                             isSelected = false,
                             isLetter = false
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
-                            dimensions = "30 x 30 x 30 cm",
+                            dimensions = "30 x 30 x 30",
+                            weight = "10",
                             isSelected = false,
                             isLetter = false
                         )

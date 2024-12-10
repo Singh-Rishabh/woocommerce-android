@@ -152,6 +152,13 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
+    fun onWeightChange(weight: String) {
+        _viewState.update {
+            val newPackageData = it.customPackageCreationData.copy(weight = weight)
+            it.copy(customPackageCreationData = newPackageData)
+        }
+    }
+
     fun onSavePackageChanged(checked: Boolean) {
         _viewState.update {
             val newPackageData = it.customPackageCreationData.copy(saveAsTemplate = checked)
@@ -189,7 +196,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                         name = it.name,
                         isLetter = it.type == PackageType.ENVELOPE,
                         innerDimensions = it.dimensions,
-                        boxWeight = 0.0,
+                        boxWeight = it.weight?.toDoubleOrNull() ?: 0.0,
                         isUserDefined = true,
                         maxWeight = 0.0
                     )
