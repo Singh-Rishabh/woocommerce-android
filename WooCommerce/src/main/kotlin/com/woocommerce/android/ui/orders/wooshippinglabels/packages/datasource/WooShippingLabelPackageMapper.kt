@@ -25,6 +25,7 @@ class WooShippingLabelPackageMapper @Inject constructor() {
                 id = it.id.orEmpty(),
                 name = it.name.orEmpty(),
                 dimensions = it.dimensions.orEmpty(),
+                weight = it.boxWeight?.toString().orEmpty(),
                 isLetter = it.isLetter ?: false
             )
         } ?: emptyList()
@@ -36,6 +37,7 @@ class WooShippingLabelPackageMapper @Inject constructor() {
                 id = it.id.orEmpty(),
                 name = it.name.orEmpty(),
                 dimensions = it.dimensions.orEmpty(),
+                weight = it.boxWeight?.toString().orEmpty(),
                 isLetter = it.isLetter ?: false
             )
         }
@@ -72,6 +74,7 @@ class WooShippingLabelPackageMapper @Inject constructor() {
                 id = it.id.orEmpty(),
                 name = it.name.orEmpty(),
                 dimensions = it.outerDimensions.orEmpty(),
+                weight = it.boxWeight?.toString().orEmpty(),
                 isLetter = it.isLetter ?: false
             )
         } ?: emptyList()

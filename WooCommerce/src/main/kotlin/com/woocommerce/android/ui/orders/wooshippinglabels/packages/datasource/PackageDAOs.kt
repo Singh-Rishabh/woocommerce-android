@@ -9,6 +9,7 @@ data class PackageDAO(
     val id: String,
     val name: String,
     val dimensions: String,
+    val weight: String,
     val isLetter: Boolean
 )
 
