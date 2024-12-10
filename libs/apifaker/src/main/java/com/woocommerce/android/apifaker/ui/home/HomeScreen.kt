@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.woocommerce.android.apifaker.models.ApiType
@@ -46,7 +47,7 @@ internal fun HomeScreen(
     onExit: () -> Unit
 ) {
     HomeScreen(
-        endpoints = viewModel.endpoints.collectAsState().value,
+        endpoints = viewModel.endpoints.collectAsStateWithLifecycle().value,
         isEnabled = viewModel.isEnabled.collectAsState(initial = false).value,
         navController = navController,
         onMockingToggleChanged = viewModel::onMockingToggleChanged,
