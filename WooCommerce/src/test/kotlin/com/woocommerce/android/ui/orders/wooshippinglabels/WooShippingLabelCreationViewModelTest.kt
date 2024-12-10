@@ -124,4 +124,49 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         assert(dataState.shippingLines.isNotEmpty())
         assertEquals(dataState.shippingLines.size, defaultShippingLines.size)
     }
+
+    @Test
+    fun `when the order is not found, then show an error`() = testBlocking {
+        val order: Order? = null
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+
+        createViewModel()
+
+        val currentViewState = sut.viewState.value
+        assert(currentViewState is WooShippingViewState.Error)
+    }
+
+    @Test
+    fun `when there are no origin addresses, then show an error`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(emptyList())
+
+        createViewModel()
+
+        val currentViewState = sut.viewState.value
+        assert(currentViewState is WooShippingViewState.Error)
+    }
+
+    @Test
+    fun `when there are origin addresses, then display the origin addresses`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+
+        createViewModel()
+
+        val currentViewState = sut.viewState.value
+        assert(currentViewState is WooShippingViewState.DataState)
+        val dataState = currentViewState as WooShippingViewState.DataState
+        assertEquals(dataState.shippingAddresses.originAddresses.size, defaultOriginAddresses.size)
+        val ids = dataState.shippingAddresses.originAddresses.map { it.id }
+        assert(ids.containsAll(defaultOriginAddresses.map { it.id }))
+    }
 }
