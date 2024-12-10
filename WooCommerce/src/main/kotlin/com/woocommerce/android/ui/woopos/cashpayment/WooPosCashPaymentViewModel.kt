@@ -34,10 +34,15 @@ class WooPosCashPaymentViewModel @Inject constructor(
         viewModelScope.launch {
             val order = repository.getOrderById(orderId)!!
             _state.value = WooPosCashPaymentState.Collecting(
-                enteredAmount = "",
+                enteredAmount = null,
                 changeDue = priceFormat(BigDecimal.ZERO),
-                total = priceFormat(order.total),
+                total = order.total,
+                totalText = priceFormat(order.total),
                 errorMessage = null,
+                currencySymbol = repository.getCurrencySymbol(),
+                currencyPosition = repository.getCurrencySymbolPosition(),
+                decimalSeparator = repository.getDecimalSeparator(),
+                numberOfDecimals = repository.getNumberOfDecimals(),
                 button = WooPosCashPaymentState.Collecting.Button(
                     text = resourceProvider.getString(R.string.woopos_complete_cash_order_button),
                     status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
@@ -48,7 +53,19 @@ class WooPosCashPaymentViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosCashPaymentUIEvent) {
         when (event) {
-            is WooPosCashPaymentUIEvent.AmountChanged -> TODO()
+            is WooPosCashPaymentUIEvent.AmountChanged -> {
+                val stateBeforeChange = _state.value as? WooPosCashPaymentState.Collecting ?: return
+                val enteredAmount = event.newAmount ?: return
+
+                viewModelScope.launch {
+                    val total = stateBeforeChange.total
+                    val changeDue = priceFormat(total - enteredAmount)
+                    _state.value = stateBeforeChange.copy(
+                        enteredAmount = enteredAmount,
+                        changeDue = changeDue
+                    )
+                }
+            }
             WooPosCashPaymentUIEvent.CompleteOrderClicked -> handleOrderCompletion()
         }
     }

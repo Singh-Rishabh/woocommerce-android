@@ -6,28 +6,39 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
+import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
+import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
-import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosInputField
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import org.wordpress.android.fluxc.model.WCSettingsModel
+import java.math.BigDecimal
 
 @Composable
 fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
@@ -46,7 +57,7 @@ fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) 
 @Composable
 fun WooPosCashPaymentScreen(
     state: WooPosCashPaymentState,
-    onAmountChanged: (String) -> Unit,
+    onAmountChanged: (BigDecimal?) -> Unit,
     onCompleteOrderClicked: () -> Unit,
     onBackClicked: () -> Unit,
     onOrderComplete: () -> Unit,
@@ -77,7 +88,7 @@ fun WooPosCashPaymentScreen(
 @Composable
 private fun Collecting(
     state: WooPosCashPaymentState.Collecting,
-    onAmountChanged: (String) -> Unit,
+    onAmountChanged: (BigDecimal?) -> Unit,
     onCompleteOrderClicked: () -> Unit,
 ) {
     ConstraintLayout(
@@ -91,22 +102,42 @@ private fun Collecting(
             )
     ) {
         val (input, total, changeDue, button) = createRefs()
-        WooPosInputField(
-            value = state.enteredAmount,
-            onValueChange = onAmountChanged,
-            label = "Given amount",
-            errorMessage = state.errorMessage,
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+
+        WCOutlinedTypedTextField(
             modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
                 .constrainAs(input) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
                     end.linkTo(total.start)
-                }
-                .height(72.dp)
+                },
+            value = state.enteredAmount,
+            label = stringResource(R.string.cash_payments_cash_received),
+            valueMapper = NullableCurrencyTextFieldValueMapper.create(
+                decimalSeparator = state.decimalSeparator,
+                numberOfDecimals = state.numberOfDecimals
+            ),
+            onValueChange = onAmountChanged,
+            visualTransformation = CurrencyVisualTransformation(
+                state.currencySymbol,
+                state.currencyPosition
+            ),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Decimal
+            )
         )
 
         Text(
-            text = state.total,
+            text = state.totalText,
             style = MaterialTheme.typography.h6,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -117,7 +148,7 @@ private fun Collecting(
         )
 
         Text(
-            text = "Change due",
+            text = state.changeDue,
             style = MaterialTheme.typography.subtitle2,
             modifier = Modifier
                 .constrainAs(changeDue) {
@@ -196,10 +227,15 @@ fun WooPosTotalsPaymentCashScreen() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
-                enteredAmount = "5$",
+                enteredAmount = BigDecimal(100),
                 errorMessage = null,
                 changeDue = "5$",
-                total = "10$",
+                total = BigDecimal(10),
+                totalText = "10$",
+                currencySymbol = "$",
+                currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
+                decimalSeparator = ".",
+                numberOfDecimals = 2,
                 button = WooPosCashPaymentState.Collecting.Button(
                     text = "Mark order as complete",
                     status = WooPosCashPaymentState.Collecting.Button.Status.DISABLED
@@ -219,10 +255,15 @@ fun WooPosTotalsPaymentCashWithLabelScreen() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
-                enteredAmount = "",
+                enteredAmount = null,
                 errorMessage = null,
                 changeDue = "5$",
-                total = "10$",
+                total = BigDecimal(10),
+                totalText = "10$",
+                currencySymbol = "$",
+                currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
+                decimalSeparator = ".",
+                numberOfDecimals = 2,
                 button = WooPosCashPaymentState.Collecting.Button(
                     text = "Mark order as complete",
                     status = WooPosCashPaymentState.Collecting.Button.Status.LOADING
@@ -242,10 +283,15 @@ fun WooPosTotalsPaymentCashWithErrorScreen() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
-                enteredAmount = "$20.00",
+                enteredAmount = BigDecimal(500),
                 errorMessage = "Amount must be more or equal to total",
                 changeDue = "5$",
-                total = "10$",
+                total = BigDecimal(10),
+                totalText = "10$",
+                currencySymbol = "$",
+                currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
+                decimalSeparator = ".",
+                numberOfDecimals = 2,
                 button = WooPosCashPaymentState.Collecting.Button(
                     text = "Mark order as complete",
                     status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
