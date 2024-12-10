@@ -88,6 +88,7 @@ fun WooPosCashPaymentScreen(
     }
 }
 
+@Suppress("DestructuringDeclarationWithTooManyEntries")
 @Composable
 private fun Collecting(
     state: WooPosCashPaymentState.Collecting,
