@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.cashpayment
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,12 +28,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
-import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
 import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosTypedInputField
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 import org.wordpress.android.fluxc.model.WCSettingsModel
@@ -62,10 +61,7 @@ fun WooPosCashPaymentScreen(
     onBackClicked: () -> Unit,
     onOrderComplete: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+    Column {
         Toolbar(onBackClicked)
 
         when (state) {
@@ -93,7 +89,6 @@ private fun Collecting(
 ) {
     ConstraintLayout(
         modifier = Modifier
-            .fillMaxSize()
             .padding(
                 start = 16.dp,
                 end = 16.dp,
@@ -110,14 +105,16 @@ private fun Collecting(
             keyboardController?.show()
         }
 
-        WCOutlinedTypedTextField(
+        val totalBarrier = createStartBarrier(total, changeDue)
+
+        WooPosTypedInputField(
             modifier = Modifier
-                .fillMaxWidth()
                 .focusRequester(focusRequester)
                 .constrainAs(input) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
-                    end.linkTo(total.start)
+                    end.linkTo(totalBarrier, margin = 16.dp)
+                    width = androidx.constraintlayout.compose.Dimension.fillToConstraints // Fill the space between start and barrier
                 },
             value = state.enteredAmount,
             label = stringResource(R.string.cash_payments_cash_received),
@@ -133,7 +130,8 @@ private fun Collecting(
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
-            )
+            ),
+            errorMessage = state.errorMessage,
         )
 
         Text(
@@ -149,7 +147,7 @@ private fun Collecting(
 
         Text(
             text = state.changeDue,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.subtitle1,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     bottom.linkTo(input.bottom)

@@ -1,69 +1,86 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.woocommerce.android.ui.compose.component.BigDecimalTextFieldValueMapper
+import com.woocommerce.android.ui.compose.component.TextFieldValueMapper
+import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import java.math.BigDecimal
 
 @Composable
-fun WooPosInputField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String = "",
-    errorMessage: String? = null,
-    textStyle: TextStyle = MaterialTheme.typography.h6,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
+fun <T> WooPosTypedInputField(
+    value: T,
+    onValueChange: (T) -> Unit,
+    label: String,
+    valueMapper: TextFieldValueMapper<T>,
     modifier: Modifier = Modifier,
+    helperText: String? = null,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    errorMessage: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    singleLine: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
+        focusedBorderColor = Color.Transparent,
+        unfocusedBorderColor = Color.Transparent,
+        disabledBorderColor = Color.Transparent,
+        errorBorderColor = Color.Transparent,
+    ),
+    placeholderText: String? = null
 ) {
     Column(modifier = modifier) {
-        TextField(
+        WCOutlinedTypedTextField(
             value = value,
             onValueChange = onValueChange,
-            label = {
-                if (value.isEmpty()) {
-                    Text(
-                        text = label,
-                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.4f),
-                        fontStyle = textStyle.fontStyle,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-            },
-            textStyle = textStyle,
+            label = if (value == null || value.toString().isEmpty()) "" else label,
+            valueMapper = valueMapper,
+            helperText = helperText,
+            enabled = enabled,
+            readOnly = readOnly,
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
             isError = errorMessage != null,
-            keyboardOptions = keyboardOptions,
             visualTransformation = visualTransformation,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            ),
-            modifier = Modifier
-                .fillMaxWidth(),
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            interactionSource = interactionSource,
+            colors = colors,
+            placeholderText = placeholderText,
         )
+
+        Spacer(modifier = Modifier.size(8.dp))
 
         if (errorMessage != null) {
             Text(
                 text = errorMessage,
                 color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.subtitle2,
+                style = MaterialTheme.typography.subtitle1,
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .padding(start = 16.dp)
@@ -77,24 +94,27 @@ fun WooPosInputField(
 fun WooPosInputFieldPreview() {
     WooPosTheme {
         Column(modifier = Modifier.padding(16.dp)) {
-            WooPosInputField(
-                value = "",
+            WooPosTypedInputField(
+                value = BigDecimal.TEN,
                 onValueChange = {},
+                valueMapper = BigDecimalTextFieldValueMapper.create(true),
                 label = "Label",
             )
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            WooPosInputField(
-                value = "Text",
+            WooPosTypedInputField(
+                value = BigDecimal.TEN,
                 onValueChange = {},
+                valueMapper = BigDecimalTextFieldValueMapper.create(true),
                 label = "",
             )
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            WooPosInputField(
-                value = "Text",
+            WooPosTypedInputField(
+                value = BigDecimal.TEN,
+                valueMapper = BigDecimalTextFieldValueMapper.create(true),
                 onValueChange = {},
                 label = "",
                 errorMessage = "Please enter a valid amount",
