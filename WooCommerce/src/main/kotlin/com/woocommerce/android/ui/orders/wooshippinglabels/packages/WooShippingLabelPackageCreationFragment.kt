@@ -45,7 +45,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowPackageTypeDialog -> handlePackageTypeSelection(event.currentSelection)
-                is PackageSelected -> handlePackageDataAsResult(event.packageData)
+                is PackageSelected -> navigateBackWithResult(PACKAGE_SELECTION_RESULT, event.packageData)
             }
         }
     }
@@ -71,13 +71,6 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
                     .map { getString(it.resourceId) }
                     .toTypedArray()
             ).let { findNavController().navigateSafely(it) }
-    }
-
-    private fun handlePackageDataAsResult(packageData: PackageData) {
-        navigateBackWithResult(
-            PACKAGE_SELECTION_RESULT,
-            Bundle().apply { putParcelable(PACKAGE_SELECTION_RESULT, packageData) }
-        )
     }
 
     companion object {
