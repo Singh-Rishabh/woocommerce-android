@@ -6,11 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleDialogResult
+import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -74,7 +74,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
     }
 
     private fun handlePackageDataAsResult(packageData: PackageData) {
-        setFragmentResult(
+        navigateBackWithResult(
             PACKAGE_SELECTION_RESULT,
             Bundle().apply { putParcelable(PACKAGE_SELECTION_RESULT, packageData) }
         )
