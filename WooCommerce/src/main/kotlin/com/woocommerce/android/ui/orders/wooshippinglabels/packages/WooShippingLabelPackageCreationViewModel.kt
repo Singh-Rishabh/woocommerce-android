@@ -57,9 +57,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     init {
         launch {
-            fetchPredefinedPackages()
-                .let { _viewState.value.copy(predefinedPackagesState = it) }
-                .let { _viewState.update { it } }
+            fetchPredefinedPackages().let { response ->
+                _viewState.update { viewState ->
+                    viewState.copy(predefinedPackagesState = response)
+                }
+            }
 
         }
     }

@@ -81,12 +81,12 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
     }
 
     @Test
-    fun `invoke should return null StorePredefinedPackages when site is not available`() = testBlocking {
+    fun `invoke should return Error StorePredefinedPackages when site is not available`() = testBlocking {
         whenever(selectedSite.getOrNull()).thenReturn(null)
 
         val result = fetchPredefinedPackagesFromStore()
 
-        assertThat(result).isNull()
+        assertThat(result).isEqualTo(PredefinedPackagesState.Error)
     }
 
     private fun generatePackagesData() = StorePackagesDAO(
