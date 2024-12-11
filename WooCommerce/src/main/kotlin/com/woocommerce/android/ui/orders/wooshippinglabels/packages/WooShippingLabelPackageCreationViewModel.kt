@@ -213,6 +213,15 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         val carrierPackageSection: CarrierPackageSelection = CarrierPackageSelection(emptyMap())
     ) : Parcelable
 
+    sealed class PredefinedPackagesState {
+        data class Data(
+            val savedPackageSelection: SavedPackageSelection = SavedPackageSelection(emptyList()),
+            val carrierPackageSelection: CarrierPackageSelection = CarrierPackageSelection(emptyMap())
+        ) : PredefinedPackagesState()
+        data object Error : PredefinedPackagesState()
+        data object Waiting : PredefinedPackagesState()
+    }
+
     @Parcelize
     data class PageTab(
         val title: String,
