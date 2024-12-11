@@ -4,14 +4,12 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -49,6 +47,8 @@ import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRatesSection
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
@@ -211,64 +211,13 @@ private fun LabelCreationScreenWithBottomSheet(
                     modifier = Modifier.padding(16.dp),
                     onSelectPackageClick = onSelectPackageClick
                 )
-                WooShippingShippingRatesSection(
+                ShippingRatesSection(
                     shippingRatesState = shippingRatesState,
                     onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
                     onRefreshShippingRates = onRefreshShippingRates
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun WooShippingShippingRatesSection(
-    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
-    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
-    onRefreshShippingRates: () -> Unit,
-) {
-    when (shippingRatesState) {
-        is WooShippingLabelCreationViewModel.ShippingRatesState.DataState -> {
-            val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
-            ShippingRatesCard(
-                selectedRate = null,
-                onSelectedChange = {},
-                shippingRates = shippingRatesState.shippingRates,
-                signatureRequired = signatureRequired.value,
-                onSelectedSignatureChange = { signatureRequired.value = it },
-                signatureRequiredOptions = listOf(
-                    SignatureRequired("Signature Required", "$10.00"),
-                    SignatureRequired("Adult Signature Required", "$15.00")
-                ),
-                selectedSortOption = shippingRatesState.selectedRatesSortOrder,
-                onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        WooShippingLabelCreationViewModel.ShippingRatesState.Error -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .sizeIn(minHeight = 300.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Error")
-                WCColoredButton(onClick = { onRefreshShippingRates() }) {
-                    Text(text = "Retry")
-                }
-            }
-        }
-
-        is WooShippingLabelCreationViewModel.ShippingRatesState.Loading -> {
-            ShippingRatesLoading(
-                selectedSortOption = shippingRatesState.selectedRatesSortOrder,
-                onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged
-            )
-        }
-
-        WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable -> {}
     }
 }
 

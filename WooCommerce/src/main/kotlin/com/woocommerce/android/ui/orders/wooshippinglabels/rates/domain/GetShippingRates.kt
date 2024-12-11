@@ -1,9 +1,13 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels
+package com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain
 
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.generateRates
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.random.Random
