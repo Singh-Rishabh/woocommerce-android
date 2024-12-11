@@ -24,8 +24,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.W
 fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState = viewModel.viewState.observeAsState()
     WooShippingSavedPackageScreen(
-        savedPackages = viewState.value?.savedPackageSelection?.packages.orEmpty(),
-        isAddPackageEnabled = viewState.value?.savedPackageSelection?.hasSelection ?: false,
+        savedPackages = viewState.value?.predefinedPackagesData?.savedPackages.orEmpty(),
+        isAddPackageEnabled = viewState.value?.predefinedPackagesData?.hasSavedSelection ?: false,
         onAddPackageClick = viewModel::onAddSavedPackageClick,
         onSavedPackageSelected = viewModel::onSavedPackageSelected
 

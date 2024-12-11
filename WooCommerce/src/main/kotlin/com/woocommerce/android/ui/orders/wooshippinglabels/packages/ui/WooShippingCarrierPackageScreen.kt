@@ -47,8 +47,8 @@ import kotlinx.coroutines.launch
 fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingCarrierPackageScreen(
-        carrierPackages = viewState?.carrierPackageSection?.carrierPackages ?: emptyMap(),
-        isAddPackageEnabled = viewState?.carrierPackageSection?.hasSelection ?: false,
+        carrierPackages = viewState?.predefinedPackagesData?.carrierPackages ?: emptyMap(),
+        isAddPackageEnabled = viewState?.predefinedPackagesData?.hasCarrierSelection ?: false,
         onPackageSelected = viewModel::onCarrierPackageSelected,
         onAddPackageClick = viewModel::onAddCarrierPackageClick
     )
