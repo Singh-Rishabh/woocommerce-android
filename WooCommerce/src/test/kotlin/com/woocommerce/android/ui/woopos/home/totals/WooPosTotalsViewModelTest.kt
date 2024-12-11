@@ -298,6 +298,8 @@ class WooPosTotalsViewModelTest {
     fun `given OnNewTransactionClicked, should send NewTransactionClicked event and reset state to initial`() =
         runTest {
             // GIVEN
+            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+                .thenReturn("Payment failed")
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
                 on { events }.thenReturn(mock())
             }
@@ -941,16 +943,6 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given order draft created and reader connected, when payment is processed, should show processing state`() = runTest {
         // GIVEN
-        whenever(
-            resourceProvider.getString(
-                R.string.woopos_success_totals_payment_processing_title
-            )
-        ).thenReturn("Processing payment")
-        whenever(
-            resourceProvider.getString(
-                R.string.woopos_success_totals_payment_processing_subtitle
-            )
-        ).thenReturn("Please wait…")
         whenever(networkStatus.isConnected()).thenReturn(true)
         val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
         whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
@@ -1105,10 +1097,6 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given payment failed, when go back to checkout clicked, then should inform home about the situation`() = runTest {
         // GIVEN
-        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
-            .thenReturn("Processing payment")
-        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle))
-            .thenReturn("Please wait…")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
             .thenReturn("Payment failed")
         whenever(resourceProvider.getString(R.string.woo_pos_payment_failed_try_again))
