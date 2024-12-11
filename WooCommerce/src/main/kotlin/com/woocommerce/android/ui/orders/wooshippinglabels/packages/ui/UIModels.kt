@@ -116,24 +116,6 @@ sealed class Carrier(
 
 @Parcelize
 data class StorePredefinedPackages(
-    val carrierPackageSelection: CarrierPackageSelection,
-    val savedPackageSelection: SavedPackageSelection
+    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
+    val savedPackages: List<PackageData>
 ) : Parcelable
-
-@Parcelize
-data class CarrierPackageSelection(
-    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
-) : Parcelable {
-    val hasSelection: Boolean
-        get() = carrierPackages.values.flatten().find { group ->
-            group.packages.find { it.isSelected } != null
-        } != null
-}
-
-@Parcelize
-data class SavedPackageSelection(
-    val packages: List<PackageData>
-) : Parcelable {
-    val hasSelection: Boolean
-        get() = packages.find { it.isSelected } != null
-}
