@@ -79,7 +79,6 @@ class WooPosTotalsViewModel @Inject constructor(
         cardReaderPaymentController = cardReaderPaymentControllerFactory.create(
             orderId = orderId,
             paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS,
-            coroutineScope = viewModelScope,
             isTTPPaymentInProgress = ::isTTPPaymentInProgress,
         )
     }
@@ -135,6 +134,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
                         cardReaderPaymentController?.onBackPressed()
+                        cardReaderPaymentController?.stop()
                         uiState.value = InitialState
                     }
 
@@ -163,6 +163,10 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun onCleared() {
+        cardReaderPaymentController?.stop()
     }
 
     private fun createOrderDraft(productIds: List<Long>) {
@@ -205,10 +209,6 @@ class WooPosTotalsViewModel @Inject constructor(
             orderTotalText = priceFormat(totalAmount),
             paymentStateText = ""
         )
-    }
-
-    override fun onCleared() {
-        cardReaderPaymentController?.onCleared()
     }
 
     @Parcelize
