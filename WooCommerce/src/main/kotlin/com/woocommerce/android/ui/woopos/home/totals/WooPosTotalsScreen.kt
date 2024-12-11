@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -42,6 +41,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCircularLoadingIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -120,7 +120,6 @@ private fun StateChangeAnimated(
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun TotalsLoaded(
     state: WooPosTotalsViewState.Totals,
@@ -133,21 +132,24 @@ private fun TotalsLoaded(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1.1f)
-                .background(WooPosTheme.colors.totalsErrorBackground)
+                .background(WooPosTheme.colors.totalsErrorBackground),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
         ) {
-            val error = state.error
-            when {
-                error != null -> TotalsError(modifier = Modifier, error = error)
-                else -> {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = state.paymentStateText,
-                        style = MaterialTheme.typography.body1,
-                    )
+            when (val readerStatus = state.readerStatus) {
+                is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
+                    ReaderDisconnected(modifier = Modifier, status = readerStatus)
+                }
+                is WooPosTotalsViewState.ReaderStatus.Preparing,
+                is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
+                    PreparingReader(readerStatus)
+                }
+                is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
+                    ReaderReadyForPayment(readerStatus)
                 }
             }
         }
@@ -156,9 +158,48 @@ private fun TotalsLoaded(
 }
 
 @Composable
-private fun TotalsError(
+private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
+    WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
+    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.title,
+        style = MaterialTheme.typography.h5,
+        fontWeight = FontWeight.Medium
+    )
+    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.subtitle,
+        style = MaterialTheme.typography.h4,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStatus) {
+    Icon(
+        modifier = Modifier.size(164.dp),
+        painter = painterResource(id = R.drawable.woopos_ic_collect_payment),
+        contentDescription = "Collect Payment",
+        tint = Color.Unspecified,
+    )
+    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.title,
+        style = MaterialTheme.typography.h5,
+        fontWeight = FontWeight.Medium
+    )
+    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+    Text(
+        text = readerStatus.subtitle,
+        style = MaterialTheme.typography.h4,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+private fun ReaderDisconnected(
     modifier: Modifier = Modifier,
-    error: WooPosTotalsViewState.Totals.Error
+    status: WooPosTotalsViewState.ReaderStatus.Disconnected
 ) {
     Column(
         modifier = modifier.padding(40.dp.toAdaptivePadding()),
@@ -177,7 +218,7 @@ private fun TotalsError(
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
 
         Text(
-            text = error.title,
+            text = status.title,
             style = MaterialTheme.typography.h4,
             fontWeight = FontWeight.SemiBold
         )
@@ -185,13 +226,13 @@ private fun TotalsError(
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
         Text(
-            text = error.subtitle,
+            text = status.subtitle,
             style = MaterialTheme.typography.h6
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
-            text = error.actionButonLabel,
-            onClick = error.onAction,
+            text = status.actionButonLabel,
+            onClick = status.onAction,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp)
@@ -332,7 +373,10 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
-                paymentStateText = "Payment state"
+                readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
+                    title = "Ready for payment",
+                    subtitle = "Tap, swipe or insert card"
+                )
             ),
             onUIEvent = {}
         )
@@ -349,8 +393,7 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
-                paymentStateText = "Payment state",
-                error = WooPosTotalsViewState.Totals.Error(
+                readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
                     actionButonLabel = "Connect to a reader",
@@ -365,14 +408,14 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
 @Composable
 @WooPosPreview
 fun TotalsErrorPreview() {
-    val error = WooPosTotalsViewState.Totals.Error(
+    val readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
         title = "Reader not connected",
         subtitle = "To process this payment, please connect your reader.",
         actionButonLabel = "Connect to a reader",
         onAction = {}
     )
     WooPosTheme {
-        TotalsError(modifier = Modifier, error = error)
+        ReaderDisconnected(modifier = Modifier, status = readerStatus)
     }
 }
 
@@ -395,5 +438,25 @@ fun WooPosTotalsErrorScreenPreview() {
             errorMessage = "An error occurred. Please try again.",
             onUIEvent = {}
         )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun PreparingReaderPReview() {
+    val readerStatus = WooPosTotalsViewState.ReaderStatus.Preparing(
+        title = "Getting ready",
+        subtitle = "Preparing reader for payment"
+    )
+    WooPosTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(WooPosTheme.colors.totalsErrorBackground),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            PreparingReader(readerStatus)
+        }
     }
 }
