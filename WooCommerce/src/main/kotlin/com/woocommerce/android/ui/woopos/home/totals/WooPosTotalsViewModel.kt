@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.ReceiptSending
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
@@ -115,18 +116,8 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
                 }
             }
-            WooPosTotalsUIEvent.OnTakeCashPaymentClicked -> {
-                viewModelScope.launch {
-                    uiState.value = WooPosTotalsViewState.CashPayment(
-                        enteredAmount = "",
-                        changeDue = priceFormat(BigDecimal.ZERO),
-                        total = priceFormat(dataState.value.orderTotal!!),
-                        canBeOrderBeCompleted = false
-                    )
-                }
-            }
             is WooPosTotalsUIEvent.OnEmailChanged -> {
-                uiState.value = WooPosTotalsViewState.ReceiptSending(email = event.email)
+                uiState.value = ReceiptSending(email = event.email)
             }
         }
     }
@@ -148,7 +139,7 @@ class WooPosTotalsViewModel @Inject constructor(
     }
 
     private fun sendReceiptByEmail() {
-        val viewState = uiState.value as WooPosTotalsViewState.ReceiptSending
+        val viewState = uiState.value as ReceiptSending
         val email = viewState.email
         val orderId = dataState.value.orderId
         check(orderId != EMPTY_ORDER_ID)
@@ -241,7 +232,11 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            isCashPaymentAvailable = isCashPaymentsEnabled()
+            cashPaymentAvailability = if (isCashPaymentsEnabled()) {
+                WooPosTotalsViewState.Totals.CashPaymentAvailability.Available(order.id)
+            } else {
+                WooPosTotalsViewState.Totals.CashPaymentAvailability.Unavailable
+            }
         )
     }
 
