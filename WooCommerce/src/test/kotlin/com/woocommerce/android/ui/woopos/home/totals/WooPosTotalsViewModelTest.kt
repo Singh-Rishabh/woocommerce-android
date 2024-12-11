@@ -530,7 +530,6 @@ class WooPosTotalsViewModelTest {
         )
 
         // WHEN
-        viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
         advanceUntilIdle()
 
         // THEN
@@ -540,7 +539,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @org.junit.Test
-    fun `given there is no internet, when trying to complete payment, then trigger proper event`() = runTest {
+    fun `given there is no internet, then trigger proper event`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
         val productIds = listOf(1L, 2L, 3L)
@@ -579,19 +578,18 @@ class WooPosTotalsViewModelTest {
         }
 
         // WHEN
-        val viewModel = createViewModel(
+        createViewModel(
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
         )
-        viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
 
         // THEN
         verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.NoInternet)
     }
 
     @org.junit.Test
-    fun `given there is no internet, when trying to complete payment, then collect payment method is not called`() = runTest {
+    fun `given there is no internet, then collect payment method is not called`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
         val productIds = listOf(1L, 2L, 3L)
@@ -635,7 +633,6 @@ class WooPosTotalsViewModelTest {
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
         )
-        viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
 
         // THEN
         verify(cardReaderManager, never()).collectPayment(any())

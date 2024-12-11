@@ -79,7 +79,6 @@ class WooPosTotalsViewModel @Inject constructor(
         cardReaderPaymentController = cardReaderPaymentControllerFactory.create(
             orderId = orderId,
             paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS,
-            coroutineScope = viewModelScope,
             isTTPPaymentInProgress = ::isTTPPaymentInProgress,
         )
     }
@@ -90,7 +89,6 @@ class WooPosTotalsViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
         when (event) {
-            is WooPosTotalsUIEvent.CollectPaymentClicked -> collectPayment()
             is WooPosTotalsUIEvent.OnNewTransactionClicked -> {
                 viewModelScope.launch {
                     childrenToParentEventSender.sendToParent(
@@ -136,6 +134,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
                         cardReaderPaymentController?.onBackPressed()
+                        cardReaderPaymentController?.stop()
                         uiState.value = InitialState
                     }
 
@@ -166,6 +165,10 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
+    override fun onCleared() {
+        cardReaderPaymentController?.stop()
+    }
+
     private fun createOrderDraft(productIds: List<Long>) {
         viewModelScope.launch {
             uiState.value = WooPosTotalsViewState.Loading
@@ -176,6 +179,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         dataState.value = dataState.value.copy(orderId = order.id)
                         uiState.value = buildWooPosTotalsViewState(order)
                         analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
+                        collectPayment()
                     },
                     onFailure = { error ->
                         WooLog.e(T.POS, "Order creation failed - $error")
@@ -205,10 +209,6 @@ class WooPosTotalsViewModel @Inject constructor(
             orderTotalText = priceFormat(totalAmount),
             paymentStateText = ""
         )
-    }
-
-    override fun onCleared() {
-        cardReaderPaymentController?.onCleared()
     }
 
     @Parcelize
