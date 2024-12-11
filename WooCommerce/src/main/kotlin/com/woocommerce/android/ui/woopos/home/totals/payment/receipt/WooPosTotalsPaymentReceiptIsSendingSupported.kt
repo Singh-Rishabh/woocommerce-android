@@ -1,22 +1,15 @@
 package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
 
 import com.woocommerce.android.extensions.semverCompareTo
-import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class WooPosTotalsPaymentReceiptIsSendingAvailable @Inject constructor(
-    private val isReceiptsEnabled: WooPosIsReceiptsEnabled,
+class WooPosTotalsPaymentReceiptIsSendingSupported @Inject constructor(
     private val getWooCoreVersion: GetWooCorePluginCachedVersion,
 ) {
-    suspend operator fun invoke() =
-        if (!isReceiptsEnabled()) {
-            false
-        } else {
-            isWooCoreSupportsSendingReceiptsByEmail()
-        }
+    suspend operator fun invoke() = isWooCoreSupportsSendingReceiptsByEmail()
 
     private suspend fun isWooCoreSupportsSendingReceiptsByEmail() = withContext(Dispatchers.IO) {
         val wooCoreVersion = getWooCoreVersion()
@@ -27,7 +20,7 @@ class WooPosTotalsPaymentReceiptIsSendingAvailable @Inject constructor(
         }
     }
 
-    private companion object {
+    companion object {
         const val WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL = "9.5.0"
     }
 }
