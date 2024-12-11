@@ -16,7 +16,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 
 @Composable
-fun WooPosTotalsPaymentReceiptScreen(
+private fun WooPosEmailReceiptScreen(
     state: WooPosTotalsViewState.ReceiptSending,
     onEmailAddressChanged: (String) -> Unit,
     onSendReceiptClicked: () -> Unit,
@@ -68,7 +68,7 @@ fun WooPosTotalsPaymentReceiptScreen(
 @WooPosPreview
 @Composable
 fun PreviewWooPosTotalsPaymentReceiptScreen() {
-    WooPosTotalsPaymentReceiptScreen(
+    WooPosEmailReceiptScreen(
         state = WooPosTotalsViewState.ReceiptSending("email hint"),
         onEmailAddressChanged = {},
         onSendReceiptClicked = {},
