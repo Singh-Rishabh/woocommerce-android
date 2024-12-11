@@ -117,7 +117,6 @@ fun String.capitalize(locale: Locale = Locale.getDefault()) = replaceFirstChar {
  * "0".readableFileSize() -> "0"
  * Invalid input returns "0"
  *
- *
  * @return Formatted string with size and unit (e.g., "1.5 GB")
  */
 fun String.readableFileSize(): String {
