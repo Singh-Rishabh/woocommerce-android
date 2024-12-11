@@ -114,21 +114,10 @@ fun WooShippingLabelCreationScreen(
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
         val elevation = when {
-            isDarkTheme && isCollapsed -> {
-                7.dp
-            }
-
-            !isDarkTheme && isCollapsed -> {
-                0.dp
-            }
-
-            isDarkTheme && !isCollapsed -> {
-                16.dp
-            }
-
-            else -> {
-                8.dp
-            }
+            isDarkTheme && isCollapsed -> 7.dp
+            !isDarkTheme && isCollapsed -> 0.dp
+            isDarkTheme && !isCollapsed -> 16.dp
+            else -> 8.dp
         }
         Box(
             modifier = Modifier
