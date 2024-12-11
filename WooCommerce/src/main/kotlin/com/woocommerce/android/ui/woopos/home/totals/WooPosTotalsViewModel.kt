@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
+import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connecting
+import com.woocommerce.android.cardreader.connection.CardReaderStatus.NotConnected
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentController
@@ -27,6 +29,7 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
@@ -53,11 +56,12 @@ class WooPosTotalsViewModel @Inject constructor(
         private val InitialState = WooPosTotalsViewState.Loading
     }
 
-    private val uiState = savedState.getStateFlow<WooPosTotalsViewState>(
-        scope = viewModelScope,
-        initialValue = InitialState,
-        key = "woo_pos_totals_view_state"
-    )
+    private val uiState: MutableStateFlow<WooPosTotalsViewState> =
+        savedState.getStateFlow(
+            scope = viewModelScope,
+            initialValue = InitialState,
+            key = "woo_pos_totals_view_state"
+        )
 
     val state: StateFlow<WooPosTotalsViewState> = uiState
 
@@ -85,6 +89,37 @@ class WooPosTotalsViewModel @Inject constructor(
 
     init {
         listenUpEvents()
+        observeCardReaderStatus()
+    }
+
+    private fun observeCardReaderStatus() {
+        viewModelScope.launch {
+            cardReaderFacade.readerStatus.combine(
+                dataState
+            ) { status, data -> Pair(status, data) }.collect { (status, data) ->
+                when (status) {
+                    is NotConnected, is Connecting -> {
+                        val state = uiState.value
+                        if (state !is WooPosTotalsViewState.Totals) return@collect
+                        uiState.value = state.copy(error = buildTotalsReaderNotConnectedError())
+                        cancelPaymentAction()
+                    }
+                    is Connected -> {
+                        val state = uiState.value
+                        if (state !is WooPosTotalsViewState.Totals) return@collect
+                        uiState.value = state.copy(error = null)
+                        if (data.orderId != EMPTY_ORDER_ID) {
+                            collectPayment()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun cancelPaymentAction() {
+        cardReaderPaymentController?.onBackPressed()
+        cardReaderPaymentController?.stop()
     }
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
@@ -133,8 +168,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
-                        cardReaderPaymentController?.onBackPressed()
-                        cardReaderPaymentController?.stop()
+                        cancelPaymentAction()
                         uiState.value = InitialState
                     }
 
@@ -202,14 +236,29 @@ class WooPosTotalsViewModel @Inject constructor(
         val subtotalAmount = order.productsTotal
         val taxAmount = order.totalTax
         val totalAmount = order.total
+        val error = when (cardReaderFacade.readerStatus.value) {
+            is Connected -> null
+            else -> buildTotalsReaderNotConnectedError()
+        }
 
         return WooPosTotalsViewState.Totals(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            paymentStateText = ""
+            paymentStateText = "",
+            error = error
         )
     }
+
+    private fun buildTotalsReaderNotConnectedError(): WooPosTotalsViewState.Totals.Error =
+        WooPosTotalsViewState.Totals.Error(
+            title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
+            subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
+            actionButonLabel = resourceProvider.getString(
+                R.string.woopos_success_totals_error_reader_not_connected_cta_button_label
+            ),
+            onAction = { cardReaderFacade.connectToReader() }
+        )
 
     @Parcelize
     private data class TotalsDataState(
