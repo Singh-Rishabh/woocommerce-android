@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.totals.payment.processing
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,8 +35,6 @@ import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 import kotlinx.coroutines.delay
 
-private const val ENTER_ANIMATION_DURATION = 280
-
 @Composable
 fun WooPosPaymentProcessingScreen(
     state: WooPosTotalsViewState.PaymentProcessing,
@@ -69,7 +66,6 @@ fun WooPosPaymentProcessingScreen(
             )
             val marginBetweenAnimatedIconAndText by animateDpAsState(
                 targetValue = if (enterAnimationStarted) 0.dp else 256.dp,
-                animationSpec = tween(durationMillis = ENTER_ANIMATION_DURATION)
             )
             Spacer(modifier = Modifier.height(marginBetweenAnimatedIconAndText.toAdaptivePadding()))
             AnimatedVisibility(visible = enterAnimationStarted) {
