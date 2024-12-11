@@ -43,7 +43,7 @@ class WooPosHomeViewModel @Inject constructor(
     }
 
     fun onUIEvent(event: WooPosHomeUIEvent) {
-        return when (event) {
+        when (event) {
             WooPosHomeUIEvent.SystemBackClicked -> {
                 when (_state.value.screenPositionState) {
                     ScreenPositionState.Checkout.NotPaid -> {
@@ -80,6 +80,11 @@ class WooPosHomeViewModel @Inject constructor(
             }
 
             WooPosHomeUIEvent.OnPaymentCompletedViaCash -> onOrderSuccessfullyPaid()
+            WooPosHomeUIEvent.ExitPosClicked -> {
+                viewModelScope.launch {
+                    _navigationEvent.emit(NavigationEvent.ExitPos)
+                }
+            }
         }
     }
 
