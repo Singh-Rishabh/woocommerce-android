@@ -7,6 +7,7 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -86,6 +87,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     fun onPurchaseShippingLabel() {
         triggerEvent(LabelPurchased)
+    }
+
+    fun onPackageSelected(packageData: PackageData) {
+
     }
 
     data object StartPackageSelection : Event()
