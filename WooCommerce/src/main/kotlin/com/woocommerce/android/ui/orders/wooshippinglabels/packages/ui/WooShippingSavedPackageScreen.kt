@@ -65,6 +65,7 @@ fun WooShippingSavedPackageScreen(
                 Text(text = stringResource(id = R.string.woo_shipping_labels_package_creation_error))
             }
         }
+
         is PredefinedPackagesState.Waiting -> {
             Column(
                 modifier = modifier

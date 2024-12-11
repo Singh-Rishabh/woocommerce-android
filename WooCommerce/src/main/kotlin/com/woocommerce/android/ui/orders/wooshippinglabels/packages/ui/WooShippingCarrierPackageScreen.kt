@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -40,23 +41,70 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PredefinedPackagesState
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooShippingPackageListItem
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooShippingPackageListItemSkeleton
 import kotlinx.coroutines.launch
 
 @Composable
 fun WooShippingCarrierPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingCarrierPackageScreen(
-        carrierPackages = viewState?.predefinedPackagesData?.carrierPackages ?: emptyMap(),
+        packageState = viewState?.predefinedPackagesState ?: PredefinedPackagesState.Waiting,
         isAddPackageEnabled = viewState?.predefinedPackagesData?.hasCarrierSelection ?: false,
         onPackageSelected = viewModel::onCarrierPackageSelected,
         onAddPackageClick = viewModel::onAddCarrierPackageClick
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WooShippingCarrierPackageScreen(
+    modifier: Modifier = Modifier,
+    packageState: PredefinedPackagesState,
+    onPackageSelected: (PackageData, Boolean) -> Unit,
+    isAddPackageEnabled: Boolean = false,
+    onAddPackageClick: () -> Unit = {}
+) {
+    when (packageState) {
+        is PredefinedPackagesState.Data -> {
+            WooShippingCarrierPackageContent(
+                modifier = modifier,
+                carrierPackages = packageState.carrierPackages,
+                onPackageSelected = onPackageSelected,
+                isAddPackageEnabled = isAddPackageEnabled,
+                onAddPackageClick = onAddPackageClick
+            )
+        }
+
+        is PredefinedPackagesState.Error -> {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text(text = stringResource(id = R.string.woo_shipping_labels_package_creation_error))
+            }
+        }
+
+        is PredefinedPackagesState.Waiting -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                WooShippingPackageListItemSkeleton()
+                WooShippingPackageListItemSkeleton()
+                WooShippingPackageListItemSkeleton()
+            }
+        }
+    }
+}
+
+@Composable
+fun WooShippingCarrierPackageContent(
     modifier: Modifier = Modifier,
     carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
     onPackageSelected: (PackageData, Boolean) -> Unit,
@@ -94,7 +142,6 @@ fun WooShippingCarrierPackageScreen(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun CarrierTabRow(
     modifier: Modifier,
@@ -137,7 +184,6 @@ private fun CarrierTabRow(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PackageListPager(
     modifier: Modifier,
@@ -223,7 +269,7 @@ private fun CarrierLogo(
 @Composable
 fun WooShippingCarrierPackageScreenPreview() {
     WooThemeWithBackground {
-        WooShippingCarrierPackageScreen(
+        WooShippingCarrierPackageContent(
             carrierPackages = mapOf(
                 Carrier.DHL to listOf(
                     CarrierPackageGroup(
