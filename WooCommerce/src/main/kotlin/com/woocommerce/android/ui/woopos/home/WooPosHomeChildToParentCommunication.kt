@@ -22,6 +22,7 @@ sealed class ChildToParentEvent {
     data class CheckoutClicked(
         val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
     ) : ChildToParentEvent()
+
     data object BackFromCheckoutToCartClicked : ChildToParentEvent()
     data class ItemClickedInProductSelector(val itemData: WooPosItemsViewModel.ItemClickedData) : ChildToParentEvent()
     data object NewTransactionClicked : ChildToParentEvent()
@@ -32,7 +33,12 @@ sealed class ChildToParentEvent {
         data object FullScreen : ProductsStatusChanged()
         data object WithCart : ProductsStatusChanged()
     }
+
     data class ToastMessageDisplayed(val message: String) : ChildToParentEvent()
+    sealed class NavigationEvent : ChildToParentEvent() {
+        data class ToCashPayment(val orderId: Long) : NavigationEvent()
+        data class ToEmailReceipt(val orderId: Long) : NavigationEvent()
+    }
 }
 
 interface WooPosChildrenToParentEventReceiver {

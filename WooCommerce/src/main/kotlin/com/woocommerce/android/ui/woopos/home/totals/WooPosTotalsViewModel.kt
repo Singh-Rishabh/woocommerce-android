@@ -12,7 +12,7 @@ import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendin
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
-import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.*
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
@@ -89,7 +89,7 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.OnNewTransactionClicked -> {
                 viewModelScope.launch {
                     childrenToParentEventSender.sendToParent(
-                        ChildToParentEvent.NewTransactionClicked
+                        NewTransactionClicked
                     )
                 }
             }
@@ -99,10 +99,12 @@ class WooPosTotalsViewModel @Inject constructor(
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 viewModelScope.launch {
                     if (isReceiptSendingSupportedValue.await()) {
-
+                        childrenToParentEventSender.sendToParent(
+                            NavigationEvent.ToEmailReceipt(dataState.value.orderId)
+                        )
                     } else {
                         childrenToParentEventSender.sendToParent(
-                            ChildToParentEvent.ToastMessageDisplayed(
+                            ToastMessageDisplayed(
                                 message = resourceProvider.getString(
                                     R.string.woopos_receipt_sending_not_supported,
                                     WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL,
@@ -112,6 +114,14 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
                 }
             }
+
+            WooPosTotalsUIEvent.OnCashPaymentClicked -> {
+                viewModelScope.launch {
+                    childrenToParentEventSender.sendToParent(
+                        NavigationEvent.ToCashPayment(dataState.value.orderId)
+                    )
+                }
+            }
         }
     }
 
@@ -119,7 +129,7 @@ class WooPosTotalsViewModel @Inject constructor(
         if (!networkStatus.isConnected()) {
             viewModelScope.launch {
                 childrenToParentEventSender.sendToParent(
-                    ChildToParentEvent.ToastMessageDisplayed(
+                    ToastMessageDisplayed(
                         message = resourceProvider.getString(R.string.woopos_no_internet_message)
                     )
                 )
@@ -157,7 +167,7 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderFacade.paymentStatus.collect { status ->
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
-                        childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
+                        childrenToParentEventSender.sendToParent(OrderSuccessfullyPaid)
                     }
                     is WooPosCardReaderPaymentStatus.Failure,
                     is WooPosCardReaderPaymentStatus.Unknown -> Unit
@@ -221,11 +231,7 @@ class WooPosTotalsViewModel @Inject constructor(
             orderSubtotalText = priceFormat(subtotalAmount),
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
-            cashPaymentAvailability = if (isCashPaymentsEnabled()) {
-                WooPosTotalsViewState.Totals.CashPaymentAvailability.Available(order.id)
-            } else {
-                WooPosTotalsViewState.Totals.CashPaymentAvailability.Unavailable
-            }
+            isCashPaymentAvailable = isCashPaymentsEnabled()
         )
     }
 

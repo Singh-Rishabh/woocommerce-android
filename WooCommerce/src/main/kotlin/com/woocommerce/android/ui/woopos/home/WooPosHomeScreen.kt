@@ -32,6 +32,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosExitConfirmationDialog
 import com.woocommerce.android.ui.woopos.common.composeui.isPreviewMode
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreen
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreenProductsPreview
@@ -68,6 +69,19 @@ fun WooPosHomeScreen(
                 message,
                 ToastUtils.Duration.LONG
             )
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect {
+            when (it) {
+                is NavigationEvent.ToCashPayment -> {
+                    onNavigationEvent(WooPosNavigationEvent.OpenCashPayment(it.orderId))
+                }
+                is NavigationEvent.ToEmailReceipt -> {
+                    onNavigationEvent(WooPosNavigationEvent.OpenEmailReceipt(it.orderId))
+                }
+            }
         }
     }
 
@@ -123,7 +137,6 @@ private fun WooPosHomeScreen(
         cartWidthDp = cartWidthDp,
         totalsWidthDp = totalsWidthAnimatedDp,
         onHomeUIEvent = onHomeUIEvent,
-        onNavigationEvent = onNavigationEvent,
     )
 
     WooPosExitConfirmationDialog(
@@ -144,7 +157,6 @@ private fun WooPosHomeScreen(
     cartWidthDp: Dp,
     totalsWidthDp: Dp,
     onHomeUIEvent: (WooPosHomeUIEvent) -> Unit,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -168,7 +180,6 @@ private fun WooPosHomeScreen(
             WooPosHomeScreenTotals(
                 modifier = Modifier
                     .width(totalsWidthDp),
-                onNavigationEvent = onNavigationEvent,
             )
         }
 
@@ -214,17 +225,11 @@ private fun WooPosHomeScreenCart(modifier: Modifier) {
 }
 
 @Composable
-private fun WooPosHomeScreenTotals(
-    modifier: Modifier,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit
-) {
+private fun WooPosHomeScreenTotals(modifier: Modifier) {
     if (isPreviewMode()) {
         WooPosTotalsScreenPreview(modifier)
     } else {
-        WooPosTotalsScreen(
-            modifier = modifier,
-            onNavigationEvent = onNavigationEvent
-        )
+        WooPosTotalsScreen(modifier = modifier)
     }
 }
 
