@@ -72,37 +72,18 @@ class WooPosCashPaymentViewModelTest {
 
     @Test
     fun `given order exists, when ViewModel initializes, then state is Collecting`() = runTest {
-        // GIVEN
-        val orderId = 123L
-        val total = BigDecimal("100.00")
-        val totalText = "Total: $100.00"
-        val currencySymbol = "$"
-        val currencyPosition = WCSettingsModel.CurrencyPosition.LEFT
-        val decimalSeparator = "."
-        val numberOfDecimals = 2
-
-        val mockOrder = mock<Order> { on { this.total }.thenReturn(total) }
-        whenever(repository.getOrderById(orderId)).thenReturn(mockOrder)
-        whenever(resourceProvider.getString(R.string.woopos_cash_payment_total, "100.00"))
-            .thenReturn(totalText)
-        whenever(priceFormat(total)).thenReturn("100.00")
-        whenever(repository.getCurrencySymbol()).thenReturn(currencySymbol)
-        whenever(repository.getCurrencySymbolPosition()).thenReturn(currencyPosition)
-        whenever(repository.getDecimalSeparator()).thenReturn(decimalSeparator)
-        whenever(repository.getNumberOfDecimals()).thenReturn(numberOfDecimals)
-
         // WHEN
         val state = viewModel.state.first()
 
         // THEN
         assertThat(state).isInstanceOf(WooPosCashPaymentState.Collecting::class.java)
         val collectingState = state as WooPosCashPaymentState.Collecting
-        assertThat(collectingState.total).isEqualTo(total)
-        assertThat(collectingState.totalText).isEqualTo(totalText)
-        assertThat(collectingState.currencySymbol).isEqualTo(currencySymbol)
-        assertThat(collectingState.currencyPosition).isEqualTo(currencyPosition)
-        assertThat(collectingState.decimalSeparator).isEqualTo(decimalSeparator)
-        assertThat(collectingState.numberOfDecimals).isEqualTo(numberOfDecimals)
+        assertThat(collectingState.total).isEqualTo(BigDecimal("100.00"))
+        assertThat(collectingState.totalText).isEqualTo("Total: $100.00")
+        assertThat(collectingState.currencySymbol).isEqualTo("$")
+        assertThat(collectingState.currencyPosition).isEqualTo(WCSettingsModel.CurrencyPosition.LEFT)
+        assertThat(collectingState.decimalSeparator).isEqualTo(".")
+        assertThat(collectingState.numberOfDecimals).isEqualTo(2)
     }
 
     @Test
@@ -110,21 +91,19 @@ class WooPosCashPaymentViewModelTest {
         // GIVEN
         val enteredAmount = BigDecimal("120.00")
         val changeDue = BigDecimal("20.00")
-        val changeDueText = "Change Due: $20.00"
-
         whenever(resourceProvider.getString(R.string.woopos_cash_payment_change_due, "20.00"))
-            .thenReturn(changeDueText)
+            .thenReturn("Change Due: $20.00")
         whenever(priceFormat(changeDue)).thenReturn("20.00")
 
         // WHEN
         viewModel.onUIEvent(WooPosCashPaymentUIEvent.AmountChanged(enteredAmount))
+        val state = viewModel.state.first()
 
         // THEN
-        val state = viewModel.state.first()
         assertThat(state).isInstanceOf(WooPosCashPaymentState.Collecting::class.java)
         val collectingState = state as WooPosCashPaymentState.Collecting
         assertThat(collectingState.enteredAmount).isEqualTo(enteredAmount)
-        assertThat(collectingState.changeDueText).isEqualTo(changeDueText)
+        assertThat(collectingState.changeDueText).isEqualTo("Change Due: $20.00")
         assertThat(collectingState.button.status).isEqualTo(WooPosCashPaymentState.Collecting.Button.Status.ENABLED)
     }
 
@@ -132,23 +111,20 @@ class WooPosCashPaymentViewModelTest {
     fun `given invalid amount less than total, when onUIEvent AmountChanged, then button is disabled and no change due`() = runTest {
         // GIVEN
         val enteredAmount = BigDecimal("30.00")
-        val noChangeText = "No Change Due"
-
         whenever(resourceProvider.getString(R.string.woopos_cash_payment_no_chang_due))
-            .thenReturn(noChangeText)
+            .thenReturn("No Change Due")
 
         // WHEN
         viewModel.onUIEvent(
             WooPosCashPaymentUIEvent.AmountChanged(enteredAmount)
         )
-
         val state = viewModel.state.first()
 
         // THEN
         assertThat(state).isInstanceOf(WooPosCashPaymentState.Collecting::class.java)
         val collectingState = state as WooPosCashPaymentState.Collecting
         assertThat(collectingState.enteredAmount).isEqualTo(enteredAmount)
-        assertThat(collectingState.changeDueText).isEqualTo(noChangeText)
+        assertThat(collectingState.changeDueText).isEqualTo("No Change Due")
         assertThat(collectingState.button.status).isEqualTo(WooPosCashPaymentState.Collecting.Button.Status.DISABLED)
     }
 
@@ -159,7 +135,6 @@ class WooPosCashPaymentViewModelTest {
 
         // WHEN
         viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked)
-
         val state = viewModel.state.first()
 
         // THEN
@@ -177,7 +152,6 @@ class WooPosCashPaymentViewModelTest {
 
         // WHEN
         viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked)
-
         val state = viewModel.state.first()
 
         // THEN
