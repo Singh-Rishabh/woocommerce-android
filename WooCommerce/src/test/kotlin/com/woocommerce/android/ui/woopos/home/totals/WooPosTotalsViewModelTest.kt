@@ -1084,6 +1084,8 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Ready for payment")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_subtitle))
             .thenReturn("Tap, swipe or insert card")
+        whenever(resourceProvider.getString(R.string.woo_pos_payment_remove_card))
+            .thenReturn("Remove card")
 
         val productIds = listOf(1L, 2L, 3L)
         val orderId = 23L
