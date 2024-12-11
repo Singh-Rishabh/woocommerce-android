@@ -3,9 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.SavedPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StorePredefinedPackages
 import javax.inject.Inject
 
@@ -21,12 +19,8 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
             ?: return null
 
         return StorePredefinedPackages(
-            savedPackageSelection = storePackages
-                .filterSavedData()
-                .let { SavedPackageSelection(it) },
-            carrierPackageSelection = storePackages
-                .filterCarrierData()
-                .let { CarrierPackageSelection(it) }
+            savedPackages = storePackages.filterSavedData(),
+            carrierPackages = storePackages.filterCarrierData()
         )
     }
 
