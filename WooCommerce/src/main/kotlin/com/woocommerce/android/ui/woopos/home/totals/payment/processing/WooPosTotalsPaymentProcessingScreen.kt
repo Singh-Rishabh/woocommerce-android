@@ -1,5 +1,9 @@
 package com.woocommerce.android.ui.woopos.home.totals.payment.processing
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +16,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -27,11 +35,19 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
+import kotlinx.coroutines.delay
+
+private const val ENTER_ANIMATION_DURATION = 280
 
 @Composable
 fun WooPosPaymentProcessingScreen(
     state: WooPosTotalsViewState.PaymentProcessing,
 ) {
+    var enterAnimationStarted by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(50)
+        enterAnimationStarted = true
+    }
     Box(
         modifier = Modifier
             .background(color = WooPosTheme.colors.paymentProcessingBackground)
@@ -52,18 +68,31 @@ fun WooPosPaymentProcessingScreen(
                 clipToCompositionBounds = false,
                 clipSpec = LottieClipSpec.Markers("payment_processing_start", "payment_processing_end")
             )
-            Text(
-                text = state.title,
-                color = WooPosTheme.colors.paymentProcessingText,
-                style = MaterialTheme.typography.body1,
+            val marginBetweenAnimatedIconAndText by animateDpAsState(
+                targetValue = if (enterAnimationStarted) 0.dp else 256.dp,
+                animationSpec = tween(durationMillis = ENTER_ANIMATION_DURATION)
             )
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
-            Text(
-                text = state.subtitle,
-                color = WooPosTheme.colors.paymentProcessingText,
-                style = MaterialTheme.typography.h4,
-                fontWeight = FontWeight.Bold,
-            )
+            Spacer(modifier = Modifier.height(marginBetweenAnimatedIconAndText.toAdaptivePadding()))
+            AnimatedVisibility(
+                visible = enterAnimationStarted,
+                enter = fadeIn(animationSpec = tween(durationMillis = ENTER_ANIMATION_DURATION * 2)),
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = state.title,
+                        color = WooPosTheme.colors.paymentProcessingText,
+                        style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Normal,
+                    )
+                    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                    Text(
+                        text = state.subtitle,
+                        color = WooPosTheme.colors.paymentProcessingText,
+                        style = MaterialTheme.typography.h4,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
         }
     }
