@@ -234,7 +234,7 @@ private fun Toolbar(onBackClicked: () -> Unit) {
 
 @WooPosPreview
 @Composable
-fun WooPosTotalsPaymentCashScreen() {
+fun WooPosTotalsPaymentCashScreenPreview() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
@@ -262,7 +262,7 @@ fun WooPosTotalsPaymentCashScreen() {
 
 @WooPosPreview
 @Composable
-fun WooPosTotalsPaymentCashWithLabelScreen() {
+fun WooPosTotalsPaymentCashWithLabelScreenPreview() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
@@ -290,7 +290,7 @@ fun WooPosTotalsPaymentCashWithLabelScreen() {
 
 @WooPosPreview
 @Composable
-fun WooPosTotalsPaymentCashWithErrorScreen() {
+fun WooPosTotalsPaymentCashWithErrorScreenPreview() {
     WooPosTheme {
         WooPosCashPaymentScreen(
             state = WooPosCashPaymentState.Collecting(
