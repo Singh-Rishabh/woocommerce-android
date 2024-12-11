@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
+package com.woocommerce.android.ui.woopos.emailreceipt
 
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.OrderMapper
@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WCOrderStore
 import javax.inject.Inject
 
-class WooPosTotalsPaymentReceiptRepository @Inject constructor(
+class WooPosEmailReceiptRepository @Inject constructor(
     private val selectedSite: SelectedSite,
     private val orderStore: WCOrderStore,
     private val orderCreateEditRepository: OrderCreateEditRepository,

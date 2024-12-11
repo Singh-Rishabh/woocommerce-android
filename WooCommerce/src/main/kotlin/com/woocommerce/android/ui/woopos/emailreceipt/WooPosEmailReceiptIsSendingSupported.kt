@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
+package com.woocommerce.android.ui.woopos.emailreceipt
 
 import com.woocommerce.android.extensions.semverCompareTo
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
@@ -6,7 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class WooPosTotalsPaymentReceiptIsSendingSupported @Inject constructor(
+class WooPosEmailReceiptIsSendingSupported @Inject constructor(
     private val getWooCoreVersion: GetWooCorePluginCachedVersion,
 ) {
     suspend operator fun invoke() = isWooCoreSupportsSendingReceiptsByEmail()

@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
+package com.woocommerce.android.ui.woopos.emailreceipt
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
