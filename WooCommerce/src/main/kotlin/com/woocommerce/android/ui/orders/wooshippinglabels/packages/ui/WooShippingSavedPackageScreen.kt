@@ -11,6 +11,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,12 +56,13 @@ fun WooShippingSavedPackageScreen(
 
         is PredefinedPackagesState.Error -> {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                Text("Error")
+                Text(text = stringResource(id = R.string.woo_shipping_labels_package_creation_error))
             }
         }
         is PredefinedPackagesState.Waiting -> {
@@ -160,6 +162,19 @@ fun WooShippingSavedPackageScreenLoadingPreview() {
     WooThemeWithBackground {
         WooShippingSavedPackageScreen(
             packageState = PredefinedPackagesState.Waiting,
+            isAddPackageEnabled = false,
+            onAddPackageClick = {},
+            onSavedPackageSelected = { _, _ -> }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun WooShippingSavedPackageScreenErrorPreview() {
+    WooThemeWithBackground {
+        WooShippingSavedPackageScreen(
+            packageState = PredefinedPackagesState.Error,
             isAddPackageEnabled = false,
             onAddPackageClick = {},
             onSavedPackageSelected = { _, _ -> }
