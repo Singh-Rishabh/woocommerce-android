@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.woopos.home.totals.payment.processing
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -73,10 +72,7 @@ fun WooPosPaymentProcessingScreen(
                 animationSpec = tween(durationMillis = ENTER_ANIMATION_DURATION)
             )
             Spacer(modifier = Modifier.height(marginBetweenAnimatedIconAndText.toAdaptivePadding()))
-            AnimatedVisibility(
-                visible = enterAnimationStarted,
-                enter = fadeIn(animationSpec = tween(durationMillis = ENTER_ANIMATION_DURATION * 2)),
-            ) {
+            AnimatedVisibility(visible = enterAnimationStarted) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = state.title,
