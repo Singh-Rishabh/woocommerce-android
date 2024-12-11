@@ -1,11 +1,13 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import com.woocommerce.android.R
+import com.woocommerce.android.model.Address
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.random.Random
-@Suppress("MagicNumber")
+
 class GetShippingRates @Inject constructor() {
     private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
         r1.rate.substring(1).toBigDecimal().compareTo(r2.rate.substring(1).toBigDecimal())
@@ -17,7 +19,9 @@ class GetShippingRates @Inject constructor() {
 
     suspend operator fun invoke(
         selectedPackage: PackageDAO,
-        sortOrder: ShippingSortOption
+        sortOrder: ShippingSortOption,
+        shipTo: Address,
+        shipFrom: OriginShippingAddress
     ): Result<Map<Carrier, List<ShippingRateUI>>> {
         delay(1_000)
         val comparator = when (sortOrder) {
