@@ -18,13 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PredefinedPackagesState
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooShippingPackageListItem
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooShippingPackageListItemSkeleton
 
 @Composable
 fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationViewModel) {
     val viewState = viewModel.viewState.observeAsState()
     WooShippingSavedPackageScreen(
-        savedPackages = viewState.value?.predefinedPackagesData?.savedPackages.orEmpty(),
+        packageState = viewState.value?.predefinedPackagesState ?: PredefinedPackagesState.Waiting,
         isAddPackageEnabled = viewState.value?.predefinedPackagesData?.hasSavedSelection ?: false,
         onAddPackageClick = viewModel::onAddSavedPackageClick,
         onSavedPackageSelected = viewModel::onSavedPackageSelected
@@ -34,6 +36,50 @@ fun WooShippingSavedPackageScreen(viewModel: WooShippingLabelPackageCreationView
 
 @Composable
 fun WooShippingSavedPackageScreen(
+    modifier: Modifier = Modifier,
+    packageState: PredefinedPackagesState,
+    isAddPackageEnabled: Boolean,
+    onAddPackageClick: () -> Unit,
+    onSavedPackageSelected: (PackageData, Boolean) -> Unit
+) {
+    when (packageState) {
+        is PredefinedPackagesState.Data -> {
+            WooShippingSavedPackageContent(
+                modifier = modifier,
+                savedPackages = packageState.savedPackages,
+                isAddPackageEnabled = isAddPackageEnabled,
+                onAddPackageClick = onAddPackageClick,
+                onSavedPackageSelected = onSavedPackageSelected
+            )
+        }
+
+        is PredefinedPackagesState.Error -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                Text("Error")
+            }
+        }
+        is PredefinedPackagesState.Waiting -> {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                WooShippingPackageListItemSkeleton()
+                WooShippingPackageListItemSkeleton()
+                WooShippingPackageListItemSkeleton()
+            }
+        }
+    }
+}
+
+@Composable
+fun WooShippingSavedPackageContent(
     modifier: Modifier = Modifier,
     savedPackages: List<PackageData>,
     isAddPackageEnabled: Boolean,
@@ -51,7 +97,7 @@ fun WooShippingSavedPackageScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             savedPackages.forEach { packageData ->
-                WooSavedPackageListItem(
+                WooShippingPackageListItem(
                     modifier,
                     packageData,
                     onSavedPackageSelected
@@ -77,7 +123,7 @@ fun WooShippingSavedPackageScreen(
 @Composable
 fun WooShippingSavedPackageScreenPreview() {
     WooThemeWithBackground {
-        WooShippingSavedPackageScreen(
+        WooShippingSavedPackageContent(
             savedPackages = listOf(
                 PackageData(
                     name = "Small Flat Rate Box",
