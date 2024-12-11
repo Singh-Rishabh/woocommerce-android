@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
+@Suppress("UnusedPrivateProperty")
 class WooPosEmailReceiptViewModel @Inject constructor(
     private val repository: WooPosEmailReceiptRepository,
     resourceProvider: ResourceProvider,

@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
 @Composable
+@Suppress("UnusedParameter")
 fun WooPosEmailReceiptScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
     val viewModel = hiltViewModel<WooPosEmailReceiptViewModel>()
     val state = viewModel.state.collectAsState().value

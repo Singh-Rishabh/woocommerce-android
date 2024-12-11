@@ -152,7 +152,7 @@ private fun TotalsLoaded(
             if (state.isCashPaymentAvailable) {
                 WooPosButton(
                     text = stringResource(R.string.woopos_payment_take_cash_payment_label),
-                    onClick = {onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
+                    onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
                 )
             }
 
