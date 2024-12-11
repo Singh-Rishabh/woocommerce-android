@@ -72,12 +72,16 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -88,7 +92,6 @@ private const val CANADA_FEE_FLAT_IN_CENTS = 15L
 
 @Suppress("LongParameterList", "LargeClass")
 class CardReaderPaymentController(
-    private val scope: CoroutineScope,
     private val cardReaderManager: CardReaderManager,
     private val orderRepository: OrderDetailRepository,
     private val selectedSite: SelectedSite,
@@ -113,6 +116,8 @@ class CardReaderPaymentController(
     private val cardReaderType: CardReaderType,
     private val isTTPPaymentInProgress: KMutableProperty0<Boolean>,
 ) {
+    private var scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
         MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
     val paymentState: StateFlow<CardReaderPaymentOrRefundState> = _paymentState
@@ -131,6 +136,8 @@ class CardReaderPaymentController(
     }
 
     fun start() {
+        scope.cancel()
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         if (cardReaderManager.readerStatus.value is CardReaderStatus.Connected) {
             startFlowWhenReaderConnected()
         } else {
@@ -778,10 +785,11 @@ class CardReaderPaymentController(
         }
     }
 
-    fun onCleared() {
+    fun stop() {
         paymentDataForRetry?.let {
             cardReaderManager.cancelPayment(it)
         }
+        scope.cancel()
     }
 
     fun onBackPressed() {
