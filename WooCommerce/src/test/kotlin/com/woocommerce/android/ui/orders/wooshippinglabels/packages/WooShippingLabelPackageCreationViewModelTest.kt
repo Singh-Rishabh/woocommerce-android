@@ -5,17 +5,15 @@ import com.woocommerce.android.R
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PredefinedPackagesState
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.WooShippingLabelPackageRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.SavedPackageSelection
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StorePredefinedPackages
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -187,11 +185,9 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             isLetter = true
         )
         whenever(fetchPredefinedPackages()).thenReturn(
-            StorePredefinedPackages(
-                carrierPackageSelection = CarrierPackageSelection(emptyMap()),
-                savedPackageSelection = SavedPackageSelection(
-                    listOf(package1, package2)
-                )
+            PredefinedPackagesState.Data(
+                carrierPackages = emptyMap(),
+                savedPackages = listOf(package1, package2)
             )
         )
 
@@ -205,7 +201,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.viewState.observeForever { lastViewState = it }
         sut.onSavedPackageSelected(package1, true)
 
-        val selectedPackages = lastViewState?.savedPackageSelection?.packages?.filter { it.isSelected }
+        val selectedPackages = lastViewState?.predefinedPackagesData?.savedPackages?.filter { it.isSelected }
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
@@ -238,11 +234,9 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             )
         )
         whenever(fetchPredefinedPackages()).thenReturn(
-            StorePredefinedPackages(
-                carrierPackageSelection = CarrierPackageSelection(carrierPackages),
-                savedPackageSelection = SavedPackageSelection(
-                    emptyList()
-                )
+            PredefinedPackagesState.Data(
+                carrierPackages = carrierPackages,
+                savedPackages = emptyList()
             )
         )
 
@@ -256,9 +250,14 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.viewState.observeForever { lastViewState = it }
         sut.onCarrierPackageSelected(package1, true)
 
-        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap {
-            it.packages
-        }?.filter { it.isSelected }
+        val selectedPackages = lastViewState
+            ?.predefinedPackagesData
+            ?.carrierPackages
+            ?.values
+            ?.flatten()
+            ?.flatMap { it.packages }
+            ?.filter { it.isSelected }
+
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package1.copy(isSelected = true))
@@ -313,11 +312,9 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             )
         )
         whenever(fetchPredefinedPackages()).thenReturn(
-            StorePredefinedPackages(
-                carrierPackageSelection = CarrierPackageSelection(carrierPackages),
-                savedPackageSelection = SavedPackageSelection(
-                    emptyList()
-                )
+            PredefinedPackagesState.Data(
+                carrierPackages = carrierPackages,
+                savedPackages = emptyList()
             )
         )
 
@@ -332,9 +329,14 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onCarrierPackageSelected(package1, true)
         sut.onCarrierPackageSelected(package2, true)
 
-        val selectedPackages = lastViewState?.carrierPackageSection?.carrierPackages?.values?.flatten()?.flatMap {
-            it.packages
-        }?.filter { it.isSelected }
+        val selectedPackages = lastViewState
+            ?.predefinedPackagesData
+            ?.carrierPackages
+            ?.values
+            ?.flatten()
+            ?.flatMap { it.packages }
+            ?.filter { it.isSelected }
+
         assertThat(selectedPackages).isNotNull
         assertThat(selectedPackages).size().isEqualTo(1)
         assertThat(selectedPackages?.first()).isEqualTo(package2.copy(isSelected = true))
