@@ -62,7 +62,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                     viewState.copy(predefinedPackagesState = response)
                 }
             }
-
         }
     }
 
@@ -71,8 +70,9 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             val predefinedPackages = viewState.predefinedPackagesData
             predefinedPackages?.carrierPackages
                 ?.map { updateCarrierPackagesSelection(it, selectedPackage, isSelected) }
-                ?.let { viewState.copy(predefinedPackagesState = predefinedPackages.copy(carrierPackages = it.toMap())) }
-                ?: _viewState.value
+                ?.let {
+                    viewState.copy(predefinedPackagesState = predefinedPackages.copy(carrierPackages = it.toMap()))
+                } ?: _viewState.value
         }
     }
 
@@ -228,7 +228,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                 get() = carrierPackages.values.flatten().find { group ->
                     group.packages.find { it.isSelected } != null
                 } != null
-
 
             val hasSavedSelection: Boolean
                 get() = savedPackages.find { it.isSelected } != null
