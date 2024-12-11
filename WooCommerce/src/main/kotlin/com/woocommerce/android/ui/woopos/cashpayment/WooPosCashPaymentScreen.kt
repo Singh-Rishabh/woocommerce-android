@@ -156,7 +156,7 @@ private fun Collecting(
         )
 
         Text(
-            text = state.changeDue,
+            text = state.changeDueText,
             style = MaterialTheme.typography.subtitle2,
             color = WooPosTheme.colors.warning,
             fontWeight = FontWeight.Normal,
@@ -240,7 +240,7 @@ fun WooPosTotalsPaymentCashScreen() {
             state = WooPosCashPaymentState.Collecting(
                 enteredAmount = BigDecimal(100),
                 errorMessage = null,
-                changeDue = "5$",
+                changeDueText = "5$",
                 total = BigDecimal(10),
                 totalText = "10$",
                 currencySymbol = "$",
@@ -268,7 +268,7 @@ fun WooPosTotalsPaymentCashWithLabelScreen() {
             state = WooPosCashPaymentState.Collecting(
                 enteredAmount = null,
                 errorMessage = null,
-                changeDue = "5$",
+                changeDueText = "5$",
                 total = BigDecimal(10),
                 totalText = "10$",
                 currencySymbol = "$",
@@ -296,7 +296,7 @@ fun WooPosTotalsPaymentCashWithErrorScreen() {
             state = WooPosCashPaymentState.Collecting(
                 enteredAmount = BigDecimal(500),
                 errorMessage = "Amount must be more or equal to total",
-                changeDue = "5$",
+                changeDueText = "5$",
                 total = BigDecimal(10),
                 totalText = "10$",
                 currencySymbol = "$",
