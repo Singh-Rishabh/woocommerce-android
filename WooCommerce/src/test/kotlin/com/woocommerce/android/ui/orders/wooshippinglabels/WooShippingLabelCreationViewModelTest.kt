@@ -1,14 +1,15 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
@@ -72,6 +73,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             isVerified = true
         )
     )
+    private val defaultShipToAddress = Address.EMPTY.copy(
+        address1 = "1278 24st Perito AVE"
+    )
+
     private val defaultShippingRates = emptyMap<Carrier, List<ShippingRateUI>>()
 
     private val orderDetailRepository: OrderDetailRepository = mock()
@@ -104,12 +109,16 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when the order NO contains shipping lines, then NO shipping lines summary is displayed`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = emptyList()
+            shippingLines = emptyList(),
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -122,12 +131,16 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when the order contains shipping lines, then shipping lines summary is displayed`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -143,7 +156,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val order: Order? = null
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -158,7 +170,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(emptyList())
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -174,7 +185,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -189,12 +199,16 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when shipping rates succeed then display the shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -207,12 +221,16 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when shipping rates fail then display an error`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.failure(Exception("Random error"))
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.failure(Exception("Random error"))
 
         createViewModel()
 
@@ -225,50 +243,62 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when refresh rates is triggered then refresh shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
         sut.onRefreshShippingRates()
 
-        verify(getShippingRates, times(2)).invoke(any(), any())
+        verify(getShippingRates, times(2)).invoke(any(), any(), any(), any())
     }
 
     @Test
     fun `when rates sort order is changed then refresh shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
         sut.onSelectedRateSortOrderChanged(ShippingSortOption.CHEAPEST)
 
-        verify(getShippingRates, times(2)).invoke(any(), any())
+        verify(getShippingRates, times(2)).invoke(any(), any(), any(), any())
     }
 
     @Test
     fun `when rates sort order is NOT changed then DON'T refresh shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
         sut.onSelectedRateSortOrderChanged(ShippingSortOption.FASTEST)
 
-        verify(getShippingRates, times(1)).invoke(any(), any())
+        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any())
     }
 }
