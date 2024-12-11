@@ -5,10 +5,12 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
@@ -45,6 +47,24 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             totalTax = BigDecimal.ZERO,
         )
     }
+    private val defaultOriginAddresses = listOf(
+        OriginShippingAddress(
+            firstName = "first name",
+            lastName = "last name",
+            company = "Company",
+            phone = "",
+            address1 = "A huge address that should be truncated",
+            address2 = "",
+            city = "San Francisco",
+            postcode = "",
+            email = "email",
+            country = "USA",
+            state = "California",
+            id = "id_1",
+            isDefault = false,
+            isVerified = true
+        )
+    )
     private val orderDetailRepository: OrderDetailRepository = mock()
     private val getShippableItems: GetShippableItems = mock()
     private val currencyFormatter: CurrencyFormatter = mock {
@@ -56,6 +76,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val savedState: SavedStateHandle =
         WooShippingLabelCreationFragmentArgs(orderId = orderId).toSavedStateHandle()
 
+    private val observeOriginAddresses: ObserveOriginAddresses = mock()
+
     private lateinit var sut: WooShippingLabelCreationViewModel
 
     fun createViewModel() {
@@ -63,6 +85,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             orderDetailRepository = orderDetailRepository,
             getShippableItems = getShippableItems,
             currencyFormatter = currencyFormatter,
+            observeOriginAddresses = observeOriginAddresses,
             savedState = savedState
         )
     }
@@ -74,6 +97,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
 
         createViewModel()
 
@@ -90,6 +114,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
 
         createViewModel()
 
@@ -98,5 +123,50 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val dataState = currentViewState as WooShippingViewState.DataState
         assert(dataState.shippingLines.isNotEmpty())
         assertEquals(dataState.shippingLines.size, defaultShippingLines.size)
+    }
+
+    @Test
+    fun `when the order is not found, then show an error`() = testBlocking {
+        val order: Order? = null
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+
+        createViewModel()
+
+        val currentViewState = sut.viewState.value
+        assert(currentViewState is WooShippingViewState.Error)
+    }
+
+    @Test
+    fun `when there are no origin addresses, then show an error`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(emptyList())
+
+        createViewModel()
+
+        val currentViewState = sut.viewState.value
+        assert(currentViewState is WooShippingViewState.Error)
+    }
+
+    @Test
+    fun `when there are origin addresses, then display the origin addresses`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+
+        createViewModel()
+
+        val currentViewState = sut.viewState.value
+        assert(currentViewState is WooShippingViewState.DataState)
+        val dataState = currentViewState as WooShippingViewState.DataState
+        assertEquals(dataState.shippingAddresses.originAddresses.size, defaultOriginAddresses.size)
+        val ids = dataState.shippingAddresses.originAddresses.map { it.id }
+        assert(ids.containsAll(defaultOriginAddresses.map { it.id }))
     }
 }

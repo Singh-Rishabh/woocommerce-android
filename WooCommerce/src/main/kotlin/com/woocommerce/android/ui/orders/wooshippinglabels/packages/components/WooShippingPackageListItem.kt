@@ -49,7 +49,10 @@ fun WooSavedPackageListItem(
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = packageData.dimensions,
+                    text = packageData.weight
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                        ?: packageData.dimensionForDisplay,
                     style = MaterialTheme.typography.body2
                 )
             }

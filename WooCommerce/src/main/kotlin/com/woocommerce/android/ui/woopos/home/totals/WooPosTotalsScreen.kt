@@ -42,31 +42,47 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonLarge
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 import kotlinx.coroutines.delay
 
 @Composable
-fun WooPosTotalsScreen(modifier: Modifier = Modifier) {
+fun WooPosTotalsScreen(
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: WooPosTotalsViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState().value
-    WooPosTotalsScreen(modifier, state, viewModel::onUIEvent)
+    WooPosTotalsScreen(
+        modifier = modifier,
+        state = state,
+        onUIEvent = viewModel::onUIEvent,
+        onNavigationEvent = onNavigationEvent
+    )
 }
 
 @Composable
 private fun WooPosTotalsScreen(
     modifier: Modifier = Modifier,
     state: WooPosTotalsViewState,
-    onUIEvent: (WooPosTotalsUIEvent) -> Unit
+    onUIEvent: (WooPosTotalsUIEvent) -> Unit,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(modifier = modifier) {
         StateChangeAnimated(visible = state is WooPosTotalsViewState.Totals) {
             if (state is WooPosTotalsViewState.Totals) {
-                TotalsLoaded(state = state, onUIEvent = onUIEvent)
+                TotalsLoaded(
+                    state = state,
+                    onUIEvent = onUIEvent,
+                    onNavigationEvent = onNavigationEvent,
+                )
             }
         }
 
@@ -124,7 +140,8 @@ private fun StateChangeAnimated(
 @Composable
 private fun TotalsLoaded(
     state: WooPosTotalsViewState.Totals,
-    onUIEvent: (WooPosTotalsUIEvent) -> Unit
+    onUIEvent: (WooPosTotalsUIEvent) -> Unit,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     var isButtonVisible by remember { mutableStateOf(false) }
 
@@ -151,6 +168,23 @@ private fun TotalsLoaded(
             Spacer(modifier = Modifier.weight(1f))
 
             TotalsGrid(state)
+
+            when (val cashPaymentAvailability = state.cashPaymentAvailability) {
+                is CashPaymentAvailability.Available -> {
+                    WooPosButton(
+                        text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                        onClick = {
+                            onNavigationEvent(
+                                WooPosNavigationEvent.OpenCashPayment(
+                                    orderId = cashPaymentAvailability.orderId
+                                )
+                            )
+                        },
+                    )
+                }
+                CashPaymentAvailability.Unavailable -> {
+                }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -296,8 +330,28 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
+                cashPaymentAvailability = CashPaymentAvailability.Unavailable
             ),
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
+        )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
+    WooPosTheme {
+        WooPosTotalsScreen(
+            modifier = Modifier,
+            state = WooPosTotalsViewState.Totals(
+                orderSubtotalText = "$420.00",
+                orderTotalText = "$462.00",
+                orderTaxText = "$42.00",
+                cashPaymentAvailability = CashPaymentAvailability.Available(orderId = 1)
+            ),
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
@@ -308,7 +362,8 @@ fun WooPosTotalsScreenLoadingPreview() {
     WooPosTheme {
         WooPosTotalsScreen(
             state = WooPosTotalsViewState.Loading,
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
