@@ -33,12 +33,10 @@ class WooPosEmailReceiptViewModel @Inject constructor(
 
     val state: StateFlow<WooPosEmailReceiptState> = _state
 
-    init {
-    }
-
     fun onUIEvent(event: WooPosEmailReceiptUIEvent) {
         when (event) {
             WooPosEmailReceiptUIEvent.SendEmailClicked -> TODO()
+            is WooPosEmailReceiptUIEvent.EmailChanged -> TODO()
         }
     }
 }

@@ -8,6 +8,8 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
+import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -15,10 +17,6 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.ReceiptSending
-import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
-import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
-import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -45,7 +43,6 @@ class WooPosTotalsViewModel @Inject constructor(
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender,
     private val cardReaderFacade: WooPosCardReaderFacade,
     private val totalsRepository: WooPosTotalsRepository,
-    private val receiptRepository: WooPosEmailReceiptRepository,
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
@@ -99,11 +96,10 @@ class WooPosTotalsViewModel @Inject constructor(
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
                 createOrderDraft(dataState.value.itemClickedDataList)
             }
-            WooPosTotalsUIEvent.OnSendReceiptClicked -> sendReceiptByEmail()
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 viewModelScope.launch {
                     if (isReceiptSendingSupportedValue.await()) {
-                        uiState.value = ReceiptSending(email = "")
+
                     } else {
                         childrenToParentEventSender.sendToParent(
                             ChildToParentEvent.ToastMessageDisplayed(
@@ -115,9 +111,6 @@ class WooPosTotalsViewModel @Inject constructor(
                         )
                     }
                 }
-            }
-            is WooPosTotalsUIEvent.OnEmailChanged -> {
-                uiState.value = ReceiptSending(email = event.email)
             }
         }
     }
@@ -135,16 +128,6 @@ class WooPosTotalsViewModel @Inject constructor(
             val orderId = dataState.value.orderId
             check(orderId != EMPTY_ORDER_ID)
             cardReaderFacade.collectPayment(orderId)
-        }
-    }
-
-    private fun sendReceiptByEmail() {
-        val viewState = uiState.value as ReceiptSending
-        val email = viewState.email
-        val orderId = dataState.value.orderId
-        check(orderId != EMPTY_ORDER_ID)
-        viewModelScope.launch {
-            receiptRepository.sendReceiptByEmail(orderId, email)
         }
     }
 
