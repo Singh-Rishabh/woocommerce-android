@@ -268,7 +268,7 @@ class ProductListRepository @Inject constructor(
     @Suppress("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onProductsSearched(event: WCProductStore.OnProductsSearched) {
-        val continuation = if (event.isSkuSearch == SkuSearchOptions.Disabled) {
+        val continuation = if (event.globalUniqueIdSearchQuery != null) {
             searchByGlobalUniqueIdContinuation
         } else {
             searchBySKUContinuation

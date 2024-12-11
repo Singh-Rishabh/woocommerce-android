@@ -225,7 +225,7 @@ class ProductListFragment :
     }
 
     private fun enableProductsRefresh(enable: Boolean) {
-        binding.productsRefreshLayout.isEnabled = enable
+        _binding?.productsRefreshLayout?.isEnabled = enable
     }
 
     private fun initAddProductFab(fabButton: FloatingActionButton) {

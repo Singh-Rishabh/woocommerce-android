@@ -1,14 +1,11 @@
 package com.woocommerce.android
 
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.woocommerce.android.notifications.NotificationChannelType
 import com.woocommerce.android.ui.payments.cardreader.onboarding.PersistentOnboardingData
 import com.woocommerce.android.ui.payments.cardreader.onboarding.PluginType
 import com.woocommerce.android.ui.prefs.domain.DomainFlowSource
 import com.woocommerce.android.ui.promobanner.PromoBannerType
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
 
 class AppPrefsWrapper @Inject constructor() {
@@ -325,18 +322,7 @@ class AppPrefsWrapper @Inject constructor() {
     /**
      * Observes changes to the preferences
      */
-    fun observePrefs(): Flow<Unit> {
-        return callbackFlow {
-            val listener = OnSharedPreferenceChangeListener { _, _ ->
-                trySend(Unit)
-            }
-            AppPrefs.getPreferences().registerOnSharedPreferenceChangeListener(listener)
-
-            awaitClose {
-                AppPrefs.getPreferences().unregisterOnSharedPreferenceChangeListener(listener)
-            }
-        }
-    }
+    fun observePrefs(): Flow<Unit> = AppPrefs.observePrefs()
 
     fun updateOnboardingCompletedStatus(siteId: Int, completed: Boolean) {
         AppPrefs.updateOnboardingCompletedStatus(siteId, completed)

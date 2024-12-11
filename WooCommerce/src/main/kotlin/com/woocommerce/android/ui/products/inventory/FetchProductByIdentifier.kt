@@ -6,6 +6,8 @@ import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper
 import com.woocommerce.android.ui.products.list.ProductListRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 
@@ -17,16 +19,18 @@ class FetchProductByIdentifier @Inject constructor(
     suspend operator fun invoke(
         codeScannerResultCode: String,
         codeScannerResultFormat: GoogleBarcodeFormatMapper.BarcodeFormat
-    ): Result<Product> {
-        val product = searchProductBySku(
-            codeScannerResultCode = codeScannerResultCode,
-            codeScannerResultFormat = codeScannerResultFormat
-        ) ?: searchProductByGlobalUniqueIdentifier(
-            codeScannerResultCode = codeScannerResultCode,
-            codeScannerResultFormat = codeScannerResultFormat
-        )
+    ): Result<Product> = coroutineScope {
+        val globalUniqueIdentifierSearch = async {
+            searchProductByGlobalUniqueIdentifier(
+                codeScannerResultCode,
+                codeScannerResultFormat
+            )
+        }
+        val skuSearch = async { searchProductBySku(codeScannerResultCode, codeScannerResultFormat) }
 
-        return if (product != null) {
+        val product = globalUniqueIdentifierSearch.await() ?: skuSearch.await()
+
+        if (product != null) {
             Result.success(product)
         } else {
             Result.failure(Exception("Product not found"))
@@ -37,7 +41,7 @@ class FetchProductByIdentifier @Inject constructor(
         codeScannerResultCode: String,
         codeScannerResultFormat: GoogleBarcodeFormatMapper.BarcodeFormat
     ): Product? {
-        return productRepository.searchProductList(
+        val product = productRepository.searchProductList(
             searchQuery = codeScannerResultCode,
             skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
         )?.firstOrNull()
@@ -50,6 +54,7 @@ class FetchProductByIdentifier @Inject constructor(
                     skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
                 )?.firstOrNull()
             }
+        return product
     }
 
     private suspend fun searchProductByGlobalUniqueIdentifier(

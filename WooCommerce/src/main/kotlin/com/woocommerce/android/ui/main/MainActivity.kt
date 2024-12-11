@@ -395,7 +395,7 @@ class MainActivity :
         super.onPause()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
         // Verify authenticated session

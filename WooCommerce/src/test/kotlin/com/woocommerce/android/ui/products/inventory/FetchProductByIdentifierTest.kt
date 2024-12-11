@@ -19,6 +19,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.store.WCProductStore
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class FetchProductByIdentifierTest : BaseUnitTest() {
@@ -93,6 +94,27 @@ class FetchProductByIdentifierTest : BaseUnitTest() {
         val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
 
         assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `given barcode scan result, when product found when searching by global unique id and sku, should return the global unique id`() = testBlocking {
+        val skuProduct = ProductTestUtils.generateProduct(productId = 1)
+        whenever(
+            repo.searchProductList(
+                searchQuery = "123",
+                skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
+            )
+        ).thenReturn(listOf(skuProduct))
+
+        val globalUniqueIdProduct = ProductTestUtils.generateProduct(productId = 2)
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(listOf(globalUniqueIdProduct))
+
+        val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
+
+        assertTrue(result.isSuccess)
+        assertEquals(result.getOrNull(), globalUniqueIdProduct)
     }
 
     @Test
