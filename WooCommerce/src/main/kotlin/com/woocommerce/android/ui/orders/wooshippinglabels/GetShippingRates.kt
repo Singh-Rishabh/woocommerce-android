@@ -5,7 +5,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.P
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.random.Random
-
+@Suppress("MagicNumber")
 class GetShippingRates @Inject constructor() {
     private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
         r1.rate.substring(1).toBigDecimal().compareTo(r2.rate.substring(1).toBigDecimal())
