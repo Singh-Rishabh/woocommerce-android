@@ -168,12 +168,9 @@ class WooPosTotalsViewModel @Inject constructor(
     private suspend fun retryPaymentCollectionFromScratch() {
         cancelPaymentAction()
         val order = totalsRepository.getOrderById(dataState.value.orderId)
-        if (order == null) {
-            returnToCart()
-        } else {
-            uiState.value = buildWooPosTotalsViewState(order)
-            collectPayment()
-        }
+        checkNotNull(order)
+        uiState.value = buildWooPosTotalsViewState(order)
+        collectPayment()
     }
 
     private fun collectPayment() {
@@ -222,7 +219,7 @@ class WooPosTotalsViewModel @Inject constructor(
                 when (paymentState) {
                     is CardReaderPaymentState.CollectingPayment,
                     is CardReaderPaymentState.LoadingData ->
-                        handlePaymentState(paymentState as CardReaderPaymentState)
+                        handlePaymentState(paymentState)
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,
@@ -233,9 +230,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
                         uiState.value =
-                            PaymentSuccess(
-                                orderTotalText = paymentState.amountWithCurrencyLabel
-                            )
+                            PaymentSuccess(orderTotalText = paymentState.amountWithCurrencyLabel)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
 
@@ -263,13 +258,9 @@ class WooPosTotalsViewModel @Inject constructor(
             )
         } else {
             val order = totalsRepository.getOrderById(dataState.value.orderId)
-            if (order == null) {
-                returnToCart()
-            } else {
-                uiState.value =
-                    buildWooPosTotalsViewState(order, paymentState)
-                childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
-            }
+            checkNotNull(order)
+            uiState.value = buildWooPosTotalsViewState(order, paymentState)
+            childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
     }
 
