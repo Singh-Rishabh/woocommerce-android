@@ -51,6 +51,7 @@ private object WooPosColors {
     val darkCustomloadingSkeleton = Color(0xFF616161)
     val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
     val darkQuaternaryBackground = Color(0xFF111111)
+    val darkTotalsBackground = Color(0xFF1C1C1E)
 
     // LightCustomColors
     val lightCustomColorsError = Color(0xFFF16618)
