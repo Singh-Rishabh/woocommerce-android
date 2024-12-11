@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -168,10 +166,14 @@ private fun EndpointItem(
                 elevation = 4.dp
             ) {
                 Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(8.dp)
                 ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(
                             text = when (endpoint.request.type) {
                                 ApiType.WPApi -> "WordPress API"
@@ -187,11 +189,6 @@ private fun EndpointItem(
                             style = MaterialTheme.typography.body1
                         )
                     }
-                    Spacer(
-                        modifier = Modifier
-                            .weight(1f)
-                            .defaultMinSize(minWidth = 16.dp)
-                    )
                     Text(
                         text = endpoint.response.statusCode.toString(),
                         style = MaterialTheme.typography.subtitle1
