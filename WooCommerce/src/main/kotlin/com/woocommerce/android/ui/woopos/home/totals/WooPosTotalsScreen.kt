@@ -45,6 +45,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
+import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 
 @Composable
@@ -87,6 +89,21 @@ private fun WooPosTotalsScreen(
                 )
             }
         }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentProcessing) {
+            if (state is WooPosTotalsViewState.PaymentProcessing) {
+                WooPosPaymentProcessingScreen(state)
+            }
+        }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentFailed) {
+            if (state is WooPosTotalsViewState.PaymentFailed) {
+                WooPosPaymentFailedScreen(
+                    state = state,
+                    onUIEvent = onUIEvent,
+                )
+            }
+        }
     }
 }
 
@@ -116,18 +133,25 @@ private fun TotalsLoaded(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        val error = state.error
-        if (error != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1.1f)
-                    .background(WooPosTheme.colors.totalsErrorBackground)
-            ) {
-                TotalsError(modifier = Modifier, error = error)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.1f)
+                .background(WooPosTheme.colors.totalsErrorBackground)
+        ) {
+            val error = state.error
+            when {
+                error != null -> TotalsError(modifier = Modifier, error = error)
+                else -> {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = state.paymentStateText,
+                        style = MaterialTheme.typography.body1,
+                    )
+                }
             }
         }
-        TotalsGrid(modifier = Modifier.weight(1f), state = state)
+        TotalsGrid(modifier = Modifier.weight(.9f), state = state)
     }
 }
 
@@ -212,10 +236,6 @@ private fun TotalsGrid(
             styleTwo = MaterialTheme.typography.h4,
             fontWeightOne = FontWeight.Medium,
             fontWeightTwo = FontWeight.Bold,
-        )
-        Text(
-            text = state.paymentStateText,
-            style = MaterialTheme.typography.body1,
         )
     }
 }

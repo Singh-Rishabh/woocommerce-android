@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -91,6 +92,26 @@ fun WooPosOutlinedButton(
     text: String,
     shape: RoundedCornerShape = RoundedCornerShape(4.dp),
     onClick: () -> Unit,
+) = WooPosOutlinedButton(
+    modifier = modifier,
+    shape = shape,
+    content = {
+        Text(
+            text = text,
+            color = MaterialTheme.colors.primary,
+            style = MaterialTheme.typography.body2,
+            fontWeight = FontWeight.SemiBold,
+        )
+    },
+    onClick = onClick,
+)
+
+@Composable
+fun WooPosOutlinedButton(
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    content: @Composable RowScope.() -> Unit,
+    onClick: () -> Unit,
 ) {
     Button(
         modifier = modifier,
@@ -107,15 +128,9 @@ fun WooPosOutlinedButton(
             disabledElevation = 0.dp,
             hoveredElevation = 0.dp,
             focusedElevation = 0.dp
-        )
-    ) {
-        Text(
-            text = text,
-            color = MaterialTheme.colors.primary,
-            style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.SemiBold,
-        )
-    }
+        ),
+        content = content
+    )
 }
 
 @Composable
