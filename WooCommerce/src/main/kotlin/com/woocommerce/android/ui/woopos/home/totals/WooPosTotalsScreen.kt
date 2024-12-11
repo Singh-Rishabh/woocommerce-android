@@ -184,7 +184,7 @@ private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
 private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     val tapCardAnimation by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.woopos_card_ilustration))
     LottieAnimation(
-        modifier = Modifier.size(256.dp).padding(0.dp),
+        modifier = Modifier.size(256.dp),
         composition = tapCardAnimation,
         clipSpec = LottieClipSpec.Markers("reader_awaiting_start", "reader_awaiting_end"),
         iterations = LottieConstants.IterateForever,
