@@ -4,19 +4,20 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -65,27 +66,34 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 shippableItems = viewState.shippableItems,
                 shippingLines = viewState.shippingLines,
                 shippingAddresses = viewState.shippingAddresses,
+                shippingRatesState = viewState.shippingRates,
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
-                onShippingToAddressChange = viewModel::onShippingToAddressChange
+                onShippingToAddressChange = viewModel::onShippingToAddressChange,
+                onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
+                onRefreshShippingRates = viewModel::onRefreshShippingRates
             )
         }
 
         WooShippingLabelCreationViewModel.WooShippingViewState.Error -> {
-            TODO()
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("Error")
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WooShippingLabelCreationScreen(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onShippingToAddressChange: (Address) -> Unit,
     onSelectPackageClick: () -> Unit,
     onPurchaseShippingLabel: () -> Unit,
+    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
+    onRefreshShippingRates: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -97,16 +105,30 @@ fun WooShippingLabelCreationScreen(
             scaffoldState = scaffoldState,
             shippingLines = shippingLines,
             shippingAddresses = shippingAddresses,
+            shippingRatesState = shippingRatesState,
             onShippingFromAddressChange = onShippingFromAddressChange,
-            onShippingToAddressChange = onShippingToAddressChange
+            onShippingToAddressChange = onShippingToAddressChange,
+            onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
+            onRefreshShippingRates = onRefreshShippingRates
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
         val elevation = when {
-            isDarkTheme && isCollapsed -> { 7.dp }
-            !isDarkTheme && isCollapsed -> { 0.dp }
-            isDarkTheme && !isCollapsed -> { 16.dp }
-            else -> { 8.dp }
+            isDarkTheme && isCollapsed -> {
+                7.dp
+            }
+
+            !isDarkTheme && isCollapsed -> {
+                0.dp
+            }
+
+            isDarkTheme && !isCollapsed -> {
+                16.dp
+            }
+
+            else -> {
+                8.dp
+            }
         }
         Box(
             modifier = Modifier
@@ -129,15 +151,17 @@ fun WooShippingLabelCreationScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun LabelCreationScreenWithBottomSheet(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     onSelectPackageClick: () -> Unit,
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onShippingToAddressChange: (Address) -> Unit,
+    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
+    onRefreshShippingRates: () -> Unit,
     scaffoldState: BottomSheetScaffoldState,
     modifier: Modifier = Modifier
 ) {
@@ -198,25 +222,64 @@ private fun LabelCreationScreenWithBottomSheet(
                     modifier = Modifier.padding(16.dp),
                     onSelectPackageClick = onSelectPackageClick
                 )
-                val selected = remember { mutableStateOf<ShippingRate?>(null) }
-                val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
-                ShippingRatesCard(
-                    selected = selected.value,
-                    onSelectedChange = {
-                        selected.value = it
-                        signatureRequired.value = null
-                    },
-                    shippingRates = generateShippingRates(),
-                    signatureRequired = signatureRequired.value,
-                    onSelectedSignatureChange = { signatureRequired.value = it },
-                    signatureRequiredOptions = listOf(
-                        SignatureRequired("Signature Required", "$10.00"),
-                        SignatureRequired("Adult Signature Required", "$15.00")
-                    ),
-                    modifier = Modifier.fillMaxWidth()
+                WooShippingShippingRatesSection(
+                    shippingRatesState = shippingRatesState,
+                    onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
+                    onRefreshShippingRates = onRefreshShippingRates
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun WooShippingShippingRatesSection(
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
+    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
+    onRefreshShippingRates: () -> Unit,
+) {
+    when (shippingRatesState) {
+        is WooShippingLabelCreationViewModel.ShippingRatesState.DataState -> {
+            val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
+            ShippingRatesCard(
+                selectedRate = null,
+                onSelectedChange = {},
+                shippingRates = shippingRatesState.shippingRates,
+                signatureRequired = signatureRequired.value,
+                onSelectedSignatureChange = { signatureRequired.value = it },
+                signatureRequiredOptions = listOf(
+                    SignatureRequired("Signature Required", "$10.00"),
+                    SignatureRequired("Adult Signature Required", "$15.00")
+                ),
+                selectedSortOption = shippingRatesState.selectedRatesSortOrder,
+                onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        WooShippingLabelCreationViewModel.ShippingRatesState.Error -> {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sizeIn(minHeight = 300.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Error")
+                WCColoredButton(onClick = { onRefreshShippingRates() }) {
+                    Text(text = "Retry")
+                }
+            }
+        }
+
+        is WooShippingLabelCreationViewModel.ShippingRatesState.Loading -> {
+            ShippingRatesLoading(
+                selectedSortOption = shippingRatesState.selectedRatesSortOrder,
+                onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged
+            )
+        }
+
+        WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable -> {}
     }
 }
 
@@ -240,8 +303,11 @@ private fun WooShippingLabelCreationScreenPreview() {
                 shipTo = getShipTo(),
                 originAddresses = listOf(getShipFrom())
             ),
+            shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             onShippingFromAddressChange = {},
-            onShippingToAddressChange = {}
+            onShippingToAddressChange = {},
+            onRefreshShippingRates = {},
+            onSelectedRateSortOrderChanged = {}
         )
     }
 }
