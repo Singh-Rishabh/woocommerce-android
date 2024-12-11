@@ -7,17 +7,31 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+
+@Composable
+fun WooPosEmailReceiptScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
+    val viewModel = hiltViewModel<WooPosEmailReceiptViewModel>()
+    val state = viewModel.state.collectAsState().value
+
+    WooPosEmailReceiptScreen(
+        state = state,
+        onEmailAddressChanged = { viewModel.onUIEvent(WooPosEmailReceiptUIEvent.EmailChanged(it)) },
+        onSendReceiptClicked = { viewModel.onUIEvent(WooPosEmailReceiptUIEvent.SendEmailClicked) },
+    )
+}
 
 @Composable
 private fun WooPosEmailReceiptScreen(
-    state: WooPosTotalsViewState.ReceiptSending,
+    state: WooPosEmailReceiptState,
     onEmailAddressChanged: (String) -> Unit,
     onSendReceiptClicked: () -> Unit,
 ) {
@@ -69,7 +83,13 @@ private fun WooPosEmailReceiptScreen(
 @Composable
 fun PreviewWooPosTotalsPaymentReceiptScreen() {
     WooPosEmailReceiptScreen(
-        state = WooPosTotalsViewState.ReceiptSending("email hint"),
+        state = WooPosEmailReceiptState(
+            email = "email@google.com",
+            button = WooPosEmailReceiptState.Button(
+                text = "Send",
+                status = WooPosEmailReceiptState.Button.Status.ENABLED
+            )
+        ),
         onEmailAddressChanged = {},
         onSendReceiptClicked = {},
     )
