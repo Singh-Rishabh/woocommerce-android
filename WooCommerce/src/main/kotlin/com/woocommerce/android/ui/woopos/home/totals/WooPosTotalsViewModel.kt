@@ -1,8 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
-import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.Companion.PRIVATE
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,10 +32,6 @@ import com.woocommerce.android.util.WooLog.T
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -89,16 +83,12 @@ class WooPosTotalsViewModel @Inject constructor(
             savedState[KEY_TTP_PAYMENT_IN_PROGRESS] = value
         }
 
-    @VisibleForTesting(otherwise = PRIVATE)
-    internal var paymentScope: CoroutineScope? = null
     private var cardReaderPaymentController: CardReaderPaymentController? = null
 
     private fun createCardReaderPaymentController(orderId: Long) {
-        paymentScope = CoroutineScope(SupervisorJob(viewModelScope.coroutineContext[Job]))
         cardReaderPaymentController = cardReaderPaymentControllerFactory.create(
             orderId = orderId,
             paymentType = PaymentOrRefund.Payment.PaymentType.WOO_POS,
-            coroutineScope = paymentScope!!,
             isTTPPaymentInProgress = ::isTTPPaymentInProgress,
         )
     }
@@ -139,9 +129,8 @@ class WooPosTotalsViewModel @Inject constructor(
     )
 
     private fun cancelPaymentAction() {
-        cardReaderPaymentController?.onCleared()
         cardReaderPaymentController?.onBackPressed()
-        paymentScope?.cancel()
+        cardReaderPaymentController?.stop()
     }
 
     fun onUIEvent(event: WooPosTotalsUIEvent) {
@@ -184,12 +173,9 @@ class WooPosTotalsViewModel @Inject constructor(
     private suspend fun retryPaymentCollectionFromScratch() {
         cancelPaymentAction()
         val order = totalsRepository.getOrderById(dataState.value.orderId)
-        if (order == null) {
-            returnToCart()
-        } else {
-            uiState.value = buildWooPosTotalsViewState(order)
-            collectPayment()
-        }
+        checkNotNull(order)
+        uiState.value = buildWooPosTotalsViewState(order)
+        collectPayment()
     }
 
     private fun collectPayment() {
@@ -237,8 +223,8 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
                 when (paymentState) {
                     is CardReaderPaymentState.CollectingPayment -> handleCollectingPaymentState()
-                    is CardReaderPaymentState.LoadingData ->
-                        handleReaderLoadingPaymentState()
+
+                    is CardReaderPaymentState.LoadingData -> handleReaderLoadingPaymentState()
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing,
@@ -249,9 +235,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
                         uiState.value =
-                            PaymentSuccess(
-                                orderTotalText = paymentState.amountWithCurrencyLabel
-                            )
+                            PaymentSuccess(orderTotalText = paymentState.amountWithCurrencyLabel)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
 
@@ -282,12 +266,9 @@ class WooPosTotalsViewModel @Inject constructor(
             )
         } else {
             val order = totalsRepository.getOrderById(dataState.value.orderId)
-            if (order == null) {
-                returnToCart()
-            } else {
-                uiState.value = buildWooPosTotalsViewState(order)
-                childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
-            }
+            checkNotNull(order)
+            uiState.value = buildWooPosTotalsViewState(order)
+            childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
     }
 
@@ -303,12 +284,9 @@ class WooPosTotalsViewModel @Inject constructor(
             )
         } else {
             val order = totalsRepository.getOrderById(dataState.value.orderId)
-            if (order == null) {
-                returnToCart()
-            } else {
-                uiState.value = buildWooPosTotalsViewState(order)
-                childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
-            }
+            checkNotNull(order)
+            uiState.value = buildWooPosTotalsViewState(order)
+            childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
     }
 
@@ -343,6 +321,10 @@ class WooPosTotalsViewModel @Inject constructor(
             R.string.woopos_success_totals_payment_processing_subtitle
         )
     )
+
+    override fun onCleared() {
+        cardReaderPaymentController?.stop()
+    }
 
     private fun createOrderDraft(productIds: List<Long>) {
         viewModelScope.launch {
