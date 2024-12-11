@@ -4,9 +4,9 @@ import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper
 import com.woocommerce.android.ui.products.list.ProductListRepository
-import org.wordpress.android.fluxc.store.WCProductStore
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 
 class FetchProductByIdentifier @Inject constructor(
@@ -17,8 +17,12 @@ class FetchProductByIdentifier @Inject constructor(
         codeScannerResultCode: String,
         codeScannerResultFormat: GoogleBarcodeFormatMapper.BarcodeFormat
     ): Result<Product> = coroutineScope {
-        val globalUniqueIdentifierSearch = async { searchProductByGlobalUniqueIdentifier(codeScannerResultCode,
-            codeScannerResultFormat) }
+        val globalUniqueIdentifierSearch = async {
+            searchProductByGlobalUniqueIdentifier(
+                codeScannerResultCode,
+                codeScannerResultFormat
+            )
+        }
         val skuSearch = async { searchProductBySku(codeScannerResultCode, codeScannerResultFormat) }
 
         val product = globalUniqueIdentifierSearch.await() ?: skuSearch.await()
@@ -34,7 +38,7 @@ class FetchProductByIdentifier @Inject constructor(
         codeScannerResultCode: String,
         codeScannerResultFormat: GoogleBarcodeFormatMapper.BarcodeFormat
     ): Product? {
-        return productRepository.searchProductList(
+        val product = productRepository.searchProductList(
             searchQuery = codeScannerResultCode,
             skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
         )?.firstOrNull()
@@ -47,6 +51,7 @@ class FetchProductByIdentifier @Inject constructor(
                     skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
                 )?.firstOrNull()
             }
+        return product
     }
 
     private suspend fun searchProductByGlobalUniqueIdentifier(
