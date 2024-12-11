@@ -58,7 +58,7 @@ fun WooPosPaymentProcessingScreen(
             Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
             val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.woopos_card_ilustration))
             LottieAnimation(
-                modifier = Modifier.size(256.dp).padding(0.dp),
+                modifier = Modifier.size(256.dp),
                 composition = composition,
                 iterations = LottieConstants.IterateForever,
                 clipToCompositionBounds = false,
