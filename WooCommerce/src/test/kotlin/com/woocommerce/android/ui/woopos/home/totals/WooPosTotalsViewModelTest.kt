@@ -932,7 +932,7 @@ class WooPosTotalsViewModelTest {
         // THEN
         val processingState = vm.state.value as WooPosTotalsViewState.PaymentProcessing
         assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
-        with(processingState){
+        with(processingState) {
             assertThat(title).isEqualTo("Processing payment")
             assertThat(subtitle).isEqualTo("Please wait…")
         }
@@ -970,7 +970,7 @@ class WooPosTotalsViewModelTest {
         // THEN
         val processingState = vm.state.value as WooPosTotalsViewState.PaymentProcessing
         assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
-        with(processingState){
+        with(processingState) {
             assertThat(title).isEqualTo("Processing payment")
             assertThat(subtitle).isEqualTo("Remove card")
         }
