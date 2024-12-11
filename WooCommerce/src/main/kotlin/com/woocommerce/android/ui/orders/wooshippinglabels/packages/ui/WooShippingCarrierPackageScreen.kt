@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooShippingPackageListItem
 import kotlinx.coroutines.launch
 
 @Composable
@@ -195,7 +195,7 @@ private fun PackageListSection(
         )
         Divider()
         packages.forEach { packageData ->
-            WooSavedPackageListItem(
+            WooShippingPackageListItem(
                 modifier = Modifier.padding(start = 16.dp),
                 packageData = packageData,
                 onPackageSelected = onPackageSelected

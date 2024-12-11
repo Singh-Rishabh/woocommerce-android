@@ -28,6 +28,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCarrierPackageScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCustomPackageCreationScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingSavedPackageContent
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingSavedPackageScreen
 
 @Composable
@@ -128,7 +129,7 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                 )
             },
             createSavedPackageScreen = {
-                WooShippingSavedPackageScreen(
+                WooShippingSavedPackageContent(
                     savedPackages = listOf(
                         PackageData(
                             name = "Small Flat Rate Box",

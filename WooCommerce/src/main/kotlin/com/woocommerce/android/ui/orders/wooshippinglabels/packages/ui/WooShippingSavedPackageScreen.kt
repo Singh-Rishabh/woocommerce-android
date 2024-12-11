@@ -153,3 +153,16 @@ fun WooShippingSavedPackageScreenPreview() {
         )
     }
 }
+
+@Preview
+@Composable
+fun WooShippingSavedPackageScreenLoadingPreview() {
+    WooThemeWithBackground {
+        WooShippingSavedPackageScreen(
+            packageState = PredefinedPackagesState.Waiting,
+            isAddPackageEnabled = false,
+            onAddPackageClick = {},
+            onSavedPackageSelected = { _, _ -> }
+        )
+    }
+}
