@@ -42,15 +42,25 @@ import com.woocommerce.android.ui.woopos.home.toolbar.WooPosFloatingToolbar
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreen
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreenPreview
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import kotlinx.coroutines.delay
 import org.wordpress.android.util.ToastUtils
 
 @Composable
 fun WooPosHomeScreen(
+    isPaymentCompletedViaCash: Boolean,
     onNavigationEvent: (WooPosNavigationEvent) -> Unit
 ) {
     val viewModel: WooPosHomeViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState().value
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        if (isPaymentCompletedViaCash) {
+            delay(800)
+            viewModel.onUIEvent(WooPosHomeUIEvent.OnPaymentCompletedViaCash)
+        }
+    }
+
     LaunchedEffect(viewModel.toastEvent) {
         viewModel.toastEvent.collect { message ->
             ToastUtils.showToast(
@@ -112,7 +122,8 @@ private fun WooPosHomeScreen(
         productsWidthDp = productsWidthAnimatedDp,
         cartWidthDp = cartWidthDp,
         totalsWidthDp = totalsWidthAnimatedDp,
-        onHomeUIEvent,
+        onHomeUIEvent = onHomeUIEvent,
+        onNavigationEvent = onNavigationEvent,
     )
 
     WooPosExitConfirmationDialog(
@@ -133,6 +144,7 @@ private fun WooPosHomeScreen(
     cartWidthDp: Dp,
     totalsWidthDp: Dp,
     onHomeUIEvent: (WooPosHomeUIEvent) -> Unit,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -155,7 +167,8 @@ private fun WooPosHomeScreen(
             )
             WooPosHomeScreenTotals(
                 modifier = Modifier
-                    .width(totalsWidthDp)
+                    .width(totalsWidthDp),
+                onNavigationEvent = onNavigationEvent,
             )
         }
 
@@ -201,11 +214,17 @@ private fun WooPosHomeScreenCart(modifier: Modifier) {
 }
 
 @Composable
-private fun WooPosHomeScreenTotals(modifier: Modifier) {
+private fun WooPosHomeScreenTotals(
+    modifier: Modifier,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit
+) {
     if (isPreviewMode()) {
         WooPosTotalsScreenPreview(modifier)
     } else {
-        WooPosTotalsScreen(modifier)
+        WooPosTotalsScreen(
+            modifier = modifier,
+            onNavigationEvent = onNavigationEvent
+        )
     }
 }
 
