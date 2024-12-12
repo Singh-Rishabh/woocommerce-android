@@ -47,6 +47,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 
 @Composable
@@ -71,13 +72,27 @@ private fun WooPosTotalsScreen(
 
         StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentSuccess) {
             if (state is WooPosTotalsViewState.PaymentSuccess) {
-                WooPosPaymentSuccessScreen(state) { onUIEvent(WooPosTotalsUIEvent.OnNewTransactionClicked) }
+                WooPosPaymentSuccessScreen(
+                    state,
+                    onReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked) },
+                    onNewTransactionClicked = { onUIEvent(WooPosTotalsUIEvent.OnNewTransactionClicked) }
+                )
             }
         }
 
         StateChangeAnimated(visible = state is WooPosTotalsViewState.Loading) {
             if (state is WooPosTotalsViewState.Loading) {
                 TotalsLoading()
+            }
+        }
+
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.ReceiptSending) {
+            if (state is WooPosTotalsViewState.ReceiptSending) {
+                WooPosTotalsPaymentReceiptScreen(
+                    state,
+                    onEmailAddressChanged = { onUIEvent(WooPosTotalsUIEvent.OnEmailChanged(it)) },
+                    onSendReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnSendReceiptClicked) }
+                )
             }
         }
 

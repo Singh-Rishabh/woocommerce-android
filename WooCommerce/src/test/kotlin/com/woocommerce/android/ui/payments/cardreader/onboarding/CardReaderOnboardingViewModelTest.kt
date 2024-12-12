@@ -2043,6 +2043,68 @@ class CardReaderOnboardingViewModelTest : BaseUnitTest() {
             assertThat(viewModel.viewStateData.value).isInstanceOf(NoConnectionErrorState::class.java)
         }
 
+    @Test
+    fun `given WooPosConnection param, when checking isPos, then it returns true`() {
+        val viewModel = createVM(
+            CardReaderOnboardingFragmentArgs(
+                cardReaderOnboardingParam = CardReaderOnboardingParams.Check(
+                    cardReaderFlowParam = CardReaderFlowParam.WooPosConnection
+                ),
+                cardReaderType = CardReaderType.EXTERNAL
+            ).toSavedStateHandle()
+        )
+
+        assertTrue(viewModel.isPos)
+    }
+
+    @Test
+    fun `given PaymentOrRefund param with WooPos payment type, when checking isPos, then it returns true`() {
+        val viewModel = createVM(
+            CardReaderOnboardingFragmentArgs(
+                cardReaderOnboardingParam = CardReaderOnboardingParams.Check(
+                    cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
+                        1L,
+                        CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
+                    )
+                ),
+                cardReaderType = CardReaderType.EXTERNAL
+            ).toSavedStateHandle()
+        )
+
+        assertTrue(viewModel.isPos)
+    }
+
+    @Test
+    fun `given PaymentOrRefund param with non-WooPos payment type, when checking isPos, then it returns false`() {
+        val viewModel = createVM(
+            CardReaderOnboardingFragmentArgs(
+                cardReaderOnboardingParam = CardReaderOnboardingParams.Check(
+                    cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
+                        1L,
+                        ORDER
+                    )
+                ),
+                cardReaderType = CardReaderType.EXTERNAL
+            ).toSavedStateHandle()
+        )
+
+        assertFalse(viewModel.isPos)
+    }
+
+    @Test
+    fun `given CardReadersHub param, when checking isPos, then it returns false`() {
+        val viewModel = createVM(
+            CardReaderOnboardingFragmentArgs(
+                cardReaderOnboardingParam = CardReaderOnboardingParams.Check(
+                    cardReaderFlowParam = CardReaderFlowParam.CardReadersHub()
+                ),
+                cardReaderType = CardReaderType.EXTERNAL
+            ).toSavedStateHandle()
+        )
+
+        assertFalse(viewModel.isPos)
+    }
+
     // Tracking Begin
     @Test
     fun `given cod disabled screen, when skip button clicked, then track event`() =

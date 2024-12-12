@@ -5,14 +5,20 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchCarrierPackagesFromStore
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchSavedPackagesFromStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.FetchPredefinedPackagesFromStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CustomPackageCreationData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.SavedPackageSelection
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -20,8 +26,7 @@ import javax.inject.Inject
 class WooShippingLabelPackageCreationViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val resourceProvider: ResourceProvider,
-    private val fetchSavedPackages: FetchSavedPackagesFromStore,
-    private val fetchCarrierPackages: FetchCarrierPackagesFromStore
+    private val fetchPredefinedPackages: FetchPredefinedPackagesFromStore
 ) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
@@ -47,11 +52,15 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         )
 
     init {
-        _viewState.update { viewState ->
-            viewState.copy(
-                savedPackageSelection = SavedPackageSelection(fetchSavedPackages()),
-                carrierPackageSection = CarrierPackageSelection(fetchCarrierPackages())
-            )
+        launch {
+            fetchPredefinedPackages()?.let {
+                _viewState.update { viewState ->
+                    viewState.copy(
+                        savedPackageSelection = it.savedPackageSelection,
+                        carrierPackageSection = it.carrierPackageSelection
+                    )
+                }
+            }
         }
     }
 
@@ -90,7 +99,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onAddCustomPackageClick() {
         _viewState.value.customPackageCreationData
-            .asPackageData
+            .toPackageData()
             .let { triggerEvent(PackageSelected(it)) }
     }
 

@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms
+package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -39,11 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.Carrier
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.CarrierPackageGroup
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.WooSavedPackageListItem
 import kotlinx.coroutines.launch
 
@@ -229,31 +225,21 @@ fun WooShippingCarrierPackageScreenPreview() {
     WooThemeWithBackground {
         WooShippingCarrierPackageScreen(
             carrierPackages = mapOf(
-                Carrier(
-                    id = "dhl",
-                    name = "DHL Express",
-                    logoRes = R.drawable.dhl_logo
-                ) to listOf(
+                Carrier.DHL to listOf(
                     CarrierPackageGroup(
                         groupName = "Group 1",
                         packages = listOf(
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 1 - Carrier 1",
-                                description = "Description 1",
-                                length = "10",
-                                width = "10",
-                                height = "10",
-                                isSelected = false
+                                dimensions = "10 x 10 x 10 cm",
+                                isSelected = false,
+                                isLetter = false
                             ),
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 2 - Carrier 1",
-                                description = "Description 2",
-                                length = "20",
-                                width = "20",
-                                height = "20",
-                                isSelected = false
+                                dimensions = "20 x 20 x 20 cm",
+                                isSelected = false,
+                                isLetter = false
                             )
                         )
                     ),
@@ -261,51 +247,35 @@ fun WooShippingCarrierPackageScreenPreview() {
                         groupName = "Group 2",
                         packages = listOf(
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 3 - Carrier 1",
-                                description = "Description 3",
-                                length = "30",
-                                width = "30",
-                                height = "30",
-                                isSelected = false
+                                dimensions = "30 x 30 x 30 cm",
+                                isSelected = false,
+                                isLetter = false
                             ),
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 4 - Carrier 1",
-                                description = "Description 4",
-                                length = "40",
-                                width = "40",
-                                height = "40",
-                                isSelected = false
+                                dimensions = "40 x 40 x 40 cm",
+                                isSelected = false,
+                                isLetter = false
                             )
                         )
                     )
                 ),
-                Carrier(
-                    id = "usps",
-                    name = "USPS",
-                    logoRes = R.drawable.usps_logo
-                ) to listOf(
+                Carrier.USPS to listOf(
                     CarrierPackageGroup(
                         groupName = "Group 2",
                         packages = listOf(
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 1 - Carrier 2",
-                                description = "Description 1",
-                                length = "10",
-                                width = "10",
-                                height = "10",
-                                isSelected = false
+                                dimensions = "10 x 10 x 10 cm",
+                                isSelected = false,
+                                isLetter = false
                             ),
                             PackageData(
-                                type = PackageType.BOX,
                                 name = "Package 2 Carrier - 2",
-                                description = "Description 2",
-                                length = "20",
-                                width = "20",
-                                height = "20",
-                                isSelected = false
+                                dimensions = "20 x 20 x 20 cm",
+                                isSelected = false,
+                                isLetter = false
                             )
                         )
                     )

@@ -141,7 +141,7 @@ class DashboardStatsViewModelTest : BaseUnitTest() {
                 whenever(networkStatus.isConnected()).thenReturn(false)
             }
 
-            viewModel.onTabSelected(ANY_SELECTION_TYPE)
+            viewModel.onRangeChanged(ANY_SELECTION_TYPE)
 
             verify(getStats, never()).invoke(any(), any())
         }
@@ -155,7 +155,7 @@ class DashboardStatsViewModelTest : BaseUnitTest() {
                 .thenReturn(ANY_SELECTION_TYPE.name)
         }
 
-        viewModel.onTabSelected(ANY_SELECTION_TYPE)
+        viewModel.onRangeChanged(ANY_SELECTION_TYPE)
 
         verify(getStats, times(2)).invoke(
             refresh = ArgumentMatchers.eq(false),
@@ -196,7 +196,7 @@ class DashboardStatsViewModelTest : BaseUnitTest() {
                     .thenReturn(ANY_SELECTION_TYPE.name)
             }
 
-            viewModel.onTabSelected(ANY_SELECTION_TYPE)
+            viewModel.onRangeChanged(ANY_SELECTION_TYPE)
 
             Assertions.assertThat(viewModel.revenueStatsState.value)
                 .isInstanceOf(DashboardStatsViewModel.RevenueStatsViewState.Content::class.java)
@@ -209,7 +209,7 @@ class DashboardStatsViewModelTest : BaseUnitTest() {
         testBlocking {
             setup()
 
-            viewModel.onTabSelected(ANY_SELECTION_TYPE)
+            viewModel.onRangeChanged(ANY_SELECTION_TYPE)
 
             verify(appPrefsWrapper).setActiveStatsTab(ANY_SELECTION_TYPE.name)
         }
@@ -286,7 +286,7 @@ class DashboardStatsViewModelTest : BaseUnitTest() {
 
         val state = viewModel.dateRangeState.runAndCaptureValues {
             viewModel.onChartDateSelected("11")
-            viewModel.onTabSelected(ANY_SELECTION_TYPE)
+            viewModel.onRangeChanged(ANY_SELECTION_TYPE)
         }.last()
 
         verify(dateRangeFormatter, never())

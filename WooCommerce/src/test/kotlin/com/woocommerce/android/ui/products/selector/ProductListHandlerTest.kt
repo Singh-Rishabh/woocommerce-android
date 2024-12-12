@@ -22,7 +22,7 @@ internal class ProductListHandlerTest : BaseUnitTest() {
         on(it.observeProducts(any())) doReturn flow { emit(generateSampleProducts()) }
 
         onBlocking {
-            (it.fetchProducts(any(), any(), any()))
+            (it.fetchProducts(any(), any(), any(), any()))
         } doReturn Result.success(true)
     }
 
@@ -34,7 +34,7 @@ internal class ProductListHandlerTest : BaseUnitTest() {
 
     @Test
     fun `when load invoked, then emits first 25 products from db`() = testBlocking {
-        whenever(repo.fetchProducts(any(), any(), any())).doReturn(Result.success(true))
+        whenever(repo.fetchProducts(any(), any(), any(), any())).doReturn(Result.success(true))
         val handler = ProductListHandler(repo)
         handler.loadFromCacheAndFetch(searchType = SearchType.DEFAULT)
 
@@ -51,7 +51,7 @@ internal class ProductListHandlerTest : BaseUnitTest() {
     fun `when load invoked, then side fetches first 25 products from backend`() = testBlocking {
         val handler = ProductListHandler(repo)
         handler.loadFromCacheAndFetch(searchType = SearchType.DEFAULT)
-        verify(repo).fetchProducts(0, 25, emptyMap())
+        verify(repo).fetchProducts(false, 0, 25, emptyMap())
     }
 
     @Test
@@ -61,7 +61,7 @@ internal class ProductListHandlerTest : BaseUnitTest() {
 
         handler.loadMore()
 
-        verify(repo).fetchProducts(25, 25, emptyMap())
+        verify(repo).fetchProducts(false, 25, 25, emptyMap())
 
         handler.productsFlow.test {
             val products = awaitItem()

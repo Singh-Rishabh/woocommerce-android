@@ -90,7 +90,7 @@ class WooPosHomeViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
                         )
-                        sendEventToChildren(ParentToChildrenEvent.CheckoutClicked(event.productIds))
+                        sendEventToChildren(ParentToChildrenEvent.CheckoutClicked(event.itemClickedDataList))
                     }
 
                     is ChildToParentEvent.BackFromCheckoutToCartClicked -> {

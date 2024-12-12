@@ -23,7 +23,9 @@ sealed class ParentToChildrenEvent {
     data class ItemClickedInProductSelector(
         val itemData: WooPosItemsViewModel.ItemClickedData
     ) : ParentToChildrenEvent()
-    data class CheckoutClicked(val productIds: List<Long>) : ParentToChildrenEvent()
+    data class CheckoutClicked(
+        val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
+    ) : ParentToChildrenEvent()
     data object OrderSuccessfullyPaid : ParentToChildrenEvent()
 }
 

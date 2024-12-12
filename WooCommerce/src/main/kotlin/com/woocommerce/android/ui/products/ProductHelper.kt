@@ -64,6 +64,7 @@ object ProductHelper {
             isStockManaged = false,
             stockQuantity = 0.0,
             sku = "",
+            globalUniqueId = "",
             slug = "",
             length = 0f,
             width = 0f,

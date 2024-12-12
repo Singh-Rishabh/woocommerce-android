@@ -38,6 +38,7 @@ class WooPosProductsDataSource @Inject constructor(
         emit(ProductsResult.Cached(productCache))
 
         val result = handler.loadFromCacheAndFetch(
+            forceRefresh = forceRefreshProducts,
             searchType = ProductListHandler.SearchType.DEFAULT,
             filters =
             if (isNonSimpleProductTypesEnabled()) {

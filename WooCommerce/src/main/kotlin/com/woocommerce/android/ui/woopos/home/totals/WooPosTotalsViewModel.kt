@@ -19,9 +19,12 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentFailed
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentProcessing
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentSuccess
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -48,9 +51,11 @@ class WooPosTotalsViewModel @Inject constructor(
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender,
     private val cardReaderFacade: WooPosCardReaderFacade,
     private val totalsRepository: WooPosTotalsRepository,
+    private val receiptRepository: WooPosTotalsPaymentReceiptRepository,
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
+    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingAvailable,
     private val cardReaderPaymentControllerFactory: CardReaderPaymentControllerFactory,
     private val uiStringParser: UiStringParser,
     private val savedState: SavedStateHandle,
@@ -143,7 +148,14 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
-                createOrderDraft(dataState.value.productIds)
+                createOrderDraft(dataState.value.itemClickedDataList)
+            }
+            WooPosTotalsUIEvent.OnSendReceiptClicked -> sendReceiptByEmail()
+            WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
+                uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+            }
+            is WooPosTotalsUIEvent.OnEmailChanged -> {
+                uiState.value = WooPosTotalsViewState.ReceiptSending(email = event.email)
             }
             WooPosTotalsUIEvent.GoBackToCheckoutAfterFailedPayment -> viewModelScope.launch {
                 childrenToParentEventSender.sendToParent(ChildToParentEvent.GoBackToCheckoutAfterFailedPayment)
@@ -197,13 +209,23 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
+    private fun sendReceiptByEmail() {
+        val viewState = uiState.value as WooPosTotalsViewState.ReceiptSending
+        val email = viewState.email
+        val orderId = dataState.value.orderId
+        check(orderId != EMPTY_ORDER_ID)
+        viewModelScope.launch {
+            receiptRepository.sendReceiptByEmail(orderId, email)
+        }
+    }
+
     private fun listenUpEvents() {
         viewModelScope.launch {
             parentToChildrenEventReceiver.events.collect { event ->
                 when (event) {
                     is ParentToChildrenEvent.CheckoutClicked -> {
-                        dataState.value = dataState.value.copy(productIds = event.productIds)
-                        createOrderDraft(dataState.value.productIds)
+                        dataState.value = dataState.value.copy(itemClickedDataList = event.itemClickedDataList)
+                        createOrderDraft(dataState.value.itemClickedDataList)
                     }
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
@@ -234,8 +256,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
-                        uiState.value =
-                            PaymentSuccess(orderTotalText = paymentState.amountWithCurrencyLabel)
+                        uiState.value = buildPaymentSuccessState()
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
 
@@ -253,6 +274,19 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun buildPaymentSuccessState(): PaymentSuccess {
+        val order = totalsRepository.getOrderById(dataState.value.orderId)
+        checkNotNull(order)
+        val orderTotalText = resourceProvider.getString(
+            R.string.woopos_success_screen_total,
+            priceFormat(order.total)
+        )
+        return PaymentSuccess(
+            orderTotalText = orderTotalText,
+            isReceiptAvailable = isReceiptSendingAvailable()
+        )
     }
 
     private suspend fun handleCollectingPaymentState() {
@@ -290,10 +324,6 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun returnToCart() {
-        childrenToParentEventSender.sendToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
-    }
-
     private fun buildPaymentFailedState(
         state: CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment
     ): PaymentFailed {
@@ -326,11 +356,11 @@ class WooPosTotalsViewModel @Inject constructor(
         cardReaderPaymentController?.stop()
     }
 
-    private fun createOrderDraft(productIds: List<Long>) {
+    private fun createOrderDraft(itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>) {
         viewModelScope.launch {
             uiState.value = WooPosTotalsViewState.Loading
 
-            totalsRepository.createOrderWithProducts(productIds = productIds)
+            totalsRepository.createOrderWithProducts(itemClickedDataList = itemClickedDataList)
                 .fold(
                     onSuccess = { order ->
                         dataState.value = dataState.value.copy(orderId = order.id)
@@ -387,6 +417,6 @@ class WooPosTotalsViewModel @Inject constructor(
     @Parcelize
     private data class TotalsDataState(
         val orderId: Long = EMPTY_ORDER_ID,
-        val productIds: List<Long> = emptyList()
+        val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData> = emptyList()
     ) : Parcelable
 }

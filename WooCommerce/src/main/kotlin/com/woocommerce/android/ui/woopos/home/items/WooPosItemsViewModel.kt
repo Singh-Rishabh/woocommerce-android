@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items
 
+import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
@@ -290,7 +292,8 @@ class WooPosItemsViewModel @Inject constructor(
         productType == ProductType.VARIABLE ||
             productType == ProductType.VARIATION
 
-    sealed class ItemClickedData(open val id: Long) {
+    @Parcelize
+    sealed class ItemClickedData(open val id: Long) : Parcelable {
         data class SimpleProduct(override val id: Long) : ItemClickedData(id)
         data class Variation(val productId: Long, override val id: Long) : ItemClickedData(id)
     }

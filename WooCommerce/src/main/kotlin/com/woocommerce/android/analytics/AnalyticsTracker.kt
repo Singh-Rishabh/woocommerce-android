@@ -19,7 +19,6 @@ import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import java.util.Locale
 import java.util.UUID
 
 class AnalyticsTracker private constructor(
@@ -91,7 +90,7 @@ class AnalyticsTracker private constructor(
             return
         }
 
-        val eventName = stat.name.lowercase(Locale.getDefault())
+        val eventName = stat.name.lowercase()
 
         val user = username ?: getAnonID() ?: generateNewAnonID()
 

@@ -12,10 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 
 @Composable
 fun WooSavedPackageListItem(
@@ -39,7 +40,7 @@ fun WooSavedPackageListItem(
             )
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = packageData.description,
+                    text = stringResource(id = packageData.descriptionResId),
                     style = MaterialTheme.typography.caption,
                     color = colorResource(id = R.color.color_on_surface_disabled)
                 )
@@ -48,7 +49,7 @@ fun WooSavedPackageListItem(
                     style = MaterialTheme.typography.body1
                 )
                 Text(
-                    text = packageData.dimensionsForDisplay,
+                    text = packageData.dimensions,
                     style = MaterialTheme.typography.body2
                 )
             }

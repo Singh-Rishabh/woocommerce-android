@@ -21,14 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageTab
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CARRIER
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CUSTOM
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.SAVED
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingCarrierPackageScreen
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingCustomPackageCreationScreen
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.forms.WooShippingSavedPackageScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCarrierPackageScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCustomPackageCreationScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingSavedPackageScreen
 
 @Composable
 fun WooShippingLabelPackageCreationScreen(
@@ -126,31 +126,22 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                 WooShippingSavedPackageScreen(
                     savedPackages = listOf(
                         PackageData(
-                            type = PackageType.ENVELOPE,
                             name = "Small Flat Rate Box",
-                            description = "USPS Priority Mail Flat Rate Boxes",
-                            length = "10",
-                            width = "10",
-                            height = "10",
-                            isSelected = true
+                            dimensions = "10 x 10 x 10 cm",
+                            isSelected = true,
+                            isLetter = true
                         ),
                         PackageData(
-                            type = PackageType.BOX,
                             name = "Small Flat Rate Box",
-                            description = "Custom package",
-                            length = "20",
-                            width = "20",
-                            height = "20",
-                            isSelected = false
+                            dimensions = "20 x 20 x 20 cm",
+                            isSelected = false,
+                            isLetter = false
                         ),
                         PackageData(
-                            type = PackageType.BOX,
                             name = "Small Flat Rate Box",
-                            description = "DHL Express",
-                            length = "30",
-                            width = "30",
-                            height = "30",
-                            isSelected = false
+                            dimensions = "30 x 30 x 30 cm",
+                            isSelected = false,
+                            isLetter = false
                         )
                     ),
                     isAddPackageEnabled = true,
