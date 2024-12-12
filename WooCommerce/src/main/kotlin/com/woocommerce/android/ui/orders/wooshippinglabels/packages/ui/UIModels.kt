@@ -83,7 +83,7 @@ data class CustomPackageCreationData(
         }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
-        name = "",
+        name = name.orEmpty(),
         dimensions = "$length x $width x $height",
         weight = weight.orEmpty(),
         isSelected = true,
