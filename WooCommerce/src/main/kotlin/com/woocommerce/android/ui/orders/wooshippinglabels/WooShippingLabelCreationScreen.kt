@@ -467,7 +467,6 @@ private fun PackageSelectionAvailableCard(
                         contentDescription = "Star",
                     )
                 }
-
             }
         }
     }

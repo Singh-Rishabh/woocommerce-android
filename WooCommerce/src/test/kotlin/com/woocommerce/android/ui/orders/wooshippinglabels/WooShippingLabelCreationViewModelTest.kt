@@ -15,6 +15,7 @@ import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
@@ -26,7 +27,6 @@ import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import org.assertj.core.api.Assertions.assertThat
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
