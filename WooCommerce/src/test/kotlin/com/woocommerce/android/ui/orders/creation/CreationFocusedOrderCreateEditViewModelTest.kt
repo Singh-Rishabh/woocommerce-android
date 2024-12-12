@@ -1294,7 +1294,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
 
             createSut(navArgs)
 
-            verify(fetchProductBySKU).invoke(
+            verify(fetchProductByIdentifier).invoke(
                 "123",
                 BarcodeFormat.FormatUPCA,
             )
@@ -1351,7 +1351,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
 
             createSut(navArgs)
 
-            verify(fetchProductBySKU, never()).invoke(
+            verify(fetchProductByIdentifier, never()).invoke(
                 eq("123"),
                 any()
             )
@@ -1377,7 +1377,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                 )
             )
             whenever(
-                fetchProductBySKU.invoke(
+                fetchProductByIdentifier.invoke(
                     "12345",
                     BarcodeFormat.FormatUPCA,
                 )
@@ -1422,7 +1422,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                 )
             )
             whenever(
-                fetchProductBySKU.invoke(
+                fetchProductByIdentifier.invoke(
                     "12345",
                     BarcodeFormat.FormatUPCA,
                 )
@@ -1462,7 +1462,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
                 )
             )
             whenever(
-                fetchProductBySKU.invoke(
+                fetchProductByIdentifier.invoke(
                     "12345",
                     BarcodeFormat.FormatUPCA,
                 )
@@ -1512,7 +1512,7 @@ class CreationFocusedOrderCreateEditViewModelTest : UnifiedOrderEditViewModelTes
             )
 
             whenever(
-                fetchProductBySKU.invoke(
+                fetchProductByIdentifier.invoke(
                     "12345",
                     BarcodeFormat.FormatUPCA,
                 )
