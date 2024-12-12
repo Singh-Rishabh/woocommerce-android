@@ -699,7 +699,7 @@ platform :android do
       json_key: UPLOAD_TO_PLAY_STORE_JSON_KEY
     )
 
-    create_gh_release(app: app, version: version, prerelease: true) if options[:create_release]
+    create_gh_release(app: app, version: version, beta_release: true) if options[:create_release]
   end
 
   # This lane triggers a stable release build on CI. If the lane is run locally, it will trigger a build on Buildkite CI.
@@ -1117,17 +1117,16 @@ platform :android do
   # Private lanes
   #####################################################################################
 
-  # Creates a new GitHub Release for the given version. The name (and tag) of the release will be exactly as
-  # the `version` parameter, with a `w` appended in the case of a Wear OS app.
+  # Creates a new GitHub Release for the given version.
   #
-  # @param [String] app The Android app to create the release for (`MOBILE_APP` or `WEAR_APP`)
-  # @param [String] version The version of the app, as in the `versionName` property from `version.properties`.
-  # @param [Boolean] prerelease If true, the GitHub Release will have the prerelease flag
+  # The name (and tag) of the release will be exactly as the `version` parameter, with a `w` appended in the case of a Wear OS app.
   #
-  # @example Running the lane
-  #          bundle exec fastlane create_gh_release app:WEAR_APP version:1.0.0 prerelease:true
+  # @param app [String] The Android app to create the release for (`MOBILE_APP` or `WEAR_APP`)
+  # @param version [String] The version of the app, as in the `versionName` property from `version.properties`.
+  # @param beta_release [Boolean] If true, the GitHub Release will have the prerelease flag and be submitted immediately.
+  #                               If false, the GitHub Release will be created as Draft, without the prerelease flag.
   #
-  private_lane :create_gh_release do |app:, version:, prerelease: false|
+  private_lane :create_gh_release do |app:, version: version_name_current, beta_release: false|
     validate_app_param!(app)
 
     universal_apk_path = File.join(PROJECT_ROOT_FOLDER, 'artifacts', universal_apk_name(app, version))
@@ -1150,7 +1149,8 @@ platform :android do
       # 'version' is used for the release name as well as the tag that's going to be created for the release
       version: app == WEAR_APP ? "#{version}w" : version,
       release_notes_file_path: METADATA_SOURCE_CHANGELOG_FILE_PATH[app],
-      prerelease: prerelease,
+      prerelease: beta_release, # Beta = Prerelease, Final = normal Release
+      is_draft: !beta_release, # Beta = publish immediately, Final = Draft (only publish manually after Google approval)
       release_assets: release_assets.join(',')
     )
   end

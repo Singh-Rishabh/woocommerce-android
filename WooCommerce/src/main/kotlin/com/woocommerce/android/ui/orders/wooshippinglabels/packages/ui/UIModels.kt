@@ -10,28 +10,24 @@ import kotlinx.parcelize.Parcelize
 data class PackageData(
     val name: String,
     val dimensions: String,
+    val weight: String,
     val isSelected: Boolean,
-    val isLetter: Boolean
+    val isLetter: Boolean,
+    val dimensionUnit: String = "cm",
+    val weightUnit: String = "kg"
 ) : Parcelable {
     val descriptionResId: Int
         get() = when (isLetter) {
             true -> R.string.woo_shipping_labels_package_creation_envelope_type
             false -> R.string.woo_shipping_labels_package_creation_box_type
         }
-}
 
-@Parcelize
-data class PredefinedPackage(
-    val boxWeight: Double,
-    val isFlatRate: Boolean,
-    val id: String,
-    val name: String,
-    val dimensions: String,
-    val maxWeight: Double,
-    val isLetter: Boolean,
-    val groupId: String,
-    val canShipInternational: Boolean
-) : Parcelable
+    val dimensionForDisplay
+        get() = "$dimensions $dimensionUnit"
+
+    val weightForDisplay
+        get() = "$weight $weightUnit"
+}
 
 @Parcelize
 data class CustomPackageCreationData(
@@ -40,6 +36,7 @@ data class CustomPackageCreationData(
     val width: String,
     val height: String,
     val saveAsTemplate: Boolean,
+    val weight: String? = null,
     val name: String? = null
 ) : Parcelable {
     val isValid: Boolean
@@ -52,12 +49,13 @@ data class CustomPackageCreationData(
         get() {
             if (saveAsTemplate.not()) return true
 
-            return name.isNotNullOrEmpty()
+            return name.isNotNullOrEmpty() && weight.isNotNullOrEmpty()
         }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
         name = "",
         dimensions = "$length x $width x $height $dimensionUnit",
+        weight = weight.orEmpty(),
         isSelected = true,
         isLetter = type == PackageType.ENVELOPE
     )
@@ -68,6 +66,7 @@ data class CustomPackageCreationData(
             length = "",
             width = "",
             height = "",
+            weight = "",
             saveAsTemplate = false
         )
     }

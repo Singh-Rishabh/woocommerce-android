@@ -12,15 +12,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.store.WCProductStore
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FetchProductBySKUTest : BaseUnitTest() {
+class FetchProductByIdentifierTest : BaseUnitTest() {
     private val repo: ProductListRepository = mock()
     private val checkDigitRemoverFactory: CheckDigitRemoverFactory = mock()
-    private val sut = FetchProductBySKU(repo, checkDigitRemoverFactory)
+    private val sut = FetchProductByIdentifier(repo, checkDigitRemoverFactory)
 
     @Test
     fun `given barcode scan result, when product found, should return success`() = testBlocking {
@@ -45,6 +47,10 @@ class FetchProductBySKUTest : BaseUnitTest() {
             )
         ).thenReturn(null)
 
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(null)
+
         val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
 
         assertTrue(result.isFailure)
@@ -59,9 +65,53 @@ class FetchProductBySKUTest : BaseUnitTest() {
             )
         ).thenReturn(emptyList())
 
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(emptyList())
+
         val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
 
         assertTrue(result.isFailure)
+    }
+
+    @Test
+    fun `given barcode scan result, when product found when searching by global unique id, should return success`() = testBlocking {
+        whenever(
+            repo.searchProductList(
+                searchQuery = "123",
+                skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
+            )
+        ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(ProductTestUtils.generateProductList())
+
+        val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
+
+        assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `given barcode scan result, when product found when searching by sku and global unique id, should return global unique id`() = testBlocking {
+        val skuProduct = ProductTestUtils.generateProduct(productId = 2)
+        whenever(
+            repo.searchProductList(
+                searchQuery = "123",
+                skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
+            )
+        ).thenReturn(listOf(skuProduct))
+
+        val globalUniqueIdReturnedProduct = ProductTestUtils.generateProduct(productId = 1)
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(listOf(globalUniqueIdReturnedProduct))
+
+        val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
+
+        assertTrue(result.isSuccess)
+        assertEquals(result.getOrNull(), globalUniqueIdReturnedProduct)
     }
 
     @Test
@@ -72,12 +122,17 @@ class FetchProductBySKUTest : BaseUnitTest() {
                 skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
             )
         ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(emptyList())
+
         val checkDigitRemover: CheckDigitRemover = mock()
         whenever(checkDigitRemoverFactory.getCheckDigitRemoverFor(any())).thenReturn(checkDigitRemover)
 
         sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatEAN8)
 
-        verify(checkDigitRemover).getSKUWithoutCheckDigit("123")
+        verify(checkDigitRemover, times(2)).getSKUWithoutCheckDigit("123")
     }
 
     @Test
@@ -88,12 +143,17 @@ class FetchProductBySKUTest : BaseUnitTest() {
                 skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
             )
         ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(emptyList())
+
         val checkDigitRemover: CheckDigitRemover = mock()
         whenever(checkDigitRemoverFactory.getCheckDigitRemoverFor(any())).thenReturn(checkDigitRemover)
 
         sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatEAN13)
 
-        verify(checkDigitRemover).getSKUWithoutCheckDigit("123")
+        verify(checkDigitRemover, times(2)).getSKUWithoutCheckDigit("123")
     }
 
     @Test
@@ -104,12 +164,17 @@ class FetchProductBySKUTest : BaseUnitTest() {
                 skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
             )
         ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(emptyList())
+
         val checkDigitRemover: CheckDigitRemover = mock()
         whenever(checkDigitRemoverFactory.getCheckDigitRemoverFor(any())).thenReturn(checkDigitRemover)
 
         sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatUPCA)
 
-        verify(checkDigitRemover).getSKUWithoutCheckDigit("123")
+        verify(checkDigitRemover, times(2)).getSKUWithoutCheckDigit("123")
     }
 
     @Test
@@ -120,12 +185,17 @@ class FetchProductBySKUTest : BaseUnitTest() {
                 skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
             )
         ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(emptyList())
+
         val checkDigitRemover: CheckDigitRemover = mock()
         whenever(checkDigitRemoverFactory.getCheckDigitRemoverFor(any())).thenReturn(checkDigitRemover)
 
         sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatUPCE)
 
-        verify(checkDigitRemover).getSKUWithoutCheckDigit("123")
+        verify(checkDigitRemover, times(2)).getSKUWithoutCheckDigit("123")
     }
 
     @Test
