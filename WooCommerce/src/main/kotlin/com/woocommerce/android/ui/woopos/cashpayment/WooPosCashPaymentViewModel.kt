@@ -94,7 +94,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
 
     private fun handleOrderCompletion() {
         viewModelScope.launch {
-            val stateBeforeCompleting = _state.value as? WooPosCashPaymentState.Collecting ?: return@launch
+            val stateBeforeCompleting = _state.value as WooPosCashPaymentState.Collecting
             _state.value = stateBeforeCompleting.copy(
                 button = stateBeforeCompleting.button.copy(
                     status = WooPosCashPaymentState.Collecting.Button.Status.LOADING

@@ -50,7 +50,7 @@ class WooPosCashPaymentRepository @Inject constructor(
             site = selectedSite.get(),
             newStatus = statusModel,
             newPaymentMethodId = CASH_ON_DELIVERY_PAYMENT_TYPE,
-            codGateway?.title ?: "Pay in Person",
+            newPaymentMethodTitle = codGateway?.title ?: "Pay in Person",
         )
             .filterIsInstance<WCOrderStore.UpdateOrderResult.RemoteUpdateResult>()
             .map { result ->

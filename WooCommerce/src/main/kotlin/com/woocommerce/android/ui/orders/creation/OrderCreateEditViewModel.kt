@@ -141,7 +141,7 @@ import com.woocommerce.android.ui.products.ParameterRepository
 import com.woocommerce.android.ui.products.ProductRestriction
 import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductType
-import com.woocommerce.android.ui.products.inventory.FetchProductBySKU
+import com.woocommerce.android.ui.products.inventory.FetchProductByIdentifier
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel.SelectedItem
 import com.woocommerce.android.ui.products.selector.ProductSelectorViewModel.SelectedItem.Product
 import com.woocommerce.android.ui.products.selector.variationIds
@@ -209,7 +209,7 @@ class OrderCreateEditViewModel @Inject constructor(
     private val currencySymbolFinder: CurrencySymbolFinder,
     private val totalsHelper: OrderCreateEditTotalsHelper,
     private val feedbackRepository: FeedbackRepository,
-    private val fetchProductBySKU: FetchProductBySKU,
+    private val fetchProductByIdentifier: FetchProductByIdentifier,
     dateUtils: DateUtils,
     autoSyncOrder: AutoSyncOrder,
     autoSyncPriceModifier: AutoSyncPriceModifier,
@@ -917,7 +917,7 @@ class OrderCreateEditViewModel @Inject constructor(
         }.orEmpty()
         viewModelScope.launch {
             viewState = viewState.copy(isUpdatingOrderDraft = true)
-            val result = fetchProductBySKU(barcodeOptions.sku, barcodeOptions.barcodeFormat)
+            val result = fetchProductByIdentifier(barcodeOptions.sku, barcodeOptions.barcodeFormat)
             if (result.isSuccess) {
                 val product = result.getOrNull()
                 if (product != null) {
