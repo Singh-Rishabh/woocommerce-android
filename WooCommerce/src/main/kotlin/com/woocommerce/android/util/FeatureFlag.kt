@@ -16,7 +16,8 @@ enum class FeatureFlag {
     OBJECTIVE_SECTION,
     POS_CASH_PAYMENTS,
     POS_RECEIPTS,
-    PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT;
+    PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT,
+    BULK_UPDATE_ORDERS_STATUS;
 
     fun isEnabled(context: Context? = null): Boolean {
         return when (this) {
@@ -30,7 +31,8 @@ enum class FeatureFlag {
             REVAMP_WOO_SHIPPING,
             POS_CASH_PAYMENTS,
             POS_RECEIPTS,
-            PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT -> PackageUtils.isDebugBuild()
+            PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT,
+            BULK_UPDATE_ORDERS_STATUS -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
             ENDLESS_CAMPAIGNS_SUPPORT,
