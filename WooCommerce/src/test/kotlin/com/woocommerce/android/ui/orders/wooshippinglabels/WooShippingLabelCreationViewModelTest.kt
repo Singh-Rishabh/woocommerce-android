@@ -274,6 +274,40 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun `onPackageSelected updates state to DataAvailable when current state is NotSelected`() = testBlocking {
+        var currentViewState: WooShippingViewState? = null
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+
+        createViewModel()
+        sut.viewState.asLiveData().observeForever {
+            currentViewState = it
+        }
+
+        val initialPackageData = PackageData(
+            name = "Initial Package",
+            dimensions = "5 x 5 x 5",
+            weight = "0.5",
+            isSelected = true,
+            isLetter = false
+        )
+
+        sut.onPackageSelected(initialPackageData)
+
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        val dataState = currentViewState as DataState
+
+        assertThat(dataState.packageSelection).isInstanceOf(DataAvailable::class.java)
+        val dataAvailable = dataState.packageSelection as DataAvailable
+        assertThat(dataAvailable.selectedPackage).isEqualTo(initialPackageData)
+    }
+
+    @Test
     fun `onPackageSelected updates state to DataAvailable when current state is DataAvailable`() = testBlocking {
         var currentViewState: WooShippingViewState? = null
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
