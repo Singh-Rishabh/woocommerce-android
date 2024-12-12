@@ -9,10 +9,23 @@ sealed class WooPosCashPaymentState : Parcelable {
         val enteredAmount: String,
         val changeDue: String,
         val total: String,
-        val canBeOrderBeCompleted: Boolean,
-    ) : WooPosCashPaymentState()
+        val button: Button
+    ) : WooPosCashPaymentState() {
+        @Parcelize
+        data class Button(
+            val text: String,
+            val status: Status,
+        ) : Parcelable {
+            @Parcelize
+            enum class Status : Parcelable {
+                ENABLED,
+                DISABLED,
+                LOADING
+            }
+        }
+    }
 
-    object Finishing : WooPosCashPaymentState()
+    object Complete : WooPosCashPaymentState()
 
     object Initiating : WooPosCashPaymentState()
 }

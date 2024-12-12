@@ -10,6 +10,7 @@ import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnable
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
+import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccessfullyPaid
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
@@ -514,7 +515,8 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given payment status is success, when payment flow started, then OrderSuccessfullyPaid event and update state to PaymentSuccess`() =
+    @Suppress("LongMethod")
+    fun `given payment status is success, when payment flow started, then OrderSuccessfullyPaid event and PaymentSuccess`() =
         runTest {
             // GIVEN
             whenever(networkStatus.isConnected()).thenReturn(true)
@@ -523,7 +525,9 @@ class WooPosTotalsViewModelTest {
                     id = 1L
                 )
             )
-            val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
+            val parentToChildrenEventFlow = MutableStateFlow<ParentToChildrenEvent>(
+                ParentToChildrenEvent.CheckoutClicked(itemClickedData)
+            )
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
                 on { events }.thenReturn(parentToChildrenEventFlow)
             }
@@ -553,7 +557,7 @@ class WooPosTotalsViewModelTest {
             }
 
             val paymentStatusFlow =
-                MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Unknown)
+                MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Success)
             whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
 
             val resourceProvider: ResourceProvider = mock {
@@ -572,8 +576,7 @@ class WooPosTotalsViewModelTest {
 
             // WHEN
             viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
-            paymentStatusFlow.value = WooPosCardReaderPaymentStatus.Success
-            advanceUntilIdle()
+            parentToChildrenEventFlow.value = OrderSuccessfullyPaid
 
             // THEN
             val state = viewModel.state.value

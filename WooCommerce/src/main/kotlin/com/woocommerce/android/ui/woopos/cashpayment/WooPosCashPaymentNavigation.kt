@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.woopos.cashpayment
 
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
@@ -8,38 +7,32 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.woocommerce.android.ui.woopos.home.HOME_ROUTE
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
-private const val ROUTE = "cash_payment/{orderId}"
+const val CASH_ROUTE_ORDER_ID_KEY = "orderId"
+private const val CASH_ROUTE = "$HOME_ROUTE/cash_payment/{$CASH_ROUTE_ORDER_ID_KEY}"
 
 fun NavController.navigateToCashPaymentScreen(orderId: Long) {
-    navigate("cash_payment/$orderId")
+    navigate(CASH_ROUTE.replace("{$CASH_ROUTE_ORDER_ID_KEY}", orderId.toString()))
 }
 
 fun NavGraphBuilder.cashPaymentScreen(
     onNavigationEvent: (WooPosNavigationEvent) -> Unit
 ) {
     composable(
-        route = ROUTE,
+        route = CASH_ROUTE,
         arguments = listOf(
-            navArgument("orderId") { type = NavType.LongType }
+            navArgument(CASH_ROUTE_ORDER_ID_KEY) { type = NavType.LongType }
         ),
         enterTransition = {
             slideInHorizontally(
                 initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = spring(
-                    dampingRatio = 0.8f,
-                    stiffness = 200f
-                )
             )
         },
         exitTransition = {
             slideOutHorizontally(
                 targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = spring(
-                    dampingRatio = 0.8f,
-                    stiffness = 200f
-                )
             )
         },
     ) { backStackEntry ->

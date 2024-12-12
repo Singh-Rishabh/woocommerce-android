@@ -41,6 +41,7 @@ fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) 
         onAmountChanged = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.AmountChanged(it)) },
         onCompleteOrderClicked = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked) },
         onBackClicked = { onNavigationEvent(WooPosNavigationEvent.BackFromCashPayment) },
+        onOrderComplete = { onNavigationEvent(WooPosNavigationEvent.OpenHomeFromCashPaymentAfterSuccessfulPayment) },
     )
 }
 
@@ -50,6 +51,7 @@ fun WooPosCashPaymentScreen(
     onAmountChanged: (String) -> Unit,
     onCompleteOrderClicked: () -> Unit,
     onBackClicked: () -> Unit,
+    onOrderComplete: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -66,7 +68,7 @@ fun WooPosCashPaymentScreen(
                 )
             }
 
-            WooPosCashPaymentState.Finishing -> TODO()
+            WooPosCashPaymentState.Complete -> onOrderComplete()
             WooPosCashPaymentState.Initiating -> {
                 // show nothing
             }
@@ -86,6 +88,7 @@ private fun Collecting(
         Column(
             modifier = Modifier
                 .width(540.dp)
+                .padding(32.dp)
         ) {
             Spacer(modifier = Modifier.weight(1f))
 
@@ -133,9 +136,9 @@ private fun Collecting(
             Spacer(modifier = Modifier.height(16.dp))
 
             WooPosButton(
-                text = "Mark completed",
+                text = state.button.text,
                 onClick = onCompleteOrderClicked,
-                enabled = state.canBeOrderBeCompleted,
+                enabled = state.button.status == WooPosCashPaymentState.Collecting.Button.Status.ENABLED,
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -196,11 +199,15 @@ fun WooPosTotalsPaymentCashScreenScreen() {
                 enteredAmount = "5$",
                 changeDue = "5$",
                 total = "10$",
-                canBeOrderBeCompleted = true,
+                button = WooPosCashPaymentState.Collecting.Button(
+                    text = "Complete order",
+                    status = WooPosCashPaymentState.Collecting.Button.Status.ENABLED
+                )
             ),
             onAmountChanged = {},
             onCompleteOrderClicked = {},
             onBackClicked = {},
+            onOrderComplete = {},
         )
     }
 }
