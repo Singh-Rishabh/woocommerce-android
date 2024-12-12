@@ -33,7 +33,8 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                 isSelected = false,
                 isLetter = packageDAO.isLetter,
                 dimensionUnit = packageDAO.dimensionUnit,
-                weightUnit = packageDAO.weightUnit
+                weightUnit = packageDAO.weightUnit,
+                groupName = packageDAO.groupName
             )
         }
 
@@ -61,7 +62,8 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                         isSelected = false,
                         isLetter = packageItem.isLetter,
                         dimensionUnit = packageItem.dimensionUnit,
-                        weightUnit = packageItem.weightUnit
+                        weightUnit = packageItem.weightUnit,
+                        groupName = packageItem.groupName
                     )
                 }
             )

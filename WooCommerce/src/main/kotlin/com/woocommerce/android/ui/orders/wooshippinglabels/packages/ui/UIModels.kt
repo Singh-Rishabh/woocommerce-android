@@ -15,7 +15,8 @@ data class PackageData(
     val isSelected: Boolean,
     val isLetter: Boolean,
     val dimensionUnit: String = "cm",
-    val weightUnit: String = "kg"
+    val weightUnit: String = "kg",
+    val groupName: String? = null
 ) : Parcelable {
     @IgnoredOnParcel
     val length: String
@@ -51,7 +52,8 @@ data class PackageData(
             dimensions = "",
             weight = "",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
+            groupName = null
         )
     }
 }
