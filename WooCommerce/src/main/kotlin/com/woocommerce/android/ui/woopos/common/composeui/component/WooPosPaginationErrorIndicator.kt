@@ -76,7 +76,7 @@ private fun WooPosPaginationErrorIndicatorContent(
             modifier = Modifier
                 .height(112.dp)
                 .fillMaxWidth()
-                .padding(end = 16.dp),
+                .padding(end = 16.dp.toAdaptivePadding()),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
