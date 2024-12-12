@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsV
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -128,7 +129,7 @@ class WooPosVariationsViewModelTest {
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
             flowOf(FetchResult.Remote(Result.success(variations)))
         )
-        whenever(variationsDataSource.canLoadMore()).thenReturn(false)
+        whenever(variationsDataSource.canLoadMore(any())).thenReturn(false)
         whenever(variationsDataSource.loadMore(any())).thenReturn(Result.success(emptyList()))
 
         val viewModel = createViewModel()
@@ -136,7 +137,7 @@ class WooPosVariationsViewModelTest {
         advanceUntilIdle()
 
         // WHEN
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L, 10))
         advanceUntilIdle()
         // THEN
         viewModel.viewState.test {
@@ -152,7 +153,7 @@ class WooPosVariationsViewModelTest {
             ProductTestUtils.generateProductVariation(1, 1, "10.0"),
         )
         whenever(variationsDataSource.loadMore(any())).thenReturn(Result.success(variations))
-        whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+        whenever(variationsDataSource.canLoadMore(any())).thenReturn(true)
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
             flow {
                 emit(
@@ -170,7 +171,7 @@ class WooPosVariationsViewModelTest {
 
         val viewModel = createViewModel()
         viewModel.init(1L)
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L, 10))
 
         // THEN
         viewModel.viewState.test {
@@ -184,7 +185,7 @@ class WooPosVariationsViewModelTest {
     fun `given load more fails, when end of list reached, then pagination state is error`() = runTest {
         // GIVEN
         whenever(variationsDataSource.loadMore(any())).thenReturn(Result.failure(Exception()))
-        whenever(variationsDataSource.canLoadMore()).thenReturn(true)
+        whenever(variationsDataSource.canLoadMore(any())).thenReturn(true)
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
             flow {
                 emit(
@@ -203,13 +204,60 @@ class WooPosVariationsViewModelTest {
         val viewModel = createViewModel()
         viewModel.init(1L)
         advanceUntilIdle()
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L))
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(123L, 10))
         advanceUntilIdle()
 
         // THEN
         viewModel.viewState.test {
             val state = awaitItem() as WooPosVariationsViewState.Content
             assertThat(state.paginationState).isEqualTo(PaginationState.Error)
+        }
+    }
+
+    @Test
+    fun `given fetching variations first page and load more call is also happening, when view model created, then view state updated correctly`() = runTest {
+        // GIVEN
+        val variations = listOf(
+            ProductTestUtils.generateProductVariation(1, 1, "10.0"),
+            ProductTestUtils.generateProductVariation(2, 1, "20.0")
+        )
+        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+            flowOf(FetchResult.Remote(Result.success(variations)))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        val activeJob = Job()
+        viewModel.loadMoreJob = activeJob
+        viewModel.init(1L)
+        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L, 10))
+
+        viewModel.viewState.test {
+            // THEN
+            val state = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(state.paginationState).isEqualTo(PaginationState.Loading)
+        }
+    }
+
+    @Test
+    fun `given fetching variations first page and load more call is not happening, when view model created, then view state updated correctly`() = runTest {
+        // GIVEN
+        val variations = listOf(
+            ProductTestUtils.generateProductVariation(1, 1, "10.0"),
+            ProductTestUtils.generateProductVariation(2, 1, "20.0")
+        )
+        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+            flowOf(FetchResult.Remote(Result.success(variations)))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.init(1L)
+
+        viewModel.viewState.test {
+            // THEN
+            val state = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(state.paginationState).isEqualTo(PaginationState.None)
         }
     }
 

@@ -2547,16 +2547,12 @@
     -->
     <string name="enable_card_reader">Enable Simulated Card Reader</string>
     <string name="update_simulated_reader">Update Simulated Card Reader</string>
-    <string name="simulated_reader_key">Simulated Reader Key</string>
-    <string name="update_simulated_reader_key">Update Simulated Reader Key</string>
     <string name="always_update_reader">Always</string>
     <string name="never_update_reader">Never</string>
     <string name="low_battery_error_update_reader" translatable="false">Low Battery Error</string>
     <string name="low_battery_succeed_connect_update_reader" translatable="false">Low Battery Succeed Connect</string>
     <string name="randomly_update_reader">Randomly</string>
     <string name="enable_interac_payment" translatable="false">Enable Interac Payment</string>
-    <string name="enable_interac_key" translatable="false">Enable Interac Key</string>
-
 
     <!--
         WCToggleSingleOptionView
@@ -2932,8 +2928,6 @@
     <string name="coupon_list_item_label_products_and_categories">%1$s and %2$s</string>
     <string name="coupon_list_item_label_included_and_excluded">%1$s excl. %2$s</string>
     <string name="coupon_list_empty_heading">No coupons found</string>
-    <string name="coupon_list_wip_title">View and edit coupons</string>
-    <string name="coupon_list_wip_message_enabled">We’ve been working on making it possible to view and edit coupons from your device!</string>
     <string name="coupon_list_view_coupon">View coupon summary</string>
     <string name="coupon_list_loading_failed">Fetching coupons failed</string>
     <string name="coupon_list_search_failed">Searching coupons failed</string>
@@ -4285,6 +4279,8 @@
     <string name="woopos_payment_tax_label">Taxes</string>
     <string name="woopos_payment_total_label">Total</string>
     <string name="woopos_payment_collect_payment_label">Collect card payment</string>
+    <string name="woopos_receipt_sending_not_supported">Please update WooCommerce to version %s or later</string>
+    <string name="woopos_payment_take_cash_payment_label">Take cash payment</string>
     <string name="woopos_products_empty_list">No products</string>
     <string name="woopos_reader_connect_now_button">Connect now</string>
     <string name="woopos_totals_main_error_label">Couldn\'t load totals</string>
@@ -4318,6 +4314,9 @@
     <string name="woopos_items_pagination_error">"Failed to load more items. Please try again."</string>
     <string name="woopos_items_pagination_error_content_description">"Failed to load more items. Double tap to try again."</string>
     <string name="woopos_variations_loading_error_title">Error loading variations</string>
+
+    <string name="woopos_cash_payment_title">Cash payment</string>
+    <string name="woopos_complete_cash_order_button">Complete order</string>
 
 
     <string name="customers_details_customer_section">Customer</string>
@@ -4383,6 +4382,8 @@
     <string name="woo_shipping_labels_package_creation_length">Length</string>
     <string name="woo_shipping_labels_package_creation_width">Width</string>
     <string name="woo_shipping_labels_package_creation_height">Height</string>
+    <string name="woo_shipping_labels_package_creation_weight">Weight</string>
+    <string name="woo_shipping_labels_package_creation_package_name">Package Name</string>
     <string name="woo_shipping_labels_package_creation_save_package_option">Save this as a new package template</string>
     <string name="woo_shipping_labels_package_creation_add_package">Add Package</string>
     <string name="woo_shipping_labels_package_creation_box_type">Box</string>

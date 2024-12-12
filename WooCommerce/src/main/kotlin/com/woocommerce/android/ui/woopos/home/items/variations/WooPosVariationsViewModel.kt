@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items.variations
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.model.ProductVariation
@@ -37,22 +38,21 @@ class WooPosVariationsViewModel @Inject constructor(
             initialValue = _viewState.value,
         )
 
-    private var flowJob: Job? = null
-    private var loadMoreJob: Job? = null
+    private var fetchJob: Job? = null
 
-    fun init(productId: Long, withPullToRefresh: Boolean = false, withCart: Boolean = true) {
-        resetState()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var loadMoreJob: Job? = null
+
+    fun init(productId: Long) {
+        viewModelScope.launch {
+            variationsDataSource.resetState()
+        }
         loadVariations(
             productId = productId,
-            withPullToRefresh = withPullToRefresh,
-            withCart = withCart,
+            withPullToRefresh = false,
+            withCart = true,
             forceRefresh = false
         )
-    }
-
-    private fun resetState() {
-        flowJob?.cancel()
-        variationsDataSource.resetLoadMoreState()
     }
 
     private fun loadVariations(
@@ -61,7 +61,8 @@ class WooPosVariationsViewModel @Inject constructor(
         withPullToRefresh: Boolean,
         withCart: Boolean,
     ) {
-        viewModelScope.launch {
+        fetchJob?.cancel()
+        fetchJob = viewModelScope.launch {
             _viewState.value = if (withPullToRefresh) {
                 buildProductsReloadingState()
             } else {
@@ -90,6 +91,11 @@ class WooPosVariationsViewModel @Inject constructor(
                                                 price = priceFormat(it.price),
                                                 imageUrl = it.image?.source
                                             )
+                                        },
+                                        paginationState = if (loadMoreJob?.isActive == true) {
+                                            PaginationState.Loading
+                                        } else {
+                                            PaginationState.None
                                         }
                                     )
                                 } else {
@@ -131,13 +137,13 @@ class WooPosVariationsViewModel @Inject constructor(
             is WooPosVariationsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
         }
 
-    private fun loadMore(productId: Long) {
+    private fun loadMore(productId: Long, numOfVariations: Int) {
         val currentState = _viewState.value
         if (currentState !is WooPosVariationsViewState.Content) {
             return
         }
 
-        if (!variationsDataSource.canLoadMore()) {
+        if (!variationsDataSource.canLoadMore(numOfVariations)) {
             return
         }
 
@@ -167,7 +173,7 @@ class WooPosVariationsViewModel @Inject constructor(
     fun onUIEvent(event: WooPosVariationsUIEvents) {
         when (event) {
             is WooPosVariationsUIEvents.EndOfItemsListReached -> {
-                onEndOfVariationsListReached(event.productId)
+                onEndOfVariationsListReached(event.productId, event.numOfVariations)
             }
 
             is WooPosVariationsUIEvents.PullToRefreshTriggered -> {
@@ -196,7 +202,7 @@ class WooPosVariationsViewModel @Inject constructor(
         viewModelScope.launch { fromChildToParentEventSender.sendToParent(event) }
     }
 
-    private fun onEndOfVariationsListReached(productId: Long) {
-        loadMore(productId)
+    private fun onEndOfVariationsListReached(productId: Long, numOfVariations: Int) {
+        loadMore(productId, numOfVariations)
     }
 }

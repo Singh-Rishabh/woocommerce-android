@@ -474,21 +474,26 @@ class ProductDetailCardBuilder(
 
     @Suppress("LongMethod")
     private fun ProductAggregate.shipping(): ProductProperty? {
-        return if (!this.product.isVirtual && hasShipping) {
+        val currentProduct = this.product
+        return if (!currentProduct.isVirtual && hasShipping) {
             val weightWithUnits = product.getWeightWithUnits(parameters.weightUnit)
             val sizeWithUnits = product.getSizeWithUnits(parameters.dimensionUnit)
-            val shippingGroup = mapOf(
-                Pair(resources.getString(string.product_weight), weightWithUnits),
-                Pair(resources.getString(string.product_dimensions), sizeWithUnits),
-                Pair(
+            val shippingGroup = buildMap {
+                put(resources.getString(string.product_weight), weightWithUnits)
+                put(resources.getString(string.product_dimensions), sizeWithUnits)
+                put(
                     resources.getString(string.product_shipping_class),
-                    viewModel.getShippingClassByRemoteShippingClassId(this.product.shippingClassId)
-                ),
-                Pair(
-                    resources.getString(string.subscription_one_time_shipping),
-                    buildOneTimeShippingDescription(subscription)
+                    viewModel.getShippingClassByRemoteShippingClassId(currentProduct.shippingClassId)
                 )
-            )
+
+                // Only add "One time shipping" info if product is Subscription types
+                if (currentProduct.productType == SUBSCRIPTION || currentProduct.productType == VARIABLE_SUBSCRIPTION) {
+                    put(
+                        resources.getString(string.subscription_one_time_shipping),
+                        buildOneTimeShippingDescription(subscription)
+                    )
+                }
+            }
 
             PropertyGroup(
                 string.product_shipping,

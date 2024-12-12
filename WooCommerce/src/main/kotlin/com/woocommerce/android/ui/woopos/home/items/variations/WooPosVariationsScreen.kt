@@ -53,8 +53,9 @@ fun WooPosVariationsScreen(
     variableProductData: VariableProductData,
     onBackClicked: () -> Unit
 ) {
-    val viewModel: WooPosVariationsViewModel = hiltViewModel()
-
+    val viewModel: WooPosVariationsViewModel = hiltViewModel(
+        key = variableProductData.id.toString()
+    )
     LaunchedEffect(variableProductData.id) {
         viewModel.init(variableProductData.id)
     }
@@ -66,7 +67,12 @@ fun WooPosVariationsScreen(
             viewModel.onUIEvent(WooPosVariationsUIEvents.OnItemClicked(productId, variationId))
         },
         onEndOfItemListReached = {
-            viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(variableProductData.id))
+            viewModel.onUIEvent(
+                WooPosVariationsUIEvents.EndOfItemsListReached(
+                    variableProductData.id,
+                    variableProductData.numOfVariations
+                )
+            )
         },
         onPullToRefresh = {
             viewModel.onUIEvent(WooPosVariationsUIEvents.PullToRefreshTriggered(variableProductData.id))

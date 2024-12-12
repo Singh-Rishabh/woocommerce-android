@@ -16,6 +16,7 @@ import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarUIEvent.OnOut
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarUIEvent.OnToolbarMenuClicked
 import com.woocommerce.android.ui.woopos.support.WooPosGetSupportFacade
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
+import com.woocommerce.android.viewmodel.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,6 +29,7 @@ class WooPosToolbarViewModel @Inject constructor(
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender,
     private val getSupportFacade: WooPosGetSupportFacade,
     private val networkStatus: WooPosNetworkStatus,
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
     private val _state = MutableStateFlow(
         WooPosToolbarState(
@@ -97,7 +99,11 @@ class WooPosToolbarViewModel @Inject constructor(
             WooPosToolbarState.WooPosCardReaderStatus.NotConnected -> {
                 if (!networkStatus.isConnected()) {
                     viewModelScope.launch {
-                        childrenToParentEventSender.sendToParent(ChildToParentEvent.NoInternet)
+                        childrenToParentEventSender.sendToParent(
+                            ChildToParentEvent.ToastMessageDisplayed(
+                                message = resourceProvider.getString(R.string.woopos_no_internet_message)
+                            )
+                        )
                     }
                 } else {
                     cardReaderFacade.connectToReader()

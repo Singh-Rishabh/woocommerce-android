@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,20 +18,21 @@ class WooPosVariationsDataSource @Inject constructor(
     private val handler: VariationListHandler
 ) {
     private val variationCache = VariationsLRUCache<Long, List<ProductVariation>>(maxSize = 50)
-    private val cacheMutex = kotlinx.coroutines.sync.Mutex()
 
     private suspend fun getCachedVariations(productId: Long): List<ProductVariation> {
-        return cacheMutex.withLock { variationCache.get(productId) ?: emptyList() }
+        return variationCache.get(productId) ?: emptyList()
     }
 
     private suspend fun updateCache(productId: Long, variations: List<ProductVariation>) {
-        cacheMutex.withLock {
-            variationCache.put(productId, variations)
-        }
+        variationCache.put(productId, variations)
     }
 
-    fun canLoadMore(): Boolean {
-        return handler.canLoadMore()
+    suspend fun resetState() {
+        handler.resetState()
+    }
+
+    fun canLoadMore(numOfVariations: Int): Boolean {
+        return handler.canLoadMore(numOfVariations)
     }
 
     fun fetchFirstPage(
@@ -75,10 +75,6 @@ class WooPosVariationsDataSource @Inject constructor(
                 result.exceptionOrNull() ?: Exception("Unknown error while loading more variations")
             )
         }
-    }
-
-    fun resetLoadMoreState() {
-        handler.resetLoadMoreState()
     }
 }
 

@@ -72,7 +72,7 @@ fun WooPosItemList(
             when (product) {
                 is SimpleProduct -> {
                     ProductItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         item = product,
                         onItemClicked = onItemClicked
                     )
@@ -80,7 +80,7 @@ fun WooPosItemList(
 
                 is VariableProduct -> {
                     VariableProductItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         item = product,
                         onItemClicked = onItemClicked
                     )
@@ -88,7 +88,7 @@ fun WooPosItemList(
 
                 is Variation -> {
                     VariationItem(
-                        modifier = Modifier.animateItemPlacement(),
+                        modifier = Modifier.animateItem(),
                         item = product,
                         onItemClicked = onItemClicked
                     )
