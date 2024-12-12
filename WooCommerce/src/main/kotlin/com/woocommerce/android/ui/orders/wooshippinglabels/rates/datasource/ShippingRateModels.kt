@@ -26,7 +26,7 @@ data class WooShippingRateModel(
 
 data class WooShippingRateOptionsModel(
     val rateOptions: Map<Option, WooShippingRateModel>
-){
+) {
     val defaultRate: WooShippingRateModel
         get() = rateOptions[Option.DEFAULT] ?: rateOptions.values.first()
 }

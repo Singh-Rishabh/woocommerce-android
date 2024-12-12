@@ -21,7 +21,7 @@ class WooShippingRatesRestClient @Inject constructor(
         origin: OriginAddressDTO,
         destination: DestinationAddressDTO,
         packages: List<PackageDTO>
-    ): WooResult<Map<String, Map<String,WooShippingRatesDTO>>> {
+    ): WooResult<Map<String, Map<String, WooShippingRatesDTO>>> {
         val body = mapOf(
             "order_id" to orderId,
             "origin" to origin,
@@ -36,7 +36,7 @@ class WooShippingRatesRestClient @Inject constructor(
             clazz = JsonObject::class.java,
         ).toWooPayload().asWooResult { json ->
             val type = object : TypeToken<Map<String, Map<String, WooShippingRatesDTO>>>() {}.type
-            val response = gson.fromJson<Map<String, Map<String,WooShippingRatesDTO>>>(json, type)
+            val response = gson.fromJson<Map<String, Map<String, WooShippingRatesDTO>>>(json, type)
             response
         }
     }
