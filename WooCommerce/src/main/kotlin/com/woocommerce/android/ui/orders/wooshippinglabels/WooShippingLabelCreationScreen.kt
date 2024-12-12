@@ -217,6 +217,7 @@ private fun LabelCreationScreenWithBottomSheet(
                         .padding(start = 4.dp, end = 8.dp)
                 )
                 PackageCard(
+                    modifier = Modifier.padding(16.dp),
                     packageSelectionState = packageSelectionState,
                     onSelectPackageClick = onSelectPackageClick
                 )
@@ -319,14 +320,17 @@ internal fun HazmatCard(
 
 @Composable
 private fun PackageCard(
+    modifier: Modifier = Modifier,
     packageSelectionState: PackageSelectionState,
     onSelectPackageClick: () -> Unit
 ) {
     when (packageSelectionState) {
         is NotSelected -> SelectPackageCard(
+            modifier = modifier,
             onSelectPackageClick = onSelectPackageClick
         )
         is DataAvailable -> PackageSelectionAvailableCard(
+            modifier = modifier,
             packageData = packageSelectionState.selectedPackage,
             onSelectPackageClick = onSelectPackageClick
         )
@@ -334,9 +338,12 @@ private fun PackageCard(
 }
 
 @Composable
-private fun SelectPackageCard(onSelectPackageClick: () -> Unit) {
+private fun SelectPackageCard(
+    modifier: Modifier = Modifier,
+    onSelectPackageClick: () -> Unit
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = MaterialTheme.colors.surface,
                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
@@ -382,10 +389,11 @@ private fun SelectPackageCard(onSelectPackageClick: () -> Unit) {
 
 @Composable
 private fun PackageSelectionAvailableCard(
+    modifier: Modifier = Modifier,
     packageData: PackageData,
     onSelectPackageClick: () -> Unit
 ) {
-    Column(modifier = Modifier.background(color = MaterialTheme.colors.surface)) {
+    Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -393,7 +401,8 @@ private fun PackageSelectionAvailableCard(
         ) {
             Text(
                 text = stringResource(id = R.string.shipping_label_package_selected_title),
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.SemiBold
             )
             IconButton(
                 onClick = onSelectPackageClick
@@ -413,7 +422,7 @@ private fun PackageSelectionAvailableCard(
                     color = colorResource(id = R.color.divider_color),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .padding(dimensionResource(id = R.dimen.major_200)),
+                .padding(dimensionResource(id = R.dimen.major_125)),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
@@ -497,6 +506,7 @@ private fun HazmatCardPreview() {
 private fun PackageNotSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
+            modifier = Modifier.padding(16.dp),
             packageSelectionState = NotSelected,
             onSelectPackageClick = {}
         )
@@ -508,6 +518,7 @@ private fun PackageNotSelectedPreview() {
 private fun PackageSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
+            modifier = Modifier.padding(16.dp),
             packageSelectionState = DataAvailable(
                 selectedPackage = PackageData(
                     name = "Package 1",
