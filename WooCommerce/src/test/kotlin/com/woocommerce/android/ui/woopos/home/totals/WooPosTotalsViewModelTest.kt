@@ -14,6 +14,7 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccess
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
@@ -51,6 +52,8 @@ class WooPosTotalsViewModelTest {
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
     private val networkStatus: WooPosNetworkStatus = mock()
+
+    private val wooPosItemsNavigator: WooPosItemsNavigator = mock()
 
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
 
@@ -590,6 +593,72 @@ class WooPosTotalsViewModelTest {
         }
 
     @Test
+    fun `given payment status is success, when payment flow started, then wooPosItemsNavigator event is sent to update items screen to items list screen`() = runTest {
+        // GIVEN
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                id = 1L
+            )
+        )
+        val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
+        val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+            on { events }.thenReturn(parentToChildrenEventFlow)
+        }
+
+        val order = Order.getEmptyOrder(
+            dateCreated = Date(),
+            dateModified = Date()
+        ).copy(
+            id = 123L,
+            totalTax = BigDecimal("2.00"),
+            items = listOf(
+                Order.Item.EMPTY.copy(subtotal = BigDecimal("1.00")),
+            ),
+            total = BigDecimal("3.00"),
+            productsTotal = BigDecimal("5.00"),
+        )
+
+        val totalsRepository: WooPosTotalsRepository = mock {
+            onBlocking { createOrderWithProducts(any()) }.thenReturn(Result.success(order))
+        }
+
+        val savedState = createMockSavedStateHandle()
+        val priceFormat: WooPosFormatPrice = mock {
+            onBlocking { invoke(BigDecimal("1.00")) }.thenReturn("$1.00")
+            onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("$2.00")
+            onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("$3.00")
+            onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
+        }
+        val resourceProvider: ResourceProvider = mock {
+            on { getString(R.string.woopos_success_screen_total, "$3.00") }.thenReturn(
+                "A payment of $3.00 was successfully made"
+            )
+        }
+
+        val paymentStatusFlow = MutableStateFlow<WooPosCardReaderPaymentStatus>(WooPosCardReaderPaymentStatus.Unknown)
+        whenever(cardReaderFacade.paymentStatus).thenReturn(paymentStatusFlow)
+
+        val viewModel = createViewModel(
+            resourceProvider = resourceProvider,
+            savedState = savedState,
+            parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+            totalsRepository = totalsRepository,
+            priceFormat = priceFormat,
+        )
+
+        // WHEN
+        viewModel.onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked)
+        paymentStatusFlow.value = WooPosCardReaderPaymentStatus.Success
+        advanceUntilIdle()
+
+        // THEN
+        verify(wooPosItemsNavigator).sendNavigationEvent(
+            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+        )
+    }
+
+    @Test
     fun `given there is no internet, when trying to complete payment, then trigger proper event`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
@@ -761,6 +830,7 @@ class WooPosTotalsViewModelTest {
         priceFormat = priceFormat,
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
+        wooPosItemsNavigator = wooPosItemsNavigator,
         isReceiptSendingSupported = isReceiptSendingSupported,
         isReceiptsEnabled = isReceiptsEnabled,
         isCashPaymentsEnabled = isCashPaymentsEnabled,

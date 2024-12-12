@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.ReceiptSending
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
@@ -49,6 +50,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
+    private val wooPosItemsNavigator: WooPosItemsNavigator,
     private val isReceiptSendingSupported: WooPosTotalsPaymentReceiptIsSendingSupported,
     private val isReceiptsEnabled: WooPosIsReceiptsEnabled,
     private val isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled,
@@ -174,6 +176,9 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderFacade.paymentStatus.collect { status ->
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
+                        wooPosItemsNavigator.sendNavigationEvent(
+                            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+                        )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
                     is WooPosCardReaderPaymentStatus.Failure,
