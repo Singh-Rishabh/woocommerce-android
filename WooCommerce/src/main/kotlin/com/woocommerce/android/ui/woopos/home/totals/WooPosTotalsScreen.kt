@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -17,9 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -37,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
@@ -45,6 +43,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonLarge
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
@@ -117,7 +116,6 @@ private fun StateChangeAnimated(
     )
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun TotalsLoaded(
     state: WooPosTotalsViewState.Totals,
@@ -130,52 +128,59 @@ private fun TotalsLoaded(
         isButtonVisible = true
     }
 
-    Column(
+    ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp.toAdaptivePadding()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+            .padding(16.dp.toAdaptivePadding())
     ) {
-        Column(
+        val (content, buttons) = createRefs()
+
+        val totalsGridBottomMarin = 68.dp.toAdaptivePadding()
+        TotalsGrid(
+            state = state,
             modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .constrainAs(content) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(parent.bottom, margin = totalsGridBottomMarin)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                }
+        )
+
+        AnimatedVisibility(
+            visible = isButtonVisible,
+            enter = slideInVertically { it },
+            modifier = Modifier.constrainAs(buttons) {
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+            }
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                if (state.isCashPaymentAvailable) {
+                    WooPosButton(
+                        text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                        onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
+                    )
+                }
 
-            TotalsGrid(state)
-
-            if (state.isCashPaymentAvailable) {
-                WooPosButton(
-                    text = stringResource(R.string.woopos_payment_take_cash_payment_label),
-                    onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
+                WooPosButtonLarge(
+                    text = stringResource(R.string.woopos_payment_collect_payment_label),
+                    onClick = { onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked) }
                 )
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-        }
-
-        AnimatedVisibility(visible = isButtonVisible) {
-            WooPosButtonLarge(
-                text = stringResource(R.string.woopos_payment_collect_payment_label),
-                onClick = { onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked) },
-                modifier = Modifier
-                    .animateEnterExit(
-                        enter = slideInVertically { it },
-                    )
-            )
         }
     }
 }
 
 @Composable
-private fun TotalsGrid(state: WooPosTotalsViewState.Totals) {
+private fun TotalsGrid(
+    state: WooPosTotalsViewState.Totals,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .padding(24.dp.toAdaptivePadding())
             .width(382.dp)
     ) {
