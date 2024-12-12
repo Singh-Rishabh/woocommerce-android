@@ -27,6 +27,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -424,27 +426,48 @@ private fun PackageSelectionAvailableCard(
                 )
                 .padding(dimensionResource(id = R.dimen.major_125)),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = packageData.groupName
-                        ?.takeIf { it.isNotEmpty() }
-                        ?: stringResource(id = packageData.descriptionResId),
-                    style = MaterialTheme.typography.caption,
-                    color = colorResource(id = R.color.color_on_surface_disabled)
-                )
-                Text(
-                    text = packageData.name
-                        .takeIf { it.isNotEmpty() }
-                        ?: stringResource(id = R.string.shipping_label_package_default_name),
-                    style = MaterialTheme.typography.body1
-                )
-                Text(
-                    text = packageData.weight
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
-                        ?: packageData.dimensionForDisplay,
-                    style = MaterialTheme.typography.body2
-                )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = packageData.groupName
+                            ?.takeIf { it.isNotEmpty() }
+                            ?: stringResource(id = packageData.descriptionResId),
+                        style = MaterialTheme.typography.caption,
+                        color = colorResource(id = R.color.color_on_surface_disabled)
+                    )
+                    Text(
+                        text = packageData.name
+                            .takeIf { it.isNotEmpty() }
+                            ?: stringResource(id = R.string.shipping_label_package_default_name),
+                        style = MaterialTheme.typography.body1
+                    )
+                    Text(
+                        text = packageData.weight
+                            .takeIf { it.isNotEmpty() }
+                            ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                            ?: packageData.dimensionForDisplay,
+                        style = MaterialTheme.typography.body2
+                    )
+                }
+
+                if (packageData.isPredefined) {
+                    Icon(
+                        tint = colorResource(id = R.color.woo_yellow_20),
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Star",
+                    )
+                } else {
+                    Icon(
+                        tint = colorResource(id = R.color.color_on_surface_disabled),
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = "Star",
+                    )
+                }
+
             }
         }
     }
