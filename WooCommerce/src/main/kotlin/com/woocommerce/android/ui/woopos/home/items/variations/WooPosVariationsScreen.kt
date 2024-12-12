@@ -189,9 +189,10 @@ fun VariationsError(modifier: Modifier, onRetryClicked: () -> Unit) {
 @Composable
 fun VariationsPaginationError(onRetryClicked: () -> Unit) {
     WooPosPaginationErrorIndicator(
-        message = stringResource(id = R.string.woopos_items_pagination_error),
+        message = stringResource(id = R.string.woopos_items_pagination_error_title),
+        description = stringResource(id = R.string.woopos_items_pagination_error_description),
         primaryButton = Button(
-            text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
+            text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
             click = onRetryClicked
         ),
     )
