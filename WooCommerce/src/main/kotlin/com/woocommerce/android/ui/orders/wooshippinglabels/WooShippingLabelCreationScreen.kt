@@ -48,6 +48,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 
 @Composable
@@ -67,6 +68,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 shippingLines = viewState.shippingLines,
                 shippingAddresses = viewState.shippingAddresses,
                 shippingRatesState = viewState.shippingRates,
+                packageSelectionState = viewState.packageSelection,
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
                 onShippingToAddressChange = viewModel::onShippingToAddressChange,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
@@ -87,6 +89,7 @@ fun WooShippingLabelCreationScreen(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
+    packageSelectionState: PackageSelectionState,
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onShippingToAddressChange: (Address) -> Unit,
@@ -293,6 +296,7 @@ private fun WooShippingLabelCreationScreenPreview() {
                 originAddresses = listOf(getShipFrom())
             ),
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
+            packageSelectionState = PackageSelectionState.NotSelected,
             onShippingFromAddressChange = {},
             onShippingToAddressChange = {},
             onRefreshShippingRates = {},
