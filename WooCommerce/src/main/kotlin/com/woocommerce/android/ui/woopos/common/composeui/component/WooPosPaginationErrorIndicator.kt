@@ -75,10 +75,9 @@ private fun WooPosPaginationErrorIndicatorContent(
         Row(
             modifier = Modifier
                 .height(112.dp)
-                .fillMaxWidth()
-                .padding(end = 16.dp.toAdaptivePadding()),
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -87,7 +86,7 @@ private fun WooPosPaginationErrorIndicatorContent(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(112.dp)
                 ) {
                     Icon(
                         modifier = Modifier
@@ -98,7 +97,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                         tint = Color.Unspecified,
                     )
                 }
-                Spacer(modifier = Modifier.width(30.dp))
+                Spacer(modifier = Modifier.width(18.dp))
                 Column {
                     Text(
                         text = message,
@@ -118,6 +117,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                 text = primaryButton.text,
                 onClick = primaryButton.click,
                 modifier = Modifier
+                    .padding(end = 16.dp.toAdaptivePadding())
                     .weight(0.25f),
             )
         }
