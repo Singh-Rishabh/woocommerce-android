@@ -121,6 +121,40 @@ fun WooPosOutlinedButton(
 }
 
 @Composable
+fun WooPosOutlinedButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        onClick = onClick,
+        border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.background,
+            contentColor = MaterialTheme.colors.onBackground,
+        ),
+        elevation = ButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            focusedElevation = 0.dp
+        )
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+@Composable
 @WooPosPreview
 fun WooPosButtonsPreview() {
     WooPosTheme {
