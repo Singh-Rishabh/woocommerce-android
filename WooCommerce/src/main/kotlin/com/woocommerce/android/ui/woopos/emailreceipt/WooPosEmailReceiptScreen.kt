@@ -99,7 +99,8 @@ private fun EmailState(
             contentAlignment = Alignment.Center,
             textStyle = MaterialTheme.typography.h3,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
+                autoCorrectEnabled = false,
+                keyboardType = KeyboardType.Email
             ),
             modifier = Modifier.constrainAs(email) {
                 top.linkTo(parent.top, margin = topMargin)
