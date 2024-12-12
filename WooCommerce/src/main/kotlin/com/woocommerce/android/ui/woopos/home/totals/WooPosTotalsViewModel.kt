@@ -105,7 +105,7 @@ class WooPosTotalsViewModel @Inject constructor(
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 viewModelScope.launch {
                     if (isReceiptSendingSupportedValue.await()) {
-                        uiState.value = WooPosTotalsViewState.ReceiptSending(email = "")
+                        uiState.value = ReceiptSending(email = "")
                     } else {
                         childrenToParentEventSender.sendToParent(
                             ChildToParentEvent.ToastMessageDisplayed(
@@ -163,8 +163,9 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = InitialState
                     }
 
-                    is ParentToChildrenEvent.ItemClickedInProductSelector,
-                    ParentToChildrenEvent.OrderSuccessfullyPaid -> Unit
+                    ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState()
+
+                    is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                 }
             }
         }
@@ -175,18 +176,8 @@ class WooPosTotalsViewModel @Inject constructor(
             cardReaderFacade.paymentStatus.collect { status ->
                 when (status) {
                     is WooPosCardReaderPaymentStatus.Success -> {
-                        val state = uiState.value
                         wooPosItemsNavigator.sendNavigationEvent(
                             WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
-                        )
-                        check(state is WooPosTotalsViewState.Totals)
-                        val orderTotalText = resourceProvider.getString(
-                            R.string.woopos_success_screen_total,
-                            state.orderTotalText
-                        )
-                        uiState.value = WooPosTotalsViewState.PaymentSuccess(
-                            orderTotalText = orderTotalText,
-                            isReceiptAvailable = isReceiptsEnabled()
                         )
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.OrderSuccessfullyPaid)
                     }
@@ -225,6 +216,21 @@ class WooPosTotalsViewModel @Inject constructor(
                         )
                     }
                 )
+        }
+    }
+
+    private fun showSuccessfulPaymentState() {
+        viewModelScope.launch {
+            val state = uiState.value
+            check(state is WooPosTotalsViewState.Totals)
+            val orderTotalText = resourceProvider.getString(
+                R.string.woopos_success_screen_total,
+                state.orderTotalText
+            )
+            uiState.value = WooPosTotalsViewState.PaymentSuccess(
+                orderTotalText = orderTotalText,
+                isReceiptAvailable = isReceiptsEnabled()
+            )
         }
     }
 
