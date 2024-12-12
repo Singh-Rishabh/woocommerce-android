@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.woopos.cashpayment.CASH_ROUTE_ORDER_ID_KEY
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,7 @@ class WooPosEmailReceiptViewModel @Inject constructor(
     resourceProvider: ResourceProvider,
     savedState: SavedStateHandle,
 ) : ViewModel() {
-    private val orderId = savedState.get<Long>(CASH_ROUTE_ORDER_ID_KEY)!!
+    private val orderId = savedState.get<Long>(EMAIL_RECEIPT_ROUTE_ORDER_ID_KEY)!!
 
     private val _state = savedState.getStateFlow<WooPosEmailReceiptState>(
         scope = viewModelScope,
