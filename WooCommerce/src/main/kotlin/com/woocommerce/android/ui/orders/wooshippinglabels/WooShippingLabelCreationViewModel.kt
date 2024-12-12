@@ -6,7 +6,7 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
-import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotAvailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
@@ -46,11 +46,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     )
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
-    private val selectedPackage = MutableStateFlow<PackageSelectionState>(NotAvailable)
     private val storeOptions = MutableStateFlow(mockStoreOptions)
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
 
+    private val selectedPackage = MutableStateFlow<PackageSelectionState>(NotSelected)
     @OptIn(ExperimentalCoroutinesApi::class)
     private val shippingRates =
         combine(
@@ -59,7 +59,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, sortOrder, _ ->
             when (selectedPackage) {
-                is NotAvailable -> PackageData.EMPTY
+                is NotSelected -> PackageData.EMPTY
                 is PackageSelectionState.Data -> selectedPackage.selectedPackage
             }.let { Pair(it, sortOrder) }
         }.flatMapLatest {
@@ -91,8 +91,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             storeOptions,
             flowOf(orderDetailRepository.getOrderById(navArgs.orderId)),
             observeOriginAddresses(),
-            shippingRates
-        ) { storeOptions, order, originAddresses, shippingRates ->
+            shippingRates,
+            selectedPackage
+        ) { storeOptions, order, originAddresses, shippingRates, packageSelection ->
             val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
             if (order == null || selectedOriginAddress == null) {
                 return@combine WooShippingViewState.Error
@@ -118,7 +119,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     originAddresses = originAddresses,
                     shipTo = order.shippingAddress
                 ),
-                shippingRates = shippingRates
+                shippingRates = shippingRates,
+                packageSelection = packageSelection
             )
         }.collect {
             viewState.value = it
@@ -194,7 +196,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onPackageSelected(packageData: PackageData) {
         selectedPackage.update { content ->
             when (content) {
-                is NotAvailable -> PackageSelectionState.Data(
+                is NotSelected -> PackageSelectionState.Data(
                     selectedPackage = packageData,
                     totalWeight = packageData.weight
                 )
@@ -214,6 +216,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingLines: List<ShippingLineSummaryUI>,
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
+            val packageSelection: PackageSelectionState
         ) : WooShippingViewState()
     }
 
@@ -232,7 +235,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     sealed class PackageSelectionState {
-        data object NotAvailable : PackageSelectionState()
+        data object NotSelected : PackageSelectionState()
         data class Data(
             val selectedPackage: PackageData,
             val totalWeight: String
