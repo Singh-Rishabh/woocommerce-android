@@ -14,6 +14,7 @@ data class PackageData(
     val weight: String,
     val isSelected: Boolean,
     val isLetter: Boolean,
+    val isPredefined: Boolean = false,
     val dimensionUnit: String = "cm",
     val weightUnit: String = "kg",
     val groupName: String? = null
@@ -87,7 +88,8 @@ data class CustomPackageCreationData(
         weight = weight.orEmpty(),
         isSelected = true,
         isLetter = type == PackageType.ENVELOPE,
-        dimensionUnit = dimensionUnit
+        dimensionUnit = dimensionUnit,
+        isPredefined = saveAsTemplate
     )
 
     companion object {
