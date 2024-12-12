@@ -317,6 +317,8 @@ class WooPosTotalsViewModelTest {
     fun `given OnNewTransactionClicked, should send NewTransactionClicked event and reset state to initial`() =
         runTest {
             // GIVEN
+            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+                .thenReturn("Payment failed")
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
                 on { events }.thenReturn(mock())
             }
@@ -557,6 +559,9 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Getting ready")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
             .thenReturn("Checking order")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_preparing_reader_for_payment))
+            .thenReturn("Preparing reader for payment")
+
         whenever(networkStatus.isConnected()).thenReturn(true)
 
         // WHEN
@@ -582,25 +587,7 @@ class WooPosTotalsViewModelTest {
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
             on { events }.thenReturn(parentToChildrenEventFlow)
         }
-        val order = Order.getEmptyOrder(
-            dateCreated = Date(),
-            dateModified = Date()
-        ).copy(
-            totalTax = BigDecimal("2.00"),
-            items = listOf(
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                ),
-                Order.Item.EMPTY.copy(
-                    subtotal = BigDecimal("1.00"),
-                )
-            ),
-            productsTotal = BigDecimal("3.00"),
-            total = BigDecimal("5.00"),
-        )
+        val order = createNonEmptyOrder()
         val totalsRepository: WooPosTotalsRepository = mock {
             onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
                 Result.success(order)
@@ -767,7 +754,7 @@ class WooPosTotalsViewModelTest {
         paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
 
         // THEN
-        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
+        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
     }
 
     @Test
@@ -801,6 +788,72 @@ class WooPosTotalsViewModelTest {
         // THEN
         val totalState = vm.state.value as WooPosTotalsViewState.Totals
         assertThat(totalState.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
+    }
+
+    @Test
+    fun `given order draft created and reader connected, when payment is captured, should show processing state`() = runTest {
+        // GIVEN
+        whenever(
+            resourceProvider.getString(
+                R.string.woopos_success_totals_payment_processing_title
+            )
+        ).thenReturn("Processing payment")
+        whenever(
+            resourceProvider.getString(
+                R.string.woopos_success_totals_payment_processing_subtitle
+            )
+        ).thenReturn("Please wait…")
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
+        val mockCardReaderPaymentController: CardReaderPaymentController = mock()
+        val factory: CardReaderPaymentControllerFactory = mock()
+        whenever(factory.create(any(), any(), any())).thenReturn(mockCardReaderPaymentController)
+        val paymentState =
+            MutableStateFlow<CardReaderPaymentOrRefundState>(
+                CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState("") {}
+            )
+        whenever(mockCardReaderPaymentController.paymentState).thenReturn(paymentState)
+
+        // WHEN
+        val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
+        paymentState.value = CardReaderPaymentState.PaymentCapturing.ExternalReaderPaymentCapturing("")
+
+        // THEN
+        val processingState = vm.state.value as WooPosTotalsViewState.PaymentInProgress
+        assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
+        with(processingState) {
+            assertThat(title).isEqualTo("Processing payment")
+            assertThat(subtitle).isEqualTo("Please wait…")
+        }
+    }
+
+    @Test
+    fun `given order draft created and reader connected, when payment is processed, should show processing state`() = runTest {
+        // GIVEN
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
+        whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
+        val mockCardReaderPaymentController: CardReaderPaymentController = mock()
+        val factory: CardReaderPaymentControllerFactory = mock()
+        whenever(factory.create(any(), any(), any())).thenReturn(mockCardReaderPaymentController)
+        val paymentState =
+            MutableStateFlow<CardReaderPaymentOrRefundState>(
+                CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState("") {}
+            )
+        whenever(mockCardReaderPaymentController.paymentState).thenReturn(paymentState)
+
+        // WHEN
+        val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
+        paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
+
+        // THEN
+        val processingState = vm.state.value as WooPosTotalsViewState.PaymentInProgress
+        assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
+        with(processingState) {
+            assertThat(title).isEqualTo("Processing payment")
+            assertThat(subtitle).isEqualTo("Remove card")
+        }
     }
 
     @Test
@@ -932,10 +985,6 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given payment failed, when go back to checkout clicked, then should inform home about the situation`() = runTest {
         // GIVEN
-        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
-            .thenReturn("Processing payment")
-        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle))
-            .thenReturn("Please wait…")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
             .thenReturn("Payment failed")
         whenever(resourceProvider.getString(R.string.woo_pos_payment_failed_try_again))
@@ -994,6 +1043,26 @@ class WooPosTotalsViewModelTest {
         assertThat(viewModel.state.value).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
     }
 
+    private fun createNonEmptyOrder() = Order.getEmptyOrder(
+        dateCreated = Date(),
+        dateModified = Date()
+    ).copy(
+        totalTax = BigDecimal("2.00"),
+        items = listOf(
+            Order.Item.EMPTY.copy(
+                subtotal = BigDecimal("1.00"),
+            ),
+            Order.Item.EMPTY.copy(
+                subtotal = BigDecimal("1.00"),
+            ),
+            Order.Item.EMPTY.copy(
+                subtotal = BigDecimal("1.00"),
+            )
+        ),
+        productsTotal = BigDecimal("3.00"),
+        total = BigDecimal("5.00"),
+    )
+
     @Suppress("LongMethod")
     private suspend fun createViewModelAndSetupForSuccessfulOrderCreation(
         controllerFactory: CardReaderPaymentControllerFactory = paymentControllerFactory
@@ -1016,6 +1085,9 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Ready for payment")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_subtitle))
             .thenReturn("Tap, swipe or insert card")
+        whenever(resourceProvider.getString(R.string.woo_pos_payment_remove_card))
+            .thenReturn("Remove card")
+
         val itemClickedData = listOf(
             WooPosItemsViewModel.ItemClickedData.SimpleProduct(
                 id = 1L

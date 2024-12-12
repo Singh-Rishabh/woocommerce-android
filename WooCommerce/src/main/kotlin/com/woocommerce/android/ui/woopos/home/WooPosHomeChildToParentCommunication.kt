@@ -26,7 +26,7 @@ sealed class ChildToParentEvent {
     data class ItemClickedInProductSelector(val itemData: WooPosItemsViewModel.ItemClickedData) : ChildToParentEvent()
     data object NewTransactionClicked : ChildToParentEvent()
     data object PaymentCollecting : ChildToParentEvent()
-    data object PaymentProcessing : ChildToParentEvent()
+    data object PaymentInProgress : ChildToParentEvent()
     data object PaymentFailed : ChildToParentEvent()
     data object RetryFailedPaymentClicked : ChildToParentEvent()
     data object GoBackToCheckoutAfterFailedPayment : ChildToParentEvent()

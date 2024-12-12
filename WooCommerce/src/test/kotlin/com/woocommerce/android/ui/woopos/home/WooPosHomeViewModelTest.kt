@@ -313,7 +313,7 @@ class WooPosHomeViewModelTest {
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
 
         // WHEN
-        events.emit(ChildToParentEvent.PaymentProcessing)
+        events.emit(ChildToParentEvent.PaymentInProgress)
 
         // THEN
         assertThat(
@@ -332,7 +332,7 @@ class WooPosHomeViewModelTest {
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
-        events.emit(ChildToParentEvent.PaymentProcessing)
+        events.emit(ChildToParentEvent.PaymentInProgress)
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
@@ -357,7 +357,7 @@ class WooPosHomeViewModelTest {
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
-        events.emit(ChildToParentEvent.PaymentProcessing)
+        events.emit(ChildToParentEvent.PaymentInProgress)
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)

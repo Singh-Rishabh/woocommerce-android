@@ -26,6 +26,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +37,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieClipSpec
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
@@ -47,7 +53,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
 import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
-import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
+import com.woocommerce.android.ui.woopos.home.totals.payment.inprogress.WooPosPaymentInProgressScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
@@ -119,9 +125,9 @@ private fun WooPosTotalsScreen(
             }
         }
 
-        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentProcessing) {
-            if (state is WooPosTotalsViewState.PaymentProcessing) {
-                WooPosPaymentProcessingScreen(state)
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentInProgress) {
+            if (state is WooPosTotalsViewState.PaymentInProgress) {
+                WooPosPaymentInProgressScreen(state)
             }
         }
 
@@ -237,11 +243,12 @@ private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
 
 @Composable
 private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStatus) {
-    Icon(
-        modifier = Modifier.size(164.dp),
-        painter = painterResource(id = R.drawable.woopos_ic_collect_payment),
-        contentDescription = "Collect Payment",
-        tint = Color.Unspecified,
+    val tapCardAnimation by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.woopos_card_ilustration))
+    LottieAnimation(
+        modifier = Modifier.size(256.dp),
+        composition = tapCardAnimation,
+        clipSpec = LottieClipSpec.Markers("reader_awaiting_start", "reader_awaiting_end"),
+        iterations = LottieConstants.IterateForever,
     )
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
