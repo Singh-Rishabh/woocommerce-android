@@ -44,6 +44,16 @@ data class PackageData(
 
     val weightForDisplay
         get() = "$weight $weightUnit"
+
+    companion object {
+        val EMPTY = PackageData(
+            name = "",
+            dimensions = "",
+            weight = "",
+            isSelected = false,
+            isLetter = false
+        )
+    }
 }
 
 @Parcelize
