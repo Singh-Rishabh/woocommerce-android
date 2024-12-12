@@ -217,7 +217,6 @@ private fun LabelCreationScreenWithBottomSheet(
                         .padding(start = 4.dp, end = 8.dp)
                 )
                 PackageCard(
-                    modifier = Modifier.padding(16.dp),
                     packageSelectionState = packageSelectionState,
                     onSelectPackageClick = onSelectPackageClick
                 )
@@ -320,7 +319,6 @@ internal fun HazmatCard(
 
 @Composable
 private fun PackageCard(
-    modifier: Modifier = Modifier,
     packageSelectionState: PackageSelectionState,
     onSelectPackageClick: () -> Unit
 ) {
@@ -497,7 +495,6 @@ private fun HazmatCardPreview() {
 private fun PackageNotSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
-            modifier = Modifier.padding(16.dp),
             packageSelectionState = NotSelected,
             onSelectPackageClick = {}
         )
@@ -509,7 +506,6 @@ private fun PackageNotSelectedPreview() {
 private fun PackageSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
-            modifier = Modifier.padding(16.dp),
             packageSelectionState = DataAvailable(
                 selectedPackage = PackageData(
                     name = "Package 1",
