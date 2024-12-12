@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Colors
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -66,23 +67,24 @@ val Colors.selectedRateBackgroundColor: Color get() = if (isLight) Color(0xFFF2E
 
 @Composable
 internal fun ShippingRatesCard(
-    selected: ShippingRate?,
-    onSelectedChange: (ShippingRate) -> Unit = {},
-    shippingRates: Map<Carrier, List<ShippingRate>>,
+    selectedRate: ShippingRateUI?,
+    onSelectedChange: (ShippingRateUI) -> Unit,
+    shippingRates: Map<Carrier, List<ShippingRateUI>>,
     signatureRequired: SignatureRequired?,
     onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
+    selectedSortOption: ShippingSortOption,
+    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedSortOption by remember { mutableStateOf(ShippingSortOption.CHEAPEST) }
     Column(modifier = modifier) {
         ShippingRatesHeader(
             selectedSortOption = selectedSortOption,
-            onSortOptionSelected = { selectedSortOption = it },
+            onSortOptionSelected = onSelectedRateSortOrderChanged,
             modifier = Modifier.padding(start = dimensionResource(R.dimen.major_100))
         )
         ShippingRates(
-            selected = selected,
+            selectedRate = selectedRate,
             onSelectedChange = onSelectedChange,
             shippingRates = shippingRates,
             signatureRequired = signatureRequired,
@@ -100,15 +102,41 @@ private fun ShippingRatesCardPreview() {
     val selected = rates.values.first().first()
     WooThemeWithBackground {
         ShippingRatesCard(
-            selected = selected,
+            selectedRate = selected,
             shippingRates = generateShippingRates(),
             signatureRequired = null,
+            onSelectedChange = {},
             onSelectedSignatureChange = {},
             signatureRequiredOptions = listOf(
                 SignatureRequired("Signature Required", "$10.00"),
                 SignatureRequired("Adult Signature Required", "$15.00")
-            )
+            ),
+            selectedSortOption = ShippingSortOption.CHEAPEST,
+            onSelectedRateSortOrderChanged = {}
         )
+    }
+}
+
+@Composable
+internal fun ShippingRatesLoading(
+    selectedSortOption: ShippingSortOption,
+    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        ShippingRatesHeader(
+            selectedSortOption = selectedSortOption,
+            onSortOptionSelected = onSelectedRateSortOrderChanged,
+            modifier = Modifier.padding(start = dimensionResource(R.dimen.major_100))
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .sizeIn(minHeight = 300.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 
@@ -200,9 +228,9 @@ private fun SortingDropdownMenu(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShippingRates(
-    selected: ShippingRate?,
-    onSelectedChange: (ShippingRate) -> Unit = {},
-    shippingRates: Map<Carrier, List<ShippingRate>>,
+    selectedRate: ShippingRateUI?,
+    onSelectedChange: (ShippingRateUI) -> Unit,
+    shippingRates: Map<Carrier, List<ShippingRateUI>>,
     signatureRequired: SignatureRequired?,
     onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
@@ -259,7 +287,7 @@ fun ShippingRates(
                 ShippingRateItem(
                     carrier = carrier,
                     shippingRate = rate,
-                    isSelected = selected == rate,
+                    isSelected = selectedRate == rate,
                     signatureRequired = signatureRequired,
                     onSelectedSignatureChange = onSelectedSignatureChange,
                     signatureRequiredOptions = signatureRequiredOptions,
@@ -288,7 +316,7 @@ private fun CarrierLogo(
 @Composable
 private fun ShippingRateItem(
     carrier: Carrier,
-    shippingRate: ShippingRate,
+    shippingRate: ShippingRateUI,
     isSelected: Boolean,
     signatureRequired: SignatureRequired?,
     onSelectedSignatureChange: (SignatureRequired?) -> Unit,
@@ -363,7 +391,7 @@ private fun ShippingRateItem(
 
 private fun getShippingRateFormattedDescription(
     context: Context,
-    shippingRate: ShippingRate
+    shippingRate: ShippingRateUI
 ): AnnotatedString {
     return buildAnnotatedString {
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -383,7 +411,7 @@ private fun getShippingRateFormattedDescription(
 
 @Composable
 private fun ShippingRateItemExpandedDescription(
-    shippingRate: ShippingRate,
+    shippingRate: ShippingRateUI,
     signatureRequired: SignatureRequired?,
     onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
@@ -455,7 +483,7 @@ private fun SelectSignatureRequired(
     }
 }
 
-fun ShippingRate.getEstimatedDays(context: Context): String {
+fun ShippingRateUI.getEstimatedDays(context: Context): String {
     return StringUtils.getQuantityString(
         context = context,
         quantity = deliveryDays,
@@ -464,7 +492,7 @@ fun ShippingRate.getEstimatedDays(context: Context): String {
     )
 }
 
-fun ShippingRate.getIncludedOptions(context: Context): List<String> {
+fun ShippingRateUI.getIncludedOptions(context: Context): List<String> {
     val options = mutableListOf<String>()
     if (tracking) {
         val tracking = context.getString(
@@ -499,7 +527,7 @@ data class Carrier(
     val logoRes: Int? = null,
 )
 
-data class ShippingRate(
+data class ShippingRateUI(
     val name: String,
     val rate: String,
     val currency: String,
@@ -514,7 +542,7 @@ data class SignatureRequired(
     val amount: String,
 )
 
-fun generateShippingRates(): Map<Carrier, List<ShippingRate>> {
+fun generateShippingRates(): Map<Carrier, List<ShippingRateUI>> {
     val carriers = listOf(
         Carrier(
             id = "dhl",
@@ -551,11 +579,11 @@ fun generateShippingRates(): Map<Carrier, List<ShippingRate>> {
     }
 }
 
-fun generateRates(carrier: String, number: Int): List<ShippingRate> {
+fun generateRates(carrier: String, number: Int): List<ShippingRateUI> {
     return List(number) {
-        ShippingRate(
+        ShippingRateUI(
             name = "$carrier - Ground Advantage Express",
-            rate = "$${(it + 1) * 2}.00",
+            rate = "$${(it + 100) / (it + 1)}.00",
             currency = "USD",
             deliveryDays = it,
             insurance = "$100.00",
