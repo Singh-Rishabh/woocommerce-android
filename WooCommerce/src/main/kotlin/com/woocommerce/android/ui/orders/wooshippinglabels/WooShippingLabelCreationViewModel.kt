@@ -50,12 +50,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
 
-    private val selectedPackage = MutableStateFlow<PackageSelectionState>(NotSelected)
+    private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val shippingRates =
         combine(
-            selectedPackage,
+            packageSelection,
             selectedRatesSortOrder,
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, sortOrder, _ ->
@@ -93,7 +93,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             flowOf(orderDetailRepository.getOrderById(navArgs.orderId)),
             observeOriginAddresses(),
             shippingRates,
-            selectedPackage
+            packageSelection
         ) { storeOptions, order, originAddresses, shippingRates, packageSelection ->
             val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
             if (order == null || selectedOriginAddress == null) {
@@ -195,7 +195,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onPackageSelected(packageData: PackageData) {
-        selectedPackage.update { content ->
+        packageSelection.update { content ->
             when (content) {
                 is NotSelected -> PackageSelectionState.Data(
                     selectedPackage = packageData,
