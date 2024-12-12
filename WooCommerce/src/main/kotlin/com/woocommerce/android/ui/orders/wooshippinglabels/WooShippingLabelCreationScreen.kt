@@ -431,7 +431,9 @@ private fun PackageSelectionAvailableCard(
                     color = colorResource(id = R.color.color_on_surface_disabled)
                 )
                 Text(
-                    text = packageData.name,
+                    text = packageData.name
+                        .takeIf { it.isNotEmpty() }
+                        ?: stringResource(id = R.string.shipping_label_package_default_name),
                     style = MaterialTheme.typography.body1
                 )
                 Text(
