@@ -50,8 +50,6 @@ import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 import javax.inject.Inject
 
-private const val KEY_TTP_PAYMENT_IN_PROGRESS = "ttp_payment_in_progress"
-
 @HiltViewModel
 class WooPosTotalsViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
@@ -97,11 +95,7 @@ class WooPosTotalsViewModel @Inject constructor(
         key = KEY_STATE,
     )
 
-    private var isTTPPaymentInProgress: Boolean
-        get() = savedState.get<Boolean>(KEY_TTP_PAYMENT_IN_PROGRESS) == true
-        set(value) {
-            savedState[KEY_TTP_PAYMENT_IN_PROGRESS] = value
-        }
+    private var isTTPPaymentInProgress: Boolean by TTPPaymentProgressDelegate(savedState)
 
     private var cardReaderPaymentController: CardReaderPaymentController? = null
 
