@@ -19,7 +19,9 @@ class WooPosChildrenToParentCommunication @Inject constructor() :
 }
 
 sealed class ChildToParentEvent {
-    data class CheckoutClicked(val productIds: List<Long>) : ChildToParentEvent()
+    data class CheckoutClicked(
+        val itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
+    ) : ChildToParentEvent()
     data object BackFromCheckoutToCartClicked : ChildToParentEvent()
     data class ItemClickedInProductSelector(val itemData: WooPosItemsViewModel.ItemClickedData) : ChildToParentEvent()
     data object NewTransactionClicked : ChildToParentEvent()
@@ -35,7 +37,7 @@ sealed class ChildToParentEvent {
         data object FullScreen : ProductsStatusChanged()
         data object WithCart : ProductsStatusChanged()
     }
-    data object NoInternet : ChildToParentEvent()
+    data class ToastMessageDisplayed(val message: String) : ChildToParentEvent()
 }
 
 interface WooPosChildrenToParentEventReceiver {

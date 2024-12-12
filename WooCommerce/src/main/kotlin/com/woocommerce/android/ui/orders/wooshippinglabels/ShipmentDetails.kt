@@ -42,9 +42,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.appendWithIfNotEmpty
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
 
@@ -52,9 +54,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
+    shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
+    shippingAddresses: WooShippingAddresses,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
     handlerModifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -98,18 +105,35 @@ fun ShipmentDetails(
         }
     }
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        ShipmentDetailsLandscape(modifier = modifier)
+        ShipmentDetailsLandscape(
+            shippableItems = shippableItems,
+            shippingLines = shippingLines,
+            shippingAddresses = shippingAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange,
+            modifier = modifier
+        )
     } else {
         ShipmentDetailsPortrait(
-            modifier = modifier,
+            shippableItems = shippableItems,
+            shippingLines = shippingLines,
             markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+            shippingAddresses = shippingAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange,
+            modifier = modifier
         )
     }
 }
 
 @Composable
 private fun ShipmentDetailsPortrait(
+    shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -124,11 +148,12 @@ private fun ShipmentDetailsPortrait(
 
         ) {
             OrderDetailsSection(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo(),
-                totalItems = 5,
-                totalItemsCost = "$120.99",
-                shippingLines = getShippingLines(3)
+                shippingAddresses = shippingAddresses,
+                onShippingFromAddressChange = onShippingFromAddressChange,
+                onShippingToAddressChange = onShippingToAddressChange,
+                totalItems = shippableItems.shippableItems.size,
+                totalItemsCost = shippableItems.formattedTotalPrice,
+                shippingLines = shippingLines
             )
             Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
             ShipmentCostSection(
@@ -147,6 +172,11 @@ private fun ShipmentDetailsPortrait(
 
 @Composable
 private fun ShipmentDetailsLandscape(
+    shippableItems: ShippableItemsUI,
+    shippingLines: List<ShippingLineSummaryUI>,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -159,8 +189,9 @@ private fun ShipmentDetailsLandscape(
 
         ) {
             AddressSectionLandscape(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo(),
+                shippingAddresses = shippingAddresses,
+                onShippingFromAddressChange = onShippingFromAddressChange,
+                onShippingToAddressChange = onShippingToAddressChange,
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
             )
             Row(
@@ -169,9 +200,9 @@ private fun ShipmentDetailsLandscape(
                     .fillMaxWidth()
             ) {
                 OrderDetailsSectionLandscape(
-                    totalItems = 5,
-                    totalItemsCost = "$120.99",
-                    shippingLines = getShippingLines(3),
+                    totalItems = shippableItems.shippableItems.size,
+                    totalItemsCost = shippableItems.formattedTotalPrice,
+                    shippingLines = shippingLines,
                     modifier = Modifier.weight(1f)
                 )
                 VerticalDivider(modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100)))
@@ -210,11 +241,12 @@ private fun ShipmentDetailsSectionTitlePreview() {
 
 @Composable
 private fun OrderDetailsSection(
-    shipFrom: Address,
-    shipTo: Address,
+    shippingAddresses: WooShippingAddresses,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onShippingToAddressChange: (Address) -> Unit,
     totalItems: Int,
     totalItemsCost: String,
-    shippingLines: List<ShippingLineSummary>,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxWidth()) {
@@ -223,9 +255,11 @@ private fun OrderDetailsSection(
             modifier = Modifier.padding(start = dimensionResource(R.dimen.major_100))
         )
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.major_100)))
-        AddressSection(
-            shipFrom = shipFrom,
-            shipTo = shipTo,
+        AddressSectionPortrait(
+            shippingAddresses = shippingAddresses,
+            originAddresses = shippingAddresses.originAddresses,
+            onShippingFromAddressChange = onShippingFromAddressChange,
+            onShippingToAddressChange = onShippingToAddressChange,
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
         )
         TotalCard(
@@ -241,7 +275,7 @@ private fun OrderDetailsSection(
 private fun OrderDetailsSectionLandscape(
     totalItems: Int,
     totalItemsCost: String,
-    shippingLines: List<ShippingLineSummary>,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxWidth()) {
@@ -266,7 +300,19 @@ private fun OrderDetailsSectionLandscape(
 fun ShipmentDetailsLandscapePreview() {
     WooThemeWithBackground {
         Surface {
-            ShipmentDetailsLandscape()
+            ShipmentDetailsLandscape(
+                shippableItems = ShippableItemsUI(
+                    shippableItems = generateItems(6),
+                    formattedTotalWeight = "8.5kg",
+                    formattedTotalPrice = "$92.78"
+                ),
+                shippingLines = getShippingLines(),
+                shippingAddresses = WooShippingAddresses(
+                    shipFrom = getShipFrom(),
+                    shipTo = getShipTo(),
+                    originAddresses = listOf(getShipFrom())
+                )
+            )
         }
     }
 }
@@ -275,7 +321,7 @@ fun ShipmentDetailsLandscapePreview() {
 private fun TotalCard(
     totalItems: Int,
     totalItemsCost: String,
-    shippingLines: List<ShippingLineSummary>,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -314,7 +360,7 @@ private fun ItemsCostPreview() {
 
 @Composable
 private fun ShippingLines(
-    shippingLines: List<ShippingLineSummary>,
+    shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
@@ -445,16 +491,22 @@ private fun ShipmentCostSectionPreview() {
     }
 }
 
-private fun getShippingLines(number: Int = 3) = List(number) { i ->
-    ShippingLineSummary(
+fun getShippingLines(number: Int = 3) = List(number) { i ->
+    ShippingLineSummaryUI(
         title = "Shipping $i",
         amount = "$12.99"
     )
 }
 
-fun Address.toShippingFromString() = this.getEnvelopeAddress().replace("\n", " ")
+fun OriginShippingAddress.toShippingFromString() = StringBuilder()
+    .appendWithIfNotEmpty(this.address1)
+    .appendWithIfNotEmpty(this.address2)
+    .appendWithIfNotEmpty(this.city)
+    .appendWithIfNotEmpty(this.state)
+    .appendWithIfNotEmpty(this.postcode)
+    .toString()
 
-data class ShippingLineSummary(
+data class ShippingLineSummaryUI(
     val title: String,
     val amount: String
 )

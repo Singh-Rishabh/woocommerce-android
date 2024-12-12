@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel.ItemClickedData
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -262,9 +263,14 @@ class WooPosHomeViewModelTest {
 
     @Test
     fun `given home screen is at checkout, when products are updated, then should not modify screen position`() {
+        val itemClickedData = listOf(
+            ItemClickedData.SimpleProduct(
+                id = 1L
+            )
+        )
         whenever(childrenToParentEventReceiver.events).thenReturn(
             flowOf(
-                ChildToParentEvent.CheckoutClicked(listOf(1)),
+                ChildToParentEvent.CheckoutClicked(itemClickedData),
                 ChildToParentEvent.ProductsStatusChanged.FullScreen
             )
         )
@@ -280,7 +286,7 @@ class WooPosHomeViewModelTest {
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
 
         val viewModel: WooPosHomeViewModel = createViewModel()
-        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(ItemClickedData.SimpleProduct(1))))
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
@@ -301,7 +307,7 @@ class WooPosHomeViewModelTest {
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
 
         val viewModel: WooPosHomeViewModel = createViewModel()
-        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(ItemClickedData.SimpleProduct(1))))
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
@@ -322,7 +328,7 @@ class WooPosHomeViewModelTest {
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
 
         val viewModel: WooPosHomeViewModel = createViewModel()
-        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(ItemClickedData.SimpleProduct(1))))
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
@@ -347,7 +353,7 @@ class WooPosHomeViewModelTest {
         whenever(childrenToParentEventReceiver.events).thenReturn(events)
 
         val viewModel: WooPosHomeViewModel = createViewModel()
-        events.emit(ChildToParentEvent.CheckoutClicked(listOf(1)))
+        events.emit(ChildToParentEvent.CheckoutClicked(listOf(ItemClickedData.SimpleProduct(1))))
         assertThat(
             viewModel.state.value.screenPositionState
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)

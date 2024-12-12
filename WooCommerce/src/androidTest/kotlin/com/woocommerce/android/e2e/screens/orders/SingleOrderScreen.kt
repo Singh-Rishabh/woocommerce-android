@@ -6,7 +6,6 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.hasDescendant
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.espresso.matcher.ViewMatchers.withParentIndex
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import com.woocommerce.android.R
 import com.woocommerce.android.e2e.helpers.util.NestedScrollViewExtension
@@ -15,9 +14,9 @@ import com.woocommerce.android.e2e.helpers.util.ProductData
 import com.woocommerce.android.e2e.helpers.util.Screen
 import org.hamcrest.Matchers
 
-class SingleOrderScreen : Screen(R.id.orderStatus_subtitle) {
+class SingleOrderScreen : Screen(R.id.orderDetail_container) {
     fun goBackToOrdersScreen(): OrderListScreen {
-        if (isElementDisplayed(R.id.orderDetail_container)) {
+        if (!isElementDisplayed(R.id.order_list_view_root) && isElementDisplayed(R.id.orderDetail_container)) {
             pressBack()
         }
 
@@ -44,7 +43,9 @@ class SingleOrderScreen : Screen(R.id.orderStatus_subtitle) {
     }
 
     fun assertOrderId(orderId: Int): SingleOrderScreen {
-        Espresso.onView(Matchers.allOf(withId(R.id.toolbar), withParentIndex(0)))
+        Espresso.onView(
+            Matchers.allOf(withId(R.id.toolbar), ViewMatchers.isDescendantOfA(withId(R.id.orderRefreshLayout)))
+        )
             .check(ViewAssertions.matches(hasDescendant(withText("Order #$orderId"))))
             .check(ViewAssertions.matches(isDisplayed()))
         return this

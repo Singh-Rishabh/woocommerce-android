@@ -83,7 +83,7 @@ subprojects {
     }
 }
 
-def detektAll = tasks.register("detektAll", Detekt) {
+tasks.register("detektAll", Detekt) {
     description = "Custom DETEKT build for all modules"
     parallel = true
     ignoreFailures = false
@@ -101,27 +101,12 @@ def detektAll = tasks.register("detektAll", Detekt) {
     }
 }
 
-def detektAutoCorrectPrompt = tasks.register("detektAutoCorrectPrompt") {
-    doLast {
-        def detektTask = detektAll.get()
-        if (detektTask.state.failure != null && !detektTask.autoCorrect) {
-            println ".-----------------------------------------------------------------------------------------------------------------------------------.\n" +
-                    "| 🛠  Did you know: you can ask Detekt to automatically resolve some of the issues by running `./gradlew detektAll --auto-correct` |\n" +
-                    "'-----------------------------------------------------------------------------------------------------------------------------------'"
-        }
-    }
-}
-
-detektAll.configure {
-    finalizedBy detektAutoCorrectPrompt
-}
-
 dependencies {
     detektPlugins(libs.detekt.formatting)
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
 }
 
 /**

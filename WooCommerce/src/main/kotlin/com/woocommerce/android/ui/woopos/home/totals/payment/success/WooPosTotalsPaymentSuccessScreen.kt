@@ -40,6 +40,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun WooPosPaymentSuccessScreen(
     state: WooPosTotalsViewState.PaymentSuccess,
+    onReceiptClicked: () -> Unit,
     onNewTransactionClicked: () -> Unit,
 ) {
     var bottomAnimationStarted by remember { mutableStateOf(false) }
@@ -56,6 +57,7 @@ fun WooPosPaymentSuccessScreen(
         state = state,
         iconAnimationStarted = iconAnimationStarted,
         bottomAnimationStarted = bottomAnimationStarted,
+        onReceiptClicked = onReceiptClicked,
         onNewTransactionClicked = onNewTransactionClicked,
     )
 }
@@ -65,6 +67,7 @@ fun WooPosPaymentSuccessScreen(
     state: WooPosTotalsViewState.PaymentSuccess,
     iconAnimationStarted: Boolean,
     bottomAnimationStarted: Boolean,
+    onReceiptClicked: () -> Unit,
     onNewTransactionClicked: () -> Unit,
 ) {
     Box(
@@ -79,7 +82,7 @@ fun WooPosPaymentSuccessScreen(
         )
         @Suppress("DestructuringDeclarationWithTooManyEntries")
         ConstraintLayout {
-            val (icon, title, message, button) = createRefs()
+            val (icon, title, message, buttonReceipt, buttonNewOrder) = createRefs()
 
             val checkMarkIconMargin = 56.dp.toAdaptivePadding()
             CheckMarkIcon(
@@ -106,8 +109,9 @@ fun WooPosPaymentSuccessScreen(
             )
 
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
+            val textLinkTo = if (state.isReceiptAvailable) buttonReceipt else buttonNewOrder
             Text(
-                text = stringResource(R.string.woopos_success_screen_total, state.orderTotalText),
+                text = state.orderTotalText,
                 style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
@@ -115,13 +119,29 @@ fun WooPosPaymentSuccessScreen(
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    bottom.linkTo(button.top, margin = marginBetweenButtonAndTextAdaptive)
+                    bottom.linkTo(textLinkTo.top, margin = marginBetweenButtonAndTextAdaptive)
                 }
             )
 
+            val marginBetweenButtons = 16.dp.toAdaptivePadding()
+            if (state.isReceiptAvailable) {
+                WooPosButton(
+                    modifier = Modifier
+                        .constrainAs(buttonReceipt) {
+                            bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtons)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .height(80.dp)
+                        .width(604.dp),
+                    onClick = onReceiptClicked,
+                    text = stringResource(R.string.woopos_receipt_button),
+                )
+            }
+
             WooPosButton(
                 modifier = Modifier
-                    .constrainAs(button) {
+                    .constrainAs(buttonNewOrder) {
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
@@ -183,9 +203,30 @@ private fun CheckMarkIcon(
 fun WooPosPaymentSuccessScreenPreview() {
     WooPosTheme {
         WooPosPaymentSuccessScreen(
-            state = WooPosTotalsViewState.PaymentSuccess(orderTotalText = "$13.18"),
+            state = WooPosTotalsViewState.PaymentSuccess(
+                orderTotalText = "A payment of 13.18 was successfully made",
+                isReceiptAvailable = true,
+            ),
             bottomAnimationStarted = true,
             iconAnimationStarted = true,
+            onReceiptClicked = {},
+            onNewTransactionClicked = {}
+        )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun WooPosPaymentSuccessWithoutReceiptScreenPreview() {
+    WooPosTheme {
+        WooPosPaymentSuccessScreen(
+            state = WooPosTotalsViewState.PaymentSuccess(
+                orderTotalText = "A payment of 13.18 was successfully made",
+                isReceiptAvailable = false,
+            ),
+            bottomAnimationStarted = true,
+            iconAnimationStarted = true,
+            onReceiptClicked = {},
             onNewTransactionClicked = {}
         )
     }

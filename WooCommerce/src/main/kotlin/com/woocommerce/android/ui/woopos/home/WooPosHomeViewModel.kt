@@ -1,10 +1,11 @@
 package com.woocommerce.android.ui.woopos.home
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ExitConfirmationDialog
+import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
+import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ScreenPositionState
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,19 +24,15 @@ class WooPosHomeViewModel @Inject constructor(
         scope = viewModelScope,
         key = "home_state",
         initialValue = WooPosHomeState(
-            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible,
-            productsInfoDialog = WooPosHomeState.ProductsInfoDialog(isVisible = false),
-            exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
+            screenPositionState = ScreenPositionState.Cart.Visible,
+            productsInfoDialog = ProductsInfoDialog(isVisible = false),
+            exitConfirmationDialog = ExitConfirmationDialog(isVisible = false),
         )
     )
     val state: StateFlow<WooPosHomeState> = _state
 
-    private val _toastEvent = MutableSharedFlow<Toast>()
-    val toastEvent: SharedFlow<Toast> = _toastEvent
-
-    data class Toast(
-        @StringRes val message: Int,
-    )
+    private val _toastEvent = MutableSharedFlow<String>()
+    val toastEvent: SharedFlow<String> = _toastEvent
 
     init {
         listenBottomEvents()
@@ -45,23 +42,22 @@ class WooPosHomeViewModel @Inject constructor(
         return when (event) {
             WooPosHomeUIEvent.SystemBackClicked -> {
                 when (_state.value.screenPositionState) {
-                    WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals -> {
+                    ScreenPositionState.Checkout.CartWithTotals -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
+                            screenPositionState = ScreenPositionState.Cart.Visible
                         )
                         sendEventToChildren(ParentToChildrenEvent.BackFromCheckoutToCartClicked)
                     }
 
-                    WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> {
+                    ScreenPositionState.Checkout.FullScreenTotals -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
+                            screenPositionState = ScreenPositionState.Cart.Visible
                         )
-                        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
                     }
 
-                    is WooPosHomeState.ScreenPositionState.Cart -> {
+                    is ScreenPositionState.Cart -> {
                         _state.value = _state.value.copy(
-                            exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = true)
+                            exitConfirmationDialog = ExitConfirmationDialog(isVisible = true)
                         )
                     }
                 }
@@ -69,15 +65,17 @@ class WooPosHomeViewModel @Inject constructor(
 
             WooPosHomeUIEvent.ExitConfirmationDialogDismissed -> {
                 _state.value = _state.value.copy(
-                    exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false)
+                    exitConfirmationDialog = ExitConfirmationDialog(isVisible = false)
                 )
             }
 
             WooPosHomeUIEvent.DismissProductsInfoDialog -> {
                 _state.value = _state.value.copy(
-                    productsInfoDialog = WooPosHomeState.ProductsInfoDialog(isVisible = false)
+                    productsInfoDialog = ProductsInfoDialog(isVisible = false)
                 )
             }
+
+            WooPosHomeUIEvent.OnPaymentCompletedViaCash -> onOrderSuccessfullyPaid()
         }
     }
 
@@ -88,14 +86,14 @@ class WooPosHomeViewModel @Inject constructor(
                 when (event) {
                     is ChildToParentEvent.CheckoutClicked -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
+                            screenPositionState = ScreenPositionState.Checkout.CartWithTotals
                         )
-                        sendEventToChildren(ParentToChildrenEvent.CheckoutClicked(event.productIds))
+                        sendEventToChildren(ParentToChildrenEvent.CheckoutClicked(event.itemClickedDataList))
                     }
 
                     is ChildToParentEvent.BackFromCheckoutToCartClicked -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
+                            screenPositionState = ScreenPositionState.Cart.Visible
                         )
                         sendEventToChildren(ParentToChildrenEvent.BackFromCheckoutToCartClicked)
                     }
@@ -108,35 +106,34 @@ class WooPosHomeViewModel @Inject constructor(
 
                     is ChildToParentEvent.NewTransactionClicked -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Cart.Visible
+                            screenPositionState = ScreenPositionState.Cart.Visible
                         )
-                        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
                     }
+
+                    is ChildToParentEvent.OrderSuccessfullyPaid -> onOrderSuccessfullyPaid()
 
                     is ChildToParentEvent.PaymentCollecting -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
+                            screenPositionState = ScreenPositionState.Checkout.CartWithTotals
                         )
                     }
-
                     is ChildToParentEvent.PaymentProcessing,
-                    is ChildToParentEvent.OrderSuccessfullyPaid,
                     is ChildToParentEvent.PaymentFailed -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals
+                            screenPositionState = ScreenPositionState.Checkout.FullScreenTotals
                         )
                     }
 
                     is ChildToParentEvent.GoBackToCheckoutAfterFailedPayment,
                     is ChildToParentEvent.RetryFailedPaymentClicked -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals
+                            screenPositionState = ScreenPositionState.Checkout.CartWithTotals
                         )
                     }
 
                     ChildToParentEvent.ExitPosClicked -> {
                         _state.value = _state.value.copy(
-                            exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = true)
+                            exitConfirmationDialog = ExitConfirmationDialog(isVisible = true)
                         )
                     }
 
@@ -144,13 +141,13 @@ class WooPosHomeViewModel @Inject constructor(
 
                     ChildToParentEvent.ProductsDialogInfoIconClicked -> {
                         _state.value = _state.value.copy(
-                            productsInfoDialog = WooPosHomeState.ProductsInfoDialog(isVisible = true)
+                            productsInfoDialog = ProductsInfoDialog(isVisible = true)
                         )
                     }
 
-                    ChildToParentEvent.NoInternet -> {
+                    is ChildToParentEvent.ToastMessageDisplayed -> {
                         viewModelScope.launch {
-                            _toastEvent.emit(Toast(R.string.woopos_no_internet_message))
+                            _toastEvent.emit(event.message)
                         }
                     }
                 }
@@ -163,18 +160,17 @@ class WooPosHomeViewModel @Inject constructor(
         val newScreenPositionState = when (event) {
             ChildToParentEvent.ProductsStatusChanged.FullScreen -> {
                 when (screenPosition) {
-                    is WooPosHomeState.ScreenPositionState.Cart -> WooPosHomeState.ScreenPositionState.Cart.Hidden
-                    is WooPosHomeState.ScreenPositionState.Checkout -> screenPosition
+                    is ScreenPositionState.Cart -> ScreenPositionState.Cart.Hidden
+                    is ScreenPositionState.Checkout -> screenPosition
                 }
             }
             ChildToParentEvent.ProductsStatusChanged.WithCart -> {
                 when (screenPosition) {
-                    WooPosHomeState.ScreenPositionState.Cart.Hidden ->
-                        WooPosHomeState.ScreenPositionState.Cart.Visible
+                    ScreenPositionState.Cart.Hidden -> ScreenPositionState.Cart.Visible
 
-                    WooPosHomeState.ScreenPositionState.Cart.Visible,
-                    WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals,
-                    WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> screenPosition
+                    ScreenPositionState.Cart.Visible,
+                    ScreenPositionState.Checkout.CartWithTotals,
+                    ScreenPositionState.Checkout.FullScreenTotals -> screenPosition
                 }
             }
         }
@@ -185,5 +181,12 @@ class WooPosHomeViewModel @Inject constructor(
         viewModelScope.launch {
             parentToChildrenEventSender.sendToChildren(event)
         }
+    }
+
+    private fun onOrderSuccessfullyPaid() {
+        _state.value = _state.value.copy(
+            screenPositionState = ScreenPositionState.Checkout.FullScreenTotals
+        )
+        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
     }
 }

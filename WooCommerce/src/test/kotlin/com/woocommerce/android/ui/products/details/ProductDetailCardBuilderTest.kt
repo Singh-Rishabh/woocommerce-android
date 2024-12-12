@@ -6,6 +6,7 @@ import com.woocommerce.android.model.ProductAggregate
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.blaze.IsBlazeEnabled
 import com.woocommerce.android.ui.customfields.CustomFieldsRepository
+import com.woocommerce.android.ui.products.ProductHelper
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.products.addons.AddonRepository
@@ -35,6 +36,10 @@ class ProductDetailCardBuilderTest : BaseUnitTest() {
     }
     private val customFieldsRepository: CustomFieldsRepository = mock {
         onBlocking { hasDisplayableCustomFields(any()) } doReturn false
+    }
+
+    private val resourceProvider: ResourceProvider = mock {
+        on { getString(any()) } doAnswer { it.getArgument<Any?>(0).toString() }
     }
 
     @Before
@@ -193,5 +198,113 @@ class ProductDetailCardBuilderTest : BaseUnitTest() {
                 it.title == R.string.product_custom_fields
         }
         Assertions.assertThat(customFieldsCard).isNull()
+    }
+
+    @Test
+    fun `given subscription product with one time shipping enabled, when building cards, then shipping includes one-time shipping`() = testBlocking {
+        productStub = ProductTestUtils.generateProduct()
+            .copy(
+                isVirtual = false,
+                type = ProductType.SUBSCRIPTION.value,
+                weight = 1.5f,
+                length = 10f,
+                width = 20f,
+                height = 30f,
+                shippingClassId = 123
+            )
+
+        val subscriptionDetails = ProductHelper.getDefaultSubscriptionDetails().copy(
+            oneTimeShipping = true
+        )
+
+        val cards = sut.buildPropertyCards(
+            ProductAggregate(
+                product = productStub,
+                subscription = subscriptionDetails
+            ),
+            ""
+        )
+
+        val shippingGroup = cards.first { it.type == ProductPropertyCard.Type.SECONDARY }
+            .properties
+            .find {
+                it is ProductProperty.PropertyGroup &&
+                    it.title == R.string.product_shipping
+            } as ProductProperty.PropertyGroup
+
+        val propertyKeys = shippingGroup.properties.toList().map { it.first }
+        Assertions.assertThat(propertyKeys).hasSize(4) // Weight, Dimensions, Shipping class, One-time shipping
+        Assertions.assertThat(propertyKeys).contains(
+            resourceProvider.getString(R.string.subscription_one_time_shipping)
+        )
+    }
+
+    @Test
+    fun `given variable subscription product with one time shipping enabled, when building cards, then shipping includes one-time shipping`() = testBlocking {
+        productStub = ProductTestUtils.generateProduct()
+            .copy(
+                isVirtual = false,
+                type = ProductType.VARIABLE_SUBSCRIPTION.value,
+                weight = 1.5f,
+                length = 10f,
+                width = 20f,
+                height = 30f,
+                shippingClassId = 123
+            )
+
+        val subscriptionDetails = ProductHelper.getDefaultSubscriptionDetails().copy(
+            oneTimeShipping = true
+        )
+
+        val cards = sut.buildPropertyCards(
+            ProductAggregate(
+                product = productStub,
+                subscription = subscriptionDetails
+            ),
+            ""
+        )
+
+        val shippingGroup = cards.first { it.type == ProductPropertyCard.Type.SECONDARY }
+            .properties
+            .find {
+                it is ProductProperty.PropertyGroup &&
+                    it.title == R.string.product_shipping
+            } as ProductProperty.PropertyGroup
+
+        val propertyKeys = shippingGroup.properties.toList().map { it.first }
+        Assertions.assertThat(propertyKeys).hasSize(4) // Weight, Dimensions, Shipping class, One-time shipping
+        Assertions.assertThat(propertyKeys).contains(
+            resourceProvider.getString(R.string.subscription_one_time_shipping)
+        )
+    }
+
+    @Test
+    fun `given simple non-virtual product, when building cards, then shipping excludes one-time shipping`() = testBlocking {
+        productStub = ProductTestUtils.generateProduct()
+            .copy(
+                isVirtual = false,
+                type = ProductType.SIMPLE.value,
+                weight = 1.5f,
+                length = 10f,
+                width = 20f,
+                height = 30f,
+                shippingClassId = 123
+            )
+
+        val cards = sut.buildPropertyCards(ProductAggregate(productStub), "")
+
+        val shippingGroup = cards.first { it.type == ProductPropertyCard.Type.SECONDARY }
+            .properties
+            .find {
+                it is ProductProperty.PropertyGroup &&
+                    it.title == R.string.product_shipping
+            } as ProductProperty.PropertyGroup
+
+        val propertyKeys = shippingGroup.properties.toList().map { it.first }
+
+        Assertions.assertThat(propertyKeys).hasSize(3) // Weight, Dimensions, Shipping class
+        Assertions.assertThat(propertyKeys).doesNotContain(
+            resourceProvider.getString(R.string.subscription_one_time_shipping)
+        )
     }
 }
