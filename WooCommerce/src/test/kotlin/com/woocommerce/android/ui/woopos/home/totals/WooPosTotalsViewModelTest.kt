@@ -754,7 +754,7 @@ class WooPosTotalsViewModelTest {
         paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
 
         // THEN
-        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
+        assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
     }
 
     @Test
@@ -820,8 +820,8 @@ class WooPosTotalsViewModelTest {
         paymentState.value = CardReaderPaymentState.PaymentCapturing.ExternalReaderPaymentCapturing("")
 
         // THEN
-        val processingState = vm.state.value as WooPosTotalsViewState.PaymentProcessing
-        assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
+        val processingState = vm.state.value as WooPosTotalsViewState.PaymentInProgress
+        assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
         with(processingState) {
             assertThat(title).isEqualTo("Processing payment")
             assertThat(subtitle).isEqualTo("Please wait…")
@@ -848,8 +848,8 @@ class WooPosTotalsViewModelTest {
         paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
 
         // THEN
-        val processingState = vm.state.value as WooPosTotalsViewState.PaymentProcessing
-        assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentProcessing::class.java)
+        val processingState = vm.state.value as WooPosTotalsViewState.PaymentInProgress
+        assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
         with(processingState) {
             assertThat(title).isEqualTo("Processing payment")
             assertThat(subtitle).isEqualTo("Remove card")

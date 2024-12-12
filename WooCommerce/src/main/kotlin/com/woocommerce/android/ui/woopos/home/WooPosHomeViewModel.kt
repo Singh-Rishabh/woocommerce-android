@@ -117,7 +117,7 @@ class WooPosHomeViewModel @Inject constructor(
                             screenPositionState = ScreenPositionState.Checkout.CartWithTotals
                         )
                     }
-                    is ChildToParentEvent.PaymentProcessing,
+                    is ChildToParentEvent.PaymentInProgress,
                     is ChildToParentEvent.PaymentFailed -> {
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Checkout.FullScreenTotals

@@ -53,7 +53,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
 import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
-import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
+import com.woocommerce.android.ui.woopos.home.totals.payment.inprogress.WooPosPaymentInProgressScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
@@ -125,9 +125,9 @@ private fun WooPosTotalsScreen(
             }
         }
 
-        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentProcessing) {
-            if (state is WooPosTotalsViewState.PaymentProcessing) {
-                WooPosPaymentProcessingScreen(state)
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentInProgress) {
+            if (state is WooPosTotalsViewState.PaymentInProgress) {
+                WooPosPaymentInProgressScreen(state)
             }
         }
 

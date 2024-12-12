@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.processing
+package com.woocommerce.android.ui.woopos.home.totals.payment.inprogress
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
@@ -35,8 +35,8 @@ import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 import kotlinx.coroutines.delay
 
 @Composable
-fun WooPosPaymentProcessingScreen(
-    state: WooPosTotalsViewState.PaymentProcessing,
+fun WooPosPaymentInProgressScreen(
+    state: WooPosTotalsViewState.PaymentInProgress,
 ) {
     var enterAnimationStarted by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -91,10 +91,10 @@ fun WooPosPaymentProcessingScreen(
 
 @WooPosPreview
 @Composable
-fun WooPosPaymentProcessingScreenPreview() {
+fun WooPosPaymentInProgressScreenPreview() {
     WooPosTheme {
-        WooPosPaymentProcessingScreen(
-            state = WooPosTotalsViewState.PaymentProcessing(
+        WooPosPaymentInProgressScreen(
+            state = WooPosTotalsViewState.PaymentInProgress(
                 title = "Processing payment",
                 subtitle = "Please wait...",
             )

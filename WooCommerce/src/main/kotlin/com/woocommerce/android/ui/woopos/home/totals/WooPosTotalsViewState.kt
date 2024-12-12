@@ -64,7 +64,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         )
     }
 
-    data class PaymentProcessing(
+    data class PaymentInProgress(
         val title: String,
         val subtitle: String,
     ) : WooPosTotalsViewState()

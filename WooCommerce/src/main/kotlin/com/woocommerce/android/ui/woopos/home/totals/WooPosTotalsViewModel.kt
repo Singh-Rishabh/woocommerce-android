@@ -24,7 +24,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceive
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentFailed
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentProcessing
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentInProgress
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.ReceiptSending
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
@@ -282,8 +282,8 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing -> {
-                        uiState.value = buildPaymentProcessingState(paymentState)
-                        childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentProcessing)
+                        uiState.value = buildPaymentInProgressState(paymentState)
+                        childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
@@ -366,12 +366,12 @@ class WooPosTotalsViewModel @Inject constructor(
         )
     }
 
-    private fun buildPaymentProcessingState(paymentState: CardReaderPaymentOrRefundState): PaymentProcessing {
+    private fun buildPaymentInProgressState(paymentState: CardReaderPaymentOrRefundState): PaymentInProgress {
         val subtitle = when (paymentState) {
             is CardReaderPaymentState.ProcessingPayment -> R.string.woo_pos_payment_remove_card
             else -> R.string.woopos_success_totals_payment_processing_subtitle
         }
-        return PaymentProcessing(
+        return PaymentInProgress(
             title = resourceProvider.getString(
                 R.string.woopos_success_totals_payment_processing_title
             ),
