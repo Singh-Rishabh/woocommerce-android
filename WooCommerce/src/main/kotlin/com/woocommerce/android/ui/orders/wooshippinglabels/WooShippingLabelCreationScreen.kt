@@ -408,8 +408,8 @@ private fun PackageSelectionAvailableCard(
                 onClick = onSelectPackageClick
             ) {
                 Icon(
-                    tint = colorResource(id = R.color.woo_purple_90),
                     painter = painterResource(id = R.drawable.ic_edit),
+                    tint = colorResource(id = R.color.color_icon_menu),
                     contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
                 )
             }
