@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -392,7 +393,36 @@ private fun PackageSelectionAvailableCard(
     modifier: Modifier,
     packageData: PackageData
 ) {
-
+    Column(
+        modifier = modifier
+            .padding(top = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = stringResource(id = packageData.descriptionResId),
+                    style = MaterialTheme.typography.caption,
+                    color = colorResource(id = R.color.color_on_surface_disabled)
+                )
+                Text(
+                    text = packageData.name,
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = packageData.weight
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                        ?: packageData.dimensionForDisplay,
+                    style = MaterialTheme.typography.body2
+                )
+            }
+        }
+        Divider()
+    }
 }
 
 data class ShippableItemUI(
