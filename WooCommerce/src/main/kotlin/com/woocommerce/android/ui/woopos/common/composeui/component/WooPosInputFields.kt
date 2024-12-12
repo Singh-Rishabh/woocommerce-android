@@ -1,10 +1,14 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
@@ -13,8 +17,10 @@ import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -92,9 +98,48 @@ fun <T> WooPosTypedInputField(
     }
 }
 
+@Composable
+fun WooPosInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String = "",
+    textStyle: TextStyle = MaterialTheme.typography.h6,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    modifier: Modifier = Modifier,
+) {
+    Column {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            textStyle = textStyle,
+            modifier = modifier
+                .background(Color.Transparent),
+            singleLine = true,
+            decorationBox = { innerTextField ->
+                Box(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                ) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = label,
+                            style = MaterialTheme.typography.subtitle1,
+                        )
+                    }
+
+                    innerTextField()
+                }
+            },
+            keyboardActions = keyboardActions,
+            keyboardOptions = keyboardOptions
+        )
+    }
+}
+
 @WooPosPreview
 @Composable
-fun WooPosInputFieldPreview() {
+fun WooPosTypedInputFieldPreview() {
     WooPosTheme {
         Column(modifier = Modifier.padding(16.dp)) {
             WooPosTypedInputField(
@@ -125,3 +170,31 @@ fun WooPosInputFieldPreview() {
         }
     }
 }
+
+@WooPosPreview
+@Composable
+fun WooPosInputFieldPreview() {
+    WooPosTheme {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            WooPosInputField(
+                value = "longemail@gmail.com",
+                onValueChange = {},
+                textStyle = MaterialTheme.typography.h3,
+            )
+
+            Spacer(modifier = Modifier.size(8.dp))
+
+            WooPosInputField(
+                value = "",
+                onValueChange = {},
+                label = "Label",
+            )
+        }
+    }
+}
+

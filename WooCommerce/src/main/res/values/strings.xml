@@ -4325,6 +4325,7 @@
     <string name="woopos_toolbar_icon_content_description">Back</string>
 
     <string name="woopos_email_receipt_title">Email receipt</string>
+    <string name="woopos_email_receipt_email_label">Type email</string>
 
 
     <string name="customers_details_customer_section">Customer</string>
