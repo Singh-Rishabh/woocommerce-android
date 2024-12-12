@@ -50,6 +50,7 @@ import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 
@@ -323,29 +324,20 @@ private fun PackageCard(
     onSelectPackageClick: () -> Unit
 ) {
     when (packageSelectionState) {
-        PackageSelectionState.NotSelected -> {
-            SelectPackageCard(
-                modifier = modifier,
-                onSelectPackageClick = onSelectPackageClick
-            )
-        }
-        is PackageSelectionState.Data -> {
-            PackageSelectionAvailableCard(
-                modifier = modifier,
-                packageData = packageSelectionState.selectedPackage,
-                onSelectPackageClick = onSelectPackageClick
-            )
-        }
+        is NotSelected -> SelectPackageCard(
+            onSelectPackageClick = onSelectPackageClick
+        )
+        is PackageSelectionState.Data -> PackageSelectionAvailableCard(
+            packageData = packageSelectionState.selectedPackage,
+            onSelectPackageClick = onSelectPackageClick
+        )
     }
 }
 
 @Composable
-private fun SelectPackageCard(
-    modifier: Modifier = Modifier,
-    onSelectPackageClick: () -> Unit
-) {
+private fun SelectPackageCard(onSelectPackageClick: () -> Unit) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .background(
                 color = MaterialTheme.colors.surface,
                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
@@ -391,17 +383,14 @@ private fun SelectPackageCard(
 
 @Composable
 private fun PackageSelectionAvailableCard(
-    modifier: Modifier,
     packageData: PackageData,
     onSelectPackageClick: () -> Unit
 ) {
-    Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
+    Column(modifier = Modifier.background(color = MaterialTheme.colors.surface)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimensionResource(id = R.dimen.major_100))
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Package",
@@ -417,38 +406,31 @@ private fun PackageSelectionAvailableCard(
             }
         }
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
                     color = colorResource(id = R.color.divider_color),
                     shape = RoundedCornerShape(8.dp)
-                )
-                .padding(dimensionResource(id = R.dimen.major_200)),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                ).padding(dimensionResource(id = R.dimen.major_200)),
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = stringResource(id = packageData.descriptionResId),
-                        style = MaterialTheme.typography.caption,
-                        color = colorResource(id = R.color.color_on_surface_disabled)
-                    )
-                    Text(
-                        text = packageData.name,
-                        style = MaterialTheme.typography.body1
-                    )
-                    Text(
-                        text = packageData.weight
-                            .takeIf { it.isNotEmpty() }
-                            ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
-                            ?: packageData.dimensionForDisplay,
-                        style = MaterialTheme.typography.body2
-                    )
-                }
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(
+                    text = stringResource(id = packageData.descriptionResId),
+                    style = MaterialTheme.typography.caption,
+                    color = colorResource(id = R.color.color_on_surface_disabled)
+                )
+                Text(
+                    text = packageData.name,
+                    style = MaterialTheme.typography.body1
+                )
+                Text(
+                    text = packageData.weight
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                        ?: packageData.dimensionForDisplay,
+                    style = MaterialTheme.typography.body2
+                )
             }
         }
     }
@@ -492,7 +474,7 @@ private fun WooShippingLabelCreationScreenPreview() {
                 originAddresses = listOf(getShipFrom())
             ),
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
-            packageSelectionState = PackageSelectionState.NotSelected,
+            packageSelectionState = NotSelected,
             onShippingFromAddressChange = {},
             onShippingToAddressChange = {},
             onRefreshShippingRates = {},
@@ -515,7 +497,7 @@ private fun PackageNotSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
             modifier = Modifier.padding(16.dp),
-            packageSelectionState = PackageSelectionState.NotSelected,
+            packageSelectionState = NotSelected,
             onSelectPackageClick = {}
         )
     }
@@ -530,12 +512,12 @@ private fun PackageSelectedPreview() {
             packageSelectionState = PackageSelectionState.Data(
                 selectedPackage = PackageData(
                     name = "Package 1",
-                    dimensions = "10 x 10 x 10 cm",
-                    weight = "1.5 kg",
+                    dimensions = "10 x 10 x 10",
+                    weight = "1.5",
                     isSelected = true,
                     isLetter = false
                 ),
-                totalWeight = "1.5 kg"
+                totalWeight = "1.5"
             ),
             onSelectPackageClick = {}
         )
