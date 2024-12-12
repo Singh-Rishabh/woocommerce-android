@@ -11,10 +11,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.W
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.networking.CustomPackageCreationRequestData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.SavedPackageSelection
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -59,12 +57,9 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     init {
         launch {
-            fetchPredefinedPackages()?.let {
+            fetchPredefinedPackages().let { response ->
                 _viewState.update { viewState ->
-                    viewState.copy(
-                        savedPackageSelection = it.savedPackageSelection,
-                        carrierPackageSection = it.carrierPackageSelection
-                    )
+                    viewState.copy(predefinedPackagesState = response)
                 }
             }
         }
@@ -72,34 +67,40 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onCarrierPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
-            viewState.carrierPackageSection.carrierPackages
-                .map { updateCarrierPackagesSelection(it, selectedPackage, isSelected) }
-                .let { viewState.copy(carrierPackageSection = CarrierPackageSelection(it.toMap())) }
+            val predefinedPackages = viewState.predefinedPackagesData
+            predefinedPackages?.carrierPackages
+                ?.map { updateCarrierPackagesSelection(it, selectedPackage, isSelected) }
+                ?.let {
+                    viewState.copy(predefinedPackagesState = predefinedPackages.copy(carrierPackages = it.toMap()))
+                } ?: _viewState.value
         }
     }
 
     fun onSavedPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
-            viewState.savedPackageSelection.packages
-                .map { it.copy(isSelected = false) }
-                .toMutableList()
-                .safelyUpdate(selectedPackage, selectedPackage.copy(isSelected = isSelected))
-                .let { SavedPackageSelection(it) }
-                .let { viewState.copy(savedPackageSelection = it) }
+            val predefinedPackages = viewState.predefinedPackagesData
+            predefinedPackages?.savedPackages
+                ?.map { it.copy(isSelected = false) }
+                ?.toMutableList()
+                ?.safelyUpdate(selectedPackage, selectedPackage.copy(isSelected = isSelected))
+                ?.let { viewState.copy(predefinedPackagesState = predefinedPackages.copy(savedPackages = it)) }
+                ?: _viewState.value
         }
     }
 
     fun onAddCarrierPackageClick() {
-        _viewState.value.carrierPackageSection.carrierPackages
-            .asSequence()
-            .flatMap { it.value }
-            .flatMap { it.packages }
-            .find { it.isSelected }
+        _viewState.value.predefinedPackagesData?.carrierPackages
+            ?.asSequence()
+            ?.flatMap { it.value }
+            ?.flatMap { it.packages }
+            ?.find { it.isSelected }
             ?.let { triggerEvent(PackageSelected(it)) }
     }
 
     fun onAddSavedPackageClick() {
-        _viewState.value.savedPackageSelection.packages.find { it.isSelected }
+        _viewState.value.predefinedPackagesData
+            ?.savedPackages
+            ?.find { it.isSelected }
             ?.let { triggerEvent(PackageSelected(it)) }
     }
 
@@ -209,9 +210,29 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     data class ViewState(
         val pageTabs: List<PageTab> = emptyList(),
         val customPackageCreationData: CustomPackageCreationData = CustomPackageCreationData.EMPTY,
-        val savedPackageSelection: SavedPackageSelection = SavedPackageSelection(emptyList()),
-        val carrierPackageSection: CarrierPackageSelection = CarrierPackageSelection(emptyMap())
-    ) : Parcelable
+        val predefinedPackagesState: PredefinedPackagesState = PredefinedPackagesState.Waiting,
+    ) : Parcelable {
+        val predefinedPackagesData
+            get() = (predefinedPackagesState as? PredefinedPackagesState.Data)
+    }
+
+    @Parcelize
+    sealed class PredefinedPackagesState : Parcelable {
+        data object Error : PredefinedPackagesState()
+        data object Waiting : PredefinedPackagesState()
+        data class Data(
+            val savedPackages: List<PackageData> = emptyList(),
+            val carrierPackages: Map<Carrier, List<CarrierPackageGroup>> = emptyMap()
+        ) : PredefinedPackagesState() {
+            val hasCarrierSelection: Boolean
+                get() = carrierPackages.values.flatten().find { group ->
+                    group.packages.find { it.isSelected } != null
+                } != null
+
+            val hasSavedSelection: Boolean
+                get() = savedPackages.find { it.isSelected } != null
+        }
+    }
 
     @Parcelize
     data class PageTab(
