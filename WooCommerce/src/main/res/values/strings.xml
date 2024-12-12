@@ -4326,6 +4326,7 @@
 
     <string name="woopos_email_receipt_title">Email receipt</string>
     <string name="woopos_email_receipt_email_label">Type email</string>
+    <string name="woopos_email_receipt_send_error">Error trying to send this email. Try again</string>
 
 
     <string name="customers_details_customer_section">Customer</string>

@@ -8,25 +8,26 @@ import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 @Suppress("UnusedPrivateProperty")
 class WooPosEmailReceiptViewModel @Inject constructor(
     private val repository: WooPosEmailReceiptRepository,
-    resourceProvider: ResourceProvider,
+    private val resourceProvider: ResourceProvider,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val orderId = savedState.get<Long>(EMAIL_RECEIPT_ROUTE_ORDER_ID_KEY)!!
 
     private val _state = savedState.getStateFlow<WooPosEmailReceiptState>(
         scope = viewModelScope,
-        initialValue = WooPosEmailReceiptState(
+        initialValue = WooPosEmailReceiptState.Email(
             email = "",
             errorMessage = null,
-            button = WooPosEmailReceiptState.Button(
+            button = WooPosEmailReceiptState.Email.Button(
                 text = resourceProvider.getString(R.string.woopos_email_receipt_send_button),
-                status = WooPosEmailReceiptState.Button.Status.DISABLED
+                status = WooPosEmailReceiptState.Email.Button.Status.DISABLED
             )
         ),
         key = "woo_pos_email_receipt_state",
@@ -36,25 +37,52 @@ class WooPosEmailReceiptViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosEmailReceiptUIEvent) {
         when (event) {
-            WooPosEmailReceiptUIEvent.SendEmailClicked -> TODO()
+            WooPosEmailReceiptUIEvent.SendEmailClicked -> handleSendEmailClicked()
             is WooPosEmailReceiptUIEvent.EmailChanged -> handleEmailChanged(event.email)
         }
     }
 
+    private fun handleSendEmailClicked() {
+        viewModelScope.launch {
+            val currentState = _state.value as WooPosEmailReceiptState.Email
+            _state.value = currentState.copy(
+                errorMessage = null,
+                button = currentState.button.copy(
+                    status = WooPosEmailReceiptState.Email.Button.Status.LOADING
+                )
+            )
+
+            val result = repository.sendReceiptByEmail(orderId, currentState.email)
+
+            _state.value = if (result.isSuccess) {
+                WooPosEmailReceiptState.Sent
+            } else {
+                val currentState = _state.value as? WooPosEmailReceiptState.Email ?: return@launch
+                currentState.copy(
+                    errorMessage = resourceProvider.getString(R.string.woopos_email_receipt_send_error),
+                    button = currentState.button.copy(
+                        status = WooPosEmailReceiptState.Email.Button.Status.ENABLED
+                    )
+                )
+            }
+        }
+    }
+
     private fun handleEmailChanged(email: String) {
+        val currentState = _state.value as WooPosEmailReceiptState.Email
         _state.value = if (repository.isEmailValid(email)) {
-             _state.value.copy(
+            currentState.copy(
                 email = email,
                 errorMessage = null,
-                button = _state.value.button.copy(
-                    status = WooPosEmailReceiptState.Button.Status.ENABLED
+                button = currentState.button.copy(
+                    status = WooPosEmailReceiptState.Email.Button.Status.ENABLED
                 )
             )
         } else {
-            _state.value.copy(
+            currentState.copy(
                 email = email,
-                button = _state.value.button.copy(
-                    status = WooPosEmailReceiptState.Button.Status.DISABLED
+                button = currentState.button.copy(
+                    status = WooPosEmailReceiptState.Email.Button.Status.DISABLED
                 )
             )
         }

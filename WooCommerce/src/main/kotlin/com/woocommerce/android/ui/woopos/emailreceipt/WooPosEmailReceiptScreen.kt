@@ -35,6 +35,7 @@ fun WooPosEmailReceiptScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit)
         onEmailAddressChanged = { viewModel.onUIEvent(WooPosEmailReceiptUIEvent.EmailChanged(it)) },
         onSendReceiptClicked = { viewModel.onUIEvent(WooPosEmailReceiptUIEvent.SendEmailClicked) },
         onBackClicked = { onNavigationEvent(WooPosNavigationEvent.GoBack) },
+        onEmailSent = { onNavigationEvent(WooPosNavigationEvent.GoBack) }
     )
 }
 
@@ -43,6 +44,7 @@ private fun WooPosEmailReceiptScreen(
     state: WooPosEmailReceiptState,
     onEmailAddressChanged: (String) -> Unit,
     onSendReceiptClicked: () -> Unit,
+    onEmailSent: () -> Unit,
     onBackClicked: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -50,60 +52,74 @@ private fun WooPosEmailReceiptScreen(
             titleText = stringResource(R.string.woopos_email_receipt_title),
             onBackClicked = onBackClicked,
         )
+        when (state) {
+            is WooPosEmailReceiptState.Email ->
+                EmailState(
+                    state = state,
+                    onEmailAddressChanged = onEmailAddressChanged,
+                    onSendReceiptClicked = onSendReceiptClicked
+                )
 
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            val (email, error, button) = createRefs()
+            is WooPosEmailReceiptState.Sent -> onEmailSent()
+        }
+    }
+}
 
-            val standardMargin = 16.dp.toAdaptivePadding()
-            val topMargin = 72.dp.toAdaptivePadding()
-            val textFieldButtonMargin = 80.dp.toAdaptivePadding()
-            WooPosInputField(
-                value = state.email,
-                onValueChange = onEmailAddressChanged,
-                label = stringResource(R.string.woopos_email_receipt_email_label),
-                contentAlignment = Alignment.Center,
-                textStyle = MaterialTheme.typography.h3,
-                modifier = Modifier.constrainAs(email) {
-                    top.linkTo(parent.top, margin = topMargin)
+@Composable
+private fun EmailState(
+    state: WooPosEmailReceiptState.Email,
+    onEmailAddressChanged: (String) -> Unit,
+    onSendReceiptClicked: () -> Unit,
+) {
+    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+        val (email, error, button) = createRefs()
+
+        val standardMargin = 16.dp.toAdaptivePadding()
+        val topMargin = 72.dp.toAdaptivePadding()
+        val textFieldButtonMargin = 80.dp.toAdaptivePadding()
+        WooPosInputField(
+            value = state.email,
+            onValueChange = onEmailAddressChanged,
+            label = stringResource(R.string.woopos_email_receipt_email_label),
+            contentAlignment = Alignment.Center,
+            textStyle = MaterialTheme.typography.h3,
+            modifier = Modifier.constrainAs(email) {
+                top.linkTo(parent.top, margin = topMargin)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                width = Dimension.fillToConstraints
+            },
+        )
+
+        if (state.errorMessage != null) {
+            Text(
+                text = state.errorMessage,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.h6,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.constrainAs(error) {
+                    top.linkTo(email.bottom, margin = 8.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
-            )
-
-            if (state.errorMessage != null) {
-                Text(
-                    text = state.errorMessage,
-                    color = MaterialTheme.colors.error,
-                    style = MaterialTheme.typography.h6,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.constrainAs(error) {
-                        top.linkTo(email.bottom, margin = 8.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                )
-            }
-
-            WooPosButton(
-                text = state.button.text,
-                onClick = onSendReceiptClicked,
-                state = when (state.button.status) {
-                    WooPosEmailReceiptState.Button.Status.ENABLED -> WooPosButtonState.ENABLED
-                    WooPosEmailReceiptState.Button.Status.DISABLED -> WooPosButtonState.DISABLED
-                    WooPosEmailReceiptState.Button.Status.LOADING -> WooPosButtonState.LOADING
-                },
-                modifier = Modifier.constrainAs(button) {
-                    top.linkTo(email.bottom, margin = textFieldButtonMargin)
-                    start.linkTo(parent.start, margin = standardMargin)
-                    end.linkTo(parent.end, margin = standardMargin)
-                    width = Dimension.fillToConstraints
-                },
+                }
             )
         }
+
+        WooPosButton(
+            text = state.button.text,
+            onClick = onSendReceiptClicked,
+            state = when (state.button.status) {
+                WooPosEmailReceiptState.Email.Button.Status.ENABLED -> WooPosButtonState.ENABLED
+                WooPosEmailReceiptState.Email.Button.Status.DISABLED -> WooPosButtonState.DISABLED
+                WooPosEmailReceiptState.Email.Button.Status.LOADING -> WooPosButtonState.LOADING
+            },
+            modifier = Modifier.constrainAs(button) {
+                top.linkTo(email.bottom, margin = textFieldButtonMargin)
+                start.linkTo(parent.start, margin = standardMargin)
+                end.linkTo(parent.end, margin = standardMargin)
+                width = Dimension.fillToConstraints
+            },
+        )
     }
 }
 
@@ -111,19 +127,20 @@ private fun WooPosEmailReceiptScreen(
 @Composable
 fun PreviewWooPosTotalsPaymentReceiptScreen() {
     WooPosTheme {
-    WooPosEmailReceiptScreen(
-        state = WooPosEmailReceiptState(
-            email = "email@google.com",
-            errorMessage = null,
-            button = WooPosEmailReceiptState.Button(
-                text = "Send",
-                status = WooPosEmailReceiptState.Button.Status.ENABLED
-            )
-        ),
-        onEmailAddressChanged = {},
-        onSendReceiptClicked = {},
-        onBackClicked = {},
-    )
+        WooPosEmailReceiptScreen(
+            state = WooPosEmailReceiptState.Email(
+                email = "email@google.com",
+                errorMessage = null,
+                button = WooPosEmailReceiptState.Email.Button(
+                    text = "Send",
+                    status = WooPosEmailReceiptState.Email.Button.Status.ENABLED
+                )
+            ),
+            onEmailAddressChanged = {},
+            onSendReceiptClicked = {},
+            onBackClicked = {},
+            onEmailSent = {},
+        )
     }
 }
 
@@ -131,19 +148,20 @@ fun PreviewWooPosTotalsPaymentReceiptScreen() {
 @Composable
 fun PreviewWooPosTotalsPaymentReceiptWithLabelScreen() {
     WooPosTheme {
-    WooPosEmailReceiptScreen(
-        state = WooPosEmailReceiptState(
-            email = "",
-            errorMessage = null,
-            button = WooPosEmailReceiptState.Button(
-                text = "Send",
-                status = WooPosEmailReceiptState.Button.Status.ENABLED
-            )
-        ),
-        onEmailAddressChanged = {},
-        onSendReceiptClicked = {},
-        onBackClicked = {},
-    )
+        WooPosEmailReceiptScreen(
+            state = WooPosEmailReceiptState.Email(
+                email = "",
+                errorMessage = null,
+                button = WooPosEmailReceiptState.Email.Button(
+                    text = "Send",
+                    status = WooPosEmailReceiptState.Email.Button.Status.ENABLED
+                )
+            ),
+            onEmailAddressChanged = {},
+            onSendReceiptClicked = {},
+            onEmailSent = {},
+            onBackClicked = {},
+        )
     }
 }
 
@@ -152,17 +170,18 @@ fun PreviewWooPosTotalsPaymentReceiptWithLabelScreen() {
 fun PreviewWooPosTotalsPaymentReceiptWithErrorScreen() {
     WooPosTheme {
         WooPosEmailReceiptScreen(
-            state = WooPosEmailReceiptState(
+            state = WooPosEmailReceiptState.Email(
                 email = "email@google.com",
                 errorMessage = "Invalid email",
-                button = WooPosEmailReceiptState.Button(
+                button = WooPosEmailReceiptState.Email.Button(
                     text = "Send",
-                    status = WooPosEmailReceiptState.Button.Status.ENABLED
+                    status = WooPosEmailReceiptState.Email.Button.Status.ENABLED
                 )
             ),
             onEmailAddressChanged = {},
             onSendReceiptClicked = {},
             onBackClicked = {},
+            onEmailSent = {},
         )
     }
 }
