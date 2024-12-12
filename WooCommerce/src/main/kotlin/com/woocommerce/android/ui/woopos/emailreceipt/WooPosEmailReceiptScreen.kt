@@ -6,9 +6,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -74,6 +79,14 @@ private fun EmailState(
     ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
         val (email, error, button) = createRefs()
 
+        val focusRequester = remember { FocusRequester() }
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+
         val standardMargin = 16.dp.toAdaptivePadding()
         val topMargin = 72.dp.toAdaptivePadding()
         val textFieldButtonMargin = 80.dp.toAdaptivePadding()
@@ -88,7 +101,7 @@ private fun EmailState(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 width = Dimension.fillToConstraints
-            },
+            }.focusRequester(focusRequester),
         )
 
         if (state.errorMessage != null) {

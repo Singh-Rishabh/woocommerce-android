@@ -101,7 +101,7 @@ class WooPosTotalsViewModel @Inject constructor(
             }
             WooPosTotalsUIEvent.OnStartReceiptFlowClicked -> {
                 viewModelScope.launch {
-                    if (isReceiptSendingSupportedValue.await()) {
+                    if (!isReceiptSendingSupportedValue.await()) {
                         childrenToParentEventSender.sendToParent(
                             NavigationEvent.ToEmailReceipt(dataState.value.orderId)
                         )
