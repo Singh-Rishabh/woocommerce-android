@@ -39,12 +39,14 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
             PackageData(
                 name = "Saved Package 1",
                 dimensions = "dimensions",
+                weight = "weight",
                 isSelected = false,
                 isLetter = false
             ),
             PackageData(
                 name = "Saved Package 2",
                 dimensions = "dimensions",
+                weight = "weight",
                 isSelected = false,
                 isLetter = false
             )
@@ -56,6 +58,7 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                     PackageData(
                         name = "Carrier Package 1",
                         dimensions = "dimensions",
+                        weight = "weight",
                         isSelected = false,
                         isLetter = false
                     )
@@ -91,13 +94,19 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 id = "1",
                 name = "Saved Package 1",
                 dimensions = "dimensions",
-                isLetter = false
+                weight = "weight",
+                isLetter = false,
+                dimensionUnit = "cm",
+                weightUnit = "kg"
             ),
             PackageDAO(
                 id = "2",
                 name = "Saved Package 2",
                 dimensions = "dimensions",
-                isLetter = false
+                weight = "weight",
+                isLetter = false,
+                dimensionUnit = "cm",
+                weightUnit = "kg"
             )
         ),
         carrierPackages = mapOf(
@@ -110,7 +119,10 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                                 id = "1",
                                 name = "Carrier Package 1",
                                 dimensions = "dimensions",
-                                isLetter = false
+                                weight = "weight",
+                                isLetter = false,
+                                dimensionUnit = "cm",
+                                weightUnit = "kg"
                             )
                         )
                     )

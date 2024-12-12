@@ -66,7 +66,7 @@ import com.woocommerce.android.ui.payments.cardreader.onboarding.PluginType
 import com.woocommerce.android.ui.payments.cardreader.update.CardReaderUpdateViewModel
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
-import com.woocommerce.android.ui.prefs.DeveloperOptionsRepository
+import com.woocommerce.android.ui.prefs.developer.DeveloperOptionsRepository
 import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -240,7 +240,7 @@ class CardReaderConnectViewModel @Inject constructor(
     private fun onReadyToStartScanning() {
         if (!cardReaderManager.initialized) {
             cardReaderManager.initialize(
-                updateFrequency = mapUpdateOptions(appPrefs.selectedUpdateReaderOption()),
+                updateFrequency = developerOptionsRepository.getUpdateSimulatedReaderOption(),
                 useInterac = developerOptionsRepository.isInteracPaymentEnabled(),
                 BuildConfig.DEBUG,
             )
@@ -248,10 +248,6 @@ class CardReaderConnectViewModel @Inject constructor(
         launch {
             startScanningIfNotStarted()
         }
-    }
-
-    private fun mapUpdateOptions(updateFrequency: String): CardReaderManager.SimulatorUpdateFrequency {
-        return CardReaderManager.SimulatorUpdateFrequency.valueOf(updateFrequency)
     }
 
     private suspend fun startScanningIfNotStarted() {

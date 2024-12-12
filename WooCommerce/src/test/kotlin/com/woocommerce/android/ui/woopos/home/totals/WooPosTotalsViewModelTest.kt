@@ -31,12 +31,17 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingAvailable
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
+import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
@@ -56,7 +61,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.mockito.kotlin.any
-import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.clearInvocations
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -79,6 +83,8 @@ class WooPosTotalsViewModelTest {
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
     private val networkStatus: WooPosNetworkStatus = mock()
+
+    private val wooPosItemsNavigator: WooPosItemsNavigator = mock()
 
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val resourceProvider: ResourceProvider = mock()
@@ -136,9 +142,10 @@ class WooPosTotalsViewModelTest {
 
     private val cardReaderFacade: WooPosCardReaderFacade = mock()
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val isReceiptSendingAvailable: WooPosTotalsPaymentReceiptIsSendingAvailable = mock {
+    private val isReceiptSendingSupported: WooPosTotalsPaymentReceiptIsSendingSupported = mock {
         onBlocking { invoke() }.thenReturn(false)
     }
+    private val isReceiptsEnabled: WooPosIsReceiptsEnabled = mock()
     private val receiptRepository: WooPosTotalsPaymentReceiptRepository = mock()
 
     private companion object {
@@ -233,6 +240,9 @@ class WooPosTotalsViewModelTest {
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
+            isCashPaymentsEnabled = mock {
+                onBlocking { invoke() }.thenReturn(true)
+            }
         )
 
         // THEN
@@ -240,6 +250,7 @@ class WooPosTotalsViewModelTest {
         assertThat(state.orderTotalText).isEqualTo("$5.00")
         assertThat(state.orderTaxText).isEqualTo("$2.00")
         assertThat(state.orderSubtotalText).isEqualTo("$3.00")
+        assertThat(state.cashPaymentAvailability).isEqualTo(CashPaymentAvailability.Available(123L))
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
     }
 
@@ -488,13 +499,17 @@ class WooPosTotalsViewModelTest {
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
+            isCashPaymentsEnabled = mock {
+                onBlocking { invoke() }.thenReturn(false)
+            }
         )
 
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
-        assertThat(state.orderTotalText).isEqualTo("5.00$")
-        assertThat(state.orderTaxText).isEqualTo("2.00$")
         assertThat(state.orderSubtotalText).isEqualTo("3.00$")
+        assertThat(state.orderTaxText).isEqualTo("2.00$")
+        assertThat(state.orderTotalText).isEqualTo("5.00$")
+        assertThat(state.cashPaymentAvailability).isEqualTo(CashPaymentAvailability.Unavailable)
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
     }
 
@@ -552,21 +567,7 @@ class WooPosTotalsViewModelTest {
         assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.Preparing::class.java)
     }
 
-    @org.junit.Test
-    fun `given there is no internet, then trigger proper event`() = runTest {
-        // GIVEN
-        whenever(networkStatus.isConnected()).thenReturn(false)
-        val readerStatus = MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
-        whenever(cardReaderFacade.readerStatus).thenReturn(readerStatus)
-
-        // WHEN
-        createViewModelAndSetupForSuccessfulOrderCreation()
-
-        // THEN
-        verify(childrenToParentEventSender, atLeastOnce()).sendToParent(ChildToParentEvent.NoInternet)
-    }
-
-    @org.junit.Test
+    @Test
     fun `given there is no internet, then collect payment method is not called`() = runTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready)).thenReturn("Getting ready")
@@ -610,9 +611,12 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
             onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
         }
+        val resourceProvider = mock<ResourceProvider>()
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
 
         // WHEN
         createViewModel(
+            resourceProvider = resourceProvider,
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
@@ -620,6 +624,25 @@ class WooPosTotalsViewModelTest {
 
         // THEN
         verify(cardReaderManager, never()).collectPayment(any())
+    }
+
+    @Test
+    fun `given there is no internet, then parent is informed`() = runTest {
+        // GIVEN
+        whenever(networkStatus.isConnected()).thenReturn(false)
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
+        whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
+
+        // WHEN
+        createViewModelAndSetupForSuccessfulOrderCreation()
+
+        // THEN
+        verify(cardReaderManager, never()).collectPayment(any())
+        verify(childrenToParentEventSender).sendToParent(
+            ChildToParentEvent.ToastMessageDisplayed(
+                message = "No internet"
+            )
+        )
     }
 
     @Test
@@ -945,8 +968,16 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `when OnStartReceiptFlowClicked is triggered, then update state to ReceiptSending with empty email`() = runTest {
+    fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then update state to ReceiptSending with empty email`() = runTest {
         // GIVEN
+        whenever(isReceiptSendingSupported.invoke()).thenReturn(true)
+
+        whenever(
+            resourceProvider.getString(
+                R.string.woopos_receipt_sending_not_supported,
+                WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL,
+            )
+        ).thenReturn("Please update WooCommerce")
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
             on { events }.thenReturn(mock())
         }
@@ -1045,6 +1076,7 @@ class WooPosTotalsViewModelTest {
         parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock(),
         totalsRepository: WooPosTotalsRepository = mock(),
         priceFormat: WooPosFormatPrice = mock(),
+        isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled = mock(),
         savedState: SavedStateHandle = SavedStateHandle(),
         cardReaderPaymentControllerFactory: CardReaderPaymentControllerFactory = paymentControllerFactory,
     ) = WooPosTotalsViewModel(
@@ -1052,14 +1084,17 @@ class WooPosTotalsViewModelTest {
         parentToChildrenEventReceiver = parentToChildrenEventReceiver,
         childrenToParentEventSender = childrenToParentEventSender,
         cardReaderFacade = cardReaderFacade,
+        receiptRepository = receiptRepository,
         totalsRepository = totalsRepository,
         priceFormat = priceFormat,
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
+        wooPosItemsNavigator = wooPosItemsNavigator,
+        isReceiptSendingSupported = isReceiptSendingSupported,
+        isReceiptsEnabled = isReceiptsEnabled,
+        isCashPaymentsEnabled = isCashPaymentsEnabled,
         uiStringParser = uiStringParser,
-        receiptRepository = receiptRepository,
-        isReceiptSendingAvailable = isReceiptSendingAvailable,
         savedState = savedState,
     )
 }

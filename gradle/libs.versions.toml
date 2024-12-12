@@ -9,13 +9,13 @@ androidx-arch-core = '2.1.0'
 androidx-browser = '1.5.0'
 androidx-camera = '1.2.3'
 androidx-cardview = '1.0.0'
-androidx-compose-bom = '2024.04.00'
+androidx-compose-bom = '2024.09.01'
 androidx-constraintlayout-compose = '1.0.1'
 androidx-constraintlayout-main = '2.1.4'
 androidx-core-main = '1.13.1'
 androidx-core-splashscreen = '1.0.1'
 androidx-datastore = '1.0.0' # Higher versions of the DataStore library are presenting crashes, refer to peaMlT-XN before upgrading it.
-androidx-fragment = '1.8.2'
+androidx-fragment = '1.8.5'
 androidx-hilt = '1.2.0'
 androidx-lifecycle = '2.8.7'
 androidx-navigation = '2.7.7'
@@ -42,7 +42,6 @@ bumptech-glide = '4.16.0'
 cashapp-turbine = '1.0.0'
 coil = '2.1.0'
 commons-fileupload = '1.5'
-commons-io = '2.11.0'
 dependency-analysis = '1.28.0'
 detekt = '1.23.5'
 facebook-flipper = '0.176.1'
@@ -86,7 +85,7 @@ stripe-terminal = '3.7.1'
 tinder-statemachine = '0.2.0'
 wiremock = '2.26.3'
 wordpress-aztec = 'v2.1.4'
-wordpress-fluxc = 'trunk-b06ca0ea66c6515813be7c59c83c7e1f0b0c6738'
+wordpress-fluxc = 'trunk-7cb493915ef7e0ee6eff1a4ca3b9872e178ee73e'
 wordpress-login = '1.19.0'
 wordpress-libaddressinput = '0.0.2'
 wordpress-mediapicker = '0.3.1'
@@ -171,7 +170,6 @@ cashapp-turbine = { group = "app.cash.turbine", name = "turbine", version.ref = 
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-svg = { group = "io.coil-kt", name = "coil-svg", version.ref = "coil" }
 commons-fileupload = { group = "commons-fileupload", name = "commons-fileupload", version.ref = "commons-fileupload" }
-commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons-io" }
 detekt-formatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 facebook-flipper-main = { group = "com.facebook.flipper", name = "flipper", version.ref = "facebook-flipper" }
 facebook-flipper-network-plugin = { group = "com.facebook.flipper", name = "flipper-network-plugin", version.ref = "facebook-flipper" }

@@ -45,28 +45,42 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCircul
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
 import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.processing.WooPosPaymentProcessingScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
 @Composable
-fun WooPosTotalsScreen(modifier: Modifier = Modifier) {
+fun WooPosTotalsScreen(
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val viewModel: WooPosTotalsViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState().value
-    WooPosTotalsScreen(modifier, state, viewModel::onUIEvent)
+    WooPosTotalsScreen(
+        modifier = modifier,
+        state = state,
+        onUIEvent = viewModel::onUIEvent,
+        onNavigationEvent = onNavigationEvent
+    )
 }
 
 @Composable
 private fun WooPosTotalsScreen(
     modifier: Modifier = Modifier,
     state: WooPosTotalsViewState,
-    onUIEvent: (WooPosTotalsUIEvent) -> Unit
+    onUIEvent: (WooPosTotalsUIEvent) -> Unit,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(modifier = modifier) {
         StateChangeAnimated(visible = state is WooPosTotalsViewState.Totals) {
             if (state is WooPosTotalsViewState.Totals) {
-                TotalsLoaded(state = state)
+                TotalsLoaded(
+                    state = state,
+                    onNavigationEvent = onNavigationEvent,
+                )
             }
         }
 
@@ -138,6 +152,7 @@ private fun StateChangeAnimated(
 @Composable
 private fun TotalsLoaded(
     state: WooPosTotalsViewState.Totals,
+    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -168,7 +183,38 @@ private fun TotalsLoaded(
                 }
             }
         }
-        TotalsGrid(modifier = Modifier.weight(.9f), state = state)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = 40.dp.toAdaptivePadding(),
+                    vertical = 16.dp.toAdaptivePadding()
+                )
+                .weight(.9f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            TotalsGrid(state = state)
+            when (val cashPaymentAvailability = state.cashPaymentAvailability) {
+                is CashPaymentAvailability.Available -> {
+                    WooPosButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp),
+                        text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                        onClick = {
+                            onNavigationEvent(
+                                WooPosNavigationEvent.OpenCashPayment(
+                                    orderId = cashPaymentAvailability.orderId
+                                )
+                            )
+                        },
+                    )
+                }
+
+                CashPaymentAvailability.Unavailable -> Unit
+            }
+        }
     }
 }
 
@@ -388,12 +434,14 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
+                cashPaymentAvailability = CashPaymentAvailability.Unavailable,
                 readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
                     title = "Ready for payment",
                     subtitle = "Tap, swipe or insert card"
                 )
             ),
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
@@ -408,6 +456,7 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                 orderSubtotalText = "$420.00",
                 orderTotalText = "$462.00",
                 orderTaxText = "$42.00",
+                cashPaymentAvailability = CashPaymentAvailability.Unavailable,
                 readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
@@ -415,7 +464,32 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                     onAction = {}
                 )
             ),
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
+        )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
+    WooPosTheme {
+        WooPosTotalsScreen(
+            modifier = Modifier,
+            state = WooPosTotalsViewState.Totals(
+                orderSubtotalText = "$420.00",
+                orderTotalText = "$462.00",
+                orderTaxText = "$42.00",
+                cashPaymentAvailability = CashPaymentAvailability.Available(orderId = 1),
+                readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
+                    title = "Reader not connected",
+                    subtitle = "To process this payment, please connect your reader.",
+                    actionButonLabel = "Connect to a reader",
+                    onAction = {}
+                )
+            ),
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
@@ -440,7 +514,8 @@ fun WooPosTotalsScreenLoadingPreview() {
     WooPosTheme {
         WooPosTotalsScreen(
             state = WooPosTotalsViewState.Loading,
-            onUIEvent = {}
+            onUIEvent = {},
+            onNavigationEvent = {}
         )
     }
 }
