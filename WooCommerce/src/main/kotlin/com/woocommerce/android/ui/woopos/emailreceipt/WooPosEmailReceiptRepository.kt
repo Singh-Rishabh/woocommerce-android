@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.emailreceipt
 
+import android.util.Patterns
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.OrderMapper
 import com.woocommerce.android.tools.SelectedSite
@@ -27,6 +28,8 @@ class WooPosEmailReceiptRepository @Inject constructor(
 
         return@withContext triggerOrderReceiptSending(orderId)
     }
+
+    fun isEmailValid(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
     private suspend fun triggerOrderReceiptSending(orderId: Long): Result<Unit> {
         val sendOrderResult = orderStore.sendOrderReceipt(selectedSite.get(), orderId)

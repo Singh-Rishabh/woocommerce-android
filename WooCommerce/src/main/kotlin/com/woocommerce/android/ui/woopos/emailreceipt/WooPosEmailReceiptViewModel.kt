@@ -37,7 +37,26 @@ class WooPosEmailReceiptViewModel @Inject constructor(
     fun onUIEvent(event: WooPosEmailReceiptUIEvent) {
         when (event) {
             WooPosEmailReceiptUIEvent.SendEmailClicked -> TODO()
-            is WooPosEmailReceiptUIEvent.EmailChanged -> TODO()
+            is WooPosEmailReceiptUIEvent.EmailChanged -> handleEmailChanged(event.email)
+        }
+    }
+
+    private fun handleEmailChanged(email: String) {
+        _state.value = if (repository.isEmailValid(email)) {
+             _state.value.copy(
+                email = email,
+                errorMessage = null,
+                button = _state.value.button.copy(
+                    status = WooPosEmailReceiptState.Button.Status.ENABLED
+                )
+            )
+        } else {
+            _state.value.copy(
+                email = email,
+                button = _state.value.button.copy(
+                    status = WooPosEmailReceiptState.Button.Status.DISABLED
+                )
+            )
         }
     }
 }
