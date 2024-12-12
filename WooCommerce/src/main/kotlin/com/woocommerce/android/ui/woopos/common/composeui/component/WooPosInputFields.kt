@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicTextField
@@ -104,37 +105,39 @@ fun WooPosInputField(
     onValueChange: (String) -> Unit,
     label: String = "",
     textStyle: TextStyle = MaterialTheme.typography.h6,
+    textColor: Color = MaterialTheme.colors.onBackground,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
+    contentAlignment: Alignment = Alignment.CenterStart,
     modifier: Modifier = Modifier,
 ) {
-    Column {
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            textStyle = textStyle,
-            modifier = modifier
-                .background(Color.Transparent),
-            singleLine = true,
-            decorationBox = { innerTextField ->
-                Box(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                ) {
-                    if (value.isEmpty()) {
-                        Text(
-                            text = label,
-                            style = MaterialTheme.typography.subtitle1,
-                        )
-                    }
-
-                    innerTextField()
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        textStyle = textStyle.copy(color = textColor),
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Transparent),
+        singleLine = true,
+        decorationBox = { innerTextField ->
+            Box(
+                modifier = Modifier
+                    .padding(horizontal = 8.dp),
+                contentAlignment = contentAlignment
+            ) {
+                if (value.isEmpty()) {
+                    Text(
+                        text = label,
+                        style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
+                    )
                 }
-            },
-            keyboardActions = keyboardActions,
-            keyboardOptions = keyboardOptions
-        )
-    }
+
+                innerTextField()
+            }
+        },
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions
+    )
 }
 
 @WooPosPreview
@@ -185,6 +188,7 @@ fun WooPosInputFieldPreview() {
                 value = "longemail@gmail.com",
                 onValueChange = {},
                 textStyle = MaterialTheme.typography.h3,
+                contentAlignment = Alignment.Center
             )
 
             Spacer(modifier = Modifier.size(8.dp))
@@ -192,6 +196,7 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "",
                 onValueChange = {},
+                textStyle = MaterialTheme.typography.h3,
                 label = "Label",
             )
         }

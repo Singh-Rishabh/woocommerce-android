@@ -23,6 +23,7 @@ class WooPosEmailReceiptViewModel @Inject constructor(
         scope = viewModelScope,
         initialValue = WooPosEmailReceiptState(
             email = "",
+            errorMessage = null,
             button = WooPosEmailReceiptState.Button(
                 text = resourceProvider.getString(R.string.woopos_email_receipt_send_button),
                 status = WooPosEmailReceiptState.Button.Status.DISABLED

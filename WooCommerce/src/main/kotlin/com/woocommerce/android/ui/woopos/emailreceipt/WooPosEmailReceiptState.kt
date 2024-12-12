@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class WooPosEmailReceiptState(
     val email: String,
+    val errorMessage: String?,
     val button: Button
 ) : Parcelable {
     @Parcelize

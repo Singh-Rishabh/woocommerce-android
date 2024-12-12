@@ -2,21 +2,27 @@ package com.woocommerce.android.ui.woopos.emailreceipt
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosInputField
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosToolbar
+import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 
 @Composable
@@ -39,46 +45,62 @@ private fun WooPosEmailReceiptScreen(
     onSendReceiptClicked: () -> Unit,
     onBackClicked: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Column(modifier = Modifier.fillMaxSize()) {
         WooPosToolbar(
             titleText = stringResource(R.string.woopos_email_receipt_title),
             onBackClicked = onBackClicked,
         )
+
         ConstraintLayout(
             modifier = Modifier
-                .width(540.dp),
+                .fillMaxWidth()
         ) {
-            val (title, email, button) = createRefs()
+            val (email, error, button) = createRefs()
 
-            Text(
-                text = "Receipt",
-                style = MaterialTheme.typography.h2,
-                modifier = Modifier.constrainAs(title) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                }
-            )
-
-            TextField(
+            val standardMargin = 16.dp.toAdaptivePadding()
+            val topMargin = 72.dp.toAdaptivePadding()
+            val textFieldButtonMargin = 80.dp.toAdaptivePadding()
+            WooPosInputField(
                 value = state.email,
                 onValueChange = onEmailAddressChanged,
-                label = { "email" },
+                label = stringResource(R.string.woopos_email_receipt_email_label),
+                contentAlignment = Alignment.Center,
+                textStyle = MaterialTheme.typography.h3,
                 modifier = Modifier.constrainAs(email) {
-                    top.linkTo(title.bottom, margin = 16.dp)
+                    top.linkTo(parent.top, margin = topMargin)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                }
+                    width = Dimension.fillToConstraints
+                },
             )
 
+            if (state.errorMessage != null) {
+                Text(
+                    text = state.errorMessage,
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.h6,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.constrainAs(error) {
+                        top.linkTo(email.bottom, margin = 8.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                )
+            }
+
             WooPosButton(
-                text = "Send",
+                text = state.button.text,
                 onClick = onSendReceiptClicked,
+                state = when (state.button.status) {
+                    WooPosEmailReceiptState.Button.Status.ENABLED -> WooPosButtonState.ENABLED
+                    WooPosEmailReceiptState.Button.Status.DISABLED -> WooPosButtonState.DISABLED
+                    WooPosEmailReceiptState.Button.Status.LOADING -> WooPosButtonState.LOADING
+                },
                 modifier = Modifier.constrainAs(button) {
-                    top.linkTo(email.bottom, margin = 16.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
+                    top.linkTo(email.bottom, margin = textFieldButtonMargin)
+                    start.linkTo(parent.start, margin = standardMargin)
+                    end.linkTo(parent.end, margin = standardMargin)
+                    width = Dimension.fillToConstraints
                 },
             )
         }
@@ -88,9 +110,11 @@ private fun WooPosEmailReceiptScreen(
 @WooPosPreview
 @Composable
 fun PreviewWooPosTotalsPaymentReceiptScreen() {
+    WooPosTheme {
     WooPosEmailReceiptScreen(
         state = WooPosEmailReceiptState(
             email = "email@google.com",
+            errorMessage = null,
             button = WooPosEmailReceiptState.Button(
                 text = "Send",
                 status = WooPosEmailReceiptState.Button.Status.ENABLED
@@ -100,4 +124,45 @@ fun PreviewWooPosTotalsPaymentReceiptScreen() {
         onSendReceiptClicked = {},
         onBackClicked = {},
     )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun PreviewWooPosTotalsPaymentReceiptWithLabelScreen() {
+    WooPosTheme {
+    WooPosEmailReceiptScreen(
+        state = WooPosEmailReceiptState(
+            email = "",
+            errorMessage = null,
+            button = WooPosEmailReceiptState.Button(
+                text = "Send",
+                status = WooPosEmailReceiptState.Button.Status.ENABLED
+            )
+        ),
+        onEmailAddressChanged = {},
+        onSendReceiptClicked = {},
+        onBackClicked = {},
+    )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun PreviewWooPosTotalsPaymentReceiptWithErrorScreen() {
+    WooPosTheme {
+        WooPosEmailReceiptScreen(
+            state = WooPosEmailReceiptState(
+                email = "email@google.com",
+                errorMessage = "Invalid email",
+                button = WooPosEmailReceiptState.Button(
+                    text = "Send",
+                    status = WooPosEmailReceiptState.Button.Status.ENABLED
+                )
+            ),
+            onEmailAddressChanged = {},
+            onSendReceiptClicked = {},
+            onBackClicked = {},
+        )
+    }
 }
