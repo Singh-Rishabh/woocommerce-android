@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -395,11 +396,13 @@ private fun PackageSelectionAvailableCard(
 ) {
     Column(
         modifier = modifier
-            .background(
-                color = MaterialTheme.colors.surface,
-                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-            )
-            .padding(dimensionResource(id = R.dimen.major_200)),
+            .background(color = MaterialTheme.colors.surface,)
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = colorResource(id = R.color.divider_color),
+                shape = RoundedCornerShape(8.dp)
+            ).padding(dimensionResource(id = R.dimen.major_200)),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
@@ -425,7 +428,6 @@ private fun PackageSelectionAvailableCard(
                 )
             }
         }
-        Divider()
     }
 }
 
