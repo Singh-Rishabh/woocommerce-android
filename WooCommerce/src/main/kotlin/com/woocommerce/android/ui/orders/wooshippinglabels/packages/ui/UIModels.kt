@@ -81,10 +81,11 @@ data class CustomPackageCreationData(
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
         name = "",
-        dimensions = "$length x $width x $height $dimensionUnit",
+        dimensions = "$length x $width x $height",
         weight = weight.orEmpty(),
         isSelected = true,
-        isLetter = type == PackageType.ENVELOPE
+        isLetter = type == PackageType.ENVELOPE,
+        dimensionUnit = dimensionUnit
     )
 
     companion object {
