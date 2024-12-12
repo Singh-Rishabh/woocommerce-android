@@ -13,7 +13,8 @@ class WooShippingRatesDomainMapper @Inject constructor() {
             getCarrier(entry.key) to entry.value.map {
                 ShippingRateUI(
                     name = it.defaultRate.serviceName,
-                    price = it.defaultRate.price.toString(),
+                    price = it.defaultRate.price,
+                    formattedPrice = it.defaultRate.price.toString(),
                     deliveryDays = it.defaultRate.deliveryDays,
                     insurance = "$200.00",
                     tracking = true,

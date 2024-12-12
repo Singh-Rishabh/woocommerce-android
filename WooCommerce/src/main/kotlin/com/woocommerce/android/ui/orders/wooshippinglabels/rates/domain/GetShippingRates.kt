@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRatesRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -14,12 +13,12 @@ class GetShippingRates @Inject constructor(
     private val repository: WooShippingRatesRepository,
     private val shippingMapper: WooShippingRatesDomainMapper
 ) {
-    private val cheapestComparator = Comparator<WooShippingRateOptionsModel> { r1, r2 ->
-        r1.defaultRate.price.compareTo(r2.defaultRate.price)
+    private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
+        r1.price.compareTo(r2.price)
     }
 
-    private val fastestComparator = Comparator<WooShippingRateOptionsModel> { r1, r2 ->
-        r1.defaultRate.deliveryDays.compareTo(r2.defaultRate.deliveryDays)
+    private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 ->
+        r1.deliveryDays.compareTo(r2.deliveryDays)
     }
 
     suspend operator fun invoke(
@@ -44,10 +43,10 @@ class GetShippingRates @Inject constructor(
         }
 
         return if (result.isSuccess) {
-            val rates = shippingMapper(result.getOrThrow())
-            Result.success(rates)
-        } else{
-            Result.failure(result.exceptionOrNull()?: Exception("Failed to get shipping rates"))
+            val sortedRates = shippingMapper(result.getOrThrow()).mapValues { it.value.sortedWith(comparator) }
+            Result.success(sortedRates)
+        } else {
+            Result.failure(result.exceptionOrNull() ?: Exception("Failed to get shipping rates"))
         }
     }
 }

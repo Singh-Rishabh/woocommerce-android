@@ -64,6 +64,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooS
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateOptionsModel
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import kotlin.random.Random
 
 @Suppress("MagicNumber")
@@ -368,7 +369,7 @@ private fun ShippingRateItem(
                             .padding(horizontal = 12.dp)
                     )
                     Text(
-                        text = shippingRate.price,
+                        text = shippingRate.formattedPrice,
                         style = MaterialTheme.typography.body1,
                         fontWeight = FontWeight.Bold
                     )
@@ -533,7 +534,8 @@ data class CarrierUI(
 
 data class ShippingRateUI(
     val name: String,
-    val price: String,
+    val price: BigDecimal,
+    val formattedPrice: String,
     val deliveryDays: Int,
     val insurance: String?,
     val tracking: Boolean,
@@ -602,7 +604,8 @@ fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI
 
         ShippingRateUI(
             name = rate.serviceName,
-            price = rate.price.toString(),
+            price = rate.price,
+            formattedPrice = rate.price.toString(),
             deliveryDays = rate.deliveryDays,
             insurance = null,
             tracking = false,
