@@ -91,7 +91,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     ) = flow {
         if (addresses != null && addresses.shipTo != Address.EMPTY) {
             emit(ShippingRatesState.Loading(sortOrder))
-            val shippingRatesResult = getShippingRates(selectedPackage, sortOrder, addresses.shipTo, addresses.shipFrom)
+            val shippingRatesResult = getShippingRates(
+                selectedPackage = selectedPackage,
+                sortOrder = sortOrder,
+                shipTo = addresses.shipTo,
+                shipFrom = addresses.shipFrom
+            )
             if (shippingRatesResult.isSuccess) {
                 emit(ShippingRatesState.DataState(sortOrder, shippingRatesResult.getOrThrow()))
             } else {
