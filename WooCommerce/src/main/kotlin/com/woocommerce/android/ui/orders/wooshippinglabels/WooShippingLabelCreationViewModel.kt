@@ -24,9 +24,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(
@@ -51,6 +51,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val refreshShippingRates = MutableSharedFlow<Unit>()
 
     private val selectedPackage = MutableStateFlow<PackageSelectionState>(NotSelected)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private val shippingRates =
         combine(
