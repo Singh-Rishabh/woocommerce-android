@@ -426,7 +426,9 @@ private fun PackageSelectionAvailableCard(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = stringResource(id = packageData.descriptionResId),
+                    text = packageData.groupName
+                        ?.takeIf { it.isNotEmpty() }
+                        ?: stringResource(id = packageData.descriptionResId),
                     style = MaterialTheme.typography.caption,
                     color = colorResource(id = R.color.color_on_surface_disabled)
                 )
