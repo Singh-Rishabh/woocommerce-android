@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.products.inventory
 
 import com.woocommerce.android.analytics.AnalyticsEvent
-import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemover
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
