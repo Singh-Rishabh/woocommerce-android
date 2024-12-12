@@ -65,7 +65,7 @@ fun WooPosHomeScreen(
         }
     }
 
-    LaunchedEffect(viewModel.toastEvent) {
+    LaunchedEffect(Unit) {
         viewModel.toastEvent.collect { message ->
             ToastUtils.showToast(
                 context,
