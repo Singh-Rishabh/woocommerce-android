@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(
@@ -191,7 +192,15 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onPackageSelected(packageData: PackageData) {
-
+        selectedPackage.update { content ->
+            when (content) {
+                is NotAvailable -> PackageSelectionState.Data(
+                    selectedPackage = packageData,
+                    totalWeight = packageData.weight
+                )
+                is PackageSelectionState.Data -> content.copy(selectedPackage = packageData)
+            }
+        }
     }
 
     data object StartPackageSelection : Event()
