@@ -395,7 +395,11 @@ private fun PackageSelectionAvailableCard(
 ) {
     Column(
         modifier = modifier
-            .padding(top = 8.dp),
+            .background(
+                color = MaterialTheme.colors.surface,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+            )
+            .padding(dimensionResource(id = R.dimen.major_200)),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
@@ -482,11 +486,32 @@ private fun HazmatCardPreview() {
 
 @Preview
 @Composable
-private fun PackageCardPreview() {
+private fun PackageNotSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
             modifier = Modifier.padding(16.dp),
             packageSelectionState = PackageSelectionState.NotSelected,
+            onSelectPackageClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PackageSelectedPreview() {
+    WooThemeWithBackground {
+        PackageCard(
+            modifier = Modifier.padding(16.dp),
+            packageSelectionState = PackageSelectionState.Data(
+                selectedPackage = PackageData(
+                    name = "Package 1",
+                    dimensions = "10 x 10 x 10 cm",
+                    weight = "1.5 kg",
+                    isSelected = true,
+                    isLetter = false
+                ),
+                totalWeight = "1.5 kg"
+            ),
             onSelectPackageClick = {}
         )
     }
