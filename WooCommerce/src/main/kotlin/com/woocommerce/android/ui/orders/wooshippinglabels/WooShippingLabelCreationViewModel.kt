@@ -6,10 +6,10 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -44,18 +44,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         originCountry = "US"
     )
 
-    private val mockSelectedPackage = PackageDAO(
-        id = "small_flat_box",
-        name = "Small Flat Rate Box",
-        dimensions = "21.91 x 13.65 x 4.13",
-        isLetter = false,
-        weight = "0.5",
-        dimensionUnit = "cm",
-        weightUnit = "kg"
-    )
-
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
-    private val selectedPackage = MutableStateFlow(mockSelectedPackage)
+    private val selectedPackage = MutableStateFlow<PackageSelectionState>(NotAvailable)
     private val storeOptions = MutableStateFlow(mockStoreOptions)
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
@@ -67,7 +57,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             selectedRatesSortOrder,
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, sortOrder, _ ->
-            Pair(selectedPackage, sortOrder)
+            when (selectedPackage) {
+                is NotAvailable -> PackageData.EMPTY
+                is PackageSelectionState.Data -> selectedPackage.selectedPackage
+            }.let { Pair(it, sortOrder) }
         }.flatMapLatest {
             val (selectedPackage, sortOrder) = it
             refreshShippingRates(selectedPackage, sortOrder)
@@ -79,7 +72,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch { observeShippingLabelInformation() }
     }
 
-    private fun refreshShippingRates(selectedPackage: PackageDAO, sortOrder: ShippingSortOption) = flow {
+    private fun refreshShippingRates(
+        selectedPackage: PackageData,
+        sortOrder: ShippingSortOption
+    ) = flow {
         emit(ShippingRatesState.Loading(sortOrder))
         val shippingRatesResult = getShippingRates(selectedPackage, sortOrder)
         if (shippingRatesResult.isSuccess) {
@@ -224,6 +220,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val selectedRatesSortOrder: ShippingSortOption,
             val shippingRates: Map<Carrier, List<ShippingRateUI>>
         ) : ShippingRatesState()
+    }
+
+    sealed class PackageSelectionState {
+        data object NotAvailable : PackageSelectionState()
+        data class Data(
+            val selectedPackage: PackageData,
+            val totalWeight: String
+        ) : PackageSelectionState()
     }
 }
 
