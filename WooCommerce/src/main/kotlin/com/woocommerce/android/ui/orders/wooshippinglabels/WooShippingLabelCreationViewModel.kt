@@ -11,7 +11,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemM
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
@@ -235,7 +235,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
         data class DataState(
             val selectedRatesSortOrder: ShippingSortOption,
-            val shippingRates: Map<Carrier, List<ShippingRateUI>>
+            val shippingRates: Map<CarrierUI, List<ShippingRateUI>>
         ) : ShippingRatesState()
     }
 }

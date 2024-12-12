@@ -59,6 +59,9 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateOptionsModel
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
 import kotlin.random.Random
@@ -70,7 +73,7 @@ val Colors.selectedRateBackgroundColor: Color get() = if (isLight) Color(0xFFF2E
 internal fun ShippingRatesCard(
     selectedRate: ShippingRateUI?,
     onSelectedChange: (ShippingRateUI) -> Unit,
-    shippingRates: Map<Carrier, List<ShippingRateUI>>,
+    shippingRates: Map<CarrierUI, List<ShippingRateUI>>,
     signatureRequired: SignatureRequired?,
     onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
@@ -231,7 +234,7 @@ private fun SortingDropdownMenu(
 fun ShippingRates(
     selectedRate: ShippingRateUI?,
     onSelectedChange: (ShippingRateUI) -> Unit,
-    shippingRates: Map<Carrier, List<ShippingRateUI>>,
+    shippingRates: Map<CarrierUI, List<ShippingRateUI>>,
     signatureRequired: SignatureRequired?,
     onSelectedSignatureChange: (SignatureRequired?) -> Unit,
     signatureRequiredOptions: List<SignatureRequired>,
@@ -316,7 +319,7 @@ private fun CarrierLogo(
 
 @Composable
 private fun ShippingRateItem(
-    carrier: Carrier,
+    carrier: CarrierUI,
     shippingRate: ShippingRateUI,
     isSelected: Boolean,
     signatureRequired: SignatureRequired?,
@@ -365,7 +368,7 @@ private fun ShippingRateItem(
                             .padding(horizontal = 12.dp)
                     )
                     Text(
-                        text = shippingRate.rate,
+                        text = shippingRate.price,
                         style = MaterialTheme.typography.body1,
                         fontWeight = FontWeight.Bold
                     )
@@ -522,20 +525,21 @@ enum class ShippingSortOption(@StringRes val stringResource: Int) {
     FASTEST(R.string.shipping_label_shipping_rates_sort_option_fastest)
 }
 
-data class Carrier(
-    val id: String,
+data class CarrierUI(
+    val carrier: WooShippingCarrier,
     val name: String,
     val logoRes: Int? = null,
 )
 
 data class ShippingRateUI(
     val name: String,
-    val rate: String,
-    val currency: String,
+    val price: String,
     val deliveryDays: Int,
     val insurance: String?,
     val tracking: Boolean,
-    val freePickup: Boolean
+    val freePickup: Boolean,
+    val options: WooShippingRateOptionsModel,
+    val selectedOption: WooShippingRateModel = options.defaultRate
 )
 
 data class SignatureRequired(
@@ -543,30 +547,30 @@ data class SignatureRequired(
     val amount: String,
 )
 
-fun generateShippingRates(): Map<Carrier, List<ShippingRateUI>> {
+fun generateShippingRates(): Map<CarrierUI, List<ShippingRateUI>> {
     val carriers = listOf(
-        Carrier(
-            id = "dhl",
+        CarrierUI(
+            carrier = WooShippingCarrier.DHL,
             name = "DHL Express",
             logoRes = R.drawable.dhl_logo
         ),
-        Carrier(
-            id = "usps",
+        CarrierUI(
+            carrier = WooShippingCarrier.USPS,
             name = "USPS",
             logoRes = R.drawable.usps_logo
         ),
-        Carrier(
-            id = "ups",
+        CarrierUI(
+            carrier = WooShippingCarrier.UPS,
             name = "UPS",
             logoRes = R.drawable.ups_logo
         ),
-        Carrier(
-            id = "fedex",
+        CarrierUI(
+            carrier = WooShippingCarrier.FEDEX,
             name = "Fed Ex",
             logoRes = R.drawable.fedex_logo
         ),
-        Carrier(
-            id = "canadapost",
+        CarrierUI(
+            carrier = WooShippingCarrier.UNKNOWN,
             name = "Canada Post",
             logoRes = null
         )
@@ -574,22 +578,40 @@ fun generateShippingRates(): Map<Carrier, List<ShippingRateUI>> {
 
     return carriers.associateWith {
         generateRates(
-            it.name,
+            it.carrier,
             Random(0).nextInt(from = 3, until = 10)
         )
     }
 }
 
-fun generateRates(carrier: String, number: Int): List<ShippingRateUI> {
+fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI> {
     return List(number) {
-        ShippingRateUI(
-            name = "$carrier - Ground Advantage Express",
-            rate = "$${(it + 100) / (it + 1)}.00",
-            currency = "USD",
+        val rate = WooShippingRateModel(
+            packageId = "123",
+            shipmentId = "123",
+            rateId = "123",
+            serviceId = "123",
+            carrierId = "123",
+            serviceName = "$carrier $it",
             deliveryDays = it,
-            insurance = "$100.00",
-            tracking = true,
-            freePickup = true
+            price = it.toBigDecimal(),
+            discount = it.toBigDecimal(),
+            option = WooShippingRateModel.Option.DEFAULT,
+            carrier = WooShippingCarrier.DHL
+        )
+
+        ShippingRateUI(
+            name = rate.serviceName,
+            price = rate.price.toString(),
+            deliveryDays = rate.deliveryDays,
+            insurance = null,
+            tracking = false,
+            freePickup = false,
+            options = WooShippingRateOptionsModel(
+                rateOptions = mapOf(
+                    WooShippingRateModel.Option.DEFAULT to rate
+                )
+            )
         )
     }
 }

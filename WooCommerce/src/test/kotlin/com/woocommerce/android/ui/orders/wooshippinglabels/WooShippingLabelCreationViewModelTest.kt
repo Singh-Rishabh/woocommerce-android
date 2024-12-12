@@ -9,7 +9,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
@@ -77,7 +77,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         address1 = "1278 24st Perito AVE"
     )
 
-    private val defaultShippingRates = emptyMap<Carrier, List<ShippingRateUI>>()
+    private val defaultShippingRates = emptyMap<CarrierUI, List<ShippingRateUI>>()
 
     private val orderDetailRepository: OrderDetailRepository = mock()
     private val getShippableItems: GetShippableItems = mock()
