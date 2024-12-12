@@ -1263,6 +1263,8 @@
     <string name="shipping_label_hazmat_title">Are you shipping dangerous goods or hazardous materials?</string>
     <string name="shipping_label_select_package_button">Select a Package</string>
     <string name="shipping_label_select_package_title">Select a package to get shipping rates</string>
+    <string name="shipping_label_package_selected_title">Package</string>
+    <string name="shipping_label_package_selected_description">Change package selection</string>
     <string name="shipping_label_select_package_description">Enter your package\'s dimensions or pick a carrier package option to see the available shipping rates.</string>
     <string name="shipping_label_shipment_details_title">Shipment details</string>
     <string name="shipping_label_shipment_details_order_details">Order details</string>
@@ -1280,6 +1282,7 @@
     <string name="shipping_label_purchased_track_shipment">Track shipment</string>
     <string name="shipping_label_purchased_schedule_pick_up">Schedule pickup</string>
     <string name="shipping_label_purchased_request_refund">Request refund</string>
+
 
     <!--
     Shipping label package creation labels

@@ -392,15 +392,16 @@ private fun PackageSelectionAvailableCard(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Package",
-                style = MaterialTheme.typography.subtitle1,
+                text = stringResource(id = R.string.shipping_label_package_selected_title),
+                style = MaterialTheme.typography.h6,
             )
             IconButton(
                 onClick = onSelectPackageClick
             ) {
                 Icon(
+                    tint = colorResource(id = R.color.woo_purple_90),
                     painter = painterResource(id = R.drawable.ic_edit),
-                    contentDescription = "Edit package"
+                    contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
                 )
             }
         }
@@ -411,7 +412,8 @@ private fun PackageSelectionAvailableCard(
                     width = 1.dp,
                     color = colorResource(id = R.color.divider_color),
                     shape = RoundedCornerShape(8.dp)
-                ).padding(dimensionResource(id = R.dimen.major_200)),
+                )
+                .padding(dimensionResource(id = R.dimen.major_200)),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
