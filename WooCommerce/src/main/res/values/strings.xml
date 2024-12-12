@@ -4321,6 +4321,8 @@
     <string name="woopos_cash_payment_no_chang_due">No change due</string>
     <string name="woopos_cash_payment_error_message">Error trying to process payment. Try again.</string>
 
+    <string name="woopos_toolbar_icon_content_description">Back</string>
+
 
     <string name="customers_details_customer_section">Customer</string>
     <string name="customers_details_orders_section">Orders</string>
