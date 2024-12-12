@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -333,7 +332,8 @@ private fun PackageCard(
         is PackageSelectionState.Data -> {
             PackageSelectionAvailableCard(
                 modifier = modifier,
-                packageData = packageSelectionState.selectedPackage
+                packageData = packageSelectionState.selectedPackage,
+                onSelectPackageClick = onSelectPackageClick
             )
         }
     }
@@ -392,40 +392,63 @@ private fun SelectPackageCard(
 @Composable
 private fun PackageSelectionAvailableCard(
     modifier: Modifier,
-    packageData: PackageData
+    packageData: PackageData,
+    onSelectPackageClick: () -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .background(color = MaterialTheme.colors.surface,)
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = colorResource(id = R.color.divider_color),
-                shape = RoundedCornerShape(8.dp)
-            ).padding(dimensionResource(id = R.dimen.major_200)),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
+    Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(id = R.dimen.major_100))
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = stringResource(id = packageData.descriptionResId),
-                    style = MaterialTheme.typography.caption,
-                    color = colorResource(id = R.color.color_on_surface_disabled)
+            Text(
+                text = "Package",
+                style = MaterialTheme.typography.subtitle1,
+            )
+            IconButton(
+                onClick = onSelectPackageClick
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    contentDescription = "Edit package"
                 )
-                Text(
-                    text = packageData.name,
-                    style = MaterialTheme.typography.body1
+            }
+        }
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = colorResource(id = R.color.divider_color),
+                    shape = RoundedCornerShape(8.dp)
                 )
-                Text(
-                    text = packageData.weight
-                        .takeIf { it.isNotEmpty() }
-                        ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
-                        ?: packageData.dimensionForDisplay,
-                    style = MaterialTheme.typography.body2
-                )
+                .padding(dimensionResource(id = R.dimen.major_200)),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = stringResource(id = packageData.descriptionResId),
+                        style = MaterialTheme.typography.caption,
+                        color = colorResource(id = R.color.color_on_surface_disabled)
+                    )
+                    Text(
+                        text = packageData.name,
+                        style = MaterialTheme.typography.body1
+                    )
+                    Text(
+                        text = packageData.weight
+                            .takeIf { it.isNotEmpty() }
+                            ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                            ?: packageData.dimensionForDisplay,
+                        style = MaterialTheme.typography.body2
+                    )
+                }
             }
         }
     }
