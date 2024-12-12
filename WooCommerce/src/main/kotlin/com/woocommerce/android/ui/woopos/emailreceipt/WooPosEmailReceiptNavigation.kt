@@ -1,5 +1,7 @@
 package com.woocommerce.android.ui.woopos.emailreceipt
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -23,6 +25,16 @@ fun NavGraphBuilder.emailReceiptScreen(
         arguments = listOf(
             navArgument(EMAIL_RECEIPT_ROUTE_ORDER_ID_KEY) { type = NavType.LongType }
         ),
+        enterTransition = {
+            slideInHorizontally(
+                initialOffsetX = { fullWidth -> fullWidth },
+            )
+        },
+        exitTransition = {
+            slideOutHorizontally(
+                targetOffsetX = { fullWidth -> fullWidth },
+            )
+        },
     ) { backStackEntry ->
         WooPosEmailReceiptScreen(
             onNavigationEvent = onNavigationEvent,
