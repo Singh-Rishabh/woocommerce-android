@@ -50,6 +50,7 @@ import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
@@ -109,6 +110,7 @@ fun WooShippingLabelCreationScreen(
             shippingLines = shippingLines,
             shippingAddresses = shippingAddresses,
             shippingRatesState = shippingRatesState,
+            packageSelectionState = packageSelectionState,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
             onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
@@ -148,6 +150,7 @@ private fun LabelCreationScreenWithBottomSheet(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
+    packageSelectionState: PackageSelectionState,
     onSelectPackageClick: () -> Unit,
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
@@ -212,6 +215,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 )
                 PackageCard(
                     modifier = Modifier.padding(16.dp),
+                    packageSelectionState = packageSelectionState,
                     onSelectPackageClick = onSelectPackageClick
                 )
                 WooShippingShippingRatesSection(
@@ -275,36 +279,6 @@ private fun WooShippingShippingRatesSection(
     }
 }
 
-@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL)
-@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL)
-@Composable
-private fun WooShippingLabelCreationScreenPreview() {
-    WooThemeWithBackground {
-        WooShippingLabelCreationScreen(
-            shippableItems = ShippableItemsUI(
-                shippableItems = generateItems(6),
-                formattedTotalWeight = "8.5kg",
-                formattedTotalPrice = "$92.78"
-            ),
-            shippingLines = getShippingLines(),
-            modifier = Modifier.fillMaxSize(),
-            onSelectPackageClick = {},
-            onPurchaseShippingLabel = {},
-            shippingAddresses = WooShippingAddresses(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo(),
-                originAddresses = listOf(getShipFrom())
-            ),
-            shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
-            packageSelectionState = PackageSelectionState.NotSelected,
-            onShippingFromAddressChange = {},
-            onShippingToAddressChange = {},
-            onRefreshShippingRates = {},
-            onSelectedRateSortOrderChanged = {}
-        )
-    }
-}
-
 @Composable
 internal fun HazmatCard(
     modifier: Modifier = Modifier,
@@ -341,16 +315,30 @@ internal fun HazmatCard(
     }
 }
 
-@Preview
 @Composable
-private fun HazmatCardPreview() {
-    WooThemeWithBackground {
-        HazmatCard(modifier = Modifier.padding(16.dp))
+private fun PackageCard(
+    modifier: Modifier = Modifier,
+    packageSelectionState: PackageSelectionState,
+    onSelectPackageClick: () -> Unit
+) {
+    when (packageSelectionState) {
+        PackageSelectionState.NotSelected -> {
+            SelectPackageCard(
+                modifier = modifier,
+                onSelectPackageClick = onSelectPackageClick
+            )
+        }
+        is PackageSelectionState.Data -> {
+            PackageSelectionAvailableCard(
+                modifier = modifier,
+                packageData = packageSelectionState.selectedPackage
+            )
+        }
     }
 }
 
 @Composable
-private fun PackageCard(
+private fun SelectPackageCard(
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit
 ) {
@@ -399,15 +387,12 @@ private fun PackageCard(
     }
 }
 
-@Preview
 @Composable
-private fun PackageCardPreview() {
-    WooThemeWithBackground {
-        PackageCard(
-            modifier = Modifier.padding(16.dp),
-            onSelectPackageClick = {}
-        )
-    }
+private fun PackageSelectionAvailableCard(
+    modifier: Modifier,
+    packageData: PackageData
+) {
+
 }
 
 data class ShippableItemUI(
@@ -426,3 +411,53 @@ data class ShippableItemsUI(
     val formattedTotalWeight: String,
     val formattedTotalPrice: String
 )
+
+@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL)
+@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL)
+@Composable
+private fun WooShippingLabelCreationScreenPreview() {
+    WooThemeWithBackground {
+        WooShippingLabelCreationScreen(
+            shippableItems = ShippableItemsUI(
+                shippableItems = generateItems(6),
+                formattedTotalWeight = "8.5kg",
+                formattedTotalPrice = "$92.78"
+            ),
+            shippingLines = getShippingLines(),
+            modifier = Modifier.fillMaxSize(),
+            onSelectPackageClick = {},
+            onPurchaseShippingLabel = {},
+            shippingAddresses = WooShippingAddresses(
+                shipFrom = getShipFrom(),
+                shipTo = getShipTo(),
+                originAddresses = listOf(getShipFrom())
+            ),
+            shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
+            packageSelectionState = PackageSelectionState.NotSelected,
+            onShippingFromAddressChange = {},
+            onShippingToAddressChange = {},
+            onRefreshShippingRates = {},
+            onSelectedRateSortOrderChanged = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun HazmatCardPreview() {
+    WooThemeWithBackground {
+        HazmatCard(modifier = Modifier.padding(16.dp))
+    }
+}
+
+@Preview
+@Composable
+private fun PackageCardPreview() {
+    WooThemeWithBackground {
+        PackageCard(
+            modifier = Modifier.padding(16.dp),
+            packageSelectionState = PackageSelectionState.NotSelected,
+            onSelectPackageClick = {}
+        )
+    }
+}
