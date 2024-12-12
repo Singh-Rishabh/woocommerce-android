@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
+package com.woocommerce.android.ui.woopos.emailreceipt
 
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.OrderMapper
@@ -19,7 +19,7 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 import org.wordpress.android.fluxc.store.WCOrderStore
 
-class WooPosTotalsPaymentReceiptRepositoryTest {
+class WooPosEmailReceiptRepositoryTest {
     private val siteModel: SiteModel = mock()
     private val selectedSite: SelectedSite = mock {
         on { get() }.thenReturn(siteModel)
@@ -28,7 +28,7 @@ class WooPosTotalsPaymentReceiptRepositoryTest {
     private val orderCreateEditRepository: OrderCreateEditRepository = mock()
     private val orderMapper: OrderMapper = mock()
 
-    private val repository = WooPosTotalsPaymentReceiptRepository(
+    private val repository = WooPosEmailReceiptRepository(
         selectedSite,
         orderStore,
         orderCreateEditRepository,

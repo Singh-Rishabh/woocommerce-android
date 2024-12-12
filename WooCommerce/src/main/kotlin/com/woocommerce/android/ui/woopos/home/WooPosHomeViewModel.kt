@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ExitConfirmationDialog
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ScreenPositionState
@@ -34,12 +35,15 @@ class WooPosHomeViewModel @Inject constructor(
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent: SharedFlow<String> = _toastEvent
 
+    private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
+    val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
+
     init {
         listenBottomEvents()
     }
 
     fun onUIEvent(event: WooPosHomeUIEvent) {
-        return when (event) {
+        when (event) {
             WooPosHomeUIEvent.SystemBackClicked -> {
                 when (_state.value.screenPositionState) {
                     ScreenPositionState.Checkout.NotPaid -> {
@@ -76,6 +80,11 @@ class WooPosHomeViewModel @Inject constructor(
             }
 
             WooPosHomeUIEvent.OnPaymentCompletedViaCash -> onOrderSuccessfullyPaid()
+            WooPosHomeUIEvent.ExitPosClicked -> {
+                viewModelScope.launch {
+                    _navigationEvent.emit(NavigationEvent.ExitPos)
+                }
+            }
         }
     }
 
@@ -129,6 +138,8 @@ class WooPosHomeViewModel @Inject constructor(
                             _toastEvent.emit(event.message)
                         }
                     }
+
+                    is NavigationEvent -> viewModelScope.launch { _navigationEvent.emit(event) }
                 }
             }
         }

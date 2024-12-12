@@ -6,6 +6,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
+import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -14,9 +15,6 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccess
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptRepository
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -67,11 +65,10 @@ class WooPosTotalsViewModelTest {
         on { paymentStatus }.thenReturn(MutableStateFlow(WooPosCardReaderPaymentStatus.Unknown))
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val isReceiptSendingSupported: WooPosTotalsPaymentReceiptIsSendingSupported = mock {
+    private val isReceiptSendingSupported: WooPosEmailReceiptIsSendingSupported = mock {
         onBlocking { invoke() }.thenReturn(false)
     }
     private val isReceiptsEnabled: WooPosIsReceiptsEnabled = mock()
-    private val receiptRepository: WooPosTotalsPaymentReceiptRepository = mock()
 
     private companion object {
         private const val EMPTY_ORDER_ID = -1L
@@ -156,7 +153,7 @@ class WooPosTotalsViewModelTest {
                 orderSubtotalText = "$3.00",
                 orderTaxText = "$2.00",
                 orderTotalText = "$5.00",
-                cashPaymentAvailability = CashPaymentAvailability.Available(123L)
+                isCashPaymentAvailable = true
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -469,7 +466,7 @@ class WooPosTotalsViewModelTest {
                 orderSubtotalText = "3.00$",
                 orderTaxText = "2.00$",
                 orderTotalText = "5.00$",
-                cashPaymentAvailability = CashPaymentAvailability.Unavailable
+                isCashPaymentAvailable = false
             )
         )
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
@@ -756,7 +753,6 @@ class WooPosTotalsViewModelTest {
         parentToChildrenEventReceiver = parentToChildrenEventReceiver,
         childrenToParentEventSender = childrenToParentEventSender,
         cardReaderFacade = cardReaderFacade,
-        receiptRepository = receiptRepository,
         totalsRepository = totalsRepository,
         priceFormat = priceFormat,
         analyticsTracker = analyticsTracker,
