@@ -1,5 +1,7 @@
 package com.woocommerce.android.ui.products.inventory
 
+import com.woocommerce.android.analytics.AnalyticsEvent
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemover
 import com.woocommerce.android.ui.orders.creation.CheckDigitRemoverFactory
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper
@@ -22,7 +24,8 @@ import kotlin.test.assertEquals
 class FetchProductByIdentifierTest : BaseUnitTest() {
     private val repo: ProductListRepository = mock()
     private val checkDigitRemoverFactory: CheckDigitRemoverFactory = mock()
-    private val sut = FetchProductByIdentifier(repo, checkDigitRemoverFactory)
+    private val analyticsTracker: AnalyticsTrackerWrapper = mock()
+    private val sut = FetchProductByIdentifier(repo, checkDigitRemoverFactory, analyticsTracker)
 
     @Test
     fun `given barcode scan result, when product found, should return success`() = testBlocking {
@@ -93,8 +96,8 @@ class FetchProductByIdentifierTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given barcode scan result, when product found when searching by sku and global unique id, should return global unique id`() = testBlocking {
-        val skuProduct = ProductTestUtils.generateProduct(productId = 2)
+    fun `given barcode scan result, when product found when searching by global unique id and sku, should return the global unique id`() = testBlocking {
+        val skuProduct = ProductTestUtils.generateProduct(productId = 1)
         whenever(
             repo.searchProductList(
                 searchQuery = "123",
@@ -102,16 +105,37 @@ class FetchProductByIdentifierTest : BaseUnitTest() {
             )
         ).thenReturn(listOf(skuProduct))
 
-        val globalUniqueIdReturnedProduct = ProductTestUtils.generateProduct(productId = 1)
-
+        val globalUniqueIdProduct = ProductTestUtils.generateProduct(productId = 2)
         whenever(
             repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
-        ).thenReturn(listOf(globalUniqueIdReturnedProduct))
+        ).thenReturn(listOf(globalUniqueIdProduct))
 
         val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
 
         assertTrue(result.isSuccess)
-        assertEquals(result.getOrNull(), globalUniqueIdReturnedProduct)
+        assertEquals(result.getOrNull(), globalUniqueIdProduct)
+    }
+
+    @Test
+    fun `given barcode scan result, when product found when searching by global unique id, should track event`() = testBlocking {
+        whenever(
+            repo.searchProductList(
+                searchQuery = "123",
+                skuSearchOptions = WCProductStore.SkuSearchOptions.ExactSearch
+            )
+        ).thenReturn(emptyList())
+
+        whenever(
+            repo.searchProductListByGlobalUniqueId(globalUniqueId = "123")
+        ).thenReturn(ProductTestUtils.generateProductList())
+
+        val result = sut("123", GoogleBarcodeFormatMapper.BarcodeFormat.FormatCode39)
+
+        verify(analyticsTracker).track(
+            AnalyticsEvent.PRODUCT_SEARCH_VIA_GLOBAL_UNIQUE_IDENTIFIER_SUCCESS
+        )
+
+        assertTrue(result.isSuccess)
     }
 
     @Test
