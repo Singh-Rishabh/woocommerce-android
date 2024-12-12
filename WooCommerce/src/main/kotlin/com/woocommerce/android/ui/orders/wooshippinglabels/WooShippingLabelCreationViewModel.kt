@@ -6,6 +6,7 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -61,7 +62,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         ) { selectedPackage, sortOrder, _ ->
             when (selectedPackage) {
                 is NotSelected -> PackageData.EMPTY
-                is PackageSelectionState.Data -> selectedPackage.selectedPackage
+                is DataAvailable -> selectedPackage.selectedPackage
             }.let { Pair(it, sortOrder) }
         }.flatMapLatest {
             val (selectedPackage, sortOrder) = it
@@ -197,11 +198,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onPackageSelected(packageData: PackageData) {
         packageSelection.update { content ->
             when (content) {
-                is NotSelected -> PackageSelectionState.Data(
+                is NotSelected -> DataAvailable(
                     selectedPackage = packageData,
                     totalWeight = packageData.weight
                 )
-                is PackageSelectionState.Data -> content.copy(selectedPackage = packageData)
+                is DataAvailable -> content.copy(selectedPackage = packageData)
             }
         }
     }
@@ -237,7 +238,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     sealed class PackageSelectionState {
         data object NotSelected : PackageSelectionState()
-        data class Data(
+        data class DataAvailable(
             val selectedPackage: PackageData,
             val totalWeight: String
         ) : PackageSelectionState()

@@ -50,6 +50,7 @@ import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
@@ -327,7 +328,7 @@ private fun PackageCard(
         is NotSelected -> SelectPackageCard(
             onSelectPackageClick = onSelectPackageClick
         )
-        is PackageSelectionState.Data -> PackageSelectionAvailableCard(
+        is DataAvailable -> PackageSelectionAvailableCard(
             packageData = packageSelectionState.selectedPackage,
             onSelectPackageClick = onSelectPackageClick
         )
@@ -509,7 +510,7 @@ private fun PackageSelectedPreview() {
     WooThemeWithBackground {
         PackageCard(
             modifier = Modifier.padding(16.dp),
-            packageSelectionState = PackageSelectionState.Data(
+            packageSelectionState = DataAvailable(
                 selectedPackage = PackageData(
                     name = "Package 1",
                     dimensions = "10 x 10 x 10",
