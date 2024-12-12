@@ -40,7 +40,6 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
-import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonLarge
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
@@ -159,11 +158,13 @@ private fun TotalsLoaded(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
                 if (state.isCashPaymentAvailable) {
-                    WooPosButton(
+                    WooPosOutlinedButton(
                         text = stringResource(R.string.woopos_payment_take_cash_payment_label),
                         onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
                     )
                 }
+
+                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
                 WooPosButtonLarge(
                     text = stringResource(R.string.woopos_payment_collect_payment_label),
