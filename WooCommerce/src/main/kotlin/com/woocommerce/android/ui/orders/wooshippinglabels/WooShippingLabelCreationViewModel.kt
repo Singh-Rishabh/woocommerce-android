@@ -150,9 +150,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress? {
-        return (viewState as? WooShippingViewState.DataState)?.let {
-            it.shippingAddresses.shipFrom
-        } ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.firstOrNull()
+        return (viewState.value as? WooShippingViewState.DataState)?.shippingAddresses?.shipFrom
+            ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.firstOrNull()
     }
 
     fun onShippingFromAddressChange(address: OriginShippingAddress) {
