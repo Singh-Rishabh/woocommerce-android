@@ -106,7 +106,6 @@ private fun EmailState(
                 top.linkTo(parent.top, margin = topMargin)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                width = Dimension.fillToConstraints
             }.focusRequester(focusRequester),
         )
 

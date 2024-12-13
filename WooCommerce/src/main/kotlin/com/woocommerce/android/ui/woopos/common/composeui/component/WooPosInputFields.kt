@@ -4,11 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,10 +18,15 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
@@ -111,33 +117,44 @@ fun WooPosInputField(
     contentAlignment: Alignment = Alignment.CenterStart,
     modifier: Modifier = Modifier,
 ) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        textStyle = textStyle.copy(color = textColor),
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.Transparent),
-        singleLine = true,
-        decorationBox = { innerTextField ->
-            Box(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp),
-                contentAlignment = contentAlignment
-            ) {
-                if (value.isEmpty()) {
-                    Text(
-                        text = label,
-                        style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
-                    )
-                }
+    var labelWidth by remember { mutableIntStateOf(0) }
 
-                innerTextField()
-            }
-        },
-        keyboardActions = keyboardActions,
-        keyboardOptions = keyboardOptions
-    )
+    Box(
+        modifier = modifier
+            .background(Color.Transparent),
+        contentAlignment = contentAlignment,
+    ) {
+        if (value.isEmpty()) {
+            Text(
+                text = label,
+                style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier
+                    .onGloballyPositioned { coordinates ->
+                        labelWidth = coordinates.size.width
+                    }
+            )
+        }
+
+        val density = LocalDensity.current
+
+        // that\s workaround to keep cursor to the left from the label
+        val textFieldModifier = if(value.isEmpty()) {
+            Modifier.width(with(density) { labelWidth.toDp() + 4.dp })
+        } else {
+            Modifier.width(IntrinsicSize.Min)
+        }
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            textStyle = textStyle.copy(color = textColor),
+            singleLine = true,
+            keyboardActions = keyboardActions,
+            keyboardOptions = keyboardOptions,
+            modifier = textFieldModifier,
+        )
+    }
 }
 
 @WooPosPreview
@@ -197,7 +214,7 @@ fun WooPosInputFieldPreview() {
                 value = "",
                 onValueChange = {},
                 textStyle = MaterialTheme.typography.h3,
-                label = "Label",
+                label = "Label Label",
             )
         }
     }
