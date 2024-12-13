@@ -418,12 +418,8 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                 readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
                     title = "Ready for payment",
                     subtitle = "Tap, swipe or insert card"
-                )
+                ),
                 isCashPaymentAvailable = false,
-                readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
-                    title = "Ready for payment",
-                    subtitle = "Tap, swipe or insert card"
-                )
             ),
             onUIEvent = {},
         )

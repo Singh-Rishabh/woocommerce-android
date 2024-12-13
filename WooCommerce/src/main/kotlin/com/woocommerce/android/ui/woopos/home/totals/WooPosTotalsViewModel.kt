@@ -19,6 +19,7 @@ import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendin
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NewTransactionClicked
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.OrderSuccessfullyPaid
@@ -67,7 +68,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val isCashPaymentsEnabled: WooPosIsCashPaymentsEnabled,
     private val cardReaderPaymentControllerFactory: CardReaderPaymentControllerFactory,
     private val uiStringParser: UiStringParser,
-    private val savedState: SavedStateHandle,
+    savedState: SavedStateHandle,
 ) : ViewModel() {
 
     private companion object {

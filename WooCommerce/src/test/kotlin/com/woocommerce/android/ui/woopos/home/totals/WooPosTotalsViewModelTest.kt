@@ -32,6 +32,7 @@ import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
+import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCashPaymentsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -40,8 +41,6 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
-import com.woocommerce.android.ui.woopos.home.totals.payment.receipt.WooPosTotalsPaymentReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -654,10 +653,6 @@ class WooPosTotalsViewModelTest {
 
     @Test
     fun `given reader connected, when checkout clicked, then should hide error`() = runTest {
-        // GIVEN
-        val readerStatus: StateFlow<CardReaderStatus> =
-            MutableStateFlow<CardReaderStatus>(CardReaderStatus.Connected(mock()))
-
         // WHEN
         val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
 
@@ -1015,7 +1010,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
-    fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then update state to ReceiptSending with empty email`() = runTest {
+    fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then toast message should be shown`() = runTest {
         // GIVEN
         whenever(isReceiptSendingSupported.invoke()).thenReturn(true)
 
@@ -1038,7 +1033,11 @@ class WooPosTotalsViewModelTest {
         viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
 
         // THEN
-        assertThat(viewModel.state.value).isEqualTo(WooPosTotalsViewState.ReceiptSending(email = ""))
+        verify(childrenToParentEventSender).sendToParent(
+            ChildToParentEvent.ToastMessageDisplayed(
+                message = "Please update WooCommerce"
+            )
+        )
     }
 
     private fun createNonEmptyOrder() = Order.getEmptyOrder(
