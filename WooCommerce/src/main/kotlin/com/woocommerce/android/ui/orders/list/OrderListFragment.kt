@@ -21,6 +21,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.transition.TransitionManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -58,6 +60,8 @@ import com.woocommerce.android.ui.jitm.JitmMessagePathsProvider
 import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.main.MainActivity
 import com.woocommerce.android.ui.main.MainNavigationRouter
+import com.woocommerce.android.ui.orders.DefaultOrderListItemLookup
+import com.woocommerce.android.ui.orders.OrderSelectionItemKeyProvider
 import com.woocommerce.android.ui.orders.OrderStatusUpdateSource
 import com.woocommerce.android.ui.orders.OrdersCommunicationViewModel
 import com.woocommerce.android.ui.orders.creation.CodeScannerStatus
@@ -65,8 +69,10 @@ import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper.Barc
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowErrorSnack
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowOrderFilters
+import com.woocommerce.android.ui.products.MutableMultipleSelectionPredicate
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.widgets.WCEmptyView.EmptyViewType
 import dagger.hilt.android.AndroidEntryPoint
@@ -108,6 +114,8 @@ class OrderListFragment :
     @Inject
     lateinit var feedbackPrefs: FeedbackPrefs
 
+    private var tracker: SelectionTracker<Long>? = null
+    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>()
     private val viewModel: OrderListViewModel by viewModels()
     private val communicationViewModel: OrdersCommunicationViewModel by activityViewModels()
     private var snackBar: Snackbar? = null
@@ -239,6 +247,36 @@ class OrderListFragment :
         binding.orderFiltersCard.setClickListener { viewModel.onFiltersButtonTapped() }
         initCreateOrderFAB(binding.createOrderButton)
         initSwipeBehaviour()
+
+        if (FeatureFlag.BULK_UPDATE_ORDERS_STATUS.isEnabled()) {
+            addSelectionTracker()
+        }
+    }
+
+    private fun addSelectionTracker() {
+        tracker = SelectionTracker.Builder(
+            "orderSelection", // a string to identify our selection in the context of this fragment
+            binding.orderListView.ordersList, // the RecyclerView where we will apply the tracker
+            OrderSelectionItemKeyProvider(binding.orderListView.ordersList), // the source of selection keys
+            DefaultOrderListItemLookup(
+                binding.orderListView.ordersList
+            ), // the source of information about recycler items
+            StorageStrategy.createLongStorage() // strategy for type-safe storage of the selection state
+        ).withSelectionPredicate(selectionPredicate)
+            .build()
+
+        binding.orderListView.adapter.tracker = tracker // Use the new property
+
+        tracker?.addObserver(
+            object : SelectionTracker.SelectionObserver<Long>() {
+                override fun onSelectionChanged() {
+                    val selectionCount = tracker?.selection?.size() ?: 0
+                    // TODO: add onSelectionChanged handling to OrderListViewModel
+                    // Temporarily showing toast instead to debug size selection
+                    ToastUtils.showToast(context, "Current selection count: $selectionCount")
+                }
+            }
+        )
     }
 
     private fun setupToolbar() {

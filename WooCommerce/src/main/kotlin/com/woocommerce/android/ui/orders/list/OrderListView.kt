@@ -29,6 +29,9 @@ class OrderListView @JvmOverloads constructor(
     val ordersList
         get() = binding.ordersList
 
+    val adapter: OrderListAdapter
+        get() = ordersAdapter
+
     fun init(
         currencyFormatter: CurrencyFormatter,
         orderListListener: OrderListListener
