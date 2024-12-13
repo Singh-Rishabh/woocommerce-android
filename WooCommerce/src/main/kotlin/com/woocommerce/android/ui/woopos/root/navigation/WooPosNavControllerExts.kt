@@ -8,6 +8,7 @@ fun NavController.navigateOnce(route: String) {
     }
 }
 
+@Suppress("ReturnCount")
 private fun NavController.currentRouteWithParams(): String {
     val currentRoute = currentDestination?.route ?: return ""
     val arguments = currentBackStackEntry?.arguments ?: return currentRoute
