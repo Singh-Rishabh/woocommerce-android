@@ -17,7 +17,16 @@ class PrintShippingLabel @Inject constructor(
         shippingLabelData: String
     ) {
         withContext(dispatchers.io) {
-
+            fileUtils.createTempTimeStampedFile(
+                storageDir = storageDirectory,
+                prefix = "PDF",
+                fileExtension = "pdf"
+            )?.let {
+                fileUtils.writeContentToFile(
+                    file = it,
+                    content = base64Decoder.decode(shippingLabelData, 0)
+                )
+            }
         }
     }
 }
