@@ -62,7 +62,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
 
     private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.price.compareTo(r2.price) }
-
     private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.deliveryDays.compareTo(r2.deliveryDays) }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -71,14 +70,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelection,
             shippingAddresses,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, addresses, _ ->
-            when (selectedPackage) {
-                is NotSelected -> PackageData.EMPTY
-                is DataAvailable -> selectedPackage.selectedPackage
-            }.let { Pair(it, addresses) }
+        ) { packageSelection, addresses, _ ->
+             Pair(packageSelection, addresses)
         }.flatMapLatest {
-            val (selectedPackage, addresses) = it
-            refreshShippingRates(selectedPackage, addresses)
+            val (packageSelection, addresses) = it
+            refreshShippingRates(packageSelection, addresses)
         }
 
     val viewState: MutableStateFlow<WooShippingViewState> = MutableStateFlow(WooShippingViewState.Loading)
@@ -112,14 +108,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun refreshShippingRates(
-        selectedPackage: PackageData,
+        packageSelection: PackageSelectionState,
         addresses: WooShippingAddresses?
     ) = flow {
-        if (addresses != null && addresses.shipTo != Address.EMPTY && selectedPackage != PackageData.EMPTY) {
+        if (addresses != null && addresses.shipTo != Address.EMPTY && packageSelection is DataAvailable) {
             val sortOrder = selectedRatesSortOrder.value
             emit(ShippingRatesState.Loading(sortOrder))
             val shippingRatesResult = getShippingRates(
-                selectedPackage = selectedPackage,
+                selectedPackage = packageSelection.selectedPackage,
                 sortOrder = sortOrder,
                 shipTo = addresses.shipTo,
                 shipFrom = addresses.shipFrom
@@ -189,17 +185,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onShippingToAddressChange(address: Address) {
         (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
             viewState.value = currentData.copy(
-                shippingAddresses = currentData.shippingAddresses.copy(
-                    shipTo = address
-                )
+                shippingAddresses = currentData.shippingAddresses.copy(shipTo = address)
             )
         }
     }
 
     fun onRefreshShippingRates() {
-        launch {
-            refreshShippingRates.emit(Unit)
-        }
+        launch { refreshShippingRates.emit(Unit) }
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
