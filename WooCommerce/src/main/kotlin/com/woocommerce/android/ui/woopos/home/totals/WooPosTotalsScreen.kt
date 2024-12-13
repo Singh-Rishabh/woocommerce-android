@@ -49,6 +49,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCircularLoadingIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.CashPaymentAvailability
@@ -180,10 +181,12 @@ private fun TotalsLoaded(
                 is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
                     ReaderDisconnected(modifier = Modifier, status = readerStatus)
                 }
+
                 is WooPosTotalsViewState.ReaderStatus.Preparing,
                 is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
                     PreparingReader(readerStatus)
                 }
+
                 is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
                     ReaderReadyForPayment(readerStatus)
                 }
@@ -201,24 +204,27 @@ private fun TotalsLoaded(
             verticalArrangement = Arrangement.Center,
         ) {
             TotalsGrid(state = state)
-            when (val cashPaymentAvailability = state.cashPaymentAvailability) {
-                is CashPaymentAvailability.Available -> {
-                    WooPosButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp),
-                        text = stringResource(R.string.woopos_payment_take_cash_payment_label),
-                        onClick = {
-                            onNavigationEvent(
-                                WooPosNavigationEvent.OpenCashPayment(
-                                    orderId = cashPaymentAvailability.orderId
-                                )
-                            )
-                        },
-                    )
-                }
 
-                CashPaymentAvailability.Unavailable -> Unit
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                when (state.cashPaymentAvailability) {
+                    is CashPaymentAvailability.Available -> {
+                        WooPosOutlinedButton(
+                            text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                            onClick = {
+                                onNavigationEvent(
+                                    WooPosNavigationEvent.OpenCashPayment(
+                                        orderId = state.cashPaymentAvailability.orderId
+                                    )
+                                )
+                            },
+                        )
+                        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                    }
+
+                    CashPaymentAvailability.Unavailable -> {
+                    }
+                }
             }
         }
     }
@@ -309,12 +315,9 @@ private fun ReaderDisconnected(
 }
 
 @Composable
-private fun TotalsGrid(
-    modifier: Modifier = Modifier,
-    state: WooPosTotalsViewState.Totals
-) {
+private fun TotalsGrid(state: WooPosTotalsViewState.Totals) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .padding(24.dp.toAdaptivePadding())
             .width(382.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
