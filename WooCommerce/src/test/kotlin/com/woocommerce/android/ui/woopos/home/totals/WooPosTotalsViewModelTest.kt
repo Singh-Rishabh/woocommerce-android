@@ -186,8 +186,6 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given checkout started, when vm created, then order creation is started`() = runTest {
         // GIVEN
-        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
-            .thenReturn("Getting ready")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
             .thenReturn("Checking order")
         val itemClickedData = listOf(
@@ -595,12 +593,9 @@ class WooPosTotalsViewModelTest {
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
             onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
         }
-        val resourceProvider = mock<ResourceProvider>()
-        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
 
         // WHEN
         createViewModel(
-            resourceProvider = resourceProvider,
             parentToChildrenEventReceiver = parentToChildrenEventReceiver,
             totalsRepository = totalsRepository,
             priceFormat = priceFormat,
@@ -614,7 +609,6 @@ class WooPosTotalsViewModelTest {
     fun `given there is no internet, then parent is informed`() = runTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
-        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
         whenever(cardReaderManager.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
 
         // WHEN
@@ -1084,6 +1078,11 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Tap, swipe or insert card")
         whenever(resourceProvider.getString(R.string.woo_pos_payment_remove_card))
             .thenReturn("Remove card")
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
+            .thenReturn("No internet")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+            .thenReturn("Payment failed")
+        whenever(uiStringParser.asString(any())).thenReturn("Unfortunately, this payment has been declined.")
 
         val itemClickedData = listOf(
             WooPosItemsViewModel.ItemClickedData.SimpleProduct(
