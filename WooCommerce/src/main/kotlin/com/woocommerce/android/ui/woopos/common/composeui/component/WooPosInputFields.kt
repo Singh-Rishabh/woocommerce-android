@@ -141,7 +141,7 @@ fun WooPosInputField(
         val density = LocalDensity.current
 
         // that's workaround to keep cursor to the left from the label
-        val textFieldModifier = if(value.isEmpty()) {
+        val textFieldModifier = if (value.isEmpty()) {
             Modifier.width(with(density) { labelWidth.toDp() + 4.dp })
         } else {
             Modifier.width(IntrinsicSize.Min)
