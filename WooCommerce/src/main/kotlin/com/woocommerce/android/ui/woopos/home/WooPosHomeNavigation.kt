@@ -9,12 +9,13 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import com.woocommerce.android.ui.woopos.root.navigation.navigateOnce
 
 const val HOME_ROUTE = "home"
 const val HOME_PAYMENT_COMPLETED_VIA_CASH_KEY = "home_payment_completed_via_cash_key"
 
 fun NavController.navigateToHomeScreen() {
-    navigate(HOME_ROUTE)
+    navigateOnce(HOME_ROUTE)
 }
 
 fun NavController.navigateToHomeScreenAfterSuccessfulCashPayment() {
