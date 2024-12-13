@@ -284,14 +284,16 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 dimensions = "10 x 10 x 10",
                                 weight = "10",
                                 isSelected = false,
-                                isLetter = false
+                                isLetter = false,
+                                id = "1",
                             ),
                             PackageData(
                                 name = "Package 2 - Carrier 1",
                                 dimensions = "20 x 20 x 20",
                                 weight = "20",
                                 isSelected = false,
-                                isLetter = false
+                                isLetter = false,
+                                id = "1",
                             )
                         )
                     ),
@@ -303,14 +305,16 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 dimensions = "30 x 30 x 30",
                                 weight = "30",
                                 isSelected = false,
-                                isLetter = false
+                                isLetter = false,
+                                id = "1",
                             ),
                             PackageData(
                                 name = "Package 4 - Carrier 1",
                                 dimensions = "40 x 40 x 40",
                                 weight = "40",
                                 isSelected = false,
-                                isLetter = false
+                                isLetter = false,
+                                id = "1",
                             )
                         )
                     )
@@ -324,14 +328,16 @@ fun WooShippingCarrierPackageScreenPreview() {
                                 dimensions = "10 x 10 x 10",
                                 weight = "10",
                                 isSelected = false,
-                                isLetter = false
+                                isLetter = false,
+                                id = "1",
                             ),
                             PackageData(
                                 name = "Package 2 Carrier - 2",
                                 dimensions = "20 x 20 x 20",
                                 weight = "20",
                                 isSelected = false,
-                                isLetter = false
+                                isLetter = false,
+                                id = "1",
                             )
                         )
                     )

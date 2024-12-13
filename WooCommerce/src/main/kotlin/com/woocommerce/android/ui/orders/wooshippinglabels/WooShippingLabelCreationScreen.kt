@@ -501,7 +501,8 @@ private fun PackageSelectedPreview() {
                     dimensions = "10 x 10 x 10",
                     weight = "1.5",
                     isSelected = true,
-                    isLetter = false
+                    isLetter = false,
+                    id = "1",
                 ),
                 totalWeight = "1.5"
             ),

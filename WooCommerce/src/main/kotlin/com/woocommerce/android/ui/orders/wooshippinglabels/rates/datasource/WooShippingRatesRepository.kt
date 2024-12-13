@@ -40,11 +40,13 @@ class WooShippingRatesRepository @Inject constructor(
             name = "${shipTo.firstName} ${shipTo.lastName}"
         )
         val packageDTO = PackageDTO(
-            length = 5.0,
-            width = 5.0,
-            height = 5.0,
-            weight = 5.0,
-            isLetter = false
+            id = selectedPackage.id,
+            boxId = "default_package",
+            length = selectedPackage.length.toDouble(),
+            width = selectedPackage.width.toDouble(),
+            height = selectedPackage.height.toDouble(),
+            weight = selectedPackage.weight.toDouble().coerceAtLeast(0.1),
+            isLetter = selectedPackage.isLetter
         )
         val result = restClient.getShippingRates(
             site = selectedSite.get(),
