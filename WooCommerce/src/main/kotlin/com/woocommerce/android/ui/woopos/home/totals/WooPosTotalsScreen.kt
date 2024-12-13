@@ -230,7 +230,6 @@ private fun TotalsLoaded(
     }
 }
 
-
 @Composable
 private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
