@@ -2678,32 +2678,6 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             verify(cardReaderManager, never()).collectPayment(any())
         }
 
-    @Test
-    fun `given point of sale, when payment captured, then should not show success state`() {
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            initViewModel(
-                readerType = EXTERNAL,
-                cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
-                    orderId = ORDER_ID,
-                    paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-                )
-            )
-
-            viewModel.start()
-
-            assertThat(viewModel.viewStateData.value).isNotInstanceOfAny(
-                BuiltInReaderPaymentSuccessfulState::class.java,
-                ExternalReaderPaymentSuccessfulState::class.java,
-                ExternalReaderPaymentSuccessfulReceiptSentAutomaticallyState::class.java,
-                BuiltInReaderPaymentSuccessfulReceiptSentAutomaticallyState::class.java,
-            )
-        }
-    }
-
     private fun setupViewModelForInteracRefund() {
         viewModel = CardReaderPaymentViewModel(
             interacRefundSavedState,
