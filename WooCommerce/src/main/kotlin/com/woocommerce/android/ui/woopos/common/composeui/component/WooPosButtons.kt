@@ -86,7 +86,7 @@ fun WooPosButtonLarge(
 }
 
 @Composable
-fun WooPosOutlinedButton(
+fun WooPosOutlinedButtonSmall(
     modifier: Modifier = Modifier,
     text: String,
     shape: RoundedCornerShape = RoundedCornerShape(4.dp),
