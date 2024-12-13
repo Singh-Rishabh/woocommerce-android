@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
@@ -139,7 +140,7 @@ fun WooPosInputField(
 
         val density = LocalDensity.current
 
-        // that\s workaround to keep cursor to the left from the label
+        // that's workaround to keep cursor to the left from the label
         val textFieldModifier = if(value.isEmpty()) {
             Modifier.width(with(density) { labelWidth.toDp() + 4.dp })
         } else {
@@ -153,6 +154,7 @@ fun WooPosInputField(
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions,
             modifier = textFieldModifier,
+            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
         )
     }
 }
