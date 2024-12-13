@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -34,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
@@ -45,6 +46,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCircularLoadingIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
@@ -163,10 +165,11 @@ private fun TotalsLoaded(
         modifier = Modifier
             .background(WooPosTheme.colors.totalsBackground)
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        TotalsGrid(
-            state = state,
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1.1f)
@@ -178,10 +181,12 @@ private fun TotalsLoaded(
                 is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
                     ReaderDisconnected(modifier = Modifier, status = readerStatus)
                 }
+
                 is WooPosTotalsViewState.ReaderStatus.Preparing,
                 is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
                     PreparingReader(readerStatus)
                 }
+
                 is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
                     ReaderReadyForPayment(readerStatus)
                 }
@@ -200,44 +205,31 @@ private fun TotalsLoaded(
         ) {
             TotalsGrid(state = state)
 
-            AnimatedVisibility(
-                visible = isButtonVisible,
-                enter = slideInVertically { it },
-                modifier = Modifier.constrainAs(buttons) {
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
-                    when (state.cashPaymentAvailability) {
-                        is CashPaymentAvailability.Available -> {
-                            WooPosOutlinedButton(
-                                text = stringResource(R.string.woopos_payment_take_cash_payment_label),
-                                onClick = {
-                                    onNavigationEvent(
-                                        WooPosNavigationEvent.OpenCashPayment(
-                                            orderId = state.cashPaymentAvailability.orderId
-                                        )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                when (state.cashPaymentAvailability) {
+                    is CashPaymentAvailability.Available -> {
+                        WooPosOutlinedButton(
+                            text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                            onClick = {
+                                onNavigationEvent(
+                                    WooPosNavigationEvent.OpenCashPayment(
+                                        orderId = state.cashPaymentAvailability.orderId
                                     )
-                                },
-                            )
-                            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
-                        }
-                        CashPaymentAvailability.Unavailable -> {
-                        }
+                                )
+                            },
+                        )
+                        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
                     }
 
-                    WooPosButtonLarge(
-                        text = stringResource(R.string.woopos_payment_collect_payment_label),
-                        onClick = { onUIEvent(WooPosTotalsUIEvent.CollectPaymentClicked) }
-                    )
+                    CashPaymentAvailability.Unavailable -> {
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
@@ -277,6 +269,50 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
         style = MaterialTheme.typography.h4,
         fontWeight = FontWeight.Bold
     )
+}
+
+@Composable
+private fun ReaderDisconnected(
+    modifier: Modifier = Modifier,
+    status: WooPosTotalsViewState.ReaderStatus.Disconnected
+) {
+    Column(
+        modifier = modifier.padding(40.dp.toAdaptivePadding()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
+
+        Icon(
+            modifier = Modifier.size(64.dp),
+            painter = painterResource(id = R.drawable.woo_pos_ic_error),
+            contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
+            tint = Color.Unspecified,
+        )
+
+        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+
+        Text(
+            text = status.title,
+            style = MaterialTheme.typography.h4,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+
+        Text(
+            text = status.subtitle,
+            style = MaterialTheme.typography.h6
+        )
+        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        WooPosButton(
+            text = status.actionButonLabel,
+            onClick = status.onAction,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+        )
+    }
 }
 
 @Composable
