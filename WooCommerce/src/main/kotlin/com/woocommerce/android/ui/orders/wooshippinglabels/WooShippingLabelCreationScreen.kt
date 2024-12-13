@@ -27,6 +27,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberBottomSheetScaffoldState
@@ -410,7 +411,7 @@ private fun PackageSelectionAvailableCard(
                 onClick = onSelectPackageClick
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_edit),
+                    imageVector = Icons.Filled.Edit,
                     tint = colorResource(id = R.color.color_icon_menu),
                     contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
                 )
