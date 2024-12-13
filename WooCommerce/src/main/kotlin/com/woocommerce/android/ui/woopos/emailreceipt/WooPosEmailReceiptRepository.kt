@@ -15,6 +15,7 @@ class WooPosEmailReceiptRepository @Inject constructor(
     private val orderStore: WCOrderStore,
     private val orderCreateEditRepository: OrderCreateEditRepository,
     private val orderMapper: OrderMapper,
+    private val provideEmailPattern: WooPosProvideEmailPattern,
 ) {
     suspend fun sendReceiptByEmail(orderId: Long, email: String): Result<Unit> = withContext(Dispatchers.IO) {
         val order = getOrderById(orderId)
@@ -29,7 +30,7 @@ class WooPosEmailReceiptRepository @Inject constructor(
         return@withContext triggerOrderReceiptSending(orderId)
     }
 
-    fun isEmailValid(email: String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    fun isEmailValid(email: String): Boolean = provideEmailPattern().matcher(email).matches()
 
     private suspend fun triggerOrderReceiptSending(orderId: Long): Result<Unit> {
         val sendOrderResult = orderStore.sendOrderReceipt(selectedSite.get(), orderId)
@@ -52,4 +53,8 @@ class WooPosEmailReceiptRepository @Inject constructor(
         orderStore.getOrderByIdAndSite(orderId, selectedSite.get())?.let {
             orderMapper.toAppModel(it)
         }
+}
+
+class WooPosProvideEmailPattern @Inject constructor() {
+    operator fun invoke() = Patterns.EMAIL_ADDRESS
 }
