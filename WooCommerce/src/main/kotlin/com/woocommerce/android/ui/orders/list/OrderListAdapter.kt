@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.paging.PagedList
 import androidx.paging.PagedListAdapter
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -36,6 +37,7 @@ class OrderListAdapter(
 
     var activeOrderStatusMap: Map<String, WCOrderStatusModel> = emptyMap()
     var allOrderIds: List<Long> = listOf()
+    var tracker: SelectionTracker<Long>? = null
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
@@ -164,6 +166,15 @@ class OrderListAdapter(
                 orderItemUI.currencyCode
             )
             viewBinding.divider.visibility = if (orderItemUI.isLastItemInSection) View.GONE else View.VISIBLE
+
+            val isSelected = tracker?.isSelected(orderItemUI.orderId) ?: orderItemUI.isSelected
+            viewBinding.orderItemLayout.setBackgroundColor(
+                if (isSelected) {
+                    viewBinding.root.context.getColor(R.color.color_item_selected)
+                } else {
+                    Color.TRANSPARENT
+                }
+            )
 
             when {
                 orderItemUI.isSelected -> {
