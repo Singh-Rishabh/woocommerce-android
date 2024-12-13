@@ -56,13 +56,13 @@ class WooPosCashPaymentViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosCashPaymentUIEvent) {
         when (event) {
-            is WooPosCashPaymentUIEvent.AmountChanged -> handelAmountChange(event)
+            is WooPosCashPaymentUIEvent.AmountChanged -> handleAmountChange(event)
 
             WooPosCashPaymentUIEvent.CompleteOrderClicked -> handleOrderCompletion()
         }
     }
 
-    private fun handelAmountChange(event: WooPosCashPaymentUIEvent.AmountChanged) {
+    private fun handleAmountChange(event: WooPosCashPaymentUIEvent.AmountChanged) {
         viewModelScope.launch {
             val currentState = _state.value as? WooPosCashPaymentState.Collecting ?: return@launch
             val enteredAmount = event.newAmount ?: return@launch
