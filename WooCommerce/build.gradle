@@ -441,7 +441,6 @@ dependencies {
     testImplementation(libs.cashapp.turbine)
 
     implementation(libs.apache.commons.text)
-    implementation(libs.commons.io)
 
     implementation(libs.tinder.statemachine)
 
@@ -477,6 +476,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     coreLibraryDesugaring(libs.android.desugar)
+
+    // Lottie
+    implementation(libs.lottie.compose)
 
     // CameraX
     implementation(libs.androidx.camera.camera2)

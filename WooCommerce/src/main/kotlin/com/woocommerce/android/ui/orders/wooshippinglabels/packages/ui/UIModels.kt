@@ -2,35 +2,62 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 
 import android.os.Parcelable
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PackageData(
     val name: String,
     val dimensions: String,
+    val weight: String,
     val isSelected: Boolean,
-    val isLetter: Boolean
+    val isLetter: Boolean,
+    val isPredefined: Boolean = false,
+    val dimensionUnit: String = "cm",
+    val weightUnit: String = "kg",
+    val groupName: String? = null
 ) : Parcelable {
+    @IgnoredOnParcel
+    val length: String
+
+    @IgnoredOnParcel
+    val width: String
+
+    @IgnoredOnParcel
+    val height: String
+
+    init {
+        val dimensionList = dimensions.split("x")
+        length = dimensionList.getOrNull(0).orEmpty().trim()
+        width = dimensionList.getOrNull(1).orEmpty().trim()
+        height = dimensionList.getOrNull(2).orEmpty().trim()
+    }
+
     val descriptionResId: Int
         get() = when (isLetter) {
             true -> R.string.woo_shipping_labels_package_creation_envelope_type
             false -> R.string.woo_shipping_labels_package_creation_box_type
         }
-}
 
-@Parcelize
-data class PredefinedPackage(
-    val boxWeight: Double,
-    val isFlatRate: Boolean,
-    val id: String,
-    val name: String,
-    val dimensions: String,
-    val maxWeight: Double,
-    val isLetter: Boolean,
-    val groupId: String,
-    val canShipInternational: Boolean
-) : Parcelable
+    val dimensionForDisplay
+        get() = "$dimensions $dimensionUnit"
+
+    val weightForDisplay
+        get() = "$weight $weightUnit"
+
+    companion object {
+        val EMPTY = PackageData(
+            name = "",
+            dimensions = "",
+            weight = "",
+            isSelected = false,
+            isLetter = false,
+            groupName = null
+        )
+    }
+}
 
 @Parcelize
 data class CustomPackageCreationData(
@@ -38,16 +65,31 @@ data class CustomPackageCreationData(
     val length: String,
     val width: String,
     val height: String,
-    val saveAsTemplate: Boolean
+    val saveAsTemplate: Boolean,
+    val weight: String? = null,
+    val name: String? = null
 ) : Parcelable {
     val isValid: Boolean
-        get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty()
+        get() = height.isNotEmpty() && length.isNotEmpty() && width.isNotEmpty() && isTemplateConfigured
+
+    val dimensions: String
+        get() = "$length x $width x $height"
+
+    private val isTemplateConfigured: Boolean
+        get() {
+            if (saveAsTemplate.not()) return true
+
+            return name.isNotNullOrEmpty() && weight.isNotNullOrEmpty()
+        }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
-        name = "",
-        dimensions = "$length x $width x $height $dimensionUnit",
+        name = name.orEmpty(),
+        dimensions = "$length x $width x $height",
+        weight = weight.orEmpty(),
         isSelected = true,
-        isLetter = type == PackageType.ENVELOPE
+        isLetter = type == PackageType.ENVELOPE,
+        dimensionUnit = dimensionUnit,
+        isPredefined = saveAsTemplate
     )
 
     companion object {
@@ -56,6 +98,7 @@ data class CustomPackageCreationData(
             length = "",
             width = "",
             height = "",
+            weight = "",
             saveAsTemplate = false
         )
     }
@@ -88,24 +131,6 @@ sealed class Carrier(
 
 @Parcelize
 data class StorePredefinedPackages(
-    val carrierPackageSelection: CarrierPackageSelection,
-    val savedPackageSelection: SavedPackageSelection
+    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
+    val savedPackages: List<PackageData>
 ) : Parcelable
-
-@Parcelize
-data class CarrierPackageSelection(
-    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
-) : Parcelable {
-    val hasSelection: Boolean
-        get() = carrierPackages.values.flatten().find { group ->
-            group.packages.find { it.isSelected } != null
-        } != null
-}
-
-@Parcelize
-data class SavedPackageSelection(
-    val packages: List<PackageData>
-) : Parcelable {
-    val hasSelection: Boolean
-        get() = packages.find { it.isSelected } != null
-}

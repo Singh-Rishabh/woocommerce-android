@@ -126,8 +126,11 @@ class WooPosCartViewModel @Inject constructor(
             parentToChildrenEventReceiver.events.collect { event ->
                 when (event) {
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> handleBackFromCheckoutToCartClicked()
+
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> handleItemClickedInItemsSelector(event)
-                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> handleOrderSuccessfullyPaid()
+
+                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> clearCart()
+
                     is ParentToChildrenEvent.CheckoutClicked -> Unit
                 }
             }
@@ -169,7 +172,7 @@ class WooPosCartViewModel @Inject constructor(
         }
     }
 
-    private fun handleOrderSuccessfullyPaid() {
+    private fun clearCart() {
         _state.value = WooPosCartState()
     }
 
