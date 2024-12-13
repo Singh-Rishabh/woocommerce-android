@@ -90,7 +90,8 @@ class WooShippingLabelPackageMapper @Inject constructor() {
                 weight = it.boxWeight?.toString().orEmpty(),
                 isLetter = it.isLetter ?: false,
                 dimensionUnit = storeOptions?.dimensionUnit.orEmpty(),
-                weightUnit = storeOptions?.weightUnit.orEmpty()
+                weightUnit = storeOptions?.weightUnit.orEmpty(),
+                groupName = title
             )
         } ?: emptyList()
     )

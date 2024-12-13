@@ -75,7 +75,7 @@ class CustomPackageCreationDataTest {
         val packageData = data.toPackageData()
 
         assertThat(packageData.name).isEqualTo("")
-        assertThat(packageData.dimensions).isEqualTo("10 x 10 x 10 cm")
+        assertThat(packageData.dimensions).isEqualTo("10 x 10 x 10")
         assertThat(packageData.isSelected).isTrue
         assertThat(packageData.isLetter).isFalse
     }
@@ -93,7 +93,7 @@ class CustomPackageCreationDataTest {
         val packageData = data.toPackageData()
 
         assertThat(packageData.name).isEqualTo("")
-        assertThat(packageData.dimensions).isEqualTo("10 x 10 x 10 cm")
+        assertThat(packageData.dimensions).isEqualTo("10 x 10 x 10")
         assertThat(packageData.isSelected).isTrue
         assertThat(packageData.isLetter).isTrue
     }

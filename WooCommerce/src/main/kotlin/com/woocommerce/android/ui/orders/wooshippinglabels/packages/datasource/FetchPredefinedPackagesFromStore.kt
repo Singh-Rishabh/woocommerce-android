@@ -31,9 +31,11 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                 dimensions = packageDAO.dimensions,
                 weight = packageDAO.weight,
                 isSelected = false,
+                isPredefined = true,
                 isLetter = packageDAO.isLetter,
                 dimensionUnit = packageDAO.dimensionUnit,
-                weightUnit = packageDAO.weightUnit
+                weightUnit = packageDAO.weightUnit,
+                groupName = packageDAO.groupName
             )
         }
 
@@ -59,9 +61,11 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
                         dimensions = packageItem.dimensions,
                         weight = packageItem.weight,
                         isSelected = false,
+                        isPredefined = true,
                         isLetter = packageItem.isLetter,
                         dimensionUnit = packageItem.dimensionUnit,
-                        weightUnit = packageItem.weightUnit
+                        weightUnit = packageItem.weightUnit,
+                        groupName = packageItem.groupName
                     )
                 }
             )

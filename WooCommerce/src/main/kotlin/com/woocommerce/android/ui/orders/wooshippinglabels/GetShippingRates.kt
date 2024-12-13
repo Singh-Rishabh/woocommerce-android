@@ -1,7 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 import kotlin.random.Random
@@ -16,7 +16,7 @@ class GetShippingRates @Inject constructor() {
     }
 
     suspend operator fun invoke(
-        selectedPackage: PackageDAO,
+        selectedPackage: PackageData,
         sortOrder: ShippingSortOption
     ): Result<Map<Carrier, List<ShippingRateUI>>> {
         delay(1_000)
