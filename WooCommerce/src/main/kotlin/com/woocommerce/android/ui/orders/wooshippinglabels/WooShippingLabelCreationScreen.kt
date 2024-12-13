@@ -2,8 +2,10 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,7 +50,11 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRatesSection
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 
@@ -67,6 +75,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 shippingLines = viewState.shippingLines,
                 shippingAddresses = viewState.shippingAddresses,
                 shippingRatesState = viewState.shippingRates,
+                packageSelectionState = viewState.packageSelection,
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
                 onShippingToAddressChange = viewModel::onShippingToAddressChange,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
@@ -87,6 +96,7 @@ fun WooShippingLabelCreationScreen(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
+    packageSelectionState: PackageSelectionState,
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onShippingToAddressChange: (Address) -> Unit,
@@ -106,6 +116,7 @@ fun WooShippingLabelCreationScreen(
             shippingLines = shippingLines,
             shippingAddresses = shippingAddresses,
             shippingRatesState = shippingRatesState,
+            packageSelectionState = packageSelectionState,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
             onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
@@ -145,6 +156,7 @@ private fun LabelCreationScreenWithBottomSheet(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
+    packageSelectionState: PackageSelectionState,
     onSelectPackageClick: () -> Unit,
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
@@ -209,6 +221,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 )
                 PackageCard(
                     modifier = Modifier.padding(16.dp),
+                    packageSelectionState = packageSelectionState,
                     onSelectPackageClick = onSelectPackageClick
                 )
                 ShippingRatesSection(
@@ -218,35 +231,6 @@ private fun LabelCreationScreenWithBottomSheet(
                 )
             }
         }
-    }
-}
-
-@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL)
-@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL)
-@Composable
-private fun WooShippingLabelCreationScreenPreview() {
-    WooThemeWithBackground {
-        WooShippingLabelCreationScreen(
-            shippableItems = ShippableItemsUI(
-                shippableItems = generateItems(6),
-                formattedTotalWeight = "8.5kg",
-                formattedTotalPrice = "$92.78"
-            ),
-            shippingLines = getShippingLines(),
-            modifier = Modifier.fillMaxSize(),
-            onSelectPackageClick = {},
-            onPurchaseShippingLabel = {},
-            shippingAddresses = WooShippingAddresses(
-                shipFrom = getShipFrom(),
-                shipTo = getShipTo(),
-                originAddresses = listOf(getShipFrom())
-            ),
-            shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
-            onShippingFromAddressChange = {},
-            onShippingToAddressChange = {},
-            onRefreshShippingRates = {},
-            onSelectedRateSortOrderChanged = {}
-        )
     }
 }
 
@@ -286,16 +270,27 @@ internal fun HazmatCard(
     }
 }
 
-@Preview
 @Composable
-private fun HazmatCardPreview() {
-    WooThemeWithBackground {
-        HazmatCard(modifier = Modifier.padding(16.dp))
+private fun PackageCard(
+    modifier: Modifier = Modifier,
+    packageSelectionState: PackageSelectionState,
+    onSelectPackageClick: () -> Unit
+) {
+    when (packageSelectionState) {
+        is NotSelected -> SelectPackageCard(
+            modifier = modifier,
+            onSelectPackageClick = onSelectPackageClick
+        )
+        is DataAvailable -> PackageSelectionAvailableCard(
+            modifier = modifier,
+            packageData = packageSelectionState.selectedPackage,
+            onSelectPackageClick = onSelectPackageClick
+        )
     }
 }
 
 @Composable
-private fun PackageCard(
+private fun SelectPackageCard(
     modifier: Modifier = Modifier,
     onSelectPackageClick: () -> Unit
 ) {
@@ -344,14 +339,86 @@ private fun PackageCard(
     }
 }
 
-@Preview
 @Composable
-private fun PackageCardPreview() {
-    WooThemeWithBackground {
-        PackageCard(
-            modifier = Modifier.padding(16.dp),
-            onSelectPackageClick = {}
-        )
+private fun PackageSelectionAvailableCard(
+    modifier: Modifier = Modifier,
+    packageData: PackageData,
+    onSelectPackageClick: () -> Unit
+) {
+    Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(id = R.string.shipping_label_package_selected_title),
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.SemiBold
+            )
+            IconButton(
+                onClick = onSelectPackageClick
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    tint = colorResource(id = R.color.color_icon_menu),
+                    contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(
+                    width = 1.dp,
+                    color = colorResource(id = R.color.divider_color),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(dimensionResource(id = R.dimen.major_125)),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text(
+                        text = packageData.groupName
+                            ?.takeIf { it.isNotEmpty() }
+                            ?: stringResource(id = packageData.descriptionResId),
+                        style = MaterialTheme.typography.caption,
+                        color = colorResource(id = R.color.color_on_surface_disabled)
+                    )
+                    Text(
+                        text = packageData.name
+                            .takeIf { it.isNotEmpty() }
+                            ?: stringResource(id = R.string.shipping_label_package_default_name),
+                        style = MaterialTheme.typography.body1
+                    )
+                    Text(
+                        text = packageData.weight
+                            .takeIf { it.isNotEmpty() }
+                            ?.let { "${packageData.dimensionForDisplay} • ${packageData.weightForDisplay}" }
+                            ?: packageData.dimensionForDisplay,
+                        style = MaterialTheme.typography.body2
+                    )
+                }
+
+                if (packageData.isPredefined) {
+                    Icon(
+                        tint = colorResource(id = R.color.woo_yellow_20),
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = "Star",
+                    )
+                } else {
+                    Icon(
+                        tint = colorResource(id = R.color.color_on_surface_disabled),
+                        imageVector = Icons.Outlined.Star,
+                        contentDescription = "Star",
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -371,3 +438,74 @@ data class ShippableItemsUI(
     val formattedTotalWeight: String,
     val formattedTotalPrice: String
 )
+
+@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL)
+@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL)
+@Composable
+private fun WooShippingLabelCreationScreenPreview() {
+    WooThemeWithBackground {
+        WooShippingLabelCreationScreen(
+            shippableItems = ShippableItemsUI(
+                shippableItems = generateItems(6),
+                formattedTotalWeight = "8.5kg",
+                formattedTotalPrice = "$92.78"
+            ),
+            shippingLines = getShippingLines(),
+            modifier = Modifier.fillMaxSize(),
+            onSelectPackageClick = {},
+            onPurchaseShippingLabel = {},
+            shippingAddresses = WooShippingAddresses(
+                shipFrom = getShipFrom(),
+                shipTo = getShipTo(),
+                originAddresses = listOf(getShipFrom())
+            ),
+            shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
+            packageSelectionState = NotSelected,
+            onShippingFromAddressChange = {},
+            onShippingToAddressChange = {},
+            onRefreshShippingRates = {},
+            onSelectedRateSortOrderChanged = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun HazmatCardPreview() {
+    WooThemeWithBackground {
+        HazmatCard(modifier = Modifier.padding(16.dp))
+    }
+}
+
+@Preview
+@Composable
+private fun PackageNotSelectedPreview() {
+    WooThemeWithBackground {
+        PackageCard(
+            modifier = Modifier.padding(16.dp),
+            packageSelectionState = NotSelected,
+            onSelectPackageClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PackageSelectedPreview() {
+    WooThemeWithBackground {
+        PackageCard(
+            modifier = Modifier.padding(16.dp),
+            packageSelectionState = DataAvailable(
+                selectedPackage = PackageData(
+                    name = "Package 1",
+                    dimensions = "10 x 10 x 10",
+                    weight = "1.5",
+                    isSelected = true,
+                    isLetter = false
+                ),
+                totalWeight = "1.5"
+            ),
+            onSelectPackageClick = {}
+        )
+    }
+}

@@ -210,7 +210,11 @@ private fun PackageList(
     packageGroups: List<CarrierPackageGroup>,
     onPackageSelected: (PackageData, Boolean) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxSize()
+    ) {
         packageGroups.forEach { group ->
             Spacer(modifier = Modifier.height(8.dp))
             PackageListSection(

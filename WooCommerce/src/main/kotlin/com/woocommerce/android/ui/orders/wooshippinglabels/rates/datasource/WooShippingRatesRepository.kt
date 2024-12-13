@@ -3,7 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.DestinationAddressDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.OriginAddressDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.PackageDTO
@@ -16,7 +16,7 @@ class WooShippingRatesRepository @Inject constructor(
     private val restClient: WooShippingRatesRestClient
 ) {
     suspend fun getShippingRates(
-        selectedPackage: PackageDAO,
+        selectedPackage: PackageData,
         shipTo: Address,
         shipFrom: OriginShippingAddress
     ): Result<List<WooShippingRateOptionsModel>> {

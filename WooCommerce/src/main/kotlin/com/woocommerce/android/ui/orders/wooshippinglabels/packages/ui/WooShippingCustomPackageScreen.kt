@@ -80,10 +80,11 @@ fun WooShippingCustomPackageCreationScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
     ) {
         Column(
-            modifier = modifier.weight(1f),
+            modifier = modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Column(modifier = modifier) {

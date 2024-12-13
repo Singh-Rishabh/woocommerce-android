@@ -14,8 +14,10 @@ data class PackageData(
     val weight: String,
     val isSelected: Boolean,
     val isLetter: Boolean,
+    val isPredefined: Boolean = false,
     val dimensionUnit: String = "cm",
-    val weightUnit: String = "kg"
+    val weightUnit: String = "kg",
+    val groupName: String? = null
 ) : Parcelable {
     @IgnoredOnParcel
     val length: String
@@ -44,6 +46,17 @@ data class PackageData(
 
     val weightForDisplay
         get() = "$weight $weightUnit"
+
+    companion object {
+        val EMPTY = PackageData(
+            name = "",
+            dimensions = "",
+            weight = "",
+            isSelected = false,
+            isLetter = false,
+            groupName = null
+        )
+    }
 }
 
 @Parcelize
@@ -70,11 +83,13 @@ data class CustomPackageCreationData(
         }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
-        name = "",
-        dimensions = "$length x $width x $height $dimensionUnit",
+        name = name.orEmpty(),
+        dimensions = "$length x $width x $height",
         weight = weight.orEmpty(),
         isSelected = true,
-        isLetter = type == PackageType.ENVELOPE
+        isLetter = type == PackageType.ENVELOPE,
+        dimensionUnit = dimensionUnit,
+        isPredefined = saveAsTemplate
     )
 
     companion object {

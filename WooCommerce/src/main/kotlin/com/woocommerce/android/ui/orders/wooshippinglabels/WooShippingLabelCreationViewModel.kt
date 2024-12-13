@@ -6,10 +6,12 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -47,32 +50,26 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         originCountry = "US"
     )
 
-    private val mockSelectedPackage = PackageDAO(
-        id = "small_flat_box",
-        name = "Small Flat Rate Box",
-        dimensions = "21.91 x 13.65 x 4.13",
-        isLetter = false,
-        weight = "0.5",
-        dimensionUnit = "cm",
-        weightUnit = "kg"
-    )
-
-    private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
-    private val selectedPackage = MutableStateFlow(mockSelectedPackage)
     private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(null)
+    private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
     private val storeOptions = MutableStateFlow(mockStoreOptions)
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
 
+    private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     private val shippingRates =
         combine(
-            selectedPackage,
+            packageSelection,
             selectedRatesSortOrder,
             shippingAddresses,
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, sortOrder, addresses, _ ->
-            Triple(selectedPackage, sortOrder, addresses)
+            when (selectedPackage) {
+                is NotSelected -> PackageData.EMPTY
+                is DataAvailable -> selectedPackage.selectedPackage
+            }.let { Triple(it, sortOrder, addresses) }
         }.flatMapLatest {
             val (selectedPackage, sortOrder, addresses) = it
             refreshShippingRates(selectedPackage, sortOrder, addresses)
@@ -85,7 +82,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun refreshShippingRates(
-        selectedPackage: PackageDAO,
+        selectedPackage: PackageData,
         sortOrder: ShippingSortOption,
         addresses: WooShippingAddresses?
     ) = flow {
@@ -112,8 +109,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             storeOptions,
             flowOf(orderDetailRepository.getOrderById(navArgs.orderId)),
             observeOriginAddresses(),
-            shippingRates
-        ) { storeOptions, order, originAddresses, shippingRates ->
+            shippingRates,
+            packageSelection
+        ) { storeOptions, order, originAddresses, shippingRates, packageSelection ->
             val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
             if (order == null || selectedOriginAddress == null) {
                 return@combine WooShippingViewState.Error
@@ -143,7 +141,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 ),
                 shippingLines = shippingLineSummary,
                 shippingAddresses = addresses,
-                shippingRates = shippingRates
+                shippingRates = shippingRates,
+                packageSelection = packageSelection
             )
         }.collect {
             viewState.value = it
@@ -216,6 +215,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         selectedRatesSortOrder.value = option
     }
 
+    fun onPackageSelected(packageData: PackageData) {
+        packageSelection.update { content ->
+            when (content) {
+                is NotSelected -> DataAvailable(
+                    selectedPackage = packageData,
+                    totalWeight = packageData.weight
+                )
+
+                is DataAvailable -> content.copy(selectedPackage = packageData)
+            }
+        }
+    }
+
     data object StartPackageSelection : Event()
     data object LabelPurchased : Event()
 
@@ -227,6 +239,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingLines: List<ShippingLineSummaryUI>,
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
+            val packageSelection: PackageSelectionState
         ) : WooShippingViewState()
     }
 
@@ -242,6 +255,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val selectedRatesSortOrder: ShippingSortOption,
             val shippingRates: Map<CarrierUI, List<ShippingRateUI>>
         ) : ShippingRatesState()
+    }
+
+    sealed class PackageSelectionState {
+        data object NotSelected : PackageSelectionState()
+        data class DataAvailable(
+            val selectedPackage: PackageData,
+            val totalWeight: String
+        ) : PackageSelectionState()
     }
 }
 

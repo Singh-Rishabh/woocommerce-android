@@ -2,7 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain
 
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRatesRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -22,7 +22,7 @@ class GetShippingRates @Inject constructor(
     }
 
     suspend operator fun invoke(
-        selectedPackage: PackageDAO,
+        selectedPackage: PackageData,
         shipTo: Address,
         shipFrom: OriginShippingAddress,
         sortOrder: ShippingSortOption = ShippingSortOption.FASTEST

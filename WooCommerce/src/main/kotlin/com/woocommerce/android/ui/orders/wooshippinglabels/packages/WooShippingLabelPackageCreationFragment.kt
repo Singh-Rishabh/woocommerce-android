@@ -6,18 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleDialogResult
+import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +44,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowPackageTypeDialog -> handlePackageTypeSelection(event.currentSelection)
-                is PackageSelected -> handlePackageDataAsResult(event.packageData)
+                is PackageSelected -> navigateBackWithResult(PACKAGE_SELECTION_RESULT, event.packageData)
             }
         }
     }
@@ -71,13 +70,6 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
                     .map { getString(it.resourceId) }
                     .toTypedArray()
             ).let { findNavController().navigateSafely(it) }
-    }
-
-    private fun handlePackageDataAsResult(packageData: PackageData) {
-        setFragmentResult(
-            PACKAGE_SELECTION_RESULT,
-            Bundle().apply { putParcelable(PACKAGE_SELECTION_RESULT, packageData) }
-        )
     }
 
     companion object {
