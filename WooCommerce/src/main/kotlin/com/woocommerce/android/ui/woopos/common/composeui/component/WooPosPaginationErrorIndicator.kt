@@ -102,7 +102,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                     Text(
                         text = message,
                         style = MaterialTheme.typography.h5,
-                        fontWeight = FontWeight.SemiBold,
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = description,
