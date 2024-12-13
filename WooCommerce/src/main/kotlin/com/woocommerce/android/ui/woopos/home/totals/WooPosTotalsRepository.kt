@@ -1,6 +1,8 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.model.OrderMapper
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditRepository
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
@@ -10,6 +12,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import org.wordpress.android.fluxc.store.WCOrderStore
 import java.util.Date
 import javax.inject.Inject
 
@@ -18,6 +21,9 @@ class WooPosTotalsRepository @Inject constructor(
     private val dateUtils: DateUtils,
     private val getProductById: WooPosGetProductById,
     private val getVariationById: WooPosGetVariationById,
+    private val orderStore: WCOrderStore,
+    private val selectedSite: SelectedSite,
+    private val orderMapper: OrderMapper,
 ) {
     private var orderCreationJob: Deferred<Result<Order>>? = null
 
@@ -113,6 +119,12 @@ class WooPosTotalsRepository @Inject constructor(
                 .map { Order.Item.Attribute(it.name!!, it.option!!) },
             name = variationResult.getName(productResult),
         )
+    }
+
+    suspend fun getOrderById(orderId: Long) = withContext(IO) {
+        orderStore.getOrderByIdAndSite(orderId, selectedSite.get())?.let {
+            orderMapper.toAppModel(it)
+        }
     }
 
     private companion object {

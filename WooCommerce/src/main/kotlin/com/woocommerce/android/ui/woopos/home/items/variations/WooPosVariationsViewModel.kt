@@ -83,7 +83,9 @@ class WooPosVariationsViewModel @Inject constructor(
                                 val variations = result.result.getOrThrow()
                                 if (variations.isNotEmpty()) {
                                     WooPosVariationsViewState.Content(
-                                        items = variations.filter { it.price != null }.map {
+                                        items = variations.filter {
+                                            it.price != null && !it.isVirtual && !it.isDownloadable
+                                        }.map {
                                             WooPosItem.Variation(
                                                 id = it.remoteVariationId,
                                                 name = it.getName(getProductById(productId)),

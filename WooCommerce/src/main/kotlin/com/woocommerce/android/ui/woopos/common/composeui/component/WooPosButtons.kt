@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -86,10 +87,30 @@ fun WooPosButtonLarge(
 }
 
 @Composable
-fun WooPosOutlinedButton(
+fun WooPosOutlinedButtonSmall(
     modifier: Modifier = Modifier,
     text: String,
     shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    onClick: () -> Unit,
+) = WooPosOutlinedButton(
+    modifier = modifier,
+    shape = shape,
+    content = {
+        Text(
+            text = text,
+            color = MaterialTheme.colors.primary,
+            style = MaterialTheme.typography.body2,
+            fontWeight = FontWeight.SemiBold,
+        )
+    },
+    onClick = onClick,
+)
+
+@Composable
+fun WooPosOutlinedButton(
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    content: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
 ) {
     Button(
@@ -107,13 +128,41 @@ fun WooPosOutlinedButton(
             disabledElevation = 0.dp,
             hoveredElevation = 0.dp,
             focusedElevation = 0.dp
+        ),
+        content = content
+    )
+}
+
+@Composable
+fun WooPosOutlinedButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+) {
+    Button(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(80.dp),
+        onClick = onClick,
+        border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.background,
+            contentColor = MaterialTheme.colors.onBackground,
+        ),
+        elevation = ButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+            hoveredElevation = 0.dp,
+            focusedElevation = 0.dp
         )
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colors.primary,
-            style = MaterialTheme.typography.body2,
-            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.h5,
+            fontWeight = FontWeight.Bold,
         )
     }
 }
