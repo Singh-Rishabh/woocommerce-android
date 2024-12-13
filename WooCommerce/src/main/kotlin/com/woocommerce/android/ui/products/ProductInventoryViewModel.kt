@@ -142,9 +142,18 @@ class ProductInventoryViewModel @Inject constructor(
             mapOf(AnalyticsTracker.KEY_HAS_CHANGED_DATA to hasChanges)
         )
         if (hasChanges && !hasSkuError() && !hasGlobalUniqueIdError()) {
+            trackGlobalUniqueIdChangeIfNecessary()
             triggerEvent(ExitWithResult(inventoryData))
         } else {
             triggerEvent(Exit)
+        }
+    }
+
+    private fun trackGlobalUniqueIdChangeIfNecessary() {
+        if (inventoryData.globalUniqueId != originalInventoryData.globalUniqueId) {
+            analyticsTracker.track(
+                AnalyticsEvent.PRODUCT_INVENTORY_SETTINGS_GLOBAL_UNIQUE_IDENTIFIER_FIELD_EDITED
+            )
         }
     }
 

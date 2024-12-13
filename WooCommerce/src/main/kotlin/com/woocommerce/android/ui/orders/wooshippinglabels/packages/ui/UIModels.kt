@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -16,6 +17,22 @@ data class PackageData(
     val dimensionUnit: String = "cm",
     val weightUnit: String = "kg"
 ) : Parcelable {
+    @IgnoredOnParcel
+    val length: String
+
+    @IgnoredOnParcel
+    val width: String
+
+    @IgnoredOnParcel
+    val height: String
+
+    init {
+        val dimensionList = dimensions.split("x")
+        length = dimensionList.getOrNull(0).orEmpty().trim()
+        width = dimensionList.getOrNull(1).orEmpty().trim()
+        height = dimensionList.getOrNull(2).orEmpty().trim()
+    }
+
     val descriptionResId: Int
         get() = when (isLetter) {
             true -> R.string.woo_shipping_labels_package_creation_envelope_type
@@ -99,24 +116,6 @@ sealed class Carrier(
 
 @Parcelize
 data class StorePredefinedPackages(
-    val carrierPackageSelection: CarrierPackageSelection,
-    val savedPackageSelection: SavedPackageSelection
+    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
+    val savedPackages: List<PackageData>
 ) : Parcelable
-
-@Parcelize
-data class CarrierPackageSelection(
-    val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
-) : Parcelable {
-    val hasSelection: Boolean
-        get() = carrierPackages.values.flatten().find { group ->
-            group.packages.find { it.isSelected } != null
-        } != null
-}
-
-@Parcelize
-data class SavedPackageSelection(
-    val packages: List<PackageData>
-) : Parcelable {
-    val hasSelection: Boolean
-        get() = packages.find { it.isSelected } != null
-}
