@@ -10,13 +10,19 @@ class WooShippingLabelPrintingRestClient @Inject constructor(
     private val wooNetwork: WooNetwork
 ) {
     suspend fun fetchShippingLabelPrinting(
-        site: SiteModel
+        site: SiteModel,
+        labelIds: List<Long>,
+        paperSize: String
     ): WooPayload<PrintingResponse> {
         val URL = "/wcshipping/v1/label/print"
 
         return wooNetwork.executeGetGsonRequest(
             site = site,
             path = URL,
+            params = mapOf(
+                "label_ids" to labelIds.joinToString { "$it," },
+                "paper_size" to paperSize
+            ),
             clazz = PrintingResponse::class.java,
         ).toWooPayload()
     }
