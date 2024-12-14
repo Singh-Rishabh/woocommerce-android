@@ -151,13 +151,17 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getShippingAddresses() {
-        order.filterNotNull().combine(observeOriginAddresses()) { order, originAddresses ->
-            val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
-            WooShippingAddresses(
-                shipFrom = selectedOriginAddress,
-                originAddresses = originAddresses,
-                shipTo = order.shippingAddress
-            )
+        order.combine(observeOriginAddresses()) { order, originAddresses ->
+            if (order != null && originAddresses.isNotEmpty()) {
+                val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
+                WooShippingAddresses(
+                    shipFrom = selectedOriginAddress,
+                    originAddresses = originAddresses,
+                    shipTo = order.shippingAddress
+                )
+            } else {
+                null
+            }
         }.collect { shippingAddresses.value = it }
     }
 
