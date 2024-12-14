@@ -100,9 +100,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     init {
         launch { observeShippingLabelInformation() }
-        launch { getOrderInformation() }
         launch { getStoreOptions() }
         launch { getShippingAddresses() }
+        launch { getOrderInformation() }
         launch { observePackageWeight() }
         launch { observePackageChanges() }
     }
@@ -175,11 +175,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             delay(MULTIPLE_CALLS_DELAY)
 
             val shippingRatesResult = getShippingRates(
-                orderId = shippingRatesInfo.orderId!!,
-                selectedPackage = shippingRatesInfo.packageSelected!!,
-                shipTo = shippingRatesInfo.shipTo!!,
-                shipFrom = shippingRatesInfo.shipFrom!!,
-                weight = shippingRatesInfo.weight!!
+                shippingRatesInfo.orderId!!,
+                shippingRatesInfo.packageSelected!!,
+                shippingRatesInfo.shipTo!!,
+                shippingRatesInfo.shipFrom!!,
+                shippingRatesInfo.weight!!
             )
 
             if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {

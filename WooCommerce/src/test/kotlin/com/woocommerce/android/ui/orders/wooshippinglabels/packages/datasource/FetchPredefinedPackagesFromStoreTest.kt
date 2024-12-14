@@ -38,6 +38,7 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
 
         assertThat(result.savedPackages).containsExactly(
             PackageData(
+                id = "1",
                 name = "Saved Package 1",
                 dimensions = "dimensions",
                 weight = "weight",
@@ -46,6 +47,7 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 isPredefined = true
             ),
             PackageData(
+                id = "2",
                 name = "Saved Package 2",
                 dimensions = "dimensions",
                 weight = "weight",
@@ -59,6 +61,7 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 groupName = "Group 1",
                 packages = listOf(
                     PackageData(
+                        id = "1",
                         name = "Carrier Package 1",
                         dimensions = "dimensions",
                         weight = "weight",
