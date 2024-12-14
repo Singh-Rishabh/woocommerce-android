@@ -6,44 +6,29 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageDa
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRatesRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import javax.inject.Inject
 
 class GetShippingRates @Inject constructor(
     private val repository: WooShippingRatesRepository,
     private val shippingMapper: WooShippingRatesDomainMapper
 ) {
-    private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
-        r1.price.compareTo(r2.price)
-    }
-
-    private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 ->
-        r1.deliveryDays.compareTo(r2.deliveryDays)
-    }
 
     suspend operator fun invoke(
+        orderId: Long,
         selectedPackage: PackageData,
         shipTo: Address,
         shipFrom: OriginShippingAddress,
-        sortOrder: ShippingSortOption = ShippingSortOption.FASTEST
+        weight: Float
     ): Result<Map<CarrierUI, List<ShippingRateUI>>> {
         val result = repository.getShippingRates(
+            orderId = orderId,
             selectedPackage = selectedPackage,
             shipTo = shipTo,
-            shipFrom = shipFrom
+            shipFrom = shipFrom,
+            weight = weight
         )
-        val comparator = when (sortOrder) {
-            ShippingSortOption.CHEAPEST -> {
-                cheapestComparator
-            }
-
-            ShippingSortOption.FASTEST -> {
-                fastestComparator
-            }
-        }
-
         return if (result.isSuccess) {
-            val sortedRates = shippingMapper(result.getOrThrow()).mapValues { it.value.sortedWith(comparator) }
+            val sortedRates = shippingMapper(result.getOrThrow())
             Result.success(sortedRates)
         } else {
             Result.failure(result.exceptionOrNull() ?: Exception("Failed to get shipping rates"))

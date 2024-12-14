@@ -56,9 +56,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(null)
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
 
-    private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
-    private val refreshShippingRates = MutableSharedFlow<Unit>()
-
+    private val packageSelected = MutableStateFlow<PackageData?>(null)
+    private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
 
     private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.price.compareTo(r2.price) }
