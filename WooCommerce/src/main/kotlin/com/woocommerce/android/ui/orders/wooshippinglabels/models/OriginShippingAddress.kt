@@ -15,4 +15,23 @@ data class OriginShippingAddress(
     val phone: String?,
     val isDefault: Boolean,
     val isVerified: Boolean
-)
+){
+    companion object {
+        val EMPTY = OriginShippingAddress(
+            id = "",
+            company = null,
+            firstName = null,
+            lastName = null,
+            email = null,
+            address1 = null,
+            address2 = null,
+            city = null,
+            state = null,
+            postcode = "",
+            country = "",
+            phone = null,
+            isDefault = false,
+            isVerified = false
+        )
+    }
+}

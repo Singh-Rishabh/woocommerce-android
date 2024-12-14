@@ -34,11 +34,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,9 +58,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         originCountry = "US"
     )
 
-    private val order = MutableStateFlow<Order?>(null)
-    private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(null)
-    private val storeOptions = MutableStateFlow<StoreOptionsModel?>(null)
+    private val emptyOrder = Order.getEmptyOrder(Date(), Date())
+    private val order = MutableStateFlow<Order?>(emptyOrder)
+    private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
+    private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
+
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
 
     private val packageSelected = MutableStateFlow<PackageData?>(null)
@@ -405,4 +407,12 @@ data class WooShippingAddresses(
     val shipFrom: OriginShippingAddress,
     val shipTo: Address,
     val originAddresses: List<OriginShippingAddress>
-)
+) {
+    companion object {
+        val EMPTY = WooShippingAddresses(
+            shipFrom = OriginShippingAddress.EMPTY,
+            shipTo = Address.EMPTY,
+            originAddresses = emptyList()
+        )
+    }
+}
