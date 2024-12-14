@@ -80,9 +80,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     private val shippingRates =
         combine(
-            order,
+            order.drop(1),
             packageSelected,
-            shippingAddresses,
+            shippingAddresses.drop(1),
             packageWeight,
             refreshShippingRates.onStart { emit(Unit) }
         ) { order, selectedPackage, addresses, packageWeight, _ ->
