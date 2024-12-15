@@ -35,7 +35,10 @@ class WooShippingRatesDatasourceMapper @Inject constructor() {
                         price = rate.rate,
                         discount = rate.retailRate.minus(rate.rate),
                         option = getOption(rateOptionId),
-                        carrier = getCarrier(rate.carrierId)
+                        carrier = getCarrier(rate.carrierId),
+                        isTrackingEnabled = rate.tracking,
+                        hasFreePickup = rate.freePickup,
+                        insurance = rate.insurance?.toBigDecimalOrNull()
                     )
                     optionsMap.getOrPut(key = option.serviceId, defaultValue = { mutableListOf() }).add(option)
                 }
