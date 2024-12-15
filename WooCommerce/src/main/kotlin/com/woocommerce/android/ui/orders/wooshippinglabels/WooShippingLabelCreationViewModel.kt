@@ -25,7 +25,6 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,9 +33,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import javax.inject.Inject
@@ -74,27 +72,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     var customWeight by mutableStateOf("")
         private set
 
-    private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.price.compareTo(r2.price) }
-    private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.deliveryDays.compareTo(r2.deliveryDays) }
+    private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
+        r1.defaultRate.rate.price.compareTo(r2.defaultRate.rate.price)
+    }
+    private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 ->
+        r1.defaultRate.rate.deliveryDays.compareTo(r2.defaultRate.rate.deliveryDays)
+    }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val shippingRates =
-        combine(
-            order.drop(1),
-            packageSelected,
-            shippingAddresses.drop(1),
-            packageWeight,
-            refreshShippingRates.onStart { emit(Unit) }
-        ) { order, selectedPackage, addresses, packageWeight, _ ->
-            ShippingRatesInfo(
-                orderId = order?.id,
-                packageSelected = selectedPackage,
-                shipFrom = addresses?.shipFrom,
-                shipTo = addresses?.shipTo,
-                weight = packageWeight?.totalWeight,
-                currencyCode = order?.currency
-            )
-        }.flatMapLatest { refreshShippingRates(it) }
+    private val selectedRate = MutableStateFlow<ShippingRateUI?>(null)
+    private val shippingRates = MutableStateFlow<Map<CarrierUI, List<ShippingRateUI>>>(emptyMap())
+    private val shippingRatesState = MutableStateFlow<ShippingRatesState>(ShippingRatesState.NoAvailable)
 
     val viewState: MutableStateFlow<WooShippingViewState> = MutableStateFlow(WooShippingViewState.Loading)
 
@@ -105,6 +92,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch { getOrderInformation() }
         launch { observePackageWeight() }
         launch { observePackageChanges() }
+        launch { observeShippingRates() }
+        launch { observeShippingRatesState() }
     }
 
     private suspend fun getOrderInformation() {
@@ -113,6 +102,46 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private fun getStoreOptions() {
         storeOptions.value = mockStoreOptions
+    }
+
+    private suspend fun observeShippingRates() {
+        combine(
+            packageSelected,
+            shippingAddresses,
+            packageWeight,
+            refreshShippingRates.onStart { emit(Unit) }
+        ) { selectedPackage, addresses, packageWeight, _ ->
+            ShippingRatesInfo(
+                orderId = navArgs.orderId,
+                packageSelected = selectedPackage,
+                shipFrom = addresses?.shipFrom,
+                shipTo = addresses?.shipTo,
+                weight = packageWeight?.totalWeight,
+                currencyCode = order.value?.currency
+            )
+        }.collectLatest {
+            updateShippingRates(it)
+        }
+    }
+
+    private suspend fun observeShippingRatesState() {
+        combine(
+            shippingRates,
+            selectedRate,
+            selectedRatesSortOrder
+        ) { shippingRates, selectedRate, selectedRatesSortOrder ->
+            if (shippingRates.isEmpty()) {
+                ShippingRatesState.NoAvailable
+            } else {
+                ShippingRatesState.DataState(
+                    selectedRatesSortOrder,
+                    sortShippingRates(selectedRatesSortOrder, shippingRates),
+                    selectedRate
+                )
+            }
+        }.collectLatest {
+            shippingRatesState.value = it
+        }
     }
 
     @OptIn(FlowPreview::class)
@@ -165,12 +194,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }.collect { shippingAddresses.value = it }
     }
 
-    private fun refreshShippingRates(
-        shippingRatesInfo: ShippingRatesInfo
-    ) = flow {
+    private suspend fun updateShippingRates(shippingRatesInfo: ShippingRatesInfo) {
         if (shippingRatesInfo.hasRequiredData) {
             val sortOrder = selectedRatesSortOrder.value
-            emit(ShippingRatesState.Loading(sortOrder))
+            shippingRatesState.value = ShippingRatesState.Loading(sortOrder)
 
             delay(MULTIPLE_CALLS_DELAY)
 
@@ -179,21 +206,17 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 shippingRatesInfo.packageSelected!!,
                 shippingRatesInfo.shipTo!!,
                 shippingRatesInfo.shipFrom!!,
-                shippingRatesInfo.weight!!
+                shippingRatesInfo.weight!!,
+                shippingRatesInfo.currencyCode
             )
 
             if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
-                emit(
-                    ShippingRatesState.DataState(
-                        sortOrder,
-                        sortShippingRates(sortOrder, shippingRatesResult.getOrThrow())
-                    )
-                )
+                shippingRates.value = shippingRatesResult.getOrThrow()
             } else {
-                emit(ShippingRatesState.Error)
+                shippingRatesState.value = ShippingRatesState.Error
             }
         } else {
-            emit(ShippingRatesState.NoAvailable)
+            shippingRatesState.value = ShippingRatesState.NoAvailable
         }
     }
 
@@ -202,8 +225,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             storeOptions.drop(1),
             order.drop(1),
             shippingAddresses.drop(1),
-            shippingRates,
-            packageSelection
+            shippingRatesState,
+            packageSelection,
         ) { storeOptions, order, addresses, shippingRates, packageSelection ->
             if (order == null || storeOptions == null || addresses == null) {
                 return@combine WooShippingViewState.Error
@@ -235,25 +258,20 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress {
-        return (viewState.value as? WooShippingViewState.DataState)?.shippingAddresses?.shipFrom
-            ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.first()
+        return shippingAddresses.value?.shipFrom?.takeIf {
+            it != OriginShippingAddress.EMPTY
+        } ?: originAddresses.first()
     }
 
     fun onShippingFromAddressChange(address: OriginShippingAddress) {
-        (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
-            viewState.value = currentData.copy(
-                shippingAddresses = currentData.shippingAddresses.copy(
-                    shipFrom = address
-                )
-            )
+        shippingAddresses.value?.let {
+            shippingAddresses.value = it.copy(shipFrom = address)
         }
     }
 
     fun onShippingToAddressChange(address: Address) {
-        (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
-            viewState.value = currentData.copy(
-                shippingAddresses = currentData.shippingAddresses.copy(shipTo = address)
-            )
+        shippingAddresses.value?.let {
+            shippingAddresses.value = it.copy(shipTo = address)
         }
     }
 
@@ -293,22 +311,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
         selectedRatesSortOrder.value = option
-        when (val currentViewState = viewState.value) {
-            is WooShippingViewState.DataState -> {
-                (currentViewState.shippingRates as? ShippingRatesState.DataState)?.let { currentRatesState ->
-                    viewState.value = currentViewState.copy(
-                        shippingRates = ShippingRatesState.DataState(
-                            selectedRatesSortOrder = option,
-                            shippingRates = sortShippingRates(option, currentRatesState.shippingRates)
-                        )
-                    )
-                } ?: onRefreshShippingRates()
-            }
+    }
 
-            else -> {
-                onRefreshShippingRates()
-            }
-        }
+    fun onSelectedSippingRateChanged(rate: ShippingRateUI) {
+        selectedRate.update { rate }
     }
 
     private fun sortShippingRates(
@@ -360,7 +366,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
         data class DataState(
             val selectedRatesSortOrder: ShippingSortOption,
-            val shippingRates: Map<CarrierUI, List<ShippingRateUI>>
+            val shippingRates: Map<CarrierUI, List<ShippingRateUI>>,
+            val selectedRate: ShippingRateUI? = null
         ) : ShippingRatesState()
     }
 
