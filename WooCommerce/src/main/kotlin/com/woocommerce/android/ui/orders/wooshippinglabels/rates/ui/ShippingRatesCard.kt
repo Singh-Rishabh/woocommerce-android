@@ -6,7 +6,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,8 +60,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateOptionsModel
-import com.woocommerce.android.util.StringUtils
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import kotlin.random.Random
@@ -73,13 +71,10 @@ val Colors.selectedRateBackgroundColor: Color get() = if (isLight) Color(0xFFF2E
 @Composable
 internal fun ShippingRatesCard(
     selectedRate: ShippingRateUI?,
-    onSelectedChange: (ShippingRateUI) -> Unit,
     shippingRates: Map<CarrierUI, List<ShippingRateUI>>,
-    signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
-    signatureRequiredOptions: List<SignatureRequired>,
     selectedSortOption: ShippingSortOption,
     onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -90,11 +85,8 @@ internal fun ShippingRatesCard(
         )
         ShippingRates(
             selectedRate = selectedRate,
-            onSelectedChange = onSelectedChange,
             shippingRates = shippingRates,
-            signatureRequired = signatureRequired,
-            onSelectedSignatureChange = onSelectedSignatureChange,
-            signatureRequiredOptions = signatureRequiredOptions
+            onSelectedSippingRateChanged = onSelectedSippingRateChanged
         )
     }
 }
@@ -109,15 +101,9 @@ private fun ShippingRatesCardPreview() {
         ShippingRatesCard(
             selectedRate = selected,
             shippingRates = generateShippingRates(),
-            signatureRequired = null,
-            onSelectedChange = {},
-            onSelectedSignatureChange = {},
-            signatureRequiredOptions = listOf(
-                SignatureRequired("Signature Required", "$10.00"),
-                SignatureRequired("Adult Signature Required", "$15.00")
-            ),
             selectedSortOption = ShippingSortOption.CHEAPEST,
-            onSelectedRateSortOrderChanged = {}
+            onSelectedRateSortOrderChanged = {},
+            onSelectedSippingRateChanged = {}
         )
     }
 }
@@ -230,15 +216,11 @@ private fun SortingDropdownMenu(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ShippingRates(
     selectedRate: ShippingRateUI?,
-    onSelectedChange: (ShippingRateUI) -> Unit,
     shippingRates: Map<CarrierUI, List<ShippingRateUI>>,
-    signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
-    signatureRequiredOptions: List<SignatureRequired>,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     modifier: Modifier = Modifier,
     tabModifier: Modifier = Modifier
 ) {
@@ -292,11 +274,9 @@ fun ShippingRates(
                 ShippingRateItem(
                     carrier = carrier,
                     shippingRate = rate,
-                    isSelected = selectedRate == rate,
-                    signatureRequired = signatureRequired,
-                    onSelectedSignatureChange = onSelectedSignatureChange,
-                    signatureRequiredOptions = signatureRequiredOptions,
-                    modifier = Modifier.clickable { onSelectedChange(rate) }
+                    selectedRate = selectedRate,
+                    onSelectedSippingRateChanged = onSelectedSippingRateChanged,
+                    modifier = Modifier.clickable { onSelectedSippingRateChanged(rate) }
                 )
             }
         }
@@ -322,12 +302,11 @@ private fun CarrierLogo(
 private fun ShippingRateItem(
     carrier: CarrierUI,
     shippingRate: ShippingRateUI,
-    isSelected: Boolean,
-    signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
-    signatureRequiredOptions: List<SignatureRequired>,
+    selectedRate: ShippingRateUI?,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isSelected = selectedRate?.id == shippingRate.id
     val borderWidth = if (isSelected) {
         2.dp
     } else {
@@ -362,14 +341,14 @@ private fun ShippingRateItem(
             Column(modifier = Modifier.animateContentSize()) {
                 Row {
                     Text(
-                        text = shippingRate.name,
+                        text = shippingRate.selectedOption.title,
                         style = MaterialTheme.typography.body1,
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = 12.dp)
                     )
                     Text(
-                        text = shippingRate.formattedPrice,
+                        text = shippingRate.selectedOption.formatedPrice,
                         style = MaterialTheme.typography.body1,
                         fontWeight = FontWeight.Bold
                     )
@@ -377,9 +356,8 @@ private fun ShippingRateItem(
                 if (isSelected) {
                     ShippingRateItemExpandedDescription(
                         shippingRate = shippingRate,
-                        signatureRequired = signatureRequired,
-                        onSelectedSignatureChange = onSelectedSignatureChange,
-                        signatureRequiredOptions = signatureRequiredOptions,
+                        selectedRate = selectedRate,
+                        onSelectedSippingRateChanged = onSelectedSippingRateChanged,
                         modifier = Modifier.padding(start = 12.dp, top = 8.dp, end = 16.dp)
                     )
                 } else {
@@ -400,9 +378,9 @@ private fun getShippingRateFormattedDescription(
 ): AnnotatedString {
     return buildAnnotatedString {
         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-            append(shippingRate.getEstimatedDays(context))
+            append(shippingRate.defaultRate.formattedEstimatedDays)
         }
-        val options = shippingRate.getIncludedOptions(context)
+        val options = shippingRate.defaultRate.shippingRateOptions
         if (options.isNotEmpty()) {
             append(" • ")
             val include = context.getString(
@@ -417,15 +395,14 @@ private fun getShippingRateFormattedDescription(
 @Composable
 private fun ShippingRateItemExpandedDescription(
     shippingRate: ShippingRateUI,
-    signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
-    signatureRequiredOptions: List<SignatureRequired>,
+    selectedRate: ShippingRateUI?,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val options = shippingRate.getIncludedOptions(LocalContext.current)
+    val options = shippingRate.defaultRate.shippingRateOptions
     Column(modifier = modifier) {
         Text(
-            text = shippingRate.getEstimatedDays(LocalContext.current),
+            text = shippingRate.defaultRate.formattedEstimatedDays,
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(top = 8.dp, end = 16.dp, bottom = 8.dp),
             fontWeight = FontWeight.Bold
@@ -446,9 +423,16 @@ private fun ShippingRateItemExpandedDescription(
             }
         }
         SelectSignatureRequired(
-            signatureRequired = signatureRequired,
-            onSelectedSignatureChange = onSelectedSignatureChange,
-            signatureRequiredOptions = signatureRequiredOptions,
+            options = shippingRate.options,
+            currentSelectedOption = selectedRate?.selectedOption,
+            onSelectedOption = { option ->
+                val selection = if (option != selectedRate?.selectedOption) {
+                    option
+                } else {
+                    shippingRate.defaultRate
+                }
+                onSelectedSippingRateChanged(shippingRate.copy(selectedOption = selection))
+            },
             modifier = Modifier.padding(top = 8.dp)
         )
     }
@@ -456,35 +440,32 @@ private fun ShippingRateItemExpandedDescription(
 
 @Composable
 private fun SelectSignatureRequired(
-    signatureRequired: SignatureRequired?,
-    onSelectedSignatureChange: (SignatureRequired?) -> Unit,
-    signatureRequiredOptions: List<SignatureRequired>,
+    options: Map<Option, ShippingRateOptionUI>,
+    currentSelectedOption: ShippingRateOptionUI?,
+    onSelectedOption: (selectedOption: ShippingRateOptionUI) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        signatureRequiredOptions.forEach { option ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .clickable {
-                        val isSelected = signatureRequired == option
-                        val value = if (isSelected) null else option
-                        onSelectedSignatureChange(value)
-                    }
-                    .padding(vertical = 8.dp)
-                    .fillMaxWidth()
-            ) {
-                SelectionCheck(
-                    isSelected = signatureRequired == option,
-                    onSelectionChange = null,
-                    modifier = Modifier.padding(end = 4.dp)
-                )
-                Text(
-                    text = option.name,
-                    style = MaterialTheme.typography.body1,
-                )
+        options.filter { it.key != Option.DEFAULT }
+            .forEach { option ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .clickable { onSelectedOption(option.value) }
+                        .padding(vertical = 8.dp)
+                        .fillMaxWidth()
+                ) {
+                    SelectionCheck(
+                        isSelected = option.value.rate.rateId == currentSelectedOption?.rate?.rateId,
+                        onSelectionChange = null,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+                    Text(
+                        text = option.value.formattedFee,
+                        style = MaterialTheme.typography.body1,
+                    )
+                }
             }
-        }
     }
 }
 
@@ -500,20 +481,22 @@ data class CarrierUI(
 )
 
 data class ShippingRateUI(
-    val name: String,
-    val price: BigDecimal,
-    val formattedPrice: String,
-    val deliveryDays: Int,
-    val insurance: String?,
-    val tracking: Boolean,
-    val freePickup: Boolean,
-    val options: WooShippingRateOptionsModel,
-    val selectedOption: WooShippingRateModel = options.defaultRate
-)
+    val options: Map<Option, ShippingRateOptionUI>,
+    val selectedOption: ShippingRateOptionUI
+) {
+    val id = defaultRate.rate.rateId
+    val defaultRate: ShippingRateOptionUI
+        get() = options[Option.DEFAULT] ?: options.values.first()
+}
 
-data class SignatureRequired(
-    val name: String,
-    val amount: String,
+data class ShippingRateOptionUI(
+    val title: String,
+    val formatedPrice: String,
+    val formattedFee: String,
+    val formattedEstimatedDays: String,
+    val option: Option,
+    val shippingRateOptions: List<String>,
+    val rate: WooShippingRateModel
 )
 
 fun generateShippingRates(): Map<CarrierUI, List<ShippingRateUI>> {
@@ -556,32 +539,39 @@ fun generateShippingRates(): Map<CarrierUI, List<ShippingRateUI>> {
 fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI> {
     return List(number) {
         val rate = WooShippingRateModel(
-            packageId = "123",
-            shipmentId = "123",
-            rateId = "123",
-            serviceId = "123",
-            carrierId = "123",
+            packageId = "123$it",
+            shipmentId = "123$it",
+            rateId = "123$it",
+            serviceId = "123$it",
+            carrierId = "123$it",
             serviceName = "$carrier $it",
             deliveryDays = it,
             price = it.toBigDecimal(),
             discount = it.toBigDecimal(),
-            option = WooShippingRateModel.Option.DEFAULT,
-            carrier = WooShippingCarrier.DHL
+            option = Option.DEFAULT,
+            carrier = WooShippingCarrier.DHL,
+            hasFreePickup = true,
+            insurance = BigDecimal.TEN,
+            isTrackingEnabled = true
         )
+        val option = ShippingRateOptionUI(
+            title = rate.serviceName,
+            formatedPrice = rate.toString(),
+            formattedFee = rate.toString(),
+            option = rate.option,
+            rate = rate,
+            shippingRateOptions = listOf(
+                "Tracking",
+                "Insurance",
+                "Free Pickup"
+            ),
+            formattedEstimatedDays = "$it business days"
+        )
+        val options = mapOf(Option.DEFAULT to option)
 
         ShippingRateUI(
-            name = rate.serviceName,
-            price = rate.price,
-            formattedPrice = rate.price.toString(),
-            deliveryDays = rate.deliveryDays,
-            insurance = null,
-            tracking = false,
-            freePickup = false,
-            options = WooShippingRateOptionsModel(
-                rateOptions = mapOf(
-                    WooShippingRateModel.Option.DEFAULT to rate
-                )
-            )
+            options = options,
+            selectedOption = options.values.first()
         )
     }
 }
