@@ -15,9 +15,9 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCar
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateOptionUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
@@ -101,33 +101,38 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         name = "UPS",
     )
 
+    private val defaultShippingRate = WooShippingRateModel(
+        packageId = "1",
+        shipmentId = "1",
+        rateId = "1",
+        serviceId = "1",
+        carrierId = "1",
+        serviceName = "Default",
+        deliveryDays = 1,
+        price = BigDecimal(12),
+        discount = BigDecimal.ZERO,
+        option = Option.DEFAULT,
+        carrier = defaultCarrier.carrier,
+        hasFreePickup = true,
+        isTrackingEnabled = true,
+        insurance = null
+    )
+
+    private val defaultShippableItemUI = ShippingRateOptionUI(
+        title = defaultShippableItems[0].title,
+        formatedPrice = "$ ${defaultShippableItems[0].price}",
+        formattedFee = "",
+        formattedEstimatedDays = "1 day",
+        shippingRateOptions = emptyList(),
+        option = Option.DEFAULT,
+        rate = defaultShippingRate,
+    )
+
     private val defaultShippingRates = mapOf(
         defaultCarrier to defaultShippableItems.map {
             ShippingRateUI(
-                name = it.title,
-                price = it.price,
-                deliveryDays = 1,
-                formattedPrice = "$12.00",
-                insurance = "$300.00",
-                tracking = true,
-                freePickup = true,
-                options = WooShippingRateOptionsModel(
-                    mapOf(
-                        Option.DEFAULT to WooShippingRateModel(
-                            packageId = "1",
-                            shipmentId = "1",
-                            rateId = "1",
-                            serviceId = "1",
-                            carrierId = "1",
-                            serviceName = "Default",
-                            deliveryDays = 1,
-                            price = BigDecimal(12),
-                            discount = BigDecimal.ZERO,
-                            option = Option.DEFAULT,
-                            carrier = defaultCarrier.carrier,
-                        )
-                    )
-                )
+                options = mapOf(Option.DEFAULT to defaultShippableItemUI),
+                selectedOption = defaultShippableItemUI
             )
         }
     )
@@ -264,10 +269,11 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
-            getShippingRates(any(), any(), any(), any(), any())
+            getShippingRates(any(), any(), any(), any(), any(), any())
         ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
         sut.onPackageSelected(defaultPackageData)
 
         advanceUntilIdle()
@@ -290,7 +296,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any(), any(), any(), any())) doReturn Result.failure(Exception("Random error"))
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.failure(Exception("Random error"))
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData)
@@ -315,7 +323,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -327,7 +337,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        verify(getShippingRates, times(2)).invoke(any(), any(), any(), any(), any())
+        verify(getShippingRates, times(2)).invoke(any(), any(), any(), any(), any(), any())
     }
 
     @Test
@@ -342,7 +352,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -354,7 +366,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any())
+        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any(), any())
     }
 
     @Test
@@ -369,7 +381,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any(), any(), any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
@@ -381,7 +395,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any())
+        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any(), any())
     }
 
     @Test
