@@ -488,39 +488,6 @@ private fun SelectSignatureRequired(
     }
 }
 
-fun ShippingRateUI.getEstimatedDays(context: Context): String {
-    return StringUtils.getQuantityString(
-        context = context,
-        quantity = deliveryDays,
-        default = R.string.shipping_label_shipping_carrier_rates_delivery_estimate_many,
-        one = R.string.shipping_label_shipping_carrier_rates_delivery_estimate_one
-    )
-}
-
-fun ShippingRateUI.getIncludedOptions(context: Context): List<String> {
-    val options = mutableListOf<String>()
-    if (tracking) {
-        val tracking = context.getString(
-            R.string.shipping_label_rate_included_options_tracking
-        )
-        options.add(tracking)
-    }
-    if (insurance != null) {
-        val insurance = context.getString(
-            R.string.shipping_label_rate_included_options_insurance,
-            context.getString(R.string.shipping_label_rate_insurance_up_to, insurance)
-        )
-        options.add(insurance)
-    }
-    if (freePickup) {
-        val freePickup = context.getString(
-            R.string.shipping_label_rate_included_options_free_pickup
-        )
-        options.add(freePickup)
-    }
-    return options
-}
-
 enum class ShippingSortOption(@StringRes val stringResource: Int) {
     CHEAPEST(R.string.shipping_label_shipping_rates_sort_option_cheapest),
     FASTEST(R.string.shipping_label_shipping_rates_sort_option_fastest)
