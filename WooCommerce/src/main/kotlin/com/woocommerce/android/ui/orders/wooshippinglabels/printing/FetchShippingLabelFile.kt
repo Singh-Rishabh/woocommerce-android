@@ -9,7 +9,7 @@ import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.withContext
 
-class PrintShippingLabel @Inject constructor(
+class FetchShippingLabelFile @Inject constructor(
     private val appContext: Context,
     private val dispatchers: CoroutineDispatchers,
     private val fileUtils: FileUtils,
@@ -20,8 +20,8 @@ class PrintShippingLabel @Inject constructor(
 
     suspend operator fun invoke(
         shippingLabelData: String
-    ) {
-        withContext(dispatchers.io) {
+    ): File? {
+        return withContext(dispatchers.io) {
             storageDir?.let { createShippingLabelFile(it, shippingLabelData) }
         }
     }
