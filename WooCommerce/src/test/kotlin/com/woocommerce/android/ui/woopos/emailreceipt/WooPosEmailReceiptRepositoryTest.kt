@@ -18,6 +18,7 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 import org.wordpress.android.fluxc.store.WCOrderStore
+import java.util.regex.Pattern
 
 class WooPosEmailReceiptRepositoryTest {
     private val siteModel: SiteModel = mock()
@@ -27,13 +28,51 @@ class WooPosEmailReceiptRepositoryTest {
     private val orderStore: WCOrderStore = mock()
     private val orderCreateEditRepository: OrderCreateEditRepository = mock()
     private val orderMapper: OrderMapper = mock()
+    private val provideEmailPattern: WooPosProvideEmailPattern = mock {
+        on { invoke() }.thenReturn(
+            Pattern.compile(
+                "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+                    "\\@" +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+                    "(" +
+                    "\\." +
+                    "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+                    ")+"
+            )
+        )
+    }
 
     private val repository = WooPosEmailReceiptRepository(
         selectedSite,
         orderStore,
         orderCreateEditRepository,
         orderMapper,
+        provideEmailPattern
     )
+
+    @Test
+    fun `given valid email, when isEmailValid, then return true`() {
+        // GIVEN
+        val validEmail = "test@example.com"
+
+        // WHEN
+        val result = repository.isEmailValid(validEmail)
+
+        // THEN
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun `given invalid email, when isEmailValid, then return false`() {
+        // GIVEN
+        val invalidEmail = "invalid-email"
+
+        // WHEN
+        val result = repository.isEmailValid(invalidEmail)
+
+        // THEN
+        assertThat(result).isFalse()
+    }
 
     @Test
     fun `given valid order id and email, when sendReceiptByEmail, then return success`() = runTest {
