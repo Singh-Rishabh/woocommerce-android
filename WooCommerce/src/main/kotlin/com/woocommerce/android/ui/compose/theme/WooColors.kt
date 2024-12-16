@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 @Suppress("MagicNumber")
 object WooColors {
-    val md_theme_light_primary = Color(0xFF6108CE)
+    val md_theme_light_primary = Color(0xFF873EFF)
     val md_theme_light_onPrimary = Color(0xFFFFFFFF)
     val md_theme_light_primary_variant = Color(0xFF3C087E)
     val md_theme_light_secondary = Color(0xFFC9356E)
@@ -19,7 +19,7 @@ object WooColors {
     val md_theme_light_surface = Color(0xFFFFFFFF)
     val md_theme_light_onSurface = Color(0xFF000000)
 
-    val md_theme_dark_primary = Color(0xFFB17FD4)
+    val md_theme_dark_primary = Color(0xFF873EFF)
     val md_theme_dark_onPrimary = Color(0xFF000000)
     val md_theme_dark_primary_variant = Color(0xFF7F54B3)
     val md_theme_dark_secondary = Color(0xFFEB6594)
