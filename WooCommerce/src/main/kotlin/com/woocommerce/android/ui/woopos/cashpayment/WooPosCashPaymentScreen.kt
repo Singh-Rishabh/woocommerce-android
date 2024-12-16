@@ -2,8 +2,6 @@ package com.woocommerce.android.ui.woopos.cashpayment
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -21,6 +19,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -94,10 +93,9 @@ private fun Collecting(
     onCompleteOrderClicked: () -> Unit,
 ) {
     ConstraintLayout(
-        modifier = Modifier.padding(top = 48.dp.toAdaptivePadding())
-            .fillMaxWidth()
+        modifier = Modifier.fillMaxSize()
     ) {
-        val (input, total, changeDue, button) = createRefs()
+        val (input, total, error, changeDue, button) = createRefs()
         val focusRequester = remember { FocusRequester() }
         val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -106,18 +104,26 @@ private fun Collecting(
             keyboardController?.show()
         }
 
-        val totalBarrier = createStartBarrier(total, changeDue)
+        Text(
+            text = state.totalText,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier
+                .constrainAs(total) {
+                    top.linkTo(parent.top, margin = 4.dp)
+                    start.linkTo(parent.start, margin = 64.dp)
+                }
+        )
 
         var inputText by remember { mutableStateOf(state.enteredAmount) }
 
-        val standardMargin = 16.dp.toAdaptivePadding()
+        val marginBetweenTotalAndInput = 48.dp.toAdaptivePadding()
         WooPosTypedInputField(
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .constrainAs(input) {
-                    top.linkTo(parent.top)
+                    top.linkTo(total.bottom, margin = marginBetweenTotalAndInput)
                     start.linkTo(parent.start)
-                    end.linkTo(totalBarrier, margin = standardMargin)
+                    end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
                 },
             value = inputText,
@@ -138,34 +144,36 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            errorMessage = state.errorMessage,
         )
 
-        Text(
-            text = state.totalText,
-            style = MaterialTheme.typography.h6,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .constrainAs(total) {
-                    top.linkTo(input.top)
-                    bottom.linkTo(input.bottom)
-                    end.linkTo(parent.end, margin = standardMargin)
-                }
-        )
-
+        val smallMargin = 8.dp.toAdaptivePadding()
+        val standardMargin = 16.dp.toAdaptivePadding()
         Text(
             text = state.changeDueText,
-            style = MaterialTheme.typography.subtitle2,
+            style = MaterialTheme.typography.body1,
             color = WooPosTheme.colors.warning,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
                 .constrainAs(changeDue) {
-                    bottom.linkTo(input.bottom)
+                    top.linkTo(input.bottom, margin = smallMargin)
+                    start.linkTo(parent.start, margin = standardMargin)
                     end.linkTo(parent.end, margin = standardMargin)
                 }
         )
 
-        val buttonTopMargin = 48.dp.toAdaptivePadding()
+        if (state.errorMessage != null) {
+            Text(
+                text = state.errorMessage,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.body1,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.constrainAs(error) {
+                    top.linkTo(changeDue.bottom, margin = smallMargin)
+                    start.linkTo(parent.start, margin = standardMargin)
+                    end.linkTo(parent.end, margin = standardMargin)
+                }
+            )
+        }
 
         WooPosButton(
             text = state.button.text,
@@ -177,7 +185,7 @@ private fun Collecting(
             },
             modifier = Modifier
                 .constrainAs(button) {
-                    top.linkTo(changeDue.bottom, margin = buttonTopMargin)
+                    top.linkTo(input.bottom, margin = 96.dp)
                     end.linkTo(parent.end, margin = standardMargin)
                     start.linkTo(parent.start, margin = standardMargin)
                     width = Dimension.fillToConstraints
@@ -222,9 +230,9 @@ fun WooPosTotalsPaymentCashWithLabelScreenPreview() {
             state = WooPosCashPaymentState.Collecting(
                 enteredAmount = null,
                 errorMessage = null,
-                changeDueText = "5$",
+                changeDueText = "Change Due 5$",
                 total = BigDecimal(10),
-                totalText = "10$",
+                totalText = "Total: 10$",
                 currencySymbol = "$",
                 currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
                 decimalSeparator = ".",
@@ -250,9 +258,9 @@ fun WooPosTotalsPaymentCashWithErrorScreenPreview() {
             state = WooPosCashPaymentState.Collecting(
                 enteredAmount = BigDecimal(500),
                 errorMessage = "Amount must be more or equal to total",
-                changeDueText = "5$",
+                changeDueText = "Change Due 5$",
                 total = BigDecimal(10),
-                totalText = "10$",
+                totalText = "Total: 10$",
                 currencySymbol = "$",
                 currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
                 decimalSeparator = ".",
