@@ -9,12 +9,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.woocommerce.android.ui.woopos.home.HOME_ROUTE
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import com.woocommerce.android.ui.woopos.root.navigation.navigateOnce
 
 const val CASH_ROUTE_ORDER_ID_KEY = "orderId"
 private const val CASH_ROUTE = "$HOME_ROUTE/cash_payment/{$CASH_ROUTE_ORDER_ID_KEY}"
 
 fun NavController.navigateToCashPaymentScreen(orderId: Long) {
-    navigate(CASH_ROUTE.replace("{$CASH_ROUTE_ORDER_ID_KEY}", orderId.toString()))
+    navigateOnce(CASH_ROUTE.replace("{$CASH_ROUTE_ORDER_ID_KEY}", orderId.toString()))
 }
 
 fun NavGraphBuilder.cashPaymentScreen(
