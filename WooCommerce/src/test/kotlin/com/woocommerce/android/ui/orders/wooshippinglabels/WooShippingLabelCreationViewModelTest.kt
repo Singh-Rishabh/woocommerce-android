@@ -11,6 +11,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -315,7 +316,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
         sut.viewState.asLiveData().observeForever {
@@ -327,7 +328,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             dimensions = "5 x 5 x 5",
             weight = "0.5",
             isSelected = true,
-            isLetter = false
+            isLetter = false,
+            id = "id_1"
         )
 
         sut.onPackageSelected(initialPackageData)
@@ -349,7 +351,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(getShippingRates(any(), any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
         sut.viewState.asLiveData().observeForever {
@@ -361,7 +363,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             dimensions = "5 x 5 x 5",
             weight = "0.5",
             isSelected = true,
-            isLetter = false
+            isLetter = false,
+            id = "id_1"
         )
 
         sut.onPackageSelected(initialPackageData)
@@ -371,7 +374,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             dimensions = "10 x 10 x 10",
             weight = "1.5",
             isSelected = true,
-            isLetter = false
+            isLetter = false,
+            id = "id_2"
         )
 
         sut.onPackageSelected(newPackageData)

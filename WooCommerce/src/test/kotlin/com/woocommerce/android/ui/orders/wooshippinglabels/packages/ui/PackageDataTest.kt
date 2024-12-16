@@ -12,7 +12,8 @@ class PackageDataTest {
             dimensions = "10 x 20 x 30",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
+            id = "1"
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -27,7 +28,8 @@ class PackageDataTest {
             dimensions = "10 x 20",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
+            id = "1"
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -42,7 +44,8 @@ class PackageDataTest {
             dimensions = "10",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
+            id = "1"
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -57,7 +60,8 @@ class PackageDataTest {
             dimensions = "",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
+            id = "1"
         )
 
         assertThat(packageData.length).isEmpty()
