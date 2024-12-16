@@ -65,6 +65,192 @@ class WooShippingRatesDomainMapperTest : BaseUnitTest() {
         assertEquals(mappedRates.values.sumOf { it.size }, ratesNum)
     }
 
+    @Test
+    fun `when the shipping rate contain a null insurance then is NOT included in the shipping rate`() {
+        val rates = listOf(
+            WooShippingRateOptionsModel(
+                mapOf(
+                    WooShippingRateModel.Option.DEFAULT to WooShippingRateModel(
+                        carrier = WooShippingCarrier.DHL,
+                        deliveryDays = (1..10).random(),
+                        discount = BigDecimal.ZERO,
+                        hasFreePickup = true,
+                        insurance = null,
+                        isTrackingEnabled = true,
+                        carrierId = WooShippingCarrier.DHL.ordinal.toString(),
+                        option = WooShippingRateModel.Option.DEFAULT,
+                        packageId = "1",
+                        price = BigDecimal.TEN,
+                        rateId = "1",
+                        shipmentId = "1",
+                        serviceId = "1",
+                        serviceName = "Default"
+                    )
+                )
+            )
+        )
+        val mappedRates = sut(rates, "USD")
+
+        val rate = mappedRates.values.first().first()
+
+        assertEquals(2, rate.defaultRate.shippingRateOptions.size)
+    }
+
+    @Test
+    fun `when the shipping rate contains insurance then IS included in the shipping rate`() {
+        val rates = listOf(
+            WooShippingRateOptionsModel(
+                mapOf(
+                    WooShippingRateModel.Option.DEFAULT to WooShippingRateModel(
+                        carrier = WooShippingCarrier.DHL,
+                        deliveryDays = (1..10).random(),
+                        discount = BigDecimal.ZERO,
+                        hasFreePickup = true,
+                        insurance = BigDecimal.TEN,
+                        isTrackingEnabled = true,
+                        carrierId = WooShippingCarrier.DHL.ordinal.toString(),
+                        option = WooShippingRateModel.Option.DEFAULT,
+                        packageId = "1",
+                        price = BigDecimal.TEN,
+                        rateId = "1",
+                        shipmentId = "1",
+                        serviceId = "1",
+                        serviceName = "Default"
+                    )
+                )
+            )
+        )
+        val mappedRates = sut(rates, "USD")
+
+        val rate = mappedRates.values.first().first()
+
+        assertEquals(3, rate.defaultRate.shippingRateOptions.size)
+    }
+
+    @Test
+    fun `when isTrackingEnabled is false then isTrackingEnabled is NOT included in the shipping rate`() {
+        val rates = listOf(
+            WooShippingRateOptionsModel(
+                mapOf(
+                    WooShippingRateModel.Option.DEFAULT to WooShippingRateModel(
+                        carrier = WooShippingCarrier.DHL,
+                        deliveryDays = (1..10).random(),
+                        discount = BigDecimal.ZERO,
+                        hasFreePickup = true,
+                        insurance = BigDecimal.TEN,
+                        isTrackingEnabled = false,
+                        carrierId = WooShippingCarrier.DHL.ordinal.toString(),
+                        option = WooShippingRateModel.Option.DEFAULT,
+                        packageId = "1",
+                        price = BigDecimal.TEN,
+                        rateId = "1",
+                        shipmentId = "1",
+                        serviceId = "1",
+                        serviceName = "Default"
+                    )
+                )
+            )
+        )
+        val mappedRates = sut(rates, "USD")
+
+        val rate = mappedRates.values.first().first()
+
+        assertEquals(2, rate.defaultRate.shippingRateOptions.size)
+    }
+
+    @Test
+    fun `when isTrackingEnabled is false then isTrackingEnabled is included in the shipping rate`() {
+        val rates = listOf(
+            WooShippingRateOptionsModel(
+                mapOf(
+                    WooShippingRateModel.Option.DEFAULT to WooShippingRateModel(
+                        carrier = WooShippingCarrier.DHL,
+                        deliveryDays = (1..10).random(),
+                        discount = BigDecimal.ZERO,
+                        hasFreePickup = true,
+                        insurance = BigDecimal.TEN,
+                        isTrackingEnabled = true,
+                        carrierId = WooShippingCarrier.DHL.ordinal.toString(),
+                        option = WooShippingRateModel.Option.DEFAULT,
+                        packageId = "1",
+                        price = BigDecimal.TEN,
+                        rateId = "1",
+                        shipmentId = "1",
+                        serviceId = "1",
+                        serviceName = "Default"
+                    )
+                )
+            )
+        )
+        val mappedRates = sut(rates, "USD")
+
+        val rate = mappedRates.values.first().first()
+
+        assertEquals(3, rate.defaultRate.shippingRateOptions.size)
+    }
+
+    @Test
+    fun `when hasFreePickup is false then isTrackingEnabled is NOT included in the shipping rate`() {
+        val rates = listOf(
+            WooShippingRateOptionsModel(
+                mapOf(
+                    WooShippingRateModel.Option.DEFAULT to WooShippingRateModel(
+                        carrier = WooShippingCarrier.DHL,
+                        deliveryDays = (1..10).random(),
+                        discount = BigDecimal.ZERO,
+                        hasFreePickup = false,
+                        insurance = BigDecimal.TEN,
+                        isTrackingEnabled = true,
+                        carrierId = WooShippingCarrier.DHL.ordinal.toString(),
+                        option = WooShippingRateModel.Option.DEFAULT,
+                        packageId = "1",
+                        price = BigDecimal.TEN,
+                        rateId = "1",
+                        shipmentId = "1",
+                        serviceId = "1",
+                        serviceName = "Default"
+                    )
+                )
+            )
+        )
+        val mappedRates = sut(rates, "USD")
+
+        val rate = mappedRates.values.first().first()
+
+        assertEquals(2, rate.defaultRate.shippingRateOptions.size)
+    }
+
+    @Test
+    fun `when hasFreePickup is false then isTrackingEnabled is included in the shipping rate`() {
+        val rates = listOf(
+            WooShippingRateOptionsModel(
+                mapOf(
+                    WooShippingRateModel.Option.DEFAULT to WooShippingRateModel(
+                        carrier = WooShippingCarrier.DHL,
+                        deliveryDays = (1..10).random(),
+                        discount = BigDecimal.ZERO,
+                        hasFreePickup = true,
+                        insurance = BigDecimal.TEN,
+                        isTrackingEnabled = true,
+                        carrierId = WooShippingCarrier.DHL.ordinal.toString(),
+                        option = WooShippingRateModel.Option.DEFAULT,
+                        packageId = "1",
+                        price = BigDecimal.TEN,
+                        rateId = "1",
+                        shipmentId = "1",
+                        serviceId = "1",
+                        serviceName = "Default"
+                    )
+                )
+            )
+        )
+        val mappedRates = sut(rates, "USD")
+
+        val rate = mappedRates.values.first().first()
+
+        assertEquals(3, rate.defaultRate.shippingRateOptions.size)
+    }
+
     @Suppress("LongMethod")
     private fun generateRates(carriersNum: Int, ratesNum: Int): List<WooShippingRateOptionsModel> {
         require(WooShippingCarrier.entries.size >= carriersNum) {
