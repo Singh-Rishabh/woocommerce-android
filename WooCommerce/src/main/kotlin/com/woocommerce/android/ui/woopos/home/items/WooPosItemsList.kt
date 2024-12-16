@@ -53,11 +53,12 @@ import kotlinx.coroutines.flow.filter
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ItemList(
+fun WooPosItemList(
     state: ContentViewState,
     listState: LazyListState,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfProductsListReached: () -> Unit,
+    onErrorWhilePaginating: @Composable () -> Unit,
 ) {
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -95,11 +96,21 @@ fun ItemList(
             }
         }
 
-        if (state.loadingMore) {
-            item {
-                ItemsLoadingItem()
+        when (state.paginationState) {
+            PaginationState.Error -> {
+                item {
+                    onErrorWhilePaginating()
+                }
+            }
+            PaginationState.Loading -> {
+                item {
+                    ItemsLoadingItem()
+                }
+            }
+            PaginationState.None -> {
             }
         }
+
         item {
             Spacer(modifier = Modifier.height(104.dp))
         }

@@ -46,14 +46,14 @@ class WooPosHomeViewModel @Inject constructor(
         when (event) {
             WooPosHomeUIEvent.SystemBackClicked -> {
                 when (_state.value.screenPositionState) {
-                    ScreenPositionState.Checkout.NotPaid -> {
+                    ScreenPositionState.Checkout.CartWithTotals -> {
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Cart.Visible
                         )
                         sendEventToChildren(ParentToChildrenEvent.BackFromCheckoutToCartClicked)
                     }
 
-                    ScreenPositionState.Checkout.Paid -> {
+                    ScreenPositionState.Checkout.FullScreenTotals -> {
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Cart.Visible
                         )
@@ -88,13 +88,14 @@ class WooPosHomeViewModel @Inject constructor(
         }
     }
 
+    @Suppress("LongMethod")
     private fun listenBottomEvents() {
         viewModelScope.launch {
             childrenToParentEventReceiver.events.collect { event ->
                 when (event) {
                     is ChildToParentEvent.CheckoutClicked -> {
                         _state.value = _state.value.copy(
-                            screenPositionState = ScreenPositionState.Checkout.NotPaid
+                            screenPositionState = ScreenPositionState.Checkout.CartWithTotals
                         )
                         sendEventToChildren(ParentToChildrenEvent.CheckoutClicked(event.itemClickedDataList))
                     }
@@ -103,6 +104,7 @@ class WooPosHomeViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Cart.Visible
                         )
+                        sendEventToChildren(ParentToChildrenEvent.BackFromCheckoutToCartClicked)
                     }
 
                     is ChildToParentEvent.ItemClickedInProductSelector -> {
@@ -118,6 +120,25 @@ class WooPosHomeViewModel @Inject constructor(
                     }
 
                     is ChildToParentEvent.OrderSuccessfullyPaid -> onOrderSuccessfullyPaid()
+
+                    is ChildToParentEvent.PaymentCollecting -> {
+                        _state.value = _state.value.copy(
+                            screenPositionState = ScreenPositionState.Checkout.CartWithTotals
+                        )
+                    }
+                    is ChildToParentEvent.PaymentInProgress,
+                    is ChildToParentEvent.PaymentFailed -> {
+                        _state.value = _state.value.copy(
+                            screenPositionState = ScreenPositionState.Checkout.FullScreenTotals
+                        )
+                    }
+
+                    is ChildToParentEvent.GoBackToCheckoutAfterFailedPayment,
+                    is ChildToParentEvent.RetryFailedPaymentClicked -> {
+                        _state.value = _state.value.copy(
+                            screenPositionState = ScreenPositionState.Checkout.CartWithTotals
+                        )
+                    }
 
                     ChildToParentEvent.ExitPosClicked -> {
                         _state.value = _state.value.copy(
@@ -156,12 +177,11 @@ class WooPosHomeViewModel @Inject constructor(
             }
             ChildToParentEvent.ProductsStatusChanged.WithCart -> {
                 when (screenPosition) {
-                    ScreenPositionState.Cart.Hidden ->
-                        ScreenPositionState.Cart.Visible
+                    ScreenPositionState.Cart.Hidden -> ScreenPositionState.Cart.Visible
 
                     ScreenPositionState.Cart.Visible,
-                    ScreenPositionState.Checkout.NotPaid,
-                    ScreenPositionState.Checkout.Paid -> screenPosition
+                    ScreenPositionState.Checkout.CartWithTotals,
+                    ScreenPositionState.Checkout.FullScreenTotals -> screenPosition
                 }
             }
         }
@@ -176,7 +196,7 @@ class WooPosHomeViewModel @Inject constructor(
 
     private fun onOrderSuccessfullyPaid() {
         _state.value = _state.value.copy(
-            screenPositionState = ScreenPositionState.Checkout.Paid
+            screenPositionState = ScreenPositionState.Checkout.FullScreenTotals
         )
         sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
     }
