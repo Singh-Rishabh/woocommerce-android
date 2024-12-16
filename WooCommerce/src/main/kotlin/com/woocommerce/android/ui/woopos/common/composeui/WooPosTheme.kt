@@ -62,7 +62,7 @@ private object WooPosColors {
     val lightCustomColorsBorder = Color(0xFFC6C6C8)
     val lightQuaternaryBackground = Color(0x14747480)
 
-    // Woo colors from here: W5OBIbzWilNI8qely8Y4OHQd-fi-144_2
+    // Woo colors from here: https://color-studio.blog/
     val WooPurple0 = Color(0xFFF2EDFF)
     val WooPurple5 = Color(0xFFDFD1FB)
     val WooPurple10 = Color(0xFFCFB9F6)
