@@ -899,12 +899,14 @@ class OrderListViewModel @Inject constructor(
 
     private fun enterSelectionMode(count: Int) {
         viewState = viewState.copy(
+            orderListState = ViewState.OrderListState.Selecting,
             selectionCount = count
         )
     }
 
     private fun exitSelectionMode() {
         viewState = viewState.copy(
+            orderListState = ViewState.OrderListState.Browsing,
             selectionCount = null
         )
     }
