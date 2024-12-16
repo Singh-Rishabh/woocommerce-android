@@ -143,13 +143,15 @@ fun WooPosInputField(
         contentAlignment = contentAlignment,
     ) {
         if (value.isEmpty()) {
-            Text(text = label,
+            Text(
+                text = label,
                 style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
                 maxLines = 1,
                 softWrap = false,
                 modifier = Modifier.onGloballyPositioned { coordinates ->
                     labelWidth = coordinates.size.width
-                })
+                }
+            )
         }
 
         val density = LocalDensity.current
