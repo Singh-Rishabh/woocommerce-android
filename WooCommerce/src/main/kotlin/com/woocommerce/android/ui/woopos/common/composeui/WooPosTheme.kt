@@ -82,7 +82,6 @@ private object WooPosColors {
     val Purple40 = Color(0xFFAF7DD1)
     val Purple50 = Color(0xFF7F54B3)
     val Purple60 = Color(0xFF674399)
-    val Purple60Alpha33 = Color(0x33674399)
     val Purple80 = Color(0xFF3C2861)
     val Purple90 = Color(0xFF271B3D)
 
@@ -131,38 +130,20 @@ private object WooPosColors {
     val Green50 = Color(0xFF008A20)
 
     val White = Color(0xFFFFFFFF)
-    val WhiteAlpha005 = Color(0x0DFFFFFF)
-    val WhiteAlpha008 = Color(0x14FFFFFF)
-    val WhiteAlpha009 = Color(0x17FFFFFF)
-    val WhiteAlpha012 = Color(0x1FFFFFFF)
-    val WhiteAlpha038 = Color(0x61FFFFFF)
-    val WhiteAlpha060 = Color(0x99FFFFFF)
-    val WhiteAlpha087 = Color(0xDEFFFFFF)
 
     val Gray0 = Color(0xFFF6F7F7)
     val Gray5 = Color(0xFFDCDCDE)
-    val Gray6 = Color(0xFFF2F2F7)
     val Gray20 = Color(0xFFB4B1B8)
     val Gray40 = Color(0xFF787C82)
     val Gray60 = Color(0xFF51565F)
     val Gray70 = Color(0xFF3D444B)
     val Gray80 = Color(0xFF2C3338)
-    val Gray80Alpha012 = Color(0x1F2C3338)
-    val Gray80Alpha030 = Color(0x4D3C3C43)
     val Gray900 = Color(0xFFF7F7F7)
 
     val Black = Color(0xFF000000)
-    val Black90 = Color(0xFF121212)
-    val Black90Alpha004 = Color(0x0A000000)
-    val Black90Alpha012 = Color(0x1F121212)
-    val Black90Alpha020 = Color(0x33121212)
-    val Black90Alpha038 = Color(0x61121212)
-    val Black90Alpha060 = Color(0x99121212)
-    val Black90Alpha087 = Color(0xDE121212)
-    val Black900 = Color(0xFF272727)
     val Black60 = Color(0xFF6A6A6A)
     val Black80 = Color(0xFF363636)
-    val BlackAlpha008 = Color(0x14212121)
+    val Black90 = Color(0xFF121212)
 }
 
 private val DarkColorPalette = darkColors(
