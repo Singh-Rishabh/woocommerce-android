@@ -28,6 +28,6 @@ class WooShippingLabelPrintingRestClient @Inject constructor(
     }
 
     class PrintingResponse {
-
+        val b64Content: String? = null
     }
 }
