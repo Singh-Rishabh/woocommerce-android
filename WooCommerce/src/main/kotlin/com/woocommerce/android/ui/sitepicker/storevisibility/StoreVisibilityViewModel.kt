@@ -3,10 +3,10 @@ package com.woocommerce.android.ui.sitepicker.storevisibility
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,31 +15,48 @@ class StoreVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
-
-    private val _wooStores = MutableStateFlow(emptyList<WooStoreUi>())
-    val wooStoresState = _wooStores.asLiveData()
+    private val _wooStores = MutableStateFlow(
+        WooStoresUiState(
+            wooStores = emptyList(),
+            isSaveButtonEnabled = false
+        )
+    )
+    val viewState = _wooStores.asLiveData()
 
     init {
         launch {
-            _wooStores.update {
-                sitePickerRepository.getSites()
+            _wooStores.value = _wooStores.value.copy(
+                wooStores = sitePickerRepository.getSites()
                     .filter { it.hasWooCommerce }
                     .map {
                         WooStoreUi(
                             siteName = it.name,
                             siteUrl = it.url,
                             siteId = it.siteId,
-                            isVisible = it.isVisible
+                            isSelected = it.isVisible
                         )
                     }
-            }
+            )
         }
     }
+
+    fun onBackPressed() {
+        triggerEvent(Exit)
+    }
+
+    fun onSaveTapped() {
+        TODO("Not yet implemented")
+    }
+
+    data class WooStoresUiState(
+        val wooStores: List<WooStoreUi>,
+        val isSaveButtonEnabled: Boolean
+    )
 
     data class WooStoreUi(
         val siteName: String,
         val siteUrl: String,
         val siteId: Long,
-        val isVisible: Boolean
+        val isSelected: Boolean
     )
 }
