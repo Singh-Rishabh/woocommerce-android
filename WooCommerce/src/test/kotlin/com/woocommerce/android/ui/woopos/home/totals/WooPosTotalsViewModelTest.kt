@@ -188,6 +188,13 @@ class WooPosTotalsViewModelTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
             .thenReturn("Checking order")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+            .thenReturn("Getting ready")
+        whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+            .thenReturn("Checking order")
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
+            .thenReturn("No internet")
+
         val itemClickedData = listOf(
             WooPosItemsViewModel.ItemClickedData.SimpleProduct(
                 id = 1L
@@ -257,6 +264,8 @@ class WooPosTotalsViewModelTest {
                 .thenReturn("Getting ready")
             whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
                 .thenReturn("Checking order")
+            whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
+                .thenReturn("No internet")
             val itemClickedData = listOf(
                 WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
             )
@@ -452,6 +461,8 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Getting ready")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
             .thenReturn("Checking order")
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
+            .thenReturn("No internet")
         val itemClickedData = listOf(
             WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
         )
@@ -556,11 +567,27 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Checking order")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_preparing_reader_for_payment))
             .thenReturn("Preparing reader for payment")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+            .thenReturn("Payment failed")
+        whenever(resourceProvider.getString(R.string.woo_pos_payment_failed_try_again))
+            .thenReturn("Try again")
+        whenever(uiStringParser.asString(any())).thenReturn("Unfortunately, this payment has been declined.")
+
+        val mockCardReaderPaymentController: CardReaderPaymentController = mock()
+        val factory: CardReaderPaymentControllerFactory = mock()
+        whenever(factory.create(any(), any(), any())).thenReturn(mockCardReaderPaymentController)
+        val paymentState =
+            MutableStateFlow<CardReaderPaymentOrRefundState>(
+                CardReaderPaymentState.LoadingData({})
+            )
+        whenever(mockCardReaderPaymentController.paymentState).thenReturn(paymentState)
 
         whenever(networkStatus.isConnected()).thenReturn(true)
 
         // WHEN
-        val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
+        val viewModel = createViewModelAndSetupForSuccessfulOrderCreation(
+            controllerFactory = factory
+        )
 
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Totals
@@ -572,6 +599,7 @@ class WooPosTotalsViewModelTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready)).thenReturn("Getting ready")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order)).thenReturn("Checking order")
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
         whenever(networkStatus.isConnected()).thenReturn(false)
         val itemClickedData = listOf(
             WooPosItemsViewModel.ItemClickedData.SimpleProduct(
@@ -1006,7 +1034,7 @@ class WooPosTotalsViewModelTest {
     @Test
     fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then toast message should be shown`() = runTest {
         // GIVEN
-        whenever(isReceiptSendingSupported.invoke()).thenReturn(true)
+        whenever(isReceiptSendingSupported.invoke()).thenReturn(false)
 
         whenever(
             resourceProvider.getString(
