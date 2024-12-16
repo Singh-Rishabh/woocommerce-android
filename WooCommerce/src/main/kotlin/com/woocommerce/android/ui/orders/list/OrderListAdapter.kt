@@ -176,17 +176,6 @@ class OrderListAdapter(
                 }
             )
 
-            when {
-                orderItemUI.isSelected -> {
-                    viewBinding.orderItemLayout.setBackgroundColor(
-                        viewBinding.root.context.getColor(R.color.color_item_selected)
-                    )
-                }
-                else -> {
-                    viewBinding.orderItemLayout.setBackgroundColor(Color.TRANSPARENT)
-                }
-            }
-
             // clear existing tags and add new ones
             viewBinding.orderTags.removeAllViews()
             processTagView(orderItemUI.status, this)
