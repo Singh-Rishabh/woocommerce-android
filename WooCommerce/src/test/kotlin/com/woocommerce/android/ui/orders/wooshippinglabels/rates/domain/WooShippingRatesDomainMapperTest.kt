@@ -27,7 +27,6 @@ class WooShippingRatesDomainMapperTest : BaseUnitTest() {
             .thenAnswer { i -> "formatted ${i.arguments[0]}" }
     }
 
-
     private val sut = WooShippingRatesDomainMapper(
         resourceProvider = resourceProvider,
         currencyFormatter = currencyFormatter
@@ -66,6 +65,7 @@ class WooShippingRatesDomainMapperTest : BaseUnitTest() {
         assertEquals(mappedRates.values.sumOf { it.size }, ratesNum)
     }
 
+    @Suppress("LongMethod")
     private fun generateRates(carriersNum: Int, ratesNum: Int): List<WooShippingRateOptionsModel> {
         require(WooShippingCarrier.entries.size >= carriersNum) {
             "The number of carriers should be less than the number of options"
@@ -75,7 +75,7 @@ class WooShippingRatesDomainMapperTest : BaseUnitTest() {
         }
         val carriers = WooShippingCarrier.entries.take(carriersNum)
         val rates = mutableListOf<WooShippingRateOptionsModel>()
-        val lastPosition = ratesNum -1
+        val lastPosition = ratesNum - 1
         for (i in 0..lastPosition) {
             val ratesMap = mutableMapOf<WooShippingRateModel.Option, WooShippingRateModel>()
             val carrier = if (i < carriersNum) carriers[i] else carriers.random()
