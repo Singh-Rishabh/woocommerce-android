@@ -38,6 +38,7 @@ import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T
 import org.wordpress.android.fluxc.model.WCSettingsModel
 import java.math.BigDecimal
+import kotlin.text.isEmpty
 
 @Composable
 fun WooPosMoneyInputField(
@@ -78,6 +79,12 @@ fun WooPosMoneyInputField(
         modifier = modifier.background(Color.Transparent),
         contentAlignment = contentAlignment,
     ) {
+        val textFieldColor = if (textFieldValue.text.isEmpty()) {
+            textColor.copy(alpha = 0.2f)
+        } else {
+            textColor
+        }
+
         BasicTextField(
             value = textFieldValue,
             onValueChange = onValueChange@{ updatedValue ->
@@ -86,31 +93,33 @@ fun WooPosMoneyInputField(
                     return@onValueChange
                 }
                 val transformedText = valueMapper.transformText(textFieldValue.text, updatedValue.text)
-                runCatching { valueMapper.parseText(transformedText) }
-                    .onSuccess {
-                        textFieldValue = TextFieldValue(
-                            text = transformedText,
-                            composition = updatedValue.composition,
-                            selection = TextRange(
-                                (updatedValue.selection.start + transformedText.length - updatedValue.text.length)
-                                    .coerceIn(0, transformedText.length)
+                runCatching { valueMapper.parseText(transformedText) }.onSuccess {
+                    textFieldValue = TextFieldValue(
+                        text = transformedText,
+                        composition = updatedValue.composition,
+                        selection = TextRange(
+                            (updatedValue.selection.start + transformedText.length - updatedValue.text.length).coerceIn(
+                                0,
+                                transformedText.length
                             )
                         )
-                        if (!valueMapper.equals(currentValue, it)) {
-                            currentValue = it
-                            onValueChange(it)
-                        }
+                    )
+
+                    if (!valueMapper.equals(currentValue, it)) {
+                        currentValue = it
+                        onValueChange(it)
                     }
-                    .onFailure {
-                        WooLog.e(T.POS, "Failed to parse text: $transformedText", it)
-                    }
+                }.onFailure {
+                    WooLog.e(T.POS, "Failed to parse text: $transformedText", it)
+                }
             },
-            textStyle = textStyle.copy(color = textColor),
+            textStyle = textStyle.copy(color = textFieldColor),
             singleLine = true,
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions,
             visualTransformation = visualTransformation,
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+            modifier = Modifier.width(IntrinsicSize.Min),
         )
     }
 }
@@ -170,7 +179,7 @@ fun WooPosTypedInputFieldPreview() {
     WooPosTheme {
         Column(modifier = Modifier.padding(16.dp)) {
             WooPosMoneyInputField(
-                value = BigDecimal.ZERO,
+                value = null,
                 onValueChange = {},
                 currencySymbol = "$",
                 currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
@@ -181,7 +190,7 @@ fun WooPosTypedInputFieldPreview() {
             Spacer(modifier = Modifier.size(8.dp))
 
             WooPosMoneyInputField(
-                value = BigDecimal.TEN,
+                value = BigDecimal.ZERO,
                 onValueChange = {},
                 currencySymbol = "$",
                 currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
