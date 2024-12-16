@@ -45,7 +45,6 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 isSelected = false,
                 isLetter = false,
                 isPredefined = true,
-                id = "1"
             ),
             PackageData(
                 id = "2",
@@ -55,7 +54,6 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 isSelected = false,
                 isLetter = false,
                 isPredefined = true,
-                id = "2"
             )
         )
         assertThat(result.carrierPackages[Carrier.USPS]).containsExactly(
@@ -70,7 +68,6 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                         isSelected = false,
                         isLetter = false,
                         isPredefined = true,
-                        id = "1"
                     )
                 )
             )

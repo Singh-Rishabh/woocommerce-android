@@ -86,7 +86,7 @@ class WooShippingRatesRepositoryTest : BaseUnitTest() {
                 message = "Error"
             )
         )
-        val result = sut.getShippingRates(defaultPackageData, defaultAddress, defaultOriginAddress)
+        val result = sut.getShippingRates(1L,defaultPackageData, defaultAddress, defaultOriginAddress, 2f)
 
         assert(result.isFailure)
     }
@@ -97,7 +97,7 @@ class WooShippingRatesRepositoryTest : BaseUnitTest() {
             restClient.getShippingRates(any(), any(), any(), any(), any())
         ) doReturn WooResult(emptyMap())
 
-        val result = sut.getShippingRates(defaultPackageData, defaultAddress, defaultOriginAddress)
+        val result = sut.getShippingRates(1L,defaultPackageData, defaultAddress, defaultOriginAddress, 2f)
 
         assert(result.isSuccess)
     }

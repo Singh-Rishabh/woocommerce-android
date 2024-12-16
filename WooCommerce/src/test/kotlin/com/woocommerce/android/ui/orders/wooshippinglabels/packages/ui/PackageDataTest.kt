@@ -14,7 +14,6 @@ class PackageDataTest {
             weight = "5",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -31,7 +30,6 @@ class PackageDataTest {
             weight = "5",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -48,7 +46,6 @@ class PackageDataTest {
             weight = "5",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -65,7 +62,6 @@ class PackageDataTest {
             weight = "5",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
 
         assertThat(packageData.length).isEmpty()

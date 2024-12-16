@@ -178,7 +178,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "10",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
         val package2 = PackageData(
             id = "2",
@@ -187,7 +186,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "20",
             isSelected = false,
             isLetter = true,
-            id = "2"
         )
         whenever(fetchPredefinedPackages()).thenReturn(
             PredefinedPackagesState.Data(
@@ -223,7 +221,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "10",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
         val package2 = PackageData(
             id = "2",
@@ -232,7 +229,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "20",
             isSelected = false,
             isLetter = true,
-            id = "2"
         )
         val carrierPackages = mapOf(
             carrier to listOf(
@@ -285,7 +281,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "10",
             isSelected = false,
             isLetter = false,
-            id = "1"
         )
         val package2 = PackageData(
             id = "2",
@@ -294,7 +289,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "20",
             isSelected = false,
             isLetter = true,
-            id = "2"
         )
         val package3 = PackageData(
             id = "3",
@@ -303,7 +297,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "30",
             isSelected = false,
             isLetter = false,
-            id = "3"
         )
         val package4 = PackageData(
             id = "4",
@@ -312,7 +305,6 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
             weight = "40",
             isSelected = false,
             isLetter = true,
-            id = "4"
         )
         val carrierPackages = mapOf(
             carrier1 to listOf(
