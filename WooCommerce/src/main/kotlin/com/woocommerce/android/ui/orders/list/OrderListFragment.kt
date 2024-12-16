@@ -10,6 +10,8 @@ import android.view.MenuItem.OnActionExpandListener
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.ViewGroupCompat
@@ -88,7 +90,8 @@ class OrderListFragment :
     OnQueryTextListener,
     OnActionExpandListener,
     OrderListListener,
-    SwipeToComplete.OnSwipeListener {
+    SwipeToComplete.OnSwipeListener,
+    ActionMode.Callback {
     companion object {
         const val TAG: String = "OrderListFragment"
         const val STATE_KEY_SEARCH_QUERY = "search-query"
@@ -115,6 +118,7 @@ class OrderListFragment :
     lateinit var feedbackPrefs: FeedbackPrefs
 
     private var tracker: SelectionTracker<Long>? = null
+    private var actionMode: ActionMode? = null
     private val selectionPredicate = MutableMultipleSelectionPredicate<Long>()
     private val viewModel: OrderListViewModel by viewModels()
     private val communicationViewModel: OrdersCommunicationViewModel by activityViewModels()
@@ -689,9 +693,33 @@ class OrderListFragment :
             new.shouldDisplayTroubleshootingBanner.takeIfNotEqualTo(old?.shouldDisplayTroubleshootingBanner) {
                 displayTimeoutErrorCard(it)
             }
+            new.orderListState?.takeIfNotEqualTo(old?.orderListState) {
+                handleListState(it)
+            }
         }
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
             binding.orderFiltersCard.updateLastUpdate(lastUpdate)
+        }
+    }
+
+    private fun handleListState(orderListState: OrderListViewModel.ViewState.OrderListState) {
+        when (orderListState) {
+            OrderListViewModel.ViewState.OrderListState.Selecting -> {
+                actionMode = (requireActivity() as AppCompatActivity)
+                    .startSupportActionMode(this@OrderListFragment)
+                delayMultiSelection()
+            }
+
+            OrderListViewModel.ViewState.OrderListState.Browsing -> {
+                actionMode?.finish()
+            }
+        }
+    }
+
+    private fun delayMultiSelection() {
+        selectionPredicate.selectMultiple = false
+        binding.orderListView.ordersList.post {
+            selectionPredicate.selectMultiple = true
         }
     }
 
@@ -1087,5 +1115,20 @@ class OrderListFragment :
             origin = HelpOrigin.ORDERS_LIST,
             extraTags = ArrayList()
         ).let { activity?.startActivity(it) }
+    }
+
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode) {
+        tracker?.clearSelection()
+        actionMode = null
     }
 }
