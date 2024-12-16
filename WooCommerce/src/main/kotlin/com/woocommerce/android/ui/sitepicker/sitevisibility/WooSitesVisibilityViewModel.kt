@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.sitepicker.storevisibility
+package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class StoreVisibilityViewModel @Inject constructor(
+class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {

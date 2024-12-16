@@ -68,6 +68,6 @@
         android:label="CloseAccountDialogFragment" />
     <fragment
         android:id="@+id/storeVisibilityFragment"
-        android:name="com.woocommerce.android.ui.sitepicker.storevisibility.StoreVisibilityFragment"
+        android:name="com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityFragment"
         android:label="StoreVisibilityFragment" />
 </navigation>

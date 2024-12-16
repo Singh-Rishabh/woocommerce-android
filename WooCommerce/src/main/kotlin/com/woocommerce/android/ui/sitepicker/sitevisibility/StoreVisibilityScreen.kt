@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.sitepicker.storevisibility
+package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -32,11 +32,11 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
 import com.woocommerce.android.ui.compose.preview.LightDarkThemePreviews
 import com.woocommerce.android.ui.compose.theme.WooTypography
-import com.woocommerce.android.ui.sitepicker.storevisibility.StoreVisibilityViewModel.WooStoreUi
-import com.woocommerce.android.ui.sitepicker.storevisibility.StoreVisibilityViewModel.WooStoresUiState
+import com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityViewModel.WooStoreUi
+import com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityViewModel.WooStoresUiState
 
 @Composable
-fun WooSitesVisibilityScreen(viewModel: StoreVisibilityViewModel) {
+fun WooSitesVisibilityScreen(viewModel: WooSitesVisibilityViewModel) {
     BackHandler(onBack = viewModel::onBackPressed)
     viewModel.viewState.observeAsState().value?.let { state ->
         WooSitesVisibilityScreen(

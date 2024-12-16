@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.sitepicker.storevisibility
+package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,11 +13,11 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class StoreVisibilityFragment : BaseFragment() {
+class WooSitesVisibilityFragment : BaseFragment() {
     override val activityAppBarStatus: AppBarStatus
         get() = AppBarStatus.Hidden
 
-    val viewModel: StoreVisibilityViewModel by viewModels()
+    val viewModel: WooSitesVisibilityViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return composeView {
