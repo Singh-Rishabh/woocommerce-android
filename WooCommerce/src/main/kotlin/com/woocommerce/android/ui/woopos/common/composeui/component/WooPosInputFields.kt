@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -15,11 +14,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldColors
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -28,81 +26,92 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.woocommerce.android.ui.compose.component.BigDecimalTextFieldValueMapper
-import com.woocommerce.android.ui.compose.component.TextFieldValueMapper
-import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
+import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
+import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
-import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.util.WooLog
+import com.woocommerce.android.util.WooLog.T
+import org.wordpress.android.fluxc.model.WCSettingsModel
 import java.math.BigDecimal
 
 @Composable
-fun <T> WooPosTypedInputField(
-    value: T,
-    onValueChange: (T) -> Unit,
-    label: String,
-    valueMapper: TextFieldValueMapper<T>,
-    modifier: Modifier = Modifier,
-    helperText: String? = null,
-    enabled: Boolean = true,
-    readOnly: Boolean = false,
-    leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
-    errorMessage: String? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
+fun WooPosMoneyInputField(
+    value: BigDecimal?,
+    onValueChange: (BigDecimal?) -> Unit,
+    currencySymbol: String,
+    currencyPosition: WCSettingsModel.CurrencyPosition,
+    decimalSeparator: String,
+    numberOfDecimals: Int,
+    textStyle: TextStyle = MaterialTheme.typography.h6,
+    textColor: Color = MaterialTheme.colors.onBackground,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: TextFieldColors = TextFieldDefaults.outlinedTextFieldColors(
-        focusedBorderColor = Color.Transparent,
-        unfocusedBorderColor = Color.Transparent,
-        disabledBorderColor = Color.Transparent,
-        errorBorderColor = Color.Transparent,
-        focusedLabelColor = MaterialTheme.colors.onBackground.copy(alpha = 0.8f),
-    ),
-    placeholderText: String? = null
+    contentAlignment: Alignment = Alignment.CenterStart,
+    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        WCOutlinedTypedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            label = label,
-            valueMapper = valueMapper,
-            helperText = helperText,
-            enabled = enabled,
-            readOnly = readOnly,
-            leadingIcon = leadingIcon,
-            trailingIcon = trailingIcon,
-            isError = errorMessage != null,
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            keyboardActions = keyboardActions,
-            singleLine = singleLine,
-            maxLines = maxLines,
-            interactionSource = interactionSource,
-            colors = colors,
-            placeholderText = placeholderText,
+    val visualTransformation = remember {
+        CurrencyVisualTransformation(
+            currencySymbol = currencySymbol,
+            currencyPosition = currencyPosition
         )
+    }
 
-        val errorTextStyle = MaterialTheme.typography.subtitle2
-        if (errorMessage != null) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colors.error,
-                fontWeight = FontWeight.Normal,
-                style = errorTextStyle,
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .padding(start = 16.dp.toAdaptivePadding())
-            )
-        }
+    val valueMapper = NullableCurrencyTextFieldValueMapper.create(
+        decimalSeparator = decimalSeparator,
+        numberOfDecimals = numberOfDecimals
+    )
+
+    var currentValue by remember {
+        mutableStateOf(value)
+    }
+    var textFieldValue by remember(value != currentValue) {
+        currentValue = value
+        mutableStateOf(TextFieldValue(valueMapper.printValue(value)))
+    }
+
+    Box(
+        modifier = modifier.background(Color.Transparent),
+        contentAlignment = contentAlignment,
+    ) {
+        BasicTextField(
+            value = textFieldValue,
+            onValueChange = onValueChange@{ updatedValue ->
+                if (updatedValue.text == textFieldValue.text) {
+                    textFieldValue = updatedValue
+                    return@onValueChange
+                }
+                val transformedText = valueMapper.transformText(textFieldValue.text, updatedValue.text)
+                runCatching { valueMapper.parseText(transformedText) }
+                    .onSuccess {
+                        textFieldValue = TextFieldValue(
+                            text = transformedText,
+                            composition = updatedValue.composition,
+                            selection = TextRange(
+                                (updatedValue.selection.start + transformedText.length - updatedValue.text.length)
+                                    .coerceIn(0, transformedText.length)
+                            )
+                        )
+                        if (!valueMapper.equals(currentValue, it)) {
+                            currentValue = it
+                            onValueChange(it)
+                        }
+                    }
+                    .onFailure {
+                        WooLog.e(T.POS, "Failed to parse text: $transformedText", it)
+                    }
+            },
+            textStyle = textStyle.copy(color = textColor),
+            singleLine = true,
+            keyboardActions = keyboardActions,
+            keyboardOptions = keyboardOptions,
+            visualTransformation = visualTransformation,
+            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+        )
     }
 }
 
@@ -121,21 +130,17 @@ fun WooPosInputField(
     var labelWidth by remember { mutableIntStateOf(0) }
 
     Box(
-        modifier = modifier
-            .background(Color.Transparent),
+        modifier = modifier.background(Color.Transparent),
         contentAlignment = contentAlignment,
     ) {
         if (value.isEmpty()) {
-            Text(
-                text = label,
+            Text(text = label,
                 style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
                 maxLines = 1,
                 softWrap = false,
-                modifier = Modifier
-                    .onGloballyPositioned { coordinates ->
-                        labelWidth = coordinates.size.width
-                    }
-            )
+                modifier = Modifier.onGloballyPositioned { coordinates ->
+                    labelWidth = coordinates.size.width
+                })
         }
 
         val density = LocalDensity.current
@@ -164,30 +169,35 @@ fun WooPosInputField(
 fun WooPosTypedInputFieldPreview() {
     WooPosTheme {
         Column(modifier = Modifier.padding(16.dp)) {
-            WooPosTypedInputField(
-                value = BigDecimal.TEN,
+            WooPosMoneyInputField(
+                value = BigDecimal.ZERO,
                 onValueChange = {},
-                valueMapper = BigDecimalTextFieldValueMapper.create(true),
-                label = "Label",
+                currencySymbol = "$",
+                currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
+                decimalSeparator = ".",
+                numberOfDecimals = 2,
             )
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            WooPosTypedInputField(
+            WooPosMoneyInputField(
                 value = BigDecimal.TEN,
                 onValueChange = {},
-                valueMapper = BigDecimalTextFieldValueMapper.create(true),
-                label = "",
+                currencySymbol = "$",
+                currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
+                decimalSeparator = ".",
+                numberOfDecimals = 2,
             )
 
             Spacer(modifier = Modifier.size(8.dp))
 
-            WooPosTypedInputField(
+            WooPosMoneyInputField(
                 value = BigDecimal.TEN,
-                valueMapper = BigDecimalTextFieldValueMapper.create(true),
                 onValueChange = {},
-                label = "",
-                errorMessage = "Please enter a valid amount",
+                currencySymbol = "$",
+                currencyPosition = WCSettingsModel.CurrencyPosition.LEFT,
+                decimalSeparator = ".",
+                numberOfDecimals = 2,
             )
         }
     }

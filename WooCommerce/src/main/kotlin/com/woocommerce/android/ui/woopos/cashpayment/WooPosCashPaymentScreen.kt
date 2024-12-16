@@ -25,14 +25,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
-import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosMoneyInputField
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosToolbar
-import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosTypedInputField
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 import org.wordpress.android.fluxc.model.WCSettingsModel
@@ -117,37 +115,30 @@ private fun Collecting(
         var inputText by remember { mutableStateOf(state.enteredAmount) }
 
         val marginBetweenTotalAndInput = 48.dp.toAdaptivePadding()
-        WooPosTypedInputField(
+        val standardMargin = 16.dp.toAdaptivePadding()
+        WooPosMoneyInputField(
             modifier = Modifier
                 .focusRequester(focusRequester)
                 .constrainAs(input) {
                     top.linkTo(total.bottom, margin = marginBetweenTotalAndInput)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
+                    start.linkTo(parent.start, margin = standardMargin)
+                    end.linkTo(parent.end, margin = standardMargin)
                 },
             value = inputText,
-            label = stringResource(R.string.woopos_cash_payment_enter_amount_label),
-            valueMapper = NullableCurrencyTextFieldValueMapper.create(
-                decimalSeparator = state.decimalSeparator,
-                numberOfDecimals = state.numberOfDecimals
-            ),
             onValueChange = {
                 onAmountChanged(it)
                 inputText = it
             },
-            visualTransformation = CurrencyVisualTransformation(
-                state.currencySymbol,
-                state.currencyPosition
-            ),
-            singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
+            currencySymbol = state.currencySymbol,
+            currencyPosition = state.currencyPosition,
+            decimalSeparator = state.decimalSeparator,
+            numberOfDecimals = state.numberOfDecimals,
         )
 
         val smallMargin = 8.dp.toAdaptivePadding()
-        val standardMargin = 16.dp.toAdaptivePadding()
         Text(
             text = state.changeDueText,
             style = MaterialTheme.typography.body1,
