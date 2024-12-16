@@ -271,9 +271,13 @@ class OrderListFragment :
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     val selectionCount = tracker?.selection?.size() ?: 0
-                    // TODO: add onSelectionChanged handling to OrderListViewModel
+
                     // Temporarily showing toast instead to debug size selection
                     ToastUtils.showToast(context, "Current selection count: $selectionCount")
+
+                    viewModel.onSelectionChanged(selectionCount)
+
+
                 }
             }
         )
