@@ -25,17 +25,12 @@ class FetchShippingLabelFile @Inject constructor(
     suspend operator fun invoke(
         labelIds: List<Long>
     ): File? {
-        val site = selectedSite.getOrNull() ?: return null
-
-        val response = printingRestClient.fetchShippingLabelPrinting(
-            site = site,
-            labelIds = labelIds,
-            paperSize = "A4"
-        ).takeIf { it.isError.not() }
+        val response = selectedSite.getOrNull()
+            ?.let { printingRestClient.fetchShippingLabelPrinting(it, labelIds, "A4") }
+            ?.takeIf { it.isError.not() }
             ?.result?.b64Content
             ?.takeIf { it.isNotNullOrEmpty() }
             ?: return null
-
 
         return withContext(dispatchers.io) {
             storageDir?.let {
