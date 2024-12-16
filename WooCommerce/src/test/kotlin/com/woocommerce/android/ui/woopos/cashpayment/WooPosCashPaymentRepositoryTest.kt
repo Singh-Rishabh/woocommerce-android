@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.cashpayment
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.OrderMapper
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.products.models.SiteParameters
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -14,15 +15,18 @@ import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.OrderEntity
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.WCOrderStatusModel
+import org.wordpress.android.fluxc.model.WCSettingsModel
 import org.wordpress.android.fluxc.model.gateways.WCGatewayModel
 import org.wordpress.android.fluxc.store.WCGatewayStore
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderChanged
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult
+import org.wordpress.android.fluxc.store.WooCommerceStore
 
 class WooPosCashPaymentRepositoryTest {
 
     private val selectedSite: SelectedSite = mock()
+    private val wooCommerceStore: WooCommerceStore = mock()
     private val orderStore: WCOrderStore = mock()
     private val orderMapper: OrderMapper = mock()
     private val gatewayStore: WCGatewayStore = mock()
@@ -33,6 +37,7 @@ class WooPosCashPaymentRepositoryTest {
     fun setUp() {
         repository = WooPosCashPaymentRepository(
             selectedSite,
+            wooCommerceStore,
             orderStore,
             orderMapper,
             gatewayStore
@@ -41,7 +46,6 @@ class WooPosCashPaymentRepositoryTest {
 
     @Test
     fun `given valid orderId and site, when getOrderById, then return mapped order`() = runTest {
-        // GIVEN
         val orderId = 123L
         val site: SiteModel = mock()
         val mockOrder: OrderEntity = mock()
@@ -51,10 +55,8 @@ class WooPosCashPaymentRepositoryTest {
         whenever(orderStore.getOrderByIdAndSite(orderId, site)).thenReturn(mockOrder)
         whenever(orderMapper.toAppModel(mockOrder)).thenReturn(mappedOrder)
 
-        // WHEN
         val result = repository.getOrderById(orderId)
 
-        // THEN
         assertThat(result).isEqualTo(mappedOrder)
         verify(orderStore).getOrderByIdAndSite(orderId, site)
         verify(orderMapper).toAppModel(mockOrder)
@@ -62,24 +64,20 @@ class WooPosCashPaymentRepositoryTest {
 
     @Test
     fun `given invalid orderId, when getOrderById, then return null`() = runTest {
-        // GIVEN
         val orderId = 456L
         val site: SiteModel = mock()
 
         whenever(selectedSite.get()).thenReturn(site)
         whenever(orderStore.getOrderByIdAndSite(orderId, site)).thenReturn(null)
 
-        // WHEN
         val result = repository.getOrderById(orderId)
 
-        // THEN
         assertThat(result).isNull()
         verify(orderStore).getOrderByIdAndSite(orderId, site)
     }
 
     @Test
     fun `given valid orderId, when completeOrder, then return success`() = runTest {
-        // GIVEN
         val orderId = 123L
         val site: SiteModel = mock()
         val gatewayTitle = "Pay in Person"
@@ -100,10 +98,8 @@ class WooPosCashPaymentRepositoryTest {
             )
         ).thenReturn(flowOf(updateResult))
 
-        // WHEN
         val result = repository.completeOrder(orderId)
 
-        // THEN
         assertThat(result.isSuccess).isTrue()
         verify(orderStore).updateOrderStatusAndPaymentMethod(
             orderId = orderId,
@@ -116,7 +112,6 @@ class WooPosCashPaymentRepositoryTest {
 
     @Test
     fun `given valid orderId, when completeOrder, then return failure`() = runTest {
-        // GIVEN
         val orderId = 123L
         val site: SiteModel = mock()
         val gatewayTitle = "Pay in Person"
@@ -144,10 +139,8 @@ class WooPosCashPaymentRepositoryTest {
             )
         ).thenReturn(flowOf(updateResult))
 
-        // WHEN
         val result = repository.completeOrder(orderId)
 
-        // THEN
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()?.message).isEqualTo(errorMessage)
         verify(orderStore).updateOrderStatusAndPaymentMethod(
@@ -160,42 +153,38 @@ class WooPosCashPaymentRepositoryTest {
     }
 
     @Test
-    fun `given no status model, when completeOrder, then default status is used`() = runTest {
-        // GIVEN
-        val orderId = 789L
+    fun `given site parameters cached, when getCurrencySymbol, then return currency symbol`() = runTest {
+        val cachedParams = mock<SiteParameters> {
+            on { currencySymbol }.thenReturn("$")
+        }
+        repository.javaClass.getDeclaredField("cachedParameters").apply {
+            isAccessible = true
+            set(repository, cachedParams)
+        }
+
+        val result = repository.getCurrencySymbol()
+
+        assertThat(result).isEqualTo("$")
+    }
+
+    @Test
+    fun `given no cached site parameters, when getCurrencySymbol, then load and return currency symbol`() = runTest {
         val site: SiteModel = mock()
-        val gatewayTitle = "Pay in Person"
-        val codGateway: WCGatewayModel = mock { on { title }.thenReturn(gatewayTitle) }
-        val updateResult = UpdateOrderResult.RemoteUpdateResult(mock { on { isError }.thenReturn(false) })
+        val siteSettings: WCSettingsModel = mock {
+            on { currencyCode }.thenReturn("USD")
+            on { currencyThousandSeparator }.thenReturn(",")
+            on { currencyDecimalSeparator }.thenReturn(".")
+            on { currencyPosition }.thenReturn(WCSettingsModel.CurrencyPosition.LEFT)
+        }
+        val currencySymbol = "$"
 
         whenever(selectedSite.get()).thenReturn(site)
-        whenever(gatewayStore.getGateway(site, "cod")).thenReturn(codGateway)
-        whenever(orderStore.getOrderStatusForSiteAndKey(site, Order.Status.Completed.value)).thenReturn(null)
-        whenever(
-            orderStore.updateOrderStatusAndPaymentMethod(
-                orderId = orderId,
-                site = site,
-                newStatus = WCOrderStatusModel(statusKey = Order.Status.Completed.value).apply {
-                    label = Order.Status.Completed.value
-                },
-                newPaymentMethodId = "cod",
-                newPaymentMethodTitle = gatewayTitle
-            )
-        ).thenReturn(flowOf(updateResult))
+        whenever(wooCommerceStore.getSiteSettings(site)).thenReturn(siteSettings)
+        whenever(wooCommerceStore.getSiteCurrency(site, "USD")).thenReturn(currencySymbol)
+        whenever(wooCommerceStore.getProductSettings(site)).thenReturn(mock())
 
-        // WHEN
-        val result = repository.completeOrder(orderId)
+        val result = repository.getCurrencySymbol()
 
-        // THEN
-        assertThat(result.isSuccess).isTrue()
-        verify(orderStore).updateOrderStatusAndPaymentMethod(
-            orderId = orderId,
-            site = site,
-            newStatus = WCOrderStatusModel(statusKey = Order.Status.Completed.value).apply {
-                label = Order.Status.Completed.value
-            },
-            newPaymentMethodId = "cod",
-            newPaymentMethodTitle = gatewayTitle
-        )
+        assertThat(result).isEqualTo(currencySymbol)
     }
 }
