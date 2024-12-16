@@ -184,6 +184,7 @@ class WooPosTotalsViewModelTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `given checkout started, when vm created, then order creation is started`() = runTest {
         // GIVEN
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
