@@ -15,6 +15,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
+    private lateinit var initiallySelectedSiteIds: List<Long>
     private val _wooStores = MutableStateFlow(
         WooStoresUiState(
             wooStores = emptyList(),
@@ -37,6 +38,9 @@ class WooSitesVisibilityViewModel @Inject constructor(
                         )
                     }
             )
+            initiallySelectedSiteIds = _wooStores.value.wooStores
+                .filter { it.isSelected }
+                .map { it.siteId }
         }
     }
 
@@ -46,6 +50,22 @@ class WooSitesVisibilityViewModel @Inject constructor(
 
     fun onSaveTapped() {
         TODO("Not yet implemented")
+    }
+
+    fun onSiteSelected(wooStoreUi: WooStoreUi) {
+        _wooStores.value = _wooStores.value.copy(
+            wooStores = _wooStores.value.wooStores.map {
+                when {
+                    it.siteId == wooStoreUi.siteId -> it.copy(isSelected = !it.isSelected)
+                    else -> it
+                }
+            }
+        )
+        _wooStores.value = _wooStores.value.copy(
+            isSaveButtonEnabled = _wooStores.value.wooStores
+                .filter { it.isSelected }
+                .map { it.siteId } != initiallySelectedSiteIds
+        )
     }
 
     data class WooStoresUiState(

@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,6 +44,7 @@ fun WooSitesVisibilityScreen(viewModel: WooSitesVisibilityViewModel) {
             state = state,
             onBack = viewModel::onBackPressed,
             onSaveTapped = viewModel::onSaveTapped,
+            onSiteSelected = viewModel::onSiteSelected,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
@@ -56,6 +58,7 @@ fun WooSitesVisibilityScreen(
     state: WooStoresUiState,
     onBack: () -> Unit,
     onSaveTapped: () -> Unit,
+    onSiteSelected: (WooStoreUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(topBar = {
@@ -87,6 +90,7 @@ fun WooSitesVisibilityScreen(
         ) {
             itemsIndexed(state.wooStores) { index, wooStore ->
                 Row(
+                    modifier = Modifier.clickable { onSiteSelected(wooStore) },
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SelectionCheck(
@@ -134,6 +138,7 @@ fun StoreVisibilityScreenPreview() {
             isSaveButtonEnabled = true
         ),
         onBack = {},
-        onSaveTapped = {}
+        onSaveTapped = {},
+        onSiteSelected = {}
     )
 }
