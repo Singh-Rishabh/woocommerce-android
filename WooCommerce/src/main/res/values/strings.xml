@@ -602,6 +602,9 @@
     <string name="orderlist_connectivity_tool_summary_suggestion">If your data still isn\'t loading, contact our support team for assistance.</string>
     <string name="orderlist_order_trashed">Order trashed</string>
     <string name="orderlist_order_trashed_error">Error trashing order</string>
+    <string name="orderlist_selection_count">%d orders selected</string>
+    <string name="orderlist_selection_count_single">%d order selected</string>
+    <string name="orderlist_selection_menu_update_status">Update status</string>
 
     <!--
          Simple Payments

@@ -75,6 +75,7 @@ import com.woocommerce.android.ui.products.MutableMultipleSelectionPredicate
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.FeatureFlag
+import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.widgets.WCEmptyView.EmptyViewType
 import dagger.hilt.android.AndroidEntryPoint
@@ -275,13 +276,7 @@ class OrderListFragment :
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     val selectionCount = tracker?.selection?.size() ?: 0
-
-                    // Temporarily showing toast instead to debug size selection
-                    ToastUtils.showToast(context, "Current selection count: $selectionCount")
-
                     viewModel.onSelectionChanged(selectionCount)
-
-
                 }
             }
         )
@@ -695,6 +690,14 @@ class OrderListFragment :
             }
             new.orderListState?.takeIfNotEqualTo(old?.orderListState) {
                 handleListState(it)
+            }
+            new.selectionCount?.takeIfNotEqualTo(old?.selectionCount) { count ->
+                actionMode?.title = StringUtils.getQuantityString(
+                    context = requireContext(),
+                    quantity = count,
+                    default = R.string.orderlist_selection_count,
+                    one = R.string.orderlist_selection_count_single
+                )
             }
         }
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
@@ -1117,14 +1120,22 @@ class OrderListFragment :
         ).let { activity?.startActivity(it) }
     }
 
-    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        TODO("Not yet implemented")
+    override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+        mode.menuInflater.inflate(R.menu.menu_action_mode_orders_list, menu)
+        return true
     }
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu) = false
 
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        TODO("Not yet implemented")
+    override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_orderlist_update_status -> {
+                // todo: implement bulk update status
+                true
+            }
+
+            else -> false
+        }
     }
 
     override fun onDestroyActionMode(mode: ActionMode) {
