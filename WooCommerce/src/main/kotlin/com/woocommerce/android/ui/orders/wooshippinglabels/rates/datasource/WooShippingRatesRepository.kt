@@ -16,9 +16,11 @@ class WooShippingRatesRepository @Inject constructor(
     private val restClient: WooShippingRatesRestClient
 ) {
     suspend fun getShippingRates(
+        orderId: Long,
         selectedPackage: PackageData,
         shipTo: Address,
-        shipFrom: OriginShippingAddress
+        shipFrom: OriginShippingAddress,
+        weight: Float
     ): Result<List<WooShippingRateOptionsModel>> {
         val origin = OriginAddressDTO(
             address = shipFrom.address1,
@@ -45,12 +47,12 @@ class WooShippingRatesRepository @Inject constructor(
             length = selectedPackage.length.toDouble(),
             width = selectedPackage.width.toDouble(),
             height = selectedPackage.height.toDouble(),
-            weight = selectedPackage.weight.toDouble().coerceAtLeast(0.1),
+            weight = weight.toDouble(),
             isLetter = selectedPackage.isLetter
         )
         val result = restClient.getShippingRates(
             site = selectedSite.get(),
-            orderId = "1427",
+            orderId = orderId.toString(),
             origin = origin,
             destination = destination,
             packages = listOf(packageDTO)

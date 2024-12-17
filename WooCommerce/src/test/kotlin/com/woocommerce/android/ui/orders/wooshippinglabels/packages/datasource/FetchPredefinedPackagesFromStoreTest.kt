@@ -38,22 +38,22 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
 
         assertThat(result.savedPackages).containsExactly(
             PackageData(
+                id = "1",
                 name = "Saved Package 1",
                 dimensions = "dimensions",
                 weight = "weight",
                 isSelected = false,
                 isLetter = false,
                 isPredefined = true,
-                id = "1"
             ),
             PackageData(
+                id = "2",
                 name = "Saved Package 2",
                 dimensions = "dimensions",
                 weight = "weight",
                 isSelected = false,
                 isLetter = false,
                 isPredefined = true,
-                id = "2"
             )
         )
         assertThat(result.carrierPackages[Carrier.USPS]).containsExactly(
@@ -61,13 +61,13 @@ class FetchPredefinedPackagesFromStoreTest : BaseUnitTest() {
                 groupName = "Group 1",
                 packages = listOf(
                     PackageData(
+                        id = "1",
                         name = "Carrier Package 1",
                         dimensions = "dimensions",
                         weight = "weight",
                         isSelected = false,
                         isLetter = false,
                         isPredefined = true,
-                        id = "1"
                     )
                 )
             )

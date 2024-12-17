@@ -20,7 +20,6 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 import kotlin.test.Test
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingRatesRepositoryTest : BaseUnitTest() {
     private val currentSite = SiteModel()
@@ -86,7 +85,7 @@ class WooShippingRatesRepositoryTest : BaseUnitTest() {
                 message = "Error"
             )
         )
-        val result = sut.getShippingRates(defaultPackageData, defaultAddress, defaultOriginAddress)
+        val result = sut.getShippingRates(1L, defaultPackageData, defaultAddress, defaultOriginAddress, 2f)
 
         assert(result.isFailure)
     }
@@ -97,9 +96,8 @@ class WooShippingRatesRepositoryTest : BaseUnitTest() {
             restClient.getShippingRates(any(), any(), any(), any(), any())
         ) doReturn WooResult(emptyMap())
 
-        val result = sut.getShippingRates(defaultPackageData, defaultAddress, defaultOriginAddress)
+        val result = sut.getShippingRates(1L, defaultPackageData, defaultAddress, defaultOriginAddress, 2f)
 
         assert(result.isSuccess)
     }
-
 }

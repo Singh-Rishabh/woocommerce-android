@@ -1283,6 +1283,7 @@
     <string name="shipping_label_purchased_track_shipment">Track shipment</string>
     <string name="shipping_label_purchased_schedule_pick_up">Schedule pickup</string>
     <string name="shipping_label_purchased_request_refund">Request refund</string>
+    <string name="shipping_label_total_shipment_weight">Total shipment weight (with package)</string>
 
 
     <!--
