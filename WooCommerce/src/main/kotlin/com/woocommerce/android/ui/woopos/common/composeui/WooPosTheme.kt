@@ -42,8 +42,6 @@ private object WooPosColors {
     val secondary = Color(0xFF0A9400)
     val surface = Color(0xFF2E2E2E)
 
-    val greenNotFromPalette = Color(0xFF08FB87)
-
     // LightColorPalette
     val lightColorPaletteSecondary = Color(0xFF004B3E)
     val lightColorPaletteSecondaryVariant = Color(0xFF50575E)
@@ -192,7 +190,7 @@ private val LightColorPalette = lightColors(
 private val DarkCustomColors = CustomColors(
     loadingSkeleton = WooPosColors.darkCustomloadingSkeleton,
     border = WooPosColors.oldGrayMedium,
-    success = WooPosColors.greenNotFromPalette,
+    success = WooPosColors.Green20,
     error = WooPosColors.darkCustomColorsError,
     totalsErrorBackground = WooPosColors.darkQuaternaryBackground,
     totalsBackground = Color(0xFF1C1C1E),
@@ -208,7 +206,7 @@ private val DarkCustomColors = CustomColors(
 private val LightCustomColors = CustomColors(
     loadingSkeleton = WooPosColors.lightCustomColorsLoadingSkeleton,
     border = WooPosColors.lightCustomColorsBorder,
-    success = WooPosColors.greenNotFromPalette,
+    success = WooPosColors.Green10,
     error = WooPosColors.lightCustomColorsError,
     totalsErrorBackground = WooPosColors.lightQuaternaryBackground,
     totalsBackground = WooPosColors.Gray0,
