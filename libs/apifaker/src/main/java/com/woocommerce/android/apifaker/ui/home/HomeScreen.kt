@@ -1,33 +1,39 @@
 package com.woocommerce.android.apifaker.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +56,7 @@ internal fun HomeScreen(
         endpoints = viewModel.endpoints.collectAsStateWithLifecycle().value,
         isEnabled = viewModel.isEnabled.collectAsState(initial = false).value,
         navController = navController,
+        onRemoveRequest = viewModel::onRemoveRequest,
         onMockingToggleChanged = viewModel::onMockingToggleChanged,
         onExit = onExit
     )
@@ -60,8 +67,9 @@ private fun HomeScreen(
     endpoints: List<MockedEndpoint>,
     isEnabled: Boolean,
     navController: NavController,
+    onRemoveRequest: (Request) -> Unit,
     onMockingToggleChanged: (Boolean) -> Unit,
-    onExit: () -> Unit,
+    onExit: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -78,7 +86,8 @@ private fun HomeScreen(
                 actions = {
                     Switch(checked = isEnabled, onCheckedChange = onMockingToggleChanged)
                 },
-                backgroundColor = MaterialTheme.colors.surface
+                backgroundColor = MaterialTheme.colors.surface,
+                elevation = 4.dp
             )
         }
     ) { paddingValues ->
@@ -90,8 +99,13 @@ private fun HomeScreen(
         ) {
             if (endpoints.isNotEmpty()) {
                 LazyColumn {
-                    items(endpoints) { endpoint ->
-                        EndpointItem(endpoint, navController, Modifier.padding(vertical = 8.dp))
+                    items(endpoints, { endpoint -> endpoint.request.id }) { endpoint ->
+                        EndpointItem(
+                            endpoint,
+                            onRemoveRequest = onRemoveRequest,
+                            navController,
+                            Modifier.padding(vertical = 8.dp)
+                        )
                     }
                 }
             } else {
@@ -110,47 +124,80 @@ private fun HomeScreen(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun EndpointItem(
     endpoint: MockedEndpoint,
+    onRemoveRequest: (Request) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = { navController.navigate(Screen.EndpointDetails.route(endpoint.request.id)) }),
-        elevation = 4.dp
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = when (endpoint.request.type) {
-                        ApiType.WPApi -> "WordPress API"
-                        ApiType.WPCom -> "WordPress.com API"
-                        is ApiType.Custom -> "Host: ${endpoint.request.type.host}"
-                    },
-                    style = MaterialTheme.typography.subtitle1
-                )
-                Text(
-                    text = endpoint.request.path,
-                    style = MaterialTheme.typography.body1
+    val dismissState = rememberDismissState()
+
+    if (dismissState.isDismissed(DismissDirection.EndToStart)) {
+        onRemoveRequest(endpoint.request)
+    }
+    SwipeToDismiss(
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart),
+        dismissThresholds = {
+            @Suppress("DEPRECATION")
+            androidx.compose.material.FractionalThreshold(0.3f)
+        },
+        modifier = modifier,
+        background = {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Red, MaterialTheme.shapes.medium)
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Icon(
+                    Icons.Default.Delete,
+                    contentDescription = "Delete"
                 )
             }
-            Spacer(
+        },
+        dismissContent = {
+            Card(
                 modifier = Modifier
-                    .weight(1f)
-                    .defaultMinSize(minWidth = 16.dp)
-            )
-            Text(
-                text = endpoint.response.statusCode.toString(),
-                style = MaterialTheme.typography.subtitle1
-            )
+                    .fillMaxWidth()
+                    .clickable(onClick = { navController.navigate(Screen.EndpointDetails.route(endpoint.request.id)) }),
+                elevation = 4.dp
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = when (endpoint.request.type) {
+                                ApiType.WPApi -> "WordPress API"
+                                ApiType.WPCom -> "WordPress.com API"
+                                is ApiType.Custom -> "Host: ${endpoint.request.type.host}"
+                            },
+                            style = MaterialTheme.typography.subtitle1,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        val pathLine = endpoint.request.httpMethod?.let { "$it " }.orEmpty() + endpoint.request.path
+                        Text(
+                            text = pathLine,
+                            style = MaterialTheme.typography.body1
+                        )
+                    }
+                    Text(
+                        text = endpoint.response.statusCode.toString(),
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -179,6 +226,7 @@ private fun HomeScreenPreview() {
         ),
         isEnabled = true,
         navController = rememberNavController(),
+        onRemoveRequest = {},
         onMockingToggleChanged = {},
         onExit = {}
     )

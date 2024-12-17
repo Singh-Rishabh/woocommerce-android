@@ -7,11 +7,21 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
+import okhttp3.internal.EMPTY_RESPONSE
 import javax.inject.Inject
 
-internal class ApiFakerInterceptor @Inject constructor(private val endpointProcessor: EndpointProcessor) : Interceptor {
+private const val ARTIFICIAL_DELAY_MS = 500L
+
+internal class ApiFakerInterceptor @Inject constructor(
+    private val apiFakerConfig: ApiFakerConfig,
+    private val endpointProcessor: EndpointProcessor
+) : Interceptor {
     @Suppress("TooGenericExceptionCaught", "SwallowedException")
     override fun intercept(chain: Chain): Response {
+        if (!apiFakerConfig.enabled.value) {
+            return chain.proceed(chain.request())
+        }
+
         Log.d(LOG_TAG, "Intercepting request: ${chain.request().url}")
         val request = chain.request()
         val fakeResponse = try {
@@ -22,14 +32,18 @@ internal class ApiFakerInterceptor @Inject constructor(private val endpointProce
         }
 
         return if (fakeResponse != null) {
-            Log.d(LOG_TAG, "Fake request: ${chain.request().url}:\n$fakeResponse")
+            Log.d(LOG_TAG, "Matched request: ${chain.request().url}:\nSending Mocked Response: $fakeResponse")
+            Thread.sleep(ARTIFICIAL_DELAY_MS)
             Response.Builder()
                 .request(request)
                 .protocol(Protocol.HTTP_1_1)
                 .message("Fake Response")
                 .code(fakeResponse.statusCode)
                 // TODO check if it's safe to always use JSON as the content type
-                .body(fakeResponse.body?.toResponseBody("application/json".toMediaType()))
+                .body(
+                    fakeResponse.body?.toResponseBody("application/json".toMediaType())
+                        ?: EMPTY_RESPONSE
+                )
                 .addHeader("content-type", "application/json")
                 .build()
         } else {
