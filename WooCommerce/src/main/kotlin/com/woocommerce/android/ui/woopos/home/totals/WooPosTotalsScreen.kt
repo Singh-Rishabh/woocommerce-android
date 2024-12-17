@@ -276,7 +276,7 @@ private fun ReaderDisconnected(
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
-            text = status.actionButonLabel,
+            text = status.actionButtonLabel,
             onClick = status.onAction,
             modifier = Modifier
                 .fillMaxWidth()
@@ -440,7 +440,7 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                 readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
-                    actionButonLabel = "Connect to a reader",
+                    actionButtonLabel = "Connect to a reader",
                     onAction = {}
                 )
             ),
@@ -463,7 +463,7 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
                 readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
-                    actionButonLabel = "Connect to a reader",
+                    actionButtonLabel = "Connect to a reader",
                     onAction = {}
                 )
             ),
@@ -478,7 +478,7 @@ fun TotalsErrorPreview() {
     val readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
         title = "Reader not connected",
         subtitle = "To process this payment, please connect your reader.",
-        actionButonLabel = "Connect to a reader",
+        actionButtonLabel = "Connect to a reader",
         onAction = {}
     )
     WooPosTheme {

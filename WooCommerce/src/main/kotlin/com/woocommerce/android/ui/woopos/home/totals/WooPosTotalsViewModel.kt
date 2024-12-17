@@ -452,7 +452,7 @@ class WooPosTotalsViewModel @Inject constructor(
         WooPosTotalsViewState.ReaderStatus.Disconnected(
             title = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title),
             subtitle = resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_subtitle),
-            actionButonLabel = resourceProvider.getString(
+            actionButtonLabel = resourceProvider.getString(
                 R.string.woopos_success_totals_error_reader_not_connected_cta_button_label
             ),
             onAction = { cardReaderFacade.connectToReader() }
