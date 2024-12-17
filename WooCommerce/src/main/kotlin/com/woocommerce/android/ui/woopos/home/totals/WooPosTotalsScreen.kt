@@ -161,7 +161,7 @@ private fun TotalsLoaded(
         ) {
             when (val readerStatus = state.readerStatus) {
                 is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
-                    ReaderDisconnected(modifier = Modifier, status = readerStatus)
+                    ReaderDisconnected(modifier = Modifier, status = readerStatus, onUIEvent = onUIEvent)
                 }
 
                 is WooPosTotalsViewState.ReaderStatus.Preparing,
@@ -244,7 +244,8 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
 @Composable
 private fun ReaderDisconnected(
     modifier: Modifier = Modifier,
-    status: WooPosTotalsViewState.ReaderStatus.Disconnected
+    status: WooPosTotalsViewState.ReaderStatus.Disconnected,
+    onUIEvent: (WooPosTotalsUIEvent) -> Unit,
 ) {
     Column(
         modifier = modifier.padding(40.dp.toAdaptivePadding()),
@@ -277,7 +278,7 @@ private fun ReaderDisconnected(
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
             text = status.actionButtonLabel,
-            onClick = status.onAction,
+            onClick = { onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp)
@@ -441,7 +442,6 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
                     actionButtonLabel = "Connect to a reader",
-                    onAction = {}
                 )
             ),
             onUIEvent = {},
@@ -464,7 +464,6 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
                     actionButtonLabel = "Connect to a reader",
-                    onAction = {}
                 )
             ),
             onUIEvent = {},
@@ -479,10 +478,9 @@ fun TotalsErrorPreview() {
         title = "Reader not connected",
         subtitle = "To process this payment, please connect your reader.",
         actionButtonLabel = "Connect to a reader",
-        onAction = {}
     )
     WooPosTheme {
-        ReaderDisconnected(modifier = Modifier, status = readerStatus)
+        ReaderDisconnected(modifier = Modifier, status = readerStatus) {}
     }
 }
 

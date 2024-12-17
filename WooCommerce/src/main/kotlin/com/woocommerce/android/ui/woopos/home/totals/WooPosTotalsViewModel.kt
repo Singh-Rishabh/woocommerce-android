@@ -207,6 +207,8 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
                 }
             }
+
+            WooPosTotalsUIEvent.ConnectReaderClicked -> cardReaderFacade.connectToReader()
         }
     }
 
@@ -455,7 +457,6 @@ class WooPosTotalsViewModel @Inject constructor(
             actionButtonLabel = resourceProvider.getString(
                 R.string.woopos_success_totals_error_reader_not_connected_cta_button_label
             ),
-            onAction = { cardReaderFacade.connectToReader() }
         )
 
     private fun initIsReceiptSendingSupportedValue() {

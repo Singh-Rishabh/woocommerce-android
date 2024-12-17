@@ -694,9 +694,8 @@ class WooPosTotalsViewModelTest {
 
         // WHEN
         val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
-        assertThat(viewModel.state.value is WooPosTotalsViewState.Totals).isTrue()
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
-        (state.readerStatus as WooPosTotalsViewState.ReaderStatus.Disconnected).onAction()
+        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
+        viewModel.onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked)
 
         // THEN
         verify(cardReaderFacade).connectToReader()

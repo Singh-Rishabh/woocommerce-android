@@ -56,7 +56,6 @@ sealed class WooPosTotalsViewState : Parcelable {
             override val title: String,
             override val subtitle: String,
             val actionButtonLabel: String,
-            val onAction: () -> Unit,
         ) : ReaderStatus(
             title = title,
             subtitle = subtitle
