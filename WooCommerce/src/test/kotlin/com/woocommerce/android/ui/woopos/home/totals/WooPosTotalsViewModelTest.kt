@@ -670,7 +670,7 @@ class WooPosTotalsViewModelTest {
         with(state.readerStatus as WooPosTotalsViewState.ReaderStatus.Disconnected) {
             assertThat(title).isEqualTo("Reader not connected")
             assertThat(subtitle).isEqualTo("To process this payment, please connect your reader.")
-            assertThat(actionButonLabel).isEqualTo("Connect to reader")
+            assertThat(actionButtonLabel).isEqualTo("Connect to reader")
         }
     }
 
@@ -694,9 +694,8 @@ class WooPosTotalsViewModelTest {
 
         // WHEN
         val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
-        assertThat(viewModel.state.value is WooPosTotalsViewState.Totals).isTrue()
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
-        (state.readerStatus as WooPosTotalsViewState.ReaderStatus.Disconnected).onAction()
+        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
+        viewModel.onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked)
 
         // THEN
         verify(cardReaderFacade).connectToReader()
