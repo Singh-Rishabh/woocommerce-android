@@ -30,6 +30,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
 import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
@@ -63,6 +64,13 @@ fun WooPosMoneyInputField(
         )
     }
 
+    val visualTransformationWithoutCurrency = remember {
+        CurrencyVisualTransformation(
+            currencySymbol = "",
+            currencyPosition = currencyPosition
+        )
+    }
+
     val valueMapper = NullableCurrencyTextFieldValueMapper.create(
         decimalSeparator = decimalSeparator,
         numberOfDecimals = numberOfDecimals
@@ -85,7 +93,7 @@ fun WooPosMoneyInputField(
         val showLabel = textFieldValue.text.isEmpty()
         if (showLabel) {
             Text(
-                text = visualTransformation.filter(AnnotatedString("0.00")).text,
+                text = visualTransformation.filter(AnnotatedString("0.00")).text.toString(),
                 style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
                 maxLines = 1,
                 softWrap = false,
@@ -141,7 +149,13 @@ fun WooPosMoneyInputField(
             singleLine = true,
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions,
-            visualTransformation = visualTransformation,
+            visualTransformation = VisualTransformation {
+                if (it.text.isEmpty()) {
+                    visualTransformationWithoutCurrency.filter(it)
+                } else {
+                    visualTransformation.filter(it)
+                }
+            },
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
             modifier = textFieldModifier,
         )
