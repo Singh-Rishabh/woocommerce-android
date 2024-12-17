@@ -52,10 +52,10 @@ fun WooPosMoneyInputField(
     numberOfDecimals: Int,
     textStyle: TextStyle = MaterialTheme.typography.h6,
     textColor: Color = MaterialTheme.colors.onBackground,
+    modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     contentAlignment: Alignment = Alignment.CenterStart,
-    modifier: Modifier = Modifier,
 ) {
     val visualTransformation = remember {
         CurrencyVisualTransformation(
@@ -167,12 +167,12 @@ fun WooPosInputField(
     value: String,
     onValueChange: (String) -> Unit,
     label: String = "",
+    modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.h6,
     textColor: Color = MaterialTheme.colors.onBackground,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     contentAlignment: Alignment = Alignment.CenterStart,
-    modifier: Modifier = Modifier,
 ) {
     var labelWidth by remember { mutableIntStateOf(0) }
 
