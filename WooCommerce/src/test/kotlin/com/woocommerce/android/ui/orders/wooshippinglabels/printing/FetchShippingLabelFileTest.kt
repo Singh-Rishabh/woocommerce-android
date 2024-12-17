@@ -7,6 +7,7 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
 import com.woocommerce.android.util.Base64Decoder
 import com.woocommerce.android.util.CoroutineDispatchers
+import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
@@ -17,7 +18,7 @@ import java.io.File
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 
 @ExperimentalCoroutinesApi
-class FetchShippingLabelFileTest {
+class FetchShippingLabelFileTest : BaseUnitTest() {
 
     private lateinit var fetchShippingLabelFile: FetchShippingLabelFile
     private val appContext: Context = mock()
@@ -39,7 +40,7 @@ class FetchShippingLabelFileTest {
     }
 
     @Test
-    fun `invoke calls labelRepository and creates file`() = runBlockingTest {
+    fun `invoke calls labelRepository and creates file`() = testBlocking {
         val labelIds = listOf(1L, 2L, 3L)
         val paperSize = "A4"
         val b64Content = "base64EncodedContent"
@@ -61,7 +62,7 @@ class FetchShippingLabelFileTest {
     }
 
     @Test
-    fun `invoke returns null when site is null`() = runBlockingTest {
+    fun `invoke returns null when site is null`() = testBlocking {
         whenever(selectedSite.getOrNull()).thenReturn(null)
 
         val result = fetchShippingLabelFile(listOf(1L, 2L, 3L))
@@ -71,7 +72,7 @@ class FetchShippingLabelFileTest {
     }
 
     @Test
-    fun `invoke returns null when response is error`() = runBlockingTest {
+    fun `invoke returns null when response is error`() = testBlocking {
         val labelIds = listOf(1L, 2L, 3L)
         val paperSize = "A4"
         val response = mock<WooResult<ShippingLabelPrintingResponse>> {
@@ -88,7 +89,7 @@ class FetchShippingLabelFileTest {
     }
 
     @Test
-    fun `invoke returns null when b64Content is empty`() = runBlockingTest {
+    fun `invoke returns null when b64Content is empty`() = testBlocking {
         val labelIds = listOf(1L, 2L, 3L)
         val paperSize = "A4"
         val response = mock<WooResult<ShippingLabelPrintingResponse>> {
