@@ -9,13 +9,17 @@ import com.woocommerce.android.util.Base64Decoder
 import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
-import java.io.File
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
+import java.io.File
 
 @ExperimentalCoroutinesApi
 class FetchShippingLabelFileTest : BaseUnitTest() {
@@ -36,7 +40,14 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
         whenever(appContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)).thenReturn(storageDir)
         whenever(selectedSite.getOrNull()).thenReturn(siteModel)
         whenever(dispatchers.io).thenReturn(kotlinx.coroutines.Dispatchers.Unconfined)
-        fetchShippingLabelFile = FetchShippingLabelFile(appContext, selectedSite, dispatchers, fileUtils, base64Decoder, labelRepository)
+        fetchShippingLabelFile = FetchShippingLabelFile(
+            appContext = appContext,
+            selectedSite = selectedSite,
+            dispatchers = dispatchers,
+            fileUtils = fileUtils,
+            base64Decoder = base64Decoder,
+            labelRepository = labelRepository
+        )
     }
 
     @Test
@@ -50,13 +61,21 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
         }
 
         whenever(labelRepository.fetchShippingLabelPrinting(siteModel, labelIds, paperSize)).thenReturn(response)
-        whenever(fileUtils.createTempTimeStampedFile(storageDir, FetchShippingLabelFile.PDF_PREFIX, FetchShippingLabelFile.PDF_EXTENSION)).thenReturn(file)
+        whenever(
+            fileUtils.createTempTimeStampedFile(
+                storageDir,
+                FetchShippingLabelFile.PDF_PREFIX,
+                FetchShippingLabelFile.PDF_EXTENSION
+            )
+        ).thenReturn(file)
         whenever(base64Decoder.decode(b64Content, 0)).thenReturn(ByteArray(0))
 
         fetchShippingLabelFile(labelIds, paperSize)
 
         verify(labelRepository).fetchShippingLabelPrinting(siteModel, labelIds, paperSize)
-        verify(fileUtils).createTempTimeStampedFile(storageDir, FetchShippingLabelFile.PDF_PREFIX, FetchShippingLabelFile.PDF_EXTENSION)
+        verify(
+            fileUtils
+        ).createTempTimeStampedFile(storageDir, FetchShippingLabelFile.PDF_PREFIX, FetchShippingLabelFile.PDF_EXTENSION)
         verify(base64Decoder).decode(b64Content, 0)
         verify(fileUtils).writeContentToFile(file, ByteArray(0))
     }
