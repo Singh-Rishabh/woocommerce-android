@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
+package com.woocommerce.android.ui.woopos.emailreceipt
 
 import com.woocommerce.android.util.GetWooCorePluginCachedVersion
 import kotlinx.coroutines.test.runTest
@@ -7,10 +7,10 @@ import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-class WooPosIsReceiptSendingAvailableTest {
+class WooPosEmailReceiptIsSendingSupportedTest {
     private val getWooCoreVersion: GetWooCorePluginCachedVersion = mock()
 
-    private val receiptSendingAvailable = WooPosTotalsPaymentReceiptIsSendingSupported(
+    private val receiptSendingAvailable = WooPosEmailReceiptIsSendingSupported(
         getWooCoreVersion = getWooCoreVersion
     )
 

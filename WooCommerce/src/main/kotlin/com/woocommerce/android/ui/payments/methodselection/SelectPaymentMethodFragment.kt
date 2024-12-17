@@ -34,8 +34,6 @@ import com.woocommerce.android.ui.payments.methodselection.SelectPaymentMethodVi
 import com.woocommerce.android.ui.payments.methodselection.SelectPaymentMethodViewState.Success
 import com.woocommerce.android.ui.payments.scantopay.ScanToPayDialogFragment
 import com.woocommerce.android.ui.payments.taptopay.summary.TapToPaySummaryFragment
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
-import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderPaymentStatus
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.UiHelpers
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
@@ -209,21 +207,6 @@ class SelectPaymentMethodFragment : BaseFragment(R.layout.fragment_select_paymen
                     findNavController().navigate(action)
                 }
 
-                is SkipScreenInPosAndNavigateToCardReaderPaymentFlow -> {
-                    if (findNavController().currentDestination?.id == R.id.selectPaymentMethodFragment) {
-                        // as we open the dialog, we want to make the UI was still invisible behind it
-                        // but we need to keep it in back stack as IPP logic works with returning notice back
-                        binding.snackRoot.isVisible = false
-                        findNavController().navigate(
-                            SelectPaymentMethodFragmentDirections
-                                .actionSelectPaymentMethodFragmentToCardReaderPaymentFlow(
-                                    event.cardReaderFlowParam,
-                                    event.cardReaderType
-                                )
-                        )
-                    }
-                }
-
                 is NavigateToCardReaderHubFlow -> {
                     val action =
                         SelectPaymentMethodFragmentDirections.actionSelectPaymentMethodFragmentToCardReaderHubFlow(
@@ -292,27 +275,9 @@ class SelectPaymentMethodFragment : BaseFragment(R.layout.fragment_select_paymen
                             )
                     )
                 }
-
-                is ReturnResultToWooPos -> {
-                    parentFragmentManager.setFragmentResult(
-                        WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_REQUEST_KEY,
-                        Bundle().apply {
-                            putParcelable(
-                                WooPosCardReaderActivity.WOO_POS_CARD_PAYMENT_RESULT_KEY,
-                                event.asWooPosCardReaderPaymentResult(),
-                            )
-                        }
-                    )
-                }
             }
         }
     }
-
-    private fun ReturnResultToWooPos.asWooPosCardReaderPaymentResult() =
-        when (this) {
-            is ReturnResultToWooPos.Success -> WooPosCardReaderPaymentStatus.Success
-            else -> WooPosCardReaderPaymentStatus.Failure
-        }
 
     private fun setupResultHandlers() {
         handleDialogResult<Boolean>(

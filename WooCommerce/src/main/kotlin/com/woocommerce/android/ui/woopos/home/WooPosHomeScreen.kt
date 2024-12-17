@@ -32,6 +32,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosExitConfirmationDialog
 import com.woocommerce.android.ui.woopos.common.composeui.isPreviewMode
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreen
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreenProductsPreview
@@ -42,6 +43,9 @@ import com.woocommerce.android.ui.woopos.home.toolbar.WooPosFloatingToolbar
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreen
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreenPreview
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent.ExitPosClicked
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent.OpenCashPayment
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent.OpenEmailReceipt
 import kotlinx.coroutines.delay
 import org.wordpress.android.util.ToastUtils
 
@@ -61,7 +65,7 @@ fun WooPosHomeScreen(
         }
     }
 
-    LaunchedEffect(viewModel.toastEvent) {
+    LaunchedEffect(Unit) {
         viewModel.toastEvent.collect { message ->
             ToastUtils.showToast(
                 context,
@@ -71,17 +75,25 @@ fun WooPosHomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect {
+            when (it) {
+                is NavigationEvent.ToCashPayment -> onNavigationEvent(OpenCashPayment(it.orderId))
+                is NavigationEvent.ToEmailReceipt -> onNavigationEvent(OpenEmailReceipt(it.orderId))
+                NavigationEvent.ExitPos -> onNavigationEvent(ExitPosClicked)
+            }
+        }
+    }
+
     WooPosHomeScreen(
-        state,
-        onNavigationEvent,
-        viewModel::onUIEvent,
+        state = state,
+        onHomeUIEvent = { viewModel.onUIEvent(it) },
     )
 }
 
 @Composable
 private fun WooPosHomeScreen(
     state: WooPosHomeState,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
     onHomeUIEvent: (WooPosHomeUIEvent) -> Unit,
 ) {
     BackHandler {
@@ -99,18 +111,18 @@ private fun WooPosHomeScreen(
             WooPosHomeState.ScreenPositionState.Cart.Hidden -> screenWidthDp
 
             is WooPosHomeState.ScreenPositionState.Cart.Visible,
-            WooPosHomeState.ScreenPositionState.Checkout.NotPaid -> productsWidthDp
+            WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals -> productsWidthDp
 
-            WooPosHomeState.ScreenPositionState.Checkout.Paid -> productsWidthDp - cartWidthDp
+            WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> productsWidthDp - cartWidthDp
         },
         label = "productsWidthAnimatedDp"
     )
 
     val totalsWidthAnimatedDp by animateDpAsState(
         when (state.screenPositionState) {
-            is WooPosHomeState.ScreenPositionState.Checkout.Paid -> screenWidthDp
+            is WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals -> screenWidthDp
             is WooPosHomeState.ScreenPositionState.Cart,
-            WooPosHomeState.ScreenPositionState.Checkout.NotPaid -> totalsWidthDp
+            WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals -> totalsWidthDp
         },
         label = "totalsWidthAnimatedDp"
     )
@@ -123,7 +135,6 @@ private fun WooPosHomeScreen(
         cartWidthDp = cartWidthDp,
         totalsWidthDp = totalsWidthAnimatedDp,
         onHomeUIEvent = onHomeUIEvent,
-        onNavigationEvent = onNavigationEvent,
     )
 
     WooPosExitConfirmationDialog(
@@ -132,7 +143,7 @@ private fun WooPosHomeScreen(
         message = stringResource(id = state.exitConfirmationDialog.message),
         dismissButtonText = stringResource(id = state.exitConfirmationDialog.confirmButton),
         onDismissRequest = { onHomeUIEvent(WooPosHomeUIEvent.ExitConfirmationDialogDismissed) },
-        onExit = { onNavigationEvent(WooPosNavigationEvent.ExitPosClicked) }
+        onExit = { onHomeUIEvent(WooPosHomeUIEvent.ExitPosClicked) }
     )
 }
 
@@ -144,7 +155,6 @@ private fun WooPosHomeScreen(
     cartWidthDp: Dp,
     totalsWidthDp: Dp,
     onHomeUIEvent: (WooPosHomeUIEvent) -> Unit,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -168,7 +178,6 @@ private fun WooPosHomeScreen(
             WooPosHomeScreenTotals(
                 modifier = Modifier
                     .width(totalsWidthDp),
-                onNavigationEvent = onNavigationEvent,
             )
         }
 
@@ -214,17 +223,11 @@ private fun WooPosHomeScreenCart(modifier: Modifier) {
 }
 
 @Composable
-private fun WooPosHomeScreenTotals(
-    modifier: Modifier,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit
-) {
+private fun WooPosHomeScreenTotals(modifier: Modifier) {
     if (isPreviewMode()) {
         WooPosTotalsScreenPreview(modifier)
     } else {
-        WooPosTotalsScreen(
-            modifier = modifier,
-            onNavigationEvent = onNavigationEvent
-        )
+        WooPosTotalsScreen(modifier = modifier)
     }
 }
 
@@ -269,7 +272,6 @@ fun WooPosHomeCartScreenPreview() {
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
             onHomeUIEvent = { },
-            onNavigationEvent = {},
         )
     }
 }
@@ -280,12 +282,11 @@ fun WooPosHomeCheckoutScreenPreview() {
     WooPosTheme {
         WooPosHomeScreen(
             state = WooPosHomeState(
-                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.NotPaid,
+                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals,
                 productsInfoDialog = ProductsInfoDialog(isVisible = false),
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
             onHomeUIEvent = { },
-            onNavigationEvent = {},
         )
     }
 }
@@ -296,12 +297,11 @@ fun WooPosHomeCheckoutPaidScreenPreview() {
     WooPosTheme {
         WooPosHomeScreen(
             state = WooPosHomeState(
-                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.Paid,
+                screenPositionState = WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals,
                 productsInfoDialog = ProductsInfoDialog(isVisible = false),
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
             onHomeUIEvent = { },
-            onNavigationEvent = {},
         )
     }
 }

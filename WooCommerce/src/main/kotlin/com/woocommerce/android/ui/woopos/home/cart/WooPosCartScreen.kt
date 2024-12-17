@@ -68,7 +68,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
-import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButtonSmall
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
@@ -380,7 +380,7 @@ private fun CartToolbar(
         }
 
         if (toolbar.isClearAllButtonVisible) {
-            WooPosOutlinedButton(
+            WooPosOutlinedButtonSmall(
                 onClick = { onClearAllClicked() },
                 modifier = Modifier
                     .constrainAs(clearAllButton) {

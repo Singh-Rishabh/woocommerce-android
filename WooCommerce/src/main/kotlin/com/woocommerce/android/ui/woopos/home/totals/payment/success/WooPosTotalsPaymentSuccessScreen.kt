@@ -33,6 +33,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 import kotlinx.coroutines.delay
@@ -125,7 +126,7 @@ fun WooPosPaymentSuccessScreen(
 
             val marginBetweenButtons = 16.dp.toAdaptivePadding()
             if (state.isReceiptAvailable) {
-                WooPosButton(
+                WooPosOutlinedButton(
                     modifier = Modifier
                         .constrainAs(buttonReceipt) {
                             bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtons)
