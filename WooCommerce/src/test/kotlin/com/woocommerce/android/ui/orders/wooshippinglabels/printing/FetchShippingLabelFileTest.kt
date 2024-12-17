@@ -8,10 +8,12 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippin
 import com.woocommerce.android.util.Base64Decoder
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -68,8 +70,11 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
             )
         ).thenReturn(file)
         whenever(base64Decoder.decode(labelData, 0)).thenReturn(ByteArray(0))
+        whenever(
+            fileUtils.writeContentToFile(eq(file), any())
+        ).thenReturn(file)
 
-        fetchShippingLabelFile(labelIds, paperSize)
+        val result = fetchShippingLabelFile(labelIds, paperSize)
 
         verify(labelRepository).fetchShippingLabelPrinting(siteModel, labelIds, paperSize)
         verify(
@@ -77,6 +82,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
         ).createTempTimeStampedFile(storageDir, FetchShippingLabelFile.PDF_PREFIX, FetchShippingLabelFile.PDF_EXTENSION)
         verify(base64Decoder).decode(labelData, 0)
         verify(fileUtils).writeContentToFile(file, ByteArray(0))
+        assertThat(result).isEqualTo(file)
     }
 
     @Test
@@ -85,7 +91,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
 
         val result = fetchShippingLabelFile(listOf(1L, 2L, 3L))
 
-        assert(result == null)
+        assertThat(result).isNull()
         verify(labelRepository, never()).fetchShippingLabelPrinting(any(), any(), any())
     }
 
@@ -101,7 +107,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
 
         val result = fetchShippingLabelFile(labelIds, paperSize)
 
-        assert(result == null)
+        assertThat(result).isNull()
         verify(labelRepository).fetchShippingLabelPrinting(siteModel, labelIds, paperSize)
         verify(fileUtils, never()).createTempTimeStampedFile(any(), any(), any())
     }
@@ -120,7 +126,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
 
         val result = fetchShippingLabelFile(labelIds, paperSize)
 
-        assert(result == null)
+        assertThat(result).isNull()
         verify(labelRepository).fetchShippingLabelPrinting(siteModel, labelIds, paperSize)
         verify(fileUtils, never()).createTempTimeStampedFile(any(), any(), any())
     }
