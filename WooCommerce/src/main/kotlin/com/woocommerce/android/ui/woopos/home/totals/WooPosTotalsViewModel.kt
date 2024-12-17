@@ -149,6 +149,7 @@ class WooPosTotalsViewModel @Inject constructor(
         cardReaderPaymentController?.stop()
     }
 
+    @Suppress("LongMethod")
     fun onUIEvent(event: WooPosTotalsUIEvent) {
         when (event) {
             is WooPosTotalsUIEvent.OnNewTransactionClicked -> {
