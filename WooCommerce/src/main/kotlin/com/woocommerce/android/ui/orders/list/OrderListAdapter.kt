@@ -165,6 +165,9 @@ class OrderListAdapter(
             // Grab the current context from the underlying view
             val ctx = this.itemView.context
 
+            // As suggested in https://developer.android.com/reference/androidx/recyclerview/selection/package-summary
+            viewBinding.root.isActivated = isActivated
+
             viewBinding.orderDate.text = orderItemUI.dateCreated
             viewBinding.orderNum.text = "#${orderItemUI.orderNumber}"
             viewBinding.orderName.text = orderItemUI.orderName
