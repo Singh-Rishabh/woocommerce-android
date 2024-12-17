@@ -21,7 +21,7 @@ class WooShippingLabelRestClient @Inject constructor(
             site = site,
             path = URL,
             params = mapOf(
-                "label_ids" to labelIds.joinToString { "$it," },
+                "label_id_csv" to labelIds.joinToString { "$it," },
                 "paper_size" to paperSize
             ),
             clazz = ShippingLabelPrintingResponse::class.java,
