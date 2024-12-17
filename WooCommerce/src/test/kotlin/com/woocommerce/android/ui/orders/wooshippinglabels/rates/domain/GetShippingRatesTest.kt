@@ -91,6 +91,6 @@ class GetShippingRatesTest : BaseUnitTest() {
         )
 
         assertTrue(result.isFailure)
-        verify(mapper, never()).invoke(any(),any())
+        verify(mapper, never()).invoke(any(), any())
     }
 }
