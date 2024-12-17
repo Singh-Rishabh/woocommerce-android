@@ -24,10 +24,11 @@ class FetchShippingLabelFile @Inject constructor(
         get() = appContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
 
     suspend operator fun invoke(
-        labelIds: List<Long>
+        labelIds: List<Long>,
+        paperSize: String = DEFAULT_PAPER_SIZE
     ): File? {
         val response = selectedSite.getOrNull()
-            ?.let { labelRepository.fetchShippingLabelPrinting(it, labelIds, "A4") }
+            ?.let { labelRepository.fetchShippingLabelPrinting(it, labelIds, paperSize) }
             ?.takeIf { it.isError.not() }
             ?.model?.b64Content
             ?.takeIf { it.isNotNullOrEmpty() }
@@ -45,12 +46,18 @@ class FetchShippingLabelFile @Inject constructor(
         shippingLabelData: String
     ) = fileUtils.createTempTimeStampedFile(
         storageDir = storageDirectory,
-        prefix = "PDF",
-        fileExtension = "pdf"
+        prefix = PDF_PREFIX,
+        fileExtension = PDF_EXTENSION
     )?.let {
         fileUtils.writeContentToFile(
             file = it,
             content = base64Decoder.decode(shippingLabelData, 0)
         )
+    }
+
+    companion object {
+        const val PDF_PREFIX = "PDF"
+        const val PDF_EXTENSION = "pdf"
+        const val DEFAULT_PAPER_SIZE = "A4"
     }
 }
