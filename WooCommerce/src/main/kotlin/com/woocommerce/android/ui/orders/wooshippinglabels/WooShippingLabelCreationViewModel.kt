@@ -103,6 +103,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         storeOptions.value = mockStoreOptions
     }
 
+    @Suppress("ComplexCondition")
     @OptIn(FlowPreview::class)
     private suspend fun observeShippingRates() {
         combine(
@@ -111,7 +112,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageWeight,
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, addresses, packageWeight, _ ->
-            if (order != null &&
+            if (
                 selectedPackage != null &&
                 addresses != null &&
                 packageWeight != null &&
