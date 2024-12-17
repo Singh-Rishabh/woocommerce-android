@@ -133,7 +133,8 @@ fun WooPosPaymentSuccessScreen(
                                 buttonEmailReceipts.top
                             } else {
                                 parent.bottom
-                            }, margin = marginBetweenButtons
+                            },
+                            margin = marginBetweenButtons
                         )
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
