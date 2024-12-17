@@ -15,7 +15,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
-    private lateinit var initiallySelectedSiteIds: List<Long>
+    private var initiallySelectedSiteIds: List<Long> = emptyList()
     private val _wooStores = MutableStateFlow(
         WooStoresUiState(
             wooStores = emptyList(),
@@ -34,7 +34,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
                             siteName = it.name,
                             siteUrl = it.url,
                             siteId = it.siteId,
-                            isSelected = it.isVisible
+                            isSelected = true // TODO remove hardcoded value
                         )
                     }
             )
