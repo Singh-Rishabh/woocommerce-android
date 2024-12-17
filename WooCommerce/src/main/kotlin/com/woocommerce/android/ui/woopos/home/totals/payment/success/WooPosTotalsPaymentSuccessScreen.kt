@@ -95,7 +95,7 @@ fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val textsMargin = 16.dp.toAdaptivePadding()
+            val textsMargin = 8.dp.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
                 style = MaterialTheme.typography.h4,
