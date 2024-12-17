@@ -188,7 +188,12 @@ class OrderListViewModel @Inject constructor(
 
     private var activeWCOrderListDescriptor: WCOrderListDescriptor? = null
 
-    var isSearching = false
+    var isSearching: Boolean
+        get() = viewState.isSearching
+        set(value) {
+            viewState = viewState.copy(isSearching = value)
+        }
+
     private var dismissListErrors = false
     var searchQuery = ""
 
@@ -957,8 +962,12 @@ class OrderListViewModel @Inject constructor(
         val isErrorFetchingDataBannerVisible: Boolean = false,
         val shouldDisplayTroubleshootingBanner: Boolean = false,
         val orderListState: OrderListState? = null,
+        val isSearching: Boolean = false,
         val selectionCount: Int? = null
     ) : Parcelable {
+        @IgnoredOnParcel
+        val isBottomNavBarVisible = !isSearching && orderListState != OrderListState.Selecting
+
         @IgnoredOnParcel
         val isFilteringActive = filterCount > 0
 

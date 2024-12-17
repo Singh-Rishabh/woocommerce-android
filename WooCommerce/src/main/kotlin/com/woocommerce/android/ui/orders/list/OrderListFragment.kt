@@ -130,14 +130,6 @@ class OrderListFragment :
         super.onStop()
     }
 
-    // Alias for interacting with [viewModel.isSearching] so the value is always identical
-    // to the real value on the UI side.
-    private var isSearching: Boolean
-        private set(value) {
-            viewModel.isSearching = value
-        }
-        get() = viewModel.isSearching
-
     private var orderListMenu: Menu? = null
     private var searchMenuItem: MenuItem? = null
     private var searchView: SearchView? = null
@@ -166,7 +158,7 @@ class OrderListFragment :
         lifecycle.addObserver(viewModel.performanceObserver)
         super.onCreate(savedInstanceState)
         savedInstanceState?.let { bundle ->
-            isSearching = bundle.getBoolean(STATE_KEY_IS_SEARCHING)
+            viewModel.isSearching = bundle.getBoolean(STATE_KEY_IS_SEARCHING)
             searchQuery = bundle.getString(STATE_KEY_SEARCH_QUERY, "")
         }
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -184,7 +176,7 @@ class OrderListFragment :
                         if (!binding.detailPaneContainer.findNavController().popBackStack()) {
                             findNavController().popBackStack()
                         }
-                    } else if (isSearching) {
+                    } else if (viewModel.isSearching) {
                         handleSearchViewCollapse()
                     } else {
                         val result =
@@ -312,7 +304,7 @@ class OrderListFragment :
     }
 
     private fun handleSearchViewExpand(): Boolean {
-        isSearching = true
+        viewModel.isSearching = true
         refreshOptionsMenu()
         checkOrientation()
         onSearchViewActiveChanged(isActive = true)
@@ -397,7 +389,7 @@ class OrderListFragment :
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(STATE_KEY_IS_SEARCHING, isSearching)
+        outState.putBoolean(STATE_KEY_IS_SEARCHING, viewModel.isSearching)
         outState.putString(STATE_KEY_SEARCH_QUERY, searchQuery)
         if (findNavController().currentDestination?.id == R.id.orders) {
             // We want to check if [OrderListFragment] is the current destination (at the top of the backstack),
@@ -424,7 +416,7 @@ class OrderListFragment :
      * search menu item to collapse
      */
     private fun refreshOptionsMenu() {
-        if (!isChildFragmentShowing() && isSearching) {
+        if (!isChildFragmentShowing() && viewModel.isSearching) {
             val savedSearchQuery = searchQuery
             enableSearchListeners()
             handler.postDelayed({
@@ -480,7 +472,7 @@ class OrderListFragment :
         }
     }
 
-    override fun getFragmentTitle() = if (isSearching) "" else getString(R.string.orders)
+    override fun getFragmentTitle() = if (viewModel.isSearching) "" else getString(R.string.orders)
 
     override fun scrollToTop() {
         binding.orderListView.scrollToTop()
@@ -699,6 +691,9 @@ class OrderListFragment :
                     one = R.string.orderlist_selection_count_single
                 )
             }
+            new.isBottomNavBarVisible.takeIfNotEqualTo(old?.isBottomNavBarVisible) { isBottomNavBarVisible ->
+                showBottomNavBar(isVisible = isBottomNavBarVisible)
+            }
         }
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
             binding.orderFiltersCard.updateLastUpdate(lastUpdate)
@@ -723,6 +718,14 @@ class OrderListFragment :
         selectionPredicate.selectMultiple = false
         binding.orderListView.ordersList.post {
             selectionPredicate.selectMultiple = true
+        }
+    }
+
+    private fun showBottomNavBar(isVisible: Boolean) {
+        if (!isVisible) {
+            (activity as? MainActivity)?.hideBottomNav()
+        } else {
+            (activity as? MainActivity)?.showBottomNav()
         }
     }
 
@@ -847,12 +850,12 @@ class OrderListFragment :
 
         // if a search is active, we need to collapse the search view so order detail can show it's title and then
         // remember the user was searching (since both searchQuery and isSearching will be reset)
-        if (isSearching) {
+        if (viewModel.isSearching) {
             val savedSearch = searchQuery
             clearSearchResults()
             updateActivityTitle()
             searchQuery = savedSearch
-            isSearching = true
+            viewModel.isSearching = true
         }
         (activity as? MainNavigationRouter)?.run {
             val navHostFragment = if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
@@ -906,7 +909,7 @@ class OrderListFragment :
     }
 
     override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-        isSearching = true
+        viewModel.isSearching = true
         checkOrientation()
         onSearchViewActiveChanged(isActive = true)
         binding.orderFiltersCard.isVisible = false
@@ -924,16 +927,16 @@ class OrderListFragment :
     }
 
     private fun clearSearchResults() {
-        if (isSearching) {
+        if (viewModel.isSearching) {
             if (requireContext().windowSizeClass == WindowSizeClass.Compact) {
                 searchQuery = ""
-                isSearching = false
+                viewModel.isSearching = false
                 disableSearchListeners()
                 updateActivityTitle()
                 searchMenuItem?.collapseActionView()
                 (activity as? MainActivity)?.showBottomNav()
             }
-            isSearching = false
+            viewModel.isSearching = false
         }
     }
 
@@ -1007,14 +1010,14 @@ class OrderListFragment :
 
     private fun checkOrientation() {
         val isLandscape = DisplayUtils.isLandscape(context)
-        if (isLandscape && isSearching) {
+        if (isLandscape && viewModel.isSearching) {
             searchView?.post { searchView?.clearFocus() }
         }
     }
     // endregion
 
     override fun shouldExpandToolbar(): Boolean {
-        return binding.orderListView.ordersList.computeVerticalScrollOffset() == 0 && !isSearching
+        return binding.orderListView.ordersList.computeVerticalScrollOffset() == 0 && !viewModel.isSearching
     }
 
     private fun displaySimplePaymentsWIPCard(show: Boolean) {
