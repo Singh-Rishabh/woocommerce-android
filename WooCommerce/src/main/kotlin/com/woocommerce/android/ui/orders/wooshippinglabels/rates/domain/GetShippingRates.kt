@@ -13,12 +13,14 @@ class GetShippingRates @Inject constructor(
     private val shippingMapper: WooShippingRatesDomainMapper
 ) {
 
+    @Suppress("LongParameterList")
     suspend operator fun invoke(
         orderId: Long,
         selectedPackage: PackageData,
         shipTo: Address,
         shipFrom: OriginShippingAddress,
-        weight: Float
+        weight: Float,
+        currencyCode: String?
     ): Result<Map<CarrierUI, List<ShippingRateUI>>> {
         val result = repository.getShippingRates(
             orderId = orderId,
@@ -28,8 +30,8 @@ class GetShippingRates @Inject constructor(
             weight = weight
         )
         return if (result.isSuccess) {
-            val sortedRates = shippingMapper(result.getOrThrow())
-            Result.success(sortedRates)
+            val rates = shippingMapper(result.getOrThrow(), currencyCode)
+            Result.success(rates)
         } else {
             Result.failure(result.exceptionOrNull() ?: Exception("Failed to get shipping rates"))
         }

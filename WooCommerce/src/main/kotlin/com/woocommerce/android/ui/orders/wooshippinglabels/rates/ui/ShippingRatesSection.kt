@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,22 +17,16 @@ internal fun ShippingRatesSection(
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
     onRefreshShippingRates: () -> Unit,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
 ) {
     when (shippingRatesState) {
         is WooShippingLabelCreationViewModel.ShippingRatesState.DataState -> {
-            val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
             ShippingRatesCard(
-                selectedRate = null,
-                onSelectedChange = {},
+                selectedRate = shippingRatesState.selectedRate,
                 shippingRates = shippingRatesState.shippingRates,
-                signatureRequired = signatureRequired.value,
-                onSelectedSignatureChange = { signatureRequired.value = it },
-                signatureRequiredOptions = listOf(
-                    SignatureRequired("Signature Required", "$10.00"),
-                    SignatureRequired("Adult Signature Required", "$15.00")
-                ),
                 selectedSortOption = shippingRatesState.selectedRatesSortOrder,
                 onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
+                onSelectedSippingRateChanged = onSelectedSippingRateChanged,
                 modifier = Modifier.fillMaxWidth()
             )
         }

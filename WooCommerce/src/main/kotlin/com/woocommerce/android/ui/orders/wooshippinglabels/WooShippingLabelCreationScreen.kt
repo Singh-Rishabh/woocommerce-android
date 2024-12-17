@@ -59,6 +59,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRatesSection
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 
@@ -84,6 +85,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onShippingToAddressChange = viewModel::onShippingToAddressChange,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
                 onRefreshShippingRates = viewModel::onRefreshShippingRates,
+                onSelectedSippingRateChanged = viewModel::onSelectedSippingRateChanged,
                 customWeight = viewModel.customWeight,
                 onCustomWeightChange = viewModel::onCustomWeightChange,
             )
@@ -111,6 +113,7 @@ fun WooShippingLabelCreationScreen(
     onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
     onRefreshShippingRates: () -> Unit,
     onCustomWeightChange: (String) -> Unit,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     customWeight: String,
     modifier: Modifier = Modifier
 ) {
@@ -130,7 +133,8 @@ fun WooShippingLabelCreationScreen(
             onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
             onRefreshShippingRates = onRefreshShippingRates,
             customWeight = customWeight,
-            onCustomWeightChange = onCustomWeightChange
+            onCustomWeightChange = onCustomWeightChange,
+            onSelectedSippingRateChanged = onSelectedSippingRateChanged
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -175,6 +179,7 @@ private fun LabelCreationScreenWithBottomSheet(
     onRefreshShippingRates: () -> Unit,
     customWeight: String,
     onCustomWeightChange: (String) -> Unit,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     scaffoldState: BottomSheetScaffoldState,
     modifier: Modifier = Modifier
 ) {
@@ -241,7 +246,8 @@ private fun LabelCreationScreenWithBottomSheet(
                 ShippingRatesSection(
                     shippingRatesState = shippingRatesState,
                     onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
-                    onRefreshShippingRates = onRefreshShippingRates
+                    onRefreshShippingRates = onRefreshShippingRates,
+                    onSelectedSippingRateChanged = onSelectedSippingRateChanged
                 )
             }
         }
@@ -527,7 +533,8 @@ private fun WooShippingLabelCreationScreenPreview() {
             onRefreshShippingRates = {},
             onSelectedRateSortOrderChanged = {},
             customWeight = "",
-            onCustomWeightChange = {}
+            onCustomWeightChange = {},
+            onSelectedSippingRateChanged = {}
         )
     }
 }

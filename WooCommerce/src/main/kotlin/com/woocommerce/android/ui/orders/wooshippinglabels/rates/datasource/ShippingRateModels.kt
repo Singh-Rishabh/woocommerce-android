@@ -14,6 +14,9 @@ data class WooShippingRateModel(
     val deliveryDays: Int,
     val price: BigDecimal,
     val discount: BigDecimal,
+    val isTrackingEnabled: Boolean,
+    val hasFreePickup: Boolean,
+    val insurance: BigDecimal?,
     val option: Option,
     val carrier: WooShippingCarrier
 ) {
