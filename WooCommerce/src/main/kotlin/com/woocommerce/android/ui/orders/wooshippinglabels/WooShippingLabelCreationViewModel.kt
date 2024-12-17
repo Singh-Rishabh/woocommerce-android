@@ -187,8 +187,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartPackageSelection)
     }
 
+    // This is a arbitrary Label ID, we must replace this later with the full Shipping Labels data after the purchase
     fun onPurchaseShippingLabel() {
-        triggerEvent(LabelPurchased)
+        triggerEvent(LabelPurchased(labelId = 1234L))
     }
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
@@ -208,7 +209,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     data object StartPackageSelection : Event()
-    data object LabelPurchased : Event()
+    data class LabelPurchased(val labelId: Long) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
