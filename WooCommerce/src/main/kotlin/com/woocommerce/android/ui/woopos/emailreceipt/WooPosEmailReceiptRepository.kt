@@ -1,5 +1,6 @@
-package com.woocommerce.android.ui.woopos.home.totals.payment.receipt
+package com.woocommerce.android.ui.woopos.emailreceipt
 
+import android.util.Patterns
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.OrderMapper
 import com.woocommerce.android.tools.SelectedSite
@@ -9,11 +10,12 @@ import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WCOrderStore
 import javax.inject.Inject
 
-class WooPosTotalsPaymentReceiptRepository @Inject constructor(
+class WooPosEmailReceiptRepository @Inject constructor(
     private val selectedSite: SelectedSite,
     private val orderStore: WCOrderStore,
     private val orderCreateEditRepository: OrderCreateEditRepository,
     private val orderMapper: OrderMapper,
+    private val provideEmailPattern: WooPosProvideEmailPattern,
 ) {
     suspend fun sendReceiptByEmail(orderId: Long, email: String): Result<Unit> = withContext(Dispatchers.IO) {
         val order = getOrderById(orderId)
@@ -27,6 +29,8 @@ class WooPosTotalsPaymentReceiptRepository @Inject constructor(
 
         return@withContext triggerOrderReceiptSending(orderId)
     }
+
+    fun isEmailValid(email: String): Boolean = provideEmailPattern().matcher(email).matches()
 
     private suspend fun triggerOrderReceiptSending(orderId: Long): Result<Unit> {
         val sendOrderResult = orderStore.sendOrderReceipt(selectedSite.get(), orderId)
@@ -49,4 +53,8 @@ class WooPosTotalsPaymentReceiptRepository @Inject constructor(
         orderStore.getOrderByIdAndSite(orderId, selectedSite.get())?.let {
             orderMapper.toAppModel(it)
         }
+}
+
+class WooPosProvideEmailPattern @Inject constructor() {
+    operator fun invoke() = Patterns.EMAIL_ADDRESS
 }
