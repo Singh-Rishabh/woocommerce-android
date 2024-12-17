@@ -28,6 +28,8 @@ internal class EndpointProcessor @Inject constructor(
 
         return with(endpointData) {
             endpointDao.queryEndpoint(apiType, httpMethod, path.trimEnd('/'), body.orEmpty())
+        }.filter {
+            request.url.checkQueryParameters(it.request.queryParameters)
         }.also {
             if (it.size > 1) {
                 Log.w(
@@ -37,9 +39,7 @@ internal class EndpointProcessor @Inject constructor(
                         "The first one will be used."
                 )
             }
-        }.firstOrNull {
-            request.url.checkQueryParameters(it.request.queryParameters)
-        }?.response?.let {
+        }.firstOrNull()?.response?.let {
             it.copy(body = it.body?.wrapBodyIfNecessary(request.url))
         }
     }
