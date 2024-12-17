@@ -83,42 +83,50 @@ fun WooSitesVisibilityScreen(
             elevation = 0.dp
         )
     }) { padding ->
-        LazyColumn(
-            modifier = modifier
-                .padding(padding)
-                .background(MaterialTheme.colors.surface)
-                .padding(horizontal = 16.dp)
-        ) {
-            itemsIndexed(state.wooStores) { index, wooStore ->
-                Row(
-                    modifier = Modifier.clickable { onSiteSelected(wooStore) },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SelectionCheck(
-                        isSelected = wooStore.isSelected,
-                        onSelectionChange = null,
-                    )
-                    Column(
-                        Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+        Column {
+            LazyColumn(
+                modifier = modifier
+                    .padding(padding)
+                    .background(MaterialTheme.colors.surface)
+                    .padding(horizontal = 16.dp)
+            ) {
+                itemsIndexed(state.wooStores) { index, wooStore ->
+                    Row(
+                        modifier = Modifier.clickable { onSiteSelected(wooStore) },
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = wooStore.siteName,
-                            style = WooTypography.body1,
-                            fontWeight = FontWeight.SemiBold
+                        SelectionCheck(
+                            isSelected = wooStore.isSelected,
+                            onSelectionChange = null,
                         )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            text = wooStore.siteUrl,
-                            style = WooTypography.caption,
-                            color = MaterialTheme.colors.onSurface
-                        )
-                        Spacer(Modifier.height(16.dp))
-                        if (index < state.wooStores.size - 1) {
-                            Divider()
+                        Column(
+                            Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        ) {
+                            Text(
+                                text = wooStore.siteName,
+                                style = WooTypography.body1,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = wooStore.siteUrl,
+                                style = WooTypography.caption,
+                                color = MaterialTheme.colors.onSurface
+                            )
+                            Spacer(Modifier.height(16.dp))
+                            if (index < state.wooStores.size - 1) {
+                                Divider()
+                            }
                         }
                     }
                 }
             }
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.site_picker_edit_store_list_footer),
+                style = WooTypography.caption,
+                color = MaterialTheme.colors.onSurface,
+            )
         }
     }
 }
