@@ -26,7 +26,6 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -104,6 +103,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         storeOptions.value = mockStoreOptions
     }
 
+    @OptIn(FlowPreview::class)
     private suspend fun observeShippingRates() {
         combine(
             packageSelected,
@@ -111,17 +111,28 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageWeight,
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, addresses, packageWeight, _ ->
-            ShippingRatesInfo(
-                orderId = navArgs.orderId,
-                packageSelected = selectedPackage,
-                shipFrom = addresses?.shipFrom,
-                shipTo = addresses?.shipTo,
-                weight = packageWeight?.totalWeight,
-                currencyCode = order.value?.currency
-            )
-        }.collectLatest {
-            updateShippingRates(it)
+            if (order != null &&
+                selectedPackage != null &&
+                addresses != null &&
+                packageWeight != null &&
+                addresses.shipTo != Address.EMPTY
+            ) {
+                ShippingRatesInfo(
+                    orderId = navArgs.orderId,
+                    packageSelected = selectedPackage,
+                    shipFrom = addresses.shipFrom,
+                    shipTo = addresses.shipTo,
+                    weight = packageWeight.totalWeight,
+                    currencyCode = order.value?.currency
+                )
+            } else {
+                null
+            }
         }
+            .debounce(MULTIPLE_CALLS_DELAY)
+            .collectLatest {
+                updateShippingRates(it)
+            }
     }
 
     private suspend fun observeShippingRatesState() {
@@ -194,19 +205,17 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }.collect { shippingAddresses.value = it }
     }
 
-    private suspend fun updateShippingRates(shippingRatesInfo: ShippingRatesInfo) {
-        if (shippingRatesInfo.hasRequiredData) {
+    private suspend fun updateShippingRates(shippingRatesInfo: ShippingRatesInfo?) {
+        if (shippingRatesInfo != null) {
             val sortOrder = selectedRatesSortOrder.value
             shippingRatesState.value = ShippingRatesState.Loading(sortOrder)
 
-            delay(MULTIPLE_CALLS_DELAY)
-
             val shippingRatesResult = getShippingRates(
-                shippingRatesInfo.orderId!!,
-                shippingRatesInfo.packageSelected!!,
-                shippingRatesInfo.shipTo!!,
-                shippingRatesInfo.shipFrom!!,
-                shippingRatesInfo.weight!!,
+                shippingRatesInfo.orderId,
+                shippingRatesInfo.packageSelected,
+                shippingRatesInfo.shipTo,
+                shippingRatesInfo.shipFrom,
+                shippingRatesInfo.weight,
                 shippingRatesInfo.currencyCode
             )
 
@@ -392,21 +401,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     data class ShippingRatesInfo(
-        val orderId: Long?,
-        val packageSelected: PackageData?,
-        val shipFrom: OriginShippingAddress?,
-        val shipTo: Address?,
-        val weight: Float?,
+        val orderId: Long,
+        val packageSelected: PackageData,
+        val shipFrom: OriginShippingAddress,
+        val shipTo: Address,
+        val weight: Float,
         val currencyCode: String?
-    ) {
-        val hasRequiredData: Boolean
-            get() = orderId != null &&
-                packageSelected != null &&
-                shipFrom != null &&
-                shipTo != null &&
-                weight != null &&
-                shipTo != Address.EMPTY
-    }
+    )
 
     companion object {
         private const val TYPING_DELAY = 800L

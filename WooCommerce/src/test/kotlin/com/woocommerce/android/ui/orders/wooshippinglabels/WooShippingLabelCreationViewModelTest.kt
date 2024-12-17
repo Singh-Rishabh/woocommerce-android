@@ -179,6 +179,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         createViewModel()
 
+        advanceUntilIdle()
+
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
         val dataState = currentViewState as DataState
@@ -199,6 +201,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
@@ -247,6 +251,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
