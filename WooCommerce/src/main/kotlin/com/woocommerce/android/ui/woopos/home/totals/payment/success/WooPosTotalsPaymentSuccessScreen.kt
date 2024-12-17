@@ -14,8 +14,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,7 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -186,11 +187,16 @@ private fun CheckMarkIcon(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(size)
+            .shadow(
+                elevation = 4.dp,
+                shape = CircleShape,
+                clip = false
+            )
             .background(WooPosTheme.colors.success, CircleShape)
     ) {
         Icon(
-            imageVector = Icons.Default.Check,
-            tint = WooPosTheme.colors.paymentSuccessIcon,
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_woo_pos_check),
+            tint = MaterialTheme.colors.onSurface,
             contentDescription = stringResource(id = R.string.woopos_payment_successful_label),
             modifier = Modifier
                 .size(iconSize)
