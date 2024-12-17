@@ -1,6 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
-import com.woocommerce.android.ui.orders.wooshippinglabels.printing.WooShippingLabelPrintingRestClient.PrintingResponse
+import com.woocommerce.android.ui.orders.wooshippinglabels.printing.ShippingLabelPrintingResponse
 import javax.inject.Inject
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooNetwork
@@ -14,7 +14,7 @@ class WooShippingLabelRestClient @Inject constructor(
         site: SiteModel,
         labelIds: List<Long>,
         paperSize: String
-    ): WooPayload<PrintingResponse> {
+    ): WooPayload<ShippingLabelPrintingResponse> {
         val URL = "/wcshipping/v1/label/print"
 
         return wooNetwork.executeGetGsonRequest(
@@ -24,7 +24,7 @@ class WooShippingLabelRestClient @Inject constructor(
                 "label_ids" to labelIds.joinToString { "$it," },
                 "paper_size" to paperSize
             ),
-            clazz = PrintingResponse::class.java,
+            clazz = ShippingLabelPrintingResponse::class.java,
         ).toWooPayload()
     }
 }
