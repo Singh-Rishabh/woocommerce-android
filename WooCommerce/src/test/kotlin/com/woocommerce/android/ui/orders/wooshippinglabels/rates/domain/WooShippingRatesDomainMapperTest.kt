@@ -13,7 +13,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.mock
 import java.math.BigDecimal
-import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingRatesDomainMapperTest : BaseUnitTest() {
@@ -33,33 +32,36 @@ class WooShippingRatesDomainMapperTest : BaseUnitTest() {
     )
 
     @Test
-    fun `mapping rates generates the expected number of carriers and rates`() {
-        // Randomly generating the number of carriers and rates to test the mapper
-        val random = Random(85)
-        var carriersNum = random.nextInt(0, WooShippingCarrier.entries.size)
-        var ratesNum = random.nextInt(WooShippingCarrier.entries.size + 1, 20)
+    fun `mapping rates generates the expected number of carriers and rates with 3 carriers and 15 rates`() {
+        val carriersNum = 3
+        val ratesNum = 15
 
-        var rates = generateRates(carriersNum, ratesNum)
-        var mappedRates = sut(rates, "USD")
+        val rates = generateRates(carriersNum, ratesNum)
+        val mappedRates = sut(rates, "USD")
 
         assertEquals(mappedRates.keys.size, carriersNum)
         assertEquals(mappedRates.values.sumOf { it.size }, ratesNum)
+    }
 
-        // Repeat the test with other random values
-        carriersNum = random.nextInt(0, WooShippingCarrier.entries.size)
-        ratesNum = random.nextInt(WooShippingCarrier.entries.size + 1, 20)
+    @Test
+    fun `mapping rates generates the expected number of carriers and rates with 1 carriers and 1 rates`() {
+        val carriersNum = 1
+        val ratesNum = 1
 
-        rates = generateRates(carriersNum, ratesNum)
-        mappedRates = sut(rates, "USD")
+        val rates = generateRates(carriersNum, ratesNum)
+        val mappedRates = sut(rates, "USD")
 
         assertEquals(mappedRates.keys.size, carriersNum)
         assertEquals(mappedRates.values.sumOf { it.size }, ratesNum)
+    }
 
-        carriersNum = random.nextInt(0, WooShippingCarrier.entries.size)
-        ratesNum = random.nextInt(WooShippingCarrier.entries.size + 1, 20)
+    @Test
+    fun `mapping rates generates the expected number of carriers and rates with 5 carriers and 10 rates`() {
+        val carriersNum = 5
+        val ratesNum = 10
 
-        rates = generateRates(carriersNum, ratesNum)
-        mappedRates = sut(rates, "USD")
+        val rates = generateRates(carriersNum, ratesNum)
+        val mappedRates = sut(rates, "USD")
 
         assertEquals(mappedRates.keys.size, carriersNum)
         assertEquals(mappedRates.values.sumOf { it.size }, ratesNum)
