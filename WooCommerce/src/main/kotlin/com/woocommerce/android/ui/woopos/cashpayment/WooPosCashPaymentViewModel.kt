@@ -74,7 +74,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
                     priceFormat(changeDue)
                 )
             } else {
-                resourceProvider.getString(R.string.woopos_cash_payment_no_chang_due)
+                ""
             }
 
             _state.value = currentState.copy(

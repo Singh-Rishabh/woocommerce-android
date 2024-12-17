@@ -4341,7 +4341,6 @@
     <string name="woopos_complete_cash_order_button">Mark payment as complete</string>
     <string name="woopos_cash_payment_total">Total: %s</string>
     <string name="woopos_cash_payment_change_due">Change due %s</string>
-    <string name="woopos_cash_payment_no_chang_due">No change due</string>
     <string name="woopos_cash_payment_error_message">Error trying to process payment. Try again.</string>
     <string name="woopos_email_receipt_send_button">Send</string>
 
