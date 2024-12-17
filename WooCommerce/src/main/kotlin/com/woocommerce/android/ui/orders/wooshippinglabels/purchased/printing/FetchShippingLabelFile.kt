@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.printing
+package com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing
 
 import android.content.Context
 import android.os.Environment

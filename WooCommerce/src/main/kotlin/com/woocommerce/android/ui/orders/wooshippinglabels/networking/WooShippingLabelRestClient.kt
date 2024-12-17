@@ -1,6 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
-import com.woocommerce.android.ui.orders.wooshippinglabels.printing.ShippingLabelPrintingResponse
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.ShippingLabelPrintingResponse
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooNetwork
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
