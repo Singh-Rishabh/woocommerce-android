@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -84,7 +83,7 @@ fun WooPosPaymentSuccessScreen(
         )
         @Suppress("DestructuringDeclarationWithTooManyEntries")
         ConstraintLayout {
-            val (icon, title, message, buttonReceipt, buttonNewOrder) = createRefs()
+            val (icon, title, message, buttonNewOrder, buttonEmailReceipts) = createRefs()
 
             val checkMarkIconMargin = 56.dp.toAdaptivePadding()
             CheckMarkIcon(
@@ -111,7 +110,6 @@ fun WooPosPaymentSuccessScreen(
             )
 
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
-            val textLinkTo = if (state.isReceiptAvailable) buttonReceipt else buttonNewOrder
             Text(
                 text = state.orderTotalText,
                 style = MaterialTheme.typography.h6,
@@ -121,41 +119,45 @@ fun WooPosPaymentSuccessScreen(
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    bottom.linkTo(textLinkTo.top, margin = marginBetweenButtonAndTextAdaptive)
+                    bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtonAndTextAdaptive)
                 }
             )
 
             val marginBetweenButtons = 16.dp.toAdaptivePadding()
+
+            WooPosButton(
+                modifier = Modifier
+                    .constrainAs(buttonNewOrder) {
+                        bottom.linkTo(
+                            if (state.isReceiptAvailable) {
+                                buttonEmailReceipts.top
+                            } else {
+                                parent.bottom
+                            }, margin = marginBetweenButtons
+                        )
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .height(80.dp)
+                    .width(604.dp),
+                onClick = onNewTransactionClicked,
+                text = stringResource(R.string.woopos_new_order_button)
+            )
+
             if (state.isReceiptAvailable) {
                 WooPosOutlinedButton(
                     modifier = Modifier
-                        .constrainAs(buttonReceipt) {
-                            bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtons)
+                        .constrainAs(buttonEmailReceipts) {
+                            bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         }
                         .height(80.dp)
                         .width(604.dp),
                     onClick = onReceiptClicked,
-                    text = stringResource(R.string.woopos_receipt_button),
+                    text = stringResource(R.string.woopos_receipt_button)
                 )
             }
-
-            WooPosButton(
-                modifier = Modifier
-                    .constrainAs(buttonNewOrder) {
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .height(80.dp)
-                    .width(604.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.onBackground
-                ),
-                onClick = onNewTransactionClicked,
-                text = stringResource(R.string.woopos_new_order_button),
-            )
         }
     }
 }
