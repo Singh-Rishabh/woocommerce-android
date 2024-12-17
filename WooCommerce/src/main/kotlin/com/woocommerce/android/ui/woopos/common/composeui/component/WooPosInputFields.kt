@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,7 +80,10 @@ fun WooPosMoneyInputField(
     var currentValue by remember {
         mutableStateOf(value)
     }
-    var textFieldValue by remember(value != currentValue) {
+    var textFieldValue by rememberSaveable(
+        value != currentValue,
+        stateSaver = TextFieldValue.Saver,
+    ) {
         currentValue = value
         mutableStateOf(TextFieldValue(valueMapper.printValue(value)))
     }
