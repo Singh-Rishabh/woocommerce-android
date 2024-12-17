@@ -10,12 +10,12 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
-import java.util.Locale
-import kotlinx.parcelize.Parcelize
-import javax.inject.Inject
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
+import java.io.File
+import java.util.Locale
+import javax.inject.Inject
 
 @HiltViewModel
 class WooShippingLabelPurchasedViewModel @Inject constructor(
@@ -65,6 +65,4 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     object SchedulePickUpRequested : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
-
-
 }

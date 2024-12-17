@@ -6,7 +6,6 @@ import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.media.FileUtils
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize
 import com.woocommerce.android.util.Base64Decoder
 import com.woocommerce.android.util.CoroutineDispatchers
 import kotlinx.coroutines.withContext
