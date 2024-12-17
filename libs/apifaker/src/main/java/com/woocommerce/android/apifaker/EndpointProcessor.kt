@@ -1,8 +1,10 @@
 package com.woocommerce.android.apifaker
 
+import android.util.Log
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
+import com.woocommerce.android.apifaker.models.QueryParameter
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.util.JSONObjectProvider
 import okhttp3.HttpUrl
@@ -18,7 +20,6 @@ internal class EndpointProcessor @Inject constructor(
     private val jsonObjectProvider: JSONObjectProvider
 ) {
     fun fakeRequestIfNeeded(request: Request): Response? {
-        // TODO match against method and query parameters too
         val endpointData = when {
             request.url.host == WPCOM_HOST -> request.extractDataFromWPComEndpoint()
             request.url.encodedPath.startsWith("/wp-json") -> request.extractDataFromWPApiEndpoint()
@@ -26,15 +27,26 @@ internal class EndpointProcessor @Inject constructor(
         }
 
         return with(endpointData) {
-            endpointDao.queryEndpoint(apiType, endpointData.httpMethod, path.trimEnd('/'), body.orEmpty())
-        }?.response?.let {
+            endpointDao.queryEndpoint(apiType, httpMethod, path.trimEnd('/'), body.orEmpty())
+        }.filter {
+            request.url.checkQueryParameters(it.request.queryParameters)
+        }.also {
+            if (it.size > 1) {
+                Log.w(
+                    LOG_TAG,
+                    "More than one endpoint matched the request: $request, " +
+                        "the endpoints matched are\n$it\n" +
+                        "The first one will be used."
+                )
+            }
+        }.firstOrNull()?.response?.let {
             it.copy(body = it.body?.wrapBodyIfNecessary(request.url))
         }
     }
 
     private fun Request.extractDataFromWPComEndpoint(): EndpointData {
         val originalBody = readBody()
-        return if (url.encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX))) {
+        return if (url.isJetpackTunnelRequest) {
             val (path, method, body) = if (method == "GET") {
                 Triple(
                     url.queryParameter("path")!!.substringBefore("&"),
@@ -87,6 +99,25 @@ internal class EndpointProcessor @Inject constructor(
         )
     }
 
+    private fun HttpUrl.checkQueryParameters(mockedQueryParameters: List<QueryParameter>): Boolean {
+        if (mockedQueryParameters.isEmpty()) return true
+
+        val requestQueryParameters = if (isJetpackTunnelRequest) {
+            queryParameter("query")?.let {
+                val json = jsonObjectProvider.parseString(it)
+                json.keys().asSequence().map { key ->
+                    key to json.getString(key)
+                }.toMap()
+            } ?: emptyMap()
+        } else {
+            queryParameterNames.associateWith { queryParameter(it) }
+        }
+
+        return mockedQueryParameters.all { queryParameter ->
+            requestQueryParameters[queryParameter.name] == queryParameter.value
+        }
+    }
+
     private fun Request.readBody(): String {
         val requestBody = body
         return if (requestBody != null) {
@@ -100,8 +131,7 @@ internal class EndpointProcessor @Inject constructor(
     }
 
     private fun String.wrapBodyIfNecessary(url: HttpUrl): String {
-        return if (url.host == WPCOM_HOST &&
-            url.encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX)) &&
+        return if (url.isJetpackTunnelRequest &&
             !startsWith("{\"data\":")
         ) {
             "{\"data\": $this}"
@@ -112,6 +142,9 @@ internal class EndpointProcessor @Inject constructor(
 
     private val Request.httpMethod
         get() = HttpMethod.valueOf(this.method.uppercase())
+
+    private val HttpUrl.isJetpackTunnelRequest
+        get() = host == WPCOM_HOST && encodedPath.trimEnd('/').matches(Regex(JETPACK_TUNNEL_REGEX))
 
     private data class EndpointData(
         val apiType: ApiType,
