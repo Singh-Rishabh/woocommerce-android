@@ -45,10 +45,7 @@ fun WooSitesVisibilityScreen(viewModel: WooSitesVisibilityViewModel) {
             onBack = viewModel::onBackPressed,
             onSaveTapped = viewModel::onSaveTapped,
             onSiteSelected = viewModel::onSiteSelected,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colors.surface)
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -83,10 +80,14 @@ fun WooSitesVisibilityScreen(
                     )
                 }
             },
+            elevation = 0.dp
         )
     }) { padding ->
         LazyColumn(
-            modifier = modifier.padding(padding)
+            modifier = modifier
+                .padding(padding)
+                .background(MaterialTheme.colors.surface)
+                .padding(horizontal = 16.dp)
         ) {
             itemsIndexed(state.wooStores) { index, wooStore ->
                 Row(
