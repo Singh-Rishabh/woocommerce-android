@@ -110,8 +110,8 @@ fun WooSitesVisibilityScreen(
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 text = wooStore.siteUrl,
-                                style = WooTypography.caption,
-                                color = MaterialTheme.colors.onSurface
+                                style = WooTypography.body2,
+                                color = colorResource(id = R.color.color_on_surface_medium)
                             )
                             Spacer(Modifier.height(16.dp))
                             if (index < state.wooStores.size - 1) {
