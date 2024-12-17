@@ -37,7 +37,7 @@ class WooPosProductsDataSource @Inject constructor(
         val result = handler.loadFromCacheAndFetch(
             forceRefresh = forceRefreshProducts,
             searchType = ProductListHandler.SearchType.DEFAULT,
-            includeType = listOf(WCProductStore.IncludeType.Simple),
+            includeType = listOf(WCProductStore.IncludeType.Simple, WCProductStore.IncludeType.Variable),
             filters = mapOf(WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value)
         )
 
