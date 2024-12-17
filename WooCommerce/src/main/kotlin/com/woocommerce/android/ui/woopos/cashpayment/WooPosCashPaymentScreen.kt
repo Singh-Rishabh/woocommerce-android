@@ -104,7 +104,7 @@ private fun Collecting(
 
         Text(
             text = state.totalText,
-            style = MaterialTheme.typography.subtitle1,
+            style = MaterialTheme.typography.h6,
             modifier = Modifier
                 .constrainAs(total) {
                     top.linkTo(parent.top, margin = 4.dp)

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
@@ -75,11 +76,34 @@ fun WooPosMoneyInputField(
         mutableStateOf(TextFieldValue(valueMapper.printValue(value)))
     }
 
+    var labelWidth by remember { mutableIntStateOf(0) }
+
     Box(
         modifier = modifier.background(Color.Transparent),
         contentAlignment = contentAlignment,
     ) {
-        val textFieldColor = if (textFieldValue.text.isEmpty()) {
+        val showLabel = textFieldValue.text.isEmpty()
+        if (showLabel) {
+            Text(
+                text = visualTransformation.filter(AnnotatedString("0.00")).text,
+                style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
+                maxLines = 1,
+                softWrap = false,
+                modifier = Modifier.onGloballyPositioned { coordinates ->
+                    labelWidth = coordinates.size.width
+                }
+            )
+        }
+
+        val density = LocalDensity.current
+
+        val textFieldModifier = if (showLabel) {
+            Modifier.width(with(density) { labelWidth.toDp() + 4.dp })
+        } else {
+            Modifier.width(IntrinsicSize.Min)
+        }
+
+        val textFieldColor = if (showLabel) {
             textColor.copy(alpha = 0.2f)
         } else {
             textColor
@@ -119,7 +143,7 @@ fun WooPosMoneyInputField(
             keyboardOptions = keyboardOptions,
             visualTransformation = visualTransformation,
             cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
-            modifier = Modifier.width(IntrinsicSize.Min),
+            modifier = textFieldModifier,
         )
     }
 }
@@ -177,7 +201,7 @@ fun WooPosInputField(
 
 @WooPosPreview
 @Composable
-fun WooPosTypedInputFieldPreview() {
+fun WooPosMoneyInputFieldPreview() {
     WooPosTheme {
         Column(modifier = Modifier.padding(16.dp)) {
             WooPosMoneyInputField(
