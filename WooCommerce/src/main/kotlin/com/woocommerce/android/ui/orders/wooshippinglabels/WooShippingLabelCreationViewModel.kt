@@ -27,7 +27,6 @@ import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -77,7 +76,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.price.compareTo(r2.price) }
     private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.deliveryDays.compareTo(r2.deliveryDays) }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     private val shippingRates =
         combine(
             order.drop(1),
@@ -94,7 +93,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 weight = packageWeight?.totalWeight,
                 currencyCode = order?.currency
             )
-        }.flatMapLatest { refreshShippingRates(it) }
+        }
+            .debounce(MULTIPLE_CALLS_DELAY)
+            .flatMapLatest { refreshShippingRates(it) }
 
     val viewState: MutableStateFlow<WooShippingViewState> = MutableStateFlow(WooShippingViewState.Loading)
 
@@ -171,8 +172,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         if (shippingRatesInfo.hasRequiredData) {
             val sortOrder = selectedRatesSortOrder.value
             emit(ShippingRatesState.Loading(sortOrder))
-
-            delay(MULTIPLE_CALLS_DELAY)
 
             val shippingRatesResult = getShippingRates(
                 shippingRatesInfo.orderId!!,
