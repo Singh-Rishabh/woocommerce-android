@@ -12,7 +12,9 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenShippingLabelFile
+import com.woocommerce.android.util.ActivityUtils
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 @AndroidEntryPoint
 class WooShippingLabelPurchasedFragment : BaseFragment() {
@@ -41,8 +43,12 @@ class WooShippingLabelPurchasedFragment : BaseFragment() {
     private fun bindEventListeners() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-
+                is OpenShippingLabelFile -> openShippingLabelPreview(event.file)
             }
         }
+    }
+
+    private fun openShippingLabelPreview(file: File) {
+        ActivityUtils.previewPDFFile(requireActivity(), file)
     }
 }
