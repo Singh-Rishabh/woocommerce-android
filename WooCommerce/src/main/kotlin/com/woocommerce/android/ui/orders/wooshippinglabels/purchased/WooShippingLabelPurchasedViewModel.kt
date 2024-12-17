@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
 
 @HiltViewModel
 class WooShippingLabelPurchasedViewModel @Inject constructor(
@@ -21,27 +21,21 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     fun onPrintShippingLabelClicked() {
-
     }
 
     fun onLabelPaperSizeOptionSelected(paperSize: WooShippingLabelPaperSize) {
-
     }
 
     fun onTrackShipmentClicked() {
-
     }
 
     fun onSchedulePickUpClicked() {
-
     }
 
     fun onRefundClicked() {
-
     }
 
     fun onLearnMoreClicked() {
-
     }
 
     @Parcelize
