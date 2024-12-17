@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenShippingLabelFile
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,6 +29,19 @@ class WooShippingLabelPurchasedFragment : BaseFragment() {
                         WooShippingLabelPurchasedScreen(viewModel)
                     }
                 }
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bindEventListeners()
+    }
+
+    private fun bindEventListeners() {
+        viewModel.event.observe(viewLifecycleOwner) { event ->
+            when (event) {
+
             }
         }
     }
