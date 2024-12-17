@@ -12,4 +12,24 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     fun onPrintShippingLabelClicked() {
 
     }
+
+    fun onLabelPaperSizeOptionSelected(paperSize: WooShippingLabelPaperSize) {
+
+    }
+
+    fun onTrackShipmentClicked() {
+
+    }
+
+    fun onSchedulePickUpClicked() {
+
+    }
+
+    fun onRefundClicked() {
+
+    }
+
+    fun onLearnMoreClicked() {
+
+    }
 }
