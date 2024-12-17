@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.ReaderStatus
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -11,6 +12,8 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderSubtotalText: String,
         val orderTaxText: String,
         val orderTotalText: String,
+        val readerStatus: ReaderStatus,
+        val isCashPaymentAvailable: Boolean,
     ) : WooPosTotalsViewState()
 
     data class PaymentSuccess(
@@ -18,8 +21,59 @@ sealed class WooPosTotalsViewState : Parcelable {
         val isReceiptAvailable: Boolean,
     ) : WooPosTotalsViewState()
 
-    data class ReceiptSending(
-        val email: String,
+    sealed class ReaderStatus(
+        open val title: String,
+        open val subtitle: String,
+    ) : Parcelable {
+        @Parcelize
+        data class Preparing(
+            override val title: String,
+            override val subtitle: String,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+
+        @Parcelize
+        data class CheckingOrder(
+            override val title: String,
+            override val subtitle: String,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+
+        @Parcelize
+        data class ReadyForPayment(
+            override val title: String,
+            override val subtitle: String,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+
+        @Parcelize
+        data class Disconnected(
+            override val title: String,
+            override val subtitle: String,
+            val actionButonLabel: String,
+            val onAction: () -> Unit,
+        ) : ReaderStatus(
+            title = title,
+            subtitle = subtitle
+        )
+    }
+
+    data class PaymentInProgress(
+        val title: String,
+        val subtitle: String,
+    ) : WooPosTotalsViewState()
+
+    data class PaymentFailed(
+        val title: String,
+        val subtitle: String,
+        val retryPaymentButtonLabel: String,
+        val isReturnToCheckoutButtonVisible: Boolean = false,
     ) : WooPosTotalsViewState()
 
     data class Error(val message: String) : WooPosTotalsViewState()

@@ -43,7 +43,6 @@
     <color name="color_default_image_background">@color/woo_gray_900</color>
 
     <color name="color_back_arrow">@color/color_on_surface</color>
-    <color name="color_text_link">@color/woo_pink_50</color>
 
     <!--
         Color resource used to indicate selected state of an item
@@ -121,7 +120,7 @@
     <color name="tag_bg_on_hold">@color/woo_orange_5</color>
     <color name="tag_bg_completed">@color/woo_blue_5</color>
     <color name="tag_bg_other">@color/woo_gray_5</color>
-    <color name="tag_bg_main">@color/woo_purple_15</color>
+    <color name="tag_bg_main">@color/woo_purple_10</color>
     <color name="tag_text_main">@color/color_primary</color>
     <color name="tag_task_label">@color/woo_gray_6</color>
     <color name="tag_task_label_text">@color/woo_black_90_alpha_060</color>
@@ -314,7 +313,7 @@
     <color name="payout_summary_status_in_transit_text">@color/woo_orange_70</color>
     <color name="payout_summary_status_paid_background">@color/woo_green_0</color>
     <color name="payout_summary_status_paid_text">@color/woo_green_50</color>
-    <color name="payout_summary_status_canceled_background">@color/woo_purple_15</color>
+    <color name="payout_summary_status_canceled_background">@color/woo_purple_10</color>
     <color name="payout_summary_status_canceled_text">@color/woo_purple_80</color>
     <color name="payout_summary_status_failed_background">@color/woo_red_5</color>
     <color name="payout_summary_status_failed_text">@color/woo_red_70</color>

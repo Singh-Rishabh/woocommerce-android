@@ -32,7 +32,6 @@ class DeveloperOptionsViewModel @Inject constructor(
         ToggleableListItem(
             icon = R.drawable.img_card_reader,
             label = UiStringRes(R.string.enable_card_reader),
-            key = UiStringRes(R.string.simulated_reader_key),
             isEnabled = true,
             isChecked = simulated,
             onToggled = ::onSimulatedReaderToggled
@@ -47,7 +46,6 @@ class DeveloperOptionsViewModel @Inject constructor(
             iconTint = R.color.color_primary,
             endIcon = R.drawable.ic_arrow_drop_down,
             label = UiStringRes(R.string.update_simulated_reader),
-            key = UiStringRes(R.string.update_simulated_reader_key),
             isEnabled = true,
             onClick = ::onUpdateSimulatedReaderClicked,
         )
@@ -62,7 +60,6 @@ class DeveloperOptionsViewModel @Inject constructor(
         ToggleableListItem(
             icon = R.drawable.ic_credit_card_give,
             label = UiStringRes(R.string.enable_interac_payment),
-            key = UiStringRes(R.string.enable_interac_key),
             isEnabled = true,
             isChecked = useInterac,
             onToggled = developerOptionsRepository::changeEnableInteracPaymentState
@@ -75,7 +72,6 @@ class DeveloperOptionsViewModel @Inject constructor(
             ToggleableListItem(
                 icon = R.drawable.ic_more_screen_settings,
                 label = UiString.UiStringText("Saved privacy settings on dialog?"),
-                key = UiString.UiStringText(""),
                 isEnabled = true,
                 isChecked = isChecked,
                 onToggled = developerOptionsRepository::changeSavedPrivacyBannerSettings
@@ -87,7 +83,6 @@ class DeveloperOptionsViewModel @Inject constructor(
             icon = R.drawable.ic_globe,
             iconTint = R.color.color_primary,
             label = UiString.UiStringText("API Faker"),
-            key = UiString.UiStringText("API Faker"),
             isEnabled = true,
             onClick = {
                 triggerEvent(DeveloperOptionsEvents.OpenApiFaker)
@@ -154,14 +149,12 @@ class DeveloperOptionsViewModel @Inject constructor(
             abstract val icon: Int
             abstract val iconTint: Int?
             abstract var isEnabled: Boolean
-            abstract var key: UiString
 
             data class ToggleableListItem(
                 @DrawableRes override val icon: Int,
                 @ColorRes override val iconTint: Int? = null,
                 override val label: UiString,
                 override var isEnabled: Boolean = false,
-                override var key: UiString,
                 val onToggled: (Boolean) -> Unit,
                 val isChecked: Boolean
             ) : ListItem()
@@ -172,7 +165,6 @@ class DeveloperOptionsViewModel @Inject constructor(
                 @DrawableRes val endIcon: Int? = null,
                 override val label: UiString,
                 override var isEnabled: Boolean = false,
-                override var key: UiString,
                 val onClick: () -> Unit
             ) : ListItem()
         }
