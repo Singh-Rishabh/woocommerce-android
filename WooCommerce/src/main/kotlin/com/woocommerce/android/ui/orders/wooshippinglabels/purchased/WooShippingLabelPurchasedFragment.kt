@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.viewModels
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -19,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WooShippingLabelPurchasedFragment : BaseFragment() {
+    private val viewModel: WooShippingLabelPurchasedViewModel by viewModels()
 
     override fun getFragmentTitle(): String = getString(R.string.shipping_label_print_screen_title)
 
@@ -28,17 +30,7 @@ class WooShippingLabelPurchasedFragment : BaseFragment() {
             setContent {
                 WooThemeWithBackground {
                     Surface {
-                        val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
-                        WooShippingLabelPurchasedScreen(
-                            selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
-                            onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
-                            onPrintShippingLabelClicked = { },
-                            modifier = Modifier.padding(16.dp),
-                            onTrackShipmentClicked = { },
-                            onSchedulePickUpClicked = { },
-                            onRefundClicked = { },
-                            onLearnMoreClicked = { }
-                        )
+                        WooShippingLabelPurchasedScreen(viewModel)
                     }
                 }
             }
