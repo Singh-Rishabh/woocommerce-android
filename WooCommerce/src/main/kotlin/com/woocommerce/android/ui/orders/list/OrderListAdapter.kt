@@ -184,16 +184,6 @@ class OrderListAdapter(
                     viewBinding.orderItemLayout.setBackgroundColor(Color.TRANSPARENT)
                 }
             }
-
-            val isSelected = tracker?.isSelected(orderItemUI.orderId) ?: orderItemUI.isSelected
-            viewBinding.orderItemLayout.setBackgroundColor(
-                if (isSelected) {
-                    viewBinding.root.context.getColor(R.color.color_item_selected)
-                } else {
-                    Color.TRANSPARENT
-                }
-            )
-
             // clear existing tags and add new ones
             viewBinding.orderTags.removeAllViews()
             processTagView(orderItemUI.status, this)
