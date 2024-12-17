@@ -23,7 +23,7 @@
             android:alpha="@dimen/alpha_emphasis_high"
             android:importantForAccessibility="no"
             android:src="@drawable/product_selected_overlay"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:visibility="visible"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>

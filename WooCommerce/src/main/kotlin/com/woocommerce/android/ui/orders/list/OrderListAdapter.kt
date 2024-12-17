@@ -168,13 +168,7 @@ class OrderListAdapter(
             viewBinding.divider.visibility = if (orderItemUI.isLastItemInSection) View.GONE else View.VISIBLE
 
             val isSelected = tracker?.isSelected(orderItemUI.orderId) ?: orderItemUI.isSelected
-            viewBinding.orderItemLayout.setBackgroundColor(
-                if (isSelected) {
-                    viewBinding.root.context.getColor(R.color.color_item_selected)
-                } else {
-                    Color.TRANSPARENT
-                }
-            )
+            viewBinding.orderImageSelected.visibility = if (isSelected) View.VISIBLE else View.GONE
 
             // clear existing tags and add new ones
             viewBinding.orderTags.removeAllViews()
