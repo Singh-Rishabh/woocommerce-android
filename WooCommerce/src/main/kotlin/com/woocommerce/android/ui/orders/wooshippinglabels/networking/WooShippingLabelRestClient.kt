@@ -1,11 +1,11 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
 import com.woocommerce.android.ui.orders.wooshippinglabels.printing.ShippingLabelPrintingResponse
-import javax.inject.Inject
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooNetwork
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooPayload
 import org.wordpress.android.fluxc.utils.toWooPayload
+import javax.inject.Inject
 
 class WooShippingLabelRestClient @Inject constructor(
     private val wooNetwork: WooNetwork
@@ -15,11 +15,11 @@ class WooShippingLabelRestClient @Inject constructor(
         labelIds: List<Long>,
         paperSize: String
     ): WooPayload<ShippingLabelPrintingResponse> {
-        val URL = "/wcshipping/v1/label/print"
+        val url = "/wcshipping/v1/label/print"
 
         return wooNetwork.executeGetGsonRequest(
             site = site,
-            path = URL,
+            path = url,
             params = mapOf(
                 "label_id_csv" to labelIds.joinToString { "$it," },
                 "paper_size" to paperSize

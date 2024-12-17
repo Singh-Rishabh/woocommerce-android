@@ -1,7 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
-import javax.inject.Inject
 import org.wordpress.android.fluxc.model.SiteModel
+import javax.inject.Inject
 
 class WooShippingLabelRepository @Inject constructor(
     private val restClient: WooShippingLabelRestClient
