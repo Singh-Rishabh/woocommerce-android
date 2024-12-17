@@ -6,7 +6,6 @@ import com.woocommerce.android.media.FileUtils
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
 import com.woocommerce.android.util.Base64Decoder
-import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
@@ -27,7 +26,6 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
     private lateinit var fetchShippingLabelFile: FetchShippingLabelFile
     private val appContext: Context = mock()
     private val selectedSite: SelectedSite = mock()
-    private val dispatchers: CoroutineDispatchers = mock()
     private val fileUtils: FileUtils = mock()
     private val base64Decoder: Base64Decoder = mock()
     private val labelRepository: WooShippingLabelRepository = mock()
@@ -39,11 +37,10 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
     fun setup() {
         whenever(appContext.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)).thenReturn(storageDir)
         whenever(selectedSite.getOrNull()).thenReturn(siteModel)
-        whenever(dispatchers.io).thenReturn(kotlinx.coroutines.Dispatchers.Unconfined)
         fetchShippingLabelFile = FetchShippingLabelFile(
             appContext = appContext,
             selectedSite = selectedSite,
-            dispatchers = dispatchers,
+            dispatchers = coroutinesTestRule.testDispatchers,
             fileUtils = fileUtils,
             base64Decoder = base64Decoder,
             labelRepository = labelRepository
@@ -54,13 +51,15 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
     fun `invoke calls labelRepository and creates file`() = testBlocking {
         val labelIds = listOf(1L, 2L, 3L)
         val paperSize = "A4"
-        val b64Content = "base64EncodedContent"
-        val response = mock<WooResult<ShippingLabelPrintingResponse>> {
-            on { isError } doReturn false
-            on { model?.b64Content } doReturn b64Content
+        val labelData = "base64EncodedContent"
+        val response = mock<ShippingLabelPrintingResponse> {
+            on { b64Content } doReturn labelData
         }
 
-        whenever(labelRepository.fetchShippingLabelPrinting(siteModel, labelIds, paperSize)).thenReturn(response)
+        whenever(
+            labelRepository.fetchShippingLabelPrinting(siteModel, labelIds, paperSize)
+        ).thenReturn(WooResult(response))
+
         whenever(
             fileUtils.createTempTimeStampedFile(
                 storageDir,
@@ -68,7 +67,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
                 FetchShippingLabelFile.PDF_EXTENSION
             )
         ).thenReturn(file)
-        whenever(base64Decoder.decode(b64Content, 0)).thenReturn(ByteArray(0))
+        whenever(base64Decoder.decode(labelData, 0)).thenReturn(ByteArray(0))
 
         fetchShippingLabelFile(labelIds, paperSize)
 
@@ -76,7 +75,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
         verify(
             fileUtils
         ).createTempTimeStampedFile(storageDir, FetchShippingLabelFile.PDF_PREFIX, FetchShippingLabelFile.PDF_EXTENSION)
-        verify(base64Decoder).decode(b64Content, 0)
+        verify(base64Decoder).decode(labelData, 0)
         verify(fileUtils).writeContentToFile(file, ByteArray(0))
     }
 
@@ -111,12 +110,13 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
     fun `invoke returns null when b64Content is empty`() = testBlocking {
         val labelIds = listOf(1L, 2L, 3L)
         val paperSize = "A4"
-        val response = mock<WooResult<ShippingLabelPrintingResponse>> {
-            on { isError } doReturn false
-            on { model?.b64Content } doReturn ""
+        val response = mock<ShippingLabelPrintingResponse> {
+            on { b64Content } doReturn ""
         }
 
-        whenever(labelRepository.fetchShippingLabelPrinting(siteModel, labelIds, paperSize)).thenReturn(response)
+        whenever(
+            labelRepository.fetchShippingLabelPrinting(siteModel, labelIds, paperSize)
+        ).thenReturn(WooResult(response))
 
         val result = fetchShippingLabelFile(labelIds, paperSize)
 
