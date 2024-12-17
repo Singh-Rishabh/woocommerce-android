@@ -92,7 +92,11 @@ class OrderListAdapter(
                             "for position: $position"
                     )
                 }
-                holder.onBind((item as OrderListItemUI), allOrderIds)
+                holder.onBind(
+                    (item as OrderListItemUI),
+                    allOrderIds,
+                    isActivated = tracker?.isSelected(item.orderId) ?: false
+                )
             }
             is SectionHeaderViewHolder -> {
                 if (BuildConfig.DEBUG && item !is SectionHeader) {
@@ -154,7 +158,10 @@ class OrderListAdapter(
         private var isNotCompleted = true
         private var orderId = SwipeToComplete.SwipeAbleViewHolder.EMPTY_SWIPED_ID
         private val extras = HashMap<String, String>()
-        fun onBind(orderItemUI: OrderListItemUI, allOrderIds: List<Long>) {
+        // Note that `isActivated` here is not the same as `isSelected`.
+        // - `isActivated` : Flag used when an item is long pressed to support multiple selection in bulk updating.
+        // - `isSelected`  : Flag used for the tablet 2-panel mode to show the selected item in a different color.
+        fun onBind(orderItemUI: OrderListItemUI, allOrderIds: List<Long>, isActivated: Boolean = false) {
             // Grab the current context from the underlying view
             val ctx = this.itemView.context
 
@@ -166,6 +173,17 @@ class OrderListAdapter(
                 orderItemUI.currencyCode
             )
             viewBinding.divider.visibility = if (orderItemUI.isLastItemInSection) View.GONE else View.VISIBLE
+
+            when {
+                orderItemUI.isSelected || isActivated -> {
+                    viewBinding.orderItemLayout.setBackgroundColor(
+                        viewBinding.root.context.getColor(R.color.color_item_selected)
+                    )
+                }
+                else -> {
+                    viewBinding.orderItemLayout.setBackgroundColor(Color.TRANSPARENT)
+                }
+            }
 
             val isSelected = tracker?.isSelected(orderItemUI.orderId) ?: orderItemUI.isSelected
             viewBinding.orderItemLayout.setBackgroundColor(
