@@ -20,7 +20,7 @@ internal interface EndpointDao {
     fun observeEndpoints(): Flow<List<MockedEndpoint>>
 
     @Query("Select COUNT(*) FROM Request")
-    suspend fun endpointsCount(): Int
+    fun observeEndpointsCount(): Flow<Int>
 
     @Transaction
     @Query(
@@ -31,7 +31,7 @@ internal interface EndpointDao {
         :body LIKE COALESCE(body, '%')
         """
     )
-    fun queryEndpoint(type: ApiType, httpMethod: HttpMethod, path: String, body: String): MockedEndpoint?
+    fun queryEndpoint(type: ApiType, httpMethod: HttpMethod, path: String, body: String): List<MockedEndpoint>
 
     @Transaction
     @Query("Select * FROM Request WHERE id = :id")
@@ -51,6 +51,4 @@ internal interface EndpointDao {
         val id = insertRequest(request)
         insertResponse(response.copy(endpointId = id))
     }
-
-    suspend fun isEmpty() = endpointsCount() == 0
 }

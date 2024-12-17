@@ -13,10 +13,13 @@ import com.woocommerce.android.apifaker.models.Response
         Request::class,
         Response::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
-@TypeConverters(EndpointTypeConverter::class)
+@TypeConverters(
+    EndpointTypeConverter::class,
+    QueryParameterConverter::class
+)
 internal abstract class ApiFakerDatabase : RoomDatabase() {
     companion object {
         fun buildDb(applicationContext: Context) = Room

@@ -4,9 +4,10 @@ import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
 import com.woocommerce.android.apifaker.models.MockedEndpoint
+import com.woocommerce.android.apifaker.models.QueryParameter
+import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.util.JSONObjectProvider
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.junit.Test
@@ -14,6 +15,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import okhttp3.Request as OkHttpRequest
 
 class EndpointProcessorTest {
     private val endpointDaoMock = mock<EndpointDao>()
@@ -25,7 +27,7 @@ class EndpointProcessorTest {
 
     @Test
     fun `when processing a GET WPCom endpoint, then extract data correctly`() {
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("GET", null)
             .url("https://public-api.wordpress.com/rest/v1.1/me?param=value")
             .build()
@@ -43,7 +45,7 @@ class EndpointProcessorTest {
     @Test
     fun `when processing a POST WPCom endpoint, then extract data correctly`() {
         val body = "Test Body"
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("POST", body.toRequestBody())
             .url("https://public-api.wordpress.com/rest/v1.1/me?param=value")
             .build()
@@ -60,7 +62,7 @@ class EndpointProcessorTest {
 
     @Test
     fun `when processing a GET Jetpack Tunnel endpoint, then extract data correctly`() {
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("GET", null)
             .url(
                 "https://public-api.wordpress.com/rest/v1.1/jetpack-blogs/161477129/rest-api/" +
@@ -91,7 +93,7 @@ class EndpointProcessorTest {
         }
         whenever(jsonObjectProvider.parseString(body)).thenReturn(jsonObject)
 
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("POST", body.toRequestBody())
             .url("https://public-api.wordpress.com/rest/v1.1/jetpack-blogs/161477129/rest-api")
             .build()
@@ -108,7 +110,7 @@ class EndpointProcessorTest {
 
     @Test
     fun `when processing a GET WPApi endpoint, then extract data correctly`() {
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("GET", null)
             .url("https://test-site.com/wp-json/wc/v3/products?param=value")
             .build()
@@ -126,7 +128,7 @@ class EndpointProcessorTest {
     @Test
     fun `when processing a POST WPApi endpoint, then extract data correctly`() {
         val body = "Test Body"
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("POST", body.toRequestBody())
             .url("https://test-site.com/wp-json/wc/v3/products")
             .build()
@@ -143,7 +145,7 @@ class EndpointProcessorTest {
 
     @Test
     fun `when processing a GET Custom endpoint, then extract data correctly`() {
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("GET", null)
             .url("https://test-site.com/an/endpoint?param=value")
             .build()
@@ -161,7 +163,7 @@ class EndpointProcessorTest {
     @Test
     fun `when processing a POST Custom endpoint, then extract data correctly`() {
         val body = "Test Body"
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method("POST", body.toRequestBody())
             .url("https://test-site.com/an/endpoint")
             .build()
@@ -179,7 +181,7 @@ class EndpointProcessorTest {
     @Test
     fun `when processing a GET jetpack tunnel endpoint, then wrap body if necessary`() {
         val mockEndpoint = MockedEndpoint(
-            request = com.woocommerce.android.apifaker.models.Request(
+            request = Request(
                 id = 0,
                 type = ApiType.WPApi,
                 httpMethod = HttpMethod.GET,
@@ -199,9 +201,9 @@ class EndpointProcessorTest {
                 path = mockEndpoint.request.path,
                 body = mockEndpoint.request.body.orEmpty()
             )
-        ).thenReturn(mockEndpoint)
+        ).thenReturn(listOf(mockEndpoint))
 
-        val request = Request.Builder()
+        val request = OkHttpRequest.Builder()
             .method(mockEndpoint.request.httpMethod.name, null)
             .url(
                 "https://public-api.wordpress.com/rest/v1.1/jetpack-blogs/161477129/rest-api/" +
@@ -211,5 +213,86 @@ class EndpointProcessorTest {
 
         val response = endpointProcessor.fakeRequestIfNeeded(request)
         assert(response?.body == "{\"data\": {\"key\":\"value\"}}")
+    }
+
+    @Test
+    fun `when processing a GET jetpack tunnel endpoint with query parameters, then check query parameters`() {
+        val mockEndpoint = MockedEndpoint(
+            request = Request(
+                id = 0,
+                type = ApiType.WPApi,
+                httpMethod = HttpMethod.GET,
+                path = "/wc/v3/products",
+                queryParameters = listOf(
+                    QueryParameter("param", "value")
+                ),
+                body = null
+            ),
+            response = Response(
+                endpointId = 0,
+                statusCode = 200
+            )
+        )
+        whenever(
+            endpointDaoMock.queryEndpoint(
+                type = mockEndpoint.request.type,
+                httpMethod = mockEndpoint.request.httpMethod!!,
+                path = mockEndpoint.request.path,
+                body = mockEndpoint.request.body.orEmpty()
+            )
+        ).thenReturn(listOf(mockEndpoint))
+        val jsonObject = mock<JSONObject> {
+            on { keys() } doReturn listOf("param").iterator()
+            on { getString("param") } doReturn "value"
+        }
+        whenever(jsonObjectProvider.parseString("{\"param\":\"value\"}")).thenReturn(jsonObject)
+
+        val request = OkHttpRequest.Builder()
+            .method(mockEndpoint.request.httpMethod.name, null)
+            .url(
+                "https://public-api.wordpress.com/rest/v1.1/jetpack-blogs/161477129/rest-api/" +
+                    "?path=${mockEndpoint.request.path}&_method=${mockEndpoint.request.httpMethod.name}" +
+                    "&query={\"param\":\"value\"}"
+            )
+            .build()
+
+        val response = endpointProcessor.fakeRequestIfNeeded(request)
+        assert(response?.statusCode == 200)
+    }
+
+    @Test
+    fun `when processing a regular endpoint with query parameters, then check query parameters`() {
+        val mockEndpoint = MockedEndpoint(
+            request = Request(
+                id = 0,
+                type = ApiType.WPApi,
+                httpMethod = HttpMethod.GET,
+                path = "/wc/v3/products",
+                queryParameters = listOf(
+                    QueryParameter("param", "value")
+                ),
+                body = null
+            ),
+            response = Response(
+                endpointId = 0,
+                statusCode = 200
+            )
+        )
+        whenever(
+            endpointDaoMock.queryEndpoint(
+                type = mockEndpoint.request.type,
+                httpMethod = mockEndpoint.request.httpMethod!!,
+                path = mockEndpoint.request.path,
+                body = mockEndpoint.request.body.orEmpty()
+            )
+        ).thenReturn(listOf(mockEndpoint))
+
+        val request = OkHttpRequest.Builder()
+            .method(mockEndpoint.request.httpMethod.name, null)
+            .url("https://test-site.com/wp-json/wc/v3/products?param=value")
+            .build()
+
+        val response = endpointProcessor.fakeRequestIfNeeded(request)
+        assert(response?.statusCode == 200)
     }
 }
