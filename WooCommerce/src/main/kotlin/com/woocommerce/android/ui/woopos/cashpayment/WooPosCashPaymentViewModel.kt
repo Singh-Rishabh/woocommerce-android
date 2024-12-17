@@ -25,13 +25,16 @@ class WooPosCashPaymentViewModel @Inject constructor(
     private val _state = savedState.getStateFlow<WooPosCashPaymentState>(
         scope = viewModelScope,
         initialValue = WooPosCashPaymentState.Initiating,
-        key = "woo_pos_cash_payment_state"
+        key = WOO_POS_CASH_PAYMENT_STATE_KEY
     )
 
     val state: StateFlow<WooPosCashPaymentState> = _state
 
     init {
         viewModelScope.launch {
+            val savedStateValue = savedState.get<WooPosCashPaymentState>(WOO_POS_CASH_PAYMENT_STATE_KEY)
+            if (savedStateValue != null && savedStateValue != WooPosCashPaymentState.Initiating) return@launch
+
             val order = repository.getOrderById(orderId)!!
             _state.value = WooPosCashPaymentState.Collecting(
                 enteredAmount = null,
@@ -114,5 +117,9 @@ class WooPosCashPaymentViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private companion object {
+        const val WOO_POS_CASH_PAYMENT_STATE_KEY = "woo_pos_cash_payment_state"
     }
 }
