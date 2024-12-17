@@ -6,6 +6,7 @@ import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.media.FileUtils
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize
 import com.woocommerce.android.util.Base64Decoder
 import com.woocommerce.android.util.CoroutineDispatchers
 import kotlinx.coroutines.withContext
@@ -25,7 +26,7 @@ class FetchShippingLabelFile @Inject constructor(
 
     suspend operator fun invoke(
         labelIds: List<Long>,
-        paperSize: String = DEFAULT_PAPER_SIZE
+        paperSize: String
     ): File? {
         val response = selectedSite.getOrNull()
             ?.let { labelRepository.fetchShippingLabelPrinting(it, labelIds, paperSize) }
@@ -58,6 +59,5 @@ class FetchShippingLabelFile @Inject constructor(
     companion object {
         const val PDF_PREFIX = "PDF"
         const val PDF_EXTENSION = "pdf"
-        const val DEFAULT_PAPER_SIZE = "A4"
     }
 }
