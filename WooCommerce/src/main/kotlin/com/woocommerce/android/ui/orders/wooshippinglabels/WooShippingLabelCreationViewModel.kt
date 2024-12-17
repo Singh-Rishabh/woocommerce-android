@@ -77,6 +77,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 -> r1.deliveryDays.compareTo(r2.deliveryDays) }
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    @Suppress("ComplexCondition")
     private val shippingRates =
         combine(
             order.drop(1),
@@ -85,14 +86,23 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageWeight,
             refreshShippingRates.onStart { emit(Unit) }
         ) { order, selectedPackage, addresses, packageWeight, _ ->
-            ShippingRatesInfo(
-                orderId = order?.id,
-                packageSelected = selectedPackage,
-                shipFrom = addresses?.shipFrom,
-                shipTo = addresses?.shipTo,
-                weight = packageWeight?.totalWeight,
-                currencyCode = order?.currency
-            )
+            if (order != null &&
+                selectedPackage != null &&
+                addresses != null &&
+                packageWeight != null &&
+                addresses.shipTo != Address.EMPTY
+            ) {
+                ShippingRatesInfo(
+                    orderId = order.id,
+                    packageSelected = selectedPackage,
+                    shipFrom = addresses.shipFrom,
+                    shipTo = addresses.shipTo,
+                    weight = packageWeight.totalWeight,
+                    currencyCode = order.currency
+                )
+            } else {
+                null
+            }
         }
             .debounce(MULTIPLE_CALLS_DELAY)
             .flatMapLatest { refreshShippingRates(it) }
@@ -167,18 +177,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun refreshShippingRates(
-        shippingRatesInfo: ShippingRatesInfo
+        shippingRatesInfo: ShippingRatesInfo?
     ) = flow {
-        if (shippingRatesInfo.hasRequiredData) {
+        if (shippingRatesInfo != null) {
             val sortOrder = selectedRatesSortOrder.value
             emit(ShippingRatesState.Loading(sortOrder))
 
             val shippingRatesResult = getShippingRates(
-                shippingRatesInfo.orderId!!,
-                shippingRatesInfo.packageSelected!!,
-                shippingRatesInfo.shipTo!!,
-                shippingRatesInfo.shipFrom!!,
-                shippingRatesInfo.weight!!
+                shippingRatesInfo.orderId,
+                shippingRatesInfo.packageSelected,
+                shippingRatesInfo.shipTo,
+                shippingRatesInfo.shipFrom,
+                shippingRatesInfo.weight
             )
 
             if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
@@ -384,21 +394,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     data class ShippingRatesInfo(
-        val orderId: Long?,
-        val packageSelected: PackageData?,
-        val shipFrom: OriginShippingAddress?,
-        val shipTo: Address?,
-        val weight: Float?,
-        val currencyCode: String?
-    ) {
-        val hasRequiredData: Boolean
-            get() = orderId != null &&
-                packageSelected != null &&
-                shipFrom != null &&
-                shipTo != null &&
-                weight != null &&
-                shipTo != Address.EMPTY
-    }
+        val orderId: Long,
+        val packageSelected: PackageData,
+        val shipFrom: OriginShippingAddress,
+        val shipTo: Address,
+        val weight: Float,
+        val currencyCode: String
+    )
 
     companion object {
         private const val TYPING_DELAY = 800L
