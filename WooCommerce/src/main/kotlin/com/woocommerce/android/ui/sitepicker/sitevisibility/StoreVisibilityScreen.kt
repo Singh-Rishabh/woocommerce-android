@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -83,9 +85,16 @@ fun WooSitesVisibilityScreen(
             elevation = 0.dp
         )
     }) { padding ->
-        Column(modifier = modifier.padding(padding)) {
+        val borderWidth = 1.dp
+        val borderColor = colorResource(id = R.color.divider_color)
+        Column(
+            modifier = modifier
+                .background(MaterialTheme.colors.surface)
+                .padding(padding)
+                .padding(horizontal = 16.dp)
+        ) {
             Text(
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_current_site_header),
                 style = WooTypography.subtitle1,
                 color = MaterialTheme.colors.onSurface,
@@ -94,17 +103,22 @@ fun WooSitesVisibilityScreen(
                 wooStore = state.currentSite,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
+                    .border(
+                        width = borderWidth,
+                        color = borderColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_current_site_footer),
                 style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
+            Spacer(Modifier.height(16.dp))
             Text(
-                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_header),
                 style = WooTypography.subtitle1,
                 color = MaterialTheme.colors.onSurface,
@@ -112,10 +126,15 @@ fun WooSitesVisibilityScreen(
             AvailableStoresForHiding(
                 state = state,
                 onSiteSelected = onSiteSelected,
-                modifier = Modifier.background(MaterialTheme.colors.surface)
+                modifier = Modifier
+                    .border(
+                        width = borderWidth,
+                        color = borderColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
             )
             Text(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_footer),
                 style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
