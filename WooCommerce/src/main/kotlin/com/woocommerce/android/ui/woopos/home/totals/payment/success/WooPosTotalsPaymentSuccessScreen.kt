@@ -68,7 +68,7 @@ fun WooPosPaymentSuccessScreen(
 @Composable
 private fun WooPosPaymentSuccessScreen(
     state: WooPosTotalsViewState.PaymentSuccess,
-    animationStage : AnimationStage,
+    animationStage: AnimationStage,
     onReceiptClicked: () -> Unit,
     onNewTransactionClicked: () -> Unit,
 ) {
@@ -162,7 +162,7 @@ private fun WooPosPaymentSuccessScreen(
 
 @Composable
 private fun CheckMarkIcon(
-    animationStage : AnimationStage,
+    animationStage: AnimationStage,
     modifier: Modifier = Modifier,
 ) {
     val size by animateDpAsState(
@@ -190,13 +190,13 @@ private fun CheckMarkIcon(
     }
 }
 
+@Suppress("MagicNumber")
 private suspend fun startAnimations(stateFlow: MutableStateFlow<AnimationStage>) {
     stateFlow.update { AnimationStage.BUTTONS }
     delay(300)
     stateFlow.update { AnimationStage.CIRCLE }
     delay(300)
     stateFlow.update { AnimationStage.ICON }
-    delay(300)
     stateFlow.update { AnimationStage.FINISHED }
 }
 
