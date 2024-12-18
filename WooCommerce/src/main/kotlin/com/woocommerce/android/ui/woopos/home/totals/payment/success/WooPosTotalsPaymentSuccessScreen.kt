@@ -10,12 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,7 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -83,7 +83,7 @@ fun WooPosPaymentSuccessScreen(
         )
         @Suppress("DestructuringDeclarationWithTooManyEntries")
         ConstraintLayout {
-            val (icon, title, message, buttonReceipt, buttonNewOrder) = createRefs()
+            val (icon, title, message, buttonNewOrder, buttonEmailReceipts) = createRefs()
 
             val checkMarkIconMargin = 56.dp.toAdaptivePadding()
             CheckMarkIcon(
@@ -95,7 +95,7 @@ fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val textsMargin = 16.dp.toAdaptivePadding()
+            val textsMargin = 8.dp.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
                 style = MaterialTheme.typography.h4,
@@ -119,38 +119,35 @@ fun WooPosPaymentSuccessScreen(
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    bottom.linkTo(buttonReceipt.top, margin = marginBetweenButtonAndTextAdaptive)
+                    bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtonAndTextAdaptive)
                 }
             )
 
             val marginBetweenButtons = 16.dp.toAdaptivePadding()
-            WooPosOutlinedButton(
+            WooPosButton(
                 modifier = Modifier
-                    .constrainAs(buttonReceipt) {
-                        bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtons)
+                    .constrainAs(buttonNewOrder) {
+                        bottom.linkTo(buttonEmailReceipts.top, margin = marginBetweenButtons)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
                     .height(80.dp)
                     .width(604.dp),
-                onClick = onReceiptClicked,
-                text = stringResource(R.string.woopos_receipt_button),
+                onClick = onNewTransactionClicked,
+                text = stringResource(R.string.woopos_new_order_button)
             )
 
-            WooPosButton(
+            WooPosOutlinedButton(
                 modifier = Modifier
-                    .constrainAs(buttonNewOrder) {
+                    .constrainAs(buttonEmailReceipts) {
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
                     .height(80.dp)
                     .width(604.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.onBackground
-                ),
-                onClick = onNewTransactionClicked,
-                text = stringResource(R.string.woopos_new_order_button),
+                onClick = onReceiptClicked,
+                text = stringResource(R.string.woopos_receipt_button)
             )
         }
     }
@@ -184,11 +181,16 @@ private fun CheckMarkIcon(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .size(size)
+            .shadow(
+                elevation = 4.dp,
+                shape = CircleShape,
+                clip = false
+            )
             .background(WooPosTheme.colors.success, CircleShape)
     ) {
         Icon(
-            imageVector = Icons.Default.Check,
-            tint = WooPosTheme.colors.paymentSuccessIcon,
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_woo_pos_check),
+            tint = MaterialTheme.colors.onSurface,
             contentDescription = stringResource(id = R.string.woopos_payment_successful_label),
             modifier = Modifier
                 .size(iconSize)
