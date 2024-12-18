@@ -178,7 +178,19 @@ class OrderListRepository @Inject constructor(
         }
     }
 
-    fun bulkUpdateOrderStatus(orderIds: List<Long>, newStatus: Order.Status) {
-        TODO()
+    suspend fun bulkUpdateOrderStatus(orderIds: List<Long>, newStatus: Order.Status): Result<Unit> {
+        val result = orderStore.batchUpdateOrdersStatus(
+            site = selectedSite.get(),
+            orderIds = orderIds,
+            newStatus = WCOrderStatusModel(statusKey = newStatus.value)
+        )
+
+        // todo update temporary handling
+        return if (result.isError) {
+            WooLog.e(ORDERS, "Error bulk updating order status: ${result.error.message}")
+            Result.failure(WooException(result.error))
+        } else {
+            Result.success(Unit)
+        }
     }
 }

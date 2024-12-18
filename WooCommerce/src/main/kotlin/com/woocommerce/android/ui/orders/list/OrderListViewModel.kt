@@ -944,12 +944,17 @@ class OrderListViewModel @Inject constructor(
                 WooLog.e(ORDERS, errorMessage)
             }
         } else {
+            // todo show loading state
             launch {
-                orderListRepository.bulkUpdateOrderStatus(
+                val result = orderListRepository.bulkUpdateOrderStatus(
                     orderIds = orderIds,
                     newStatus = newStatus
                 )
+
+                // todo show success/error snackbar
+                // todo make sure order list is refreshed
             }
+            // todo remove loading state, remove multi selection state
         }
     }
 
