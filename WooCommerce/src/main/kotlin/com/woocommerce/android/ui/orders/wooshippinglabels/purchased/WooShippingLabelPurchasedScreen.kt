@@ -88,7 +88,11 @@ internal fun WooShippingLabelPurchasedScreen(
     onLearnMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
             text = stringResource(id = R.string.shipping_label_purchased_title),
             style = MaterialTheme.typography.subtitle1,
@@ -138,26 +142,6 @@ internal fun WooShippingLabelPurchasedScreen(
                 )
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))),
         )
-    }
-}
-
-@Preview(showSystemUi = true, device = Devices.PIXEL_4)
-@Composable
-internal fun WooShippingLabelPurchasedScreenPreview() {
-    WooThemeWithBackground {
-        Surface {
-            val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
-            WooShippingLabelPurchasedScreen(
-                selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
-                onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
-                onPrintShippingLabelClicked = {},
-                modifier = Modifier.padding(16.dp),
-                onTrackShipmentClicked = {},
-                onSchedulePickUpClicked = {},
-                onRefundClicked = {},
-                onLearnMoreClicked = {}
-            )
-        }
     }
 }
 
@@ -326,6 +310,25 @@ private fun ShippingLabelLink(
                 contentDescription = null,
                 tint = MaterialTheme.colors.successColor,
                 modifier = Modifier.padding(start = 8.dp)
+            )
+        }
+    }
+}
+
+@Preview(showSystemUi = true, device = Devices.PIXEL_4)
+@Composable
+internal fun WooShippingLabelPurchasedScreenPreview() {
+    WooThemeWithBackground {
+        Surface {
+            val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
+            WooShippingLabelPurchasedScreen(
+                selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
+                onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
+                onPrintShippingLabelClicked = {},
+                onTrackShipmentClicked = {},
+                onSchedulePickUpClicked = {},
+                onRefundClicked = {},
+                onLearnMoreClicked = {}
             )
         }
     }
