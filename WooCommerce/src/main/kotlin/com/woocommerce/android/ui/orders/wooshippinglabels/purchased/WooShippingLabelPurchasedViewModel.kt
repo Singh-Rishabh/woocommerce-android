@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LETTER
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -28,7 +29,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
         initialValue = ViewState(
-            paperSizeOption = LETTER
+            paperSizeOption = LABEL
         )
     )
     val viewState = _viewState.asLiveData()
