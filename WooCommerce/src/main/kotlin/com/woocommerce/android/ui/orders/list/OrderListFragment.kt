@@ -707,11 +707,13 @@ class OrderListFragment :
                     .startSupportActionMode(this@OrderListFragment)
                 delayMultiSelection()
                 enableFiltersCard(false)
+                enableOrdersRefresh(false)
             }
 
             OrderListViewModel.ViewState.OrderListState.Browsing -> {
                 actionMode?.finish()
                 enableFiltersCard(true)
+                enableOrdersRefresh(true)
             }
         }
     }
@@ -725,6 +727,10 @@ class OrderListFragment :
 
     private fun enableFiltersCard(enable: Boolean) {
         binding.orderFiltersCard.isEnabled(enable)
+    }
+
+    private fun enableOrdersRefresh(enable: Boolean) {
+        binding.listPaneContainer.isEnabled = enable
     }
 
     private fun showBottomNavBar(isVisible: Boolean) {
