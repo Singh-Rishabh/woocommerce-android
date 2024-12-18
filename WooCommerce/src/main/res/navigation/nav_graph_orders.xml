@@ -755,5 +755,9 @@
     <fragment
         android:id="@+id/wooShippingLabelPurchasedFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
-        android:label="WooShippingLabelPurchasedFragment" />
+        android:label="WooShippingLabelPurchasedFragment">
+        <argument
+            android:name="labelId"
+            app:argType="long" />
+    </fragment>
 </navigation>

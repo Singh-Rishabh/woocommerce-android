@@ -54,11 +54,9 @@ class WooShippingLabelCreationFragment : BaseFragment() {
 
                 is WooShippingLabelCreationViewModel.LabelPurchased -> {
                     WooShippingLabelCreationFragmentDirections
-                        .actionWooShippingLabelCreationFragmentToWooShippingLabelPurchasedFragment()
-                        .let {
-                            val navController = findNavController()
-                            navController.navigateSafely(it)
-                        }
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelPurchasedFragment(
+                            labelId = event.labelId
+                        ).let { findNavController().navigateSafely(it) }
                 }
             }
         }
