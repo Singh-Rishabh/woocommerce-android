@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import com.google.android.material.snackbar.Snackbar
 import com.woocommerce.android.AppPrefsWrapper
+import com.woocommerce.android.BuildConfig
 import com.woocommerce.android.FeedbackPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
@@ -60,6 +61,7 @@ import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.util.DateUtils
 import com.woocommerce.android.util.ThrottleLiveData
 import com.woocommerce.android.util.WooLog
+import com.woocommerce.android.util.WooLog.T.ORDERS
 import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -933,8 +935,22 @@ class OrderListViewModel @Inject constructor(
         }
     }
 
-    fun onBulkOrderStatusChanged(newStatus: Order.Status) {
-        TODO() // Do API call
+    fun onBulkOrderStatusChanged(orderIds: List<Long>, newStatus: Order.Status) {
+        if (orderIds.isEmpty()) {
+            val errorMessage = "Trying to bulk update order status but order Ids list is empty"
+            if (BuildConfig.DEBUG) {
+                throw IllegalStateException(errorMessage)
+            } else {
+                WooLog.e(ORDERS, errorMessage)
+            }
+        } else {
+            launch {
+                orderListRepository.bulkUpdateOrderStatus(
+                    orderIds = orderIds,
+                    newStatus = newStatus
+                )
+            }
+        }
     }
 
     sealed class OrderListEvent : Event() {

@@ -177,4 +177,8 @@ class OrderListRepository @Inject constructor(
             continuationOrderStatus.continueWith(RequestResult.SUCCESS)
         }
     }
+
+    fun bulkUpdateOrderStatus(orderIds: List<Long>, newStatus: Order.Status) {
+        TODO()
+    }
 }

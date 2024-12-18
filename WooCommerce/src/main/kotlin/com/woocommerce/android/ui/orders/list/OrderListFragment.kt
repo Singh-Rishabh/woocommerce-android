@@ -817,7 +817,10 @@ class OrderListFragment :
             key = OrderStatusSelectorDialog.KEY_ORDER_STATUS_RESULT,
             entryId = R.id.orders,
         ) {
-            viewModel.onBulkOrderStatusChanged(Order.Status.fromValue(it.newStatus))
+            viewModel.onBulkOrderStatusChanged(
+                orderIds = tracker?.selection?.toList() ?: emptyList(),
+                newStatus = Order.Status.fromValue(it.newStatus)
+            )
         }
     }
 
