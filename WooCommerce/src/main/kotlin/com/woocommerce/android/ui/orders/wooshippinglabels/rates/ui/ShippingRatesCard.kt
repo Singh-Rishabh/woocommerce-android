@@ -461,7 +461,7 @@ private fun SelectSignatureRequired(
                         modifier = Modifier.padding(end = 4.dp)
                     )
                     Text(
-                        text = option.value.formattedFee,
+                        text = option.value.feeDescription,
                         style = MaterialTheme.typography.body1,
                     )
                 }
@@ -493,6 +493,8 @@ data class ShippingRateOptionUI(
     val title: String,
     val formatedPrice: String,
     val formattedFee: String,
+    val formattedOptionName: String,
+    val feeDescription: String,
     val formattedEstimatedDays: String,
     val option: Option,
     val shippingRateOptions: List<String>,
@@ -565,7 +567,9 @@ fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI
                 "Insurance",
                 "Free Pickup"
             ),
-            formattedEstimatedDays = "$it business days"
+            formattedEstimatedDays = "$it business days",
+            formattedOptionName = "Default",
+            feeDescription = "Default"
         )
         val options = mapOf(Option.DEFAULT to option)
 

@@ -126,6 +126,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         shippingRateOptions = emptyList(),
         option = Option.DEFAULT,
         rate = defaultShippingRate,
+        feeDescription = "fee description",
+        formattedOptionName = Option.DEFAULT.name
     )
 
     private val defaultShippingRates = mapOf(

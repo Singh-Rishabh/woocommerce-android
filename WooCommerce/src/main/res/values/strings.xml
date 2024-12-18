@@ -1339,6 +1339,8 @@
     <string name="shipping_label_shipping_carrier_shipping_method_banner_message">Your customer selected %1$s</string>
     <string name="shipping_label_rate_option_signature_required">Signature required (%s)</string>
     <string name="shipping_label_rate_option_adult_signature_required">Adult signature required (%s)</string>
+    <string name="shipping_label_rate_option_signature_required_name">Signature required</string>
+    <string name="shipping_label_rate_option_adult_signature_required_name">Adult signature required</string>
     <string name="shipping_label_rate_included_options">Includes %s</string>
     <string name="shipping_label_rate_included_options_usps_tracking">USPS tracking</string>
     <string name="shipping_label_rate_included_options_tracking">tracking</string>
