@@ -933,6 +933,10 @@ class OrderListViewModel @Inject constructor(
         }
     }
 
+    fun onBulkOrderStatusChanged(newStatus: Order.Status) {
+        TODO() // Do API call
+    }
+
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()

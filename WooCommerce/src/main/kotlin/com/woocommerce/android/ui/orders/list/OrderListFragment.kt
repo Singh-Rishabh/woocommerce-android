@@ -41,6 +41,7 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ORDER_ID
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_START_PAYMENT_FLOW
 import com.woocommerce.android.databinding.FragmentOrderListBinding
 import com.woocommerce.android.extensions.WindowSizeClass
+import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.pinFabAboveBottomNavigationBar
@@ -70,6 +71,7 @@ import com.woocommerce.android.ui.orders.OrdersCommunicationViewModel
 import com.woocommerce.android.ui.orders.creation.CodeScannerStatus
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper.BarcodeFormat
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel
+import com.woocommerce.android.ui.orders.details.OrderStatusSelectorDialog
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowErrorSnack
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowOrderFilters
 import com.woocommerce.android.ui.products.MutableMultipleSelectionPredicate
@@ -810,6 +812,12 @@ class OrderListFragment :
             if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
                 openSpecificOrder(it, true)
             }
+        }
+        handleDialogResult<OrderStatusUpdateSource>(
+            key = OrderStatusSelectorDialog.KEY_ORDER_STATUS_RESULT,
+            entryId = R.id.orders,
+        ) {
+            viewModel.onBulkOrderStatusChanged(Order.Status.fromValue(it.newStatus))
         }
     }
 
