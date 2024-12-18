@@ -91,7 +91,7 @@ class FetchShippingLabelFileTest : BaseUnitTest() {
     fun `invoke returns null when site is null`() = testBlocking {
         whenever(selectedSite.getOrNull()).thenReturn(null)
 
-        val result = fetchShippingLabelFile(listOf(1L, 2L, 3L))
+        val result = fetchShippingLabelFile(listOf(1L, 2L, 3L), "A4")
 
         assertThat(result).isNull()
         verify(labelRepository, never()).fetchShippingLabelPrinting(any(), any(), any())
