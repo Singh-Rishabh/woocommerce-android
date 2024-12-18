@@ -604,6 +604,10 @@ class OrderListFragment :
                 is OrderListViewModel.OrderListEvent.RetryLoadingOrders -> refreshOrders()
                 is OrderListViewModel.OrderListEvent.OpenOrderCreationWithSimplePaymentsMigration ->
                     openOrderCreationFragment(indicateSimplePaymentsMigration = true)
+                is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
+                    showBulkUpdateStatusDialog(event.orderIds)
+                }
+
                 else -> event.isHandled = false
             }
         }
@@ -698,6 +702,10 @@ class OrderListFragment :
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
             binding.orderFiltersCard.updateLastUpdate(lastUpdate)
         }
+    }
+
+    private fun showBulkUpdateStatusDialog(productsIds: List<Long>) {
+        TODO()
     }
 
     private fun handleListState(orderListState: OrderListViewModel.ViewState.OrderListState) {
@@ -1145,7 +1153,7 @@ class OrderListFragment :
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_orderlist_update_status -> {
-                // todo: implement bulk update status
+                viewModel.onBulkUpdateStatusClicked(tracker?.selection?.toList().orEmpty())
                 true
             }
 

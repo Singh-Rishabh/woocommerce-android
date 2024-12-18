@@ -916,6 +916,10 @@ class OrderListViewModel @Inject constructor(
         )
     }
 
+    fun onBulkUpdateStatusClicked(orderIds: List<Long>) {
+        triggerEvent(OrderListEvent.ShowUpdateStatusDialog(orderIds))
+    }
+
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
@@ -950,6 +954,8 @@ class OrderListViewModel @Inject constructor(
         data object RetryLoadingOrders : OrderListEvent()
 
         data object OpenOrderCreationWithSimplePaymentsMigration : OrderListEvent()
+
+        data class ShowUpdateStatusDialog(val orderIds: List<Long>) : OrderListEvent()
     }
 
     @Parcelize
