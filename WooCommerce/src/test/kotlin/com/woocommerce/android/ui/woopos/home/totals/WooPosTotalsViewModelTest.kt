@@ -33,7 +33,6 @@ import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
-import com.woocommerce.android.ui.woopos.featureflags.WooPosIsReceiptsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -142,8 +141,6 @@ class WooPosTotalsViewModelTest {
     private val isReceiptSendingSupported: WooPosEmailReceiptIsSendingSupported = mock {
         onBlocking { invoke() }.thenReturn(false)
     }
-    private val isReceiptsEnabled: WooPosIsReceiptsEnabled = mock()
-
     private companion object {
         private const val EMPTY_ORDER_ID = -1L
     }
@@ -1177,7 +1174,6 @@ class WooPosTotalsViewModelTest {
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
         wooPosItemsNavigator = wooPosItemsNavigator,
         isReceiptSendingSupported = isReceiptSendingSupported,
-        isReceiptsEnabled = isReceiptsEnabled,
         uiStringParser = uiStringParser,
         savedState = savedState,
     )

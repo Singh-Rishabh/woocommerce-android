@@ -110,7 +110,6 @@ fun WooPosPaymentSuccessScreen(
             )
 
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
-            val textLinkTo = if (state.isReceiptAvailable) buttonReceipt else buttonNewOrder
             Text(
                 text = state.orderTotalText,
                 style = MaterialTheme.typography.h6,
@@ -120,25 +119,23 @@ fun WooPosPaymentSuccessScreen(
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    bottom.linkTo(textLinkTo.top, margin = marginBetweenButtonAndTextAdaptive)
+                    bottom.linkTo(buttonReceipt.top, margin = marginBetweenButtonAndTextAdaptive)
                 }
             )
 
             val marginBetweenButtons = 16.dp.toAdaptivePadding()
-            if (state.isReceiptAvailable) {
-                WooPosOutlinedButton(
-                    modifier = Modifier
-                        .constrainAs(buttonReceipt) {
-                            bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtons)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                        .height(80.dp)
-                        .width(604.dp),
-                    onClick = onReceiptClicked,
-                    text = stringResource(R.string.woopos_receipt_button),
-                )
-            }
+            WooPosOutlinedButton(
+                modifier = Modifier
+                    .constrainAs(buttonReceipt) {
+                        bottom.linkTo(buttonNewOrder.top, margin = marginBetweenButtons)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .height(80.dp)
+                    .width(604.dp),
+                onClick = onReceiptClicked,
+                text = stringResource(R.string.woopos_receipt_button),
+            )
 
             WooPosButton(
                 modifier = Modifier
@@ -206,24 +203,6 @@ fun WooPosPaymentSuccessScreenPreview() {
         WooPosPaymentSuccessScreen(
             state = WooPosTotalsViewState.PaymentSuccess(
                 orderTotalText = "A payment of 13.18 was successfully made",
-                isReceiptAvailable = true,
-            ),
-            bottomAnimationStarted = true,
-            iconAnimationStarted = true,
-            onReceiptClicked = {},
-            onNewTransactionClicked = {}
-        )
-    }
-}
-
-@WooPosPreview
-@Composable
-fun WooPosPaymentSuccessWithoutReceiptScreenPreview() {
-    WooPosTheme {
-        WooPosPaymentSuccessScreen(
-            state = WooPosTotalsViewState.PaymentSuccess(
-                orderTotalText = "A payment of 13.18 was successfully made",
-                isReceiptAvailable = false,
             ),
             bottomAnimationStarted = true,
             iconAnimationStarted = true,
