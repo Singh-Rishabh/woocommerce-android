@@ -158,6 +158,7 @@ class OrderListAdapter(
         private var isNotCompleted = true
         private var orderId = SwipeToComplete.SwipeAbleViewHolder.EMPTY_SWIPED_ID
         private val extras = HashMap<String, String>()
+
         // Note that `isActivated` here is not the same as `isSelected`.
         // - `isActivated` : Flag used when an item is long pressed to support multiple selection in bulk updating.
         // - `isSelected`  : Flag used for the tablet 2-panel mode to show the selected item in a different color.
