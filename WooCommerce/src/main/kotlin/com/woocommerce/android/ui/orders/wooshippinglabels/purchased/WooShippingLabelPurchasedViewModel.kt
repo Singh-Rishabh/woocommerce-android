@@ -60,29 +60,6 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         val paperSizeOption: WooShippingLabelPaperSize,
     ) : Parcelable
 
-    @Parcelize
-    data class ShippingLabelData(
-        val totalWeight: String,
-        val totalPrice: String,
-        val dimensionUnit: String,
-        val weightUnit: String,
-        val items: List<ShippableItem>
-    ) : Parcelable
-
-    @Parcelize
-    data class ShippableItem(
-        val itemId: Long,
-        val productId: Long,
-        val title: String,
-        val dimensions: String,
-        val weight: String,
-        val formattedPrice: String,
-        val quantity: Float,
-        val dimensionUnit: String,
-        val weightUnit: String,
-        val imageUrl: String? = null
-    ) : Parcelable
-
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
     object TrackShipmentRequested : MultiLiveEvent.Event()
     object SchedulePickUpRequested : MultiLiveEvent.Event()
