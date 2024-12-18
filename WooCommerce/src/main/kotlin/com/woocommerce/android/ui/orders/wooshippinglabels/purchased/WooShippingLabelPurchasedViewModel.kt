@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
@@ -33,6 +34,29 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         )
     )
     val viewState = _viewState.asLiveData()
+
+    init {
+        _viewState.update { state ->
+            state.copy(
+                shippableItems = ShippableItemsUI(
+                    formattedTotalWeight = navArgs.purchaseData.totalWeight,
+                    formattedTotalPrice = navArgs.purchaseData.totalPrice,
+                    shippableItems = navArgs.purchaseData.items.map {
+                        ShippableItemUI(
+                            itemId = it.itemId,
+                            productId = it.productId,
+                            title = it.title,
+                            formattedSize = it.dimensions,
+                            formattedWeight = it.weight,
+                            formattedPrice = it.formattedPrice,
+                            quantity = it.quantity,
+                            imageUrl = it.imageUrl
+                        )
+                    }
+                )
+            )
+        }
+    }
 
     fun onPrintShippingLabelClicked() {
         launch {
