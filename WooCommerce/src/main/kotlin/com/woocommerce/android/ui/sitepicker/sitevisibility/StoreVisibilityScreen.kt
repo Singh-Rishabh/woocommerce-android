@@ -177,8 +177,8 @@ private fun AvailableStoresForHiding(
 @Composable
 private fun StoreItem(
     wooStore: WooStoreUi,
-    showDivider: Boolean = false,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showDivider: Boolean = false
 ) {
     Column(modifier = modifier) {
         Text(
