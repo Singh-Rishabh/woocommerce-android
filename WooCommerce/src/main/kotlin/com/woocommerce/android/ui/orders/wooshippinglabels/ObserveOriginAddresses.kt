@@ -12,19 +12,19 @@ class ObserveOriginAddresses @Inject constructor() {
         delay(200)
         val addresses = listOf(
             OriginShippingAddress(
-                firstName = "first name",
-                lastName = "last name",
-                company = "Company",
-                phone = "",
-                address1 = "A huge address that should be truncated",
+                firstName = "",
+                lastName = "",
+                company = "Shut up and sip",
+                phone = "55512345",
+                address1 = "60 29TH ST PMB 343",
                 address2 = "",
-                city = "San Francisco",
-                postcode = "",
-                email = "email",
-                country = "USA",
-                state = "California",
-                id = "id_1",
-                isDefault = false,
+                city = "SAN FRANCISCO",
+                postcode = "94110-4929",
+                email = "alejandro.torres@mail.com",
+                country = "US",
+                state = "CA",
+                id = "store_details",
+                isDefault = true,
                 isVerified = true
             ),
             OriginShippingAddress(
@@ -56,7 +56,7 @@ class ObserveOriginAddresses @Inject constructor() {
                 country = "USA",
                 state = "California",
                 id = "id_1",
-                isDefault = true,
+                isDefault = false,
                 isVerified = true
             )
         )
