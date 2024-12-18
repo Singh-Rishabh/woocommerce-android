@@ -951,7 +951,13 @@ class OrderListViewModel @Inject constructor(
                     newStatus = newStatus
                 )
 
-                // todo show success/error snackbar
+                // todo add proper handling for success and failure state
+                if (result.isFailure) {
+                    triggerEvent(Event.ShowSnackbar(R.string.error_generic))
+                } else {
+                    triggerEvent(Event.ShowSnackbar(R.string.order_status_updated))
+                }
+
                 // todo make sure order list is refreshed
             }
             // todo remove loading state, remove multi selection state

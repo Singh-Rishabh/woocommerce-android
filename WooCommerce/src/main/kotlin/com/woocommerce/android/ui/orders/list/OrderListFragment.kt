@@ -611,6 +611,8 @@ class OrderListFragment :
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
 
+                is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
+
                 else -> event.isHandled = false
             }
         }
