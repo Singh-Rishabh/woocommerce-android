@@ -93,6 +93,7 @@ fun WooSitesVisibilityScreen(
             StoreItem(
                 wooStore = state.currentSite,
                 modifier = Modifier
+                    .fillMaxWidth()
                     .background(MaterialTheme.colors.surface)
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
@@ -111,9 +112,7 @@ fun WooSitesVisibilityScreen(
             AvailableStoresForHiding(
                 state = state,
                 onSiteSelected = onSiteSelected,
-                modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
-                    .padding(horizontal = 16.dp)
+                modifier = Modifier.background(MaterialTheme.colors.surface)
             )
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
@@ -135,8 +134,9 @@ private fun AvailableStoresForHiding(
         itemsIndexed(state.wooStores) { index, wooStore ->
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onSiteSelected(wooStore) },
+                    .clickable { onSiteSelected(wooStore) }
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SelectionCheck(
