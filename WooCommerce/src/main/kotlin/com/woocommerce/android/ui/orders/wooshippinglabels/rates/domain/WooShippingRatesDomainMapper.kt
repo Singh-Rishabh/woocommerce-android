@@ -61,6 +61,7 @@ class WooShippingRatesDomainMapper @Inject constructor(
         }
     }
 
+    @Suppress("LongMethod")
     private fun getShippingRate(
         rate: WooShippingRateOptionsModel,
         resourceProvider: ResourceProvider,
