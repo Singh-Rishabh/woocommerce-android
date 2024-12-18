@@ -91,14 +91,14 @@ fun WooSitesVisibilityScreen(
                 color = MaterialTheme.colors.onSurface,
             )
             StoreItem(
-                wooStore = state.wooStores.first(),
+                wooStore = state.currentSite,
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface)
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                text = stringResource(R.string.site_picker_edit_store_list_footer),
+                text = stringResource(R.string.site_picker_edit_store_current_site_footer),
                 style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
@@ -185,25 +185,31 @@ fun StoreVisibilityScreenPreview() {
         state = WooStoresUiState(
             wooStores = listOf(
                 WooStoreUi(
-                    siteName = "My Store",
+                    siteName = "Another Store",
                     siteUrl = "https://example.com",
                     siteId = 1,
                     isSelected = true
                 ),
                 WooStoreUi(
-                    siteName = "My Store",
+                    siteName = "Any Store",
                     siteUrl = "https://example.com",
                     siteId = 1,
                     isSelected = true
                 ), WooStoreUi(
-                    siteName = "My Store",
+                    siteName = "Some Store",
                     siteUrl = "https://example.com",
                     siteId = 1,
                     isSelected = true
                 )
 
             ),
-            isSaveButtonEnabled = true
+            isSaveButtonEnabled = true,
+            currentSite = WooStoreUi(
+                siteName = "Current Store",
+                siteUrl = "https://myselectedSite.com",
+                siteId = 1,
+                isSelected = true
+            )
         ),
         onBack = {},
         onSaveTapped = {},
