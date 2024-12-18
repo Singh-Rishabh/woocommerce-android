@@ -461,7 +461,7 @@ private fun SelectSignatureRequired(
                         modifier = Modifier.padding(end = 4.dp)
                     )
                     Text(
-                        text = option.value.formattedFee,
+                        text = option.value.feeDescription,
                         style = MaterialTheme.typography.body1,
                     )
                 }
