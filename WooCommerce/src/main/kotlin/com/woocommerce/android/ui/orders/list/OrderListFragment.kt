@@ -706,10 +706,12 @@ class OrderListFragment :
                 actionMode = (requireActivity() as AppCompatActivity)
                     .startSupportActionMode(this@OrderListFragment)
                 delayMultiSelection()
+                enableFiltersCard(false)
             }
 
             OrderListViewModel.ViewState.OrderListState.Browsing -> {
                 actionMode?.finish()
+                enableFiltersCard(true)
             }
         }
     }
@@ -719,6 +721,10 @@ class OrderListFragment :
         binding.orderListView.ordersList.post {
             selectionPredicate.selectMultiple = true
         }
+    }
+
+    private fun enableFiltersCard(enable: Boolean) {
+        binding.orderFiltersCard.isEnabled(enable)
     }
 
     private fun showBottomNavBar(isVisible: Boolean) {
