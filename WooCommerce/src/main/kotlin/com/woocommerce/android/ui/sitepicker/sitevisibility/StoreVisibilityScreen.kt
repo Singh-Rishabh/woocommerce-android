@@ -116,7 +116,7 @@ fun WooSitesVisibilityScreen(
                 style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
             Text(
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_header),
@@ -153,9 +153,9 @@ private fun AvailableStoresForHiding(
         itemsIndexed(state.wooStores) { index, wooStore ->
             Row(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .clickable { onSiteSelected(wooStore) }
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
+                    .padding(start = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 SelectionCheck(
@@ -165,7 +165,7 @@ private fun AvailableStoresForHiding(
                 StoreItem(
                     wooStore = wooStore,
                     showDivider = index < state.wooStores.size - 1,
-                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                 )
             }
         }
@@ -186,6 +186,7 @@ private fun StoreItem(
         )
         Spacer(Modifier.height(4.dp))
         Text(
+            modifier = Modifier.padding(end = 8.dp),
             text = wooStore.siteUrl,
             style = WooTypography.body2,
             color = colorResource(id = R.color.color_on_surface_medium)
@@ -214,7 +215,8 @@ fun StoreVisibilityScreenPreview() {
                     siteUrl = "https://example.com",
                     siteId = 1,
                     isSelected = true
-                ), WooStoreUi(
+                ),
+                WooStoreUi(
                     siteName = "Some Store",
                     siteUrl = "https://example.com",
                     siteId = 1,
