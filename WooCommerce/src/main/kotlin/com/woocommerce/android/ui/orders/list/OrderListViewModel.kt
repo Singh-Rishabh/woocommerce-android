@@ -32,7 +32,9 @@ import com.woocommerce.android.extensions.NotificationReceivedEvent
 import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.filterNotNull
+import com.woocommerce.android.extensions.runWithContext
 import com.woocommerce.android.model.FeatureFeedbackSettings
+import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.RequestResult.SUCCESS
 import com.woocommerce.android.network.ConnectionChangeReceiver.ConnectionChangeEvent
 import com.woocommerce.android.notifications.NotificationChannelType
@@ -916,8 +918,19 @@ class OrderListViewModel @Inject constructor(
         )
     }
 
-    fun onBulkUpdateStatusClicked(orderIds: List<Long>) {
-        triggerEvent(OrderListEvent.ShowUpdateStatusDialog(orderIds))
+    fun onBulkUpdateStatusClicked() {
+        launch(dispatchers.io) {
+            orderDetailRepository
+                .getOrderStatusOptions().toTypedArray()
+                .runWithContext(dispatchers.main) {
+                    triggerEvent(
+                        OrderListEvent.ShowUpdateStatusDialog(
+                            currentStatus = "", // Intentionally set as empty string to show no status selected
+                            orderStatusList = it
+                        )
+                    )
+                }
+        }
     }
 
     sealed class OrderListEvent : Event() {
@@ -955,7 +968,28 @@ class OrderListViewModel @Inject constructor(
 
         data object OpenOrderCreationWithSimplePaymentsMigration : OrderListEvent()
 
-        data class ShowUpdateStatusDialog(val orderIds: List<Long>) : OrderListEvent()
+        data class ShowUpdateStatusDialog(
+            val currentStatus: String,
+            val orderStatusList: Array<Order.OrderStatus>
+        ) : OrderListEvent() {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (javaClass != other?.javaClass) return false
+
+                other as ShowUpdateStatusDialog
+
+                if (currentStatus != other.currentStatus) return false
+                if (!orderStatusList.contentEquals(other.orderStatusList)) return false
+
+                return true
+            }
+
+            override fun hashCode(): Int {
+                var result = currentStatus.hashCode()
+                result = 31 * result + orderStatusList.contentHashCode()
+                return result
+            }
+        }
     }
 
     @Parcelize

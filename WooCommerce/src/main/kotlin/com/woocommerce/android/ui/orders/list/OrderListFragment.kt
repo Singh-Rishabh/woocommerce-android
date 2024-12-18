@@ -49,6 +49,7 @@ import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.FeatureFeedbackSettings
 import com.woocommerce.android.model.FeatureFeedbackSettings.Feature.SIMPLE_PAYMENTS_AND_ORDER_CREATION
 import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState
+import com.woocommerce.android.model.Order
 import com.woocommerce.android.support.help.HelpOrigin
 import com.woocommerce.android.support.requests.SupportRequestFormActivity
 import com.woocommerce.android.tools.SelectedSite
@@ -605,7 +606,7 @@ class OrderListFragment :
                 is OrderListViewModel.OrderListEvent.OpenOrderCreationWithSimplePaymentsMigration ->
                     openOrderCreationFragment(indicateSimplePaymentsMigration = true)
                 is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
-                    showBulkUpdateStatusDialog(event.orderIds)
+                    showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
 
                 else -> event.isHandled = false
@@ -704,8 +705,16 @@ class OrderListFragment :
         }
     }
 
-    private fun showBulkUpdateStatusDialog(productsIds: List<Long>) {
-        TODO()
+    private fun showBulkUpdateStatusDialog(
+        currentStatus: String,
+        orderStatusList: Array<Order.OrderStatus>
+    ) {
+        findNavController().navigateSafely(
+            OrderListFragmentDirections.actionOrderListFragmentToOrdersListStatusSelectorDialog(
+                currentStatus,
+                orderStatusList
+            )
+        )
     }
 
     private fun handleListState(orderListState: OrderListViewModel.ViewState.OrderListState) {
@@ -1153,7 +1162,7 @@ class OrderListFragment :
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_orderlist_update_status -> {
-                viewModel.onBulkUpdateStatusClicked(tracker?.selection?.toList().orEmpty())
+                viewModel.onBulkUpdateStatusClicked()
                 true
             }
 
