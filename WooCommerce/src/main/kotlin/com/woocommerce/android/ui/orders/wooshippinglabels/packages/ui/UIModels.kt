@@ -9,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PackageData(
+    val id: String,
     val name: String,
     val dimensions: String,
     val weight: String,
@@ -49,6 +50,7 @@ data class PackageData(
 
     companion object {
         val EMPTY = PackageData(
+            id = "",
             name = "",
             dimensions = "",
             weight = "",
@@ -83,6 +85,7 @@ data class CustomPackageCreationData(
         }
 
     fun toPackageData(dimensionUnit: String = "cm") = PackageData(
+        id = "custom_package",
         name = name.orEmpty(),
         dimensions = "$length x $width x $height",
         weight = weight.orEmpty(),

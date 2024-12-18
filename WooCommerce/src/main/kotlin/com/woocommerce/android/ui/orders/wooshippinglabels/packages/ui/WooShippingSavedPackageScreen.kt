@@ -133,21 +133,24 @@ fun WooShippingSavedPackageScreenPreview() {
                     dimensions = "10 x 10 x 10 cm",
                     weight = "10",
                     isSelected = true,
-                    isLetter = true
+                    isLetter = true,
+                    id = "1",
                 ),
                 PackageData(
                     name = "Small Flat Rate Box",
                     dimensions = "20 x 20 x 20 cm",
                     weight = "20",
                     isSelected = false,
-                    isLetter = false
+                    isLetter = false,
+                    id = "1",
                 ),
                 PackageData(
                     name = "Small Flat Rate Box",
                     dimensions = "30 x 30 x 30 cm",
                     weight = "30",
                     isSelected = false,
-                    isLetter = false
+                    isLetter = false,
+                    id = "1",
                 )
             ),
             isAddPackageEnabled = true,
