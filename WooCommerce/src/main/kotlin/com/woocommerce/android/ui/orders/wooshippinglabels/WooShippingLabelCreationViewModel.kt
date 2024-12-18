@@ -16,7 +16,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShipping
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -319,7 +319,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     // This function is using a mocked Purchased data
     // We must replace this later with the actual Label purchasing data later
     fun onPurchaseShippingLabel() {
-        val purchasedData = PurchasedShippingData(
+        val purchaseData = PurchasedShippingLabelData(
             labelId = 4158L,
             totalWeight = "1.5",
             totalPrice = "10.00",
@@ -327,7 +327,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             weightUnit = "kg",
             items = emptyList()
         )
-        triggerEvent(LabelPurchased(purchasedData))
+        triggerEvent(LabelPurchased(purchaseData))
     }
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
@@ -363,7 +363,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     data object StartPackageSelection : Event()
-    data class LabelPurchased(val purchasedData: PurchasedShippingData) : Event()
+    data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()

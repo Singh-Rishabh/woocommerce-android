@@ -37,7 +37,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         launch {
             val paperSize = _viewState.value.paperSizeOption
             fetchShippingLabelFile(
-                labelIds = listOf(navArgs.shippingData.labelId),
+                labelIds = listOf(navArgs.purchaseData.labelId),
                 paperSize = paperSize.name.lowercase(Locale.US)
             )?.let { triggerEvent(OpenShippingLabelFile(it)) }
         }

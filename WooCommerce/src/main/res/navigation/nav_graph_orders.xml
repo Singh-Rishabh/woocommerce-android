@@ -757,7 +757,7 @@
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
         android:label="WooShippingLabelPurchasedFragment">
         <argument
-            android:name="shippingData"
-            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingData" />
+            android:name="purchaseData"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData" />
     </fragment>
 </navigation>
