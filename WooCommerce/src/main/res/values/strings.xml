@@ -4281,7 +4281,7 @@
     <string name="woopos_payment_successful_label">Payment successful</string>
     <string name="woopos_payment_successful_checkmark_icon_content_description">Payment successful checkmark icon</string>
     <string name="woopos_new_order_button">New order</string>
-    <string name="woopos_receipt_button">Receipt</string>
+    <string name="woopos_receipt_button">Email receipt</string>
     <string name="woopos_payment_subtotal_label">Subtotal</string>
     <string name="woopos_payment_tax_label">Taxes</string>
     <string name="woopos_payment_total_label">Total</string>
@@ -4342,11 +4342,16 @@
 
     <string name="woopos_cash_payment_title">Cash payment</string>
     <string name="woopos_complete_cash_order_button">Mark payment as complete</string>
-    <string name="woopos_cash_payment_enter_amount_label">Type amount received</string>
     <string name="woopos_cash_payment_total">Total: %s</string>
     <string name="woopos_cash_payment_change_due">Change due %s</string>
-    <string name="woopos_cash_payment_no_chang_due">No change due</string>
     <string name="woopos_cash_payment_error_message">Error trying to process payment. Try again.</string>
+    <string name="woopos_email_receipt_send_button">Send</string>
+
+    <string name="woopos_toolbar_icon_content_description">Back</string>
+
+    <string name="woopos_email_receipt_title">Email receipt</string>
+    <string name="woopos_email_receipt_email_label">Type email</string>
+    <string name="woopos_email_receipt_send_error">Error trying to send this email. Try again</string>
 
 
     <string name="customers_details_customer_section">Customer</string>

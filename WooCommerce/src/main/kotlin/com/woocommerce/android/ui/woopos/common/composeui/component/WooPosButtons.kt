@@ -17,6 +17,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
@@ -159,7 +160,7 @@ fun WooPosOutlinedButton(
         border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.background,
+            backgroundColor = Color.Transparent,
             contentColor = MaterialTheme.colors.onBackground,
         ),
         elevation = ButtonDefaults.elevation(
