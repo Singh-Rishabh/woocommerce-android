@@ -83,50 +83,97 @@ fun WooSitesVisibilityScreen(
             elevation = 0.dp
         )
     }) { padding ->
-        Column {
-            LazyColumn(
-                modifier = modifier
-                    .padding(padding)
-                    .background(MaterialTheme.colors.surface)
-                    .padding(horizontal = 16.dp)
-            ) {
-                itemsIndexed(state.wooStores) { index, wooStore ->
-                    Row(
-                        modifier = Modifier.clickable { onSiteSelected(wooStore) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SelectionCheck(
-                            isSelected = wooStore.isSelected,
-                            onSelectionChange = null,
-                        )
-                        Column(
-                            Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                        ) {
-                            Text(
-                                text = wooStore.siteName,
-                                style = WooTypography.body1,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = wooStore.siteUrl,
-                                style = WooTypography.body2,
-                                color = colorResource(id = R.color.color_on_surface_medium)
-                            )
-                            Spacer(Modifier.height(16.dp))
-                            if (index < state.wooStores.size - 1) {
-                                Divider()
-                            }
-                        }
-                    }
-                }
-            }
+        Column(modifier = modifier.padding(padding)) {
             Text(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_current_site_header),
+                style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            StoreItem(
+                wooStore = state.wooStores.first(),
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            )
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_footer),
                 style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
+            Text(
+                modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_list_header),
+                style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            AvailableStoresForHiding(
+                state = state,
+                onSiteSelected = onSiteSelected,
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface)
+                    .padding(horizontal = 16.dp)
+            )
+            Text(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+                text = stringResource(R.string.site_picker_edit_store_list_footer),
+                style = WooTypography.caption,
+                color = MaterialTheme.colors.onSurface,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AvailableStoresForHiding(
+    state: WooStoresUiState,
+    onSiteSelected: (WooStoreUi) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(modifier = modifier) {
+        itemsIndexed(state.wooStores) { index, wooStore ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSiteSelected(wooStore) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SelectionCheck(
+                    isSelected = wooStore.isSelected,
+                    onSelectionChange = null,
+                )
+                StoreItem(
+                    wooStore = wooStore,
+                    showDivider = index < state.wooStores.size - 1,
+                    modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StoreItem(
+    wooStore: WooStoreUi,
+    showDivider: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = wooStore.siteName,
+            style = WooTypography.body1,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = wooStore.siteUrl,
+            style = WooTypography.body2,
+            color = colorResource(id = R.color.color_on_surface_medium)
+        )
+        Spacer(Modifier.height(16.dp))
+        if (showDivider) {
+            Divider()
         }
     }
 }
@@ -142,7 +189,19 @@ fun StoreVisibilityScreenPreview() {
                     siteUrl = "https://example.com",
                     siteId = 1,
                     isSelected = true
+                ),
+                WooStoreUi(
+                    siteName = "My Store",
+                    siteUrl = "https://example.com",
+                    siteId = 1,
+                    isSelected = true
+                ), WooStoreUi(
+                    siteName = "My Store",
+                    siteUrl = "https://example.com",
+                    siteId = 1,
+                    isSelected = true
                 )
+
             ),
             isSaveButtonEnabled = true
         ),
