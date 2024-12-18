@@ -228,6 +228,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             } else {
                 shippingRatesState.value = ShippingRatesState.Error
             }
+            selectedRate.value = null
         } else {
             shippingRatesState.value = ShippingRatesState.NoAvailable
         }
