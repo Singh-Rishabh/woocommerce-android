@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.sitepicker.sitevisibility
 
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
 import com.woocommerce.android.ui.sitepicker.SitePickerTestUtils
 import com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityViewModel.WooStoreUi
@@ -21,7 +22,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
                 url = "www.$siteId.com"
             }
         }
-        private val WOO_STORE_DEFAULT_UI = DEFAULT_STORES.first().let {
+        private val WOO_STORE_DEFAULT_UI = DEFAULT_STORES.last().let {
             WooStoreUi(
                 siteName = it.name,
                 siteUrl = it.url,
@@ -34,12 +35,16 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
     private val sitePickerRepository: SitePickerRepository = mock {
         onBlocking { getSites() } doReturn DEFAULT_STORES
     }
+    private val selectedSite: SelectedSite = mock {
+        on { get() }.thenReturn(DEFAULT_STORES.first())
+    }
     private lateinit var viewModel: WooSitesVisibilityViewModel
 
     @Before
     fun setUp() {
         viewModel = WooSitesVisibilityViewModel(
             sitePickerRepository = sitePickerRepository,
+            selectedSite = selectedSite,
             savedStateHandle = mock()
         )
     }
@@ -49,10 +54,9 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
         testBlocking {
             viewModel.onSiteSelected(WOO_STORE_DEFAULT_UI)
 
-            // Assert
             val updatedState = viewModel.viewState.getOrAwaitValue()
-            assert(updatedState?.wooStores?.first()?.isSelected == false)
-            assert(updatedState?.isSaveButtonEnabled == true)
+            assert(!updatedState.wooStores.last().isSelected)
+            assert(updatedState.isSaveButtonEnabled)
         }
 
     @Test
@@ -61,9 +65,8 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
             viewModel.onSiteSelected(WOO_STORE_DEFAULT_UI)
             viewModel.onSiteSelected(WOO_STORE_DEFAULT_UI)
 
-            // Assert
             val updatedState = viewModel.viewState.getOrAwaitValue()
-            assert(updatedState?.wooStores?.first()?.isSelected == true)
-            assert(updatedState?.isSaveButtonEnabled == false)
+            assert(updatedState.wooStores?.first()?.isSelected == true)
+            assert(!updatedState.isSaveButtonEnabled)
         }
 }
