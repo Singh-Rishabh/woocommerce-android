@@ -1283,6 +1283,7 @@
     <string name="shipping_label_purchased_track_shipment">Track shipment</string>
     <string name="shipping_label_purchased_schedule_pick_up">Schedule pickup</string>
     <string name="shipping_label_purchased_request_refund">Request refund</string>
+    <string name="shipping_label_total_shipment_weight">Total shipment weight (with package)</string>
 
 
     <!--
@@ -4339,10 +4340,8 @@
 
     <string name="woopos_cash_payment_title">Cash payment</string>
     <string name="woopos_complete_cash_order_button">Mark payment as complete</string>
-    <string name="woopos_cash_payment_enter_amount_label">Type amount received</string>
     <string name="woopos_cash_payment_total">Total: %s</string>
     <string name="woopos_cash_payment_change_due">Change due %s</string>
-    <string name="woopos_cash_payment_no_chang_due">No change due</string>
     <string name="woopos_cash_payment_error_message">Error trying to process payment. Try again.</string>
     <string name="woopos_email_receipt_send_button">Send</string>
 

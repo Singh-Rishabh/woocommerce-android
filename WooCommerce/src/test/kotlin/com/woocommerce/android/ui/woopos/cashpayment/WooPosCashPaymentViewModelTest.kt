@@ -57,8 +57,6 @@ class WooPosCashPaymentViewModelTest {
             .thenReturn("Complete Order")
         whenever(resourceProvider.getString(R.string.woopos_cash_payment_change_due, "20.00"))
             .thenReturn("Change Due: $20.00")
-        whenever(resourceProvider.getString(R.string.woopos_cash_payment_no_chang_due))
-            .thenReturn("No Change Due")
 
         val savedStateHandle = SavedStateHandle(mapOf("orderId" to orderId))
 
@@ -108,11 +106,9 @@ class WooPosCashPaymentViewModelTest {
     }
 
     @Test
-    fun `given invalid amount less than total, when onUIEvent AmountChanged, then button is disabled and no change due`() = runTest {
+    fun `given invalid amount less than total, when onUIEvent AmountChanged, then button is disabled`() = runTest {
         // GIVEN
         val enteredAmount = BigDecimal("30.00")
-        whenever(resourceProvider.getString(R.string.woopos_cash_payment_no_chang_due))
-            .thenReturn("No Change Due")
 
         // WHEN
         viewModel.onUIEvent(
@@ -124,7 +120,7 @@ class WooPosCashPaymentViewModelTest {
         assertThat(state).isInstanceOf(WooPosCashPaymentState.Collecting::class.java)
         val collectingState = state as WooPosCashPaymentState.Collecting
         assertThat(collectingState.enteredAmount).isEqualTo(enteredAmount)
-        assertThat(collectingState.changeDueText).isEqualTo("No Change Due")
+        assertThat(collectingState.changeDueText).isEqualTo("")
         assertThat(collectingState.button.status).isEqualTo(WooPosCashPaymentState.Collecting.Button.Status.DISABLED)
     }
 

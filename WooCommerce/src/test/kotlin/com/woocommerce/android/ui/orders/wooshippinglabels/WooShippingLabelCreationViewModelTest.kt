@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
+import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
@@ -10,11 +11,20 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateOptionUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.kotlin.any
@@ -73,7 +83,59 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             isVerified = true
         )
     )
-    private val defaultShippingRates = emptyMap<Carrier, List<ShippingRateUI>>()
+    private val defaultShipToAddress = Address.EMPTY.copy(
+        address1 = "1278 24st Perito AVE"
+    )
+
+    private val defaultPackageData = PackageData(
+        id = "1",
+        name = "Package 1",
+        dimensions = "10 x 10 x 10",
+        weight = "10",
+        isSelected = false,
+        isLetter = false
+    )
+
+    private val defaultCarrier = CarrierUI(
+        carrier = WooShippingCarrier.UPS,
+        name = "UPS",
+    )
+
+    private val defaultShippingRate = WooShippingRateModel(
+        packageId = "1",
+        shipmentId = "1",
+        rateId = "1",
+        serviceId = "1",
+        carrierId = "1",
+        serviceName = "Default",
+        deliveryDays = 1,
+        price = BigDecimal(12),
+        discount = BigDecimal.ZERO,
+        option = Option.DEFAULT,
+        carrier = defaultCarrier.carrier,
+        hasFreePickup = true,
+        isTrackingEnabled = true,
+        insurance = null
+    )
+
+    private val defaultShippableItemUI = ShippingRateOptionUI(
+        title = defaultShippableItems[0].title,
+        formatedPrice = "$ ${defaultShippableItems[0].price}",
+        formattedFee = "",
+        formattedEstimatedDays = "1 day",
+        shippingRateOptions = emptyList(),
+        option = Option.DEFAULT,
+        rate = defaultShippingRate,
+    )
+
+    private val defaultShippingRates = mapOf(
+        defaultCarrier to defaultShippableItems.map {
+            ShippingRateUI(
+                options = mapOf(Option.DEFAULT to defaultShippableItemUI),
+                selectedOption = defaultShippableItemUI
+            )
+        }
+    )
 
     private val orderDetailRepository: OrderDetailRepository = mock()
     private val getShippableItems: GetShippableItems = mock()
@@ -105,14 +167,19 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when the order NO contains shipping lines, then NO shipping lines summary is displayed`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = emptyList()
+            shippingLines = emptyList(),
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
@@ -123,14 +190,19 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when the order contains shipping lines, then shipping lines summary is displayed`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
@@ -144,9 +216,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val order: Order? = null
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is WooShippingViewState.Error)
@@ -159,9 +232,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(emptyList())
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is WooShippingViewState.Error)
@@ -175,9 +249,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
@@ -190,14 +265,24 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when shipping rates succeed then display the shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        sut.onPackageSelected(defaultPackageData)
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
@@ -208,14 +293,23 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when shipping rates fail then display an error`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.failure(Exception("Random error"))
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.failure(Exception("Random error"))
 
         createViewModel()
+        sut.onPackageSelected(defaultPackageData)
+
+        advanceUntilIdle()
 
         val currentViewState = sut.viewState.value
         assert(currentViewState is DataState)
@@ -226,51 +320,88 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     @Test
     fun `when refresh rates is triggered then refresh shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        sut.onPackageSelected(defaultPackageData)
+
+        advanceUntilIdle()
+
         sut.onRefreshShippingRates()
 
-        verify(getShippingRates, times(2)).invoke(any(), any())
+        advanceUntilIdle()
+
+        verify(getShippingRates, times(2)).invoke(any(), any(), any(), any(), any(), any())
     }
 
     @Test
-    fun `when rates sort order is changed then refresh shipping rates`() = testBlocking {
+    fun `when rates sort order is changed then DON'T refresh shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
+        sut.onPackageSelected(defaultPackageData)
+
+        advanceUntilIdle()
+
         sut.onSelectedRateSortOrderChanged(ShippingSortOption.CHEAPEST)
 
-        verify(getShippingRates, times(2)).invoke(any(), any())
+        advanceUntilIdle()
+
+        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any(), any())
     }
 
     @Test
     fun `when rates sort order is NOT changed then DON'T refresh shipping rates`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
+            shippingLines = defaultShippingLines,
+            customer = Order.Customer(
+                billingAddress = defaultShipToAddress,
+                shippingAddress = defaultShipToAddress
+            )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
+        whenever(
+            getShippingRates(any(), any(), any(), any(), any(), any())
+        ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
 
+        sut.onPackageSelected(defaultPackageData)
+
+        advanceUntilIdle()
+
         sut.onSelectedRateSortOrderChanged(ShippingSortOption.FASTEST)
 
-        verify(getShippingRates, times(1)).invoke(any(), any())
+        advanceUntilIdle()
+
+        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any(), any())
     }
 
     @Test
@@ -282,14 +413,17 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
+
         sut.viewState.asLiveData().observeForever {
             currentViewState = it
         }
 
         val initialPackageData = PackageData(
+            id = "1",
             name = "Initial Package",
             dimensions = "5 x 5 x 5",
             weight = "0.5",
@@ -298,6 +432,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
 
         sut.onPackageSelected(initialPackageData)
+
+        advanceUntilIdle()
 
         assertThat(currentViewState).isInstanceOf(DataState::class.java)
         val dataState = currentViewState as DataState
@@ -316,14 +452,17 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(getShippingRates(any(), any())) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
+
+        advanceUntilIdle()
+
         sut.viewState.asLiveData().observeForever {
             currentViewState = it
         }
 
         val initialPackageData = PackageData(
+            id = "1",
             name = "Initial Package",
             dimensions = "5 x 5 x 5",
             weight = "0.5",
@@ -333,7 +472,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         sut.onPackageSelected(initialPackageData)
 
+        advanceUntilIdle()
+
         val newPackageData = PackageData(
+            id = "2",
             name = "New Package",
             dimensions = "10 x 10 x 10",
             weight = "1.5",
@@ -342,6 +484,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
 
         sut.onPackageSelected(newPackageData)
+
+        advanceUntilIdle()
 
         assertThat(currentViewState).isInstanceOf(DataState::class.java)
         val dataState = currentViewState as DataState

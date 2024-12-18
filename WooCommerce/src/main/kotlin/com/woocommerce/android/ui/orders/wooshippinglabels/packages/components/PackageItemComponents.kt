@@ -117,7 +117,8 @@ fun WooSavedPackageListItemPreview() {
                 dimensions = "5 x 5 x 5",
                 weight = "1.5",
                 isLetter = false,
-                isSelected = false
+                isSelected = false,
+                id = "1",
             ),
             onPackageSelected = { _, _ -> }
         )
