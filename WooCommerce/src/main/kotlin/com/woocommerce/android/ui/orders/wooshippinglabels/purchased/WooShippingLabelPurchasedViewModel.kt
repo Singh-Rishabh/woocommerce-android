@@ -30,7 +30,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
 
     private val trackingLink: String?
         get() = ShipmentTrackingUrls.fromCarrier(
-            carrierId = navArgs.purchaseData.carrierId.toString(),
+            carrierId = navArgs.purchaseData.carrierId,
             trackingNumber = navArgs.purchaseData.trackingNumber
         )
 
@@ -85,12 +85,23 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     }
 
     fun onSchedulePickUpClicked() {
-        triggerEvent(OpenUrl(""))
+        selectPickupUrl(navArgs.purchaseData.carrierId)?.let {
+            triggerEvent(OpenUrl(it))
+        }
     }
 
     fun onRefundClicked() { triggerEvent(StartRefundRequest) }
 
     fun onLearnMoreClicked() { triggerEvent(OpenLearnMoreScreen) }
+
+    private fun selectPickupUrl(carrierId: String): String? {
+        return when (carrierId) {
+            "usps" -> "https://tools.usps.com/schedule-pickup-steps.htm"
+            "ups" -> "https://wwwapps.ups.com/pickup/request"
+            "dhlexpress" -> "https://mydhl.express.dhl/us/en/schedule-pickup.html#/schedule-pickup#label-reference"
+            else -> null
+        }
+    }
 
     @Parcelize
     data class ViewState(
