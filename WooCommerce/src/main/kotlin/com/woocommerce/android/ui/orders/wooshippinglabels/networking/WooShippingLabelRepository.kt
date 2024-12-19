@@ -22,4 +22,12 @@ class WooShippingLabelRepository @Inject constructor(
     ) = restClient.fetchAccountSettings(
         site = site,
     ).asWooResult { mapper(it.storeOptions) }
+
+    suspend fun fetchPurchasedShippingLabels(
+        site: SiteModel,
+        orderId: Long,
+    ) = restClient.fetchPurchasedShippingLabels(
+        site = site,
+        orderId = orderId,
+    ).asWooResult { it.shippingLabels?.map { label -> mapper(label) } }
 }

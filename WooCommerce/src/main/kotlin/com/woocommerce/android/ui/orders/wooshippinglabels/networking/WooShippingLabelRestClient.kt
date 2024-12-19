@@ -41,4 +41,19 @@ class WooShippingLabelRestClient @Inject constructor(
 
         return result.toWooPayload()
     }
+
+    suspend fun fetchPurchasedShippingLabels(
+        site: SiteModel,
+        orderId: Long,
+    ): WooPayload<GetShippingLabelResponse> {
+        val url = "/wcshipping/v1/label/purchase/$orderId/"
+
+        val result = wooNetwork.executeGetGsonRequest(
+            site = site,
+            path = url,
+            clazz = GetShippingLabelResponse::class.java,
+        )
+
+        return result.toWooPayload()
+    }
 }
