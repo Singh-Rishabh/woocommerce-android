@@ -90,6 +90,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onSelectedSippingRateChanged = viewModel::onSelectedSippingRateChanged,
                 customWeight = viewModel.customWeight,
                 onCustomWeightChange = viewModel::onCustomWeightChange,
+                markOrderComplete = viewState.markOrderComplete,
+                onMarkOrderCompleteChange = viewModel::onMarkOrderCompleteChange
             )
         }
 
@@ -117,6 +119,8 @@ fun WooShippingLabelCreationScreen(
     onCustomWeightChange: (String) -> Unit,
     onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     customWeight: String,
+    markOrderComplete: Boolean,
+    onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -136,7 +140,9 @@ fun WooShippingLabelCreationScreen(
             onRefreshShippingRates = onRefreshShippingRates,
             customWeight = customWeight,
             onCustomWeightChange = onCustomWeightChange,
-            onSelectedSippingRateChanged = onSelectedSippingRateChanged
+            onSelectedSippingRateChanged = onSelectedSippingRateChanged,
+            markOrderComplete = markOrderComplete,
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -146,21 +152,26 @@ fun WooShippingLabelCreationScreen(
             isDarkTheme && !isCollapsed -> 16.dp
             else -> 8.dp
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-        ) {
-            Surface(elevation = elevation) {
-                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    PurchasesSectionLandscape(
-                        total = "$34.89",
-                        markOrderComplete = true,
-                        onMarkOrderCompleteChange = { },
-                        onPurchaseShippingLabel = onPurchaseShippingLabel
-                    )
-                } else {
-                    PurchaseButton(total = "$34.89", onPurchaseShippingLabel = { })
+        if (shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+            ) {
+                Surface(elevation = elevation) {
+                    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        PurchasesSectionLandscape(
+                            total = shippingRatesState.selectedRate?.selectedOption?.formatedPrice,
+                            markOrderComplete = markOrderComplete,
+                            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+                            onPurchaseShippingLabel = onPurchaseShippingLabel
+                        )
+                    } else {
+                        PurchaseButton(
+                            total = shippingRatesState.selectedRate?.selectedOption?.formatedPrice,
+                            onPurchaseShippingLabel = { }
+                        )
+                    }
                 }
             }
         }
@@ -183,24 +194,29 @@ private fun LabelCreationScreenWithBottomSheet(
     onCustomWeightChange: (String) -> Unit,
     onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     scaffoldState: BottomSheetScaffoldState,
+    markOrderComplete: Boolean,
+    onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
+    val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
+
     BottomSheetScaffold(
         sheetContent = {
-            val markOrderComplete = remember { mutableStateOf(false) }
             ShipmentDetails(
                 shippableItems = shippableItems,
                 shippingLines = shippingLines,
                 scaffoldState = scaffoldState,
-                markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it },
+                markOrderComplete = markOrderComplete,
+                onMarkOrderCompleteChange = onMarkOrderCompleteChange,
                 shippingAddresses = shippingAddresses,
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 onShippingToAddressChange = onShippingToAddressChange,
+                shippingRatesState = shippingRatesState,
                 modifier = Modifier.padding(bottom = 74.dp),
             )
         },
-        sheetPeekHeight = 132.dp,
+        sheetPeekHeight = bottomSheetPeekHeight,
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
@@ -538,7 +554,9 @@ private fun WooShippingLabelCreationScreenPreview() {
             onSelectedRateSortOrderChanged = {},
             customWeight = "",
             onCustomWeightChange = {},
-            onSelectedSippingRateChanged = {}
+            onSelectedSippingRateChanged = {},
+            markOrderComplete = true,
+            onMarkOrderCompleteChange = {}
         )
     }
 }

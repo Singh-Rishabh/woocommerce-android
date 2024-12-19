@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
@@ -47,15 +48,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val getShippableItems: GetShippableItems,
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
-    private val getShippingRates: GetShippingRates
+    private val getShippingRates: GetShippingRates,
+    private val fetchAccountSettings: FetchAccountSettings
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
-    private val mockStoreOptions = StoreOptionsModel(
-        currencySymbol = "$",
-        dimensionUnit = "cm",
-        weightUnit = "kg",
-        originCountry = "US"
-    )
 
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order?>(emptyOrder)
@@ -67,6 +63,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageSelected = MutableStateFlow<PackageData?>(null)
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
+
+    private val markOrderComplete = MutableStateFlow(false)
 
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
@@ -102,7 +100,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun getStoreOptions() {
-        storeOptions.value = mockStoreOptions
+        launch {
+            fetchAccountSettings().fold(
+                onSuccess = {
+                    storeOptions.value = it
+                },
+                onFailure = {
+                    storeOptions.value = null
+                }
+            )
+        }
     }
 
     @Suppress("ComplexCondition")
@@ -178,14 +185,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun observePackageChanges() {
-        packageSelected.combine(packageWeight) { packageSelected, packageWeight ->
+        combine(
+            packageSelected,
+            packageWeight,
+            storeOptions
+        ) { packageSelected, packageWeight, storeOptions ->
             if (packageSelected == null || packageWeight == null) {
                 NotSelected
             } else {
                 DataAvailable(
                     selectedPackage = packageSelected,
                     defaultWeight = packageWeight.defaultWeight.toString(),
-                    weightUnit = mockStoreOptions.weightUnit
+                    weightUnit = storeOptions?.weightUnit ?: ""
                 )
             }
         }.collectLatest {
@@ -227,6 +238,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             } else {
                 shippingRatesState.value = ShippingRatesState.Error
             }
+            selectedRate.value = null
         } else {
             shippingRatesState.value = ShippingRatesState.NoAvailable
         }
@@ -239,7 +251,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             shippingAddresses.drop(1),
             shippingRatesState,
             packageSelection,
-        ) { storeOptions, order, addresses, shippingRates, packageSelection ->
+            markOrderComplete,
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, markOrderComplete ->
             if (order == null || storeOptions == null || addresses == null) {
                 return@combine WooShippingViewState.Error
             }
@@ -262,7 +275,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 shippingLines = shippingLineSummary,
                 shippingAddresses = addresses,
                 shippingRates = shippingRates,
-                packageSelection = packageSelection
+                packageSelection = packageSelection,
+                markOrderComplete = markOrderComplete
             )
         }.collectLatest {
             viewState.value = it
@@ -289,6 +303,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     fun onRefreshShippingRates() {
         launch { refreshShippingRates.emit(Unit) }
+    }
+
+    fun onMarkOrderCompleteChange(value: Boolean) {
+        markOrderComplete.value = value
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
@@ -388,7 +406,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingLines: List<ShippingLineSummaryUI>,
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
-            val packageSelection: PackageSelectionState
+            val packageSelection: PackageSelectionState,
+            val markOrderComplete: Boolean
         ) : WooShippingViewState()
     }
 

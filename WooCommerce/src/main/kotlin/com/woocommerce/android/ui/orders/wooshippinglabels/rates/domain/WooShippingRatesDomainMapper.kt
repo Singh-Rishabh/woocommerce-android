@@ -61,6 +61,7 @@ class WooShippingRatesDomainMapper @Inject constructor(
         }
     }
 
+    @Suppress("LongMethod")
     private fun getShippingRate(
         rate: WooShippingRateOptionsModel,
         resourceProvider: ResourceProvider,
@@ -73,6 +74,8 @@ class WooShippingRatesDomainMapper @Inject constructor(
                         title = it.value.serviceName,
                         formatedPrice = formatCurrency(it.value.price, currencyCode),
                         formattedFee = "",
+                        feeDescription = "",
+                        formattedOptionName = "",
                         formattedEstimatedDays = getEstimatedDays(it.value, resourceProvider),
                         shippingRateOptions = getShippingRateOptionsList(it.value, resourceProvider, currencyCode),
                         option = it.value.option,
@@ -84,17 +87,22 @@ class WooShippingRatesDomainMapper @Inject constructor(
                     val fee = rate.rateOptions[Option.DEFAULT]?.let { default ->
                         it.value.price.minus(default.price)
                     }
+                    val formattedFee = formatFee(fee, currencyCode)
                     ShippingRateOptionUI(
                         title = it.value.serviceName,
                         formatedPrice = formatCurrency(it.value.price, currencyCode),
-                        formattedFee = resourceProvider.getString(
+                        formattedFee = formattedFee,
+                        feeDescription = resourceProvider.getString(
                             R.string.shipping_label_rate_option_signature_required,
-                            formatFee(fee, currencyCode)
+                            formattedFee
                         ),
                         formattedEstimatedDays = getEstimatedDays(it.value, resourceProvider),
                         shippingRateOptions = getShippingRateOptionsList(it.value, resourceProvider, currencyCode),
                         option = it.value.option,
-                        rate = it.value
+                        rate = it.value,
+                        formattedOptionName = resourceProvider.getString(
+                            R.string.shipping_label_rate_option_signature_required_name
+                        )
                     )
                 }
 
@@ -102,17 +110,22 @@ class WooShippingRatesDomainMapper @Inject constructor(
                     val fee = rate.rateOptions[Option.DEFAULT]?.let { default ->
                         it.value.price.minus(default.price)
                     }
+                    val formattedFee = formatFee(fee, currencyCode)
                     ShippingRateOptionUI(
                         title = it.value.serviceName,
                         formatedPrice = formatCurrency(it.value.price, currencyCode),
-                        formattedFee = resourceProvider.getString(
+                        formattedFee = formattedFee,
+                        feeDescription = resourceProvider.getString(
                             R.string.shipping_label_rate_option_adult_signature_required,
-                            formatFee(fee, currencyCode)
+                            formattedFee
                         ),
                         formattedEstimatedDays = getEstimatedDays(it.value, resourceProvider),
                         shippingRateOptions = getShippingRateOptionsList(it.value, resourceProvider, currencyCode),
                         option = it.value.option,
-                        rate = it.value
+                        rate = it.value,
+                        formattedOptionName = resourceProvider.getString(
+                            R.string.shipping_label_rate_option_adult_signature_required_name
+                        )
                     )
                 }
             }
