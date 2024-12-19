@@ -2,10 +2,10 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.DestinationAddressDTO
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 import javax.inject.Inject
@@ -52,6 +52,7 @@ class WooShippingLabelRepository @Inject constructor(
         } ?: ShippingLabelStatus.Unknown
     }
 
+    @Suppress("LongParameterList")
     suspend fun purchaseShippingLabel(
         site: SiteModel,
         orderId: Long,
@@ -62,59 +63,16 @@ class WooShippingLabelRepository @Inject constructor(
         selectedRate: WooShippingRateModel,
         weight: Float,
         lastOrderComplete: Boolean,
-    ): WooResult<Map<*, *>> {
-        val origin = OriginAddressPurchaseDTO(
-            id = shipFrom.id,
-            address = shipFrom.address1,
-            address2 = shipFrom.address2,
-            city = shipFrom.city,
-            state = shipFrom.state,
-            postcode = shipFrom.postcode,
-            country = shipFrom.country,
-            name = "${shipFrom.firstName} ${shipFrom.lastName}",
-            company = shipFrom.company,
-            phone = shipFrom.phone
+    ): WooResult<PurchasedLabelData> {
+        val origin = mapper.toOriginAddressPurchaseDTO(shipFrom)
+        val destination = mapper.toDestinationAddressDTO(shipTo)
+        val packageDTO = mapper.toPackagePurchaseDTO(
+            selectedPackage = selectedPackage,
+            selectedRate = selectedRate,
+            shippableItems = shippableItems,
+            weight = weight
         )
-        val destination = DestinationAddressDTO(
-            address = shipTo.address1,
-            city = shipTo.city,
-            state = shipTo.state.codeOrRaw,
-            postcode = shipTo.postcode,
-            country = shipTo.country.code,
-            name = "${shipTo.firstName} ${shipTo.lastName}"
-        )
-        val packageDTO = PackagePurchaseDTO(
-            id = selectedPackage.id,
-            boxId = "default_package",
-            length = selectedPackage.length.toFloat(),
-            width = selectedPackage.width.toFloat(),
-            height = selectedPackage.height.toFloat(),
-            weight = weight,
-            isLetter = selectedPackage.isLetter,
-            shipmentId = selectedRate.shipmentId,
-            products = shippableItems,
-            rateId = selectedRate.rateId,
-            serviceId = selectedRate.serviceId,
-            carrierId = selectedRate.carrierId,
-            serviceName = selectedRate.serviceName
-        )
-        val rateDTO = RateDTO(
-            rateId = selectedRate.rateId,
-            serviceId = selectedRate.serviceId,
-            carrierId = selectedRate.carrierId,
-            title = selectedRate.serviceName,
-            rate = selectedRate.price,
-            deliveryDays = selectedRate.deliveryDays,
-            shipmentId = selectedRate.shipmentId,
-            deliveryDate = null,
-            deliveryDateGuaranteed = false,
-            freePickup = selectedRate.hasFreePickup,
-            insurance = selectedRate.insurance,
-            isSelected = true,
-            tracking = selectedRate.isTrackingEnabled,
-            listRate = selectedRate.price,
-            retailRate = selectedRate.discount
-        )
+        val rateDTO = mapper.toRateDTO(selectedRate)
         return restClient.purchaseShippingLabel(
             site = site,
             orderId = orderId,
@@ -123,6 +81,6 @@ class WooShippingLabelRepository @Inject constructor(
             selectedPackage = packageDTO,
             selectedRate = rateDTO,
             markOrderComplete = lastOrderComplete
-        ).asWooResult()
+        ).asWooResult { mapper(it) }
     }
 }
