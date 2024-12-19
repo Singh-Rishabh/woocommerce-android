@@ -70,7 +70,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         _viewState.update { it.copy(isPrintingInProgress = true) }
         launch {
             val paperSize = _viewState.value.paperSizeOption
-            val labelFile =  fetchShippingLabelFile(
+            val labelFile = fetchShippingLabelFile(
                 labelIds = listOf(navArgs.purchaseData.labelId),
                 paperSize = paperSize.name.lowercase(Locale.US)
             )
