@@ -122,7 +122,12 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         carrier = defaultCarrier.carrier,
         hasFreePickup = true,
         isTrackingEnabled = true,
-        insurance = null
+        insurance = null,
+        deliveryDate = null,
+        isDeliveryDateGuaranteed = false,
+        isSelected = false,
+        listRate = BigDecimal.TEN,
+        retailRate = BigDecimal.TEN
     )
 
     private val defaultShippableItemUI = ShippingRateOptionUI(
@@ -160,6 +165,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val observeOriginAddresses: ObserveOriginAddresses = mock()
     private val getShippingRates: GetShippingRates = mock()
     private val fetchAccountSettings: FetchAccountSettings = mock()
+    private val purchaseShippingLabel: PurchaseShippingLabel = mock()
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -171,6 +177,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             observeOriginAddresses = observeOriginAddresses,
             getShippingRates = getShippingRates,
             fetchAccountSettings = fetchAccountSettings,
+            purchaseShippingLabel = purchaseShippingLabel,
             savedState = savedState
         )
     }
