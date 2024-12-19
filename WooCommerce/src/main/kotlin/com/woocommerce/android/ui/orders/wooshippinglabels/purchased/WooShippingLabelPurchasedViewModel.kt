@@ -66,12 +66,19 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     }
 
     fun onPrintShippingLabelClicked() {
+        _viewState.update { it.copy(isPrintingInProgress = true) }
         launch {
             val paperSize = _viewState.value.paperSizeOption
-            fetchShippingLabelFile(
+            val labelFile =  fetchShippingLabelFile(
                 labelIds = listOf(navArgs.purchaseData.labelId),
                 paperSize = paperSize.name.lowercase(Locale.US)
-            )?.let { triggerEvent(OpenShippingLabelFile(it)) }
+            )
+
+            labelFile?.let {
+                triggerEvent(OpenShippingLabelFile(it))
+            }
+
+            _viewState.update { it.copy(isPrintingInProgress = false) }
         }
     }
 
