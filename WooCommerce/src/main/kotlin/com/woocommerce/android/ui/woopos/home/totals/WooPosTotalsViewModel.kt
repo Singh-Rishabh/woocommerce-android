@@ -228,7 +228,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private fun handleBackPress() {
         viewModelScope.launch {
             when (state.value) {
-                is PaymentFailed, is PaymentInProgress  -> {
+                is PaymentFailed, is PaymentInProgress -> {
                     childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
                     retryPaymentCollectionFromScratch()
                 }
