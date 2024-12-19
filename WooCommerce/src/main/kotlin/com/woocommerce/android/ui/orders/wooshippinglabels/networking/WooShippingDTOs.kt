@@ -29,7 +29,9 @@ data class OriginAddressPurchaseDTO(
     val name: String? = null,
     val phone: String? = null,
     val postcode: String? = null,
-    val state: String? = null
+    val state: String? = null,
+    val email: String? = null,
+    @SerializedName("is_verified") val isVerified: Boolean = false,
 )
 
 data class RateDTO(
@@ -54,5 +56,3 @@ data class HazmatDTO(
     val isHazmat: Boolean = false,
     val category: String = "",
 )
-
-
