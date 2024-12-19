@@ -73,19 +73,16 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     fun `onTrackShipmentClicked triggers OpenUrl event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
-        whenever(navArgs.purchaseData.trackingNumber).thenReturn("123456")
-        whenever(navArgs.purchaseData.carrierId).thenReturn("usps")
 
         viewModel.onTrackShipmentClicked()
 
-        assertThat(latestEvent).isEqualTo(OpenUrl("https://tools.usps.com/go/TrackConfirmAction_input?qtc_tLabels1=123456"))
+        assertThat(latestEvent).isEqualTo(OpenUrl("https://tools.usps.com/go/TrackConfirmAction.action?tLabels=123456"))
     }
 
     @Test
     fun `onSchedulePickUpClicked triggers OpenUrl event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
-        whenever(navArgs.purchaseData.carrierId).thenReturn("usps")
 
         viewModel.onSchedulePickUpClicked()
 
