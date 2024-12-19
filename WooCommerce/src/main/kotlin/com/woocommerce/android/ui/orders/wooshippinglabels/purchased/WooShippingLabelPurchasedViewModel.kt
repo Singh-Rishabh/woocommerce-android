@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.orders.shippinglabels.ShipmentTrackingUrls
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
@@ -26,6 +27,12 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     private val fetchShippingLabelFile: FetchShippingLabelFile
 ) : ScopedViewModel(savedState) {
     private val navArgs by savedState.navArgs<WooShippingLabelPurchasedFragmentArgs>()
+
+    private val trackingLink: String?
+        get() = ShipmentTrackingUrls.fromCarrier(
+            carrierId = navArgs.purchaseData.carrierId.toString(),
+            trackingNumber = navArgs.purchaseData.trackingNumber
+        )
 
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
@@ -72,9 +79,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         _viewState.update { it.copy(paperSizeOption = paperSize) }
     }
 
-    fun onTrackShipmentClicked() { triggerEvent(TrackShipmentRequested) }
+    fun onTrackShipmentClicked() {
+        trackingLink?.let { triggerEvent(OpenUrl(it)) }
 
-    fun onSchedulePickUpClicked() { triggerEvent(SchedulePickUpRequested) }
+    }
+
+    fun onSchedulePickUpClicked() {
+        triggerEvent(OpenUrl(""))
+    }
 
     fun onRefundClicked() { triggerEvent(StartRefundRequest) }
 
@@ -88,8 +100,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     ) : Parcelable
 
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
-    object TrackShipmentRequested : MultiLiveEvent.Event()
-    object SchedulePickUpRequested : MultiLiveEvent.Event()
+    data class OpenUrl(val url: String) : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
 }
