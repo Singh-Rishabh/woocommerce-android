@@ -4,7 +4,8 @@ import org.wordpress.android.fluxc.model.SiteModel
 import javax.inject.Inject
 
 class WooShippingLabelRepository @Inject constructor(
-    private val restClient: WooShippingLabelRestClient
+    private val restClient: WooShippingLabelRestClient,
+    private val mapper: WooShippingNetworkingMapper
 ) {
     suspend fun fetchShippingLabelPrinting(
         site: SiteModel,
@@ -15,4 +16,10 @@ class WooShippingLabelRepository @Inject constructor(
         labelIds = labelIds,
         paperSize = paperSize
     ).asWooResult()
+
+    suspend fun fetchAccountSettings(
+        site: SiteModel,
+    ) = restClient.fetchAccountSettings(
+        site = site,
+    ).asWooResult { mapper(it.storeOptions) }
 }
