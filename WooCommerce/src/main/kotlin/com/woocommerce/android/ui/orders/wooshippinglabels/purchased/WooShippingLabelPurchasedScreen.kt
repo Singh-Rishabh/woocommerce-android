@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.ProgressDialog
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.HazmatCard
@@ -67,6 +68,7 @@ val Colors.successSurface: Color get() = if (isLight) lightGreen else darkGreen
 fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewModel) {
     val viewState = viewModel.viewState.observeAsState()
     WooShippingLabelPurchasedScreen(
+        isLoading = viewState.value?.isPrintingInProgress ?: false,
         selectedLabelPaperSizeOption = viewState.value?.paperSizeOption ?: WooShippingLabelPaperSize.LEGAL,
         onLabelPaperSizeOptionSelected = { viewModel.onLabelPaperSizeOptionSelected(it) },
         onPrintShippingLabelClicked = { viewModel.onPrintShippingLabelClicked() },
@@ -79,6 +81,7 @@ fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewMode
 
 @Composable
 internal fun WooShippingLabelPurchasedScreen(
+    isLoading: Boolean,
     selectedLabelPaperSizeOption: WooShippingLabelPaperSize,
     onLabelPaperSizeOptionSelected: (WooShippingLabelPaperSize) -> Unit,
     onPrintShippingLabelClicked: () -> Unit,
@@ -142,6 +145,13 @@ internal fun WooShippingLabelPurchasedScreen(
                 )
                 .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))),
         )
+
+        if (isLoading) {
+            ProgressDialog(
+                title = stringResource(R.string.loading),
+                subtitle = stringResource(R.string.please_wait),
+            )
+        }
     }
 }
 
@@ -322,6 +332,7 @@ internal fun WooShippingLabelPurchasedScreenPreview() {
         Surface {
             val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
             WooShippingLabelPurchasedScreen(
+                isLoading = false,
                 selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
                 onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
                 onPrintShippingLabelClicked = {},
