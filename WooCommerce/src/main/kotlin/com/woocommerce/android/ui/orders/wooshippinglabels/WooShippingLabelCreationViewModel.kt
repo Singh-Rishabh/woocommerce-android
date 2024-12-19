@@ -367,7 +367,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             )
             if (result.isSuccess) {
                 purchaseState.value = PurchaseState.Success
-                triggerEvent(LabelPurchased(labelId = 4158L))
+                result.getOrNull()?.let {
+                    triggerEvent(LabelPurchased(labelId = it.labels.first().labelId))
+                }
             } else {
                 purchaseState.value = PurchaseState.Error
             }

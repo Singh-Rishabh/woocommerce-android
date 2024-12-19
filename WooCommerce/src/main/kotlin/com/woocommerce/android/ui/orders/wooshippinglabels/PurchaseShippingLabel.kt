@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
@@ -22,9 +23,9 @@ class PurchaseShippingLabel @Inject constructor(
         shippingRate: WooShippingRateModel,
         weight: Float,
         lastOrderComplete: Boolean,
-    ): Result<Unit> {
+    ): Result<PurchasedLabelData> {
         return selectedSite.getOrNull()?.let {
-            val result = wooShippingLabelRepository.purchaseShippingLabel(
+            val response = wooShippingLabelRepository.purchaseShippingLabel(
                 orderId = orderId,
                 shippableItems = shippableItems,
                 selectedPackage = selectedPackage,
@@ -35,10 +36,11 @@ class PurchaseShippingLabel @Inject constructor(
                 lastOrderComplete = lastOrderComplete,
                 site = it
             )
-            if (result.isError) {
+            val result = response.model
+            if (response.isError || result == null) {
                 Result.failure(Exception("Purchase failed"))
             } else {
-                Result.success(Unit)
+                Result.success(result)
             }
         } ?: Result.failure(Exception("No site selected"))
     }
