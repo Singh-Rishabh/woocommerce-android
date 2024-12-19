@@ -27,4 +27,18 @@ class WooShippingLabelRestClient @Inject constructor(
             clazz = ShippingLabelPrintingResponse::class.java,
         ).toWooPayload()
     }
+
+    suspend fun fetchAccountSettings(
+        site: SiteModel,
+    ): WooPayload<AccountSettingsDTO> {
+        val url = "/wcshipping/v1/account/settings/"
+
+        val result = wooNetwork.executeGetGsonRequest(
+            site = site,
+            path = url,
+            clazz = AccountSettingsDTO::class.java,
+        )
+
+        return result.toWooPayload()
+    }
 }
