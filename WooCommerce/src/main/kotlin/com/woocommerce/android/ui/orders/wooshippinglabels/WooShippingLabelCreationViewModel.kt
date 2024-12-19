@@ -46,15 +46,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val getShippableItems: GetShippableItems,
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
-    private val getShippingRates: GetShippingRates
+    private val getShippingRates: GetShippingRates,
+    private val fetchAccountSettings: FetchAccountSettings
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
-    private val mockStoreOptions = StoreOptionsModel(
-        currencySymbol = "$",
-        dimensionUnit = "cm",
-        weightUnit = "kg",
-        originCountry = "US"
-    )
 
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order?>(emptyOrder)
@@ -103,7 +98,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun getStoreOptions() {
-        storeOptions.value = mockStoreOptions
+        launch {
+            fetchAccountSettings().fold(
+                onSuccess = {
+                    storeOptions.value = it
+                },
+                onFailure = {
+                    storeOptions.value = null
+                }
+            )
+        }
     }
 
     @Suppress("ComplexCondition")
@@ -179,14 +183,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun observePackageChanges() {
-        packageSelected.combine(packageWeight) { packageSelected, packageWeight ->
+        combine(
+            packageSelected,
+            packageWeight,
+            storeOptions
+        ) { packageSelected, packageWeight, storeOptions ->
             if (packageSelected == null || packageWeight == null) {
                 NotSelected
             } else {
                 DataAvailable(
                     selectedPackage = packageSelected,
                     defaultWeight = packageWeight.defaultWeight.toString(),
-                    weightUnit = mockStoreOptions.weightUnit
+                    weightUnit = storeOptions?.weightUnit ?: ""
                 )
             }
         }.collectLatest {
