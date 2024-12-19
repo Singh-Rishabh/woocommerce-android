@@ -1,7 +1,13 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
+import com.woocommerce.android.model.Address
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 import javax.inject.Inject
 
 class WooShippingLabelRepository @Inject constructor(
@@ -44,5 +50,37 @@ class WooShippingLabelRepository @Inject constructor(
         response.shippingLabel?.let {
             mapper(it).status
         } ?: ShippingLabelStatus.Unknown
+    }
+
+    @Suppress("LongParameterList")
+    suspend fun purchaseShippingLabel(
+        site: SiteModel,
+        orderId: Long,
+        shippableItems: List<Long>,
+        selectedPackage: PackageData,
+        shipTo: Address,
+        shipFrom: OriginShippingAddress,
+        selectedRate: WooShippingRateModel,
+        weight: Float,
+        lastOrderComplete: Boolean,
+    ): WooResult<PurchasedLabelData> {
+        val origin = mapper.toOriginAddressPurchaseDTO(shipFrom)
+        val destination = mapper.toDestinationAddressDTO(shipTo)
+        val packageDTO = mapper.toPackagePurchaseDTO(
+            selectedPackage = selectedPackage,
+            selectedRate = selectedRate,
+            shippableItems = shippableItems,
+            weight = weight
+        )
+        val rateDTO = mapper.toRateDTO(selectedRate)
+        return restClient.purchaseShippingLabel(
+            site = site,
+            orderId = orderId,
+            origin = origin,
+            destination = destination,
+            selectedPackage = packageDTO,
+            selectedRate = rateDTO,
+            markOrderComplete = lastOrderComplete
+        ).asWooResult { mapper(it) }
     }
 }
