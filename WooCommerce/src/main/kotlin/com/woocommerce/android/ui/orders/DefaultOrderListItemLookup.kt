@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.woocommerce.android.ui.orders.list.OrderListAdapter
 import com.woocommerce.android.ui.orders.list.OrderListItemUIType.OrderListItemUI
 
-
 class DefaultOrderListItemLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
     override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? =
         recyclerView
