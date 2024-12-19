@@ -5,6 +5,7 @@ import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -91,7 +92,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 customWeight = viewModel.customWeight,
                 onCustomWeightChange = viewModel::onCustomWeightChange,
                 markOrderComplete = viewState.markOrderComplete,
-                onMarkOrderCompleteChange = viewModel::onMarkOrderCompleteChange
+                onMarkOrderCompleteChange = viewModel::onMarkOrderCompleteChange,
+                purchaseState = viewState.purchaseState
             )
         }
 
@@ -121,6 +123,7 @@ fun WooShippingLabelCreationScreen(
     customWeight: String,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    purchaseState: WooShippingLabelCreationViewModel.PurchaseState,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -169,10 +172,25 @@ fun WooShippingLabelCreationScreen(
                     } else {
                         PurchaseButton(
                             total = shippingRatesState.selectedRate?.selectedOption?.formatedPrice,
-                            onPurchaseShippingLabel = { }
+                            onPurchaseShippingLabel = onPurchaseShippingLabel
                         )
                     }
                 }
+            }
+        }
+        if (purchaseState is WooShippingLabelCreationViewModel.PurchaseState.InProgress) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {}
+                    )
+                    .background(color = MaterialTheme.colors.surface.copy(alpha = 0.4f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
@@ -556,7 +574,8 @@ private fun WooShippingLabelCreationScreenPreview() {
             onCustomWeightChange = {},
             onSelectedSippingRateChanged = {},
             markOrderComplete = true,
-            onMarkOrderCompleteChange = {}
+            onMarkOrderCompleteChange = {},
+            purchaseState = WooShippingLabelCreationViewModel.PurchaseState.NoStarted
         )
     }
 }

@@ -49,7 +49,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
-    private val fetchAccountSettings: FetchAccountSettings
+    private val fetchAccountSettings: FetchAccountSettings,
+    private val purchaseShippingLabel: PurchaseShippingLabel
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -70,6 +71,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val refreshShippingRates = MutableSharedFlow<Unit>()
     var customWeight by mutableStateOf("")
         private set
+
+    private val purchaseState = MutableStateFlow<PurchaseState>(PurchaseState.NoStarted)
 
     private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
         r1.defaultRate.rate.price.compareTo(r2.defaultRate.rate.price)
@@ -244,6 +247,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    @Suppress("ComplexCondition")
     private suspend fun observeShippingLabelInformation() {
         combine(
             storeOptions.drop(1),
@@ -252,8 +256,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             shippingRatesState,
             packageSelection,
             markOrderComplete,
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, markOrderComplete ->
-            if (order == null || storeOptions == null || addresses == null) {
+            purchaseState
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, markOrderComplete, purchaseState ->
+            if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
 
@@ -276,7 +281,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 shippingAddresses = addresses,
                 shippingRates = shippingRates,
                 packageSelection = packageSelection,
-                markOrderComplete = markOrderComplete
+                markOrderComplete = markOrderComplete,
+                purchaseState = purchaseState
             )
         }.collectLatest {
             viewState.value = it
@@ -335,32 +341,41 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartPackageSelection)
     }
 
-    // This function is using a mocked Purchased data
-    // We must replace this later with the actual Label purchasing data later
+    @Suppress("ComplexCondition")
     fun onPurchaseShippingLabel() {
-        val purchaseData = PurchasedShippingLabelData(
-            labelId = 4158L,
-            carrierId = "usps",
-            totalWeight = "1.5",
-            formattedTotalPrice = currencyFormatter.formatCurrency("10.00"),
-            weightUnit = "kg",
-            trackingNumber = "1234",
-            items = listOf(
-                ShippableItem(
-                    itemId = 1,
-                    productId = 1,
-                    title = "Test Product",
-                    dimensions = "10x10x10",
-                    weight = "1.5",
-                    formattedPrice = currencyFormatter.formatCurrency("10.00"),
-                    quantity = 1f,
-                    dimensionUnit = "cm",
-                    weightUnit = "kg",
-                    imageUrl = null
-                )
+        val selectedPackage = packageSelected.value
+        val addresses = shippingAddresses.value
+        val shippingRate = selectedRate.value?.selectedOption?.rate
+        val weight = packageWeight.value?.totalWeight
+
+        if (selectedPackage == null || addresses == null || shippingRate == null || weight == null) return
+
+        val orderId = navArgs.orderId
+        val lastOrderComplete = markOrderComplete.value
+        val shippableItems = shippableItems.value.map { it.productId }
+
+        purchaseState.value = PurchaseState.InProgress
+
+        launch {
+            val result = purchaseShippingLabel(
+                orderId,
+                shippableItems,
+                selectedPackage,
+                addresses.shipTo,
+                addresses.shipFrom,
+                shippingRate,
+                weight,
+                lastOrderComplete
             )
-        )
-        triggerEvent(LabelPurchased(purchaseData))
+            if (result.isSuccess) {
+                purchaseState.value = PurchaseState.Success
+                result.getOrNull()?.let {
+                    triggerEvent(LabelPurchased(labelId = it.labels.first().labelId))
+                }
+            } else {
+                purchaseState.value = PurchaseState.Error
+            }
+        }
     }
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
@@ -407,7 +422,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
             val packageSelection: PackageSelectionState,
-            val markOrderComplete: Boolean
+            val markOrderComplete: Boolean,
+            val purchaseState: PurchaseState
         ) : WooShippingViewState()
     }
 
@@ -433,6 +449,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val defaultWeight: String,
             val weightUnit: String
         ) : PackageSelectionState()
+    }
+
+    sealed class PurchaseState {
+        data object NoStarted : PurchaseState()
+        data object InProgress : PurchaseState()
+        data object Success : PurchaseState()
+        data object Error : PurchaseState()
     }
 
     data class PackageWeight(
