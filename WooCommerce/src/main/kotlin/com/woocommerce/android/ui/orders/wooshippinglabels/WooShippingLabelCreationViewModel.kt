@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemM
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.ShippableItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -326,7 +327,20 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             formattedTotalPrice = currencyFormatter.formatCurrency("10.00"),
             weightUnit = "kg",
             trackingNumber = "1234",
-            items = emptyList()
+            items = listOf(
+                ShippableItem(
+                    itemId = 1,
+                    productId = 1,
+                    title = "Test Product",
+                    dimensions = "10x10x10",
+                    weight = "1.5",
+                    formattedPrice = currencyFormatter.formatCurrency("10.00"),
+                    quantity = 1f,
+                    dimensionUnit = "cm",
+                    weightUnit = "kg",
+                    imageUrl = null
+                )
+            )
         )
         triggerEvent(LabelPurchased(purchaseData))
     }
