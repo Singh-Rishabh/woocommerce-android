@@ -62,6 +62,20 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun `onPrintShippingLabelClicked triggers Loading state correctly`() = testBlocking {
+        val viewStateUpdates: MutableList<ViewState> = mutableListOf()
+        viewModel.viewState.observeForever { viewStateUpdates.add(it) }
+        whenever(fetchShippingLabelFile(listOf(navArgs.purchaseData.labelId), "label")).thenReturn(file)
+
+        viewModel.onPrintShippingLabelClicked()
+
+        assertThat(viewStateUpdates).hasSize(3)
+        assertThat(viewStateUpdates[0].isPrintingInProgress).isFalse()
+        assertThat(viewStateUpdates[1].isPrintingInProgress).isTrue()
+        assertThat(viewStateUpdates[2].isPrintingInProgress).isFalse()
+    }
+
+    @Test
     fun `ViewState starts with LABEL paper size as default`() {
         var latestViewState: ViewState? = null
         viewModel.viewState.observeForever { latestViewState = it }
