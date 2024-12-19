@@ -74,6 +74,7 @@ class WooShippingLabelRestClient @Inject constructor(
         return result.toWooPayload()
     }
 
+    @Suppress("LongParameterList")
     suspend fun purchaseShippingLabel(
         orderId: Long,
         site: SiteModel,
@@ -81,9 +82,9 @@ class WooShippingLabelRestClient @Inject constructor(
         destination: DestinationAddressDTO,
         selectedPackage: PackagePurchaseDTO,
         selectedRate: RateDTO,
+        markOrderComplete: Boolean,
         hazmat: HazmatDTO = HazmatDTO(),
-        markOrderComplete: Boolean
-    ): WooPayload<Map<*,*>> {
+    ): WooPayload<PurchasedShippingLabelResponseDTO> {
         val url = "/wcshipping/v1/label/purchase/$orderId/"
         return wooNetwork.executePostGsonRequest(
             site = site,
@@ -103,7 +104,7 @@ class WooShippingLabelRestClient @Inject constructor(
                 "customs" to emptyMap<String, String>(),
                 "user_meta" to mapOf("last_order_completed" to markOrderComplete)
             ),
-            clazz = Map::class.java,
+            clazz = PurchasedShippingLabelResponseDTO::class.java,
         ).toWooPayload()
     }
 }
