@@ -245,6 +245,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    @Suppress("ComplexCondition")
     private suspend fun observeShippingLabelInformation() {
         combine(
             storeOptions.drop(1),
@@ -338,18 +339,22 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartPackageSelection)
     }
 
+    @Suppress("ComplexCondition")
     fun onPurchaseShippingLabel() {
+        val selectedPackage = packageSelected.value
+        val addresses = shippingAddresses.value
+        val shippingRate = selectedRate.value?.selectedOption?.rate
+        val weight = packageWeight.value?.totalWeight
+
+        if (selectedPackage == null || addresses == null || shippingRate == null || weight == null) return
+
         val orderId = navArgs.orderId
-        val selectedPackage = packageSelected.value ?: return
-        val addresses = shippingAddresses.value ?: return
-        val shippingRate = selectedRate.value?.selectedOption?.rate ?: return
-        val weight = packageWeight.value?.totalWeight ?: return
-        val shippableItems = shippableItems.value.map { it.productId } ?: return
         val lastOrderComplete = markOrderComplete.value
+        val shippableItems = shippableItems.value.map { it.productId }
 
         purchaseState.value = PurchaseState.InProgress
 
-        launch{
+        launch {
             val result = purchaseShippingLabel(
                 orderId,
                 shippableItems,
