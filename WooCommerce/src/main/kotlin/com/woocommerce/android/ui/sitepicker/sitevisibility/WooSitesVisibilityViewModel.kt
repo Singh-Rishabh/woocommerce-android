@@ -8,6 +8,7 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.model.SiteModel
 import javax.inject.Inject
@@ -16,13 +17,14 @@ import javax.inject.Inject
 class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     private val selectedSite: SelectedSite,
+    private val hiddenSitesDataStore: HiddenSitesDataStore,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()
     private val _wooStores = MutableStateFlow(
         WooStoresUiState(
             wooStores = emptyList(),
-            currentSite = selectedSite.get().toWooStoreUi(),
+            currentSite = selectedSite.get().toWooStoreUi(true),
             isSaveButtonEnabled = false
         )
     )
@@ -33,7 +35,10 @@ class WooSitesVisibilityViewModel @Inject constructor(
             _wooStores.value = _wooStores.value.copy(
                 wooStores = sitePickerRepository.getSites()
                     .filter { it.hasWooCommerce && it.siteId != selectedSite.get().siteId }
-                    .map { it.toWooStoreUi() }
+                    .map {
+                        val isSelected = getSiteVisibility(it.siteId)
+                        it.toWooStoreUi(isSelected)
+                    }
             )
             initiallySelectedSiteIds = _wooStores.value.wooStores
                 .filter { it.isSelected }
@@ -46,7 +51,13 @@ class WooSitesVisibilityViewModel @Inject constructor(
     }
 
     fun onSaveTapped() {
-        TODO("Not yet implemented")
+        launch {
+            hiddenSitesDataStore.updateHiddenSites(
+                _wooStores.value.wooStores
+                    .associate { it.siteId.toString() to it.isSelected }
+            )
+            triggerEvent(Exit)
+        }
     }
 
     fun onSiteSelected(wooStoreUi: WooStoreUi) {
@@ -65,11 +76,14 @@ class WooSitesVisibilityViewModel @Inject constructor(
         )
     }
 
-    private fun SiteModel.toWooStoreUi() = WooStoreUi(
+    private suspend fun getSiteVisibility(siteId: Long): Boolean =
+        hiddenSitesDataStore.isSiteHidden(siteId.toString()).first()
+
+    private fun SiteModel.toWooStoreUi(isSelected: Boolean) = WooStoreUi(
         siteName = name,
         siteUrl = url,
         siteId = siteId,
-        isSelected = true // TODO remove hardcoded value
+        isSelected = isSelected
     )
 
     data class WooStoresUiState(
