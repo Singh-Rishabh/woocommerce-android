@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.compose.material.main)
     implementation(libs.androidx.compose.runtime.livedata)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling.main)
 
     implementation("${gradle.ext.fluxCBinaryPath}:${libs.versions.wordpress.fluxc.get()}") {
