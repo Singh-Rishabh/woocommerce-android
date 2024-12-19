@@ -321,10 +321,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onPurchaseShippingLabel() {
         val purchaseData = PurchasedShippingLabelData(
             labelId = 4158L,
+            carrierId = "usps",
             totalWeight = "1.5",
             totalPrice = "10.00",
             dimensionUnit = "cm",
             weightUnit = "kg",
+            trackingNumber = "1234",
             items = emptyList()
         )
         triggerEvent(LabelPurchased(purchaseData))
