@@ -19,6 +19,11 @@ data class GetShippingLabelResponse(
     @SerializedName("labels") val shippingLabels: List<ShippingLabelDTO>? = null
 )
 
+data class GetShippingLabelStatusResponse(
+    @SerializedName("success") val success: Boolean? = null,
+    @SerializedName("label") val shippingLabel: ShippingLabelDTO? = null
+)
+
 data class ShippingLabelDTO(
     @SerializedName("label_id") val labelId: Long? = null,
     @SerializedName("tracking") val tracking: String? = null,
