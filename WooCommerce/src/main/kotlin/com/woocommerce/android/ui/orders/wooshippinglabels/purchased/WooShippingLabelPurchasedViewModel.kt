@@ -47,8 +47,8 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         _viewState.update { state ->
             state.copy(
                 shippableItems = ShippableItemsUI(
-                    formattedTotalWeight = navArgs.purchaseData.totalWeight,
-                    formattedTotalPrice = navArgs.purchaseData.totalPrice,
+                    formattedTotalWeight = navArgs.purchaseData.formattedTotalWeight,
+                    formattedTotalPrice = navArgs.purchaseData.formattedTotalPrice,
                     shippableItems = navArgs.purchaseData.items.map {
                         ShippableItemUI(
                             itemId = it.itemId,

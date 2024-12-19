@@ -8,12 +8,14 @@ data class PurchasedShippingLabelData(
     val labelId: Long,
     val carrierId: String,
     val totalWeight: String,
-    val totalPrice: String,
+    val formattedTotalPrice: String,
     val trackingNumber: String,
-    val dimensionUnit: String,
     val weightUnit: String,
     val items: List<ShippableItem>
-) : Parcelable
+) : Parcelable {
+    val formattedTotalWeight: String
+        get() = "$totalWeight $weightUnit"
+}
 
 @Parcelize
 data class ShippableItem(

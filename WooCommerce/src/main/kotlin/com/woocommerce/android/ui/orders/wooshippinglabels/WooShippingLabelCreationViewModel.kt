@@ -323,8 +323,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             labelId = 4158L,
             carrierId = "usps",
             totalWeight = "1.5",
-            totalPrice = "10.00",
-            dimensionUnit = "cm",
+            formattedTotalPrice = currencyFormatter.formatCurrency("10.00"),
             weightUnit = "kg",
             trackingNumber = "1234",
             items = emptyList()
