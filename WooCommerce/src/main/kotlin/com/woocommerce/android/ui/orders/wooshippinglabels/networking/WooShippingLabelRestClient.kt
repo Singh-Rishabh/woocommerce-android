@@ -29,6 +29,51 @@ class WooShippingLabelRestClient @Inject constructor(
         ).toWooPayload()
     }
 
+    suspend fun fetchAccountSettings(
+        site: SiteModel,
+    ): WooPayload<AccountSettingsDTO> {
+        val url = "/wcshipping/v1/account/settings/"
+
+        val result = wooNetwork.executeGetGsonRequest(
+            site = site,
+            path = url,
+            clazz = AccountSettingsDTO::class.java,
+        )
+
+        return result.toWooPayload()
+    }
+
+    suspend fun fetchPurchasedShippingLabels(
+        site: SiteModel,
+        orderId: Long,
+    ): WooPayload<GetShippingLabelResponse> {
+        val url = "/wcshipping/v1/label/purchase/$orderId/"
+
+        val result = wooNetwork.executeGetGsonRequest(
+            site = site,
+            path = url,
+            clazz = GetShippingLabelResponse::class.java,
+        )
+
+        return result.toWooPayload()
+    }
+
+    suspend fun fetchShippingLabelStatus(
+        site: SiteModel,
+        orderId: Long,
+        labelId: Long,
+    ): WooPayload<GetShippingLabelStatusResponse> {
+        val url = "/wcshipping/v1/label/status/$orderId/$labelId/"
+
+        val result = wooNetwork.executeGetGsonRequest(
+            site = site,
+            path = url,
+            clazz = GetShippingLabelStatusResponse::class.java,
+        )
+
+        return result.toWooPayload()
+    }
+
     suspend fun purchaseShippingLabel(
         orderId: Long,
         site: SiteModel,
