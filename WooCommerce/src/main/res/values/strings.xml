@@ -1284,6 +1284,9 @@
     <string name="shipping_label_purchased_schedule_pick_up">Schedule pickup</string>
     <string name="shipping_label_purchased_request_refund">Request refund</string>
     <string name="shipping_label_total_shipment_weight">Total shipment weight (with package)</string>
+    <string name="shipping_label_purchased_pickup_error">We currently do not support Pick ups for this carrier</string>
+    <string name="shipping_label_purchased_tracking_error">We currently do not support Tracking for this carrier</string>
+    <string name="shipping_label_purchased_print_error">Something went wrong with this Shipping Label, try again later</string>
 
 
     <!--

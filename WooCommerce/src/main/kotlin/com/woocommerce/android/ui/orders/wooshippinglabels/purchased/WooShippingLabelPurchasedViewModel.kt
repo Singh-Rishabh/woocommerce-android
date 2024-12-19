@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.shippinglabels.ShipmentTrackingUrls
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
@@ -76,7 +77,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
 
             labelFile?.let {
                 triggerEvent(OpenShippingLabelFile(it))
-            }
+            } ?: triggerEvent(ShowError(R.string.shipping_label_purchased_print_error))
 
             _viewState.update { it.copy(isPrintingInProgress = false) }
         }
@@ -87,13 +88,15 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     }
 
     fun onTrackShipmentClicked() {
-        trackingLink?.let { triggerEvent(OpenUrl(it)) }
+        trackingLink
+            ?.let { triggerEvent(OpenUrl(it)) }
+            ?: triggerEvent(ShowError(R.string.shipping_label_purchased_tracking_error))
     }
 
     fun onSchedulePickUpClicked() {
         Carrier.fromCarrierId(navArgs.purchaseData.carrierId)?.let {
             triggerEvent(OpenUrl(it.pickupUrl))
-        }
+        } ?: triggerEvent(ShowError(R.string.shipping_label_purchased_pickup_error))
     }
 
     fun onRefundClicked() { triggerEvent(StartRefundRequest) }
@@ -109,6 +112,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
 
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
     data class OpenUrl(val url: String) : MultiLiveEvent.Event()
+    data class ShowError(val errorResId: Int) : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
 
