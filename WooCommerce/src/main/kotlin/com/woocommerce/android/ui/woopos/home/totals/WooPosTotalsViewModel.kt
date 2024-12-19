@@ -218,7 +218,7 @@ class WooPosTotalsViewModel @Inject constructor(
             when {
                 paymentState.onRetry != null -> paymentState.onRetry!!()
                 else -> {
-                    childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
+                    childrenToParentEventSender.sendToParent(ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout)
                     retryPaymentCollectionFromScratch()
                 }
             }
@@ -229,7 +229,7 @@ class WooPosTotalsViewModel @Inject constructor(
         viewModelScope.launch {
             when (state.value) {
                 is PaymentFailed, is PaymentInProgress -> {
-                    childrenToParentEventSender.sendToParent(ChildToParentEvent.RetryFailedPaymentClicked)
+                    childrenToParentEventSender.sendToParent(ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout)
                     retryPaymentCollectionFromScratch()
                 }
 
