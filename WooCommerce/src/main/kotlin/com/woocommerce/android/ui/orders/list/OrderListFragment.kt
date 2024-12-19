@@ -270,7 +270,7 @@ class OrderListFragment :
         ).withSelectionPredicate(selectionPredicate)
             .build()
 
-        binding.orderListView.adapter.tracker = tracker
+        (binding.orderListView.ordersList.adapter as? OrderListAdapter)?.tracker = tracker
 
         tracker?.addObserver(
             object : SelectionTracker.SelectionObserver<Long>() {
