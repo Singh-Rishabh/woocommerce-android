@@ -81,27 +81,17 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
 
     fun onTrackShipmentClicked() {
         trackingLink?.let { triggerEvent(OpenUrl(it)) }
-
     }
 
     fun onSchedulePickUpClicked() {
-        selectPickupUrl(navArgs.purchaseData.carrierId)?.let {
-            triggerEvent(OpenUrl(it))
+        Carrier.fromCarrierId(navArgs.purchaseData.carrierId)?.let {
+            triggerEvent(OpenUrl(it.pickupUrl))
         }
     }
 
     fun onRefundClicked() { triggerEvent(StartRefundRequest) }
 
     fun onLearnMoreClicked() { triggerEvent(OpenLearnMoreScreen) }
-
-    private fun selectPickupUrl(carrierId: String): String? {
-        return when (carrierId) {
-            "usps" -> "https://tools.usps.com/schedule-pickup-steps.htm"
-            "ups" -> "https://wwwapps.ups.com/pickup/request"
-            "dhlexpress" -> "https://mydhl.express.dhl/us/en/schedule-pickup.html#/schedule-pickup#label-reference"
-            else -> null
-        }
-    }
 
     @Parcelize
     data class ViewState(
@@ -114,4 +104,21 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     data class OpenUrl(val url: String) : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
+
+    enum class Carrier(val pickupUrl: String) {
+        USPS("https://tools.usps.com/schedule-pickup-steps.htm"),
+        UPS("https://wwwapps.ups.com/pickup/request"),
+        DHL("https://mydhl.express.dhl/us/en/schedule-pickup.html#/schedule-pickup#label-reference");
+
+        companion object {
+            fun fromCarrierId(carrierId: String): Carrier? {
+                return when (carrierId) {
+                    "usps" -> USPS
+                    "ups" -> UPS
+                    "dhlexpress" -> DHL
+                    else -> null
+                }
+            }
+        }
+    }
 }
