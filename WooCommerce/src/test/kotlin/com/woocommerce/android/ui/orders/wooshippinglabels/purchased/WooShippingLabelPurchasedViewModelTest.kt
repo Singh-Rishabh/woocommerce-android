@@ -1,14 +1,15 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.purchased
 
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenLearnMoreScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenShippingLabelFile
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenUrl
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.StartRefundRequest
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.ViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -31,7 +32,7 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
         totalPrice = "10.00",
         dimensionUnit = "cm",
         weightUnit = "kg",
-        trackingNumber = "1234",
+        trackingNumber = "123456",
         items = emptyList()
     )
 
@@ -48,7 +49,7 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onPrintShippingLabelClicked triggers OpenShippingLabelFile event`() = runBlockingTest {
+    fun `onPrintShippingLabelClicked triggers OpenShippingLabelFile event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
         whenever(fetchShippingLabelFile(listOf(navArgs.purchaseData.labelId), "label")).thenReturn(file)
@@ -60,11 +61,16 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onLabelPaperSizeOptionSelected updates viewState`() = runBlockingTest {
+    fun `ViewState starts with LABEL paper size as default`() {
+        var latestViewState: ViewState? = null
+        viewModel.viewState.observeForever { latestViewState = it }
+
+        assertThat(latestViewState).isNotNull
+        assertThat(latestViewState?.paperSizeOption).isEqualTo(LABEL)
     }
 
     @Test
-    fun `onTrackShipmentClicked triggers OpenUrl event`() = runBlockingTest {
+    fun `onTrackShipmentClicked triggers OpenUrl event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
         whenever(navArgs.purchaseData.trackingNumber).thenReturn("123456")
@@ -76,7 +82,7 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onSchedulePickUpClicked triggers OpenUrl event`() = runBlockingTest {
+    fun `onSchedulePickUpClicked triggers OpenUrl event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
         whenever(navArgs.purchaseData.carrierId).thenReturn("usps")
@@ -87,7 +93,7 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onRefundClicked triggers StartRefundRequest event`() = runBlockingTest {
+    fun `onRefundClicked triggers StartRefundRequest event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
 
@@ -97,7 +103,7 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onLearnMoreClicked triggers OpenLearnMoreScreen event`() = runBlockingTest {
+    fun `onLearnMoreClicked triggers OpenLearnMoreScreen event`() = testBlocking {
         var latestEvent: MultiLiveEvent.Event? = null
         viewModel.event.observeForever { latestEvent = it }
 
