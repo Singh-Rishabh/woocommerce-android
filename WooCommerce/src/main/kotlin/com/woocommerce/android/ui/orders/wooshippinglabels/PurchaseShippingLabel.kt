@@ -12,6 +12,7 @@ class PurchaseShippingLabel @Inject constructor(
     private val selectedSite: SelectedSite,
     private val wooShippingLabelRepository: WooShippingLabelRepository
 ) {
+    @Suppress("LongParameterList")
     suspend operator fun invoke(
         orderId: Long,
         shippableItems: List<Long>,
