@@ -1,15 +1,12 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.purchased
 
-import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenLearnMoreScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenShippingLabelFile
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenUrl
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.StartRefundRequest
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.ViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
-import com.woocommerce.android.viewmodel.navArgs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
@@ -25,14 +22,29 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
 
     private lateinit var viewModel: WooShippingLabelPurchasedViewModel
     private val fetchShippingLabelFile: FetchShippingLabelFile = mock()
-    private val savedStateHandle: SavedStateHandle = mock()
-    private val navArgs: WooShippingLabelPurchasedFragmentArgs = mock()
     private val file: File = mock()
+
+    private val mockPurchaseData = PurchasedShippingLabelData(
+        labelId = 4158L,
+        carrierId = "usps",
+        totalWeight = "1.5",
+        totalPrice = "10.00",
+        dimensionUnit = "cm",
+        weightUnit = "kg",
+        trackingNumber = "1234",
+        items = emptyList()
+    )
+
+    private val navArgs = WooShippingLabelPurchasedFragmentArgs(
+        purchaseData = mockPurchaseData
+    )
 
     @Before
     fun setup() {
-        whenever(savedStateHandle.navArgs<WooShippingLabelPurchasedFragmentArgs>()).thenReturn(navArgs)
-        viewModel = WooShippingLabelPurchasedViewModel(savedStateHandle, fetchShippingLabelFile)
+        viewModel = WooShippingLabelPurchasedViewModel(
+            savedState = navArgs.toSavedStateHandle(),
+            fetchShippingLabelFile = fetchShippingLabelFile
+        )
     }
 
     @Test
