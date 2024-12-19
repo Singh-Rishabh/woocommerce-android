@@ -6,22 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.woocommerce.android.ui.orders.list.OrderListAdapter
 import com.woocommerce.android.ui.orders.list.OrderListItemUIType.OrderListItemUI
 
-class SelectableOrderListItemLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
-    override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? =
-        recyclerView
-            .findChildViewUnder(event.x, event.y)
-            ?.let { view ->
-                recyclerView.getChildViewHolder(view)?.let { viewHolder ->
-                    val position = viewHolder.bindingAdapterPosition
-                    val item = (recyclerView.adapter as? OrderListAdapter)?.currentList?.get(position)
-                    if (item is OrderListItemUI) {
-                        SelectableOrderItemDetailsLookup(position, item.orderId)
-                    } else {
-                        null
-                    }
-                }
-            }
-}
 
 class DefaultOrderListItemLookup(private val recyclerView: RecyclerView) : ItemDetailsLookup<Long>() {
     override fun getItemDetails(event: MotionEvent): ItemDetails<Long>? =
