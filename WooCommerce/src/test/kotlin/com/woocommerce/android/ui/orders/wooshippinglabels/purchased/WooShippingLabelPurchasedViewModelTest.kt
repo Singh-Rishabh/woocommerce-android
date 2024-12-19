@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.purchased
 
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LETTER
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenLearnMoreScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenShippingLabelFile
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenUrl
@@ -67,6 +68,17 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
 
         assertThat(latestViewState).isNotNull
         assertThat(latestViewState?.paperSizeOption).isEqualTo(LABEL)
+    }
+
+    @Test
+    fun `onLabelPaperSizeOptionSelected updates the ViewState as expected`() {
+        var latestViewState: ViewState? = null
+        viewModel.viewState.observeForever { latestViewState = it }
+
+        viewModel.onLabelPaperSizeOptionSelected(LETTER)
+
+        assertThat(latestViewState).isNotNull
+        assertThat(latestViewState?.paperSizeOption).isEqualTo(LETTER)
     }
 
     @Test
