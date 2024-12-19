@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,6 +62,20 @@ private val lightGreen = Color(0xFFEDFAEF)
 val Colors.successColor: Color get() = if (isLight) darkGreen else lightGreen
 
 val Colors.successSurface: Color get() = if (isLight) lightGreen else darkGreen
+
+@Composable
+fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewModel) {
+    val viewState = viewModel.viewState.observeAsState()
+    WooShippingLabelPurchasedScreen(
+        selectedLabelPaperSizeOption = viewState.value?.paperSizeOption ?: WooShippingLabelPaperSize.LEGAL,
+        onLabelPaperSizeOptionSelected = { viewModel.onLabelPaperSizeOptionSelected(it) },
+        onPrintShippingLabelClicked = { viewModel.onPrintShippingLabelClicked() },
+        onTrackShipmentClicked = { viewModel.onTrackShipmentClicked() },
+        onSchedulePickUpClicked = { viewModel.onSchedulePickUpClicked() },
+        onRefundClicked = { viewModel.onRefundClicked() },
+        onLearnMoreClicked = { viewModel.onLearnMoreClicked() }
+    )
+}
 
 @Composable
 internal fun WooShippingLabelPurchasedScreen(

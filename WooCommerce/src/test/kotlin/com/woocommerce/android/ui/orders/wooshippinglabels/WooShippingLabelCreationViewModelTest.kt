@@ -11,6 +11,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
@@ -86,6 +87,12 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val defaultShipToAddress = Address.EMPTY.copy(
         address1 = "1278 24st Perito AVE"
     )
+    private val defaultStoreOptions = StoreOptionsModel(
+        weightUnit = "kg",
+        currencySymbol = "$",
+        dimensionUnit = "cm",
+        originCountry = "US"
+    )
 
     private val defaultPackageData = PackageData(
         id = "1",
@@ -126,6 +133,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         shippingRateOptions = emptyList(),
         option = Option.DEFAULT,
         rate = defaultShippingRate,
+        feeDescription = "fee description",
+        formattedOptionName = Option.DEFAULT.name
     )
 
     private val defaultShippingRates = mapOf(
@@ -150,6 +159,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
     private val observeOriginAddresses: ObserveOriginAddresses = mock()
     private val getShippingRates: GetShippingRates = mock()
+    private val fetchAccountSettings: FetchAccountSettings = mock()
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -160,6 +170,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             currencyFormatter = currencyFormatter,
             observeOriginAddresses = observeOriginAddresses,
             getShippingRates = getShippingRates,
+            fetchAccountSettings = fetchAccountSettings,
             savedState = savedState
         )
     }
@@ -176,6 +187,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 
@@ -199,6 +211,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 
@@ -249,6 +262,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 
@@ -277,6 +291,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(
             getShippingRates(any(), any(), any(), any(), any(), any())
         ) doReturn Result.success(defaultShippingRates)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 
@@ -305,6 +320,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(
             getShippingRates(any(), any(), any(), any(), any(), any())
         ) doReturn Result.failure(Exception("Random error"))
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData)
@@ -327,7 +343,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
-        whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
             getShippingRates(any(), any(), any(), any(), any(), any())
@@ -356,7 +371,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
-        whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
             getShippingRates(any(), any(), any(), any(), any(), any())
@@ -385,7 +399,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             )
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
-        whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
             getShippingRates(any(), any(), any(), any(), any(), any())
@@ -413,6 +426,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 
@@ -452,6 +466,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 

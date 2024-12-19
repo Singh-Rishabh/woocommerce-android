@@ -1,8 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals.payment.success
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,10 +13,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,6 +36,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlin
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun WooPosPaymentSuccessScreen(
@@ -44,30 +45,30 @@ fun WooPosPaymentSuccessScreen(
     onReceiptClicked: () -> Unit,
     onNewTransactionClicked: () -> Unit,
 ) {
-    var bottomAnimationStarted by remember { mutableStateOf(false) }
-    var iconAnimationStarted by remember { mutableStateOf(false) }
+    val savedAnimationStage = rememberSaveable { mutableStateOf(AnimationStage.INITIAL) }
+    val animationStateFlow = remember { MutableStateFlow(savedAnimationStage.value) }
 
     LaunchedEffect(Unit) {
-        delay(300)
-        bottomAnimationStarted = true
-        delay(300)
-        iconAnimationStarted = true
+        if (animationStateFlow.value != AnimationStage.FINISHED) {
+            startAnimations(animationStateFlow)
+        }
     }
+
+    val animationState = animationStateFlow.collectAsState().value
+    savedAnimationStage.value = animationState
 
     WooPosPaymentSuccessScreen(
         state = state,
-        iconAnimationStarted = iconAnimationStarted,
-        bottomAnimationStarted = bottomAnimationStarted,
+        animationStage = animationState,
         onReceiptClicked = onReceiptClicked,
         onNewTransactionClicked = onNewTransactionClicked,
     )
 }
 
 @Composable
-fun WooPosPaymentSuccessScreen(
+private fun WooPosPaymentSuccessScreen(
     state: WooPosTotalsViewState.PaymentSuccess,
-    iconAnimationStarted: Boolean,
-    bottomAnimationStarted: Boolean,
+    animationStage: AnimationStage,
     onReceiptClicked: () -> Unit,
     onNewTransactionClicked: () -> Unit,
 ) {
@@ -78,7 +79,7 @@ fun WooPosPaymentSuccessScreen(
         contentAlignment = Alignment.Center
     ) {
         val marginBetweenButtonAndText by animateDpAsState(
-            targetValue = if (bottomAnimationStarted) 80.dp else 16.dp,
+            targetValue = if (animationStage >= AnimationStage.BUTTONS) 80.dp else 16.dp,
             label = "Check mark size"
         )
         @Suppress("DestructuringDeclarationWithTooManyEntries")
@@ -87,7 +88,7 @@ fun WooPosPaymentSuccessScreen(
 
             val checkMarkIconMargin = 56.dp.toAdaptivePadding()
             CheckMarkIcon(
-                animationStarted = iconAnimationStarted,
+                animationStage = animationStage,
                 modifier = Modifier.constrainAs(icon) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -155,27 +156,17 @@ fun WooPosPaymentSuccessScreen(
 
 @Composable
 private fun CheckMarkIcon(
-    animationStarted: Boolean,
+    animationStage: AnimationStage,
     modifier: Modifier = Modifier,
 ) {
     val size by animateDpAsState(
-        targetValue = if (animationStarted) 164.dp else 0.dp,
-        label = "Check mark size"
+        targetValue = if (animationStage >= AnimationStage.CIRCLE) 164.dp else 0.dp,
+        label = "Circle Size"
     )
-
-    var iconAnimationStarted by remember { mutableStateOf(false) }
     val iconSize by animateDpAsState(
-        targetValue = if (iconAnimationStarted) 72.dp else 0.dp,
-        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
+        targetValue = if (animationStage >= AnimationStage.ICON) 72.dp else 0.dp,
         label = "Icon Size"
     )
-
-    LaunchedEffect(animationStarted) {
-        if (animationStarted) {
-            delay(300)
-            iconAnimationStarted = true
-        }
-    }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -198,6 +189,24 @@ private fun CheckMarkIcon(
     }
 }
 
+@Suppress("MagicNumber")
+private suspend fun startAnimations(stateFlow: MutableStateFlow<AnimationStage>) {
+    stateFlow.update { AnimationStage.BUTTONS }
+    delay(300)
+    stateFlow.update { AnimationStage.CIRCLE }
+    delay(300)
+    stateFlow.update { AnimationStage.ICON }
+    stateFlow.update { AnimationStage.FINISHED }
+}
+
+private enum class AnimationStage {
+    INITIAL,
+    BUTTONS,
+    CIRCLE,
+    ICON,
+    FINISHED,
+}
+
 @WooPosPreview
 @Composable
 fun WooPosPaymentSuccessScreenPreview() {
@@ -206,8 +215,7 @@ fun WooPosPaymentSuccessScreenPreview() {
             state = WooPosTotalsViewState.PaymentSuccess(
                 orderTotalText = "A payment of 13.18 was successfully made",
             ),
-            bottomAnimationStarted = true,
-            iconAnimationStarted = true,
+            animationStage = AnimationStage.FINISHED,
             onReceiptClicked = {},
             onNewTransactionClicked = {}
         )
