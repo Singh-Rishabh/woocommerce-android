@@ -122,13 +122,13 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
             ).onEach { status ->
                 when (status) {
                     PurchaseInProgress -> {
-                        _viewState.update { it.copy(isLoadingData = true) }
+                        _viewState.update { it.copy(isPurchaseFinished = false) }
                     }
                     Purchased -> {
-                        _viewState.update { it.copy(isLoadingData = false) }
+                        _viewState.update { it.copy(isPurchaseFinished = true) }
                     }
                     else -> {
-                        triggerEvent(ShowErrorAndExit(R.string.shipping_label_purchased_purchase_failed_error))
+                        _viewState.update { it.copy(isPurchaseFinished = null) }
                     }
                 }
             }.launchIn(this)
@@ -139,13 +139,13 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     data class ViewState(
         val paperSizeOption: WooShippingLabelPaperSize,
         val shippableItems: ShippableItemsUI? = null,
-        val isLoadingData: Boolean = false
+        val isLoadingData: Boolean = false,
+        val isPurchaseFinished: Boolean? = false
     ) : Parcelable
 
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
     data class OpenUrl(val url: String) : MultiLiveEvent.Event()
     data class ShowError(val errorResId: Int) : MultiLiveEvent.Event()
-    data class ShowErrorAndExit(val errorResId: Int) : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
 
