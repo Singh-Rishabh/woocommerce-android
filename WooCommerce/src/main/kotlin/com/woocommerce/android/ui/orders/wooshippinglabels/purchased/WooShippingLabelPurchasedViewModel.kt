@@ -8,7 +8,6 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.shippinglabels.ShipmentTrackingUrls
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.PurchaseInProgress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Purchased
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Unknown
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -43,14 +42,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
         initialValue = ViewState(
-            paperSizeOption = LABEL,
-            shippingLabelData = navArgs.purchaseData
+            paperSizeOption = LABEL
         )
     )
     val viewState = _viewState.asLiveData()
 
     init {
         observeShippingLabelPurchaseStatus()
+        extractPurchaseDataToViewState()
     }
 
     fun onPrintShippingLabelClicked() {
@@ -90,6 +89,29 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
 
     fun onLearnMoreClicked() { triggerEvent(OpenLearnMoreScreen) }
 
+    private fun extractPurchaseDataToViewState() {
+        _viewState.update { state ->
+            state.copy(
+                shippableItems = ShippableItemsUI(
+                    formattedTotalWeight = purchaseData.formattedTotalWeight,
+                    formattedTotalPrice = purchaseData.formattedTotalPrice,
+                    shippableItems = purchaseData.items.map {
+                        ShippableItemUI(
+                            itemId = it.itemId,
+                            productId = it.productId,
+                            title = it.title,
+                            formattedSize = it.dimensions,
+                            formattedWeight = it.weight,
+                            formattedPrice = it.formattedPrice,
+                            quantity = it.quantity,
+                            imageUrl = it.imageUrl
+                        )
+                    }
+                )
+            )
+        }
+    }
+
     private fun observeShippingLabelPurchaseStatus() {
         launch {
             observeShippingLabelStatus(
@@ -97,14 +119,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                 labelId = purchaseData.labelId
             ).onEach { status ->
                 when (status) {
-                    Unknown, PurchaseInProgress -> {
-                        _viewState.update { it.copy(isLoadingData = true) }
+                    PurchaseInProgress -> {
+                        _viewState.update { it.copy(isPurchaseFinished = false) }
                     }
                     Purchased -> {
-                        _viewState.update { it.copy(isLoadingData = false) }
+                        _viewState.update { it.copy(isPurchaseFinished = true) }
                     }
                     else -> {
-                        triggerEvent(ShowErrorAndExit(R.string.shipping_label_purchased_purchase_failed_error))
+                        _viewState.update { it.copy(isPurchaseFinished = null) }
                     }
                 }
             }.launchIn(this)
@@ -114,14 +136,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val paperSizeOption: WooShippingLabelPaperSize,
+        val shippableItems: ShippableItemsUI? = null,
         val isLoadingData: Boolean = false,
-        val shippingLabelData: PurchasedShippingLabelData? = null
+        val isPurchaseFinished: Boolean? = false
     ) : Parcelable
 
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
     data class OpenUrl(val url: String) : MultiLiveEvent.Event()
     data class ShowError(val errorResId: Int) : MultiLiveEvent.Event()
-    data class ShowErrorAndExit(val errorResId: Int) : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
 
