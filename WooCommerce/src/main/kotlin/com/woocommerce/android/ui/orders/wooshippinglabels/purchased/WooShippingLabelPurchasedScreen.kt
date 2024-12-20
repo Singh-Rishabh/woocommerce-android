@@ -68,7 +68,7 @@ val Colors.successSurface: Color get() = if (isLight) lightGreen else darkGreen
 fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewModel) {
     val viewState = viewModel.viewState.observeAsState()
     WooShippingLabelPurchasedScreen(
-        isLoading = viewState.value?.isPrintingInProgress ?: false,
+        isLoading = viewState.value?.isLoadingData ?: false,
         shippingData = viewState.value?.shippableItems,
         selectedLabelPaperSizeOption = viewState.value?.paperSizeOption ?: WooShippingLabelPaperSize.LEGAL,
         onLabelPaperSizeOptionSelected = { viewModel.onLabelPaperSizeOptionSelected(it) },

@@ -69,9 +69,9 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
         viewModel.onPrintShippingLabelClicked()
 
         assertThat(viewStateUpdates).hasSize(3)
-        assertThat(viewStateUpdates[0].isPrintingInProgress).isFalse()
-        assertThat(viewStateUpdates[1].isPrintingInProgress).isTrue()
-        assertThat(viewStateUpdates[2].isPrintingInProgress).isFalse()
+        assertThat(viewStateUpdates[0].isLoadingData).isFalse()
+        assertThat(viewStateUpdates[1].isLoadingData).isTrue()
+        assertThat(viewStateUpdates[2].isLoadingData).isFalse()
     }
 
     @Test

@@ -21,11 +21,14 @@ import kotlinx.parcelize.Parcelize
 import java.io.File
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @HiltViewModel
 class WooShippingLabelPurchasedViewModel @Inject constructor(
     savedState: SavedStateHandle,
-    private val fetchShippingLabelFile: FetchShippingLabelFile
+    private val fetchShippingLabelFile: FetchShippingLabelFile,
+    private val observeShippingLabelStatus: ObserveShippingLabelStatus
 ) : ScopedViewModel(savedState) {
     private val navArgs by savedState.navArgs<WooShippingLabelPurchasedFragmentArgs>()
 
@@ -44,12 +47,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     init {
+        val purchasedLabelData = navArgs.purchaseData
+
         _viewState.update { state ->
             state.copy(
                 shippableItems = ShippableItemsUI(
-                    formattedTotalWeight = navArgs.purchaseData.formattedTotalWeight,
-                    formattedTotalPrice = navArgs.purchaseData.formattedTotalPrice,
-                    shippableItems = navArgs.purchaseData.items.map {
+                    formattedTotalWeight = purchasedLabelData.formattedTotalWeight,
+                    formattedTotalPrice = purchasedLabelData.formattedTotalPrice,
+                    shippableItems = purchasedLabelData.items.map {
                         ShippableItemUI(
                             itemId = it.itemId,
                             productId = it.productId,
@@ -61,13 +66,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                             imageUrl = it.imageUrl
                         )
                     }
-                )
+                ),
+                isLoadingData = true
             )
         }
     }
 
     fun onPrintShippingLabelClicked() {
-        _viewState.update { it.copy(isPrintingInProgress = true) }
+        _viewState.update { it.copy(isLoadingData = true) }
         launch {
             val paperSize = _viewState.value.paperSizeOption
             val labelFile = fetchShippingLabelFile(
@@ -79,7 +85,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                 triggerEvent(OpenShippingLabelFile(it))
             } ?: triggerEvent(ShowError(R.string.shipping_label_purchased_print_error))
 
-            _viewState.update { it.copy(isPrintingInProgress = false) }
+            _viewState.update { it.copy(isLoadingData = false) }
         }
     }
 
@@ -107,7 +113,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     data class ViewState(
         val paperSizeOption: WooShippingLabelPaperSize,
         val shippableItems: ShippableItemsUI? = null,
-        val isPrintingInProgress: Boolean = false
+        val isLoadingData: Boolean = false
     ) : Parcelable
 
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
