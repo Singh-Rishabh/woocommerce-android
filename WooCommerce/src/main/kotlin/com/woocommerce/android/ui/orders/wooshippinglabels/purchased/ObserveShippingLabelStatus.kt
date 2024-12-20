@@ -19,7 +19,18 @@ class ObserveShippingLabelStatus @Inject constructor(
         labelId: Long
     ): Flow<ShippingLabelStatus> {
         return flow {
+            var latestStatus = Unknown
+            emit(latestStatus)
 
+            do {
+                latestStatus = labelRepository.fetchShippingLabelStatus(
+                    site = selectedSite.get(),
+                    orderId = orderId,
+                    labelId = labelId
+                ).takeIf { it.isError.not() }?.model ?: Unknown
+                emit(latestStatus)
+                delay(5000)
+            } while (latestStatus == PurchaseInProgress || latestStatus == Unknown)
         }
     }
 }
