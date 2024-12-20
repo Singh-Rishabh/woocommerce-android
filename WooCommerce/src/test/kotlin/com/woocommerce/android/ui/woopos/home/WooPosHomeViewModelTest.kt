@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccessfullyPaid.PaymentMethod
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel.ItemClickedData
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -79,7 +80,11 @@ class WooPosHomeViewModelTest {
             viewModel.onUIEvent(WooPosHomeUIEvent.SystemBackClicked)
 
             // THEN
-            verify(parentToChildrenEventSender).sendToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
+            verify(parentToChildrenEventSender).sendToChildren(
+                ParentToChildrenEvent.OrderSuccessfullyPaid(
+                    PaymentMethod.CARD
+                )
+            )
             assertThat(viewModel.state.value.screenPositionState)
                 .isEqualTo(WooPosHomeState.ScreenPositionState.Cart.Visible)
         }
