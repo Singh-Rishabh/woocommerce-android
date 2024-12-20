@@ -53,6 +53,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.HazmatCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetails
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingProductsCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.generateItems
 
@@ -69,10 +70,10 @@ val Colors.successSurface: Color get() = if (isLight) lightGreen else darkGreen
 @Composable
 fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewModel) {
     val viewState = viewModel.viewState.observeAsState()
-    WooShippingLabelPurchasedScreen(
+    WooShippingLabelPurchasedWithBottomSheetScreen(
         isLoading = viewState.value?.isLoadingData ?: false,
         isPurchaseFinished = viewState.value?.isPurchaseFinished,
-        shippingData = viewState.value?.shippableItems,
+        shippingData = viewState.value?.shippingLabelData,
         selectedLabelPaperSizeOption = viewState.value?.paperSizeOption ?: WooShippingLabelPaperSize.LEGAL,
         onLabelPaperSizeOptionSelected = { viewModel.onLabelPaperSizeOptionSelected(it) },
         onPrintShippingLabelClicked = { viewModel.onPrintShippingLabelClicked() },
@@ -86,7 +87,8 @@ fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewMode
 @Composable
 internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
     isLoading: Boolean,
-    shippingData: PurchasedShippingLabelData,
+    isPurchaseFinished: Boolean?,
+    shippingData: PurchasedShippingLabelData?,
     selectedLabelPaperSizeOption: WooShippingLabelPaperSize,
     onLabelPaperSizeOptionSelected: (WooShippingLabelPaperSize) -> Unit,
     onPrintShippingLabelClicked: () -> Unit,
@@ -99,37 +101,57 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
         sheetContent = {
-            ShipmentDetails(
-                scaffoldState = scaffoldState,
-                shippableItems = shippingData.items,
-                shippingLines = shippingData.shippingLines,
-                shippingAddresses = shippingData.addresses,
-                shippingRateSummary = shippingData.rateSummary,
-                isReadOnly = true
-            )
+            shippingData?.let {
+                ShipmentDetails(
+                    scaffoldState = scaffoldState,
+                    shippableItems = shippingData.items,
+                    shippingLines = shippingData.shippingLines,
+                    shippingAddresses = shippingData.addresses,
+                    shippingRateSummary = shippingData.rateSummary,
+                    isReadOnly = true
+                )
+            }
         },
         sheetPeekHeight = 78.dp,
         scaffoldState = scaffoldState,
         backgroundColor = MaterialTheme.colors.surface
-    ) { _ ->
+    ) { innerPadding ->
         Column(
             modifier = modifier
-                .padding(start = 16.dp, end = 16.dp)
+                .padding(innerPadding)
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
+            val (titleResId, messageResId) = when (isPurchaseFinished) {
+                true -> Pair(
+                    R.string.shipping_label_purchased_success_title,
+                    R.string.shipping_label_purchased_success_message
+                )
+
+                false -> Pair(
+                    R.string.shipping_label_purchased_in_progress_title,
+                    R.string.shipping_label_purchased_in_progress_message
+                )
+
+                null -> Pair(
+                    R.string.shipping_label_purchased_failure_title,
+                    R.string.shipping_label_purchased_failure_message
+                )
+            }
+
             Text(
-                text = stringResource(id = R.string.shipping_label_purchased_title),
+                text = stringResource(id = titleResId),
                 style = MaterialTheme.typography.subtitle1,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 16.dp)
             )
             Text(
-                text = stringResource(id = R.string.shipping_label_purchased_message),
+                text = stringResource(id = messageResId),
                 modifier = Modifier.padding(top = 8.dp),
                 style = MaterialTheme.typography.subtitle1,
             )
             Spacer(modifier = Modifier.padding(top = 16.dp))
             PrintShippingLabelCard(
+                isPrintButtonEnabled = isPurchaseFinished == true,
                 selectedLabelPaperSizeOption = selectedLabelPaperSizeOption,
                 onLabelPaperSizeOptionSelected = onLabelPaperSizeOptionSelected,
                 onPrintShippingLabelClicked = onPrintShippingLabelClicked,
@@ -145,8 +167,8 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
                 modifier = Modifier.padding(top = 8.dp),
             )
 
-            shippingData?.let { shippingData ->
-                val isExpanded = remember { mutableStateOf(false) }
+            val isExpanded = remember { mutableStateOf(false) }
+            shippingData?.let {
                 ShippingProductsCard(
                     shippableItems = shippingData.items,
                     isExpanded = isExpanded.value,
@@ -200,10 +222,12 @@ internal fun WooShippingLabelPurchasedScreen(
                 R.string.shipping_label_purchased_success_title,
                 R.string.shipping_label_purchased_success_message
             )
+
             false -> Pair(
                 R.string.shipping_label_purchased_in_progress_title,
                 R.string.shipping_label_purchased_in_progress_message
             )
+
             null -> Pair(
                 R.string.shipping_label_purchased_failure_title,
                 R.string.shipping_label_purchased_failure_message
