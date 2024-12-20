@@ -19,6 +19,9 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.network.BaseRequest
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 
 @ExperimentalCoroutinesApi
 class ObserveShippingLabelStatusTest {
@@ -38,7 +41,7 @@ class ObserveShippingLabelStatusTest {
     }
 
     @Test
-    fun `When response is unknown, then observation stops`() = runTest {
+    fun `When status response is unknown, then observation stops`() = runTest {
         whenever(labelRepository.fetchShippingLabelStatus(mockSite, mockOrderId, mockLabelId))
             .thenReturn(WooResult(Unknown))
 
@@ -50,7 +53,7 @@ class ObserveShippingLabelStatusTest {
     }
 
     @Test
-    fun `When response is PurchaseInProgress, continue trying until it changes`() = runTest {
+    fun `When status response is PurchaseInProgress, continue trying until it changes`() = runTest {
         var statusCallCount = 0
         whenever(labelRepository.fetchShippingLabelStatus(mockSite, mockOrderId, mockLabelId))
             .then {
@@ -66,5 +69,18 @@ class ObserveShippingLabelStatusTest {
 
         verify(labelRepository, times(2)).fetchShippingLabelStatus(mockSite, mockOrderId, mockLabelId)
         assertEquals(listOf(PurchaseInProgress, PurchaseInProgress, Purchased), result)
+    }
+
+    @Test
+    fun `When status response is error, then fallback to Unknown status`() = runTest {
+        val error = WooError(WooErrorType.GENERIC_ERROR, BaseRequest.GenericErrorType.UNKNOWN)
+        whenever(labelRepository.fetchShippingLabelStatus(mockSite, mockOrderId, mockLabelId))
+            .thenReturn(WooResult(error))
+
+        val result = observeShippingLabelStatus(mockOrderId, mockLabelId).toList()
+        advanceUntilIdle()
+
+        verify(labelRepository, times(1)).fetchShippingLabelStatus(mockSite, mockOrderId, mockLabelId)
+        assertEquals(listOf(PurchaseInProgress, Unknown), result)
     }
 }
