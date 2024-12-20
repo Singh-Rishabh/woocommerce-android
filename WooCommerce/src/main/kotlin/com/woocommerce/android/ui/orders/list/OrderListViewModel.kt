@@ -955,12 +955,12 @@ class OrderListViewModel @Inject constructor(
                 if (result.isFailure) {
                     triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                 } else {
+                    fetchOrdersAndOrderDependencies()
                     triggerEvent(Event.ShowSnackbar(R.string.order_status_updated))
                 }
-
-                // todo make sure order list is refreshed
+                exitSelectionMode()
             }
-            // todo remove loading state, remove multi selection state
+            // todo remove loading state
         }
     }
 
