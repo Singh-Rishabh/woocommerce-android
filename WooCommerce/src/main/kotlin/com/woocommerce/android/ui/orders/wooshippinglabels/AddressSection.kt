@@ -44,7 +44,8 @@ internal fun AddressSectionPortrait(
     originAddresses: List<OriginShippingAddress>,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onShippingToAddressChange: (Address) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     RoundedCornerBoxWithBorder(modifier.fillMaxWidth()) {
         ConstraintLayout {
@@ -59,6 +60,7 @@ internal fun AddressSectionPortrait(
             ) = createRefs()
 
             val barrier = createEndBarrier(shipFromLabel, shipToLabel)
+            val endBarrier = createStartBarrier(shipFromSelect)
             var expanded by remember { mutableStateOf(false) }
 
             Text(
@@ -84,7 +86,7 @@ internal fun AddressSectionPortrait(
                     .constrainAs(shipFromValue) {
                         top.linkTo(shipFromLabel.top)
                         start.linkTo(shipFromLabel.end)
-                        end.linkTo(shipFromSelect.start)
+                        end.linkTo(endBarrier)
                         width = androidx.constraintlayout.compose.Dimension.fillToConstraints
                     }
                     .padding(
@@ -94,38 +96,40 @@ internal fun AddressSectionPortrait(
                         end = dimensionResource(R.dimen.minor_100)
                     )
             )
-            IconButton(
-                onClick = { expanded = true },
-                modifier = Modifier
-                    .constrainAs(shipFromSelect) {
-                        top.linkTo(shipFromLabel.top)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(shipFromLabel.bottom)
-                    }
-                    .padding(
-                        end = dimensionResource(R.dimen.minor_100)
-                    )
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.MoreHoriz,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.sizeIn(minWidth = 150.dp)
+            if (isReadOnly.not()) {
+                IconButton(
+                    onClick = { expanded = true },
+                    modifier = Modifier
+                        .constrainAs(shipFromSelect) {
+                            top.linkTo(shipFromLabel.top)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(shipFromLabel.bottom)
+                        }
+                        .padding(
+                            end = dimensionResource(R.dimen.minor_100)
+                        )
                 ) {
-                    originAddresses.forEach { option ->
-                        DropdownMenuItem(onClick = {
-                            onShippingFromAddressChange(option)
-                            expanded = false
-                        }) {
-                            Text(
-                                text = option.toShippingFromString().uppercase(),
-                                style = MaterialTheme.typography.subtitle1,
-                                modifier = Modifier.padding(8.dp)
-                            )
+                    Icon(
+                        imageVector = Icons.Filled.MoreHoriz,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.primary
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.sizeIn(minWidth = 150.dp)
+                    ) {
+                        originAddresses.forEach { option ->
+                            DropdownMenuItem(onClick = {
+                                onShippingFromAddressChange(option)
+                                expanded = false
+                            }) {
+                                Text(
+                                    text = option.toShippingFromString().uppercase(),
+                                    style = MaterialTheme.typography.subtitle1,
+                                    modifier = Modifier.padding(8.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -165,21 +169,23 @@ internal fun AddressSectionPortrait(
                         end = dimensionResource(R.dimen.minor_100)
                     )
             )
-            IconButton(
-                onClick = { },
-                modifier = Modifier
-                    .constrainAs(shipToEdit) {
-                        top.linkTo(shipToLabel.top)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(shipToLabel.bottom)
-                    }
-                    .padding(end = dimensionResource(R.dimen.minor_100))
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_edit_pencil),
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.primary,
-                )
+            if (isReadOnly.not()) {
+                IconButton(
+                    onClick = { },
+                    modifier = Modifier
+                        .constrainAs(shipToEdit) {
+                            top.linkTo(shipToLabel.top)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(shipToLabel.bottom)
+                        }
+                        .padding(end = dimensionResource(R.dimen.minor_100))
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit_pencil),
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.primary,
+                    )
+                }
             }
         }
     }
@@ -210,7 +216,8 @@ internal fun AddressSectionLandscape(
     shippingAddresses: WooShippingAddresses,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onShippingToAddressChange: (Address) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     RoundedCornerBoxWithBorder(modifier) {
         Row(
@@ -222,7 +229,8 @@ internal fun AddressSectionLandscape(
                 shipFrom = shippingAddresses.shipFrom,
                 originAddresses = shippingAddresses.originAddresses,
                 onShippingFromAddressChange = onShippingFromAddressChange,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                isReadOnly = isReadOnly
             )
             VerticalDivider()
             Row(modifier = Modifier.weight(1f)) {
@@ -248,27 +256,29 @@ internal fun AddressSectionLandscape(
                         .weight(1f)
                 )
 
-                val iconModifier = if (shippingAddresses.shipTo == Address.EMPTY) {
-                    Modifier
-                        .padding(end = dimensionResource(R.dimen.minor_100))
-                        .align(Alignment.CenterVertically)
-                } else {
-                    Modifier
-                        .padding(
-                            top = dimensionResource(R.dimen.minor_100),
-                            end = dimensionResource(R.dimen.minor_100)
-                        )
-                }
+                if (isReadOnly.not()) {
+                    val iconModifier = if (shippingAddresses.shipTo == Address.EMPTY) {
+                        Modifier
+                            .padding(end = dimensionResource(R.dimen.minor_100))
+                            .align(Alignment.CenterVertically)
+                    } else {
+                        Modifier
+                            .padding(
+                                top = dimensionResource(R.dimen.minor_100),
+                                end = dimensionResource(R.dimen.minor_100)
+                            )
+                    }
 
-                IconButton(
-                    onClick = { },
-                    modifier = iconModifier
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_edit_pencil),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.primary,
-                    )
+                    IconButton(
+                        onClick = { },
+                        modifier = iconModifier
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_edit_pencil),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.primary,
+                        )
+                    }
                 }
             }
         }
@@ -280,7 +290,8 @@ private fun ShipFromSelection(
     shipFrom: OriginShippingAddress,
     originAddresses: List<OriginShippingAddress>,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     var expanded by remember { mutableStateOf(false) }
     Row(modifier = modifier) {
@@ -307,34 +318,36 @@ private fun ShipFromSelection(
                 )
                 .weight(1f)
         )
-        IconButton(
-            onClick = { expanded = true },
-            modifier = Modifier
-                .padding(
-                    top = dimensionResource(R.dimen.minor_50),
-                    end = dimensionResource(R.dimen.minor_100)
-                )
-        ) {
-            Icon(
-                imageVector = Icons.Filled.MoreHoriz,
-                contentDescription = null,
-                tint = MaterialTheme.colors.primary
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.sizeIn(minWidth = 150.dp)
+        if (isReadOnly.not()) {
+            IconButton(
+                onClick = { expanded = true },
+                modifier = Modifier
+                    .padding(
+                        top = dimensionResource(R.dimen.minor_50),
+                        end = dimensionResource(R.dimen.minor_100)
+                    )
             ) {
-                originAddresses.forEach { option ->
-                    DropdownMenuItem(onClick = {
-                        onShippingFromAddressChange(option)
-                        expanded = false
-                    }) {
-                        Text(
-                            text = option.toShippingFromString().uppercase(),
-                            style = MaterialTheme.typography.subtitle1,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                Icon(
+                    imageVector = Icons.Filled.MoreHoriz,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.sizeIn(minWidth = 150.dp)
+                ) {
+                    originAddresses.forEach { option ->
+                        DropdownMenuItem(onClick = {
+                            onShippingFromAddressChange(option)
+                            expanded = false
+                        }) {
+                            Text(
+                                text = option.toShippingFromString().uppercase(),
+                                style = MaterialTheme.typography.subtitle1,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
                     }
                 }
             }

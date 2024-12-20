@@ -62,6 +62,7 @@ fun ShipmentDetails(
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
     handlerModifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     val scope = rememberCoroutineScope()
     Column(
@@ -111,7 +112,8 @@ fun ShipmentDetails(
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
             shippingRateSummary = shippingRateSummary,
-            modifier = modifier
+            modifier = modifier,
+            isReadOnly = isReadOnly
         )
     } else {
         ShipmentDetailsPortrait(
@@ -123,7 +125,8 @@ fun ShipmentDetails(
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
             shippingRateSummary = shippingRateSummary,
-            modifier = modifier
+            modifier = modifier,
+            isReadOnly = isReadOnly
         )
     }
 }
@@ -139,6 +142,7 @@ private fun ShipmentDetailsPortrait(
     modifier: Modifier = Modifier,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
+    isReadOnly: Boolean = false
 ) {
     Column(modifier) {
         Column(
@@ -155,7 +159,8 @@ private fun ShipmentDetailsPortrait(
                 onShippingToAddressChange = onShippingToAddressChange,
                 totalItems = shippableItems.shippableItems.size,
                 totalItemsCost = shippableItems.formattedTotalPrice,
-                shippingLines = shippingLines
+                shippingLines = shippingLines,
+                isReadOnly = isReadOnly
             )
             Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
             ShipmentCostSection(
@@ -163,11 +168,13 @@ private fun ShipmentDetailsPortrait(
                 modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
             )
         }
-        Divider()
-        MarkComplete(
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
-        )
+        if (isReadOnly.not()) {
+            Divider()
+            MarkComplete(
+                markOrderComplete = markOrderComplete,
+                onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            )
+        }
     }
 }
 
@@ -180,6 +187,7 @@ private fun ShipmentDetailsLandscape(
     modifier: Modifier = Modifier,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
+    isReadOnly: Boolean = false
 ) {
     Column(modifier) {
         Column(
@@ -194,7 +202,8 @@ private fun ShipmentDetailsLandscape(
                 shippingAddresses = shippingAddresses,
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 onShippingToAddressChange = onShippingToAddressChange,
-                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
+                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
+                isReadOnly = isReadOnly
             )
             Row(
                 modifier = Modifier
@@ -249,6 +258,7 @@ private fun OrderDetailsSection(
     totalItemsCost: String,
     shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     Column(modifier.fillMaxWidth()) {
         ShipmentDetailsSectionTitle(
@@ -261,7 +271,8 @@ private fun OrderDetailsSection(
             originAddresses = shippingAddresses.originAddresses,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
-            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
+            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
+            isReadOnly = isReadOnly
         )
         TotalCard(
             totalItems = totalItems,
