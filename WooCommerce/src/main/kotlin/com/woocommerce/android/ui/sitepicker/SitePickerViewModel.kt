@@ -655,6 +655,12 @@ class SitePickerViewModel @Inject constructor(
         }
     }
 
+    fun onWooSitesVisibilityUpdated() {
+        launch {
+            onSitesLoaded(repository.getSites())
+        }
+    }
+
     @Parcelize
     data class SitePickerViewState(
         val userInfo: UserInfo? = null,

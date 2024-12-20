@@ -5,6 +5,7 @@ import androidx.lifecycle.asLiveData
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ExitWithResult
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +54,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
                 _wooStores.value.wooStores
                     .associate { it.siteId to it.isSelected }
             )
-            triggerEvent(Exit)
+            triggerEvent(ExitWithResult(data = true))
         }
     }
 
