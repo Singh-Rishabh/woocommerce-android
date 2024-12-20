@@ -33,6 +33,7 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
 
     private val mockPurchaseData = PurchasedShippingLabelData(
         labelId = 4158L,
+        orderId = 1234L,
         carrierId = "usps",
         totalWeight = "1.5",
         formattedTotalPrice = "10.00",
