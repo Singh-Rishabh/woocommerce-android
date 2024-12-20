@@ -10,7 +10,6 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.PurchaseInProgress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Purchased
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Unknown
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -122,7 +121,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                 labelId = purchaseData.labelId
             ).onEach { status ->
                 when (status) {
-                    Unknown, PurchaseInProgress -> {
+                    PurchaseInProgress -> {
                         _viewState.update { it.copy(isLoadingData = true) }
                     }
                     Purchased -> {
