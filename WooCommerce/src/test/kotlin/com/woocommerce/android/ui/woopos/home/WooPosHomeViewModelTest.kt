@@ -71,7 +71,7 @@ class WooPosHomeViewModelTest {
         runTest {
             // GIVEN
             whenever(childrenToParentEventReceiver.events).thenReturn(
-                flowOf(ChildToParentEvent.OrderSuccessfullyPaid)
+                flowOf(ChildToParentEvent.OrderSuccessfullyPaidByCard)
             )
             val viewModel = createViewModel()
 
