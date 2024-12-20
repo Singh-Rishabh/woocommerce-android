@@ -41,7 +41,7 @@ class WooPosIsEnabled @Inject constructor(
     private companion object {
         const val WC_VERSION_SUPPORTS_ORDER_AUTO_DRAFTS_AND_EXTRA_PAYMENTS_PROPS = "6.6.0"
 
-        val SUPPORTED_COUNTRIES = listOf("us")
-        val SUPPORTED_CURRENCIES = listOf("usd")
+        val SUPPORTED_COUNTRIES = listOf("us", "gb")
+        val SUPPORTED_CURRENCIES = listOf("usd", "gbp")
     }
 }
