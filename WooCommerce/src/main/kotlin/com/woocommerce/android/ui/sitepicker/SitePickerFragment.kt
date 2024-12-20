@@ -115,15 +115,21 @@ class SitePickerFragment :
                 true
             }
 
+            R.id.menu_edit_store_list -> {
+                TODO()
+            }
+
             else -> false
         }
     }
 
     override fun onPrepareMenu(menu: Menu) {
         menu.findItem(R.id.menu_help).isVisible =
-            viewModel.sitePickerViewStateData.liveData.value?.isHelpBtnVisible ?: false
+            viewModel.sitePickerViewStateData.liveData.value?.isHelpBtnVisible == true
         menu.findItem(R.id.menu_close_account).isVisible =
-            viewModel.sitePickerViewStateData.liveData.value?.showCloseAccountMenuItem ?: false
+            viewModel.sitePickerViewStateData.liveData.value?.showCloseAccountMenuItem == true
+        menu.findItem(R.id.menu_edit_store_list).isVisible =
+            viewModel.sitePickerViewStateData.liveData.value?.editStoreListEnabled == true
     }
 
     override fun onDestroyView() {
@@ -196,6 +202,9 @@ class SitePickerFragment :
                     WooNotFoundState -> updateWooNotFoundView()
                     SimpleWPComState -> updateSimpleWPComView()
                 }
+            }
+            new.editStoreListEnabled.takeIfNotEqualTo(old?.editStoreListEnabled) {
+                activity?.invalidateMenu()
             }
         }
 
