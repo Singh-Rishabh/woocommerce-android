@@ -694,6 +694,9 @@ class OrderListFragment :
             new.isBottomNavBarVisible.takeIfNotEqualTo(old?.isBottomNavBarVisible) { isBottomNavBarVisible ->
                 showBottomNavBar(isVisible = isBottomNavBarVisible)
             }
+            new.isAddOrderButtonVisible.takeIfNotEqualTo(old?.isAddOrderButtonVisible) { isVisible ->
+                showAddOrderButton(show = isVisible)
+            }
         }
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
             binding.orderFiltersCard.updateLastUpdate(lastUpdate)
@@ -738,6 +741,20 @@ class OrderListFragment :
             (activity as? MainActivity)?.hideBottomNav()
         } else {
             (activity as? MainActivity)?.showBottomNav()
+        }
+    }
+
+    private fun showAddOrderButton(show: Boolean) {
+        when (show) {
+            true -> {
+                uiMessageResolver.anchorViewId = binding.createOrderButton.id
+                binding.createOrderButton.show()
+            }
+
+            else -> {
+                uiMessageResolver.anchorViewId = null
+                binding.createOrderButton.hide()
+            }
         }
     }
 
