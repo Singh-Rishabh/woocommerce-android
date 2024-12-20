@@ -32,6 +32,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosExitConfirmationDialog
 import com.woocommerce.android.ui.woopos.common.composeui.isPreviewMode
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreen
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartScreenProductsPreview
@@ -42,7 +43,9 @@ import com.woocommerce.android.ui.woopos.home.toolbar.WooPosFloatingToolbar
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreen
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsScreenPreview
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
-import kotlinx.coroutines.delay
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent.ExitPosClicked
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent.OpenCashPayment
+import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent.OpenEmailReceipt
 import org.wordpress.android.util.ToastUtils
 
 @Composable
@@ -56,12 +59,11 @@ fun WooPosHomeScreen(
 
     LaunchedEffect(Unit) {
         if (isPaymentCompletedViaCash) {
-            delay(800)
             viewModel.onUIEvent(WooPosHomeUIEvent.OnPaymentCompletedViaCash)
         }
     }
 
-    LaunchedEffect(viewModel.toastEvent) {
+    LaunchedEffect(Unit) {
         viewModel.toastEvent.collect { message ->
             ToastUtils.showToast(
                 context,
@@ -71,17 +73,25 @@ fun WooPosHomeScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect {
+            when (it) {
+                is NavigationEvent.ToCashPayment -> onNavigationEvent(OpenCashPayment(it.orderId))
+                is NavigationEvent.ToEmailReceipt -> onNavigationEvent(OpenEmailReceipt(it.orderId))
+                NavigationEvent.ExitPos -> onNavigationEvent(ExitPosClicked)
+            }
+        }
+    }
+
     WooPosHomeScreen(
-        state,
-        onNavigationEvent,
-        viewModel::onUIEvent,
+        state = state,
+        onHomeUIEvent = { viewModel.onUIEvent(it) },
     )
 }
 
 @Composable
 private fun WooPosHomeScreen(
     state: WooPosHomeState,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
     onHomeUIEvent: (WooPosHomeUIEvent) -> Unit,
 ) {
     BackHandler {
@@ -123,7 +133,6 @@ private fun WooPosHomeScreen(
         cartWidthDp = cartWidthDp,
         totalsWidthDp = totalsWidthAnimatedDp,
         onHomeUIEvent = onHomeUIEvent,
-        onNavigationEvent = onNavigationEvent,
     )
 
     WooPosExitConfirmationDialog(
@@ -132,7 +141,7 @@ private fun WooPosHomeScreen(
         message = stringResource(id = state.exitConfirmationDialog.message),
         dismissButtonText = stringResource(id = state.exitConfirmationDialog.confirmButton),
         onDismissRequest = { onHomeUIEvent(WooPosHomeUIEvent.ExitConfirmationDialogDismissed) },
-        onExit = { onNavigationEvent(WooPosNavigationEvent.ExitPosClicked) }
+        onExit = { onHomeUIEvent(WooPosHomeUIEvent.ExitPosClicked) }
     )
 }
 
@@ -144,7 +153,6 @@ private fun WooPosHomeScreen(
     cartWidthDp: Dp,
     totalsWidthDp: Dp,
     onHomeUIEvent: (WooPosHomeUIEvent) -> Unit,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -168,7 +176,6 @@ private fun WooPosHomeScreen(
             WooPosHomeScreenTotals(
                 modifier = Modifier
                     .width(totalsWidthDp),
-                onNavigationEvent = onNavigationEvent,
             )
         }
 
@@ -214,17 +221,11 @@ private fun WooPosHomeScreenCart(modifier: Modifier) {
 }
 
 @Composable
-private fun WooPosHomeScreenTotals(
-    modifier: Modifier,
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit
-) {
+private fun WooPosHomeScreenTotals(modifier: Modifier) {
     if (isPreviewMode()) {
         WooPosTotalsScreenPreview(modifier)
     } else {
-        WooPosTotalsScreen(
-            modifier = modifier,
-            onNavigationEvent = onNavigationEvent
-        )
+        WooPosTotalsScreen(modifier = modifier)
     }
 }
 
@@ -269,7 +270,6 @@ fun WooPosHomeCartScreenPreview() {
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
             onHomeUIEvent = { },
-            onNavigationEvent = {},
         )
     }
 }
@@ -285,7 +285,6 @@ fun WooPosHomeCheckoutScreenPreview() {
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
             onHomeUIEvent = { },
-            onNavigationEvent = {},
         )
     }
 }
@@ -301,7 +300,6 @@ fun WooPosHomeCheckoutPaidScreenPreview() {
                 exitConfirmationDialog = WooPosHomeState.ExitConfirmationDialog(isVisible = false),
             ),
             onHomeUIEvent = { },
-            onNavigationEvent = {},
         )
     }
 }

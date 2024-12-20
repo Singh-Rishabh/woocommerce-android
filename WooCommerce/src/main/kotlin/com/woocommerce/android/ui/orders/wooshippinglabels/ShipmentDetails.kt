@@ -21,7 +21,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -47,16 +46,17 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -111,6 +111,7 @@ fun ShipmentDetails(
             shippingAddresses = shippingAddresses,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
+            shippingRatesState = shippingRatesState,
             modifier = modifier
         )
     } else {
@@ -122,6 +123,7 @@ fun ShipmentDetails(
             shippingAddresses = shippingAddresses,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
+            shippingRatesState = shippingRatesState,
             modifier = modifier
         )
     }
@@ -136,6 +138,7 @@ private fun ShipmentDetailsPortrait(
     onShippingToAddressChange: (Address) -> Unit = {},
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier) {
@@ -157,8 +160,7 @@ private fun ShipmentDetailsPortrait(
             )
             Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
             ShipmentCostSection(
-                subTotal = "$100.00",
-                total = "$120.99",
+                shippingRatesState = shippingRatesState,
                 modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
             )
         }
@@ -175,6 +177,7 @@ private fun ShipmentDetailsLandscape(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -207,8 +210,7 @@ private fun ShipmentDetailsLandscape(
                 )
                 VerticalDivider(modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100)))
                 ShipmentCostSection(
-                    subTotal = "$100.00",
-                    total = "$120.99",
+                    shippingRatesState = shippingRatesState,
                     modifier = Modifier
                         .padding(dimensionResource(R.dimen.major_100))
                         .weight(1f)
@@ -311,7 +313,8 @@ fun ShipmentDetailsLandscapePreview() {
                     shipFrom = getShipFrom(),
                     shipTo = getShipTo(),
                     originAddresses = listOf(getShipFrom())
-                )
+                ),
+                shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable
             )
         }
     }
@@ -430,52 +433,102 @@ private fun TotalItem(
 
 @Composable
 private fun ShipmentCostSection(
-    subTotal: String?,
-    total: String?,
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     modifier: Modifier = Modifier
 ) {
+    val selectedRate = (
+        shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState
+        )?.let { state -> state.selectedRate?.selectedOption }
+
     Column(modifier) {
         ShipmentDetailsSectionTitle(
             title = stringResource(R.string.shipping_label_shipment_details_shipment_cost)
         )
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.major_100)))
-        Row(modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100))) {
-            Text(
-                text = stringResource(R.string.subtotal),
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            subTotal?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle1,
-                    color = MaterialTheme.colors.onSurface
-                )
-            } ?: SkeletonView(
-                width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
-                height = dimensionResource(id = R.dimen.major_100)
-            )
-        }
-        Row(modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))) {
-            Text(
-                text = stringResource(R.string.total),
-                style = MaterialTheme.typography.subtitle1,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            total?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle1,
-                    color = MaterialTheme.colors.onSurface
-                )
-            } ?: SkeletonView(
-                width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
-                height = dimensionResource(id = R.dimen.major_100)
+        ShipmentSubtotalSection(
+            shippingRatesState = shippingRatesState,
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100))
+        )
+        ShipmentCostRow(
+            title = stringResource(R.string.total),
+            total = selectedRate?.formatedPrice,
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100)),
+            titleFontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun ShipmentSubtotalSection(
+    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
+    modifier: Modifier = Modifier
+) {
+    val selectedRate = (
+        shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState
+        )?.let { state -> state.selectedRate?.selectedOption }
+
+    val defaultPrice = (
+        shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState
+        )?.let { state -> state.selectedRate?.defaultRate?.formatedPrice }
+
+    when {
+        selectedRate == null -> {
+            ShipmentCostRow(
+                title = stringResource(R.string.subtotal),
+                total = null,
+                modifier = modifier.padding(top = dimensionResource(R.dimen.major_100))
             )
         }
+
+        selectedRate.option == WooShippingRateModel.Option.DEFAULT -> {
+            ShipmentCostRow(
+                title = selectedRate.title,
+                total = selectedRate.formatedPrice,
+                modifier = modifier.padding(top = dimensionResource(R.dimen.major_100))
+            )
+        }
+
+        else -> {
+            Column(modifier = modifier) {
+                ShipmentCostRow(
+                    title = selectedRate.title,
+                    total = defaultPrice,
+                    modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))
+                )
+                ShipmentCostRow(
+                    title = selectedRate.formattedOptionName,
+                    total = selectedRate.formattedFee,
+                    modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShipmentCostRow(
+    title: String,
+    total: String?,
+    modifier: Modifier = Modifier,
+    titleFontWeight: FontWeight = FontWeight.Normal
+) {
+    Row(modifier = modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.onSurface,
+            modifier = Modifier.weight(1f),
+            fontWeight = titleFontWeight
+        )
+        total?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.onSurface
+            )
+        } ?: SkeletonView(
+            width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
+            height = dimensionResource(id = R.dimen.major_100)
+        )
     }
 }
 
@@ -484,8 +537,7 @@ private fun ShipmentCostSection(
 private fun ShipmentCostSectionPreview() {
     WooThemeWithBackground {
         ShipmentCostSection(
-            subTotal = "$12.99",
-            total = "$12.99",
+            shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
         )
     }
