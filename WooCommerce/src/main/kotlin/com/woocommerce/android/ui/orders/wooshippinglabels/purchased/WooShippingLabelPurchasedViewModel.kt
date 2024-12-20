@@ -34,11 +34,12 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     private val observeShippingLabelStatus: ObserveShippingLabelStatus
 ) : ScopedViewModel(savedState) {
     private val navArgs by savedState.navArgs<WooShippingLabelPurchasedFragmentArgs>()
+    private val purchaseData = navArgs.purchaseData
 
     private val trackingLink: String?
         get() = ShipmentTrackingUrls.fromCarrier(
-            carrierId = navArgs.purchaseData.carrierId,
-            trackingNumber = navArgs.purchaseData.trackingNumber
+            carrierId = purchaseData.carrierId,
+            trackingNumber = purchaseData.trackingNumber
         )
 
     private val _viewState = savedState.getStateFlow(
@@ -59,7 +60,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         launch {
             val paperSize = _viewState.value.paperSizeOption
             val labelFile = fetchShippingLabelFile(
-                labelIds = listOf(navArgs.purchaseData.labelId),
+                labelIds = listOf(purchaseData.labelId),
                 paperSize = paperSize.name.lowercase(Locale.US)
             )
 
@@ -82,7 +83,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     }
 
     fun onSchedulePickUpClicked() {
-        Carrier.fromCarrierId(navArgs.purchaseData.carrierId)?.let {
+        Carrier.fromCarrierId(purchaseData.carrierId)?.let {
             triggerEvent(OpenUrl(it.pickupUrl))
         } ?: triggerEvent(ShowError(R.string.shipping_label_purchased_pickup_error))
     }
@@ -95,9 +96,9 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
         _viewState.update { state ->
             state.copy(
                 shippableItems = ShippableItemsUI(
-                    formattedTotalWeight = navArgs.purchaseData.formattedTotalWeight,
-                    formattedTotalPrice = navArgs.purchaseData.formattedTotalPrice,
-                    shippableItems = navArgs.purchaseData.items.map {
+                    formattedTotalWeight = purchaseData.formattedTotalWeight,
+                    formattedTotalPrice = purchaseData.formattedTotalPrice,
+                    shippableItems = purchaseData.items.map {
                         ShippableItemUI(
                             itemId = it.itemId,
                             productId = it.productId,
@@ -117,8 +118,8 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     private fun observeShippingLabelPurchaseStatus() {
         launch {
             observeShippingLabelStatus(
-                orderId = 0L,
-                labelId = navArgs.purchaseData.labelId
+                orderId = purchaseData.orderId,
+                labelId = purchaseData.labelId
             ).onEach { status ->
                 when (status) {
                     Unknown, PurchaseInProgress -> {
@@ -131,7 +132,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                         triggerEvent(ShowErrorAndExit(R.string.shipping_label_purchased_purchase_failed_error))
                     }
                 }
-            }.launchIn(viewModelScope)
+            }.launchIn(this)
         }
     }
 
