@@ -1,5 +1,8 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.purchased
 
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.PurchaseInProgress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Purchased
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Unknown
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LETTER
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenLearnMoreScreen
@@ -18,11 +21,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
+import kotlinx.coroutines.flow.flowOf
 
 @ExperimentalCoroutinesApi
 class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
 
     private lateinit var viewModel: WooShippingLabelPurchasedViewModel
+    private lateinit var observeShippingLabelStatus: ObserveShippingLabelStatus
     private val fetchShippingLabelFile: FetchShippingLabelFile = mock()
     private val file: File = mock()
 
@@ -42,9 +47,12 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
 
     @Before
     fun setup() {
+        observeShippingLabelStatus = mock<ObserveShippingLabelStatus>()
+
         viewModel = WooShippingLabelPurchasedViewModel(
             savedState = navArgs.toSavedStateHandle(),
-            fetchShippingLabelFile = fetchShippingLabelFile
+            fetchShippingLabelFile = fetchShippingLabelFile,
+            observeShippingLabelStatus = observeShippingLabelStatus
         )
     }
 
@@ -133,4 +141,58 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
 
         assertThat(latestEvent).isEqualTo(OpenLearnMoreScreen)
     }
+
+    @Test
+    fun `on Shipping Label Status is Unknown, ViewState isLoadingData is true`() = testBlocking {
+        val viewStateUpdates: MutableList<ViewState> = mutableListOf()
+        whenever(observeShippingLabelStatus(0L, 0L)).thenReturn(flowOf(Unknown))
+
+        viewModel = WooShippingLabelPurchasedViewModel(
+            savedState = navArgs.toSavedStateHandle(),
+            fetchShippingLabelFile = fetchShippingLabelFile,
+            observeShippingLabelStatus = observeShippingLabelStatus
+        )
+        viewModel.viewState.observeForever { viewStateUpdates.add(it) }
+
+        assertThat(viewStateUpdates).hasSize(2)
+        assertThat(viewStateUpdates[0].isLoadingData).isFalse()
+        assertThat(viewStateUpdates[1].isLoadingData).isTrue()
+    }
+
+    @Test
+    fun `on Shipping Label Status is PurchaseInProgress, ViewState isLoadingData is true`() = testBlocking {
+        val viewStateUpdates: MutableList<ViewState> = mutableListOf()
+        whenever(observeShippingLabelStatus(0L, 0L)).thenReturn(flowOf(PurchaseInProgress))
+
+        viewModel = WooShippingLabelPurchasedViewModel(
+            savedState = navArgs.toSavedStateHandle(),
+            fetchShippingLabelFile = fetchShippingLabelFile,
+            observeShippingLabelStatus = observeShippingLabelStatus
+        )
+        viewModel.viewState.observeForever { viewStateUpdates.add(it) }
+
+        assertThat(viewStateUpdates).hasSize(2)
+        assertThat(viewStateUpdates[0].isLoadingData).isFalse()
+        assertThat(viewStateUpdates[1].isLoadingData).isTrue()
+    }
+
+    @Test
+    fun `on Shipping Label Status is Purchased, ViewState isLoadingData is false`() = testBlocking {
+        val viewStateUpdates: MutableList<ViewState> = mutableListOf()
+        whenever(observeShippingLabelStatus(0L, 0L)).thenReturn(flowOf(Unknown, Purchased))
+
+        viewModel = WooShippingLabelPurchasedViewModel(
+            savedState = navArgs.toSavedStateHandle(),
+            fetchShippingLabelFile = fetchShippingLabelFile,
+            observeShippingLabelStatus = observeShippingLabelStatus
+        )
+        viewModel.viewState.observeForever { viewStateUpdates.add(it) }
+
+        assertThat(viewStateUpdates).hasSize(2)
+        assertThat(viewStateUpdates[0].isLoadingData).isFalse()
+        assertThat(viewStateUpdates[1].isLoadingData).isTrue()
+        assertThat(viewStateUpdates[2].isLoadingData).isFalse()
+    }
+
+
 }
