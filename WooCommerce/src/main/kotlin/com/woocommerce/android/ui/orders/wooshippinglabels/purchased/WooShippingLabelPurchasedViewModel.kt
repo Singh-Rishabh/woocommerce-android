@@ -8,6 +8,9 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.shippinglabels.ShipmentTrackingUrls
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.PurchaseInProgress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Purchased
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Unknown
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPaperSize.LABEL
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.FetchShippingLabelFile
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -47,8 +50,8 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     init {
-        extractPurchaseDataToViewState()
         observeShippingLabelPurchaseStatus()
+        extractPurchaseDataToViewState()
     }
 
     fun onPrintShippingLabelClicked() {
@@ -106,8 +109,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                             imageUrl = it.imageUrl
                         )
                     }
-                ),
-                isLoadingData = true
+                )
             )
         }
     }
@@ -118,7 +120,17 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
                 orderId = 0L,
                 labelId = navArgs.purchaseData.labelId
             ).onEach { status ->
-
+                when (status) {
+                    Unknown, PurchaseInProgress -> {
+                        _viewState.update { it.copy(isLoadingData = true) }
+                    }
+                    Purchased -> {
+                        _viewState.update { it.copy(isLoadingData = false) }
+                    }
+                    else -> {
+                        triggerEvent(ShowErrorAndExit(R.string.shipping_label_purchased_purchase_failed_error))
+                    }
+                }
             }.launchIn(viewModelScope)
         }
     }
@@ -133,6 +145,7 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
     data class OpenUrl(val url: String) : MultiLiveEvent.Event()
     data class ShowError(val errorResId: Int) : MultiLiveEvent.Event()
+    data class ShowErrorAndExit(val errorResId: Int) : MultiLiveEvent.Event()
     object StartRefundRequest : MultiLiveEvent.Event()
     object OpenLearnMoreScreen : MultiLiveEvent.Event()
 
