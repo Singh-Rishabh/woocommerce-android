@@ -116,7 +116,10 @@ class SitePickerFragment :
             }
 
             R.id.menu_edit_store_list -> {
-                TODO()
+                findNavController().navigateSafely(
+                    SitePickerFragmentDirections.actionSitePickerFragmentToStoreVisibilityFragment()
+                )
+                true
             }
 
             else -> false

@@ -371,6 +371,9 @@
     <string name="site_picker_connect_existing_store">Connect an existing store</string>
     <string name="login_site_picker_new_to_woo">New to WooCommerce</string>
     <string name="site_picker_edit_store_list">Edit Stores</string>
+    <string name="site_picker_edit_store_list_title">Visible Stores</string>
+    <string name="site_picker_edit_store_list_footer">Unselected stores won\'t be shown in the app site\'s picker and won\'t receive push notifications for new orders</string>
+
     <!--
         My Store View
     -->
