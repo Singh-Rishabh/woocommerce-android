@@ -19,6 +19,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelS
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.ShippableItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
@@ -112,6 +114,30 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         receiptItemId = 23324L,
         serviceName = "UPS Express",
         status = ShippingLabelStatus.PurchaseInProgress
+    )
+
+    private val defaultPurchasedShippingLabelData = PurchasedShippingLabelData(
+        labelId = 12L,
+        carrierId = WooShippingCarrier.UPS.name,
+        totalWeight = "13.0",
+        formattedTotalPrice = "$ 0",
+        items = defaultShippableItems.map {
+            ShippableItem(
+                itemId = it.itemId,
+                productId = it.productId,
+                title = it.title,
+                dimensions = "${it.length}x${it.width}x${it.height}",
+                weight = it.weight.toString(),
+                formattedPrice = "$ ${it.price}",
+                quantity = it.quantity,
+                imageUrl = it.imageUrl,
+                dimensionUnit = "cm",
+                weightUnit = "kg"
+            )
+        },
+        trackingNumber = "1234567890",
+        weightUnit = "kg"
+
     )
 
     private val defaultPackageName = "customPackage"
@@ -569,7 +595,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
         ) doReturn Result.success(defaultPurchasedLabelData)
 
-        val expectedEvent = LabelPurchased(defaultPurchasedLabelData.labels.first().labelId)
+        val expectedEvent = LabelPurchased(defaultPurchasedShippingLabelData)
 
         createViewModel()
 

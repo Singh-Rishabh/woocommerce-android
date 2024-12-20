@@ -15,8 +15,11 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.ShippableItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -350,14 +353,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
         val orderId = navArgs.orderId
         val lastOrderComplete = markOrderComplete.value
-        val shippableItems = shippableItems.value.map { it.productId }
+        val shippableItemsIdList = shippableItems.value.map { it.productId }
 
         purchaseState.value = PurchaseState.InProgress
 
         launch {
             val result = purchaseShippingLabel(
                 orderId,
-                shippableItems,
+                shippableItemsIdList,
                 selectedPackage,
                 addresses.shipTo,
                 addresses.shipFrom,
@@ -367,9 +370,15 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             )
             if (result.isSuccess) {
                 purchaseState.value = PurchaseState.Success
-                result.getOrNull()?.let {
-                    triggerEvent(LabelPurchased(labelId = it.labels.first().labelId))
-                }
+                result.getOrNull()
+                    ?.labels
+                    ?.firstOrNull()
+                    ?.toPurchasedShippingLabelData(
+                        totalWeight = packageWeight.value?.totalWeight.toString(),
+                        dimensionUnit = storeOptions.value?.dimensionUnit.orEmpty(),
+                        weightUnit = storeOptions.value?.weightUnit.orEmpty(),
+                        shippableItems = shippableItems.value
+                    )?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
             } else {
                 purchaseState.value = PurchaseState.Error
             }
@@ -408,8 +417,36 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
+    private fun ShippingLabelModel.toPurchasedShippingLabelData(
+        totalWeight: String,
+        dimensionUnit: String,
+        weightUnit: String,
+        shippableItems: List<ShippableItemModel>,
+    ) = PurchasedShippingLabelData(
+        labelId = labelId,
+        carrierId = carrierId,
+        trackingNumber = tracking,
+        totalWeight = totalWeight,
+        formattedTotalPrice = currencyFormatter.formatCurrency(refundableAmount, currency),
+        weightUnit = weightUnit,
+        items = shippableItems.map {
+            ShippableItem(
+                itemId = it.itemId,
+                productId = it.productId,
+                title = it.title,
+                dimensions = "${it.length}x${it.width}x${it.height}",
+                weight = it.weight.toString(),
+                formattedPrice = currencyFormatter.formatCurrency(it.price, currency),
+                quantity = it.quantity,
+                dimensionUnit = dimensionUnit,
+                weightUnit = weightUnit,
+                imageUrl = it.imageUrl
+            )
+        }
+    )
+
     data object StartPackageSelection : Event()
-    data class LabelPurchased(val labelId: Long) : Event()
+    data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
