@@ -14,6 +14,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.printing.Fe
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +22,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.io.File
-import kotlinx.coroutines.flow.flowOf
 
 @ExperimentalCoroutinesApi
 class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
@@ -194,6 +194,4 @@ class WooShippingLabelPurchasedViewModelTest : BaseUnitTest() {
         assertThat(viewStateUpdates[1].isLoadingData).isTrue()
         assertThat(viewStateUpdates[2].isLoadingData).isFalse()
     }
-
-
 }

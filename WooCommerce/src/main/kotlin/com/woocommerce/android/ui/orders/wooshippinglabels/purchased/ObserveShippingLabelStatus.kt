@@ -5,10 +5,10 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelS
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.PurchaseInProgress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Unknown
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 class ObserveShippingLabelStatus @Inject constructor(
     private val selectedSite: SelectedSite,
