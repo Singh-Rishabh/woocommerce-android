@@ -119,7 +119,7 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
         Column(
             modifier = modifier
                 .padding(innerPadding)
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                .padding(start = 16.dp, end = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             val (titleResId, messageResId) = when (isPurchaseFinished) {
@@ -143,6 +143,7 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
                 text = stringResource(id = titleResId),
                 style = MaterialTheme.typography.subtitle1,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 16.dp)
             )
             Text(
                 text = stringResource(id = messageResId),
