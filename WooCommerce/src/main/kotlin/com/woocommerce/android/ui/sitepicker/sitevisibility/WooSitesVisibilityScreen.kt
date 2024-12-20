@@ -47,7 +47,7 @@ fun WooSitesVisibilityScreen(viewModel: WooSitesVisibilityViewModel) {
             state = state,
             onBack = viewModel::onBackPressed,
             onSaveTapped = viewModel::onSaveTapped,
-            onSiteSelected = viewModel::onSiteSelected,
+            onSiteSelected = viewModel::onSiteTapped,
             modifier = Modifier.fillMaxWidth()
         )
     }

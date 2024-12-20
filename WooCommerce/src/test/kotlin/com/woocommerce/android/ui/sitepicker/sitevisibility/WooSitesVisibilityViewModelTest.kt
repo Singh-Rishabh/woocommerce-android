@@ -52,7 +52,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
     @Test
     fun `given all sites are selected, when selected sites change, then enable save button`() =
         testBlocking {
-            viewModel.onSiteSelected(WOO_STORE_DEFAULT_UI)
+            viewModel.onSiteTapped(WOO_STORE_DEFAULT_UI)
 
             val updatedState = viewModel.viewState.getOrAwaitValue()
             assert(!updatedState.wooStores.last().isSelected)
@@ -62,8 +62,8 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
     @Test
     fun `given all sites are selected, when selecting unselecting same site, then save button is disabled`() =
         testBlocking {
-            viewModel.onSiteSelected(WOO_STORE_DEFAULT_UI)
-            viewModel.onSiteSelected(WOO_STORE_DEFAULT_UI)
+            viewModel.onSiteTapped(WOO_STORE_DEFAULT_UI)
+            viewModel.onSiteTapped(WOO_STORE_DEFAULT_UI)
 
             val updatedState = viewModel.viewState.getOrAwaitValue()
             assert(updatedState.wooStores?.first()?.isSelected == true)
