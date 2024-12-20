@@ -17,20 +17,32 @@ class ObserveShippingLabelStatus @Inject constructor(
     suspend operator fun invoke(
         orderId: Long,
         labelId: Long
-    ): Flow<ShippingLabelStatus> {
+    ): Flow<ShippingLabelStatus?> {
         return flow {
+            var attempts = 0
             var latestStatus = Unknown
             emit(latestStatus)
 
             do {
+                if (attempts >= CHECK_ATTEMPTS_BEFORE_GIVING_UP) {
+                    emit(null)
+                    break
+                }
+
                 latestStatus = labelRepository.fetchShippingLabelStatus(
                     site = selectedSite.get(),
                     orderId = orderId,
                     labelId = labelId
                 ).takeIf { it.isError.not() }?.model ?: Unknown
                 emit(latestStatus)
-                delay(5000)
+                attempts++
+                delay(DELAY_BETWEEN_STATUS_CHECKS)
             } while (latestStatus == PurchaseInProgress || latestStatus == Unknown)
         }
+    }
+
+    companion object {
+        private const val DELAY_BETWEEN_STATUS_CHECKS = 2000L
+        private const val CHECK_ATTEMPTS_BEFORE_GIVING_UP = 10
     }
 }
