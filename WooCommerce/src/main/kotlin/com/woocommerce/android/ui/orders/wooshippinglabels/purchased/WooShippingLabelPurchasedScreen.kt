@@ -100,7 +100,7 @@ internal fun WooShippingLabelPurchasedScreen(
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        val (titleResId, messageResId) = when(isPurchaseFinished) {
+        val (titleResId, messageResId) = when (isPurchaseFinished) {
             true -> Pair(
                 R.string.shipping_label_purchased_success_title,
                 R.string.shipping_label_purchased_success_message
