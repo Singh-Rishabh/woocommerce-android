@@ -17,7 +17,7 @@ import javax.inject.Inject
 class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     private val selectedSite: SelectedSite,
-    private val hiddenSitesDataStore: HiddenSitesDataStore,
+    private val hiddenSitesDataStore: HiddenWooSitesDataStore,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class HiddenSitesDataStore @Inject constructor(
+class HiddenWooSitesDataStore @Inject constructor(
     @DataStoreQualifier(DataStoreType.SITE_PICKER_HIDDEN_SITES) private val dataStore: DataStore<Preferences>
 ) {
     suspend fun updateHiddenSites(hiddenSiteIds: Map<String, Boolean>) {
