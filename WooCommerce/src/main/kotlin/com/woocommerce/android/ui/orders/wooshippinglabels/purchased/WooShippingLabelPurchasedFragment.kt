@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShipping
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenShippingLabelFile
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.OpenUrl
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.ShowError
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedViewModel.ShowErrorAndExit
 import com.woocommerce.android.util.ActivityUtils
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +54,7 @@ class WooShippingLabelPurchasedFragment : BaseFragment() {
                 is OpenLearnMoreScreen -> openLearnMoreView()
                 is OpenUrl -> openUrl(event.url)
                 is ShowError -> showErrorDialog(event.errorResId)
+                is ShowErrorAndExit -> showTerminalErrorDialog(event.errorResId)
             }
         }
     }
@@ -77,6 +79,17 @@ class WooShippingLabelPurchasedFragment : BaseFragment() {
             titleId = R.string.error_generic,
             messageId = messageResId,
             positiveButtonId = R.string.dialog_ok
+        )
+    }
+
+    private fun showTerminalErrorDialog(messageResId: Int) {
+        WooDialog.showDialog(
+            activity = requireActivity(),
+            titleId = R.string.error_generic,
+            messageId = messageResId,
+            positiveButtonId = R.string.dialog_ok,
+            posBtnAction = { _, _ -> findNavController().popBackStack() },
+            onDismiss = { findNavController().popBackStack() }
         )
     }
 }
