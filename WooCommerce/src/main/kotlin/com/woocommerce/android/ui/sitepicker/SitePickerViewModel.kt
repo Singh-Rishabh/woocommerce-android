@@ -227,7 +227,12 @@ class SitePickerViewModel @Inject constructor(
         _sites.value = buildList {
             if (wooSites.isNotEmpty()) {
                 val wooVisibleSiteIds = getWooVisibleSites.getWooVisibleSites().map { it.siteId }
-                add(Header(R.string.login_pick_store))
+                val numberOfHiddenSites = wooSites.size - wooVisibleSiteIds.size
+                val string = when (numberOfHiddenSites) {
+                    0 -> R.string.login_pick_store
+                    else -> R.string.site_picker_select_store_list_header_with_hidden_sites
+                }
+                add(Header(string, numberOfHiddenSites))
                 addAll(
                     wooSites
                         .filter { wooVisibleSiteIds.contains(it.siteId) }
@@ -688,7 +693,7 @@ class SitePickerViewModel @Inject constructor(
 
     sealed interface SitesListItem : Parcelable {
         @Parcelize
-        data class Header(@StringRes val label: Int) : SitesListItem
+        data class Header(@StringRes val label: Int, val numHiddenSites: Int = 0) : SitesListItem
 
         @Parcelize
         data class WooSiteUiModel(
