@@ -27,6 +27,7 @@ import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitePickerEvent
 import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitesListItem.Header
 import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitesListItem.NonWooSiteUiModel
 import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitesListItem.WooSiteUiModel
+import com.woocommerce.android.ui.sitepicker.sitevisibility.GetWooVisibleSites
 import com.woocommerce.android.util.FeatureFlag
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.LiveDataDelegate
@@ -64,7 +65,8 @@ class SitePickerViewModel @Inject constructor(
     private val unifiedLoginTracker: UnifiedLoginTracker,
     private val analyticsTrackerWrapper: AnalyticsTrackerWrapper,
     private val userEligibilityFetcher: UserEligibilityFetcher,
-    private val experimentTracker: ExperimentTracker
+    private val experimentTracker: ExperimentTracker,
+    private val getWooVisibleSites: GetWooVisibleSites
 ) : ScopedViewModel(savedState) {
     companion object {
         private const val WOOCOMMERCE_INSTALLATION_URL = "https://wordpress.com/plugins/woocommerce/"
@@ -198,7 +200,7 @@ class SitePickerViewModel @Inject constructor(
         )
     }
 
-    private fun onSitesLoaded(sites: List<SiteModel>) {
+    private suspend fun onSitesLoaded(sites: List<SiteModel>) {
         if (sites.isEmpty()) {
             when {
                 loginSiteAddress != null -> showAccountMismatchScreen(loginSiteAddress!!)
@@ -224,14 +226,17 @@ class SitePickerViewModel @Inject constructor(
         val selectedSiteId = selectedSiteId.value ?: wooSites.getOrNull(0)?.id
         _sites.value = buildList {
             if (wooSites.isNotEmpty()) {
+                val wooVisibleSiteIds = getWooVisibleSites.getWooVisibleSites().map { it.siteId }
                 add(Header(R.string.login_pick_store))
                 addAll(
-                    wooSites.map {
-                        WooSiteUiModel(
-                            site = it,
-                            isSelected = selectedSiteId == it.id
-                        )
-                    }
+                    wooSites
+                        .filter { wooVisibleSiteIds.contains(it.siteId) }
+                        .map {
+                            WooSiteUiModel(
+                                site = it,
+                                isSelected = selectedSiteId == it.id
+                            )
+                        }
                 )
             }
             if (navArgs.openedFromLogin && nonWooSites.isNotEmpty()) {
