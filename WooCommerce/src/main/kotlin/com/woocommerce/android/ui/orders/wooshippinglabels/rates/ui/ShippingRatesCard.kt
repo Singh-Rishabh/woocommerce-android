@@ -58,6 +58,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingRateSummaryUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
@@ -487,6 +488,13 @@ data class ShippingRateUI(
     val id = defaultRate.rate.rateId
     val defaultRate: ShippingRateOptionUI
         get() = options[Option.DEFAULT] ?: options.values.first()
+
+    val summary = ShippingRateSummaryUI(
+        serviceName = selectedOption.title,
+        total = selectedOption.formatedPrice,
+        optionName = selectedOption.formattedOptionName,
+        optionFee = selectedOption.formattedFee
+    )
 }
 
 data class ShippingRateOptionUI(
