@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.Colors
 import androidx.compose.material.Divider
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -50,9 +52,8 @@ import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.HazmatCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
-import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetails
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingProductsCard
-import com.woocommerce.android.ui.orders.wooshippinglabels.generateItems
 
 @Suppress("MagicNumber")
 private val darkGreen = Color(0xFF005C12)
@@ -66,24 +67,118 @@ val Colors.successSurface: Color get() = if (isLight) lightGreen else darkGreen
 
 @Composable
 fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewModel) {
-    val viewState = viewModel.viewState.observeAsState()
-    WooShippingLabelPurchasedScreen(
-        isLoading = viewState.value?.isLoadingData ?: false,
-        shippingData = viewState.value?.shippableItems,
-        selectedLabelPaperSizeOption = viewState.value?.paperSizeOption ?: WooShippingLabelPaperSize.LEGAL,
-        onLabelPaperSizeOptionSelected = { viewModel.onLabelPaperSizeOptionSelected(it) },
-        onPrintShippingLabelClicked = { viewModel.onPrintShippingLabelClicked() },
-        onTrackShipmentClicked = { viewModel.onTrackShipmentClicked() },
-        onSchedulePickUpClicked = { viewModel.onSchedulePickUpClicked() },
-        onRefundClicked = { viewModel.onRefundClicked() },
-        onLearnMoreClicked = { viewModel.onLearnMoreClicked() }
-    )
+    viewModel.viewState.observeAsState().value?.let { state ->
+        WooShippingLabelPurchasedWithBottomSheetScreen(
+            isLoading = state.isLoadingData,
+            shippingData = state.shippingLabelData!!,
+            selectedLabelPaperSizeOption = state.paperSizeOption,
+            onLabelPaperSizeOptionSelected = { viewModel.onLabelPaperSizeOptionSelected(it) },
+            onPrintShippingLabelClicked = { viewModel.onPrintShippingLabelClicked() },
+            onTrackShipmentClicked = { viewModel.onTrackShipmentClicked() },
+            onSchedulePickUpClicked = { viewModel.onSchedulePickUpClicked() },
+            onRefundClicked = { viewModel.onRefundClicked() },
+            onLearnMoreClicked = { viewModel.onLearnMoreClicked() }
+        )
+    }
+}
+
+@Composable
+internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
+    isLoading: Boolean,
+    shippingData: PurchasedShippingLabelData,
+    selectedLabelPaperSizeOption: WooShippingLabelPaperSize,
+    onLabelPaperSizeOptionSelected: (WooShippingLabelPaperSize) -> Unit,
+    onPrintShippingLabelClicked: () -> Unit,
+    onTrackShipmentClicked: () -> Unit,
+    onSchedulePickUpClicked: () -> Unit,
+    onRefundClicked: () -> Unit,
+    onLearnMoreClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    BottomSheetScaffold(
+        sheetContent = {
+            ShipmentDetails(
+                scaffoldState = scaffoldState,
+                shippableItems = shippingData.items,
+                shippingLines = shippingData.shippingLines,
+                shippingAddresses = shippingData.addresses,
+                shippingRateSummary = shippingData.rateSummary,
+                isReadOnly = true
+            )
+        },
+        sheetPeekHeight = 78.dp,
+        scaffoldState = scaffoldState,
+        backgroundColor = MaterialTheme.colors.surface
+    ) { _ ->
+        Column(
+            modifier = modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Text(
+                text = stringResource(id = R.string.shipping_label_purchased_title),
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Text(
+                text = stringResource(id = R.string.shipping_label_purchased_message),
+                modifier = Modifier.padding(top = 8.dp),
+                style = MaterialTheme.typography.subtitle1,
+            )
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+            PrintShippingLabelCard(
+                selectedLabelPaperSizeOption = selectedLabelPaperSizeOption,
+                onLabelPaperSizeOptionSelected = onLabelPaperSizeOptionSelected,
+                onPrintShippingLabelClicked = onPrintShippingLabelClicked,
+                onTrackShipmentClicked = onTrackShipmentClicked,
+                onSchedulePickUpClicked = onSchedulePickUpClicked,
+                onRefundClicked = onRefundClicked,
+                onLearnMoreClicked = onLearnMoreClicked,
+            )
+            Text(
+                text = stringResource(id = R.string.shipping_label_purchased_note),
+                style = MaterialTheme.typography.caption,
+                color = colorResource(id = R.color.color_on_surface_medium),
+                modifier = Modifier.padding(top = 8.dp),
+            )
+
+            shippingData?.let { shippingData ->
+                val isExpanded = remember { mutableStateOf(false) }
+                ShippingProductsCard(
+                    shippableItems = shippingData.items,
+                    isExpanded = isExpanded.value,
+                    onExpand = { isExpanded.value = it },
+                    iconColor = MaterialTheme.colors.onSurface,
+                    modifier = Modifier.padding(top = 24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+            HazmatCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colors.background,
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                    )
+                    .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))),
+            )
+
+            if (isLoading) {
+                ProgressDialog(
+                    title = stringResource(R.string.loading),
+                    subtitle = stringResource(R.string.please_wait),
+                )
+            }
+        }
+    }
 }
 
 @Composable
 internal fun WooShippingLabelPurchasedScreen(
     isLoading: Boolean,
-    shippingData: ShippableItemsUI?,
+    shippingData: PurchasedShippingLabelData?,
     selectedLabelPaperSizeOption: WooShippingLabelPaperSize,
     onLabelPaperSizeOptionSelected: (WooShippingLabelPaperSize) -> Unit,
     onPrintShippingLabelClicked: () -> Unit,
@@ -128,11 +223,7 @@ internal fun WooShippingLabelPurchasedScreen(
         shippingData?.let { shippingData ->
             val isExpanded = remember { mutableStateOf(false) }
             ShippingProductsCard(
-                shippableItems = ShippableItemsUI(
-                    shippableItems = shippingData.shippableItems,
-                    formattedTotalWeight = shippingData.formattedTotalWeight,
-                    formattedTotalPrice = shippingData.formattedTotalPrice
-                ),
+                shippableItems = shippingData.items,
                 isExpanded = isExpanded.value,
                 onExpand = { isExpanded.value = it },
                 iconColor = MaterialTheme.colors.onSurface,
@@ -337,11 +428,7 @@ internal fun WooShippingLabelPurchasedScreenPreview() {
             val selectedLabelPaperSizeOption = remember { mutableStateOf(WooShippingLabelPaperSize.LEGAL) }
             WooShippingLabelPurchasedScreen(
                 isLoading = false,
-                shippingData = ShippableItemsUI(
-                    shippableItems = generateItems(6),
-                    formattedTotalWeight = "8.5kg",
-                    formattedTotalPrice = "$92.78"
-                ),
+                shippingData = null,
                 selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
                 onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
                 onPrintShippingLabelClicked = {},

@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
+import android.os.Parcelable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,11 +16,9 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.ShippableItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
@@ -39,6 +38,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import java.util.Date
 import javax.inject.Inject
 
@@ -373,13 +373,24 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 result.getOrNull()
                     ?.labels
                     ?.firstOrNull()
-                    ?.toPurchasedShippingLabelData(
-                        orderId = orderId,
-                        totalWeight = packageWeight.value?.totalWeight.toString(),
-                        dimensionUnit = storeOptions.value?.dimensionUnit.orEmpty(),
-                        weightUnit = storeOptions.value?.weightUnit.orEmpty(),
-                        shippableItems = shippableItems.value
-                    )?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
+                    ?.let { purchasedLabel ->
+                        val currentViewState = (viewState.value as? WooShippingViewState.DataState)
+                        val selectedRate = selectedRate.value
+                        if (currentViewState != null && selectedRate != null) {
+                            PurchasedShippingLabelData(
+                                labelId = purchasedLabel.labelId,
+                                orderId = navArgs.orderId,
+                                carrierId = purchasedLabel.carrierId,
+                                trackingNumber = purchasedLabel.tracking,
+                                addresses = currentViewState.shippingAddresses,
+                                items = currentViewState.shippableItems,
+                                rateSummary = selectedRate.summary,
+                                shippingLines = currentViewState.shippingLines
+                            )
+                        } else {
+                            null
+                        }
+                    }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
             } else {
                 purchaseState.value = PurchaseState.Error
             }
@@ -417,36 +428,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onCustomWeightChange(input: String) {
         customWeight = input
     }
-
-    private fun ShippingLabelModel.toPurchasedShippingLabelData(
-        orderId: Long,
-        totalWeight: String,
-        dimensionUnit: String,
-        weightUnit: String,
-        shippableItems: List<ShippableItemModel>,
-    ) = PurchasedShippingLabelData(
-        labelId = labelId,
-        orderId = orderId,
-        carrierId = carrierId,
-        trackingNumber = tracking,
-        totalWeight = totalWeight,
-        formattedTotalPrice = currencyFormatter.formatCurrency(refundableAmount, currency),
-        weightUnit = weightUnit,
-        items = shippableItems.map {
-            ShippableItem(
-                itemId = it.itemId,
-                productId = it.productId,
-                title = it.title,
-                dimensions = "${it.length}x${it.width}x${it.height}",
-                weight = it.weight.toString(),
-                formattedPrice = currencyFormatter.formatCurrency(it.price, currency),
-                quantity = it.quantity,
-                dimensionUnit = dimensionUnit,
-                weightUnit = weightUnit,
-                imageUrl = it.imageUrl
-            )
-        }
-    )
 
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
@@ -522,11 +503,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 }
 
+@Parcelize
 data class WooShippingAddresses(
     val shipFrom: OriginShippingAddress,
     val shipTo: Address,
     val originAddresses: List<OriginShippingAddress>
-) {
+) : Parcelable {
     companion object {
         val EMPTY = WooShippingAddresses(
             shipFrom = OriginShippingAddress.EMPTY,

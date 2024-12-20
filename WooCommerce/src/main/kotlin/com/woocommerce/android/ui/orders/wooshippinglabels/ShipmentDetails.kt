@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import android.content.res.Configuration
+import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,6 +49,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 
 @Composable
 fun ShipmentDetails(
@@ -56,9 +58,9 @@ fun ShipmentDetails(
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
-    markOrderComplete: Boolean,
-    onMarkOrderCompleteChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    markOrderComplete: Boolean = false,
+    onMarkOrderCompleteChange: (Boolean) -> Unit = {},
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
     handlerModifier: Modifier = Modifier,
@@ -526,17 +528,19 @@ fun OriginShippingAddress.toShippingFromString() = StringBuilder()
     .appendWithIfNotEmpty(this.postcode)
     .toString()
 
+@Parcelize
 data class ShippingLineSummaryUI(
     val title: String,
     val amount: String
-)
+) : Parcelable
 
+@Parcelize
 data class ShippingRateSummaryUI(
     val serviceName: String,
     val total: String,
     val optionName: String? = null,
     val optionFee: String? = null
-)
+) : Parcelable
 
 @Composable
 fun VerticalDivider(

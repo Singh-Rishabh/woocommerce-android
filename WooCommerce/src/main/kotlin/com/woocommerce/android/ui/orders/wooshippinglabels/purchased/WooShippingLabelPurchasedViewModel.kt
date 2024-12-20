@@ -6,8 +6,6 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.shippinglabels.ShipmentTrackingUrls
-import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
-import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.PurchaseInProgress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Purchased
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus.Unknown
@@ -45,14 +43,14 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
         initialValue = ViewState(
-            paperSizeOption = LABEL
+            paperSizeOption = LABEL,
+            shippingLabelData = navArgs.purchaseData
         )
     )
     val viewState = _viewState.asLiveData()
 
     init {
         observeShippingLabelPurchaseStatus()
-        extractPurchaseDataToViewState()
     }
 
     fun onPrintShippingLabelClicked() {
@@ -92,29 +90,6 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
 
     fun onLearnMoreClicked() { triggerEvent(OpenLearnMoreScreen) }
 
-    private fun extractPurchaseDataToViewState() {
-        _viewState.update { state ->
-            state.copy(
-                shippableItems = ShippableItemsUI(
-                    formattedTotalWeight = purchaseData.formattedTotalWeight,
-                    formattedTotalPrice = purchaseData.formattedTotalPrice,
-                    shippableItems = purchaseData.items.map {
-                        ShippableItemUI(
-                            itemId = it.itemId,
-                            productId = it.productId,
-                            title = it.title,
-                            formattedSize = it.dimensions,
-                            formattedWeight = it.weight,
-                            formattedPrice = it.formattedPrice,
-                            quantity = it.quantity,
-                            imageUrl = it.imageUrl
-                        )
-                    }
-                )
-            )
-        }
-    }
-
     private fun observeShippingLabelPurchaseStatus() {
         launch {
             observeShippingLabelStatus(
@@ -139,8 +114,8 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val paperSizeOption: WooShippingLabelPaperSize,
-        val shippableItems: ShippableItemsUI? = null,
-        val isLoadingData: Boolean = false
+        val isLoadingData: Boolean = false,
+        val shippingLabelData: PurchasedShippingLabelData? = null
     ) : Parcelable
 
     data class OpenShippingLabelFile(val file: File) : MultiLiveEvent.Event()
