@@ -47,29 +47,8 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     init {
-        val purchasedLabelData = navArgs.purchaseData
-
-        _viewState.update { state ->
-            state.copy(
-                shippableItems = ShippableItemsUI(
-                    formattedTotalWeight = purchasedLabelData.formattedTotalWeight,
-                    formattedTotalPrice = purchasedLabelData.formattedTotalPrice,
-                    shippableItems = purchasedLabelData.items.map {
-                        ShippableItemUI(
-                            itemId = it.itemId,
-                            productId = it.productId,
-                            title = it.title,
-                            formattedSize = it.dimensions,
-                            formattedWeight = it.weight,
-                            formattedPrice = it.formattedPrice,
-                            quantity = it.quantity,
-                            imageUrl = it.imageUrl
-                        )
-                    }
-                ),
-                isLoadingData = true
-            )
-        }
+        extractPurchaseDataToViewState()
+        observeShippingLabelPurchaseStatus()
     }
 
     fun onPrintShippingLabelClicked() {
@@ -108,6 +87,41 @@ class WooShippingLabelPurchasedViewModel @Inject constructor(
     fun onRefundClicked() { triggerEvent(StartRefundRequest) }
 
     fun onLearnMoreClicked() { triggerEvent(OpenLearnMoreScreen) }
+
+    private fun extractPurchaseDataToViewState() {
+        _viewState.update { state ->
+            state.copy(
+                shippableItems = ShippableItemsUI(
+                    formattedTotalWeight = navArgs.purchaseData.formattedTotalWeight,
+                    formattedTotalPrice = navArgs.purchaseData.formattedTotalPrice,
+                    shippableItems = navArgs.purchaseData.items.map {
+                        ShippableItemUI(
+                            itemId = it.itemId,
+                            productId = it.productId,
+                            title = it.title,
+                            formattedSize = it.dimensions,
+                            formattedWeight = it.weight,
+                            formattedPrice = it.formattedPrice,
+                            quantity = it.quantity,
+                            imageUrl = it.imageUrl
+                        )
+                    }
+                ),
+                isLoadingData = true
+            )
+        }
+    }
+
+    private fun observeShippingLabelPurchaseStatus() {
+        launch {
+            observeShippingLabelStatus(
+                orderId = 0L,
+                labelId = navArgs.purchaseData.labelId
+            ).onEach { status ->
+
+            }.launchIn(viewModelScope)
+        }
+    }
 
     @Parcelize
     data class ViewState(
