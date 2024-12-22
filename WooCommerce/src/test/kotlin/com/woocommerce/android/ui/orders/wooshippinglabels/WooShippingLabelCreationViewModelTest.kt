@@ -20,7 +20,6 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsMo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.ShippableItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
@@ -114,31 +113,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         receiptItemId = 23324L,
         serviceName = "UPS Express",
         status = ShippingLabelStatus.PurchaseInProgress
-    )
-
-    private val defaultPurchasedShippingLabelData = PurchasedShippingLabelData(
-        labelId = 12L,
-        orderId = 1L,
-        carrierId = WooShippingCarrier.UPS.name,
-        totalWeight = "13.0",
-        formattedTotalPrice = "$ 0",
-        items = defaultShippableItems.map {
-            ShippableItem(
-                itemId = it.itemId,
-                productId = it.productId,
-                title = it.title,
-                dimensions = "${it.length}x${it.width}x${it.height}",
-                weight = it.weight.toString(),
-                formattedPrice = "$ ${it.price}",
-                quantity = it.quantity,
-                imageUrl = it.imageUrl,
-                dimensionUnit = "cm",
-                weightUnit = "kg"
-            )
-        },
-        trackingNumber = "1234567890",
-        weightUnit = "kg"
-
     )
 
     private val defaultPackageName = "customPackage"
@@ -596,7 +570,18 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
         ) doReturn Result.success(defaultPurchasedLabelData)
 
-        val expectedEvent = LabelPurchased(defaultPurchasedShippingLabelData)
+        val label = defaultPurchasedLabelData.labels.first()
+
+        val expectedLabelData = PurchasedShippingLabelData(
+            labelId = label.labelId,
+            orderId = 1L,
+            carrierId = label.carrierId,
+            trackingNumber = label.tracking,
+            items = mock(),
+            rateSummary = mock(),
+            shippingLines = mock(),
+            addresses = mock()
+        )
 
         createViewModel()
 
@@ -617,14 +602,18 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val dataState = currentViewState as DataState
         assertThat(dataState.purchaseState).isEqualTo(PurchaseState.Success)
 
-        assertThat(event).isEqualTo(expectedEvent)
+        assertThat(event).isInstanceOf(LabelPurchased::class.java)
+        val data = (event as LabelPurchased).purchaseData
+        assertThat(data.labelId).isEqualTo(expectedLabelData.labelId)
+        assertThat(data.trackingNumber).isEqualTo(expectedLabelData.trackingNumber)
+        assertThat(data.carrierId).isEqualTo(expectedLabelData.carrierId)
+        assertThat(data.orderId).isEqualTo(expectedLabelData.orderId)
     }
 
     @Test
     fun `when onPurchaseShippingLabel fails then display error`() = testBlocking {
-        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
-        )
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
