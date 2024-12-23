@@ -46,8 +46,6 @@ class DateUtils @Inject constructor(
 
     private val yyyyMMddFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
-
-
     fun findMatchingDatePattern(dateString: String) = listOf(
         "yyyy-MM",
         "yyyy-MM-dd",
@@ -267,7 +265,7 @@ class DateUtils @Inject constructor(
             val date = originalFormat.parse(iso8601Date)
             targetFormat.format(date!!).lowercase(locale).trimStart('0')
         } catch (e: Exception) {
-            getDayString(iso8601Date)?.let {
+            findMatchingDatePattern(iso8601Date)?.let {
                 return it
             } ?: run {
                 "Date string argument is not of format yyyy-MM-dd H: $iso8601Date".reportAsError(e)
@@ -308,8 +306,12 @@ class DateUtils @Inject constructor(
             val date = originalFormat.parse(iso8601Date)
             date!!.formatToEEEEMMMddhha(locale)
         } catch (e: Exception) {
-            "Date string argument is not of format yyyy-MM-dd HH: $iso8601Date".reportAsError(e)
-            return null
+            findMatchingDatePattern(iso8601Date)?.let {
+                return it
+            } ?: run {
+                "Date string argument is not of format yyyy-MM-dd HH: $iso8601Date".reportAsError(e)
+                return null
+            }
         }
     }
 
