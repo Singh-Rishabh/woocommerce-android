@@ -46,6 +46,20 @@ class DateUtils @Inject constructor(
 
     private val yyyyMMddFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
+
+
+    fun findMatchingDatePattern(dateString: String) = listOf(
+        "yyyy-MM",
+        "yyyy-MM-dd",
+        "yyyy-MM-dd HH",
+        "yyyy-MM-dd'T'HH:mm:ss",
+        "yyyy-MM-dd'T'HH:mm:ss'Z'"
+    ).firstNotNullOfOrNull {
+        runCatching {
+            SimpleDateFormat(it, locale).format(dateString)
+        }.getOrNull()
+    }
+
     /**
      * Given an ISO8601 date of format YYYY-MM-DD, returns the number of days in the given month.
      *
@@ -253,8 +267,12 @@ class DateUtils @Inject constructor(
             val date = originalFormat.parse(iso8601Date)
             targetFormat.format(date!!).lowercase(locale).trimStart('0')
         } catch (e: Exception) {
-            "Date string argument is not of format yyyy-MM-dd H: $iso8601Date".reportAsError(e)
-            return null
+            getDayString(iso8601Date)?.let {
+                return it
+            } ?: run {
+                "Date string argument is not of format yyyy-MM-dd H: $iso8601Date".reportAsError(e)
+                return null
+            }
         }
     }
 
