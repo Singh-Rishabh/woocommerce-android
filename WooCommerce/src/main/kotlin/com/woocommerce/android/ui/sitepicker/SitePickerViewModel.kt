@@ -226,7 +226,7 @@ class SitePickerViewModel @Inject constructor(
         val selectedSiteId = selectedSiteId.value ?: wooSites.getOrNull(0)?.id
         _sites.value = buildList {
             if (wooSites.isNotEmpty()) {
-                val wooVisibleSiteIds = getWooVisibleSites.getWooVisibleSites().map { it.siteId }
+                val wooVisibleSiteIds = getWooVisibleSites().map { it.siteId }
                 val numberOfHiddenSites = wooSites.size - wooVisibleSiteIds.size
                 val string = when (numberOfHiddenSites) {
                     0 -> R.string.login_pick_store

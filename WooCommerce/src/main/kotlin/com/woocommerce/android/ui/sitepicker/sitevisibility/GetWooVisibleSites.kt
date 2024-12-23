@@ -9,7 +9,7 @@ class GetWooVisibleSites @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     private val visibleSitesDataStore: VisibleWooSitesDataStore
 ) {
-    suspend fun getWooVisibleSites(): List<SiteModel> =
+    suspend operator fun invoke(): List<SiteModel> =
         sitePickerRepository.getSites()
             .filter { it.hasWooCommerce && isSiteVisible(it.siteId) }
 
