@@ -65,7 +65,7 @@ class WooPosVariationsDataSourceTest {
     private val variationsCache: VariationsLRUCache<Long, List<ProductVariation>> = mock()
 
     @Test
-    fun `given force refresh, when loadSimpleProducts called, then should clear cache`() = runTest {
+    fun `given force refresh, when fetchFirstPage called, then should clear cache`() = runTest {
         // GIVEN
         val productId = 1L
         whenever(handler.canLoadMore(5)).thenReturn(true)
@@ -91,7 +91,7 @@ class WooPosVariationsDataSourceTest {
     }
 
     @Test
-    fun `given cached products, when loadSimpleProducts called, then should emit cached products first`() = runTest {
+    fun `given cached products, when fetchFirstPage called, then should emit cached products first`() = runTest {
         // GIVEN
         val productId = 1L
         whenever(handler.canLoadMore(5)).thenReturn(true)
