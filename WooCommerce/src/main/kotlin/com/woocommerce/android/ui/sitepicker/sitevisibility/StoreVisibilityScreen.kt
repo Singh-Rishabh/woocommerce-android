@@ -101,6 +101,12 @@ fun WooSitesVisibilityScreen(
                 style = WooTypography.subtitle1,
                 color = MaterialTheme.colors.onSurface,
             )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_current_site_footer),
+                style = WooTypography.caption,
+                color = MaterialTheme.colors.onSurface,
+            )
             StoreItem(
                 wooStore = state.currentSite,
                 modifier = Modifier
@@ -112,17 +118,17 @@ fun WooSitesVisibilityScreen(
                     )
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = stringResource(R.string.site_picker_edit_store_current_site_footer),
-                style = WooTypography.caption,
-                color = MaterialTheme.colors.onSurface,
-            )
             Spacer(Modifier.height(24.dp))
             Text(
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_header),
                 style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_list_footer),
+                style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
             AvailableStoresForHiding(
@@ -134,12 +140,7 @@ fun WooSitesVisibilityScreen(
                         color = borderColor,
                         shape = RoundedCornerShape(8.dp)
                     )
-            )
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = stringResource(R.string.site_picker_edit_store_list_footer),
-                style = WooTypography.caption,
-                color = MaterialTheme.colors.onSurface,
+                    .padding(bottom = 16.dp)
             )
         }
     }

@@ -34,6 +34,10 @@ class WooSitesVisibilityViewModel @Inject constructor(
                 wooStores = sitePickerRepository.getSites()
                     .filter { it.hasWooCommerce && it.siteId != selectedSite.get().siteId }
                     .map { it.toWooStoreUi() }
+                +
+                sitePickerRepository.getSites()
+                    .filter { it.hasWooCommerce && it.siteId != selectedSite.get().siteId }
+                    .map { it.toWooStoreUi() }
             )
             initiallySelectedSiteIds = _wooStores.value.wooStores
                 .filter { it.isSelected }
