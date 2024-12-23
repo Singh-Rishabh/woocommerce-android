@@ -693,7 +693,7 @@ class SitePickerViewModel @Inject constructor(
 
     sealed interface SitesListItem : Parcelable {
         @Parcelize
-        data class Header(@StringRes val label: Int, val numHiddenSites: Int = 0) : SitesListItem
+        data class Header(@StringRes val label: Int, val numberHiddenSites: Int = 0) : SitesListItem
 
         @Parcelize
         data class WooSiteUiModel(

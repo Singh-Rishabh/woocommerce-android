@@ -84,7 +84,7 @@ class SitePickerAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
-            is Header -> (holder as HeaderViewHolder).bind(item.label, item.numHiddenSites)
+            is Header -> (holder as HeaderViewHolder).bind(item.label, item.numberHiddenSites)
             is WooSiteUiModel -> (holder as WooSiteViewHolder).bind(item)
             is NonWooSiteUiModel -> (holder as NonWooSiteViewHolder).bind(item)
         }
