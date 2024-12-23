@@ -4,6 +4,7 @@
 21.4
 -----
 - [*] Fixed overlap issue in Settings > WooCommerce Version  [https://github.com/woocommerce/woocommerce-android/pull/13183]
+- [*] Fixed a crash on the order details [https://github.com/woocommerce/woocommerce-android/pull/13191]
 
 
 21.3
