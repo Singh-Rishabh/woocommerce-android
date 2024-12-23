@@ -46,6 +46,12 @@ class DateUtils @Inject constructor(
 
     private val yyyyMMddFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
+    /**
+     * Given an ISO8601 date of volatile format,
+     * parses a possible Date String given it matches one of the expected format.
+     *
+     * return null if the argument is not a known iso8601 date string.
+     */
     fun findMatchingDatePattern(dateString: String) = listOf(
         "yyyy-MM",
         "yyyy-MM-dd",
