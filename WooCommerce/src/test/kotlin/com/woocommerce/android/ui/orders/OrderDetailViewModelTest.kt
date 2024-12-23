@@ -795,7 +795,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.start()
 
         verify(orderDetailRepository, times(1)).fetchOrderById(ORDER_ID)
-        verify(viewModel, never()).order
+        verify(viewModel, never()).awaitOrder()
 
         assertThat(snackbar).isEqualTo(ShowSnackbar(string.order_error_fetch_generic))
     }
@@ -939,7 +939,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
             if (it is ShowSnackbar) snackbar = it
         }
 
-        viewModel.order = order
+        viewModel.updateOrder(order)
         viewModel.start()
         viewModel.onOrderStatusChanged(
             OrderStatusUpdateSource.Dialog(
@@ -1098,7 +1098,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
         viewModel.onCardReaderPaymentCompleted()
 
-        assertThat(viewModel.order).isEqualTo(orderAfterPayment)
+        assertThat(viewModel.awaitOrder()).isEqualTo(orderAfterPayment)
     }
 
     @Test
