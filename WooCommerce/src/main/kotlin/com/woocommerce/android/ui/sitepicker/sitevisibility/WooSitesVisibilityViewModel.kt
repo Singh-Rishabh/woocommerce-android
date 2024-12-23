@@ -18,7 +18,7 @@ import javax.inject.Inject
 class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     private val selectedSite: SelectedSite,
-    private val hiddenSitesDataStore: VisibleWooSitesDataStore,
+    private val visibleSitesDataStore: VisibleWooSitesDataStore,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()
@@ -50,7 +50,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
 
     fun onSaveTapped() {
         launch {
-            hiddenSitesDataStore.updateSiteVisibilityStatus(
+            visibleSitesDataStore.updateSiteVisibilityStatus(
                 _wooStores.value.wooStores
                     .associate { it.siteId to it.isSelected }
             )
@@ -75,7 +75,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
     }
 
     private suspend fun isSiteVisible(siteId: Long): Boolean =
-        hiddenSitesDataStore.isSiteVisible(siteId).first()
+        visibleSitesDataStore.isSiteVisible(siteId).first()
 
     private fun SiteModel.toWooStoreUi(isSiteVisible: Boolean) = WooStoreUi(
         siteName = name,

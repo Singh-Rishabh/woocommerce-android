@@ -7,8 +7,10 @@ import com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityVi
 import com.woocommerce.android.util.getOrAwaitValue
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
@@ -38,6 +40,10 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
     private val selectedSite: SelectedSite = mock {
         on { get() }.thenReturn(DEFAULT_STORES.first())
     }
+    private val visibleWooSitesDataStore: VisibleWooSitesDataStore = mock {
+        onBlocking { isSiteVisible(any()) } doReturn flowOf(true)
+    }
+
     private lateinit var viewModel: WooSitesVisibilityViewModel
 
     @Before
@@ -45,6 +51,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
         viewModel = WooSitesVisibilityViewModel(
             sitePickerRepository = sitePickerRepository,
             selectedSite = selectedSite,
+            visibleSitesDataStore = visibleWooSitesDataStore,
             savedStateHandle = mock()
         )
     }
@@ -66,7 +73,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
             viewModel.onSiteTapped(WOO_STORE_DEFAULT_UI)
 
             val updatedState = viewModel.viewState.getOrAwaitValue()
-            assert(updatedState.wooStores?.first()?.isSelected == true)
+            assert(updatedState.wooStores.first().isSelected)
             assert(!updatedState.isSaveButtonEnabled)
         }
 }
