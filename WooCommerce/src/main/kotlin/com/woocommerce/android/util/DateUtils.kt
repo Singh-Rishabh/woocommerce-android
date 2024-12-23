@@ -276,7 +276,9 @@ class DateUtils @Inject constructor(
         } catch (e: Exception) {
             findMatchingDatePattern(iso8601Date)
                 ?.formatToYYYYmmDD()
-                .also { if (it == null) "Date string argument is not of format yyyy-MM-dd H: $iso8601Date".reportAsError(e) }
+                .also {
+                    if (it == null) "Date string argument is not of format yyyy-MM-dd H: $iso8601Date".reportAsError(e)
+                }
         }
     }
 
@@ -296,7 +298,9 @@ class DateUtils @Inject constructor(
         } catch (e: Exception) {
             findMatchingDatePattern(iso8601Date)
                 ?.formatToYYYYmmDD()
-                .also { if (it == null) "Date string argument is not of format yyyy-MM-dd: $iso8601Date".reportAsError(e) }
+                .also {
+                    if (it == null) "Date string argument is not of format yyyy-MM-dd: $iso8601Date".reportAsError(e)
+                }
         }
     }
 
@@ -315,7 +319,9 @@ class DateUtils @Inject constructor(
         } catch (e: Exception) {
             findMatchingDatePattern(iso8601Date)
                 ?.formatToEEEEMMMddhha(locale)
-                .also { if (it == null) "Date string argument is not of format yyyy-MM-dd HH: $iso8601Date".reportAsError(e) }
+                .also {
+                    if (it == null) "Date string argument is not of format yyyy-MM-dd HH: $iso8601Date".reportAsError(e)
+                }
         }
     }
 
@@ -411,7 +417,9 @@ class DateUtils @Inject constructor(
         } catch (e: Exception) {
             findMatchingDatePattern(dateString)
                 ?.formatToYYYYmmDD()
-                .also { if (it == null) "Date string argument is not of format MMM dd, yyyy: $dateString".reportAsError(e) }
+                .also {
+                    if (it == null) "Date string argument is not of format MMM dd, yyyy: $dateString".reportAsError(e)
+                }
         }
     }
 
