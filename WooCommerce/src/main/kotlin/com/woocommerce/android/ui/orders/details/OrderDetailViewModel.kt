@@ -746,13 +746,14 @@ class OrderDetailViewModel @Inject constructor(
     }
 
     private suspend fun updateOrderState() {
-        val isPaymentCollectable = isPaymentCollectable(awaitOrder())
-        val orderStatus = orderDetailRepository.getOrderStatus(awaitOrder().status.value)
+        val order = awaitOrder()
+        val isPaymentCollectable = isPaymentCollectable(order)
+        val orderStatus = orderDetailRepository.getOrderStatus(order.status.value)
         viewState = viewState.copy(
             orderInfo = OrderDetailViewState.OrderInfo(
-                order = awaitOrder(),
+                order = order,
                 isPaymentCollectableWithCardReader = isPaymentCollectable,
-                receiptButtonStatus = if (paymentReceiptHelper.isReceiptAvailable(awaitOrder().id) && awaitOrder().isOrderPaid) {
+                receiptButtonStatus = if (paymentReceiptHelper.isReceiptAvailable(order.id) && order.isOrderPaid) {
                     OrderDetailViewState.ReceiptButtonStatus.Visible
                 } else {
                     OrderDetailViewState.ReceiptButtonStatus.Hidden
@@ -760,7 +761,7 @@ class OrderDetailViewModel @Inject constructor(
             ),
             orderStatus = orderStatus,
             toolbarTitle = resourceProvider.getString(
-                string.orderdetail_orderstatus_ordernum, awaitOrder().number
+                string.orderdetail_orderstatus_ordernum, order.number
             ),
         )
     }
