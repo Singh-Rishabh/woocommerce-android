@@ -224,31 +224,8 @@ class SitePickerViewModel @Inject constructor(
             )
         }
         val selectedSiteId = selectedSiteId.value ?: wooSites.getOrNull(0)?.id
-        _sites.value = buildList {
-            if (wooSites.isNotEmpty()) {
-                val wooVisibleSiteIds = getWooVisibleSites().map { it.siteId }
-                val numberOfHiddenSites = wooSites.size - wooVisibleSiteIds.size
-                val string = when (numberOfHiddenSites) {
-                    0 -> R.string.login_pick_store
-                    else -> R.string.site_picker_select_store_list_header_with_hidden_sites
-                }
-                add(Header(string, numberOfHiddenSites))
-                addAll(
-                    wooSites
-                        .filter { wooVisibleSiteIds.contains(it.siteId) }
-                        .map {
-                            WooSiteUiModel(
-                                site = it,
-                                isSelected = selectedSiteId == it.id
-                            )
-                        }
-                )
-            }
-            if (navArgs.openedFromLogin && nonWooSites.isNotEmpty()) {
-                add(Header(R.string.login_non_woo_stores_label))
-                addAll(nonWooSites.map { NonWooSiteUiModel(it) })
-            }
-        }
+        _sites.value = buildSitesList(wooSites, selectedSiteId, nonWooSites)
+
         sitePickerViewState = sitePickerViewState.copy(
             hasConnectedStores = sites.isNotEmpty(),
             isPrimaryBtnVisible = wooSites.isNotEmpty(),
@@ -263,6 +240,36 @@ class SitePickerViewModel @Inject constructor(
         if (navArgs.openedFromLogin && wooSites.size == 1) {
             onSiteSelected(wooSites.first())
             onContinueButtonClick(isAutoLogin = true)
+        }
+    }
+
+    private suspend fun buildSitesList(
+        wooSites: List<SiteModel>,
+        selectedSiteId: Int?,
+        nonWooSites: List<SiteModel>
+    ): List<SitesListItem> = buildList {
+        if (wooSites.isNotEmpty()) {
+            val wooVisibleSiteIds = getWooVisibleSites().map { it.siteId }
+            val numberOfHiddenSites = wooSites.size - wooVisibleSiteIds.size
+            val string = when (numberOfHiddenSites) {
+                0 -> string.login_pick_store
+                else -> string.site_picker_select_store_list_header_with_hidden_sites
+            }
+            add(Header(string, numberOfHiddenSites))
+            addAll(
+                wooSites
+                    .filter { wooVisibleSiteIds.contains(it.siteId) }
+                    .map {
+                        WooSiteUiModel(
+                            site = it,
+                            isSelected = selectedSiteId == it.id
+                        )
+                    }
+            )
+        }
+        if (navArgs.openedFromLogin && nonWooSites.isNotEmpty()) {
+            add(Header(string.login_non_woo_stores_label))
+            addAll(nonWooSites.map { NonWooSiteUiModel(it) })
         }
     }
 

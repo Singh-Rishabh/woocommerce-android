@@ -13,7 +13,6 @@ class GetWooVisibleSites @Inject constructor(
         sitePickerRepository.getSites()
             .filter { it.hasWooCommerce && isSiteVisible(it.siteId) }
 
-
     private suspend fun isSiteVisible(siteId: Long): Boolean {
         return visibleSitesDataStore.isSiteVisible(siteId).first()
     }
