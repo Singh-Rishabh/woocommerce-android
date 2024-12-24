@@ -795,7 +795,9 @@ class WooPosTotalsViewModelTest {
 
             // THEN
             val totalState = vm.state.value as WooPosTotalsViewState.Totals
-            assertThat(totalState.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java)
+            assertThat(totalState.readerStatus).isInstanceOf(
+                WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java
+            )
         }
 
     @Test
