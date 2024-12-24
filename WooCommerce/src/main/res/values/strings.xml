@@ -372,7 +372,10 @@
     <string name="login_site_picker_new_to_woo">New to WooCommerce</string>
     <string name="site_picker_edit_store_list">Edit Stores</string>
     <string name="site_picker_edit_store_list_title">Visible Stores</string>
-    <string name="site_picker_edit_store_list_footer">Unselected stores won\'t be shown in the app site\'s picker and won\'t receive push notifications for new orders</string>
+    <string name="site_picker_edit_store_list_footer">Unselected stores won\'t be shown in the app site\'s picker and won\'t receive push notifications for new orders or product reviews</string>
+    <string name="site_picker_edit_store_current_site_header">Current Store</string>
+    <string name="site_picker_edit_store_current_site_footer">Please switch to another store if you want to hide this one</string>
+    <string name="site_picker_edit_store_list_header">Other Stores</string>
 
     <!--
         My Store View
