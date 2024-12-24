@@ -114,7 +114,9 @@ internal class CreatePaymentAction(
         // TODO cardreader Needs to be fixed when we add support for recurring payments
         map[MetaDataKeys.PAYMENT_TYPE.key] = MetaDataKeys.PaymentTypes.SINGLE.key
 
-        map[MetaDataKeys.CHANNEL.key] = paymentInfo.channel.value
+        paymentInfo.channel?.let {
+            map[MetaDataKeys.CHANNEL.key] = it.value
+        }
 
         return map
     }

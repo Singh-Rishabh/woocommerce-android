@@ -876,7 +876,7 @@ class CardReaderPaymentController(
             null
         }
 
-    private fun determinePaymentChannel(flow: CardReaderFlowParam.PaymentOrRefund): PaymentInfo.PaymentChannel =
+    private fun determinePaymentChannel(flow: CardReaderFlowParam.PaymentOrRefund): PaymentInfo.PaymentChannel? =
         when (flow) {
             is CardReaderFlowParam.PaymentOrRefund.Payment -> {
                 when (flow.paymentType) {
@@ -889,6 +889,6 @@ class CardReaderPaymentController(
                 }
             }
 
-            is CardReaderFlowParam.PaymentOrRefund.Refund -> PaymentInfo.PaymentChannel.StoreManager
+            is CardReaderFlowParam.PaymentOrRefund.Refund -> null
         }
 }

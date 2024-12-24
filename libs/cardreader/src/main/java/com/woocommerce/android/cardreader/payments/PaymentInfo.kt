@@ -15,7 +15,7 @@ data class PaymentInfo(
     val siteUrl: String?,
     val orderKey: String?,
     val feeAmount: Long?,
-    val channel: PaymentChannel,
+    val channel: PaymentChannel?,
     internal val countryCode: String? = null,
 ) {
     sealed class PaymentChannel(val value: String) {
