@@ -951,12 +951,11 @@ class OrderListViewModel @Inject constructor(
                     newStatus = newStatus
                 )
 
-                // todo add proper handling for success and failure state
                 if (result.isFailure) {
                     triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                 } else {
                     fetchOrdersAndOrderDependencies()
-                    triggerEvent(Event.ShowSnackbar(R.string.order_status_updated))
+                    triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
                 }
                 exitSelectionMode()
             }
