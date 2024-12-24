@@ -19,7 +19,7 @@ object WooColors {
     val md_theme_light_surface = Color(0xFFFFFFFF)
     val md_theme_light_onSurface = Color(0xFF000000)
 
-    val md_theme_dark_primary = Color(0xFF873EFF)
+    val md_theme_dark_primary = Color(0xFFA77EFF)
     val md_theme_dark_onPrimary = Color(0xFF000000)
     val md_theme_dark_primary_variant = Color(0xFF7F54B3)
     val md_theme_dark_secondary = Color(0xFFEB6594)

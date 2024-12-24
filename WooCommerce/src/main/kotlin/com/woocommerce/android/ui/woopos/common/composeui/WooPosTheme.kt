@@ -34,7 +34,6 @@ private object WooPosColors {
     // Woo POS specific colors:
 
     // Adding missing colors from the old code to match exactly
-    val primary = Color(0xFF9C70D3)
     val oldGrayLight = Color(0xFFF2EBFF)
     val oldGrayMedium = Color(0xFF8D8D8D)
 
@@ -139,7 +138,7 @@ private object WooPosColors {
 }
 
 private val DarkColorPalette = darkColors(
-    primary = WooPosColors.primary,
+    primary = WooPosColors.WooPurple30,
     primaryVariant = WooPosColors.primaryVariant,
     onPrimary = Color.Black,
     secondary = WooPosColors.secondary,
@@ -151,7 +150,7 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
-    primary = WooPosColors.WooPurple50,
+    primary = WooPosColors.WooPurple40,
     primaryVariant = WooPosColors.primaryVariant,
     onPrimary = Color.White,
     secondary = WooPosColors.lightColorPaletteSecondary,

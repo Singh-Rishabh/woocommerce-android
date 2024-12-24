@@ -88,7 +88,7 @@
     <color name="woo_black_alpha_008">#14212121</color>
 
     <!-- General colors -->
-    <color name="color_primary">@color/woo_purple_60</color>
+    <color name="color_primary">@color/woo_purple_40</color>
     <color name="color_primary_surface">@color/woo_purple_60</color>
     <color name="color_primary_variant">@color/woo_purple_80</color>
     <color name="color_secondary">@color/woo_pink_50</color>
