@@ -380,6 +380,24 @@ class WooPosHomeViewModelTest {
         ).isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.CartWithTotals)
     }
 
+    @Test
+    fun `given state is Checkout, when OnPaymentCompletedViaCash event passed, then OrderSuccessfullyPaid event with CASH`() = runTest {
+        // GIVEN
+        val events = MutableSharedFlow<ChildToParentEvent>()
+        whenever(childrenToParentEventReceiver.events).thenReturn(events)
+        val viewModel = createViewModel()
+
+        // WHEN
+        viewModel.onUIEvent(WooPosHomeUIEvent.OnPaymentCompletedViaCash)
+
+        // THEN
+        verify(parentToChildrenEventSender).sendToChildren(
+            ParentToChildrenEvent.OrderSuccessfullyPaid(PaymentMethod.CASH)
+        )
+        assertThat(viewModel.state.value.screenPositionState)
+            .isEqualTo(WooPosHomeState.ScreenPositionState.Checkout.FullScreenTotals)
+    }
+
     private fun createViewModel() = WooPosHomeViewModel(
         childrenToParentEventReceiver,
         parentToChildrenEventSender,
