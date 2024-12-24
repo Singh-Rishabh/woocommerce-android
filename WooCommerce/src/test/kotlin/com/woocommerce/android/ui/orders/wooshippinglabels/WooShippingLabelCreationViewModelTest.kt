@@ -649,4 +649,22 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val currentViewState = sut.viewState.value
         assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
     }
+
+    @Test
+    fun `when the view model is created, then get store options from the local preferences and update settings on background`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        verify(observeStoreOptions).invoke()
+        verify(fetchAccountSettings).invoke()
+    }
 }
