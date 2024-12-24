@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
-import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.ReaderStatus
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -13,13 +12,9 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderTaxText: String,
         val orderTotalText: String,
         val readerStatus: ReaderStatus,
-        val isCashPaymentAvailable: Boolean,
     ) : WooPosTotalsViewState()
 
-    data class PaymentSuccess(
-        val orderTotalText: String,
-        val isReceiptAvailable: Boolean,
-    ) : WooPosTotalsViewState()
+    data class PaymentSuccess(val orderTotalText: String) : WooPosTotalsViewState()
 
     sealed class ReaderStatus(
         open val title: String,
@@ -56,8 +51,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         data class Disconnected(
             override val title: String,
             override val subtitle: String,
-            val actionButonLabel: String,
-            val onAction: () -> Unit,
+            val actionButtonLabel: String,
         ) : ReaderStatus(
             title = title,
             subtitle = subtitle

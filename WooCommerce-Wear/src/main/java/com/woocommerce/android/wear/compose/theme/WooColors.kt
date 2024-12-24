@@ -5,7 +5,7 @@ import androidx.wear.compose.material.Colors
 
 @Suppress("MagicNumber")
 object WooColors {
-    val md_theme_dark_primary = Color(0xFFB17FD4)
+    val md_theme_dark_primary = Color(0xFFA77EFF)
     val md_theme_dark_onPrimary = Color(0xFF000000)
     val md_theme_dark_primary_variant = Color(0xFF7F54B3)
     val md_theme_dark_secondary = Color(0xFFEB6594)

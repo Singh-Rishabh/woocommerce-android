@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.woocommerce.android.ui.woopos.home.HOME_ROUTE
+import com.woocommerce.android.ui.woopos.home.IsHomePaymentCompletedViaCash
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 import com.woocommerce.android.ui.woopos.root.navigation.navigateOnce
 
@@ -33,8 +34,19 @@ fun NavGraphBuilder.cashPaymentScreen(
         },
         exitTransition = {
             slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth },
+                targetOffsetX = { fullWidth -> -fullWidth },
             )
+        },
+        popExitTransition = {
+            if (targetState.IsHomePaymentCompletedViaCash) {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth },
+                )
+            } else {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                )
+            }
         },
     ) { backStackEntry ->
         WooPosCashPaymentScreen(
