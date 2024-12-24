@@ -270,7 +270,7 @@ class OrderListFragment :
         ).withSelectionPredicate(selectionPredicate)
             .build()
 
-        binding.orderListView.adapter.tracker = tracker
+        (binding.orderListView.ordersList.adapter as? OrderListAdapter)?.tracker = tracker
 
         tracker?.addObserver(
             object : SelectionTracker.SelectionObserver<Long>() {
@@ -708,6 +708,9 @@ class OrderListFragment :
             new.isBottomNavBarVisible.takeIfNotEqualTo(old?.isBottomNavBarVisible) { isBottomNavBarVisible ->
                 showBottomNavBar(isVisible = isBottomNavBarVisible)
             }
+            new.isAddOrderButtonVisible.takeIfNotEqualTo(old?.isAddOrderButtonVisible) { isVisible ->
+                showAddOrderButton(show = isVisible)
+            }
             new.isBulkUpdating.takeIfNotEqualTo(old?.isBulkUpdating) { isBulkUpdating ->
                 // Instead of recreating a new progress bar, re-use the progress bar in the SwipeRefreshLayout
                 binding.listPaneContainer.isRefreshing = isBulkUpdating
@@ -768,6 +771,16 @@ class OrderListFragment :
             (activity as? MainActivity)?.hideBottomNav()
         } else {
             (activity as? MainActivity)?.showBottomNav()
+        }
+    }
+
+    private fun showAddOrderButton(show: Boolean) {
+        if (show) {
+            uiMessageResolver.anchorViewId = binding.createOrderButton.id
+            binding.createOrderButton.show()
+        } else {
+            uiMessageResolver.anchorViewId = null
+            binding.createOrderButton.hide()
         }
     }
 
@@ -880,6 +893,23 @@ class OrderListFragment :
         binding.orderListView.submitPagedList(pagedListData)
     }
 
+    //  Some edge cases in order selection mode, like tapping the screen with 4 fingers or using TalkBack,
+    //  cause the order's onClick listener to gain focus over the selection tracker.
+    //  This quick fix will prevent the app from entering an unexpected status when the app is in selection mode.
+    private fun shouldPreventDetailNavigation(orderId: Long): Boolean {
+        if (viewModel.isSelecting()) {
+            tracker?.let { selectionTracker ->
+                if (selectionTracker.isSelected(orderId)) {
+                    selectionTracker.deselect(orderId)
+                } else {
+                    selectionTracker.select(orderId)
+                }
+            }
+            return true
+        }
+        return false
+    }
+
     override fun openOrderDetail(
         orderId: Long,
         allOrderIds: List<Long>,
@@ -887,6 +917,8 @@ class OrderListFragment :
         sharedView: View?,
         startPaymentsFlow: Boolean,
     ) {
+        if (shouldPreventDetailNavigation(orderId)) return
+
         viewModel.trackOrderClickEvent(
             orderId,
             orderStatus,

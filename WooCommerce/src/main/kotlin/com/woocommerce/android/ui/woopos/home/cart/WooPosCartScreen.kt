@@ -68,7 +68,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
-import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButtonSmall
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
@@ -209,7 +209,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            imageVector = ImageVector.vectorResource(R.drawable.woo_pos_ic_empty_cart),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_woo_pos_empty_cart),
             contentDescription = stringResource(R.string.woopos_cart_empty_content_description),
             modifier = Modifier.size(104.dp)
         )
@@ -380,7 +380,7 @@ private fun CartToolbar(
         }
 
         if (toolbar.isClearAllButtonVisible) {
-            WooPosOutlinedButton(
+            WooPosOutlinedButtonSmall(
                 onClick = { onClearAllClicked() },
                 modifier = Modifier
                     .constrainAs(clearAllButton) {

@@ -909,14 +909,16 @@ class OrderListViewModel @Inject constructor(
     private fun enterSelectionMode(count: Int) {
         viewState = viewState.copy(
             orderListState = ViewState.OrderListState.Selecting,
-            selectionCount = count
+            selectionCount = count,
+            isAddOrderButtonVisible = false
         )
     }
 
     private fun exitSelectionMode() {
         viewState = viewState.copy(
             orderListState = ViewState.OrderListState.Browsing,
-            selectionCount = null
+            selectionCount = null,
+            isAddOrderButtonVisible = true
         )
     }
 
@@ -1037,7 +1039,8 @@ class OrderListViewModel @Inject constructor(
         val orderListState: OrderListState? = null,
         val isSearching: Boolean = false,
         val isBulkUpdating: Boolean = false,
-        val selectionCount: Int? = null
+        val selectionCount: Int? = null,
+        val isAddOrderButtonVisible: Boolean = true
     ) : Parcelable {
         @IgnoredOnParcel
         val isBottomNavBarVisible = !isSearching && orderListState != OrderListState.Selecting

@@ -172,18 +172,20 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     fun `onSavedPackageSelected selects only one package at a time`() = testBlocking {
         var lastViewState: ViewState? = null
         val package1 = PackageData(
+            id = "1",
             name = "Package 1",
             dimensions = "10 x 10 x 10",
             weight = "10",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package2 = PackageData(
+            id = "2",
             name = "Package 2",
             dimensions = "20 x 20 x 20",
             weight = "20",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         whenever(fetchPredefinedPackages()).thenReturn(
             PredefinedPackagesState.Data(
@@ -213,18 +215,20 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         var lastViewState: ViewState? = null
         val carrier: Carrier = Carrier.DHL
         val package1 = PackageData(
+            id = "1",
             name = "Package 1",
             dimensions = "10 x 10 x 10",
             weight = "10",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package2 = PackageData(
+            id = "2",
             name = "Package 2",
             dimensions = "20 x 20 x 20",
             weight = "20",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         val carrierPackages = mapOf(
             carrier to listOf(
@@ -271,32 +275,36 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         val carrier1: Carrier = Carrier.DHL
         val carrier2: Carrier = Carrier.USPS
         val package1 = PackageData(
+            id = "1",
             name = "Package 1 - Carrier 1",
             dimensions = "10 x 10 x 10",
             weight = "10",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package2 = PackageData(
+            id = "2",
             name = "Package 2 - Carrier 1",
             dimensions = "20 x 20 x 20",
             weight = "20",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         val package3 = PackageData(
+            id = "3",
             name = "Package 1 - Carrier 2",
             dimensions = "30 x 30 x 30",
             weight = "30",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package4 = PackageData(
+            id = "4",
             name = "Package 2 - Carrier 2",
             dimensions = "40 x 40 x 40",
             weight = "40",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         val carrierPackages = mapOf(
             carrier1 to listOf(

@@ -139,21 +139,24 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                             dimensions = "10 x 10 x 10",
                             weight = "10",
                             isSelected = true,
-                            isLetter = true
+                            isLetter = true,
+                            id = "1",
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
                             dimensions = "20 x 20 x 20",
                             weight = "10",
                             isSelected = false,
-                            isLetter = false
+                            isLetter = false,
+                            id = "1",
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
                             dimensions = "30 x 30 x 30",
                             weight = "10",
                             isSelected = false,
-                            isLetter = false
+                            isLetter = false,
+                            id = "1",
                         )
                     ),
                     isAddPackageEnabled = true,
@@ -173,14 +176,16 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                                         dimensions = "10 x 10 x 10",
                                         weight = "10",
                                         isSelected = false,
-                                        isLetter = false
+                                        isLetter = false,
+                                        id = "1",
                                     ),
                                     PackageData(
                                         name = "Package 2 - Carrier 1",
                                         dimensions = "20 x 20 x 20",
                                         weight = "20",
                                         isSelected = false,
-                                        isLetter = false
+                                        isLetter = false,
+                                        id = "1",
                                     )
                                 )
                             ),
@@ -192,14 +197,16 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                                         dimensions = "30 x 30 x 30",
                                         weight = "30",
                                         isSelected = false,
-                                        isLetter = false
+                                        isLetter = false,
+                                        id = "1",
                                     ),
                                     PackageData(
                                         name = "Package 4 - Carrier 1",
                                         dimensions = "40 x 40 x 40",
                                         weight = "40",
                                         isSelected = false,
-                                        isLetter = false
+                                        isLetter = false,
+                                        id = "1",
                                     )
                                 )
                             )
@@ -213,14 +220,16 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                                         dimensions = "10 x 10 x 10",
                                         weight = "10",
                                         isSelected = false,
-                                        isLetter = false
+                                        isLetter = false,
+                                        id = "1",
                                     ),
                                     PackageData(
                                         name = "Package 2 Carrier - 2",
                                         dimensions = "20 x 20 x 20",
                                         weight = "20",
                                         isSelected = false,
-                                        isLetter = false
+                                        isLetter = false,
+                                        id = "1",
                                     )
                                 )
                             )

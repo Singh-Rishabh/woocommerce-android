@@ -279,7 +279,7 @@ fun ProductsEmptyList() {
         ) {
             Image(
                 modifier = Modifier.size(104.dp),
-                imageVector = ImageVector.vectorResource(id = R.drawable.woo_pos_ic_empty_products),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_woo_pos_empty_products),
                 contentDescription = stringResource(id = R.string.woopos_products_empty_list_image_description),
             )
 
@@ -327,9 +327,10 @@ fun ProductsError(onRetryClicked: () -> Unit) {
 @Composable
 private fun ProductsPaginationError(onRetryClicked: () -> Unit) {
     WooPosPaginationErrorIndicator(
-        message = stringResource(id = R.string.woopos_items_pagination_error),
+        message = stringResource(id = R.string.woopos_items_pagination_error_title),
+        description = stringResource(id = R.string.woopos_items_pagination_error_description),
         primaryButton = Button(
-            text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
+            text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
             click = onRetryClicked
         ),
     )
