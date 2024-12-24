@@ -40,6 +40,9 @@ class OrderListRepository @Inject constructor(
     companion object {
         private const val TAG = "OrderListRepository"
         private const val ORDER_STATUS_TRASH = "trash"
+        private const val BULK_UPDATE_ORDER_STATUS_ALL_FAILED = "Unable to update any orders. Please try again."
+        private const val BULK_UPDATE_ORDER_NOTHING_UPDATED = "No orders were updated. Please try again."
+        private const val BULK_UPDATE_ORDER_NO_RESPONSE = "No response received. Please try again."
     }
 
     private var isFetchingOrderStatusOptions = false
@@ -185,12 +188,39 @@ class OrderListRepository @Inject constructor(
             newStatus = WCOrderStatusModel(statusKey = newStatus.value)
         )
 
-        // todo update temporary handling
         return if (result.isError) {
             WooLog.e(ORDERS, "Error bulk updating order status: ${result.error.message}")
             Result.failure(WooException(result.error))
         } else {
-            Result.success(Unit)
+            result.model?.let {
+                logBulkOrderUpdateResults(it)
+
+                // We want to return success if at least one order was updated.
+                // However, if:
+                // - there's no updated orders but there are failed orders, return failure
+                // - there's no updated orders and no failed orders, return failure
+                when {
+                    it.failedOrders.isNotEmpty() && it.updatedOrders.isEmpty() ->
+                        Result.failure(Exception(BULK_UPDATE_ORDER_STATUS_ALL_FAILED))
+
+                    it.failedOrders.isEmpty() && it.updatedOrders.isEmpty() ->
+                        Result.failure(Exception(BULK_UPDATE_ORDER_NOTHING_UPDATED))
+
+                    else -> Result.success(Unit)
+                }
+            } ?: Result.failure(Exception(BULK_UPDATE_ORDER_NO_RESPONSE))
+        }
+    }
+
+    private fun logBulkOrderUpdateResults(model: WCOrderStore.UpdateOrdersStatusResult) {
+        if (model.updatedOrders.isNotEmpty()) {
+            WooLog.i(ORDERS, "Successfully updated ${model.updatedOrders.size} orders")
+        }
+        if (model.failedOrders.isNotEmpty()) {
+            model.failedOrders.forEach { failed ->
+                WooLog.e(ORDERS, "Failed to update order ${failed.id}: " +
+                    "[Code: ${failed.errorCode}, Status: ${failed.errorStatus}] ${failed.errorMessage}")
+            }
         }
     }
 }
