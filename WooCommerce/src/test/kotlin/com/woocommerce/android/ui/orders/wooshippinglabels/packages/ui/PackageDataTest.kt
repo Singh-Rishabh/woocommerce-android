@@ -8,11 +8,12 @@ class PackageDataTest {
     @Test
     fun `length, width, and height are correctly set when dimensions are properly formatted`() {
         val packageData = PackageData(
+            id = "1",
             name = "Test Package",
             dimensions = "10 x 20 x 30",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -23,11 +24,12 @@ class PackageDataTest {
     @Test
     fun `length, width, and height are empty when dimensions are not properly formatted`() {
         val packageData = PackageData(
+            id = "1",
             name = "Test Package",
             dimensions = "10 x 20",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -38,11 +40,12 @@ class PackageDataTest {
     @Test
     fun `length, width, and height are empty when dimensions are null`() {
         val packageData = PackageData(
+            id = "1",
             name = "Test Package",
             dimensions = "10",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
 
         assertThat(packageData.length).isEqualTo("10")
@@ -53,11 +56,12 @@ class PackageDataTest {
     @Test
     fun `length, width, and height are empty when dimensions are empty`() {
         val packageData = PackageData(
+            id = "1",
             name = "Test Package",
             dimensions = "",
             weight = "5",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
 
         assertThat(packageData.length).isEmpty()
