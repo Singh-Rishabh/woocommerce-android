@@ -245,7 +245,6 @@ class OrderListFragment :
         // to make sure it stays visible.
         binding.listPaneContainer.setProgressViewOffset(false, 0, TOP_OFFSET_PROGRESS_WITH_ACTION_MODE)
 
-
         initObservers()
         initializeResultHandlers()
         adjustUiForDeviceType(savedInstanceState)

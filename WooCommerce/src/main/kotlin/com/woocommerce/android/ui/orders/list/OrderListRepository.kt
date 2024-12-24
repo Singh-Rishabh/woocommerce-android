@@ -218,8 +218,11 @@ class OrderListRepository @Inject constructor(
         }
         if (model.failedOrders.isNotEmpty()) {
             model.failedOrders.forEach { failed ->
-                WooLog.e(ORDERS, "Failed to update order ${failed.id}: " +
-                    "[Code: ${failed.errorCode}, Status: ${failed.errorStatus}] ${failed.errorMessage}")
+                WooLog.e(
+                    ORDERS,
+                    "Failed to update order ${failed.id}: " +
+                        "[Code: ${failed.errorCode}, Status: ${failed.errorStatus}] ${failed.errorMessage}"
+                )
             }
         }
     }
