@@ -728,7 +728,8 @@ class OrderListFragment :
         findNavController().navigateSafely(
             OrderListFragmentDirections.actionOrderListFragmentToOrdersListStatusSelectorDialog(
                 currentStatus,
-                orderStatusList
+                orderStatusList,
+                R.string.dialog_ok
             )
         )
     }

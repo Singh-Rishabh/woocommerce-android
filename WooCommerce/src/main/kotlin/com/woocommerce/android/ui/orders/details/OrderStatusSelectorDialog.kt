@@ -21,6 +21,7 @@ class OrderStatusSelectorDialog : DialogFragment() {
     companion object {
         const val KEY_ORDER_STATUS_RESULT = "key_order_status_result"
         private const val REFUNDED_ID: String = "refunded"
+        private const val KEY_POSITIVE_BUTTON_LABEL = "positiveButtonLabel"
     }
 
     private val navArgs: OrderStatusSelectorDialogArgs by navArgs()
@@ -38,6 +39,9 @@ class OrderStatusSelectorDialog : DialogFragment() {
 
         val selectedIndex = getCurrentOrderStatusIndex()
 
+        val positiveButtonLabel =
+            requireArguments().getInt(KEY_POSITIVE_BUTTON_LABEL).takeIf { it != 0 } ?: R.string.apply
+
         val dialog = MaterialAlertDialogBuilder(requireActivity())
             .setTitle(resources.getString(R.string.orderstatus_select_status))
             .setCancelable(true)
@@ -53,7 +57,7 @@ class OrderStatusSelectorDialog : DialogFragment() {
                     mapOf("status" to selectedOrderStatus)
                 )
             }
-            .setPositiveButton(R.string.apply) { _, _ ->
+            .setPositiveButton(positiveButtonLabel) { _, _ ->
                 val newSelectedIndex = getCurrentOrderStatusIndex()
                 if (newSelectedIndex != selectedIndex) {
                     AnalyticsTracker.track(
