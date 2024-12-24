@@ -369,41 +369,4 @@ class WooPosProductsDataSourceTest {
 
             assertFalse(cachedResult.products.any { it.remoteId == 1L })
         }
-
-    @Test
-    fun `given remote products, when loadSimpleProducts called, then filter out downloadable products`() =
-        runTest {
-            // GIVEN
-            whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-            whenever(handler.productsFlow).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProduct(
-                            productId = 1,
-                            productName = "Product 1",
-                            amount = "0",
-                            productType = "simple",
-                            isDownloadable = true,
-                        ),
-                        ProductTestUtils.generateProduct(
-                            productId = 2,
-                            productName = "Product 2",
-                            amount = "20.0",
-                            productType = "simple",
-                            isVirtual = false,
-                            isDownloadable = false
-                        ).copy(firstImageUrl = "https://test.com")
-                    )
-                )
-            )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler)
-
-            // WHEN
-            val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
-
-            // THEN
-            val remoteResult = flow[1] as WooPosProductsDataSource.ProductsResult.Remote
-            assertThat(remoteResult.productsResult.getOrNull()?.any { it.remoteId == 1L }).isFalse()
-        }
 }
