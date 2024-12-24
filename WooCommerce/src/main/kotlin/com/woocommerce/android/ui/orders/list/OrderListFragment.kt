@@ -745,16 +745,12 @@ class OrderListFragment :
     }
 
     private fun showAddOrderButton(show: Boolean) {
-        when (show) {
-            true -> {
-                uiMessageResolver.anchorViewId = binding.createOrderButton.id
-                binding.createOrderButton.show()
-            }
-
-            else -> {
-                uiMessageResolver.anchorViewId = null
-                binding.createOrderButton.hide()
-            }
+        if (show) {
+            uiMessageResolver.anchorViewId = binding.createOrderButton.id
+            binding.createOrderButton.show()
+        } else {
+            uiMessageResolver.anchorViewId = null
+            binding.createOrderButton.hide()
         }
     }
 
