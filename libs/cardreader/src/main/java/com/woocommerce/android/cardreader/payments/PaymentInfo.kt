@@ -19,7 +19,7 @@ data class PaymentInfo(
     internal val countryCode: String? = null,
 ) {
     sealed class PaymentChannel(val value: String) {
-        data object StoreManager: PaymentChannel("mobile_store_management")
-        data object Pos: PaymentChannel("mobile_pos")
+        data object StoreManager : PaymentChannel("mobile_store_management")
+        data object Pos : PaymentChannel("mobile_pos")
     }
 }
