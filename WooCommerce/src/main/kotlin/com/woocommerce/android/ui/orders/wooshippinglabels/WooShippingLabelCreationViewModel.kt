@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,7 +52,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
     private val fetchAccountSettings: FetchAccountSettings,
-    private val purchaseShippingLabel: PurchaseShippingLabel
+    private val purchaseShippingLabel: PurchaseShippingLabel,
+    private val observeStoreOptions: ObserveStoreOptions
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -105,13 +107,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private fun getStoreOptions() {
         launch {
+            observeStoreOptions().filterNotNull().collectLatest { options ->
+                storeOptions.value = options
+            }
+        }
+        launch {
             fetchAccountSettings().fold(
-                onSuccess = {
-                    storeOptions.value = it
-                },
-                onFailure = {
-                    storeOptions.value = null
-                }
+                onSuccess = {},
+                onFailure = { storeOptions.value = null }
             )
         }
     }
