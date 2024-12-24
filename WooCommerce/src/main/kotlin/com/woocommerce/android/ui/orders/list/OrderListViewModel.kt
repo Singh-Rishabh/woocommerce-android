@@ -944,12 +944,16 @@ class OrderListViewModel @Inject constructor(
                 WooLog.e(ORDERS, errorMessage)
             }
         } else {
-            // todo show loading state
+            viewState = viewState.copy(isBulkUpdating = true)
             launch {
                 val result = orderListRepository.bulkUpdateOrderStatus(
                     orderIds = orderIds,
                     newStatus = newStatus
                 )
+
+                // Remove refreshing state early, because the fetch after successful result will show another
+                // loading state.
+                viewState = viewState.copy(isBulkUpdating = false)
 
                 if (result.isFailure) {
                     triggerEvent(Event.ShowSnackbar(R.string.error_generic))
@@ -959,7 +963,6 @@ class OrderListViewModel @Inject constructor(
                 }
                 exitSelectionMode()
             }
-            // todo remove loading state
         }
     }
 
@@ -1033,6 +1036,7 @@ class OrderListViewModel @Inject constructor(
         val shouldDisplayTroubleshootingBanner: Boolean = false,
         val orderListState: OrderListState? = null,
         val isSearching: Boolean = false,
+        val isBulkUpdating: Boolean = false,
         val selectionCount: Int? = null
     ) : Parcelable {
         @IgnoredOnParcel

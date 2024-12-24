@@ -107,6 +107,7 @@ class OrderListFragment :
         private const val TABLET_PORTRAIT_WIDTH_RATIO = 0.40f
         private const val LAST_WINDOW_SIZE_WAS_LARGER_THAN_COMPACT = "last_window_size_was_larger_than_compact"
         private const val HANDLER_DELAY = 200L
+        private const val TOP_OFFSET_PROGRESS_WITH_ACTION_MODE = 200
     }
 
     @Inject
@@ -240,6 +241,10 @@ class OrderListFragment :
                 refreshOrders()
             }
         }
+        // When Action Mode bar appears, the progress bar can be covered up by it, so we're pushing it down
+        // to make sure it stays visible.
+        binding.listPaneContainer.setProgressViewOffset(false, 0, TOP_OFFSET_PROGRESS_WITH_ACTION_MODE)
+
 
         initObservers()
         initializeResultHandlers()
@@ -702,6 +707,10 @@ class OrderListFragment :
             }
             new.isBottomNavBarVisible.takeIfNotEqualTo(old?.isBottomNavBarVisible) { isBottomNavBarVisible ->
                 showBottomNavBar(isVisible = isBottomNavBarVisible)
+            }
+            new.isBulkUpdating.takeIfNotEqualTo(old?.isBulkUpdating) { isBulkUpdating ->
+                // Instead of recreating a new progress bar, re-use the progress bar in the SwipeRefreshLayout
+                binding.listPaneContainer.isRefreshing = isBulkUpdating
             }
         }
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
