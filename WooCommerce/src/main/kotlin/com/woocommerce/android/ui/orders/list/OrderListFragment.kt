@@ -860,8 +860,11 @@ class OrderListFragment :
     private fun shouldPreventDetailNavigation(orderId: Long): Boolean {
         if (viewModel.isSelecting()) {
             tracker?.let { selectionTracker ->
-                if (selectionTracker.isSelected(orderId)) selectionTracker.deselect(orderId)
-                else selectionTracker.select(orderId)
+                if (selectionTracker.isSelected(orderId)) {
+                    selectionTracker.deselect(orderId)
+                } else {
+                    selectionTracker.select(orderId)
+                }
             }
             return true
         }
