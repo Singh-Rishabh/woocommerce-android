@@ -81,13 +81,10 @@ class WooPosProductsDataSource @Inject constructor(
 
     private fun List<Product>.applyPosProductFilter() = this.filter { product ->
         isProductHasAPrice(product) &&
-            isProductNotVirtual(product) &&
             isProductNotDownloadable(product)
     }
 
     private fun isProductNotDownloadable(product: Product) = !product.isDownloadable
-
-    private fun isProductNotVirtual(product: Product) = !product.isVirtual
 
     private fun isProductHasAPrice(product: Product) =
         (product.price != null)
