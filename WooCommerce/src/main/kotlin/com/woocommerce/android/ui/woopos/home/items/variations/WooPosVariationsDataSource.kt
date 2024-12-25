@@ -37,7 +37,7 @@ class WooPosVariationsDataSource @Inject constructor(
     fun fetchFirstPage(
         productId: Long,
         forceRefresh: Boolean = true
-    ): Flow<FetchResult<List<ProductVariation>>> = flow {
+    ): Flow<FetchResult> = flow {
         if (forceRefresh) {
             updateCache(productId, emptyList())
         }
@@ -83,9 +83,9 @@ private fun Result<Unit>.logFailure() {
     WooLog.e(WooLog.T.POS, "Loading variations failed - $errorMessage", error)
 }
 
-sealed class FetchResult<out T> {
-    data class Cached<out T>(val data: T) : FetchResult<T>()
-    data class Remote<out T>(val result: Result<T>) : FetchResult<T>()
+sealed class FetchResult {
+    data class Cached(val data: List<ProductVariation>) : FetchResult()
+    data class Remote(val result: Result<List<ProductVariation>>) : FetchResult()
 }
 
 private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
