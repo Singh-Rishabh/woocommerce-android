@@ -126,20 +126,6 @@ class OrderDetailViewModel @Inject constructor(
 
     private val _order = MutableStateFlow<Order?>(null)
 
-    fun updateOrder(newOrder: Order) {
-        _order.value = newOrder
-        viewState = viewState.copy(
-            orderInfo = viewState.orderInfo?.copy(
-                order = newOrder,
-                isPaymentCollectableWithCardReader = viewState.orderInfo?.isPaymentCollectableWithCardReader
-                    ?: false
-            ) ?: OrderDetailViewState.OrderInfo(
-                newOrder,
-                isPaymentCollectableWithCardReader = false
-            )
-        )
-    }
-
     suspend fun awaitOrder(): Order = _order.filterNotNull().first()
 
     // Keep track of the deleted shipment tracking number in case
@@ -248,13 +234,15 @@ class OrderDetailViewModel @Inject constructor(
                 )
             }
         }
+
+        updateViewStateOnOrderChange()
     }
 
     fun start() {
         if (navArgs.orderId != -1L) {
             launch {
                 orderDetailRepository.getOrderById(navArgs.orderId)?.let {
-                    updateOrder(it)
+                    _order.value = it
                     displayOrderDetails()
                     fetchOrder(showSkeleton = false)
                 } ?: fetchOrder(showSkeleton = true)
@@ -571,7 +559,7 @@ class OrderDetailViewModel @Inject constructor(
             // Refresh UI from the database, as new labels are cached by FluxC after the purchase,
             // if for any reason, the order wasn't found, refetch it
             orderDetailRepository.getOrderById(navArgs.orderId)?.let {
-                updateOrder(it)
+                _order.value = it
                 displayOrderDetails()
             } ?: fetchOrder(true)
         }
@@ -778,7 +766,7 @@ class OrderDetailViewModel @Inject constructor(
         val fetchedOrder = orderDetailRepository.fetchOrderById(navArgs.orderId)
         orderDetailsTransactionLauncher.onOrderFetched()
         if (fetchedOrder != null) {
-            updateOrder(fetchedOrder)
+            _order.value = fetchedOrder
             fetchOrderProducts()
         } else {
             triggerEvent(ShowSnackbar(string.order_error_fetch_generic))
@@ -969,6 +957,25 @@ class OrderDetailViewModel @Inject constructor(
         }
     }
 
+    private fun updateViewStateOnOrderChange() {
+        launch {
+            _order.collect { newOrder ->
+                newOrder?.let {
+                    viewState = viewState.copy(
+                        orderInfo = viewState.orderInfo?.copy(
+                            order = it,
+                            isPaymentCollectableWithCardReader = viewState.orderInfo?.isPaymentCollectableWithCardReader
+                                ?: false
+                        ) ?: OrderDetailViewState.OrderInfo(
+                            it,
+                            isPaymentCollectableWithCardReader = false
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     override fun onProductFetched(remoteProductId: Long) {
         viewState = viewState.copy(refreshedProductId = remoteProductId)
     }
@@ -980,7 +987,7 @@ class OrderDetailViewModel @Inject constructor(
     private fun reloadOrderDetails() {
         launch {
             orderDetailRepository.getOrderById(navArgs.orderId)?.let {
-                updateOrder(it)
+                _order.value = it
             } ?: WooLog.w(T.ORDERS, "Order ${navArgs.orderId} not found in the database.")
             displayOrderDetails()
         }

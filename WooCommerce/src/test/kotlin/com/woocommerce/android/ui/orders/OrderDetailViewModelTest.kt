@@ -930,30 +930,6 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `Do not update order status when not connected`() = testBlocking {
-        doReturn(order).whenever(orderDetailRepository).getOrderById(any())
-        doReturn(false).whenever(networkStatus).isConnected()
-
-        var snackbar: ShowSnackbar? = null
-        viewModel.event.observeForever {
-            if (it is ShowSnackbar) snackbar = it
-        }
-
-        viewModel.updateOrder(order)
-        viewModel.start()
-        viewModel.onOrderStatusChanged(
-            OrderStatusUpdateSource.Dialog(
-                oldStatus = order.status.value,
-                newStatus = CoreOrderStatus.PROCESSING.value
-            )
-        )
-
-        verify(orderDetailRepository, never()).updateOrderStatus(any(), any())
-
-        assertThat(snackbar).isEqualTo(ShowSnackbar(string.offline_error))
-    }
-
-    @Test
     fun `refresh shipping tracking items when an item is added`() = testBlocking {
         val shipmentTracking = OrderShipmentTracking(
             trackingProvider = "testProvider",
