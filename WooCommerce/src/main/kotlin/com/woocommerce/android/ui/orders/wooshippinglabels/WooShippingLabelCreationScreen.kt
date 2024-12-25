@@ -222,6 +222,7 @@ private fun LabelCreationScreenWithBottomSheet(
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
     val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
+    val paddingBottom = if (isPurchaseButtonDisplayed) 74.dp else 0.dp
     val shippingRateSummary =
         (shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState)?.selectedRate?.summary
 
@@ -237,7 +238,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 onShippingToAddressChange = onShippingToAddressChange,
                 shippingRateSummary = shippingRateSummary,
-                modifier = Modifier.padding(bottom = 74.dp),
+                modifier = Modifier.padding(bottom = paddingBottom),
             )
         },
         sheetPeekHeight = bottomSheetPeekHeight,
