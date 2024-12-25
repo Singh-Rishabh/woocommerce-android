@@ -93,6 +93,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onCustomWeightChange = viewModel::onCustomWeightChange,
                 markOrderComplete = viewState.markOrderComplete,
                 onMarkOrderCompleteChange = viewModel::onMarkOrderCompleteChange,
+                onNavigateBack = viewModel::onNavigateBack,
                 purchaseState = viewState.purchaseState
             )
         }
@@ -124,6 +125,7 @@ fun WooShippingLabelCreationScreen(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     purchaseState: WooShippingLabelCreationViewModel.PurchaseState,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -145,6 +147,7 @@ fun WooShippingLabelCreationScreen(
             onCustomWeightChange = onCustomWeightChange,
             onSelectedSippingRateChanged = onSelectedSippingRateChanged,
             markOrderComplete = markOrderComplete,
+            onNavigateBack = onNavigateBack,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
         val isDarkTheme = isSystemInDarkTheme()
@@ -214,6 +217,7 @@ private fun LabelCreationScreenWithBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
@@ -242,7 +246,7 @@ private fun LabelCreationScreenWithBottomSheet(
             TopAppBar(
                 title = { Text(stringResource(id = R.string.shipping_label_create_title)) },
                 navigationIcon = {
-                    IconButton({}) {
+                    IconButton(onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back)
@@ -577,6 +581,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             onSelectedSippingRateChanged = {},
             markOrderComplete = true,
             onMarkOrderCompleteChange = {},
+            onNavigateBack = {},
             purchaseState = WooShippingLabelCreationViewModel.PurchaseState.NoStarted
         )
     }
