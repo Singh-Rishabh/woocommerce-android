@@ -5,9 +5,13 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
-class VariationsLRUCache<K, V> @Inject constructor(maxSize: Int) {
+class VariationsLRUCache<K, V> @Inject constructor() {
 
-    private val cache = LruCache<K, V>(maxSize)
+    companion object {
+        private const val VARIATION_CACHE_MAX_SIZE = 50
+    }
+
+    private val cache = LruCache<K, V>(VARIATION_CACHE_MAX_SIZE)
     private val mutex = Mutex()
 
     suspend fun get(key: K): V? {
