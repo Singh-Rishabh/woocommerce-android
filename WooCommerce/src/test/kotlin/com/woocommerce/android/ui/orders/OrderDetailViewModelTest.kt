@@ -2463,4 +2463,26 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
         assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
     }
+
+    @Test
+    fun `given order in db, when viewmodel start, then view state is updated with order`() = testBlocking {
+        // GIVEN
+        val newOrder = order.copy(
+            status = Order.Status.Processing,
+            number = "NewOrderNumber"
+        )
+        doReturn(newOrder).whenever(orderDetailRepository).getOrderById(any())
+
+        var observedViewState: OrderDetailViewState? = null
+        viewModel.viewStateData.observeForever { _, newState -> observedViewState = newState }
+
+        // WHEN
+        viewModel.start()
+
+        // THEN
+        assertThat(observedViewState!!.orderInfo!!.order).isEqualTo(newOrder)
+        assertThat(observedViewState.orderInfo.isPaymentCollectableWithCardReader).isFalse()
+
+    }
+
 }
