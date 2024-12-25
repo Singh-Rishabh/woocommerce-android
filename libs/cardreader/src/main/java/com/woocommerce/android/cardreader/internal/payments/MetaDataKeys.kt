@@ -55,7 +55,7 @@ internal enum class MetaDataKeys(val key: String) {
      * The channel used to collect the payment, e.g. `mobile_store_management` or `mobile_pos`
      * This key is used for identifying the channel for in-person payments in analytics.
      */
-    CHANNEL("channel"),
+    CHANNEL("ipp_channel"),
 
     /**
      * The platform used to collect the payment, `android` in our case
