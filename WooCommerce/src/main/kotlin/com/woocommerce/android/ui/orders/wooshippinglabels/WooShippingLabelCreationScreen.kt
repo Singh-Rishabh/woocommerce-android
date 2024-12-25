@@ -511,7 +511,9 @@ private fun PackageSelectionAvailableCard(
                         modifier = Modifier.fillMaxWidth(),
                         value = customWeight,
                         onValueChange = onCustomWeightChange,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface),
+
                     )
                     if (customWeight.isEmpty()) {
                         Text(
