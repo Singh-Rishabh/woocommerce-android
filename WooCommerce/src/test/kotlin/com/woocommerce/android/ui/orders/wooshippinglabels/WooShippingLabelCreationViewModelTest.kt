@@ -651,20 +651,42 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when the view model is created, then get store options from the local preferences and update settings on background`() = testBlocking {
+    fun `when the view model is created, then get store options from the local preferences and update settings on background`() =
+        testBlocking {
+            val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+            whenever(orderDetailRepository.getOrderById(any())) doReturn order
+            whenever(getShippableItems(any())) doReturn defaultShippableItems
+            whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+            whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+            whenever(observeStoreOptions()) doReturn flowOf(null, defaultStoreOptions)
+
+            createViewModel()
+
+            advanceUntilIdle()
+
+            verify(observeStoreOptions).invoke()
+            // update the settings only once
+            verify(fetchAccountSettings).invoke()
+        }
+
+    @Test
+    fun `when there is no cached store options and API request fails then display error`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
 
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
-        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(fetchAccountSettings()) doReturn Result.failure(Exception("Random error"))
+        whenever(observeStoreOptions()) doReturn flowOf(null)
 
         createViewModel()
 
         advanceUntilIdle()
 
-        verify(observeStoreOptions).invoke()
         verify(fetchAccountSettings).invoke()
+
+        val currentViewState = sut.viewState.value
+        assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
     }
 }
