@@ -73,7 +73,6 @@ class WooPosVariationsDataSourceTest {
         whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
-        // Pre-populate the cache
         sut.fetchFirstPage(productId, forceRefresh = true).first()
         assertThat(
             sut.fetchFirstPage(productId, forceRefresh = true).first()
@@ -99,7 +98,6 @@ class WooPosVariationsDataSourceTest {
         whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
-        // Pre-populate the cache
         sut.fetchFirstPage(productId, forceRefresh = true).first()
 
         // WHEN
@@ -121,14 +119,12 @@ class WooPosVariationsDataSourceTest {
         whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
-        // Pre-populate the cache
         sut.fetchFirstPage(productId, forceRefresh = true).first()
 
         // WHEN
         val flow = sut.fetchFirstPage(productId, forceRefresh = false).toList()
 
         // THEN
-        // Validate cached result
         val cachedResult = flow[0] as FetchResult.Cached
         assertThat(cachedResult.data).containsExactlyElementsOf(sampleProducts)
 
@@ -148,10 +144,8 @@ class WooPosVariationsDataSourceTest {
         val exception = Exception("Remote load failed")
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
-        // Pre-populate the cache by calling fetchFirstPage once
         sut.fetchFirstPage(productId, forceRefresh = true).first()
 
-        // Simulate a failed remote load
         whenever(handler.fetchVariations(productId, forceRefresh = true))
             .thenReturn(Result.failure(exception))
 
@@ -159,11 +153,9 @@ class WooPosVariationsDataSourceTest {
         val flow = sut.fetchFirstPage(productId, forceRefresh = false).toList()
 
         // THEN
-        // Validate cached result
         val cachedResult = flow[0] as FetchResult.Cached
         assertThat(cachedResult.data).containsExactlyElementsOf(sampleProducts)
 
-        // Validate remote failure
         val remoteResult = flow[1] as FetchResult.Remote
         assertThat(remoteResult.result.getOrNull()).isNull()
         assertThat(remoteResult.result.exceptionOrNull()).isEqualTo(exception)
@@ -182,18 +174,15 @@ class WooPosVariationsDataSourceTest {
         whenever(handler.loadMore(productId)).thenReturn(Result.success(Unit))
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
-        // Pre-populate the cache
         sut.fetchFirstPage(productId, forceRefresh = false).first()
 
         // WHEN
         val result = sut.loadMore(productId)
 
         // THEN
-        // Validate loadMore result
         assertThat(result.isSuccess).isTrue()
         assertThat(result.getOrNull()).containsExactlyElementsOf(sampleProducts + additionalProducts)
 
-        // Validate cached result after loadMore
         val cachedResult = sut.fetchFirstPage(productId, forceRefresh = false).first()
         assertThat(cachedResult).isInstanceOf(FetchResult.Cached::class.java)
         val cachedVariations = (cachedResult as FetchResult.Cached).data
@@ -211,18 +200,15 @@ class WooPosVariationsDataSourceTest {
         whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
-        // Pre-populate the cache
         sut.fetchFirstPage(productId, forceRefresh = false).first()
 
         // WHEN
         val result = sut.loadMore(productId)
 
         // THEN
-        // Validate loadMore failure
         assertThat(result.isFailure).isTrue()
         assertThat(result.exceptionOrNull()).isEqualTo(exception)
 
-        // Validate cache remains unchanged
         val cachedResult = sut.fetchFirstPage(productId, forceRefresh = false).first()
         assertThat(cachedResult).isInstanceOf(FetchResult.Cached::class.java)
         val cachedVariations = (cachedResult as FetchResult.Cached).data
@@ -247,7 +233,6 @@ class WooPosVariationsDataSourceTest {
         val flow = sut.fetchFirstPage(productId, forceRefresh = false).toList()
 
         // THEN
-        // Validate remote failure
         val remoteResult = flow[0] as FetchResult.Remote
         assertThat(remoteResult.result.getOrNull()).isNull()
         assertThat(remoteResult.result.exceptionOrNull()).isEqualTo(exception)
@@ -267,7 +252,6 @@ class WooPosVariationsDataSourceTest {
         val flow = sut.fetchFirstPage(productId, forceRefresh = false).toList()
 
         // THEN
-        // Validate remote result (empty remote data)
         val remoteResult = flow[0] as FetchResult.Remote
         assertThat(remoteResult.result.getOrNull()).isNotNull
         assertThat(remoteResult.result.getOrNull()).isEmpty()
@@ -302,7 +286,6 @@ class WooPosVariationsDataSourceTest {
         // THEN
         val cachedResult = flow[0] as FetchResult.Cached
 
-        // Ensure variations without price are filtered out
         assertFalse(cachedResult.data.any { it.remoteVariationId == 1L })
     }
 
@@ -335,7 +318,6 @@ class WooPosVariationsDataSourceTest {
         // THEN
         val remoteResult = flow[1] as FetchResult.Remote
 
-        // Ensure variations without price are filtered out
         assertThat(remoteResult.result.getOrNull()?.any { it.remoteVariationId == 1L }).isFalse()
     }
 
@@ -370,7 +352,6 @@ class WooPosVariationsDataSourceTest {
         // THEN
         val cachedResult = flow[0] as FetchResult.Cached
 
-        // Ensure virtual variations are filtered out
         assertFalse(cachedResult.data.any { it.remoteVariationId == 1L })
     }
 
@@ -406,7 +387,6 @@ class WooPosVariationsDataSourceTest {
         // THEN
         val cachedResult = flow[0] as FetchResult.Cached
 
-        // Ensure downloadable variations are filtered out
         assertFalse(cachedResult.data.any { it.remoteVariationId == 1L })
     }
 
@@ -442,7 +422,6 @@ class WooPosVariationsDataSourceTest {
         // THEN
         val remoteResult = flow[1] as FetchResult.Remote
 
-        // Ensure downloadable variations are filtered out
         assertThat(remoteResult.result.getOrNull()?.any { it.remoteVariationId == 1L }).isFalse()
     }
 }
