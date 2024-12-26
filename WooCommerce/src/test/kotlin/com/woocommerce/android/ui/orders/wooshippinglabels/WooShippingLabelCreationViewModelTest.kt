@@ -675,7 +675,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
 
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
-        whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.failure(Exception("Random error"))
         whenever(observeStoreOptions()) doReturn flowOf(null)
