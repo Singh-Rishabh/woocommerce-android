@@ -1565,7 +1565,6 @@
     <string name="card_reader_tap_to_pay_header">TAP TO PAY</string>
     <string name="card_reader_about_tap_to_pay">About Tap to Pay</string>
     <string name="card_reader_tap_to_pay_description">Use your phone to accept card\npayments. Try it now.</string>
-    <string name="card_reader_tap_to_pay_share_feedback">Share Feedback</string>
     <string name="card_reader_tap_to_pay_not_available_error_check_requirements_button">Check Requirements</string>
     <string name="card_reader_tap_to_pay_not_available_error_title">Tap to Pay is not available</string>
     <string name="card_reader_tap_to_pay_not_available_error_nfc">To use Tap To Pay on Android, your device needs an NFC chip. To accept in-person payments, please purchase a Bluetooth card reader.</string>
