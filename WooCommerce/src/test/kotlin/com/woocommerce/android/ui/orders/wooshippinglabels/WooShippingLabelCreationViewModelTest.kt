@@ -207,6 +207,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val getShippingRates: GetShippingRates = mock()
     private val fetchAccountSettings: FetchAccountSettings = mock()
     private val purchaseShippingLabel: PurchaseShippingLabel = mock()
+    private val observeStoreOptions: ObserveStoreOptions = mock()
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -219,6 +220,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             getShippingRates = getShippingRates,
             fetchAccountSettings = fetchAccountSettings,
             purchaseShippingLabel = purchaseShippingLabel,
+            observeStoreOptions = observeStoreOptions,
             savedState = savedState
         )
     }
@@ -236,6 +238,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -260,6 +263,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -277,6 +281,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val order: Order? = null
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -293,6 +298,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         )
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(emptyList())
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -311,6 +317,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -340,6 +347,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             getShippingRates(any(), any(), any(), any(), any(), any())
         ) doReturn Result.success(defaultShippingRates)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -369,6 +377,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             getShippingRates(any(), any(), any(), any(), any(), any())
         ) doReturn Result.failure(Exception("Random error"))
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData)
@@ -475,6 +484,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -515,6 +525,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
         createViewModel()
 
@@ -567,6 +578,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(
             purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
         ) doReturn Result.success(defaultPurchasedLabelData)
@@ -619,6 +631,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(
             purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
         ) doReturn Result.failure(Exception("Random error"))
@@ -633,6 +646,45 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         sut.onPurchaseShippingLabel()
+
+        val currentViewState = sut.viewState.value
+        assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
+    }
+
+    @Test
+    fun `when the view model is created, then get store options from the local preferences and update settings on background`() =
+        testBlocking {
+            val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+            whenever(orderDetailRepository.getOrderById(any())) doReturn order
+            whenever(getShippableItems(any())) doReturn defaultShippableItems
+            whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+            whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
+            whenever(observeStoreOptions()) doReturn flowOf(null, defaultStoreOptions)
+
+            createViewModel()
+
+            advanceUntilIdle()
+
+            verify(observeStoreOptions).invoke()
+            // update the settings only once
+            verify(fetchAccountSettings).invoke()
+        }
+
+    @Test
+    fun `when there is no cached store options and API request fails then display error`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(fetchAccountSettings()) doReturn Result.failure(Exception("Random error"))
+        whenever(observeStoreOptions()) doReturn flowOf(null)
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        verify(fetchAccountSettings).invoke()
 
         val currentViewState = sut.viewState.value
         assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
