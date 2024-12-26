@@ -4,7 +4,7 @@
 21.4
 -----
 - [*] Fixed overlap issue in Settings > WooCommerce Version  [https://github.com/woocommerce/woocommerce-android/pull/13183]
-
+- [*] Removed Tap To Pay usage survey [https://github.com/woocommerce/woocommerce-android/pull/13207]
 
 21.3
 -----
