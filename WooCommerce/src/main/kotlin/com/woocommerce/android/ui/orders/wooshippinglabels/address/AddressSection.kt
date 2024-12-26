@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels
+package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -30,12 +30,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
+import com.woocommerce.android.ui.orders.wooshippinglabels.VerticalDivider
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.toShippingFromString
 
 @Composable
 @Suppress("DestructuringDeclarationWithTooManyEntries", "UnusedParameter")
@@ -87,7 +92,7 @@ internal fun AddressSectionPortrait(
                         top.linkTo(shipFromLabel.top)
                         start.linkTo(shipFromLabel.end)
                         end.linkTo(endBarrier)
-                        width = androidx.constraintlayout.compose.Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
                     }
                     .padding(
                         top = dimensionResource(R.dimen.major_100),
@@ -160,7 +165,7 @@ internal fun AddressSectionPortrait(
                         top.linkTo(shipToLabel.top)
                         start.linkTo(barrier)
                         end.linkTo(shipToEdit.start)
-                        width = androidx.constraintlayout.compose.Dimension.fillToConstraints
+                        width = Dimension.fillToConstraints
                     }
                     .padding(
                         top = dimensionResource(R.dimen.major_100),

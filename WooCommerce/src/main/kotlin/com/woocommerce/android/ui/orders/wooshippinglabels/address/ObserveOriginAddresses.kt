@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels
+package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import kotlinx.coroutines.delay
