@@ -571,8 +571,8 @@ fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI
         )
         val option = ShippingRateOptionUI(
             title = rate.serviceName,
-            formatedPrice = rate.toString(),
-            formattedFee = rate.toString(),
+            formatedPrice = rate.price.toString(),
+            formattedFee = rate.price.toString(),
             option = rate.option,
             rate = rate,
             shippingRateOptions = listOf(
