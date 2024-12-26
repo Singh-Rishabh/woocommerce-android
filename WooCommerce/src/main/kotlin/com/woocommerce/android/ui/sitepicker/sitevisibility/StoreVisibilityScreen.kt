@@ -2,15 +2,18 @@ package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -83,50 +86,117 @@ fun WooSitesVisibilityScreen(
             elevation = 0.dp
         )
     }) { padding ->
-        Column {
-            LazyColumn(
-                modifier = modifier
-                    .padding(padding)
-                    .background(MaterialTheme.colors.surface)
-                    .padding(horizontal = 16.dp)
-            ) {
-                itemsIndexed(state.wooStores) { index, wooStore ->
-                    Row(
-                        modifier = Modifier.clickable { onSiteSelected(wooStore) },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        SelectionCheck(
-                            isSelected = wooStore.isSelected,
-                            onSelectionChange = null,
-                        )
-                        Column(
-                            Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                        ) {
-                            Text(
-                                text = wooStore.siteName,
-                                style = WooTypography.body1,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Spacer(Modifier.height(4.dp))
-                            Text(
-                                text = wooStore.siteUrl,
-                                style = WooTypography.body2,
-                                color = colorResource(id = R.color.color_on_surface_medium)
-                            )
-                            Spacer(Modifier.height(16.dp))
-                            if (index < state.wooStores.size - 1) {
-                                Divider()
-                            }
-                        }
-                    }
-                }
-            }
+        val borderWidth = 1.dp
+        val borderColor = colorResource(id = R.color.divider_color)
+        Column(
+            modifier = modifier
+                .padding(padding)
+                .background(MaterialTheme.colors.surface)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+        ) {
             Text(
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_current_site_header),
+                style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_current_site_footer),
+                style = WooTypography.caption,
+                color = MaterialTheme.colors.onSurface,
+            )
+            StoreItem(
+                wooStore = state.currentSite,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(
+                        width = borderWidth,
+                        color = borderColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+            )
+            Text(
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_list_header),
+                style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_footer),
                 style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
+            AvailableStoresForHiding(
+                state = state,
+                onSiteSelected = onSiteSelected,
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .border(
+                        width = borderWidth,
+                        color = borderColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+private fun AvailableStoresForHiding(
+    state: WooStoresUiState,
+    onSiteSelected: (WooStoreUi) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        state.wooStores.forEachIndexed { index, wooStore ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSiteSelected(wooStore) }
+                    .padding(start = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                SelectionCheck(
+                    isSelected = wooStore.isSelected,
+                    onSelectionChange = null,
+                )
+                StoreItem(
+                    wooStore = wooStore,
+                    showDivider = index < state.wooStores.size - 1,
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun StoreItem(
+    wooStore: WooStoreUi,
+    modifier: Modifier = Modifier,
+    showDivider: Boolean = false
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = wooStore.siteName,
+            style = WooTypography.body1,
+            fontWeight = FontWeight.SemiBold
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            modifier = Modifier.padding(end = 8.dp),
+            text = wooStore.siteUrl,
+            style = WooTypography.body2,
+            color = colorResource(id = R.color.color_on_surface_medium)
+        )
+        Spacer(Modifier.height(16.dp))
+        if (showDivider) {
+            Divider()
         }
     }
 }
@@ -138,13 +208,32 @@ fun StoreVisibilityScreenPreview() {
         state = WooStoresUiState(
             wooStores = listOf(
                 WooStoreUi(
-                    siteName = "My Store",
+                    siteName = "Another Store",
+                    siteUrl = "https://example.com",
+                    siteId = 1,
+                    isSelected = true
+                ),
+                WooStoreUi(
+                    siteName = "Any Store",
+                    siteUrl = "https://example.com",
+                    siteId = 1,
+                    isSelected = true
+                ),
+                WooStoreUi(
+                    siteName = "Some Store",
                     siteUrl = "https://example.com",
                     siteId = 1,
                     isSelected = true
                 )
+
             ),
-            isSaveButtonEnabled = true
+            isSaveButtonEnabled = true,
+            currentSite = WooStoreUi(
+                siteName = "Current Store",
+                siteUrl = "https://myselectedSite.com",
+                siteId = 1,
+                isSelected = true
+            )
         ),
         onBack = {},
         onSaveTapped = {},
