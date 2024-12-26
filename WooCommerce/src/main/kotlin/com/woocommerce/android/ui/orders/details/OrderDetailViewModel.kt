@@ -88,6 +88,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.wordpress.android.fluxc.model.OrderAttributionInfo
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.OptimisticUpdateResult
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.RemoteUpdateResult
@@ -125,8 +126,6 @@ class OrderDetailViewModel @Inject constructor(
     val performanceObserver: LifecycleObserver = orderDetailsTransactionLauncher
 
     private val _order = MutableStateFlow<Order?>(null)
-
-    suspend fun awaitOrder(): Order = _order.filterNotNull().first()
 
     // Keep track of the deleted shipment tracking number in case
     // the request to server fails, we need to display an error message
@@ -993,6 +992,13 @@ class OrderDetailViewModel @Inject constructor(
         }
     }
 
+    suspend fun awaitOrder(): Order =
+        withTimeout(
+            TIME_TO_WAIT_ORDER_MS // time needed in order to crash in case of a deadlock
+        ) {
+            _order.filterNotNull().first()
+        }
+
     fun onWcShippingBannerDismissed() {
         shippingLabelOnboardingRepository.markWcShippingBannerAsDismissed()
     }
@@ -1037,4 +1043,8 @@ class OrderDetailViewModel @Inject constructor(
 
     data class ListInfo<T>(val isVisible: Boolean = true, val list: List<T> = emptyList())
     data class TrashOrder(val orderId: Long) : MultiLiveEvent.Event()
+
+    private companion object {
+        const val TIME_TO_WAIT_ORDER_MS = 3_000L
+    }
 }
