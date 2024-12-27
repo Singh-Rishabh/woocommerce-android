@@ -328,13 +328,14 @@ class OrderListViewModel @Inject constructor(
      * Refresh the active order list with fresh data from the API as well as refresh order status
      * options and payment gateways if the network is available.
      */
-    fun fetchOrdersAndOrderDependencies() {
+    fun fetchOrdersAndOrderDependencies(onComplete: (() -> Unit)? = null) {
         if (networkStatus.isConnected()) {
             viewState = viewState.copy(isErrorFetchingDataBannerVisible = false)
             launch(dispatchers.main) {
                 activePagedListWrapper?.fetchFirstPage()
                 fetchOrderStatusOptions()
                 fetchPaymentGateways()
+                onComplete?.invoke()
             }
         } else {
             viewState = viewState.copy(isRefreshPending = true, isErrorFetchingDataBannerVisible = false)
@@ -961,15 +962,18 @@ class OrderListViewModel @Inject constructor(
                     if (result.isFailure) {
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                     } else {
-                        fetchOrdersAndOrderDependencies()
-                        triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+                        fetchOrdersAndOrderDependencies(
+                            onComplete = {
+                                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+                            }
+                        )
                     }
-                    exitSelectionMode()
                 }
             }
         } else {
             triggerEvent(Event.ShowSnackbar(R.string.offline_error))
         }
+        exitSelectionMode()
     }
 
     sealed class OrderListEvent : Event() {
