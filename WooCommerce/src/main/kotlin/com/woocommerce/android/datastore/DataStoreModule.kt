@@ -163,7 +163,7 @@ class DataStoreModule {
     @Provides
     @Singleton
     @DataStoreQualifier(SITE_PICKER_HIDDEN_SITES)
-    fun provideHiddenSitesDataStore(
+    fun provideWooVisibleSitesDataStore(
         appContext: Context,
         crashLogging: CrashLogging,
         @AppCoroutineScope appCoroutineScope: CoroutineScope
