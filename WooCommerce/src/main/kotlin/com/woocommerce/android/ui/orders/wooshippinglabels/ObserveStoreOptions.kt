@@ -17,6 +17,7 @@ class ObserveStoreOptions @Inject constructor(
         when {
             isFirstValue && options == null -> {
                 // If there is no cached data, refresh the store options before emitting any value
+                isFirstValue = false
                 if (fetchAccountSettings().isFailure) {
                     // We will use null as not available
                     emit(null)
@@ -25,6 +26,7 @@ class ObserveStoreOptions @Inject constructor(
 
             isFirstValue && options != null -> {
                 // If there is cached data, emit cached values and refresh the store options async
+                isFirstValue = false
                 emit(options)
                 if (fetchAccountSettings().isFailure) {
                     emit(null)
@@ -33,6 +35,5 @@ class ObserveStoreOptions @Inject constructor(
 
             else -> emit(options)
         }
-        isFirstValue = false
     }
 }
