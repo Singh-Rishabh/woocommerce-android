@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.payments.refunds
 
-import org.wordpress.android.fluxc.utils.sumBy as sumByBigDecimal
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -77,6 +76,7 @@ import java.math.BigDecimal
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.collections.set
+import org.wordpress.android.fluxc.utils.sumBy as sumByBigDecimal
 
 @HiltViewModel
 @Suppress("LargeClass") // TODO Refactor this class in a follow up PR
@@ -325,8 +325,9 @@ class IssueRefundViewModel @Inject constructor(
 
             val quantityLeftToRefund = orderItem.quantity - timesRefunded
 
-            if (quantityLeftToRefund <= 0) null
-            else {
+            if (quantityLeftToRefund <= 0) {
+                null
+            } else {
                 val maxQuantity = maxQuantities[orderItem.itemId] ?: 0f
                 val selectedQuantity = kotlin.math.min(selectedQuantities[orderItem.itemId] ?: 0, maxQuantity.toInt())
                 ProductRefundListItem(

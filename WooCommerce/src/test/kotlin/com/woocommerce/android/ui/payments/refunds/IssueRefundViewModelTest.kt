@@ -1052,6 +1052,7 @@ class IssueRefundViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `given order with 6 product each and 2 fully refunded, when vm init, then 1 product with 2 items shown`() =
         testBlocking {
             // GIVEN
