@@ -179,7 +179,7 @@ class OrderListAdapter(
             viewBinding.divider.visibility = if (orderItemUI.isLastItemInSection) View.GONE else View.VISIBLE
 
             when {
-                orderItemUI.isSelected || isActivated -> {
+                orderItemUI.isSelected -> {
                     viewBinding.orderItemLayout.setBackgroundColor(
                         viewBinding.root.context.getColor(R.color.color_item_selected)
                     )
@@ -188,6 +188,8 @@ class OrderListAdapter(
                     viewBinding.orderItemLayout.setBackgroundColor(Color.TRANSPARENT)
                 }
             }
+            viewBinding.orderImageSelected.visibility = if (isActivated) View.VISIBLE else View.GONE
+
             // clear existing tags and add new ones
             viewBinding.orderTags.removeAllViews()
             processTagView(orderItemUI.status, this)

@@ -146,7 +146,7 @@ Language: fr
     <string name="woopos_cart_item_content_description">Produit dans le panier %s, Prix %s</string>
     <string name="woopos_product_item_content_description">Produit %s, Prix %s</string>
     <string name="blaze_campaign_status_suspended">En suspens</string>
-    <string name="woopos_success_screen_total">Un paiement de %1$s a été effectué avec succès</string>
+    <string name="woopos_totals_success_payment_cash">Un paiement de %1$s a été effectué avec succès</string>
     <string name="woopos_new_order_button">Nouvelle commande</string>
     <string name="woopos_dialog_products_info_button_label">OK</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ Créer une commande dans la gestion de la boutique</string>
