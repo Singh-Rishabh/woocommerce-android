@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Colors
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -234,6 +235,7 @@ fun ShippingRates(
         edgePadding = dimensionResource(R.dimen.major_100),
         backgroundColor = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.primary,
+        divider = {},
         modifier = tabModifier
     ) {
         shippingRates.keys.forEachIndexed { index, carrier ->
@@ -262,6 +264,8 @@ fun ShippingRates(
             )
         }
     }
+
+    Divider(modifier = Modifier.fillMaxWidth())
 
     HorizontalPager(
         state = pagerState,
@@ -571,8 +575,8 @@ fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI
         )
         val option = ShippingRateOptionUI(
             title = rate.serviceName,
-            formatedPrice = rate.toString(),
-            formattedFee = rate.toString(),
+            formatedPrice = rate.price.toString(),
+            formattedFee = rate.price.toString(),
             option = rate.option,
             rate = rate,
             shippingRateOptions = listOf(
