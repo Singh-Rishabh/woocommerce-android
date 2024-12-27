@@ -425,6 +425,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
+    fun onNavigateBack() {
+        triggerEvent(Event.Exit)
+    }
+
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
 
