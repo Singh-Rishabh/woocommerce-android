@@ -169,7 +169,7 @@ class DataStoreModule {
         @AppCoroutineScope appCoroutineScope: CoroutineScope
     ) = PreferenceDataStoreFactory.create(
         produceFile = {
-            appContext.preferencesDataStoreFile("site_picker_hidden_sites")
+            appContext.preferencesDataStoreFile("site_picker_visible_sites")
         },
         corruptionHandler = ReplaceFileCorruptionHandler {
             crashLogging.recordEvent("Corrupted data store. DataStore Type: ${SITE_PICKER_HIDDEN_SITES.name}")
