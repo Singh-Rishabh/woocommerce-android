@@ -40,9 +40,9 @@ class OrderListRepository @Inject constructor(
     companion object {
         private const val TAG = "OrderListRepository"
         private const val ORDER_STATUS_TRASH = "trash"
-        private const val BULK_UPDATE_ORDER_STATUS_ALL_FAILED = "Unable to update any orders. Please try again."
-        private const val BULK_UPDATE_ORDER_NOTHING_UPDATED = "No orders were updated. Please try again."
-        private const val BULK_UPDATE_ORDER_NO_RESPONSE = "No response received. Please try again."
+        private const val BULK_UPDATE_ORDER_STATUS_ALL_FAILED = "Unable to update any orders."
+        private const val BULK_UPDATE_ORDER_NOTHING_UPDATED = "No orders were updated."
+        private const val BULK_UPDATE_ORDER_NO_RESPONSE = "No response received."
     }
 
     private var isFetchingOrderStatusOptions = false
