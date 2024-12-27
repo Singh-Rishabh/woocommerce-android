@@ -23,6 +23,10 @@ class VisibleWooSitesDataStore @Inject constructor(
         return dataStore.data.map { prefs -> prefs[booleanPreferencesKey(siteId.toString())] ?: true }
     }
 
+    suspend fun clearAll() {
+        dataStore.edit { it.clear() }
+    }
+
     private suspend fun updateSiteVisibility(siteId: Long, isVisible: Boolean) {
         dataStore.edit { preferences ->
             preferences[booleanPreferencesKey(siteId.toString())] = isVisible
