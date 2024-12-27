@@ -90,4 +90,16 @@ class WooShippingLabelRepository @Inject constructor(
             markOrderComplete = lastOrderComplete
         ).asWooResult { mapper(it) }
     }
+
+    suspend fun fetchOriginAddresses(
+        site: SiteModel
+    ) = restClient.fetchOriginAddresses(site = site)
+        .asWooResult { mapper(it) }
+        .also { response ->
+            response.model
+                ?.takeIf { response.isError.not() }
+                ?.let {
+                    addressDataStore.saveOriginAddresses(it)
+                }
+        }
 }
