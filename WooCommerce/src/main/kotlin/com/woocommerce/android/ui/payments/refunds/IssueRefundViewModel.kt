@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.payments.refunds
 
+import org.wordpress.android.fluxc.utils.sumBy as sumByBigDecimal
 import android.os.Parcelable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -76,8 +77,6 @@ import java.math.BigDecimal
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.collections.set
-import kotlin.math.min
-import org.wordpress.android.fluxc.utils.sumBy as sumByBigDecimal
 
 @HiltViewModel
 @Suppress("LargeClass") // TODO Refactor this class in a follow up PR
@@ -284,18 +283,7 @@ class IssueRefundViewModel @Inject constructor(
             )
         }
 
-        val items = order.items.map {
-            val maxQuantity = maxQuantities[it.itemId] ?: 0f
-            val selectedQuantity = min(selectedQuantities[it.itemId] ?: 0, maxQuantity.toInt())
-            ProductRefundListItem(
-                orderItem = it,
-                maxQuantity = maxQuantity,
-                quantity = selectedQuantity,
-                subtotal = formatCurrency(BigDecimal.ZERO),
-                taxes = formatCurrency(BigDecimal.ZERO)
-            )
-        }
-        updateRefundItems(items)
+        updateRefundItems(determineRefundableOrderItems(order, refunds))
 
         /* Grab all shipping lines listed in the Order, but remove those that are already refunded previously) */
         val shippingLines = order.shippingLines
@@ -324,6 +312,29 @@ class IssueRefundViewModel @Inject constructor(
                 currency = order.currency,
                 decimals = decimals
             )
+        }
+    }
+
+    private fun determineRefundableOrderItems(order: Order, refunds: List<Refund>): List<ProductRefundListItem> {
+        val allRefundedItems = refunds.flatMap { it.items }
+
+        return order.items.mapNotNull { orderItem ->
+            val timesRefunded = allRefundedItems
+                .filter { it.productId == orderItem.productId }
+                .sumOf { it.quantity }
+
+            val quantityLeftToRefund = orderItem.quantity - timesRefunded
+
+            if (quantityLeftToRefund <= 0) null
+            else {
+                ProductRefundListItem(
+                    orderItem = orderItem,
+                    quantity = 0,
+                    maxQuantity = quantityLeftToRefund.toFloat(),
+                    subtotal = formatCurrency(BigDecimal.ZERO),
+                    taxes = formatCurrency(BigDecimal.ZERO)
+                )
+            }
         }
     }
 
