@@ -3,7 +3,7 @@
     <!--
         General colors
     -->
-    <color name="color_primary">@color/woo_purple_30</color>
+    <color name="color_primary">@color/woo_purple_40</color>
     <color name="color_primary_surface">@color/woo_black_90</color>
     <color name="color_primary_variant">@color/woo_purple_50</color>
     <color name="color_secondary">@color/woo_pink_30</color>
