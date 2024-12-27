@@ -938,33 +938,37 @@ class OrderListViewModel @Inject constructor(
     }
 
     fun onBulkOrderStatusChanged(orderIds: List<Long>, newStatus: Order.Status) {
-        if (orderIds.isEmpty()) {
-            val errorMessage = "Trying to bulk update order status but order Ids list is empty"
-            if (BuildConfig.DEBUG) {
-                throw IllegalStateException(errorMessage)
+        if (networkStatus.isConnected()) {
+            if (orderIds.isEmpty()) {
+                val errorMessage = "Trying to bulk update order status but order Ids list is empty"
+                if (BuildConfig.DEBUG) {
+                    throw IllegalStateException(errorMessage)
+                } else {
+                    WooLog.e(ORDERS, errorMessage)
+                }
             } else {
-                WooLog.e(ORDERS, errorMessage)
+                viewState = viewState.copy(isBulkUpdating = true)
+                launch {
+                    val result = orderListRepository.bulkUpdateOrderStatus(
+                        orderIds = orderIds,
+                        newStatus = newStatus
+                    )
+
+                    // Remove refreshing state early, because the fetch after successful result will show another
+                    // loading state.
+                    viewState = viewState.copy(isBulkUpdating = false)
+
+                    if (result.isFailure) {
+                        triggerEvent(Event.ShowSnackbar(R.string.error_generic))
+                    } else {
+                        fetchOrdersAndOrderDependencies()
+                        triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+                    }
+                    exitSelectionMode()
+                }
             }
         } else {
-            viewState = viewState.copy(isBulkUpdating = true)
-            launch {
-                val result = orderListRepository.bulkUpdateOrderStatus(
-                    orderIds = orderIds,
-                    newStatus = newStatus
-                )
-
-                // Remove refreshing state early, because the fetch after successful result will show another
-                // loading state.
-                viewState = viewState.copy(isBulkUpdating = false)
-
-                if (result.isFailure) {
-                    triggerEvent(Event.ShowSnackbar(R.string.error_generic))
-                } else {
-                    fetchOrdersAndOrderDependencies()
-                    triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
-                }
-                exitSelectionMode()
-            }
+            triggerEvent(Event.ShowSnackbar(R.string.offline_error))
         }
     }
 
