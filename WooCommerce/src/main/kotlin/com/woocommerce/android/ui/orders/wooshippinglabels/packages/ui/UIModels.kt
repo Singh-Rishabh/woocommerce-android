@@ -144,4 +144,13 @@ data class StoreOptionsForPackages(
     val dimensionUnit: String,
     val weightUnit: String,
     val originCountry: String
-) : Parcelable
+) : Parcelable {
+    companion object {
+        val DEFAULT = StoreOptionsForPackages(
+            currencySymbol = "USD",
+            dimensionUnit = "cm",
+            weightUnit = "kg",
+            originCountry = "US"
+        )
+    }
+}
