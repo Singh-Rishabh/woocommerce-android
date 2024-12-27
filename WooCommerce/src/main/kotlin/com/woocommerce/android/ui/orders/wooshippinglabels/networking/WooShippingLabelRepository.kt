@@ -1,7 +1,8 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
 import com.woocommerce.android.model.Address
-import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.ShippingLabelsDataStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingAddressDataStore
+import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingConfigurationDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus
@@ -14,7 +15,8 @@ import javax.inject.Inject
 class WooShippingLabelRepository @Inject constructor(
     private val restClient: WooShippingLabelRestClient,
     private val mapper: WooShippingNetworkingMapper,
-    private val dataStore: ShippingLabelsDataStore
+    private val configurationDataStore: WooShippingConfigurationDataStore,
+    private val addressDataStore: WooShippingAddressDataStore
 ) {
     suspend fun fetchShippingLabelPrinting(
         site: SiteModel,
@@ -34,7 +36,9 @@ class WooShippingLabelRepository @Inject constructor(
         .also { response ->
             response.model
                 ?.takeIf { response.isError.not() }
-                ?.let { dataStore.saveStoreOptions(it) }
+                ?.let {
+                    configurationDataStore.saveStoreOptions(it)
+                }
         }
 
     suspend fun fetchPurchasedShippingLabels(
