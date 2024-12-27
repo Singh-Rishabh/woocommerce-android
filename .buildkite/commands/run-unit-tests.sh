@@ -2,7 +2,7 @@
 
 echo "--- 🧪 Testing"
 set +e
-./gradlew testJalapenoDebugUnitTest lib:cardreader:testDebugUnitTest lib:iap:testDebugUnitTest
+./gradlew testJalapenoDebugUnitTest testDebugUnitTest
 TESTS_EXIT_STATUS=$?
 set -e
 

@@ -188,7 +188,12 @@ class OrderListViewModel @Inject constructor(
 
     private var activeWCOrderListDescriptor: WCOrderListDescriptor? = null
 
-    var isSearching = false
+    var isSearching: Boolean
+        get() = viewState.isSearching
+        set(value) {
+            viewState = viewState.copy(isSearching = value)
+        }
+
     private var dismissListErrors = false
     var searchQuery = ""
 
@@ -210,6 +215,8 @@ class OrderListViewModel @Inject constructor(
                 dateUtils.getDateOrTimeFromMillis(lastUpdateMillis)
             )
         }.asLiveData()
+
+    fun isSelecting() = viewState.orderListState == ViewState.OrderListState.Selecting
 
     init {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
@@ -887,6 +894,30 @@ class OrderListViewModel @Inject constructor(
         )
     }
 
+    fun onSelectionChanged(count: Int) {
+        when {
+            count == 0 -> exitSelectionMode()
+            count > 0 && !isSelecting() -> enterSelectionMode(count)
+            count > 0 -> viewState = viewState.copy(selectionCount = count)
+        }
+    }
+
+    private fun enterSelectionMode(count: Int) {
+        viewState = viewState.copy(
+            orderListState = ViewState.OrderListState.Selecting,
+            selectionCount = count,
+            isAddOrderButtonVisible = false
+        )
+    }
+
+    private fun exitSelectionMode() {
+        viewState = viewState.copy(
+            orderListState = ViewState.OrderListState.Browsing,
+            selectionCount = null,
+            isAddOrderButtonVisible = true
+        )
+    }
+
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
@@ -931,10 +962,19 @@ class OrderListViewModel @Inject constructor(
         val isSimplePaymentsAndOrderCreationFeedbackVisible: Boolean = false,
         val jitmEnabled: Boolean = false,
         val isErrorFetchingDataBannerVisible: Boolean = false,
-        val shouldDisplayTroubleshootingBanner: Boolean = false
+        val shouldDisplayTroubleshootingBanner: Boolean = false,
+        val orderListState: OrderListState? = null,
+        val isSearching: Boolean = false,
+        val selectionCount: Int? = null,
+        val isAddOrderButtonVisible: Boolean = true
     ) : Parcelable {
         @IgnoredOnParcel
+        val isBottomNavBarVisible = !isSearching && orderListState != OrderListState.Selecting
+
+        @IgnoredOnParcel
         val isFilteringActive = filterCount > 0
+
+        enum class OrderListState { Selecting, Browsing }
     }
 
     enum class Mode {

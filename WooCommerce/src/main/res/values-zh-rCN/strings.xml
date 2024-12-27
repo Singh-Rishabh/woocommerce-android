@@ -146,7 +146,7 @@ Language: zh_CN
     <string name="woopos_cart_item_content_description">购物车中的产品 %s，价格 %s</string>
     <string name="woopos_product_item_content_description">产品 %s，价格 %s</string>
     <string name="blaze_campaign_status_suspended">挂起</string>
-    <string name="woopos_success_screen_total">成功支付 %1$s</string>
+    <string name="woopos_totals_success_payment_cash">成功支付 %1$s</string>
     <string name="woopos_new_order_button">新订单</string>
     <string name="woopos_dialog_products_info_button_label">确定</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ 在商店管理中创建订单</string>

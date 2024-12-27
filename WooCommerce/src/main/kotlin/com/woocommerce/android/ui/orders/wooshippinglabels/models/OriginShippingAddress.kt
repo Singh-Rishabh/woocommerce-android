@@ -1,5 +1,9 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class OriginShippingAddress(
     val id: String,
     val company: String?,
@@ -15,4 +19,23 @@ data class OriginShippingAddress(
     val phone: String?,
     val isDefault: Boolean,
     val isVerified: Boolean
-)
+) : Parcelable {
+    companion object {
+        val EMPTY = OriginShippingAddress(
+            id = "",
+            company = null,
+            firstName = null,
+            lastName = null,
+            email = null,
+            address1 = null,
+            address2 = null,
+            city = null,
+            state = null,
+            postcode = "",
+            country = "",
+            phone = null,
+            isDefault = false,
+            isVerified = false
+        )
+    }
+}

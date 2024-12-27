@@ -156,7 +156,7 @@ class SitePickerViewModelTest : BaseUnitTest() {
         userInfo = SitePickerTestUtils.userInfo,
         primaryBtnText = resourceProvider.getString(R.string.continue_button),
         secondaryBtnText = resourceProvider.getString(R.string.login_try_another_account),
-        hasConnectedStores = defaultExpectedSiteList.isNotEmpty(),
+        hasConnectedStores = defaultExpectedSiteList.isNotEmpty()
     )
 
     @Before

@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -90,15 +90,22 @@ fun WooSitesVisibilityScreen(
         val borderColor = colorResource(id = R.color.divider_color)
         Column(
             modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.surface)
                 .padding(padding)
+                .background(MaterialTheme.colors.surface)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
             Text(
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_current_site_header),
                 style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_current_site_footer),
+                style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
             StoreItem(
@@ -113,33 +120,27 @@ fun WooSitesVisibilityScreen(
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             )
             Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = stringResource(R.string.site_picker_edit_store_current_site_footer),
-                style = WooTypography.caption,
-                color = MaterialTheme.colors.onSurface,
-            )
-            Spacer(Modifier.height(24.dp))
-            Text(
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                modifier = Modifier.padding(top = 24.dp, bottom = 8.dp),
                 text = stringResource(R.string.site_picker_edit_store_list_header),
                 style = WooTypography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+            )
+            Text(
+                modifier = Modifier.padding(bottom = 8.dp),
+                text = stringResource(R.string.site_picker_edit_store_list_footer),
+                style = WooTypography.caption,
                 color = MaterialTheme.colors.onSurface,
             )
             AvailableStoresForHiding(
                 state = state,
                 onSiteSelected = onSiteTapped,
                 modifier = Modifier
+                    .padding(bottom = 16.dp)
                     .border(
                         width = borderWidth,
                         color = borderColor,
                         shape = RoundedCornerShape(8.dp)
                     )
-            )
-            Text(
-                modifier = Modifier.padding(vertical = 8.dp),
-                text = stringResource(R.string.site_picker_edit_store_list_footer),
-                style = WooTypography.caption,
-                color = MaterialTheme.colors.onSurface,
             )
         }
     }
@@ -151,8 +152,8 @@ private fun AvailableStoresForHiding(
     onSiteSelected: (WooStoreUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier = modifier) {
-        itemsIndexed(state.wooStores) { index, wooStore ->
+    Column(modifier = modifier) {
+        state.wooStores.forEachIndexed { index, wooStore ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()

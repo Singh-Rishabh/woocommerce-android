@@ -1,9 +1,11 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import android.content.res.Configuration
+import android.os.Parcelable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,9 +14,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetScaffoldState
@@ -43,6 +46,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +61,10 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRatesSection
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
+import kotlinx.parcelize.Parcelize
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
@@ -79,7 +87,14 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
                 onShippingToAddressChange = viewModel::onShippingToAddressChange,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
-                onRefreshShippingRates = viewModel::onRefreshShippingRates
+                onRefreshShippingRates = viewModel::onRefreshShippingRates,
+                onSelectedSippingRateChanged = viewModel::onSelectedSippingRateChanged,
+                customWeight = viewModel.customWeight,
+                onCustomWeightChange = viewModel::onCustomWeightChange,
+                markOrderComplete = viewState.markOrderComplete,
+                onMarkOrderCompleteChange = viewModel::onMarkOrderCompleteChange,
+                onNavigateBack = viewModel::onNavigateBack,
+                purchaseState = viewState.purchaseState
             )
         }
 
@@ -104,6 +119,13 @@ fun WooShippingLabelCreationScreen(
     onPurchaseShippingLabel: () -> Unit,
     onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
     onRefreshShippingRates: () -> Unit,
+    onCustomWeightChange: (String) -> Unit,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
+    customWeight: String,
+    markOrderComplete: Boolean,
+    onMarkOrderCompleteChange: (Boolean) -> Unit,
+    purchaseState: WooShippingLabelCreationViewModel.PurchaseState,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -120,7 +142,13 @@ fun WooShippingLabelCreationScreen(
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
             onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
-            onRefreshShippingRates = onRefreshShippingRates
+            onRefreshShippingRates = onRefreshShippingRates,
+            customWeight = customWeight,
+            onCustomWeightChange = onCustomWeightChange,
+            onSelectedSippingRateChanged = onSelectedSippingRateChanged,
+            markOrderComplete = markOrderComplete,
+            onNavigateBack = onNavigateBack,
+            onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -130,22 +158,42 @@ fun WooShippingLabelCreationScreen(
             isDarkTheme && !isCollapsed -> 16.dp
             else -> 8.dp
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-        ) {
-            Surface(elevation = elevation) {
-                if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    PurchasesSectionLandscape(
-                        total = "$34.89",
-                        markOrderComplete = true,
-                        onMarkOrderCompleteChange = { },
-                        onPurchaseShippingLabel = onPurchaseShippingLabel
-                    )
-                } else {
-                    PurchaseButton(total = "$34.89", onPurchaseShippingLabel = { })
+        if (shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+            ) {
+                Surface(elevation = elevation) {
+                    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        PurchasesSectionLandscape(
+                            total = shippingRatesState.selectedRate?.selectedOption?.formatedPrice,
+                            markOrderComplete = markOrderComplete,
+                            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+                            onPurchaseShippingLabel = onPurchaseShippingLabel
+                        )
+                    } else {
+                        PurchaseButton(
+                            total = shippingRatesState.selectedRate?.selectedOption?.formatedPrice,
+                            onPurchaseShippingLabel = onPurchaseShippingLabel
+                        )
+                    }
                 }
+            }
+        }
+        if (purchaseState is WooShippingLabelCreationViewModel.PurchaseState.InProgress) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                        onClick = {}
+                    )
+                    .background(color = MaterialTheme.colors.surface.copy(alpha = 0.4f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
@@ -163,31 +211,43 @@ private fun LabelCreationScreenWithBottomSheet(
     onShippingToAddressChange: (Address) -> Unit,
     onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
     onRefreshShippingRates: () -> Unit,
+    customWeight: String,
+    onCustomWeightChange: (String) -> Unit,
+    onSelectedSippingRateChanged: (rate: ShippingRateUI) -> Unit,
     scaffoldState: BottomSheetScaffoldState,
+    markOrderComplete: Boolean,
+    onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
+    val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
+    val paddingBottom = if (isPurchaseButtonDisplayed) 74.dp else 0.dp
+    val shippingRateSummary =
+        (shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState)?.selectedRate?.summary
+
     BottomSheetScaffold(
         sheetContent = {
-            val markOrderComplete = remember { mutableStateOf(false) }
             ShipmentDetails(
                 shippableItems = shippableItems,
                 shippingLines = shippingLines,
                 scaffoldState = scaffoldState,
-                markOrderComplete = markOrderComplete.value,
-                onMarkOrderCompleteChange = { markOrderComplete.value = it },
+                markOrderComplete = markOrderComplete,
+                onMarkOrderCompleteChange = onMarkOrderCompleteChange,
                 shippingAddresses = shippingAddresses,
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 onShippingToAddressChange = onShippingToAddressChange,
-                modifier = Modifier.padding(bottom = 74.dp),
+                shippingRateSummary = shippingRateSummary,
+                modifier = Modifier.padding(bottom = paddingBottom),
             )
         },
-        sheetPeekHeight = 132.dp,
+        sheetPeekHeight = bottomSheetPeekHeight,
         scaffoldState = scaffoldState,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(id = R.string.shipping_label_create_title)) },
                 navigationIcon = {
-                    IconButton({}) {
+                    IconButton(onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back)
@@ -222,66 +282,18 @@ private fun LabelCreationScreenWithBottomSheet(
                 PackageCard(
                     modifier = Modifier.padding(16.dp),
                     packageSelectionState = packageSelectionState,
-                    onSelectPackageClick = onSelectPackageClick
+                    onSelectPackageClick = onSelectPackageClick,
+                    customWeight = customWeight,
+                    onCustomWeightChange = onCustomWeightChange
                 )
-                WooShippingShippingRatesSection(
+                ShippingRatesSection(
                     shippingRatesState = shippingRatesState,
                     onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
-                    onRefreshShippingRates = onRefreshShippingRates
+                    onRefreshShippingRates = onRefreshShippingRates,
+                    onSelectedSippingRateChanged = onSelectedSippingRateChanged
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun WooShippingShippingRatesSection(
-    shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
-    onSelectedRateSortOrderChanged: (ShippingSortOption) -> Unit,
-    onRefreshShippingRates: () -> Unit,
-) {
-    when (shippingRatesState) {
-        is WooShippingLabelCreationViewModel.ShippingRatesState.DataState -> {
-            val signatureRequired = remember { mutableStateOf<SignatureRequired?>(null) }
-            ShippingRatesCard(
-                selectedRate = null,
-                onSelectedChange = {},
-                shippingRates = shippingRatesState.shippingRates,
-                signatureRequired = signatureRequired.value,
-                onSelectedSignatureChange = { signatureRequired.value = it },
-                signatureRequiredOptions = listOf(
-                    SignatureRequired("Signature Required", "$10.00"),
-                    SignatureRequired("Adult Signature Required", "$15.00")
-                ),
-                selectedSortOption = shippingRatesState.selectedRatesSortOrder,
-                onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-
-        WooShippingLabelCreationViewModel.ShippingRatesState.Error -> {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .sizeIn(minHeight = 300.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(text = "Error")
-                WCColoredButton(onClick = { onRefreshShippingRates() }) {
-                    Text(text = "Retry")
-                }
-            }
-        }
-
-        is WooShippingLabelCreationViewModel.ShippingRatesState.Loading -> {
-            ShippingRatesLoading(
-                selectedSortOption = shippingRatesState.selectedRatesSortOrder,
-                onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged
-            )
-        }
-
-        WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable -> {}
     }
 }
 
@@ -325,17 +337,24 @@ internal fun HazmatCard(
 private fun PackageCard(
     modifier: Modifier = Modifier,
     packageSelectionState: PackageSelectionState,
-    onSelectPackageClick: () -> Unit
+    customWeight: String,
+    onSelectPackageClick: () -> Unit,
+    onCustomWeightChange: (String) -> Unit,
 ) {
     when (packageSelectionState) {
         is NotSelected -> SelectPackageCard(
             modifier = modifier,
             onSelectPackageClick = onSelectPackageClick
         )
+
         is DataAvailable -> PackageSelectionAvailableCard(
             modifier = modifier,
             packageData = packageSelectionState.selectedPackage,
-            onSelectPackageClick = onSelectPackageClick
+            onSelectPackageClick = onSelectPackageClick,
+            defaultWeight = packageSelectionState.defaultWeight,
+            customWeight = customWeight,
+            customWeightUnit = packageSelectionState.weightUnit,
+            onCustomWeightChange = onCustomWeightChange
         )
     }
 }
@@ -394,7 +413,11 @@ private fun SelectPackageCard(
 private fun PackageSelectionAvailableCard(
     modifier: Modifier = Modifier,
     packageData: PackageData,
-    onSelectPackageClick: () -> Unit
+    defaultWeight: String,
+    customWeight: String,
+    customWeightUnit: String,
+    onSelectPackageClick: () -> Unit,
+    onCustomWeightChange: (String) -> Unit
 ) {
     Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
         Row(
@@ -470,9 +493,48 @@ private fun PackageSelectionAvailableCard(
                 }
             }
         }
+        Text(
+            modifier = Modifier.padding(
+                top = dimensionResource(id = R.dimen.major_100),
+                bottom = dimensionResource(id = R.dimen.minor_100)
+            ),
+            text = stringResource(id = R.string.shipping_label_total_shipment_weight),
+            style = MaterialTheme.typography.body2
+        )
+        RoundedCornerBoxWithBorder {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Box(modifier = Modifier.weight(1f)) {
+                    BasicTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = customWeight,
+                        onValueChange = onCustomWeightChange,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface),
+
+                    )
+                    if (customWeight.isEmpty()) {
+                        Text(
+                            text = defaultWeight,
+                            style = MaterialTheme.typography.body2,
+                            color = colorResource(id = R.color.color_on_surface_disabled)
+                        )
+                    }
+                }
+                Text(
+                    text = customWeightUnit,
+                    style = MaterialTheme.typography.body2,
+                    color = colorResource(id = R.color.color_on_surface_disabled)
+                )
+            }
+        }
     }
 }
 
+@Parcelize
 data class ShippableItemUI(
     val itemId: Long,
     val productId: Long,
@@ -482,13 +544,14 @@ data class ShippableItemUI(
     val formattedPrice: String,
     val quantity: Float,
     val imageUrl: String? = null
-)
+) : Parcelable
 
+@Parcelize
 data class ShippableItemsUI(
     val shippableItems: List<ShippableItemUI>,
     val formattedTotalWeight: String,
     val formattedTotalPrice: String
-)
+) : Parcelable
 
 @Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL)
 @Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL)
@@ -515,7 +578,14 @@ private fun WooShippingLabelCreationScreenPreview() {
             onShippingFromAddressChange = {},
             onShippingToAddressChange = {},
             onRefreshShippingRates = {},
-            onSelectedRateSortOrderChanged = {}
+            onSelectedRateSortOrderChanged = {},
+            customWeight = "",
+            onCustomWeightChange = {},
+            onSelectedSippingRateChanged = {},
+            markOrderComplete = true,
+            onMarkOrderCompleteChange = {},
+            onNavigateBack = {},
+            purchaseState = WooShippingLabelCreationViewModel.PurchaseState.NoStarted
         )
     }
 }
@@ -535,7 +605,9 @@ private fun PackageNotSelectedPreview() {
         PackageCard(
             modifier = Modifier.padding(16.dp),
             packageSelectionState = NotSelected,
-            onSelectPackageClick = {}
+            customWeight = "",
+            onSelectPackageClick = {},
+            onCustomWeightChange = {}
         )
     }
 }
@@ -552,11 +624,15 @@ private fun PackageSelectedPreview() {
                     dimensions = "10 x 10 x 10",
                     weight = "1.5",
                     isSelected = true,
-                    isLetter = false
+                    isLetter = false,
+                    id = "1",
                 ),
-                totalWeight = "1.5"
+                defaultWeight = "1",
+                weightUnit = "kg",
             ),
-            onSelectPackageClick = {}
+            customWeight = "",
+            onSelectPackageClick = {},
+            onCustomWeightChange = {}
         )
     }
 }

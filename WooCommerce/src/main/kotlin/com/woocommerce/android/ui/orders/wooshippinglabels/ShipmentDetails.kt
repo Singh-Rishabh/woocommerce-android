@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import android.content.res.Configuration
+import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,7 +22,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -49,20 +49,22 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
-    markOrderComplete: Boolean,
-    onMarkOrderCompleteChange: (Boolean) -> Unit,
+    shippingRateSummary: ShippingRateSummaryUI?,
     modifier: Modifier = Modifier,
+    markOrderComplete: Boolean = false,
+    onMarkOrderCompleteChange: (Boolean) -> Unit = {},
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
     handlerModifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     val scope = rememberCoroutineScope()
     Column(
@@ -111,7 +113,9 @@ fun ShipmentDetails(
             shippingAddresses = shippingAddresses,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
-            modifier = modifier
+            shippingRateSummary = shippingRateSummary,
+            modifier = modifier,
+            isReadOnly = isReadOnly
         )
     } else {
         ShipmentDetailsPortrait(
@@ -122,7 +126,9 @@ fun ShipmentDetails(
             shippingAddresses = shippingAddresses,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
-            modifier = modifier
+            shippingRateSummary = shippingRateSummary,
+            modifier = modifier,
+            isReadOnly = isReadOnly
         )
     }
 }
@@ -132,11 +138,13 @@ private fun ShipmentDetailsPortrait(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
-    onShippingToAddressChange: (Address) -> Unit = {},
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    shippingRateSummary: ShippingRateSummaryUI?,
     modifier: Modifier = Modifier,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
+    onShippingToAddressChange: (Address) -> Unit = {},
+    isReadOnly: Boolean = false
 ) {
     Column(modifier) {
         Column(
@@ -153,20 +161,22 @@ private fun ShipmentDetailsPortrait(
                 onShippingToAddressChange = onShippingToAddressChange,
                 totalItems = shippableItems.shippableItems.size,
                 totalItemsCost = shippableItems.formattedTotalPrice,
-                shippingLines = shippingLines
+                shippingLines = shippingLines,
+                isReadOnly = isReadOnly
             )
             Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
             ShipmentCostSection(
-                subTotal = "$100.00",
-                total = "$120.99",
+                shippingRateSummary = shippingRateSummary,
                 modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
             )
         }
-        Divider()
-        MarkComplete(
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange
-        )
+        if (isReadOnly.not()) {
+            Divider()
+            MarkComplete(
+                markOrderComplete = markOrderComplete,
+                onMarkOrderCompleteChange = onMarkOrderCompleteChange
+            )
+        }
     }
 }
 
@@ -175,9 +185,11 @@ private fun ShipmentDetailsLandscape(
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
+    shippingRateSummary: ShippingRateSummaryUI?,
+    modifier: Modifier = Modifier,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
     onShippingToAddressChange: (Address) -> Unit = {},
-    modifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     Column(modifier) {
         Column(
@@ -192,7 +204,8 @@ private fun ShipmentDetailsLandscape(
                 shippingAddresses = shippingAddresses,
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 onShippingToAddressChange = onShippingToAddressChange,
-                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
+                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
+                isReadOnly = isReadOnly
             )
             Row(
                 modifier = Modifier
@@ -207,8 +220,7 @@ private fun ShipmentDetailsLandscape(
                 )
                 VerticalDivider(modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100)))
                 ShipmentCostSection(
-                    subTotal = "$100.00",
-                    total = "$120.99",
+                    shippingRateSummary = shippingRateSummary,
                     modifier = Modifier
                         .padding(dimensionResource(R.dimen.major_100))
                         .weight(1f)
@@ -248,6 +260,7 @@ private fun OrderDetailsSection(
     totalItemsCost: String,
     shippingLines: List<ShippingLineSummaryUI>,
     modifier: Modifier = Modifier,
+    isReadOnly: Boolean = false
 ) {
     Column(modifier.fillMaxWidth()) {
         ShipmentDetailsSectionTitle(
@@ -260,7 +273,8 @@ private fun OrderDetailsSection(
             originAddresses = shippingAddresses.originAddresses,
             onShippingFromAddressChange = onShippingFromAddressChange,
             onShippingToAddressChange = onShippingToAddressChange,
-            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100))
+            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
+            isReadOnly = isReadOnly
         )
         TotalCard(
             totalItems = totalItems,
@@ -311,7 +325,8 @@ fun ShipmentDetailsLandscapePreview() {
                     shipFrom = getShipFrom(),
                     shipTo = getShipTo(),
                     originAddresses = listOf(getShipFrom())
-                )
+                ),
+                shippingRateSummary = null
             )
         }
     }
@@ -430,52 +445,60 @@ private fun TotalItem(
 
 @Composable
 private fun ShipmentCostSection(
-    subTotal: String?,
-    total: String?,
+    shippingRateSummary: ShippingRateSummaryUI?,
     modifier: Modifier = Modifier
 ) {
     Column(modifier) {
         ShipmentDetailsSectionTitle(
             title = stringResource(R.string.shipping_label_shipment_details_shipment_cost)
         )
-        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.major_100)))
-        Row(modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100))) {
-            Text(
-                text = stringResource(R.string.subtotal),
-                style = MaterialTheme.typography.subtitle1,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.weight(1f)
-            )
-            subTotal?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle1,
-                    color = MaterialTheme.colors.onSurface
-                )
-            } ?: SkeletonView(
-                width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
-                height = dimensionResource(id = R.dimen.major_100)
+        ShipmentCostRow(
+            title = shippingRateSummary?.serviceName ?: stringResource(R.string.subtotal),
+            total = shippingRateSummary?.total,
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))
+        )
+        if (shippingRateSummary?.optionName.isNullOrEmpty().not()) {
+            ShipmentCostRow(
+                title = shippingRateSummary?.optionName.orEmpty(),
+                total = shippingRateSummary?.optionFee,
+                modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))
             )
         }
-        Row(modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100))) {
+
+        ShipmentCostRow(
+            title = stringResource(R.string.total),
+            total = shippingRateSummary?.total,
+            modifier = Modifier.padding(top = dimensionResource(R.dimen.major_100)),
+            titleFontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+private fun ShipmentCostRow(
+    title: String,
+    total: String?,
+    modifier: Modifier = Modifier,
+    titleFontWeight: FontWeight = FontWeight.Normal
+) {
+    Row(modifier = modifier) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.onSurface,
+            modifier = Modifier.weight(1f),
+            fontWeight = titleFontWeight
+        )
+        total?.let {
             Text(
-                text = stringResource(R.string.total),
+                text = it,
                 style = MaterialTheme.typography.subtitle1,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.weight(1f)
+                color = MaterialTheme.colors.onSurface
             )
-            total?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle1,
-                    color = MaterialTheme.colors.onSurface
-                )
-            } ?: SkeletonView(
-                width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
-                height = dimensionResource(id = R.dimen.major_100)
-            )
-        }
+        } ?: SkeletonView(
+            width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
+            height = dimensionResource(id = R.dimen.major_100)
+        )
     }
 }
 
@@ -484,8 +507,7 @@ private fun ShipmentCostSection(
 private fun ShipmentCostSectionPreview() {
     WooThemeWithBackground {
         ShipmentCostSection(
-            subTotal = "$12.99",
-            total = "$12.99",
+            shippingRateSummary = null,
             modifier = Modifier.padding(dimensionResource(R.dimen.major_100))
         )
     }
@@ -506,10 +528,19 @@ fun OriginShippingAddress.toShippingFromString() = StringBuilder()
     .appendWithIfNotEmpty(this.postcode)
     .toString()
 
+@Parcelize
 data class ShippingLineSummaryUI(
     val title: String,
     val amount: String
-)
+) : Parcelable
+
+@Parcelize
+data class ShippingRateSummaryUI(
+    val serviceName: String,
+    val total: String,
+    val optionName: String? = null,
+    val optionFee: String? = null
+) : Parcelable
 
 @Composable
 fun VerticalDivider(
