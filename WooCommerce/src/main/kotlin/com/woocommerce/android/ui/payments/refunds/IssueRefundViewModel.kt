@@ -327,10 +327,12 @@ class IssueRefundViewModel @Inject constructor(
 
             if (quantityLeftToRefund <= 0) null
             else {
+                val maxQuantity = maxQuantities[orderItem.itemId] ?: 0f
+                val selectedQuantity = kotlin.math.min(selectedQuantities[orderItem.itemId] ?: 0, maxQuantity.toInt())
                 ProductRefundListItem(
                     orderItem = orderItem,
-                    quantity = 0,
                     maxQuantity = quantityLeftToRefund.toFloat(),
+                    quantity = selectedQuantity,
                     subtotal = formatCurrency(BigDecimal.ZERO),
                     taxes = formatCurrency(BigDecimal.ZERO)
                 )
