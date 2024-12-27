@@ -1,6 +1,6 @@
 <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
-    android:drawable="@drawable/img_woo_bubble_white">
+    android:drawable="@drawable/img_woo_white">
     <target android:name="path">
         <aapt:attr name="android:animation">
             <objectAnimator

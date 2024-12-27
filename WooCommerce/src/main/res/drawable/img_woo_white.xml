@@ -6,7 +6,6 @@
     <group
         android:pivotX="128"
         android:pivotY="128"
-        android:rotation="180"
         android:scaleX="0.7213954"
         android:scaleY="0.7213954">
         <clip-path android:pathData="M27,102h202.81v52.65h-202.81z" />
