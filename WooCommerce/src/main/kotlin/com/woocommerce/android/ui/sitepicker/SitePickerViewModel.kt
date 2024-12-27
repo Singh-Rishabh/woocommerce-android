@@ -249,22 +249,20 @@ class SitePickerViewModel @Inject constructor(
         nonWooSites: List<SiteModel>
     ): List<SitesListItem> = buildList {
         if (wooSites.isNotEmpty()) {
-            val wooVisibleSiteIds = getWooVisibleSites().map { it.siteId }
-            val numberOfHiddenSites = wooSites.size - wooVisibleSiteIds.size
+            val wooVisibleSites = getWooVisibleSites()
+            val numberOfHiddenSites = wooSites.size - wooVisibleSites.size
             val string = when (numberOfHiddenSites) {
                 0 -> string.login_pick_store
                 else -> string.site_picker_select_store_list_header_with_hidden_sites
             }
             add(Header(string, numberOfHiddenSites))
             addAll(
-                wooSites
-                    .filter { wooVisibleSiteIds.contains(it.siteId) }
-                    .map {
-                        WooSiteUiModel(
-                            site = it,
-                            isSelected = selectedSiteId == it.id
-                        )
-                    }
+                wooVisibleSites.map {
+                    WooSiteUiModel(
+                        site = it,
+                        isSelected = selectedSiteId == it.id
+                    )
+                }
             )
         }
         if (navArgs.openedFromLogin && nonWooSites.isNotEmpty()) {
