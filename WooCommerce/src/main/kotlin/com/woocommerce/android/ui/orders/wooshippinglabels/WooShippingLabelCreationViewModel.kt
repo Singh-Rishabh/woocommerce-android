@@ -31,7 +31,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -51,7 +50,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
-    private val fetchAccountSettings: FetchAccountSettings,
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions
 ) : ScopedViewModel(savedState) {
@@ -107,29 +105,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private fun getStoreOptions() {
         launch {
-            observeStoreOptions().collectIndexed { index, options ->
-                when {
-                    index == 0 && options == null -> {
-                        refreshStoreOptions()
-                    }
-
-                    index == 0 && options != null -> {
-                        storeOptions.value = options
-                        refreshStoreOptions()
-                    }
-
-                    else -> storeOptions.value = options
-                }
+            observeStoreOptions().collectLatest { options ->
+                storeOptions.value = options
             }
-        }
-    }
-
-    private fun refreshStoreOptions() {
-        launch {
-            fetchAccountSettings().fold(
-                onSuccess = {},
-                onFailure = { storeOptions.value = null }
-            )
         }
     }
 
