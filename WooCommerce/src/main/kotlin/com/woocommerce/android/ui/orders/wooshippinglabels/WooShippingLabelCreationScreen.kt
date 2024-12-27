@@ -93,6 +93,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onCustomWeightChange = viewModel::onCustomWeightChange,
                 markOrderComplete = viewState.markOrderComplete,
                 onMarkOrderCompleteChange = viewModel::onMarkOrderCompleteChange,
+                onNavigateBack = viewModel::onNavigateBack,
                 purchaseState = viewState.purchaseState
             )
         }
@@ -124,6 +125,7 @@ fun WooShippingLabelCreationScreen(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     purchaseState: WooShippingLabelCreationViewModel.PurchaseState,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -145,6 +147,7 @@ fun WooShippingLabelCreationScreen(
             onCustomWeightChange = onCustomWeightChange,
             onSelectedSippingRateChanged = onSelectedSippingRateChanged,
             markOrderComplete = markOrderComplete,
+            onNavigateBack = onNavigateBack,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange
         )
         val isDarkTheme = isSystemInDarkTheme()
@@ -214,10 +217,14 @@ private fun LabelCreationScreenWithBottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
     val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
+    val paddingBottom = if (isPurchaseButtonDisplayed) 74.dp else 0.dp
+    val shippingRateSummary =
+        (shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState)?.selectedRate?.summary
 
     BottomSheetScaffold(
         sheetContent = {
@@ -230,8 +237,8 @@ private fun LabelCreationScreenWithBottomSheet(
                 shippingAddresses = shippingAddresses,
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 onShippingToAddressChange = onShippingToAddressChange,
-                shippingRatesState = shippingRatesState,
-                modifier = Modifier.padding(bottom = 74.dp),
+                shippingRateSummary = shippingRateSummary,
+                modifier = Modifier.padding(bottom = paddingBottom),
             )
         },
         sheetPeekHeight = bottomSheetPeekHeight,
@@ -240,7 +247,7 @@ private fun LabelCreationScreenWithBottomSheet(
             TopAppBar(
                 title = { Text(stringResource(id = R.string.shipping_label_create_title)) },
                 navigationIcon = {
-                    IconButton({}) {
+                    IconButton(onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back)
@@ -505,7 +512,9 @@ private fun PackageSelectionAvailableCard(
                         modifier = Modifier.fillMaxWidth(),
                         value = customWeight,
                         onValueChange = onCustomWeightChange,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        textStyle = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onSurface),
+
                     )
                     if (customWeight.isEmpty()) {
                         Text(
@@ -575,6 +584,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             onSelectedSippingRateChanged = {},
             markOrderComplete = true,
             onMarkOrderCompleteChange = {},
+            onNavigateBack = {},
             purchaseState = WooShippingLabelCreationViewModel.PurchaseState.NoStarted
         )
     }

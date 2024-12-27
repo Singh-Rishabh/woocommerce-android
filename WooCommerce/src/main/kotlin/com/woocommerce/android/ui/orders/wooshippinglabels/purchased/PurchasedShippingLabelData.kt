@@ -1,21 +1,23 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.purchased
 
 import android.os.Parcelable
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingLineSummaryUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingRateSummaryUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PurchasedShippingLabelData(
     val labelId: Long,
+    val orderId: Long,
     val carrierId: String,
-    val totalWeight: String,
-    val formattedTotalPrice: String,
     val trackingNumber: String,
-    val weightUnit: String,
-    val items: List<ShippableItem>
-) : Parcelable {
-    val formattedTotalWeight: String
-        get() = "$totalWeight $weightUnit"
-}
+    val items: ShippableItemsUI,
+    val addresses: WooShippingAddresses,
+    val rateSummary: ShippingRateSummaryUI,
+    val shippingLines: List<ShippingLineSummaryUI>,
+) : Parcelable
 
 @Parcelize
 data class ShippableItem(

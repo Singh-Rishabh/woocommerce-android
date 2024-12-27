@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Colors
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -58,6 +59,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingRateSummaryUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
@@ -233,6 +235,7 @@ fun ShippingRates(
         edgePadding = dimensionResource(R.dimen.major_100),
         backgroundColor = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.primary,
+        divider = {},
         modifier = tabModifier
     ) {
         shippingRates.keys.forEachIndexed { index, carrier ->
@@ -261,6 +264,8 @@ fun ShippingRates(
             )
         }
     }
+
+    Divider(modifier = Modifier.fillMaxWidth())
 
     HorizontalPager(
         state = pagerState,
@@ -487,6 +492,13 @@ data class ShippingRateUI(
     val id = defaultRate.rate.rateId
     val defaultRate: ShippingRateOptionUI
         get() = options[Option.DEFAULT] ?: options.values.first()
+
+    val summary = ShippingRateSummaryUI(
+        serviceName = selectedOption.title,
+        total = selectedOption.formatedPrice,
+        optionName = selectedOption.formattedOptionName,
+        optionFee = selectedOption.formattedFee
+    )
 }
 
 data class ShippingRateOptionUI(
@@ -563,8 +575,8 @@ fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI
         )
         val option = ShippingRateOptionUI(
             title = rate.serviceName,
-            formatedPrice = rate.toString(),
-            formattedFee = rate.toString(),
+            formatedPrice = rate.price.toString(),
+            formattedFee = rate.price.toString(),
             option = rate.option,
             rate = rate,
             shippingRateOptions = listOf(
