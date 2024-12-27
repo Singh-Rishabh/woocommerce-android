@@ -4,6 +4,7 @@
 21.4
 -----
 - [*] Fix Dashboard card menu sizing to fit bigger font sizes and longer text. [https://github.com/woocommerce/woocommerce-android/pull/13184]
+- [*] Fixed overlap issue in Settings > WooCommerce Version  [https://github.com/woocommerce/woocommerce-android/pull/13183]
 
 21.3
 -----
