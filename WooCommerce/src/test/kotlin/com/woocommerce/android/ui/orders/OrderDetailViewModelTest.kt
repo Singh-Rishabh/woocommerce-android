@@ -2493,10 +2493,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     @Test
     fun `given more than 3 second no order, when vm created, then TimeoutCancellationException is thrown`() = runTest {
         // GIVEN
-        doReturn(null).whenever(orderDetailRepository).getOrderById(any())
-        doReturn(null).whenever(orderDetailRepository).fetchOrderById(any())
-        doReturn(false).whenever(orderDetailRepository).fetchOrderNotes(any())
-        doReturn(false).whenever(addonsRepository).containsAddonsFrom(any())
+        val delay = 3_001L
 
         // WHEN
         createViewModel()
@@ -2506,7 +2503,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
             viewModel.awaitOrder()
         }
 
-        advanceTimeBy(3_001L)
+        advanceTimeBy(delay)
 
         job.join()
 
