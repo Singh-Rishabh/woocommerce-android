@@ -50,8 +50,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
-    private val fetchAccountSettings: FetchAccountSettings,
-    private val purchaseShippingLabel: PurchaseShippingLabel
+    private val purchaseShippingLabel: PurchaseShippingLabel,
+    private val observeStoreOptions: ObserveStoreOptions
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -105,14 +105,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private fun getStoreOptions() {
         launch {
-            fetchAccountSettings().fold(
-                onSuccess = {
-                    storeOptions.value = it
-                },
-                onFailure = {
-                    storeOptions.value = null
-                }
-            )
+            observeStoreOptions().collectLatest { options ->
+                storeOptions.value = options
+            }
         }
     }
 
