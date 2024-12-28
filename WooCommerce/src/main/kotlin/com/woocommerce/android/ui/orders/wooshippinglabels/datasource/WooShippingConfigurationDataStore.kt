@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class ShippingLabelsDataStore @Inject constructor(
+class WooShippingConfigurationDataStore @Inject constructor(
     @DataStoreQualifier(DataStoreType.SHIPPING_LABEL_CONFIGURATION) private val dataStore: DataStore<Preferences>,
     private val gson: Gson,
     private val selectedSite: SelectedSite
