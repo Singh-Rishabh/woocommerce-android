@@ -12,6 +12,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.store.NotificationStore
+import org.wordpress.android.fluxc.store.NotificationStore.SiteNotificationSetting
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +21,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
     private val sitePickerRepository: SitePickerRepository,
     private val selectedSite: SelectedSite,
     private val visibleSitesDataStore: VisibleWooSitesDataStore,
+    private val notificationsStore: NotificationStore,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()
@@ -50,11 +53,26 @@ class WooSitesVisibilityViewModel @Inject constructor(
 
     fun onSaveTapped() {
         launch {
-            visibleSitesDataStore.updateSiteVisibilityStatus(
-                _wooStores.value.wooStores
-                    .associate { it.siteId to it.isSelected }
+            notificationsStore.updateNotificationSettingsFor(
+                _wooStores.value.wooStores.map {
+                    SiteNotificationSetting(
+                        siteId = it.siteId,
+                        newCommentEnabled = it.isSelected,
+                        storeOrderEnabled = it.isSelected
+                    )
+                }
+            ).fold(
+                onSuccess = {
+                    visibleSitesDataStore.updateSiteVisibilityStatus(
+                        _wooStores.value.wooStores
+                            .associate { it.siteId to it.isSelected }
+                    )
+                    triggerEvent(ExitWithResult(data = true))
+                },
+                onFailure = {
+                    // TODO: Show error message
+                }
             )
-            triggerEvent(ExitWithResult(data = true))
         }
     }
 
