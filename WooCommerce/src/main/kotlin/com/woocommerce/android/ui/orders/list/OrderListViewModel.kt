@@ -977,10 +977,23 @@ class OrderListViewModel @Inject constructor(
                     viewState = viewState.copy(isBulkUpdating = false)
 
                     if (result.isFailure) {
+                        analyticsTracker.track(
+                            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_FAILURE,
+                            mapOf(
+                                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                            )
+                        )
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
+
                     } else {
                         fetchOrdersAndOrderDependencies(
                             onComplete = {
+                                analyticsTracker.track(
+                                    AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
+                                    mapOf(
+                                        AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                                    )
+                                )
                                 triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
                             }
                         )
