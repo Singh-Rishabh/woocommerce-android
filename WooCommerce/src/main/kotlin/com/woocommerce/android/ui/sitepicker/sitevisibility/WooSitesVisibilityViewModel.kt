@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
+import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ERROR
+import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ERROR_TYPE
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.NotificationStore
+import org.wordpress.android.fluxc.store.NotificationStore.NotificationSettingsUpdateError
 import org.wordpress.android.fluxc.store.NotificationStore.SiteNotificationSetting
 import javax.inject.Inject
 
@@ -84,7 +87,15 @@ class WooSitesVisibilityViewModel @Inject constructor(
                     triggerEvent(ExitWithResult(data = true))
                 },
                 onFailure = {
-                    trackerWrapper.track(stat = AnalyticsEvent.SITE_PICKER_LIST_SAVING_FAILURE)
+                    if (it is NotificationSettingsUpdateError) {
+                        trackerWrapper.track(
+                            stat = AnalyticsEvent.SITE_PICKER_LIST_SAVING_FAILURE,
+                            properties = mapOf(
+                                KEY_ERROR to it.message,
+                                KEY_ERROR_TYPE to it.type
+                            )
+                        )
+                    }
                     triggerEvent(
                         Event.ShowDialog(
                             titleId = R.string.site_picker_edit_store_list_error_title,
