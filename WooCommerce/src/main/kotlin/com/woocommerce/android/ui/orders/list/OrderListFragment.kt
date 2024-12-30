@@ -124,7 +124,9 @@ class OrderListFragment :
 
     private var tracker: SelectionTracker<Long>? = null
     private var actionMode: ActionMode? = null
-    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>()
+    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>(
+        maxSelectionCount = OrderListViewModel.BULK_UPDATE_COUNT_LIMIT
+    )
     private val viewModel: OrderListViewModel by viewModels()
     private val communicationViewModel: OrdersCommunicationViewModel by activityViewModels()
     private var snackBar: Snackbar? = null
@@ -275,6 +277,8 @@ class OrderListFragment :
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     val selectionCount = tracker?.selection?.size() ?: 0
+                    selectionPredicate.currentSelectionCount = selectionCount
+
                     viewModel.onSelectionChanged(selectionCount)
                 }
             }
@@ -615,6 +619,7 @@ class OrderListFragment :
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
 
+                is OrderListViewModel.OrderListEvent.ShowErrorString -> uiMessageResolver.showSnack(event.message)
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
 
                 else -> event.isHandled = false
