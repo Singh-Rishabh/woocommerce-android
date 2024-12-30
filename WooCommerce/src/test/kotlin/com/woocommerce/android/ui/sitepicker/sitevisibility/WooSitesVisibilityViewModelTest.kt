@@ -104,8 +104,10 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given one site is unselected, when tapping save, then save site visibility status`() =
+    fun `given update notification settings succeeds, when tapping save, then save site's visibility locally`() =
         testBlocking {
+            whenever(notificationStore.updateNotificationSettingsFor(any())).thenReturn(Result.success(Unit))
+
             val hiddenSite = A_WOO_SITE_UI_MODEL
             viewModel.onSiteTapped(hiddenSite)
 
