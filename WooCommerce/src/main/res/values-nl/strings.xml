@@ -146,7 +146,7 @@ Language: nl
     <string name="woopos_cart_item_content_description">Product in winkelwagen %s, prijs %s</string>
     <string name="woopos_product_item_content_description">Product %s, prijs %s</string>
     <string name="blaze_campaign_status_suspended">Opgeschort</string>
-    <string name="woopos_success_screen_total">Een betaling van %1$s is voldaan</string>
+    <string name="woopos_totals_success_payment_cash">Een betaling van %1$s is voldaan</string>
     <string name="woopos_new_order_button">Nieuwe bestelling</string>
     <string name="woopos_dialog_products_info_button_label">OK</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ Maak een bestelling aan in het winkelbeheer</string>

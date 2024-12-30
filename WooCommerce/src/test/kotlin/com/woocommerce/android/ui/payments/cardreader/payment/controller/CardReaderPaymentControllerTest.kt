@@ -9,10 +9,10 @@ import com.woocommerce.android.cardreader.connection.CardReader
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.event.BatteryStatus
 import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages
+import com.woocommerce.android.cardreader.connection.event.BluetoothCardReaderMessages.CardReaderNoMessage
 import com.woocommerce.android.cardreader.connection.event.CardReaderBatteryStatus
 import com.woocommerce.android.cardreader.payments.CardInteracRefundStatus
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus
-import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.CARD_REMOVED_TOO_EARLY
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.CHECK_MOBILE_DEVICE
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.AdditionalInfoType.INSERT_CARD
@@ -45,11 +45,11 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.payments.cardreader.CardReaderCountryConfigProvider
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam
+import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingChecker
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.BUILT_IN
-import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderType.EXTERNAL
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderInteracRefundableChecker
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentCollectibilityChecker
@@ -84,7 +84,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -211,7 +210,6 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
         cardReaderFlowParam: CardReaderFlowParam.PaymentOrRefund = paymentParam,
     ) {
         controller = CardReaderPaymentController(
-            scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
             orderRepository = orderRepository,
             selectedSite = selectedSite,
@@ -241,19 +239,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when RETRY message received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    delay(1) // make sure it's run after collecting payment starts
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(AdditionalInfoType.RETRY_CARD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
-            advanceUntilIdle()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(RETRY_CARD)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_retry_card_prompt)
@@ -262,17 +256,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when INSERT_CARD received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_CARD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_CARD)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
@@ -281,17 +273,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when INSERT_OR_SWIPE_CARD received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_OR_SWIPE_CARD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(INSERT_OR_SWIPE_CARD)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
@@ -300,17 +290,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when SWIPE_CARD received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(SWIPE_CARD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(SWIPE_CARD)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_collect_payment_hint)
@@ -319,19 +307,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when REMOVE_CARD received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    delay(1) // make sure it's run after collecting payment starts
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(REMOVE_CARD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
-            advanceUntilIdle()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(REMOVE_CARD)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_remove_card_prompt)
@@ -340,18 +324,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when TRY_OTHER_CARD message received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    delay(1) // make sure it's run after collecting payment starts
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_CARD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_CARD)
             advanceUntilIdle()
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
@@ -361,19 +342,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when CARD_REMOVED_TOO_EARLY message received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    delay(1) // make sure it runs after collecting payment starts
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(CARD_REMOVED_TOO_EARLY))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
-            advanceUntilIdle()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(CARD_REMOVED_TOO_EARLY)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_card_removed_too_early)
@@ -382,19 +359,15 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when TRY_OTHER_READ message received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    delay(1) // make sure it's run after collecting payment starts
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_READ_METHOD))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
-            advanceUntilIdle()
+
+            readerMessages.value = BluetoothCardReaderMessages.CardReaderDisplayMessage(TRY_ANOTHER_READ_METHOD)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_try_another_read_method_prompt)
@@ -403,19 +376,16 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     @Test
     fun `given collect payment shown, when MULTIPLE_CARDS_DETECTED received, then collect payment hint updated`() =
         testBlocking {
-            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenAnswer {
-                flow {
-                    delay(1) // make sure it's run after collecting payment starts
-                    emit(BluetoothCardReaderMessages.CardReaderDisplayMessage(MULTIPLE_CONTACTLESS_CARDS_DETECTED))
-                }
-            }
-
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(CollectingPayment) }
-            }
+            val paymentStatus = MutableStateFlow<CardPaymentStatus>(InitializingPayment)
+            val readerMessages = MutableStateFlow<BluetoothCardReaderMessages>(CardReaderNoMessage)
+            whenever(cardReaderManager.collectPayment(any())).thenReturn(paymentStatus)
+            whenever(cardReaderManager.displayBluetoothCardReaderMessages).thenReturn(readerMessages)
+            paymentStatus.value = CollectingPayment
 
             controller.start()
-            advanceUntilIdle()
+
+            readerMessages.value =
+                BluetoothCardReaderMessages.CardReaderDisplayMessage(MULTIPLE_CONTACTLESS_CARDS_DETECTED)
 
             assertThat((controller.paymentState.value as CardReaderPaymentState.CollectingPayment).cardReaderHint)
                 .isEqualTo(R.string.card_reader_payment_multiple_contactless_cards_detected_prompt)
@@ -526,6 +496,86 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
 
             verify(cardReaderManager).collectPayment(captor.capture())
             assertThat(captor.firstValue.statementDescriptor.value).isEqualTo(expectedResult)
+        }
+
+    @Test
+    fun `given payment type WOO_POS, when start, then pos channel passed`() =
+        testBlocking {
+            val captor = argumentCaptor<PaymentInfo>()
+            createController(
+                cardReaderFlowParam = PaymentOrRefund.Payment(
+                    ORDER_ID,
+                    PaymentOrRefund.Payment.PaymentType.WOO_POS
+                )
+            )
+            controller.start()
+
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.channel).isEqualTo(PaymentInfo.PaymentChannel.Pos)
+        }
+
+    @Test
+    fun `given payment type ORDER, when start, then store manager channel passed`() =
+        testBlocking {
+            val captor = argumentCaptor<PaymentInfo>()
+            createController(
+                cardReaderFlowParam = PaymentOrRefund.Payment(
+                    ORDER_ID,
+                    ORDER
+                )
+            )
+            controller.start()
+
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.channel).isEqualTo(PaymentInfo.PaymentChannel.StoreManager)
+        }
+
+    @Test
+    fun `given payment type SIMPLE, when start, then store manager channel passed`() =
+        testBlocking {
+            val captor = argumentCaptor<PaymentInfo>()
+            createController(
+                cardReaderFlowParam = PaymentOrRefund.Payment(
+                    ORDER_ID,
+                    PaymentOrRefund.Payment.PaymentType.SIMPLE
+                )
+            )
+            controller.start()
+
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.channel).isEqualTo(PaymentInfo.PaymentChannel.StoreManager)
+        }
+
+    @Test
+    fun `given payment type ORDER_CREATION, when paymentCollect, then store manager channel passed`() =
+        testBlocking {
+            val captor = argumentCaptor<PaymentInfo>()
+            createController(
+                cardReaderFlowParam = PaymentOrRefund.Payment(
+                    ORDER_ID,
+                    PaymentOrRefund.Payment.PaymentType.ORDER_CREATION
+                )
+            )
+            controller.start()
+
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.channel).isEqualTo(PaymentInfo.PaymentChannel.StoreManager)
+        }
+
+    @Test
+    fun `given payment type TRY_TAP_TO_PAY, when paymentCollect, then store manager channel passed`() =
+        testBlocking {
+            val captor = argumentCaptor<PaymentInfo>()
+            createController(
+                cardReaderFlowParam = PaymentOrRefund.Payment(
+                    ORDER_ID,
+                    PaymentOrRefund.Payment.PaymentType.TRY_TAP_TO_PAY
+                )
+            )
+            controller.start()
+
+            verify(cardReaderManager).collectPayment(captor.capture())
+            assertThat(captor.firstValue.channel).isEqualTo(PaymentInfo.PaymentChannel.StoreManager)
         }
 
     @Test
@@ -2412,7 +2462,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
             }
             controller.start()
 
-            controller.onCleared()
+            controller.stop()
 
             verify(cardReaderManager).cancelPayment(any())
         }
@@ -2431,7 +2481,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 }
             controller.start()
 
-            controller.onCleared()
+            controller.stop()
 
             verify(cardReaderManager, never()).cancelPayment(any())
         }
@@ -3621,58 +3671,12 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
                 MutableStateFlow(CardReaderStatus.Connected(cardReader))
             )
             isTTPinProgress = true
-            createController(cardReaderType = BUILT_IN,)
+            createController(cardReaderType = BUILT_IN)
 
             controller.start()
 
             verify(cardReaderManager, never()).collectPayment(any())
         }
-
-    @Test
-    fun `given point of sale, when payment captured, then should not show success state`() {
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            createController(
-                cardReaderType = EXTERNAL,
-                cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
-                    orderId = ORDER_ID,
-                    paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-                )
-            )
-
-            controller.start()
-
-            assertThat(controller.paymentState.value).isNotInstanceOf(
-                PaymentSuccessful::class.java,
-            )
-        }
-    }
-
-    @Test
-    fun `given point of sale, when payment captured, then should exit`() {
-        testBlocking {
-            whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(PaymentCompleted("")) }
-            }
-
-            createController(
-                cardReaderType = EXTERNAL,
-                cardReaderFlowParam = CardReaderFlowParam.PaymentOrRefund.Payment(
-                    orderId = ORDER_ID,
-                    paymentType = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-                )
-            )
-
-            val events = controller.event.runAndCaptureValues {
-                controller.start()
-            }
-
-            assertThat(events[0]).isInstanceOf(CardReaderPaymentEvent.Exit::class.java)
-        }
-    }
 
     private suspend fun simulateFetchOrderJobState(inProgress: Boolean) {
         if (inProgress) {
@@ -3689,7 +3693,6 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     private fun setupControllerForInteracRefund() {
         val param = CardReaderFlowParam.PaymentOrRefund.Refund(ORDER_ID, refundAmount = BigDecimal(10.72))
         controller = CardReaderPaymentController(
-            scope = TestScope(coroutinesTestRule.testDispatcher),
             cardReaderManager = cardReaderManager,
             orderRepository = orderRepository,
             selectedSite = selectedSite,

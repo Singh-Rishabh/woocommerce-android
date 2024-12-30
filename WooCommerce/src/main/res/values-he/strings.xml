@@ -146,7 +146,7 @@ Language: he_IL
     <string name="woopos_cart_item_content_description">מוצר בעגלת הקניות %s, מחיר %s</string>
     <string name="woopos_product_item_content_description">מוצר %s, מחיר %s</string>
     <string name="blaze_campaign_status_suspended">מושהה</string>
-    <string name="woopos_success_screen_total">תשלום של ⁦%1$s⁩ חויב בהצלחה</string>
+    <string name="woopos_totals_success_payment_cash">תשלום של ⁦%1$s⁩ חויב בהצלחה</string>
     <string name="woopos_new_order_button">הזמנה חדשה</string>
     <string name="woopos_dialog_products_info_button_label">אישור</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ ליצור הזמנה בניהול החנות</string>

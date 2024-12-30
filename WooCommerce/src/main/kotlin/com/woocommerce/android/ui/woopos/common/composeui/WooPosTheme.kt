@@ -18,9 +18,13 @@ data class CustomColors(
     val border: Color,
     val success: Color,
     val error: Color,
+    val totalsBackground: Color,
+    val totalsErrorBackground: Color,
     val paymentSuccessBackground: Color,
+    val paymentProcessingBackground: Color,
     val paymentSuccessText: Color,
     val paymentSuccessIcon: Color,
+    val paymentProcessingText: Color,
     val dialogSubtitleHighlightBackground: Color = Color(0x14747480),
     val homeBackground: Color,
 )
@@ -37,8 +41,6 @@ private object WooPosColors {
     val secondary = Color(0xFF0A9400)
     val surface = Color(0xFF2E2E2E)
 
-    val greenNotFromPalette = Color(0xFF08FB87)
-
     // LightColorPalette
     val lightColorPaletteSecondary = Color(0xFF004B3E)
     val lightColorPaletteSecondaryVariant = Color(0xFF50575E)
@@ -48,11 +50,14 @@ private object WooPosColors {
     val darkCustomColorsError = Color(0xFFBE4400)
     val darkCustomloadingSkeleton = Color(0xFF616161)
     val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
+    val darkQuaternaryBackground = Color(0xFF111111)
+    val darkTotalsBackground = Color(0xFF1C1C1E)
 
     // LightCustomColors
     val lightCustomColorsError = Color(0xFFF16618)
     val lightCustomColorsLoadingSkeleton = Color(0xFFE1E1E1)
     val lightCustomColorsBorder = Color(0xFFC6C6C8)
+    val lightQuaternaryBackground = Color(0x14747480)
 
     // Woo colors from here: W5OBIbzWilNI8qely8Y4OHQd-fi-144_2
     val WooPurple0 = Color(0xFFF2EDFF)
@@ -69,7 +74,6 @@ private object WooPosColors {
     val WooPurple100 = Color(0xFF140E1F)
 
     val Purple10 = Color(0xFFF7EDF7)
-    val Purple15 = Color(0xFFE5CFE8)
     val Purple20 = Color(0xFFC792E0)
     val Purple30 = Color(0xFFB17FD4)
     val Purple40 = Color(0xFFAF7DD1)
@@ -101,6 +105,7 @@ private object WooPosColors {
     val Orange5 = Color(0xFFF7DCC6)
     val Orange10 = Color(0xFFFFBF86)
     val Orange30 = Color(0xFFE68B28)
+    val Orange40 = Color(0xFFD67709)
     val Orange50 = Color(0xFFB26200)
     val Orange70 = Color(0xFF351F04)
 
@@ -121,6 +126,9 @@ private object WooPosColors {
     val Green10 = Color(0xFF59E38F)
     val Green20 = Color(0xFF1ED15A)
     val Green50 = Color(0xFF008A20)
+
+    val emerald20 = Color(0xFF98F179)
+    val emerald60 = Color(0xFF028C59)
 
     val White = Color(0xFFFFFFFF)
     val WhiteAlpha005 = Color(0x0DFFFFFF)
@@ -184,23 +192,31 @@ private val LightColorPalette = lightColors(
 private val DarkCustomColors = CustomColors(
     loadingSkeleton = WooPosColors.darkCustomloadingSkeleton,
     border = WooPosColors.oldGrayMedium,
-    success = WooPosColors.greenNotFromPalette,
+    success = WooPosColors.emerald60,
     error = WooPosColors.darkCustomColorsError,
+    totalsErrorBackground = WooPosColors.darkQuaternaryBackground,
+    totalsBackground = Color(0xFF1C1C1E),
     paymentSuccessBackground = WooPosColors.darkCustomColorsHomeBackground,
     paymentSuccessText = WooPosColors.oldGrayLight,
     paymentSuccessIcon = WooPosColors.darkCustomColorsHomeBackground,
-    homeBackground = WooPosColors.darkCustomColorsHomeBackground
+    paymentProcessingText = WooPosColors.White,
+    homeBackground = WooPosColors.darkCustomColorsHomeBackground,
+    paymentProcessingBackground = WooPosColors.WooPurple70,
 )
 
 private val LightCustomColors = CustomColors(
     loadingSkeleton = WooPosColors.lightCustomColorsLoadingSkeleton,
     border = WooPosColors.lightCustomColorsBorder,
-    success = WooPosColors.greenNotFromPalette,
+    success = WooPosColors.emerald20,
     error = WooPosColors.lightCustomColorsError,
+    totalsErrorBackground = WooPosColors.lightQuaternaryBackground,
+    totalsBackground = WooPosColors.Gray0,
     paymentSuccessBackground = WooPosColors.White,
     paymentSuccessText = WooPosColors.Purple90,
+    paymentProcessingText = WooPosColors.White,
     paymentSuccessIcon = Color.White,
-    homeBackground = WooPosColors.Gray0
+    homeBackground = WooPosColors.Gray0,
+    paymentProcessingBackground = WooPosColors.WooPurple70,
 )
 
 private val LocalCustomColors = staticCompositionLocalOf {

@@ -260,4 +260,16 @@ class ProductInventoryViewModelTest : BaseUnitTest() {
             mapOf(AnalyticsTracker.KEY_HAS_CHANGED_DATA to true)
         )
     }
+
+    @Test
+    fun `Send tracks event upon exit if there was a change on the product global unique id`() {
+        // when
+        viewModel.onProductUniqueGlobalIdChanged("1234")
+        viewModel.onExit()
+
+        // then
+        verify(analyticsTracker).track(
+            AnalyticsEvent.PRODUCT_INVENTORY_SETTINGS_GLOBAL_UNIQUE_IDENTIFIER_FIELD_EDITED
+        )
+    }
 }

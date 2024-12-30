@@ -146,7 +146,7 @@ Language: ar
     <string name="woopos_cart_item_content_description">المنتج في عربة التسوق %s، السعر %s</string>
     <string name="woopos_product_item_content_description">المنتج %s، السعر %s</string>
     <string name="blaze_campaign_status_suspended">معلَّق</string>
-    <string name="woopos_success_screen_total">تم سداد دفعة قدرها ⁦%1$s⁩ بنجاح</string>
+    <string name="woopos_totals_success_payment_cash">تم سداد دفعة قدرها ⁦%1$s⁩ بنجاح</string>
     <string name="woopos_new_order_button">طلب جديد</string>
     <string name="woopos_dialog_products_info_button_label">موافق</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ إنشاء طلب في إدارة المتجر</string>

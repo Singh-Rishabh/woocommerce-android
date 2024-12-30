@@ -146,7 +146,7 @@ Language: ru
     <string name="woopos_cart_item_content_description">Товар в корзине %s, цена %s</string>
     <string name="woopos_product_item_content_description">Товар %s, цена %s</string>
     <string name="blaze_campaign_status_suspended">Приостановлено</string>
-    <string name="woopos_success_screen_total">Платёж в сумме %1$s выполнен успешно</string>
+    <string name="woopos_totals_success_payment_cash">Платёж в сумме %1$s выполнен успешно</string>
     <string name="woopos_new_order_button">Новый заказ</string>
     <string name="woopos_dialog_products_info_button_label">ОК</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ Создать заказ в разделе «Управление магазином»</string>
