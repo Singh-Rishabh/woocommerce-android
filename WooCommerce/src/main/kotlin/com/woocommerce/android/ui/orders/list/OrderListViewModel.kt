@@ -908,19 +908,19 @@ class OrderListViewModel @Inject constructor(
             count == 0 -> exitSelectionMode()
             count >= BULK_UPDATE_COUNT_LIMIT -> {
                 viewState = viewState.copy(selectionCount = count)
-                showMaximumBulkSelectionError()
+                showMaximumBulkSelectionNotice()
             }
             count > 0 && !isSelecting() -> enterSelectionMode(count)
             count > 0 -> viewState = viewState.copy(selectionCount = count)
         }
     }
 
-    private fun showMaximumBulkSelectionError() {
-        val errorMessage = resourceProvider.getString(
+    private fun showMaximumBulkSelectionNotice() {
+        val message = resourceProvider.getString(
             R.string.orderlist_bulk_update_maximum_reached,
             BULK_UPDATE_COUNT_LIMIT
         )
-        triggerEvent(OrderListEvent.ShowSnackbarString(errorMessage))
+        triggerEvent(OrderListEvent.ShowSnackbarString(message))
     }
 
     private fun enterSelectionMode(count: Int) {
