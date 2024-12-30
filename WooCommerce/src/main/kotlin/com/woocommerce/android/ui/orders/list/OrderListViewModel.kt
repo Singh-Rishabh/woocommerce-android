@@ -920,7 +920,7 @@ class OrderListViewModel @Inject constructor(
             R.string.orderlist_bulk_update_maximum_reached,
             BULK_UPDATE_COUNT_LIMIT
         )
-        triggerEvent(OrderListEvent.ShowErrorString(errorMessage))
+        triggerEvent(OrderListEvent.ShowSnackbarString(errorMessage))
     }
 
     private fun enterSelectionMode(count: Int) {
@@ -994,7 +994,7 @@ class OrderListViewModel @Inject constructor(
 
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
-        data class ShowErrorString(val message: String) : OrderListEvent()
+        data class ShowSnackbarString(val message: String) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
         data class OpenPurchaseCardReaderLink(
             val url: String,

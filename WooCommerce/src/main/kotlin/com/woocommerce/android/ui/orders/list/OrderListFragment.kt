@@ -619,7 +619,7 @@ class OrderListFragment :
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
 
-                is OrderListViewModel.OrderListEvent.ShowErrorString -> uiMessageResolver.showSnack(event.message)
+                is OrderListViewModel.OrderListEvent.ShowSnackbarString -> uiMessageResolver.showSnack(event.message)
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
 
                 else -> event.isHandled = false
