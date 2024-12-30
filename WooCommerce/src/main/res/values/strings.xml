@@ -365,6 +365,7 @@
     <!--
         Site picker
     -->
+    <string name="site_picker_select_store_list_header_with_hidden_sites">Select store to connect (%d hidden)</string>
     <string name="login_site_picker_enter_site_address">Enter a site address</string>
     <string name="login_site_picker_add_a_store">Connect another store</string>
     <string name="site_picker_create_new_store">Create a new store</string>
