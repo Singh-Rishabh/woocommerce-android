@@ -150,7 +150,6 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
     @Test
     fun `when tapping save, then site notification settings are updated on the backend`() =
         testBlocking {
-
             viewModel.onSaveTapped()
 
             verify(notificationStore).updateNotificationSettingsFor(
