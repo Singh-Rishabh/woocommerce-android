@@ -908,6 +908,7 @@ class OrderListViewModel @Inject constructor(
     }
 
     private fun enterSelectionMode(count: Int) {
+        analyticsTracker.track(AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SELECTION_ENABLED)
         viewState = viewState.copy(
             orderListState = ViewState.OrderListState.Selecting,
             selectionCount = count,
