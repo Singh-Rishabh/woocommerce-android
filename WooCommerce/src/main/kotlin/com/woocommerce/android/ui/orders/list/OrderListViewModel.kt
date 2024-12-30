@@ -925,6 +925,14 @@ class OrderListViewModel @Inject constructor(
     }
 
     fun onBulkUpdateStatusClicked() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_REQUESTED,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                AnalyticsTracker.KEY_SELECTED_ORDERS_COUNT to viewState.selectionCount
+            )
+        )
+
         launch(dispatchers.io) {
             orderDetailRepository
                 .getOrderStatusOptions().toTypedArray()
