@@ -258,6 +258,8 @@ class AnalyticsTracker private constructor(
         const val VALUE_SORT_DATE_ASC = "date,ascending"
         const val VALUE_SORT_DATE_DESC = "date,descending"
 
+        const val KEY_SELECTED_ORDERS_COUNT = "selected_orders_count"
+
         const val VALUE_API_SUCCESS = "success"
         const val VALUE_API_FAILED = "failed"
         const val VALUE_SHIPMENT_TRACK = "track"
