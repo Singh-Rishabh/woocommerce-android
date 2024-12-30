@@ -25,23 +25,24 @@ class WooSitesVisibilityViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()
-    private val _wooStores = MutableStateFlow(
+    private val _wooStoresState = MutableStateFlow(
         WooStoresUiState(
             wooStores = emptyList(),
             currentSite = selectedSite.get().toWooStoreUi(isSiteVisible = false),
-            isSaveButtonEnabled = false
+            isSaveButtonEnabled = false,
+            isLoading = false
         )
     )
-    val viewState = _wooStores.asLiveData()
+    val viewState = _wooStoresState.asLiveData()
 
     init {
         launch {
-            _wooStores.value = _wooStores.value.copy(
+            _wooStoresState.value = _wooStoresState.value.copy(
                 wooStores = sitePickerRepository.getSites()
                     .filter { it.hasWooCommerce && it.siteId != selectedSite.get().siteId }
                     .map { it.toWooStoreUi(isSiteVisible(it.siteId)) }
             )
-            initiallySelectedSiteIds = _wooStores.value.wooStores
+            initiallySelectedSiteIds = _wooStoresState.value.wooStores
                 .filter { it.isSelected }
                 .map { it.siteId }
         }
@@ -52,9 +53,10 @@ class WooSitesVisibilityViewModel @Inject constructor(
     }
 
     fun onSaveTapped() {
+        _wooStoresState.value = _wooStoresState.value.copy(isLoading = true)
         launch {
             notificationsStore.updateNotificationSettingsFor(
-                _wooStores.value.wooStores.map {
+                _wooStoresState.value.wooStores.map {
                     SiteNotificationSetting(
                         siteId = it.siteId,
                         newCommentEnabled = it.isSelected,
@@ -64,7 +66,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
             ).fold(
                 onSuccess = {
                     visibleSitesDataStore.updateSiteVisibilityStatus(
-                        _wooStores.value.wooStores
+                        _wooStoresState.value.wooStores
                             .associate { it.siteId to it.isSelected }
                     )
                     triggerEvent(ExitWithResult(data = true))
@@ -72,21 +74,23 @@ class WooSitesVisibilityViewModel @Inject constructor(
                 onFailure = {
                     // TODO: Show error message
                 }
-            )
+            ).also {
+                _wooStoresState.value = _wooStoresState.value.copy(isLoading = false)
+            }
         }
     }
 
     fun onSiteTapped(wooStoreUi: WooStoreUi) {
-        _wooStores.value = _wooStores.value.copy(
-            wooStores = _wooStores.value.wooStores.map {
+        _wooStoresState.value = _wooStoresState.value.copy(
+            wooStores = _wooStoresState.value.wooStores.map {
                 when {
                     it.siteId == wooStoreUi.siteId -> it.copy(isSelected = !it.isSelected)
                     else -> it
                 }
             }
         )
-        _wooStores.value = _wooStores.value.copy(
-            isSaveButtonEnabled = _wooStores.value.wooStores
+        _wooStoresState.value = _wooStoresState.value.copy(
+            isSaveButtonEnabled = _wooStoresState.value.wooStores
                 .filter { it.isSelected }
                 .map { it.siteId } != initiallySelectedSiteIds
         )
@@ -105,7 +109,8 @@ class WooSitesVisibilityViewModel @Inject constructor(
     data class WooStoresUiState(
         val wooStores: List<WooStoreUi>,
         val currentSite: WooStoreUi,
-        val isSaveButtonEnabled: Boolean
+        val isSaveButtonEnabled: Boolean,
+        val isLoading: Boolean
     )
 
     data class WooStoreUi(
