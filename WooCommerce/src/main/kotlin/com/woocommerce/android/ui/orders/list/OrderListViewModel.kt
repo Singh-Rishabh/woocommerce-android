@@ -957,6 +957,14 @@ class OrderListViewModel @Inject constructor(
                     WooLog.e(ORDERS, errorMessage)
                 }
             } else {
+                analyticsTracker.track(
+                    AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_CONFIRMED,
+                    mapOf(
+                        AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                        AnalyticsTracker.KEY_SELECTED_ORDERS_COUNT to viewState.selectionCount
+                    )
+                )
+
                 viewState = viewState.copy(isBulkUpdating = true)
                 launch {
                     val result = orderListRepository.bulkUpdateOrderStatus(
