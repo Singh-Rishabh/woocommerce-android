@@ -20,7 +20,7 @@ class VisibleWooSitesDataStore @Inject constructor(
     }
 
     fun isSiteVisible(siteId: Long): Flow<Boolean> {
-        return dataStore.data.map { prefs -> prefs[booleanPreferencesKey(siteId.toString())] ?: true }
+        return dataStore.data.map { prefs -> prefs[booleanPreferencesKey(siteId.toString())] != false }
     }
 
     suspend fun clearAll() {
