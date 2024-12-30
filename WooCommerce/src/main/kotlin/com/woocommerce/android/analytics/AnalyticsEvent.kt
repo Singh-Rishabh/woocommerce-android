@@ -137,6 +137,8 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     SITE_PICKER_SITE_DISCOVERY(siteless = true),
     SITE_PICKER_JETPACK_TIMEOUT_ERROR_SHOWN(siteless = true),
     SITE_PICKER_JETPACK_TIMEOUT_CONTACT_SUPPORT_CLICKED(siteless = true),
+    SITE_PICKER_EDIT_BUTTON_SHOWN(siteless = true),
+    SITE_PICKER_EDIT_BUTTON_TAPPED(siteless = true),
 
     // -- Jetpack Installation for Login
     LOGIN_JETPACK_SITE_CREDENTIAL_SCREEN_VIEWED(siteless = true),

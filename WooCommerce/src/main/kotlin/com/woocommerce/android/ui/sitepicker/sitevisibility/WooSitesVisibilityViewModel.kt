@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.sitepicker.sitevisibility
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import com.woocommerce.android.R
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -24,6 +25,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
     private val selectedSite: SelectedSite,
     private val visibleSitesDataStore: VisibleWooSitesDataStore,
     private val notificationsStore: NotificationStore,
+    private val trackerWrapper: AnalyticsTrackerWrapper,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()
