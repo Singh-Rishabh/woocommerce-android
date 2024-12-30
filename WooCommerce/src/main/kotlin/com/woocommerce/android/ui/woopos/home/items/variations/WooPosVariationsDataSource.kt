@@ -89,5 +89,5 @@ sealed class FetchResult<out T> {
 }
 
 private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
-    return filter { it.price != null && !it.isDownloadable }
+    return filter { it.price != null && !it.isDownloadable && it.isPurchasable }
 }
