@@ -951,6 +951,7 @@ class OrderListViewModel @Inject constructor(
         if (networkStatus.isConnected()) {
             if (orderIds.isEmpty()) {
                 val errorMessage = "Trying to bulk update order status but order Ids list is empty"
+                trackBulkOrderUpdateFailure()
                 if (BuildConfig.DEBUG) {
                     throw IllegalStateException(errorMessage)
                 } else {
@@ -977,14 +978,8 @@ class OrderListViewModel @Inject constructor(
                     viewState = viewState.copy(isBulkUpdating = false)
 
                     if (result.isFailure) {
-                        analyticsTracker.track(
-                            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_FAILURE,
-                            mapOf(
-                                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
-                            )
-                        )
+                        trackBulkOrderUpdateFailure()
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
-
                     } else {
                         fetchOrdersAndOrderDependencies(
                             onComplete = {
@@ -1001,9 +996,19 @@ class OrderListViewModel @Inject constructor(
                 }
             }
         } else {
+            trackBulkOrderUpdateFailure()
             triggerEvent(Event.ShowSnackbar(R.string.offline_error))
         }
         exitSelectionMode()
+    }
+
+    private fun trackBulkOrderUpdateFailure() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_FAILURE,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+            )
+        )
     }
 
     sealed class OrderListEvent : Event() {
