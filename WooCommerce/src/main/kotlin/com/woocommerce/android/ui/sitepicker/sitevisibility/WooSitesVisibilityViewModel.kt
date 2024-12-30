@@ -2,8 +2,10 @@ package com.woocommerce.android.ui.sitepicker.sitevisibility
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
+import com.woocommerce.android.R
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ExitWithResult
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -72,7 +74,21 @@ class WooSitesVisibilityViewModel @Inject constructor(
                     triggerEvent(ExitWithResult(data = true))
                 },
                 onFailure = {
-                    // TODO: Show error message
+                    triggerEvent(
+                        Event.ShowDialog(
+                            titleId = R.string.site_picker_edit_store_list_error_title,
+                            positiveButtonId = R.string.retry,
+                            positiveBtnAction = { dialog, _ ->
+                                dialog.dismiss()
+                                onSaveTapped()
+                            },
+                            negativeButtonId = R.string.cancel,
+                            negativeBtnAction = { dialog, _ ->
+                                dialog.dismiss()
+                                triggerEvent(Exit)
+                            }
+                        )
+                    )
                 }
             ).also {
                 _wooStoresState.value = _wooStoresState.value.copy(isLoading = false)
