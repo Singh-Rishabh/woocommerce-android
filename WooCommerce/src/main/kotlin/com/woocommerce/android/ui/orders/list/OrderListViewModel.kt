@@ -77,7 +77,6 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.ThreadMode.MAIN
 import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.model.WCOrderListDescriptor
