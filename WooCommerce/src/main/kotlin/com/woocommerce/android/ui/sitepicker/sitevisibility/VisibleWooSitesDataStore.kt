@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class VisibleWooSitesDataStore @Inject constructor(
-    @DataStoreQualifier(DataStoreType.SITE_PICKER_HIDDEN_SITES) private val dataStore: DataStore<Preferences>
+    @DataStoreQualifier(DataStoreType.SITE_PICKER_WOO_VISIBLE_SITES) private val dataStore: DataStore<Preferences>
 ) {
     suspend fun updateSiteVisibilityStatus(siteIds: Map<Long, Boolean>) {
-        siteIds.forEach { (siteId, hidden) ->
-            updateSiteVisibility(siteId, hidden)
+        siteIds.forEach { (siteId, isVisible) ->
+            updateSiteVisibility(siteId, isVisible)
         }
     }
 
     fun isSiteVisible(siteId: Long): Flow<Boolean> {
-        return dataStore.data.map { prefs -> prefs[booleanPreferencesKey(siteId.toString())] ?: true }
+        return dataStore.data.map { prefs -> prefs[booleanPreferencesKey(siteId.toString())] != false }
     }
 
     suspend fun clearAll() {
