@@ -76,6 +76,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.greenrobot.eventbus.ThreadMode.MAIN
 import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.model.WCOrderListDescriptor
@@ -85,6 +86,7 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.order.CoreOrderStatus
 import org.wordpress.android.fluxc.store.ListStore
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.PARSE_ERROR
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.TIMEOUT_ERROR
+import org.wordpress.android.fluxc.store.ListStore.OnListChanged
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderSummariesFetched
 import java.util.Locale
@@ -222,6 +224,8 @@ class OrderListViewModel @Inject constructor(
 
     fun isSelecting() = viewState.orderListState == ViewState.OrderListState.Selecting
 
+    private var isQueueingBulkUpdateSuccessMessage = false
+
     init {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
@@ -328,14 +332,13 @@ class OrderListViewModel @Inject constructor(
      * Refresh the active order list with fresh data from the API as well as refresh order status
      * options and payment gateways if the network is available.
      */
-    fun fetchOrdersAndOrderDependencies(onComplete: (() -> Unit)? = null) {
+    fun fetchOrdersAndOrderDependencies() {
         if (networkStatus.isConnected()) {
             viewState = viewState.copy(isErrorFetchingDataBannerVisible = false)
             launch(dispatchers.main) {
                 activePagedListWrapper?.fetchFirstPage()
                 fetchOrderStatusOptions()
                 fetchPaymentGateways()
-                onComplete?.invoke()
             }
         } else {
             viewState = viewState.copy(isRefreshPending = true, isErrorFetchingDataBannerVisible = false)
@@ -651,6 +654,15 @@ class OrderListViewModel @Inject constructor(
         }
     }
 
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = MAIN)
+    fun onOrderListFetched(event: OnListChanged) {
+        if (event.isError.not() && isQueueingBulkUpdateSuccessMessage) {
+            triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+            isQueueingBulkUpdateSuccessMessage = false
+        }
+    }
+
     fun onFiltersButtonTapped() {
         AnalyticsTracker.track(AnalyticsEvent.ORDERS_LIST_VIEW_FILTER_OPTIONS_TAPPED)
         triggerEvent(ShowOrderFilters)
@@ -962,11 +974,8 @@ class OrderListViewModel @Inject constructor(
                     if (result.isFailure) {
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                     } else {
-                        fetchOrdersAndOrderDependencies(
-                            onComplete = {
-                                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
-                            }
-                        )
+                        isQueueingBulkUpdateSuccessMessage = true
+                        fetchOrdersAndOrderDependencies()
                     }
                 }
             }
