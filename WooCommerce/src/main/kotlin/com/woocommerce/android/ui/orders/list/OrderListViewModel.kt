@@ -69,6 +69,7 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import com.woocommerce.android.widgets.WCEmptyView.EmptyViewType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -658,8 +659,12 @@ class OrderListViewModel @Inject constructor(
     @Subscribe(threadMode = MAIN)
     fun onOrderListFetched(event: OnListChanged) {
         if (event.isError.not() && isQueueingBulkUpdateSuccessMessage) {
-            triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
-            isQueueingBulkUpdateSuccessMessage = false
+            launch {
+                @Suppress("MagicNumber")
+                delay(1000) // To let the UI update the new order statuses before showing the Snackbar
+                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+                isQueueingBulkUpdateSuccessMessage = false
+            }
         }
     }
 
