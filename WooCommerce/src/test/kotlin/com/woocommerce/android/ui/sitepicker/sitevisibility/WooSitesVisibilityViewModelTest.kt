@@ -129,7 +129,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given updating notification settings fails, when tapping save, then exit with result`() =
+    fun `given updating notification settings fails, when tapping save, then error dialog is shown`() =
         testBlocking {
             whenever(notificationStore.updateNotificationSettingsFor(any()))
                 .thenReturn(
