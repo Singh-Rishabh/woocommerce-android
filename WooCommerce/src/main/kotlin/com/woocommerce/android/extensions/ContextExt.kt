@@ -15,20 +15,33 @@ import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import com.woocommerce.android.util.SystemVersionUtils
 import kotlinx.parcelize.Parcelize
+import kotlin.math.max
+import kotlin.math.min
 
 val Context.windowSizeClass: WindowSizeClass
-    get() = determineWindowWidthSizeClassByGivenSize(resources.configuration.screenWidthDp)
+    get() = determineWindowSizeClassByDimensions(
+        resources.configuration.screenWidthDp,
+        resources.configuration.screenHeightDp
+    )
 
 val Context.windowHeightSizeClass: WindowSizeClass
     get() = determineWindowHeightSizeClassByGivenSize(resources.configuration.screenHeightDp)
 
-private fun determineWindowWidthSizeClassByGivenSize(sizeDp: Int): WindowSizeClass {
+private fun determineWindowSizeClassByDimensions(widthDp: Int, heightDp: Int): WindowSizeClass {
+    val shortSize = min(widthDp, heightDp)
+    val longSize = max(widthDp, heightDp)
+
     return when {
-        sizeDp < WindowSizeClass.Compact.maxWidthDp -> WindowSizeClass.Compact
-        sizeDp < WindowSizeClass.Medium.maxWidthDp -> WindowSizeClass.Medium
+        shortSize < WindowSizeClass.Compact.maxWidthDp || longSize < WindowSizeClass.Compact.maxHeightDp -> {
+            WindowSizeClass.Compact
+        }
+        shortSize < WindowSizeClass.Medium.maxWidthDp || longSize < WindowSizeClass.Medium.maxHeightDp -> {
+            WindowSizeClass.Medium
+        }
         else -> WindowSizeClass.ExpandedAndBigger
     }
 }
+
 
 private fun determineWindowHeightSizeClassByGivenSize(sizeDp: Int): WindowSizeClass {
     return when {
