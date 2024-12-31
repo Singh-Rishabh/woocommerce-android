@@ -126,7 +126,11 @@ class OrderListAdapter(
     fun setOrderStatusOptions(orderStatusOptions: Map<String, WCOrderStatusModel>) {
         if (orderStatusOptions.keys != activeOrderStatusMap.keys) {
             this.activeOrderStatusMap = orderStatusOptions
-            notifyDataSetChanged()
+            for (position in 0 until itemCount) {
+                if (getItem(position) is OrderListItemUI) {
+                    notifyItemChanged(position)
+                }
+            }
         }
     }
 
