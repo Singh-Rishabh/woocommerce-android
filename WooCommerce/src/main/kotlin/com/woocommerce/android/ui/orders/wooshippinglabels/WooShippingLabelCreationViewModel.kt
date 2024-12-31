@@ -14,6 +14,7 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
@@ -50,8 +51,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
-    private val fetchAccountSettings: FetchAccountSettings,
-    private val purchaseShippingLabel: PurchaseShippingLabel
+    private val purchaseShippingLabel: PurchaseShippingLabel,
+    private val observeStoreOptions: ObserveStoreOptions
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -105,14 +106,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private fun getStoreOptions() {
         launch {
-            fetchAccountSettings().fold(
-                onSuccess = {
-                    storeOptions.value = it
-                },
-                onFailure = {
-                    storeOptions.value = null
-                }
-            )
+            observeStoreOptions().collectLatest { options ->
+                storeOptions.value = options
+            }
         }
     }
 
@@ -210,7 +206,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private suspend fun getShippingAddresses() {
         order.combine(observeOriginAddresses()) { order, originAddresses ->
-            if (order != null && originAddresses.isNotEmpty()) {
+            if (order != null && !originAddresses.isNullOrEmpty()) {
                 val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 WooShippingAddresses(
                     shipFrom = selectedOriginAddress,
