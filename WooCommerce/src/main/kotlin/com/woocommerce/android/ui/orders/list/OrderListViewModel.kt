@@ -55,7 +55,6 @@ import com.woocommerce.android.ui.orders.filters.domain.GetWCOrderListDescriptor
 import com.woocommerce.android.ui.orders.filters.domain.GetWCOrderListDescriptorWithFiltersAndSearchQuery
 import com.woocommerce.android.ui.orders.filters.domain.ShouldShowCreateTestOrderScreen
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.RetryLoadingOrders
-import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.SelectOrders
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowErrorSnack
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowOrderFilters
 import com.woocommerce.android.util.CoroutineDispatchers
@@ -990,10 +989,6 @@ class OrderListViewModel @Inject constructor(
         exitSelectionMode()
     }
 
-    fun onRestoreSelection(selectedOrdersIds: List<Long>) {
-        triggerEvent(SelectOrders(selectedOrdersIds))
-    }
-
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
@@ -1051,8 +1046,6 @@ class OrderListViewModel @Inject constructor(
                 return result
             }
         }
-
-        data class SelectOrders(val ordersIds: List<Long>) : OrderListEvent()
     }
 
     @Parcelize

@@ -413,7 +413,7 @@ class OrderListFragment :
         tracker?.run {
             onRestoreInstanceState(savedInstanceState)
             if (hasSelection()) {
-                viewModel.onRestoreSelection(selection.toList())
+                setItemsSelected(selection.toList(), true)
             }
         }
 
@@ -628,7 +628,6 @@ class OrderListFragment :
                 is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
-                is OrderListViewModel.OrderListEvent.SelectOrders -> tracker?.setItemsSelected(event.ordersIds, true)
 
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
 
