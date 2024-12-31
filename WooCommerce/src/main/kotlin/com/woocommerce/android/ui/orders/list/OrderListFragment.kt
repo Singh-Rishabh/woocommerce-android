@@ -406,6 +406,18 @@ class OrderListFragment :
                 outState.putBoolean(LAST_WINDOW_SIZE_WAS_LARGER_THAN_COMPACT, true)
             }
         }
+        tracker?.onSaveInstanceState(outState)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        tracker?.run {
+            onRestoreInstanceState(savedInstanceState)
+            if (hasSelection()) {
+                viewModel.onRestoreSelection(selection.toList())
+            }
+        }
+
+        super.onViewStateRestored(savedInstanceState)
     }
 
     override fun onDestroyView() {
@@ -414,6 +426,8 @@ class OrderListFragment :
         searchView = null
         orderListMenu = null
         searchMenuItem = null
+        tracker = null
+        actionMode = null
         super.onDestroyView()
         _binding = null
     }
@@ -614,6 +628,7 @@ class OrderListFragment :
                 is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
+                is OrderListViewModel.OrderListEvent.SelectOrders -> tracker?.setItemsSelected(event.ordersIds, true)
 
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
 
