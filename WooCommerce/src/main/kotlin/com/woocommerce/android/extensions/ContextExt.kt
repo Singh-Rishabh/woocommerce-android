@@ -42,7 +42,6 @@ private fun determineWindowSizeClassByDimensions(widthDp: Int, heightDp: Int): W
     }
 }
 
-
 private fun determineWindowHeightSizeClassByGivenSize(sizeDp: Int): WindowSizeClass {
     return when {
         sizeDp < WindowSizeClass.Compact.maxHeightDp -> WindowSizeClass.Compact
