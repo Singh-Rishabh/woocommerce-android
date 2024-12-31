@@ -5,7 +5,6 @@ import androidx.lifecycle.asLiveData
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ERROR
-import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ERROR_TYPE
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
@@ -90,10 +89,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
                     if (it is NotificationSettingsUpdateError) {
                         trackerWrapper.track(
                             stat = AnalyticsEvent.SITE_PICKER_LIST_SAVING_FAILURE,
-                            properties = mapOf(
-                                KEY_ERROR to it.message,
-                                KEY_ERROR_TYPE to it.type
-                            )
+                            properties = mapOf(KEY_ERROR to it.type.toString())
                         )
                     }
                     triggerEvent(
