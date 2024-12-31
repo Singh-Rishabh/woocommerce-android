@@ -412,9 +412,6 @@ class OrderListFragment :
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         tracker?.run {
             onRestoreInstanceState(savedInstanceState)
-            if (hasSelection()) {
-                setItemsSelected(selection.toList(), true)
-            }
         }
 
         super.onViewStateRestored(savedInstanceState)
