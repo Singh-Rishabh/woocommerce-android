@@ -26,10 +26,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/major_300"
         android:importantForAccessibility="no"
+        android:src="@drawable/ic_woo_logo_white_99dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img_woo_logo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -118,5 +118,4 @@
             android:text="@string/login_prologue_start_new_store"
             android:textAllCaps="false" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
