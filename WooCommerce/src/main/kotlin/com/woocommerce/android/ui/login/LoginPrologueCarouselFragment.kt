@@ -3,6 +3,10 @@ package com.woocommerce.android.ui.login
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.R
@@ -31,16 +35,32 @@ class LoginPrologueCarouselFragment : Fragment(R.layout.fragment_login_prologue_
         fun onCarouselFinished()
     }
 
-    @Inject lateinit var unifiedLoginTracker: UnifiedLoginTracker
+    @Inject
+    lateinit var unifiedLoginTracker: UnifiedLoginTracker
 
-    @Inject lateinit var analyticsTrackerWrapper: AnalyticsTrackerWrapper
+    @Inject
+    lateinit var analyticsTrackerWrapper: AnalyticsTrackerWrapper
 
-    @Inject lateinit var appPrefsWrapper: AppPrefsWrapper
+    @Inject
+    lateinit var appPrefsWrapper: AppPrefsWrapper
 
     private var prologueCarouselListener: PrologueCarouselListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val binding = FragmentLoginPrologueCarouselBinding.bind(view)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.buttonSkip) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<MarginLayoutParams> {
+                rightMargin = insets.right
+                bottomMargin = insets.bottom
+            }
+            WindowInsetsCompat.CONSUMED
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.buttonNext) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updateLayoutParams<MarginLayoutParams> { leftMargin = insets.left }
+            WindowInsetsCompat.CONSUMED
+        }
         val adapter = LoginPrologueAdapter(this)
 
         binding.buttonSkip.setOnClickListener {
