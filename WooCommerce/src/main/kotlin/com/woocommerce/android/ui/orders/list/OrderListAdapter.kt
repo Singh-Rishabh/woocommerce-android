@@ -38,6 +38,7 @@ class OrderListAdapter(
     var activeOrderStatusMap: Map<String, WCOrderStatusModel> = emptyMap()
     var allOrderIds: List<Long> = listOf()
     var tracker: SelectionTracker<Long>? = null
+    val orderIdAndPosition = mutableMapOf<Long, Int>()
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
@@ -97,6 +98,7 @@ class OrderListAdapter(
                     allOrderIds,
                     isActivated = tracker?.isSelected(item.orderId) ?: false
                 )
+                orderIdAndPosition[item.orderId] = position
             }
             is SectionHeaderViewHolder -> {
                 if (BuildConfig.DEBUG && item !is SectionHeader) {
