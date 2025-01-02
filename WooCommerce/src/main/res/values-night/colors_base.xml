@@ -51,6 +51,7 @@
     <color name="color_toolbar">@color/woo_black_900</color>
     <color name="bottom_sheet_background">@color/woo_black_900</color>
     <color name="color_item_selected">@color/woo_black</color>
+    <color name="color_woo_logo">@color/white</color>
 
     <!--
         Elevation colors
@@ -228,7 +229,8 @@
     <!--
     Blaze
     -->
-    <color name="blaze_campaign_bottom_sheet_highlight_background">@color/woo_black_90_alpha_038</color>
+    <color name="blaze_campaign_bottom_sheet_highlight_background">@color/woo_black_90_alpha_038
+    </color>
     <color name="blaze_campaign_preview_header_background">@color/woo_white_alpha_012</color>
     <color name="blaze_campaign_objective_item_background">@color/woo_purple_90</color>
 
