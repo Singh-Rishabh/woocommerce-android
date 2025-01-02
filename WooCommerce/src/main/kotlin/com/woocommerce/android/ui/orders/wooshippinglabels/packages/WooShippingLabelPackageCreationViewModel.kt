@@ -106,16 +106,10 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onAddCustomPackageClick(savePackageAsTemplate: Boolean) {
         val customPackage = _viewState.value.customPackageCreationData
-
         if (savePackageAsTemplate) {
-            launch {
-                selectedSite.getOrNull()
-                    ?.let { customPackage.submitToStore(it) }
-                    ?.let { triggerEvent(PackageSelected(customPackage.toPackageData())) }
-            }
+            handleCustomSelectionAsTemplate(customPackage)
         } else {
-            customPackage.toPackageData()
-                .let { triggerEvent(PackageSelected(it)) }
+            triggerEvent(PackageSelected(customPackage.toPackageData()))
         }
     }
 
@@ -193,6 +187,28 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             ?.let { set(it, updatedPackage) }
     }
 
+    private fun handleCustomSelectionAsTemplate(
+        customPackage: CustomPackageCreationData
+    ) {
+        triggerEvent(ShowLoadingDialog(true))
+        launch {
+            selectedSite.getOrNull()
+                ?.let { customPackage.submitToStore(it) }
+                ?.fold(
+                    onSuccess = {
+                        triggerEvent(PackageSelected(customPackage.toPackageData()))
+                    },
+                    onFailure = {
+                        triggerEvent(ShowLoadingDialog(false))
+                        triggerEvent(ShowErrorDialog(
+                            R.string.woo_shipping_labels_package_creation_error_title,
+                            R.string.woo_shipping_labels_package_creation_error_message
+                        ))
+                    }
+                ) ?: triggerEvent(PackageSelected(customPackage.toPackageData()))
+        }
+    }
+
     private suspend fun CustomPackageCreationData.submitToStore(site: SiteModel): Result<PackageData> {
             val response = packageRepository.createCustomPackage(
                 site = site,
@@ -262,10 +278,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     data class PackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
-    data class ShowLoadingDialog(
-        val show: Boolean,
-        val messageResId: Int
-    ) : MultiLiveEvent.Event()
+    data class ShowLoadingDialog(val show: Boolean) : MultiLiveEvent.Event()
     data class ShowErrorDialog(
         val titleResId: Int,
         val messageResId: Int
