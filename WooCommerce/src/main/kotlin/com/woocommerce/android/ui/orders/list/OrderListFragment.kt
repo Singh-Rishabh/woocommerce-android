@@ -412,8 +412,8 @@ class OrderListFragment :
         }
         tracker?.onSaveInstanceState(outState)
         viewModel.orderIdAndPositionBackup =
-            ((binding.orderListView.ordersList.adapter as? OrderListAdapter)?.orderIdAndPosition
-                ?: emptyMap()) as MutableMap<Long, Int>
+            ((binding.orderListView.ordersList.adapter as? OrderListAdapter)?.orderIdAndPosition ?: emptyMap())
+                as MutableMap<Long, Int>
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -631,9 +631,11 @@ class OrderListFragment :
                     actionText = event.actionText,
                     action = event.action
                 )
+
                 is OrderListViewModel.OrderListEvent.RetryLoadingOrders -> refreshOrders()
                 is OrderListViewModel.OrderListEvent.OpenOrderCreationWithSimplePaymentsMigration ->
                     openOrderCreationFragment(indicateSimplePaymentsMigration = true)
+
                 is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
@@ -650,6 +652,7 @@ class OrderListFragment :
                     viewModel.trashOrder(event.orderId)
                     selectedOrder.selectOrder(-1L)
                 }
+
                 else -> event.isHandled = false
             }
         }
