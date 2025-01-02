@@ -97,7 +97,16 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             activity = requireActivity(),
             titleId = R.string.woo_shipping_labels_package_creation_error_title,
             messageId = R.string.woo_shipping_labels_package_creation_error_message,
-            positiveButtonId = R.string.dialog_ok
+            positiveButtonId = R.string.woo_shipping_labels_package_creation_error_proceed,
+            neutralButtonId = R.string.woo_shipping_labels_package_creation_error_retry,
+            negativeButtonId = R.string.woo_shipping_labels_package_creation_error_cancel,
+            posBtnAction = { _, _ ->
+                viewModel.onAddCustomPackageClick(savePackageAsTemplate = false)
+            },
+            neutBtAction = { _, _ ->
+                viewModel.onAddCustomPackageClick(savePackageAsTemplate = true)
+            }
+
         )
     }
 
