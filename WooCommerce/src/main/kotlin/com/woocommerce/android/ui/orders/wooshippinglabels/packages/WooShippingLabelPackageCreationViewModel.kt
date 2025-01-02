@@ -207,25 +207,25 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     }
 
     private suspend fun CustomPackageCreationData.submitToStore(site: SiteModel): Result<PackageData> {
-            val response = packageRepository.createCustomPackage(
-                site = site,
-                requestData = this@submitToStore.let {
-                    CustomPackageCreationRequestData(
-                        name = it.name,
-                        isLetter = it.type == PackageType.ENVELOPE,
-                        innerDimensions = it.dimensions,
-                        boxWeight = it.weight?.toDoubleOrNull() ?: 0.0,
-                        isUserDefined = true,
-                        maxWeight = 0.0
-                    )
-                }.let { listOf(it) }
-            )
+        val response = packageRepository.createCustomPackage(
+            site = site,
+            requestData = this@submitToStore.let {
+                CustomPackageCreationRequestData(
+                    name = it.name,
+                    isLetter = it.type == PackageType.ENVELOPE,
+                    innerDimensions = it.dimensions,
+                    boxWeight = it.weight?.toDoubleOrNull() ?: 0.0,
+                    isUserDefined = true,
+                    maxWeight = 0.0
+                )
+            }.let { listOf(it) }
+        )
 
-            return response.takeIf { it.isError.not() }
-                ?.model?.firstOrNull()
-                ?.let { PackageData.fromPackageDAO(it) }
-                ?.let { Result.success(it) }
-                ?: Result.failure(Throwable("Failed to save package"))
+        return response.takeIf { it.isError.not() }
+            ?.model?.firstOrNull()
+            ?.let { PackageData.fromPackageDAO(it) }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Throwable("Failed to save package"))
     }
 
     @Parcelize
