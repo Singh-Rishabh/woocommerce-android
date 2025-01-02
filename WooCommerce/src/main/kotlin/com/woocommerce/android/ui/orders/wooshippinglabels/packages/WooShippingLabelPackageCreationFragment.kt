@@ -50,7 +50,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowPackageTypeDialog -> handlePackageTypeSelection(event.currentSelection)
-                is ShowLoadingDialog -> showLoadingDialog(event.show, event.messageResId)
+                is ShowLoadingDialog -> showLoadingDialog(event.show)
                 is ShowErrorDialog -> showErrorDialog(event.titleResId, event.messageResId)
                 is PackageSelected -> navigateBackWithResult(PACKAGE_SELECTION_RESULT, event.packageData)
             }
@@ -80,14 +80,11 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             ).let { findNavController().navigateSafely(it) }
     }
 
-    private fun showLoadingDialog(
-        show: Boolean,
-        messageResId: Int
-    ) {
+    private fun showLoadingDialog(show: Boolean) {
         if (show) {
             progressDialog = CustomProgressDialog.show(
                 title = getString(R.string.loading),
-                message = getString(messageResId)
+                message = getString(R.string.please_wait)
             )
         } else {
             progressDialog?.dismiss()
