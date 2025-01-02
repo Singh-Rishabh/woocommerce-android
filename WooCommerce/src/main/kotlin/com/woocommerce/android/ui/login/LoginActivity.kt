@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -121,21 +122,29 @@ class LoginActivity :
         const val USERNAME_PARAMETER = "username"
     }
 
-    @Inject internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    @Inject
+    internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
-    @Inject internal lateinit var loginAnalyticsListener: LoginAnalyticsListener
+    @Inject
+    internal lateinit var loginAnalyticsListener: LoginAnalyticsListener
 
-    @Inject internal lateinit var unifiedLoginTracker: UnifiedLoginTracker
+    @Inject
+    internal lateinit var unifiedLoginTracker: UnifiedLoginTracker
 
-    @Inject internal lateinit var urlUtils: UrlUtils
+    @Inject
+    internal lateinit var urlUtils: UrlUtils
 
-    @Inject internal lateinit var experimentTracker: ExperimentTracker
+    @Inject
+    internal lateinit var experimentTracker: ExperimentTracker
 
-    @Inject internal lateinit var appPrefsWrapper: AppPrefsWrapper
+    @Inject
+    internal lateinit var appPrefsWrapper: AppPrefsWrapper
 
-    @Inject internal lateinit var dispatcher: Dispatcher
+    @Inject
+    internal lateinit var dispatcher: Dispatcher
 
-    @Inject internal lateinit var uiMessageResolver: UIMessageResolver
+    @Inject
+    internal lateinit var uiMessageResolver: UIMessageResolver
 
     private var loginMode: LoginMode? = null
     private lateinit var binding: ActivityLoginBinding
@@ -146,6 +155,8 @@ class LoginActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
         ChromeCustomTabUtils.registerForPartialTabUsage(this)
         onBackPressedDispatcher.addCallback(
             this,
