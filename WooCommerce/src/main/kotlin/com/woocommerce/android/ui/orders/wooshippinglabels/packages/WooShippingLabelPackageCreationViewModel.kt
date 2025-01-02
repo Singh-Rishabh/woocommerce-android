@@ -193,7 +193,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         triggerEvent(ShowLoadingDialog(true))
         launch {
             selectedSite.getOrNull()
-                ?.let { customPackage.submitToStore(it) }
+                ?.let { sendCustomPackageToStore(it, customPackage) }
                 ?.fold(
                     onSuccess = {
                         triggerEvent(PackageSelected(customPackage.toPackageData()))
@@ -206,19 +206,20 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         }
     }
 
-    private suspend fun CustomPackageCreationData.submitToStore(site: SiteModel): Result<PackageData> {
+    private suspend fun sendCustomPackageToStore(
+        site: SiteModel,
+        packageData: CustomPackageCreationData
+    ): Result<PackageData> {
         val response = packageRepository.createCustomPackage(
             site = site,
-            requestData = this@submitToStore.let {
-                CustomPackageCreationRequestData(
-                    name = it.name,
-                    isLetter = it.type == PackageType.ENVELOPE,
-                    innerDimensions = it.dimensions,
-                    boxWeight = it.weight?.toDoubleOrNull() ?: 0.0,
-                    isUserDefined = true,
-                    maxWeight = 0.0
-                )
-            }.let { listOf(it) }
+            requestData = CustomPackageCreationRequestData(
+                name = packageData.name,
+                isLetter = packageData.type == PackageType.ENVELOPE,
+                innerDimensions = packageData.dimensions,
+                boxWeight = packageData.weight?.toDoubleOrNull() ?: 0.0,
+                isUserDefined = true,
+                maxWeight = 0.0
+            ).let { listOf(it) }
         )
 
         return response.takeIf { it.isError.not() }
