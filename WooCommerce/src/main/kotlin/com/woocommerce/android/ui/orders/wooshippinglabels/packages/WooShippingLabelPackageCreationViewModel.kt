@@ -196,6 +196,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                 ?.let { sendCustomPackageToStore(it, customPackage) }
                 ?.fold(
                     onSuccess = {
+                        triggerEvent(ShowLoadingDialog(false))
                         triggerEvent(PackageSelected(customPackage.toPackageData()))
                     },
                     onFailure = {

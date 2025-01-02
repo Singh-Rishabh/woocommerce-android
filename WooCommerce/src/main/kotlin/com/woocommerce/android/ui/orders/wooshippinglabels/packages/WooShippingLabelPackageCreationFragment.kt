@@ -85,7 +85,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             progressDialog = CustomProgressDialog.show(
                 title = getString(R.string.loading),
                 message = getString(R.string.please_wait)
-            )
+            ).also { it.show(parentFragmentManager, CustomProgressDialog.TAG) }
         } else {
             progressDialog?.dismiss()
             progressDialog = null
@@ -98,15 +98,10 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             titleId = R.string.woo_shipping_labels_package_creation_error_title,
             messageId = R.string.woo_shipping_labels_package_creation_error_message,
             positiveButtonId = R.string.woo_shipping_labels_package_creation_error_proceed,
-            neutralButtonId = R.string.woo_shipping_labels_package_creation_error_retry,
-            negativeButtonId = R.string.woo_shipping_labels_package_creation_error_cancel,
+            neutralButtonId = R.string.woo_shipping_labels_package_creation_error_cancel,
             posBtnAction = { _, _ ->
                 viewModel.onAddCustomPackageClick(savePackageAsTemplate = false)
-            },
-            neutBtAction = { _, _ ->
-                viewModel.onAddCustomPackageClick(savePackageAsTemplate = true)
             }
-
         )
     }
 

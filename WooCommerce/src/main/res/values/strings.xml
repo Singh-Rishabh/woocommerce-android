@@ -4448,9 +4448,8 @@
     <string name="woo_shipping_labels_package_creation_box_type">Box</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
     <string name="woo_shipping_labels_package_creation_error_title">We couldn\'t save the package as template</string>
-    <string name="woo_shipping_labels_package_creation_error_message">Do you want to proceed without saving as a template?</string>
+    <string name="woo_shipping_labels_package_creation_error_message">Do you want to proceed without saving it?</string>
     <string name="woo_shipping_labels_package_creation_error_proceed">Proceed</string>
-    <string name="woo_shipping_labels_package_creation_error_retry">Retry</string>
     <string name="woo_shipping_labels_package_creation_error_cancel">Cancel</string>
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
 </resources>
