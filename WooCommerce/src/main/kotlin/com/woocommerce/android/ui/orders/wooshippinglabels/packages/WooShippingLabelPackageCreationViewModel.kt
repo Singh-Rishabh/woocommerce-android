@@ -200,10 +200,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                     },
                     onFailure = {
                         triggerEvent(ShowLoadingDialog(false))
-                        triggerEvent(ShowErrorDialog(
-                            R.string.woo_shipping_labels_package_creation_error_title,
-                            R.string.woo_shipping_labels_package_creation_error_message
-                        ))
+                        triggerEvent(ShowTemplateCreationErrorDialog)
                     }
                 ) ?: triggerEvent(PackageSelected(customPackage.toPackageData()))
         }
@@ -279,8 +276,5 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
     data class PackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
     data class ShowLoadingDialog(val show: Boolean) : MultiLiveEvent.Event()
-    data class ShowErrorDialog(
-        val titleResId: Int,
-        val messageResId: Int
-    ) : MultiLiveEvent.Event()
+    object ShowTemplateCreationErrorDialog : MultiLiveEvent.Event()
 }

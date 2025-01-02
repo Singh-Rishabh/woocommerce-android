@@ -17,7 +17,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.dialog.WooDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
-import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowErrorDialog
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowTemplateCreationErrorDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowLoadingDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.ShowPackageTypeDialog
 import com.woocommerce.android.widgets.CustomProgressDialog
@@ -51,7 +51,7 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
             when (event) {
                 is ShowPackageTypeDialog -> handlePackageTypeSelection(event.currentSelection)
                 is ShowLoadingDialog -> showLoadingDialog(event.show)
-                is ShowErrorDialog -> showErrorDialog(event.titleResId, event.messageResId)
+                is ShowTemplateCreationErrorDialog -> handleTemplateCreationError()
                 is PackageSelected -> navigateBackWithResult(PACKAGE_SELECTION_RESULT, event.packageData)
             }
         }
@@ -92,14 +92,11 @@ class WooShippingLabelPackageCreationFragment : BaseFragment() {
         }
     }
 
-    private fun showErrorDialog(
-        titleResId: Int,
-        messageResId: Int,
-    ) {
+    private fun handleTemplateCreationError() {
         WooDialog.showDialog(
             activity = requireActivity(),
-            titleId = titleResId,
-            messageId = messageResId,
+            titleId = R.string.woo_shipping_labels_package_creation_error_title,
+            messageId = R.string.woo_shipping_labels_package_creation_error_message,
             positiveButtonId = R.string.dialog_ok
         )
     }
