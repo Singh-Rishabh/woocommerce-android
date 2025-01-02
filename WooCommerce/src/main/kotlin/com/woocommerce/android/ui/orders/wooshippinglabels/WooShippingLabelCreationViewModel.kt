@@ -70,7 +70,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val uiState = MutableStateFlow(
         UIControlsState(
             markOrderComplete = false,
-            isShipmentDetailsExpanded = true,
+            isShipmentDetailsExpanded = false,
             isAddressSelectionExpanded = false
         )
     )
