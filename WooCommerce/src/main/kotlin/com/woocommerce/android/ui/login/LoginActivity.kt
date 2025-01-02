@@ -33,7 +33,7 @@ import com.woocommerce.android.support.help.HelpOrigin
 import com.woocommerce.android.support.requests.SupportRequestFormActivity
 import com.woocommerce.android.ui.base.UIMessageResolver
 import com.woocommerce.android.ui.login.LoginPrologueCarouselFragment.PrologueCarouselListener
-import com.woocommerce.android.ui.login.LoginPrologueFragment.PrologueFinishedListener
+import com.woocommerce.android.ui.login.LoginPrologueFragment.PrologueListener
 import com.woocommerce.android.ui.login.UnifiedLoginTracker.Click
 import com.woocommerce.android.ui.login.UnifiedLoginTracker.Flow
 import com.woocommerce.android.ui.login.UnifiedLoginTracker.Flow.LOGIN_SITE_ADDRESS
@@ -96,7 +96,7 @@ class LoginActivity :
     AppCompatActivity(),
     LoginListener,
     GoogleListener,
-    PrologueFinishedListener,
+    PrologueListener,
     PrologueCarouselListener,
     HasAndroidInjector,
     LoginNoJetpackListener,
