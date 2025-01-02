@@ -106,12 +106,15 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onAddCustomPackageClick(savePackageAsTemplate: Boolean) {
         val customPackage = _viewState.value.customPackageCreationData
-        selectedSite.getOrNull()
-            ?.takeIf { savePackageAsTemplate }
-            ?.let { customPackage.submitToStore(it) }
 
-        customPackage.toPackageData()
-            .let { triggerEvent(PackageSelected(it)) }
+        if (savePackageAsTemplate) {
+            selectedSite.getOrNull()
+                ?.let { customPackage.submitToStore(it) }
+                ?.let { triggerEvent(PackageSelected(customPackage.toPackageData())) }
+        } else {
+            customPackage.toPackageData()
+                .let { triggerEvent(PackageSelected(it)) }
+        }
     }
 
     fun onPackageTypeSpinnerClick() {
