@@ -996,6 +996,46 @@ class OrderListViewModelTest : BaseUnitTest() {
         assertFalse(isFetchingFirstPage!!)
     }
 
+    @Test
+    fun `when selection count changes to greater than 0, then enter selection mode`() = testBlocking {
+        viewModel.onSelectionChanged(2)
+
+        assertThat(viewModel.isSelecting()).isTrue()
+        assertThat(viewModel.viewState.selectionCount).isEqualTo(2)
+        assertThat(viewModel.viewState.isAddOrderButtonVisible).isFalse()
+        assertThat(viewModel.viewState.orderListState).isEqualTo(OrderListViewModel.ViewState.OrderListState.Selecting)
+    }
+
+    @Test
+    fun `when selection count changes to 0, then exit selection mode`() = testBlocking {
+        // First enter selection mode
+        viewModel.onSelectionChanged(2)
+        assertThat(viewModel.isSelecting()).isTrue()
+
+        // Then exit
+        viewModel.onSelectionChanged(0)
+
+        assertThat(viewModel.isSelecting()).isFalse()
+        assertThat(viewModel.viewState.selectionCount).isNull()
+        assertThat(viewModel.viewState.isAddOrderButtonVisible).isTrue()
+        assertThat(viewModel.viewState.orderListState).isEqualTo(OrderListViewModel.ViewState.OrderListState.Browsing)
+    }
+
+    @Test
+    fun `when in selection mode and count changes but stays above 0, then update count only`() = testBlocking {
+        // Enter selection mode
+        viewModel.onSelectionChanged(2)
+        val initialState = viewModel.viewState.orderListState
+
+        // Change count
+        viewModel.onSelectionChanged(3)
+
+        assertThat(viewModel.viewState.selectionCount).isEqualTo(3)
+        assertThat(viewModel.viewState.orderListState).isEqualTo(initialState)
+        assertThat(viewModel.isSelecting()).isTrue()
+    }
+
+
     private companion object {
         const val ANY_SEARCH_QUERY = "search query"
     }
