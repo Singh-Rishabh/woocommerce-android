@@ -356,7 +356,11 @@ class OrderListFragment :
 
     private fun adjustLayoutForNonTablet(savedInstanceState: Bundle?) {
         if (wasLastWindowSizeLargerThanCompact(savedInstanceState)) {
-            displayDetailPaneOnly()
+            if (viewModel.isSelecting()) {
+                displayListPaneOnly()
+            } else {
+                displayDetailPaneOnly()
+            }
         } else {
             displayListPaneOnly()
         }
