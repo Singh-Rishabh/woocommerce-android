@@ -916,23 +916,6 @@ class OrderListFragment :
         binding.orderListView.submitPagedList(pagedListData)
     }
 
-    //  Some edge cases in order selection mode, like tapping the screen with 4 fingers or using TalkBack,
-    //  cause the order's onClick listener to gain focus over the selection tracker.
-    //  This quick fix will prevent the app from entering an unexpected status when the app is in selection mode.
-    private fun shouldPreventDetailNavigation(orderId: Long): Boolean {
-        if (viewModel.isSelecting()) {
-            tracker?.let { selectionTracker ->
-                if (selectionTracker.isSelected(orderId)) {
-                    selectionTracker.deselect(orderId)
-                } else {
-                    selectionTracker.select(orderId)
-                }
-            }
-            return true
-        }
-        return false
-    }
-
     override fun openOrderDetail(
         orderId: Long,
         allOrderIds: List<Long>,
@@ -940,8 +923,6 @@ class OrderListFragment :
         sharedView: View?,
         startPaymentsFlow: Boolean,
     ) {
-        if (shouldPreventDetailNavigation(orderId)) return
-
         viewModel.trackOrderClickEvent(
             orderId,
             orderStatus,

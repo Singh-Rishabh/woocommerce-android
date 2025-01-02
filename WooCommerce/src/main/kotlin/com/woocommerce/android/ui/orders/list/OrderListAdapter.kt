@@ -25,6 +25,7 @@ import com.woocommerce.android.ui.orders.list.OrderListItemUIType.SectionHeader
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.widgets.tags.TagView
 import org.wordpress.android.fluxc.model.WCOrderStatusModel
+
 class OrderListAdapter(
     val listener: OrderListListener,
     val currencyFormatter: CurrencyFormatter
@@ -62,10 +63,12 @@ class OrderListAdapter(
                     )
                 )
             }
+
             VIEW_TYPE_LOADING -> {
                 val view = inflater.inflate(R.layout.skeleton_order_list_item_auto, parent, false)
                 LoadingViewHolder(view)
             }
+
             VIEW_TYPE_SECTION_HEADER -> {
                 SectionHeaderViewHolder(
                     OrderListHeaderBinding.inflate(
@@ -75,6 +78,7 @@ class OrderListAdapter(
                     )
                 )
             }
+
             else -> {
                 // Fail fast if a new view type is added so we can handle it
                 throw IllegalStateException("The view type '$viewType' needs to be handled")
@@ -100,6 +104,7 @@ class OrderListAdapter(
                 )
                 orderIdAndPosition[item.orderId] = position
             }
+
             is SectionHeaderViewHolder -> {
                 if (BuildConfig.DEBUG && item !is SectionHeader) {
                     error(
@@ -109,6 +114,7 @@ class OrderListAdapter(
                 }
                 holder.onBind((item as SectionHeader))
             }
+
             else -> {}
         }
     }
@@ -190,6 +196,7 @@ class OrderListAdapter(
                         viewBinding.root.context.getColor(R.color.color_item_selected)
                     )
                 }
+
                 else -> {
                     viewBinding.orderItemLayout.setBackgroundColor(Color.TRANSPARENT)
                 }
@@ -215,6 +222,7 @@ class OrderListAdapter(
             extras[SwipeToComplete.OLD_STATUS] = orderItemUI.status
 
             this.itemView.setOnClickListener {
+                if (shouldPreventDetailNavigation(orderId)) return@setOnClickListener
                 listener.openOrderDetail(
                     orderId = orderItemUI.orderId,
                     allOrderIds = allOrderIds,
@@ -222,6 +230,23 @@ class OrderListAdapter(
                     sharedView = viewBinding.root,
                 )
             }
+        }
+
+        //  Some edge cases in order selection mode, like tapping the screen with 4 fingers or using TalkBack,
+        //  cause the order's onClick listener to gain focus over the selection tracker.
+        //  This quick fix will prevent the app from entering an unexpected status when the app is in selection mode.
+        private fun shouldPreventDetailNavigation(orderId: Long): Boolean {
+            if (tracker?.selection?.size() != 0) {
+                tracker?.let { selectionTracker ->
+                    if (selectionTracker.isSelected(orderId)) {
+                        selectionTracker.deselect(orderId)
+                    } else {
+                        selectionTracker.select(orderId)
+                    }
+                }
+                return true
+            }
+            return false
         }
 
         /**
