@@ -7,6 +7,7 @@
 - [*] Fixed overlap issue in Settings > WooCommerce Version  [https://github.com/woocommerce/woocommerce-android/pull/13183]
 - [*] Fixed a crash on the order details [https://github.com/woocommerce/woocommerce-android/pull/13191]
 - [**] Fixed a crash when a shop manager was trying to install or activate plugin in the POS onboarding [https://github.com/woocommerce/woocommerce-android/pull/13203]
+- [*] Introduced WCRemoveButton for streamlined removal actions like 'Remove Coupon' and 'Remove Discount' with a distinct red-bordered style [https://github.com/woocommerce/woocommerce-android/pull/13229]
 
 21.3
 -----
