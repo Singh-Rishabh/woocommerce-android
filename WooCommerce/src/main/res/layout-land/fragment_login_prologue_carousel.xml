@@ -78,6 +78,7 @@
         android:layout_marginBottom="@dimen/major_100"
         android:text="@string/skip"
         android:textAllCaps="false"
+        android:textColor="@color/color_on_surface"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/button_next" />
