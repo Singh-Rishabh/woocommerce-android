@@ -262,4 +262,12 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     data class PackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
+    data class ShowLoadingDialog(
+        val show: Boolean,
+        val messageResId: Int
+    ) : MultiLiveEvent.Event()
+    data class ShowErrorDialog(
+        val titleResId: Int,
+        val messageResId: Int
+    ) : MultiLiveEvent.Event()
 }
