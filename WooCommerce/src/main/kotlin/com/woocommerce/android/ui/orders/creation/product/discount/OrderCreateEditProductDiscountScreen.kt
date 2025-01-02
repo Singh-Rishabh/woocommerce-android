@@ -52,8 +52,8 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
-import com.woocommerce.android.ui.compose.component.WCRemoveButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
+import com.woocommerce.android.ui.compose.component.WCRemoveButton
 import com.woocommerce.android.ui.compose.component.WCSelectableChip
 import com.woocommerce.android.ui.compose.component.WCTextButton
 import com.woocommerce.android.ui.orders.creation.OrderCreationProduct
