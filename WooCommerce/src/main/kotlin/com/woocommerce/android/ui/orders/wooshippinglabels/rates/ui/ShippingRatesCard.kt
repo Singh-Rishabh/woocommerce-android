@@ -68,7 +68,7 @@ import java.math.BigDecimal
 import kotlin.random.Random
 
 @Suppress("MagicNumber")
-val Colors.selectedRateBackgroundColor: Color get() = if (isLight) Color(0xFFF2EDFF) else Color(0x22F2EDFF)
+val Colors.shippingSelectedBackgroundColor: Color get() = if (isLight) Color(0xFFF2EDFF) else Color(0x22F2EDFF)
 
 @Composable
 internal fun ShippingRatesCard(
@@ -324,7 +324,10 @@ private fun ShippingRateItem(
     }
 
     val backgroundColor = if (isSelected) {
-        animateColorAsState(targetValue = MaterialTheme.colors.selectedRateBackgroundColor, label = "colorAnimation")
+        animateColorAsState(
+            targetValue = MaterialTheme.colors.shippingSelectedBackgroundColor,
+            label = "colorAnimation"
+        )
     } else {
         animateColorAsState(targetValue = MaterialTheme.colors.surface, label = "colorAnimation")
     }
