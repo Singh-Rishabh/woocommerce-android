@@ -9,6 +9,9 @@ import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -325,17 +328,36 @@ class LoginActivity :
 
     override fun onPrimaryButtonClicked() {
         unifiedLoginTracker.trackClick(Click.LOGIN_WITH_SITE_ADDRESS)
+        addWindowInsets()
         loginViaSiteAddress()
     }
 
     override fun onSecondaryButtonClicked() {
         unifiedLoginTracker.trackClick(Click.CONTINUE_WITH_WORDPRESS_COM)
+        addWindowInsets()
         startLoginViaWPCom()
+    }
+
+    private fun addWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun removeWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot, null)
+        binding.snackRoot.updatePadding(0, 0, 0, 0)
     }
 
     override fun onNewToWooButtonClicked() {
         ChromeCustomTabUtils.launchUrl(this, AppUrls.HOSTING_OPTIONS_DOC)
     }
+
+    override fun onEdgeToEdgeLayoutForPrologue() = removeWindowInsets()
+
+    override fun onEdgeToEdgeLayoutForCarousel() = removeWindowInsets()
 
     private fun showMainActivityAndFinish() {
         experimentTracker.log(ExperimentTracker.LOGIN_SUCCESSFUL_EVENT)

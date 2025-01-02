@@ -24,6 +24,7 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
         fun onPrimaryButtonClicked()
         fun onSecondaryButtonClicked()
         fun onNewToWooButtonClicked()
+        fun onEdgeToEdgeLayoutForPrologue()
     }
 
     @Inject
@@ -35,6 +36,8 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
     private var prologueListener: PrologueListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        prologueListener?.onEdgeToEdgeLayoutForPrologue()
+
         with(FragmentLoginPrologueBinding.bind(view)) {
             buttonLoginStore.setOnClickListener {
                 // Login with site address
