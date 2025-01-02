@@ -52,7 +52,7 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
-import com.woocommerce.android.ui.compose.component.WCColoredButton
+import com.woocommerce.android.ui.compose.component.WCRemoveButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedTypedTextField
 import com.woocommerce.android.ui.compose.component.WCSelectableChip
 import com.woocommerce.android.ui.compose.component.WCTextButton
@@ -155,14 +155,13 @@ fun OrderCreateEditProductDiscountScreen(
                 PriceAfterDiscount(viewState.value)
 
                 if (state.value.isRemoveButtonVisible) {
-                    WCColoredButton(
+                    WCRemoveButton(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = dimensionResource(R.dimen.minor_100)),
-                        onClick = onRemoveDiscountClicked
-                    ) {
-                        Text(stringResource(id = R.string.order_creation_remove_discount))
-                    }
+                        onClick = onRemoveDiscountClicked,
+                        text = stringResource(id = R.string.order_creation_remove_discount)
+                    )
                 }
                 LaunchedEffect(Unit) {
                     focusRequester.requestFocus()
