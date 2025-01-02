@@ -182,6 +182,8 @@ class OrderListViewModel @Inject constructor(
 
     val orderId: LiveData<Long> = savedState.getLiveData<Long>("orderId")
 
+    var orderIdAndPositionBackup = mutableMapOf<Long, Int>()
+
     private val _emptyViewType: ThrottleLiveData<EmptyViewType?> by lazy {
         ThrottleLiveData(
             offset = EMPTY_VIEW_THROTTLE,
