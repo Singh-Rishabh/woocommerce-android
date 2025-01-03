@@ -921,6 +921,7 @@ class OrderListViewModel @Inject constructor(
     }
 
     private fun enterSelectionMode(count: Int) {
+        analyticsTracker.track(AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SELECTION_ENABLED)
         viewState = viewState.copy(
             orderListState = ViewState.OrderListState.Selecting,
             selectionCount = count,
@@ -937,6 +938,14 @@ class OrderListViewModel @Inject constructor(
     }
 
     fun onBulkUpdateStatusClicked() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_REQUESTED,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                AnalyticsTracker.KEY_SELECTED_ORDERS_COUNT to viewState.selectionCount
+            )
+        )
+
         launch(dispatchers.io) {
             orderDetailRepository
                 .getOrderStatusOptions().toTypedArray()
@@ -955,12 +964,21 @@ class OrderListViewModel @Inject constructor(
         if (networkStatus.isConnected()) {
             if (orderIds.isEmpty()) {
                 val errorMessage = "Trying to bulk update order status but order Ids list is empty"
+                trackBulkOrderUpdateFailure()
                 if (BuildConfig.DEBUG) {
                     throw IllegalStateException(errorMessage)
                 } else {
                     WooLog.e(ORDERS, errorMessage)
                 }
             } else {
+                analyticsTracker.track(
+                    AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_CONFIRMED,
+                    mapOf(
+                        AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                        AnalyticsTracker.KEY_SELECTED_ORDERS_COUNT to viewState.selectionCount
+                    )
+                )
+
                 viewState = viewState.copy(isBulkUpdating = true)
                 launch {
                     val result = orderListRepository.bulkUpdateOrderStatus(
@@ -970,17 +988,35 @@ class OrderListViewModel @Inject constructor(
 
                     if (result.isFailure) {
                         viewState = viewState.copy(isBulkUpdating = false)
+                        trackBulkOrderUpdateFailure()
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                     } else {
                         isQueueingBulkUpdateSuccessMessage = true
                         ordersPagedListWrapper?.fetchFirstPage()
+
+                        analyticsTracker.track(
+                            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
+                            mapOf(
+                                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                            )
+                        )
                     }
                 }
             }
         } else {
+            trackBulkOrderUpdateFailure()
             triggerEvent(Event.ShowSnackbar(R.string.offline_error))
         }
         exitSelectionMode()
+    }
+
+    private fun trackBulkOrderUpdateFailure() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_FAILURE,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+            )
+        )
     }
 
     sealed class OrderListEvent : Event() {
