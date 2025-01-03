@@ -28,7 +28,6 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
         fun onPrimaryButtonClicked()
         fun onSecondaryButtonClicked()
         fun onNewToWooButtonClicked()
-        fun onEdgeToEdgeLayoutForPrologue()
     }
 
     @Inject
@@ -40,7 +39,7 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
     private var prologueListener: PrologueListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        prologueListener?.onEdgeToEdgeLayoutForPrologue()
+        (activity as? DynamicEdgeToEdgeActivity)?.enableDynamicEdgeToEdge(forceDarkStatusBar = true)
 
         with(FragmentLoginPrologueBinding.bind(view)) {
             ViewCompat.setOnApplyWindowInsetsListener(loginButtons) { v, windowInsets ->

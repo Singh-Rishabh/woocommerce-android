@@ -35,7 +35,6 @@ class LoginPrologueCarouselFragment : Fragment(R.layout.fragment_login_prologue_
 
     interface PrologueCarouselListener {
         fun onCarouselFinished()
-        fun onEdgeToEdgeLayoutForCarousel()
     }
 
     @Inject
@@ -50,9 +49,9 @@ class LoginPrologueCarouselFragment : Fragment(R.layout.fragment_login_prologue_
     private var prologueCarouselListener: PrologueCarouselListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val binding = FragmentLoginPrologueCarouselBinding.bind(view)
+        (activity as? DynamicEdgeToEdgeActivity)?.enableDynamicEdgeToEdge()
 
-        prologueCarouselListener?.onEdgeToEdgeLayoutForCarousel()
+        val binding = FragmentLoginPrologueCarouselBinding.bind(view)
 
         val isTablet = DisplayUtils.isTablet(context) || DisplayUtils.isXLargeTablet(context)
         ViewCompat.setOnApplyWindowInsetsListener(binding.buttonSkip) { v, windowInsets ->
