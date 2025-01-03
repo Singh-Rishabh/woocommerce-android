@@ -47,7 +47,7 @@ fun WooSitesVisibilityScreen(viewModel: WooSitesVisibilityViewModel) {
             state = state,
             onBack = viewModel::onBackPressed,
             onSaveTapped = viewModel::onSaveTapped,
-            onSiteSelected = viewModel::onSiteSelected,
+            onSiteTapped = viewModel::onSiteTapped,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -58,7 +58,7 @@ fun WooSitesVisibilityScreen(
     state: WooStoresUiState,
     onBack: () -> Unit,
     onSaveTapped: () -> Unit,
-    onSiteSelected: (WooStoreUi) -> Unit,
+    onSiteTapped: (WooStoreUi) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(topBar = {
@@ -133,7 +133,7 @@ fun WooSitesVisibilityScreen(
             )
             AvailableStoresForHiding(
                 state = state,
-                onSiteSelected = onSiteSelected,
+                onSiteSelected = onSiteTapped,
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .border(
@@ -237,6 +237,6 @@ fun StoreVisibilityScreenPreview() {
         ),
         onBack = {},
         onSaveTapped = {},
-        onSiteSelected = {}
+        onSiteTapped = {}
     )
 }
