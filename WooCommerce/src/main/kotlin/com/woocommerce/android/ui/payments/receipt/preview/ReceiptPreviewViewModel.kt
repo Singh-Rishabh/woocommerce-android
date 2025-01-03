@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R.string
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.receipt.preview.ReceiptPreviewViewModel.ReceiptPreviewViewState.Content
 import com.woocommerce.android.ui.payments.receipt.preview.ReceiptPreviewViewModel.ReceiptPreviewViewState.Loading
@@ -17,6 +18,7 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.net.URI
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +27,7 @@ class ReceiptPreviewViewModel
     savedState: SavedStateHandle,
     private val paymentsFlowTracker: PaymentsFlowTracker,
     private val paymentReceiptShare: PaymentReceiptShare,
+    private val selectedSite: SelectedSite,
 ) : ScopedViewModel(savedState) {
     private val args: ReceiptPreviewFragmentArgs by savedState.navArgs()
 
@@ -37,6 +40,23 @@ class ReceiptPreviewViewModel
 
     fun onReceiptLoaded() {
         viewState.value = Content
+    }
+
+    fun isReceiptDomainTrustable(receiptUrl: String): Boolean {
+        return selectedSite.getIfExists()?.let { site ->
+            getDomainName(site.url) == getDomainName(receiptUrl)
+        } ?: false
+    }
+
+    private fun getDomainName(url: String): String? {
+        return try {
+            val uri = URI(url)
+            uri.host?.let {
+                if (it.startsWith("www.")) it.substring(4) else it
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     fun onPrintClicked() {
