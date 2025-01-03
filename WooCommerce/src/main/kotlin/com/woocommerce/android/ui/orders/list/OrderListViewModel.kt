@@ -87,6 +87,7 @@ import org.wordpress.android.fluxc.store.ListStore.ListErrorType.PARSE_ERROR
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.TIMEOUT_ERROR
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderSummariesFetched
+import org.wordpress.android.mediapicker.util.distinct
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -222,6 +223,8 @@ class OrderListViewModel @Inject constructor(
 
     fun isSelecting() = viewState.orderListState == ViewState.OrderListState.Selecting
 
+    private var isQueueingBulkUpdateSuccessMessage = false
+
     init {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
         lifecycleRegistry.currentState = Lifecycle.State.STARTED
@@ -328,14 +331,13 @@ class OrderListViewModel @Inject constructor(
      * Refresh the active order list with fresh data from the API as well as refresh order status
      * options and payment gateways if the network is available.
      */
-    fun fetchOrdersAndOrderDependencies(onComplete: (() -> Unit)? = null) {
+    fun fetchOrdersAndOrderDependencies() {
         if (networkStatus.isConnected()) {
             viewState = viewState.copy(isErrorFetchingDataBannerVisible = false)
             launch(dispatchers.main) {
                 activePagedListWrapper?.fetchFirstPage()
                 fetchOrderStatusOptions()
                 fetchPaymentGateways()
-                onComplete?.invoke()
             }
         } else {
             viewState = viewState.copy(isRefreshPending = true, isErrorFetchingDataBannerVisible = false)
@@ -456,6 +458,7 @@ class OrderListViewModel @Inject constructor(
         listenToEmptyViewStateLiveData(pagedListWrapper)
 
         _pagedListData.addSource(pagedListWrapper.data) { pagedList ->
+            viewState = viewState.copy(isBulkUpdating = false)
             pagedList?.let {
                 displayOrdersBannerOrJitm()
                 _pagedListData.value = it
@@ -469,6 +472,14 @@ class OrderListViewModel @Inject constructor(
         }
         _isLoadingMore.addSource(pagedListWrapper.isLoadingMore) {
             _isLoadingMore.value = it
+        }
+
+        // Observe status changes in the data
+        pagedListWrapper.data.distinct().observe(this) {
+            if (isQueueingBulkUpdateSuccessMessage) {
+                isQueueingBulkUpdateSuccessMessage = false
+                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+            }
         }
 
         pagedListWrapper.listError
@@ -973,25 +984,20 @@ class OrderListViewModel @Inject constructor(
                         newStatus = newStatus
                     )
 
-                    // Remove refreshing state early, because the fetch after successful result will show another
-                    // loading state.
-                    viewState = viewState.copy(isBulkUpdating = false)
-
                     if (result.isFailure) {
+                        viewState = viewState.copy(isBulkUpdating = false)
                         trackBulkOrderUpdateFailure()
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                     } else {
-                        fetchOrdersAndOrderDependencies(
-                            onComplete = {
-                                analyticsTracker.track(
-                                    AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
-                                    mapOf(
-                                        AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
-                                    )
+                        isQueueingBulkUpdateSuccessMessage = true
+                        ordersPagedListWrapper?.fetchFirstPage()
+
+                        analyticsTracker.track(
+                            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
+                            mapOf(
+                                    AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
                                 )
-                                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
-                            }
-                        )
+                            )
                     }
                 }
             }
