@@ -158,6 +158,9 @@ class LoginActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // The Prologue screen requires an edge-to-edge layout, but the login screens do not. Since both the prologue
+        // and login screens are part of this activity, insets are manually managed based on the current fragment using
+        // the addWindowInsets() and removeWindowInsets() functions.
         enableEdgeToEdge()
 
         ChromeCustomTabUtils.registerForPartialTabUsage(this)
