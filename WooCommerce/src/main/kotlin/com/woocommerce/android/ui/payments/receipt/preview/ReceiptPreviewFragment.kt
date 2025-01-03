@@ -85,7 +85,10 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
         } else {
             with(binding.receiptPreviewPreviewWebview) {
                 webViewClient = object : WebViewClient() {
-                    override fun shouldOverrideUrlLoading(view: WebView, webResourceRequest: WebResourceRequest): Boolean {
+                    override fun shouldOverrideUrlLoading(
+                        view: WebView,
+                        webResourceRequest: WebResourceRequest
+                    ): Boolean {
                         return viewModel.isReceiptDomainTrustable(webResourceRequest.url.toString())
                     }
                     override fun onPageFinished(view: WebView, url: String) {

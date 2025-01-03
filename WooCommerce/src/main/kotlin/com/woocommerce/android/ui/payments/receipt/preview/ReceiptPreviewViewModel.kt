@@ -13,12 +13,14 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.CANCELLED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
+import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.net.URI
+import java.net.URISyntaxException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,10 +54,11 @@ class ReceiptPreviewViewModel
         return try {
             val uri = URI(url)
             uri.host?.let {
-                if (it.startsWith("www.")) it.substring(4) else it
+                if (it.startsWith("www.")) it.substring(WWW_PREFIX_LENGTH) else it
             }
-        } catch (e: Exception) {
-            null
+        } catch (e: URISyntaxException) {
+            WooLog.e(WooLog.T.ORDERS, "Error parsing domain name from receipt url: $url")
+            return null
         }
     }
 
@@ -109,5 +112,9 @@ class ReceiptPreviewViewModel
     ) {
         object Loading : ReceiptPreviewViewState(isProgressVisible = true)
         object Content : ReceiptPreviewViewState(isContentVisible = true)
+    }
+
+    companion object {
+        private const val WWW_PREFIX_LENGTH = 4
     }
 }
