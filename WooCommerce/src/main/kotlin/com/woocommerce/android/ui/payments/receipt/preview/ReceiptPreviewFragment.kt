@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.MenuProvider
@@ -84,12 +85,31 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
         } else {
             with(binding.receiptPreviewPreviewWebview) {
                 webViewClient = object : WebViewClient() {
+                    override fun shouldOverrideUrlLoading(view: WebView, webResourceRequest: WebResourceRequest): Boolean {
+                        return viewModel.isReceiptDomainTrustable(webResourceRequest.url.toString())
+                    }
                     override fun onPageFinished(view: WebView, url: String) {
+                        view.evaluateJavascript(
+                            "document.body.style.zoom = 1.0; " +
+                                "var meta = document.createElement('meta'); " +
+                                "meta.name = 'viewport'; " +
+                                "meta.content = 'width=device-width, initial-scale=1.0'; " +
+                                "document.getElementsByTagName('head')[0].appendChild(meta);",
+                            null
+                        )
                         viewModel.onReceiptLoaded()
                     }
                 }
-                settings.loadWithOverviewMode = true
-                settings.useWideViewPort = true
+                settings.apply {
+                    javaScriptEnabled = true
+                    loadWithOverviewMode = true
+                    useWideViewPort = true
+                    builtInZoomControls = true
+                    displayZoomControls = false
+                    allowFileAccess = false
+                    allowContentAccess = false
+                    domStorageEnabled = false
+                }
             }
         }
     }
