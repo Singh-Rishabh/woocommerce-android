@@ -208,4 +208,18 @@ class ReceiptPreviewViewModelTest : BaseUnitTest() {
 
             assertThat(viewModel.isReceiptDomainTrustable(receiptUrl)).isTrue()
         }
+
+    @Test
+    fun `given invalid receipt domain, then isReceiptTrustable returns false`() =
+        testBlocking {
+            whenever(selectedSite.getIfExists()).thenReturn(
+                SiteModel().apply {
+                    url = "https://www.woocommerce.com"
+                    origin = SiteModel.ORIGIN_WPAPI
+                }
+            )
+            val receiptUrl = "https://www.wocommerce.com/receipt"
+
+            assertThat(viewModel.isReceiptDomainTrustable(receiptUrl)).isFalse()
+        }
 }
