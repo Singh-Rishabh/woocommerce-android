@@ -46,6 +46,10 @@ import com.woocommerce.android.extensions.appendWithIfNotEmpty
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionLandscape
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionPortrait
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.launch
