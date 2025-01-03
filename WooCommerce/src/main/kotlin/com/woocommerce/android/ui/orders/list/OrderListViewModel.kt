@@ -69,7 +69,6 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import com.woocommerce.android.widgets.WCEmptyView.EmptyViewType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -86,9 +85,9 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.order.CoreOrderStatus
 import org.wordpress.android.fluxc.store.ListStore
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.PARSE_ERROR
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.TIMEOUT_ERROR
-import org.wordpress.android.fluxc.store.ListStore.OnListChanged
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderSummariesFetched
+import org.wordpress.android.mediapicker.util.distinct
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -459,6 +458,7 @@ class OrderListViewModel @Inject constructor(
         listenToEmptyViewStateLiveData(pagedListWrapper)
 
         _pagedListData.addSource(pagedListWrapper.data) { pagedList ->
+            viewState = viewState.copy(isBulkUpdating = false)
             pagedList?.let {
                 displayOrdersBannerOrJitm()
                 _pagedListData.value = it
@@ -472,6 +472,14 @@ class OrderListViewModel @Inject constructor(
         }
         _isLoadingMore.addSource(pagedListWrapper.isLoadingMore) {
             _isLoadingMore.value = it
+        }
+
+        // Observe status changes in the data
+        pagedListWrapper.data.distinct().observe(this) {
+            if (isQueueingBulkUpdateSuccessMessage) {
+                isQueueingBulkUpdateSuccessMessage = false
+                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+            }
         }
 
         pagedListWrapper.listError
@@ -651,19 +659,6 @@ class OrderListViewModel @Inject constructor(
                     AnalyticsTracker.KEY_TOTAL_COMPLETED_ORDERS to totalCompletedOrders
                 )
             )
-        }
-    }
-
-    @SuppressWarnings("unused")
-    @Subscribe(threadMode = MAIN)
-    fun onOrderListFetched(event: OnListChanged) {
-        if (event.isError.not() && isQueueingBulkUpdateSuccessMessage) {
-            launch {
-                @Suppress("MagicNumber")
-                delay(1000) // To let the UI update the new order statuses before showing the Snackbar
-                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
-                isQueueingBulkUpdateSuccessMessage = false
-            }
         }
     }
 
@@ -971,15 +966,12 @@ class OrderListViewModel @Inject constructor(
                         newStatus = newStatus
                     )
 
-                    // Remove refreshing state early, because the fetch after successful result will show another
-                    // loading state.
-                    viewState = viewState.copy(isBulkUpdating = false)
-
                     if (result.isFailure) {
+                        viewState = viewState.copy(isBulkUpdating = false)
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                     } else {
                         isQueueingBulkUpdateSuccessMessage = true
-                        fetchOrdersAndOrderDependencies()
+                        ordersPagedListWrapper?.fetchFirstPage()
                     }
                 }
             }
