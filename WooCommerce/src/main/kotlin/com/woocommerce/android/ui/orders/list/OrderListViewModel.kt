@@ -995,9 +995,9 @@ class OrderListViewModel @Inject constructor(
                         analyticsTracker.track(
                             AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
                             mapOf(
-                                    AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
-                                )
+                                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
                             )
+                        )
                     }
                 }
             }
