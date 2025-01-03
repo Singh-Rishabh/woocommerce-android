@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -32,7 +36,7 @@ import com.woocommerce.android.support.help.HelpOrigin
 import com.woocommerce.android.support.requests.SupportRequestFormActivity
 import com.woocommerce.android.ui.base.UIMessageResolver
 import com.woocommerce.android.ui.login.LoginPrologueCarouselFragment.PrologueCarouselListener
-import com.woocommerce.android.ui.login.LoginPrologueFragment.PrologueFinishedListener
+import com.woocommerce.android.ui.login.LoginPrologueFragment.PrologueListener
 import com.woocommerce.android.ui.login.UnifiedLoginTracker.Click
 import com.woocommerce.android.ui.login.UnifiedLoginTracker.Flow
 import com.woocommerce.android.ui.login.UnifiedLoginTracker.Flow.LOGIN_SITE_ADDRESS
@@ -95,7 +99,7 @@ class LoginActivity :
     AppCompatActivity(),
     LoginListener,
     GoogleListener,
-    PrologueFinishedListener,
+    PrologueListener,
     PrologueCarouselListener,
     HasAndroidInjector,
     LoginNoJetpackListener,
@@ -121,21 +125,29 @@ class LoginActivity :
         const val USERNAME_PARAMETER = "username"
     }
 
-    @Inject internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
+    @Inject
+    internal lateinit var androidInjector: DispatchingAndroidInjector<Any>
 
-    @Inject internal lateinit var loginAnalyticsListener: LoginAnalyticsListener
+    @Inject
+    internal lateinit var loginAnalyticsListener: LoginAnalyticsListener
 
-    @Inject internal lateinit var unifiedLoginTracker: UnifiedLoginTracker
+    @Inject
+    internal lateinit var unifiedLoginTracker: UnifiedLoginTracker
 
-    @Inject internal lateinit var urlUtils: UrlUtils
+    @Inject
+    internal lateinit var urlUtils: UrlUtils
 
-    @Inject internal lateinit var experimentTracker: ExperimentTracker
+    @Inject
+    internal lateinit var experimentTracker: ExperimentTracker
 
-    @Inject internal lateinit var appPrefsWrapper: AppPrefsWrapper
+    @Inject
+    internal lateinit var appPrefsWrapper: AppPrefsWrapper
 
-    @Inject internal lateinit var dispatcher: Dispatcher
+    @Inject
+    internal lateinit var dispatcher: Dispatcher
 
-    @Inject internal lateinit var uiMessageResolver: UIMessageResolver
+    @Inject
+    internal lateinit var uiMessageResolver: UIMessageResolver
 
     private var loginMode: LoginMode? = null
     private lateinit var binding: ActivityLoginBinding
@@ -146,6 +158,11 @@ class LoginActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // The Prologue screen requires an edge-to-edge layout, but the login screens do not. Since both the prologue
+        // and login screens are part of this activity, insets are manually managed based on the current fragment using
+        // the addWindowInsets() and removeWindowInsets() functions.
+        enableEdgeToEdge()
+
         ChromeCustomTabUtils.registerForPartialTabUsage(this)
         onBackPressedDispatcher.addCallback(
             this,
@@ -314,17 +331,36 @@ class LoginActivity :
 
     override fun onPrimaryButtonClicked() {
         unifiedLoginTracker.trackClick(Click.LOGIN_WITH_SITE_ADDRESS)
+        addWindowInsets()
         loginViaSiteAddress()
     }
 
     override fun onSecondaryButtonClicked() {
         unifiedLoginTracker.trackClick(Click.CONTINUE_WITH_WORDPRESS_COM)
+        addWindowInsets()
         startLoginViaWPCom()
+    }
+
+    private fun addWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
+    }
+
+    private fun removeWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot, null)
+        binding.snackRoot.updatePadding(0, 0, 0, 0)
     }
 
     override fun onNewToWooButtonClicked() {
         ChromeCustomTabUtils.launchUrl(this, AppUrls.HOSTING_OPTIONS_DOC)
     }
+
+    override fun onEdgeToEdgeLayoutForPrologue() = removeWindowInsets()
+
+    override fun onEdgeToEdgeLayoutForCarousel() = removeWindowInsets()
 
     private fun showMainActivityAndFinish() {
         experimentTracker.log(ExperimentTracker.LOGIN_SUCCESSFUL_EVENT)

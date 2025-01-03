@@ -89,6 +89,7 @@
     <color name="splash_background">@color/woo_purple_40</color>
     <color name="color_toolbar">@color/woo_white</color>
     <color name="bottom_sheet_background">@color/color_surface</color>
+    <color name="color_woo_logo">@color/color_primary</color>
 
     <!--
         Elevation colors

@@ -20,10 +20,11 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
         const val TAG = "login-prologue-fragment"
     }
 
-    interface PrologueFinishedListener {
+    interface PrologueListener {
         fun onPrimaryButtonClicked()
         fun onSecondaryButtonClicked()
         fun onNewToWooButtonClicked()
+        fun onEdgeToEdgeLayoutForPrologue()
     }
 
     @Inject
@@ -32,18 +33,20 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
     @Inject
     lateinit var appPrefsWrapper: AppPrefsWrapper
 
-    private var prologueFinishedListener: PrologueFinishedListener? = null
+    private var prologueListener: PrologueListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        prologueListener?.onEdgeToEdgeLayoutForPrologue()
+
         with(FragmentLoginPrologueBinding.bind(view)) {
             buttonLoginStore.setOnClickListener {
                 // Login with site address
-                prologueFinishedListener?.onPrimaryButtonClicked()
+                prologueListener?.onPrimaryButtonClicked()
             }
 
             buttonLoginWpcom.setOnClickListener {
                 // Login with WordPress.com account
-                prologueFinishedListener?.onSecondaryButtonClicked()
+                prologueListener?.onSecondaryButtonClicked()
             }
 
             buttonStartNewStore.setOnClickListener {
@@ -51,7 +54,7 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
                     AnalyticsEvent.LOGIN_PROLOGUE_STARTING_A_NEW_STORE_TAPPED
                 )
 
-                prologueFinishedListener?.onNewToWooButtonClicked()
+                prologueListener?.onNewToWooButtonClicked()
             }
         }
 
@@ -63,8 +66,8 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
-        if (activity is PrologueFinishedListener) {
-            prologueFinishedListener = activity as PrologueFinishedListener
+        if (activity is PrologueListener) {
+            prologueListener = activity as PrologueListener
         }
     }
 
@@ -76,6 +79,6 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
 
     override fun onDetach() {
         super.onDetach()
-        prologueFinishedListener = null
+        prologueListener = null
     }
 }
