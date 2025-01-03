@@ -17,6 +17,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagedList
 import com.google.android.material.snackbar.Snackbar
 import com.woocommerce.android.AppPrefsWrapper
+import com.woocommerce.android.BuildConfig
 import com.woocommerce.android.FeedbackPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
@@ -32,7 +33,9 @@ import com.woocommerce.android.extensions.NotificationReceivedEvent
 import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.filterNotNull
+import com.woocommerce.android.extensions.runWithContext
 import com.woocommerce.android.model.FeatureFeedbackSettings
+import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.RequestResult.SUCCESS
 import com.woocommerce.android.network.ConnectionChangeReceiver.ConnectionChangeEvent
 import com.woocommerce.android.notifications.NotificationChannelType
@@ -58,6 +61,7 @@ import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.util.DateUtils
 import com.woocommerce.android.util.ThrottleLiveData
 import com.woocommerce.android.util.WooLog
+import com.woocommerce.android.util.WooLog.T.ORDERS
 import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -83,6 +87,7 @@ import org.wordpress.android.fluxc.store.ListStore.ListErrorType.PARSE_ERROR
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.TIMEOUT_ERROR
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderSummariesFetched
+import org.wordpress.android.mediapicker.util.distinct
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -217,6 +222,8 @@ class OrderListViewModel @Inject constructor(
         }.asLiveData()
 
     fun isSelecting() = viewState.orderListState == ViewState.OrderListState.Selecting
+
+    private var isQueueingBulkUpdateSuccessMessage = false
 
     init {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
@@ -451,6 +458,7 @@ class OrderListViewModel @Inject constructor(
         listenToEmptyViewStateLiveData(pagedListWrapper)
 
         _pagedListData.addSource(pagedListWrapper.data) { pagedList ->
+            viewState = viewState.copy(isBulkUpdating = false)
             pagedList?.let {
                 displayOrdersBannerOrJitm()
                 _pagedListData.value = it
@@ -464,6 +472,14 @@ class OrderListViewModel @Inject constructor(
         }
         _isLoadingMore.addSource(pagedListWrapper.isLoadingMore) {
             _isLoadingMore.value = it
+        }
+
+        // Observe status changes in the data
+        pagedListWrapper.data.distinct().observe(this) {
+            if (isQueueingBulkUpdateSuccessMessage) {
+                isQueueingBulkUpdateSuccessMessage = false
+                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+            }
         }
 
         pagedListWrapper.listError
@@ -918,6 +934,53 @@ class OrderListViewModel @Inject constructor(
         )
     }
 
+    fun onBulkUpdateStatusClicked() {
+        launch(dispatchers.io) {
+            orderDetailRepository
+                .getOrderStatusOptions().toTypedArray()
+                .runWithContext(dispatchers.main) {
+                    triggerEvent(
+                        OrderListEvent.ShowUpdateStatusDialog(
+                            currentStatus = "", // Intentionally set as empty string to show no status selected
+                            orderStatusList = it
+                        )
+                    )
+                }
+        }
+    }
+
+    fun onBulkOrderStatusChanged(orderIds: List<Long>, newStatus: Order.Status) {
+        if (networkStatus.isConnected()) {
+            if (orderIds.isEmpty()) {
+                val errorMessage = "Trying to bulk update order status but order Ids list is empty"
+                if (BuildConfig.DEBUG) {
+                    throw IllegalStateException(errorMessage)
+                } else {
+                    WooLog.e(ORDERS, errorMessage)
+                }
+            } else {
+                viewState = viewState.copy(isBulkUpdating = true)
+                launch {
+                    val result = orderListRepository.bulkUpdateOrderStatus(
+                        orderIds = orderIds,
+                        newStatus = newStatus
+                    )
+
+                    if (result.isFailure) {
+                        viewState = viewState.copy(isBulkUpdating = false)
+                        triggerEvent(Event.ShowSnackbar(R.string.error_generic))
+                    } else {
+                        isQueueingBulkUpdateSuccessMessage = true
+                        ordersPagedListWrapper?.fetchFirstPage()
+                    }
+                }
+            }
+        } else {
+            triggerEvent(Event.ShowSnackbar(R.string.offline_error))
+        }
+        exitSelectionMode()
+    }
+
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
@@ -952,6 +1015,29 @@ class OrderListViewModel @Inject constructor(
         data object RetryLoadingOrders : OrderListEvent()
 
         data object OpenOrderCreationWithSimplePaymentsMigration : OrderListEvent()
+
+        data class ShowUpdateStatusDialog(
+            val currentStatus: String,
+            val orderStatusList: Array<Order.OrderStatus>
+        ) : OrderListEvent() {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (javaClass != other?.javaClass) return false
+
+                other as ShowUpdateStatusDialog
+
+                if (currentStatus != other.currentStatus) return false
+                if (!orderStatusList.contentEquals(other.orderStatusList)) return false
+
+                return true
+            }
+
+            override fun hashCode(): Int {
+                var result = currentStatus.hashCode()
+                result = 31 * result + orderStatusList.contentHashCode()
+                return result
+            }
+        }
     }
 
     @Parcelize
@@ -965,6 +1051,7 @@ class OrderListViewModel @Inject constructor(
         val shouldDisplayTroubleshootingBanner: Boolean = false,
         val orderListState: OrderListState? = null,
         val isSearching: Boolean = false,
+        val isBulkUpdating: Boolean = false,
         val selectionCount: Int? = null,
         val isAddOrderButtonVisible: Boolean = true
     ) : Parcelable {
