@@ -21,26 +21,11 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
 
         return PredefinedPackagesState.Data(
             storeOptions = storePackages.storeOptions.toStoreOptionsForPackages(),
-            savedPackages = storePackages.filterSavedData(),
+            savedPackages = storePackages.savedPackages
+                .map { PackageData.fromPackageDAO(it) },
             carrierPackages = storePackages.filterCarrierData()
         )
     }
-
-    private fun StorePackagesDAO.filterSavedData() =
-        savedPackages.map { packageDAO ->
-            PackageData(
-                name = packageDAO.name,
-                dimensions = packageDAO.dimensions,
-                weight = packageDAO.weight,
-                isSelected = false,
-                isPredefined = true,
-                isLetter = packageDAO.isLetter,
-                dimensionUnit = packageDAO.dimensionUnit,
-                weightUnit = packageDAO.weightUnit,
-                groupName = packageDAO.groupName,
-                id = packageDAO.id,
-            )
-        }
 
     private fun StorePackagesDAO.filterCarrierData() = mapOf(
         carrierPackages
@@ -67,18 +52,7 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
             CarrierPackageGroup(
                 groupName = group.description,
                 packages = group.packages.map { packageItem ->
-                    PackageData(
-                        name = packageItem.name,
-                        dimensions = packageItem.dimensions,
-                        weight = packageItem.weight,
-                        isSelected = false,
-                        isPredefined = true,
-                        isLetter = packageItem.isLetter,
-                        dimensionUnit = packageItem.dimensionUnit,
-                        weightUnit = packageItem.weightUnit,
-                        groupName = packageItem.groupName,
-                        id = packageItem.id,
-                    )
+                    PackageData.fromPackageDAO(packageItem)
                 }
             )
         }

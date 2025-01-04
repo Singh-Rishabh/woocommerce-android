@@ -112,12 +112,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     fun onAddCustomPackageClick(savePackageAsTemplate: Boolean) {
         val customPackage = _viewState.value.customPackageCreationData
-        selectedSite.getOrNull()
-            ?.takeIf { savePackageAsTemplate }
-            ?.let { customPackage.submitToStore(it) }
-
-        customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit)
-            .let { triggerEvent(PackageSelected(it)) }
+        if (savePackageAsTemplate) {
+            handleCustomSelectionAsTemplate(customPackage)
+        } else {
+            triggerEvent(PackageSelected(customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit)))
+        }
     }
 
     fun onPackageTypeSpinnerClick() {
@@ -194,22 +193,53 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             ?.let { set(it, updatedPackage) }
     }
 
-    private fun CustomPackageCreationData.submitToStore(site: SiteModel) {
+    private fun handleCustomSelectionAsTemplate(
+        customPackage: CustomPackageCreationData
+    ) {
+        triggerEvent(ShowLoadingDialog(true))
         launch {
-            packageRepository.createCustomPackage(
-                site = site,
-                requestData = this@submitToStore.let {
-                    CustomPackageCreationRequestData(
-                        name = it.name,
-                        isLetter = it.type == PackageType.ENVELOPE,
-                        innerDimensions = it.dimensions,
-                        boxWeight = it.weight?.toDoubleOrNull() ?: 0.0,
-                        isUserDefined = true,
-                        maxWeight = 0.0
-                    )
-                }.let { listOf(it) }
+            selectedSite.getOrNull()
+                ?.let { sendCustomPackageToStore(it, customPackage) }
+                ?.fold(
+                    onSuccess = {
+                        triggerEvent(ShowLoadingDialog(false))
+                        triggerEvent(
+                            PackageSelected(customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit))
+                        )
+                    },
+                    onFailure = {
+                        triggerEvent(ShowLoadingDialog(false))
+                        triggerEvent(ShowTemplateCreationErrorDialog)
+                    }
+                ) ?: triggerEvent(
+                PackageSelected(
+                    customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit)
+                )
             )
         }
+    }
+
+    private suspend fun sendCustomPackageToStore(
+        site: SiteModel,
+        packageData: CustomPackageCreationData
+    ): Result<PackageData> {
+        val response = packageRepository.createCustomPackage(
+            site = site,
+            requestData = CustomPackageCreationRequestData(
+                name = packageData.name,
+                isLetter = packageData.type == PackageType.ENVELOPE,
+                innerDimensions = packageData.dimensions,
+                boxWeight = packageData.weight?.toDoubleOrNull() ?: 0.0,
+                isUserDefined = true,
+                maxWeight = 0.0
+            ).let { listOf(it) }
+        )
+
+        return response.takeIf { it.isError.not() }
+            ?.model?.firstOrNull()
+            ?.let { PackageData.fromPackageDAO(it) }
+            ?.let { Result.success(it) }
+            ?: Result.failure(Throwable("Failed to save package"))
     }
 
     @Parcelize
@@ -260,4 +290,6 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
 
     data class PackageSelected(val packageData: PackageData) : MultiLiveEvent.Event()
     data class ShowPackageTypeDialog(val currentSelection: PackageType) : MultiLiveEvent.Event()
+    data class ShowLoadingDialog(val show: Boolean) : MultiLiveEvent.Event()
+    object ShowTemplateCreationErrorDialog : MultiLiveEvent.Event()
 }

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
@@ -57,6 +58,23 @@ data class PackageData(
             isSelected = false,
             isLetter = false,
             groupName = null
+        )
+
+        fun fromPackageDAO(
+            dao: PackageDAO,
+            isSelected: Boolean = false,
+            isPredefined: Boolean = true
+        ): PackageData = PackageData(
+            id = dao.id,
+            name = dao.name,
+            dimensions = dao.dimensions,
+            weight = dao.weight,
+            isSelected = isSelected,
+            isPredefined = isPredefined,
+            isLetter = dao.isLetter,
+            dimensionUnit = dao.dimensionUnit,
+            weightUnit = dao.weightUnit,
+            groupName = dao.groupName
         )
     }
 }
