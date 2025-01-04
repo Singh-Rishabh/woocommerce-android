@@ -13,6 +13,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StoreOptionsForPackages
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -38,6 +39,11 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         initialValue = ViewState(pageTabs)
     )
     val viewState = _viewState.asLiveData()
+
+    private val storeOptions: StoreOptionsForPackages
+        get() = _viewState.value.predefinedPackagesData
+            ?.storeOptions
+            ?: StoreOptionsForPackages.DEFAULT
 
     private val pageTabs
         get() = listOf(
@@ -110,7 +116,7 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
             ?.takeIf { savePackageAsTemplate }
             ?.let { customPackage.submitToStore(it) }
 
-        customPackage.toPackageData()
+        customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit)
             .let { triggerEvent(PackageSelected(it)) }
     }
 
@@ -221,8 +227,9 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         data object Error : PredefinedPackagesState()
         data object Waiting : PredefinedPackagesState()
         data class Data(
-            val savedPackages: List<PackageData> = emptyList(),
-            val carrierPackages: Map<Carrier, List<CarrierPackageGroup>> = emptyMap()
+            val storeOptions: StoreOptionsForPackages,
+            val savedPackages: List<PackageData>,
+            val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>
         ) : PredefinedPackagesState() {
             val hasCarrierSelection: Boolean
                 get() = carrierPackages.values.flatten().find { group ->

@@ -84,7 +84,7 @@ data class CustomPackageCreationData(
             return name.isNotNullOrEmpty() && weight.isNotNullOrEmpty()
         }
 
-    fun toPackageData(dimensionUnit: String = "cm") = PackageData(
+    fun toPackageData(dimensionUnit: String) = PackageData(
         id = "custom_package",
         name = name.orEmpty(),
         dimensions = "$length x $width x $height",
@@ -137,3 +137,20 @@ data class StorePredefinedPackages(
     val carrierPackages: Map<Carrier, List<CarrierPackageGroup>>,
     val savedPackages: List<PackageData>
 ) : Parcelable
+
+@Parcelize
+data class StoreOptionsForPackages(
+    val currencySymbol: String,
+    val dimensionUnit: String,
+    val weightUnit: String,
+    val originCountry: String
+) : Parcelable {
+    companion object {
+        val DEFAULT = StoreOptionsForPackages(
+            currencySymbol = "USD",
+            dimensionUnit = "cm",
+            weightUnit = "kg",
+            originCountry = "US"
+        )
+    }
+}
