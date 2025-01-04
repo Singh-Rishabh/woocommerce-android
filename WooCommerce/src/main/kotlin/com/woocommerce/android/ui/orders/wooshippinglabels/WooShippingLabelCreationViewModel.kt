@@ -67,7 +67,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
 
-    private val markOrderComplete = MutableStateFlow(false)
+    private val uiState = MutableStateFlow(
+        UIControlsState(
+            markOrderComplete = false,
+            isShipmentDetailsExpanded = false,
+            isAddressSelectionExpanded = false
+        )
+    )
 
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
@@ -252,9 +258,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             shippingAddresses.drop(1),
             shippingRatesState,
             packageSelection,
-            markOrderComplete,
-            purchaseState
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, markOrderComplete, purchaseState ->
+            uiState,
+            purchaseState,
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState ->
             if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -278,7 +284,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 shippingAddresses = addresses,
                 shippingRates = shippingRates,
                 packageSelection = packageSelection,
-                markOrderComplete = markOrderComplete,
+                uiState = uiState,
                 purchaseState = purchaseState
             )
         }.collectLatest {
@@ -309,7 +315,15 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onMarkOrderCompleteChange(value: Boolean) {
-        markOrderComplete.value = value
+        uiState.update { it.copy(markOrderComplete = value) }
+    }
+
+    fun onShipmentDetailsExpandedChange(value: Boolean) {
+        uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+    }
+
+    fun onSelectAddressExpandedChange(value: Boolean) {
+        uiState.update { it.copy(isAddressSelectionExpanded = value) }
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
@@ -348,7 +362,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         if (selectedPackage == null || addresses == null || shippingRate == null || weight == null) return
 
         val orderId = navArgs.orderId
-        val lastOrderComplete = markOrderComplete.value
+        val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
 
         purchaseState.value = PurchaseState.InProgress
@@ -441,7 +455,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
             val packageSelection: PackageSelectionState,
-            val markOrderComplete: Boolean,
+            val uiState: UIControlsState,
             val purchaseState: PurchaseState
         ) : WooShippingViewState()
     }
@@ -487,6 +501,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val totalWeight: Float
             get() = customWeight ?: defaultWeight
     }
+
+    data class UIControlsState(
+        val markOrderComplete: Boolean,
+        val isShipmentDetailsExpanded: Boolean,
+        val isAddressSelectionExpanded: Boolean
+    )
 
     data class ShippingRatesInfo(
         val orderId: Long,
