@@ -203,13 +203,19 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                 ?.fold(
                     onSuccess = {
                         triggerEvent(ShowLoadingDialog(false))
-                        triggerEvent(PackageSelected(customPackage.toPackageData()))
+                        triggerEvent(
+                            PackageSelected(customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit))
+                        )
                     },
                     onFailure = {
                         triggerEvent(ShowLoadingDialog(false))
                         triggerEvent(ShowTemplateCreationErrorDialog)
                     }
-                ) ?: triggerEvent(PackageSelected(customPackage.toPackageData()))
+                ) ?: triggerEvent(
+                PackageSelected(
+                    customPackage.toPackageData(dimensionUnit = storeOptions.dimensionUnit)
+                )
+            )
         }
     }
 
