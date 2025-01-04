@@ -5,6 +5,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StoreOptionsForPackages
 import javax.inject.Inject
 
 class FetchPredefinedPackagesFromStore @Inject constructor(
@@ -19,10 +20,10 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
             ?: return PredefinedPackagesState.Error
 
         return PredefinedPackagesState.Data(
-            carrierPackages = storePackages.filterCarrierData(),
-            savedPackages = storePackages
-                .savedPackages
-                .map { PackageData.fromPackageDAO(it) }
+            storeOptions = storePackages.storeOptions.toStoreOptionsForPackages(),
+            savedPackages = storePackages.savedPackages
+                .map { PackageData.fromPackageDAO(it) },
+            carrierPackages = storePackages.filterCarrierData()
         )
     }
 
@@ -35,6 +36,14 @@ class FetchPredefinedPackagesFromStore @Inject constructor(
             .parseCarrierData(CarrierType.DHL)
             .let { Carrier.DHL to it }
     )
+
+    private fun StoreOptionsDAO.toStoreOptionsForPackages() =
+        StoreOptionsForPackages(
+            currencySymbol = currencySymbol,
+            dimensionUnit = dimensionUnit,
+            weightUnit = weightUnit,
+            originCountry = originCountry
+        )
 
     private fun Map<CarrierType, CarrierDAO>.parseCarrierData(
         carrierType: CarrierType
