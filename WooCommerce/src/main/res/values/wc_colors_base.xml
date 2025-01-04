@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="woo_purple_0">#F2EDFF</color>
+    <color name="woo_purple_5">#E1D7FF</color>
     <color name="woo_purple_10">#D1C1FF</color>
     <color name="woo_purple_20">#B999FF</color>
     <color name="woo_purple_30">#A77EFF</color>
