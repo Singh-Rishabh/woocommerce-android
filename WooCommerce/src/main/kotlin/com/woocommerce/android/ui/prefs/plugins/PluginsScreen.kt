@@ -134,8 +134,8 @@ private fun PluginItem(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.major_100))
             .clickable(onClick = { onPluginClicked(plugin) })
+            .padding(dimensionResource(R.dimen.major_100))
     ) {
         Column(
             modifier = Modifier
