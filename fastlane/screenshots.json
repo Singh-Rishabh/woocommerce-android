@@ -5,7 +5,7 @@
   "stylesheet": "playstoreres/assets/style.css",
   "devices": [
     {
-      "name": "Pixel 3",
+      "name": "Pixel 9",
       "canvas_size": [
         1080,
         1920
@@ -20,22 +20,22 @@
       ],
       "font_size": "80px",
       "screenshot_size": [
-        636,
-        1191
+        634,
+        1411
       ],
       "screenshot_offset": [
-        226,
-        501
+        222,
+        394
       ],
-      "screenshot_mask": "playstoreres/assets/pixel-3-mask.png",
-      "device_frame": "playstoreres/assets/pixel-3.png",
+      "screenshot_mask": "playstoreres/assets/pixel-9-mask.png",
+      "device_frame": "playstoreres/assets/pixel-9.png",
       "device_frame_size": [
-        900,
-        1626
+        692,
+        1476
       ],
       "device_frame_offset": [
-        91,
-        286
+        194,
+        366
       ]
     },
     {
@@ -75,41 +75,41 @@
   "entries": [
     // Track sales and bestselling products
     {
-      "device": "Pixel 3",
-      "filename": "Pixel 3-01.png",
       "background": "#674399",
+      "device": "Pixel 9",
+      "filename": "Pixel 9-01.png",
       "screenshot": "images/phoneScreenshots/1-order-dashboard-dark.png",
       "text": "metadata/android/{locale}/promo_screenshot_1.txt"
     },
     // Create orders on the fly
     {
-      "device": "Pixel 3",
-      "filename": "Pixel 3-02.png",
       "background": "#C9356E",
+      "device": "Pixel 9",
+      "filename": "Pixel 9-02.png",
       "screenshot": "images/phoneScreenshots/2-add-order-light.png",
       "text": "metadata/android/{locale}/promo_screenshot_2.txt"
     },
     // Take payments in person
     {
-      "device": "Pixel 3",
-      "filename": "Pixel 3-03.png",
       "background": "#674399",
+      "device": "Pixel 9",
+      "filename": "Pixel 9-03.png",
       "screenshot": "images/phoneScreenshots/3-in-person-payments-dark.png",
       "text": "metadata/android/{locale}/promo_screenshot_3.txt"
     },
     // Add and edit products with a touch
     {
-      "device": "Pixel 3",
-      "filename": "Pixel 3-04.png",
       "background": "#C9356E",
+      "device": "Pixel 9",
+      "filename": "Pixel 9-04.png",
       "screenshot": "images/phoneScreenshots/4-add-product-light.png",
       "text": "metadata/android/{locale}/promo_screenshot_4.txt"
     },
     // Get notified of every sale
     {
-      "device": "Pixel 3",
-      "filename": "Pixel 3-05.png",
       "background": "#674399",
+      "device": "Pixel 9",
+      "filename": "Pixel 9-05.png",
       "screenshot": "images/phoneScreenshots/5-push-notifications-dark.png",
       "text": "metadata/android/{locale}/promo_screenshot_5.txt"
     }
