@@ -998,7 +998,7 @@ class OrderListViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `When selection count reaches limit then show error message`() {
+    fun `when selection count reaches limit, then show error message`() {
         // when
         viewModel.onSelectionChanged(BULK_UPDATE_COUNT_LIMIT)
 
