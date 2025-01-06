@@ -56,7 +56,7 @@ class PluginsViewModel @Inject constructor(
                                     name = StringEscapeUtils.unescapeHtml4(it.name),
                                     authorName = StringEscapeUtils.unescapeHtml4(it.authorName),
                                     version = it.version!!,
-                                    status = it.getState()
+                                    status = it.getStatus()
                                 )
                             }
                     )
@@ -67,7 +67,7 @@ class PluginsViewModel @Inject constructor(
         }
     }
 
-    private fun SystemPluginModel.getState(): Plugin.PluginStatus? {
+    private fun SystemPluginModel.getStatus(): Plugin.PluginStatus {
         return when {
             !isActive -> Inactive(
                 resourceProvider.getString(R.string.plugin_state_inactive),
