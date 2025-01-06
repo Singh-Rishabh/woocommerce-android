@@ -127,6 +127,10 @@ class OrderListViewModel @Inject constructor(
 ) : ScopedViewModel(savedState), LifecycleOwner {
     private val navArgs: OrderListFragmentArgs by savedState.navArgs()
 
+    companion object {
+        const val BULK_UPDATE_COUNT_LIMIT = 100
+    }
+
     private val lifecycleRegistry: LifecycleRegistry by lazy {
         LifecycleRegistry(this)
     }
@@ -915,9 +919,21 @@ class OrderListViewModel @Inject constructor(
     fun onSelectionChanged(count: Int) {
         when {
             count == 0 -> exitSelectionMode()
+            count >= BULK_UPDATE_COUNT_LIMIT -> {
+                viewState = viewState.copy(selectionCount = count)
+                showMaximumBulkSelectionNotice()
+            }
             count > 0 && !isSelecting() -> enterSelectionMode(count)
             count > 0 -> viewState = viewState.copy(selectionCount = count)
         }
+    }
+
+    private fun showMaximumBulkSelectionNotice() {
+        val message = resourceProvider.getString(
+            R.string.orderlist_bulk_update_maximum_reached,
+            BULK_UPDATE_COUNT_LIMIT
+        )
+        triggerEvent(OrderListEvent.ShowSnackbarString(message))
     }
 
     private fun enterSelectionMode(count: Int) {
@@ -1021,6 +1037,7 @@ class OrderListViewModel @Inject constructor(
 
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
+        data class ShowSnackbarString(val message: String) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
         data class OpenPurchaseCardReaderLink(
             val url: String,
