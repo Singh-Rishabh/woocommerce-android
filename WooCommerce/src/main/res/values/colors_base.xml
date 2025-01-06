@@ -105,6 +105,12 @@
     <color name="graph_no_data_text_color">@color/color_on_surface</color>
     <color name="graph_label_color">@color/color_on_surface_medium</color>
 
+    <!-- Prologue colors-->
+    <color name="prologue_carousel_shape_color">@color/woo_gray_0</color>
+    <color name="prologue_login_background_color">@color/woo_purple_70</color>
+    <color name="prologue_login_shape_color">@color/woo_purple_40</color>
+    <color name="prologue_login_button_color">@color/white</color>
+
     <!--
         Rating widget colors
     -->
