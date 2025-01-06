@@ -49,12 +49,11 @@ import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.preview.LightDarkThemePreviews
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Inactive
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Unknown
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.UpToDate
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.UpdateAvailable
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.Inactive
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.Unknown
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.UpToDate
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.UpdateAvailable
 
 @Composable
 fun PluginsScreen(viewModel: PluginsViewModel) {
@@ -86,21 +85,21 @@ fun PluginsScreen(viewModel: PluginsViewModel) {
 
 @Composable
 private fun PluginsScreen(
-    state: ViewState,
+    state: PluginsViewState,
     onRetryTapped: () -> Unit,
     onPluginClicked: (Plugin) -> Unit,
 ) {
     Crossfade(targetState = state, label = "") {
         when (it) {
-            is ViewState.Loading -> {
+            is PluginsViewState.Loading -> {
                 ShimmerPluginsList()
             }
 
-            is ViewState.Error -> {
+            is PluginsViewState.Error -> {
                 Error(onRetryTapped)
             }
 
-            is ViewState.Loaded -> {
+            is PluginsViewState.Loaded -> {
                 Plugins(
                     it.plugins,
                     onPluginClicked,
@@ -308,7 +307,7 @@ private fun Error(onRetryTapped: () -> Unit) {
 private fun PreviewPlugins() {
     WooThemeWithBackground {
         PluginsScreen(
-            ViewState.Loaded(
+            PluginsViewState.Loaded(
                 plugins = listOf(
                     Plugin("Plugin 1", "Automattic", "1.0", UpToDate("Up-to-date", R.color.color_info)),
                     Plugin("Plugin 2", "Something", "2.0", UpdateAvailable("Update available (4.9)", R.color.color_primary)),
@@ -327,7 +326,7 @@ private fun PreviewPlugins() {
 private fun PreviewError() {
     WooThemeWithBackground {
         PluginsScreen(
-            ViewState.Error,
+            PluginsViewState.Error,
             onRetryTapped = {},
             onPluginClicked = {},
         )
@@ -339,7 +338,7 @@ private fun PreviewError() {
 private fun PreviewLoading() {
     WooThemeWithBackground {
         PluginsScreen(
-            ViewState.Loading,
+            PluginsViewState.Loading,
             onRetryTapped = {},
             onPluginClicked = {},
         )

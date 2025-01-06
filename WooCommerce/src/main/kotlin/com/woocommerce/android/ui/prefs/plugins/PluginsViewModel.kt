@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.prefs.plugins
 
-import androidx.annotation.ColorRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -8,14 +7,14 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.adminUrlOrDefault
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Error
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Inactive
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Unknown
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.UpToDate
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.UpdateAvailable
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loading
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Error
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.Inactive
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.Unknown
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.UpToDate
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loaded.Plugin.PluginStatus.UpdateAvailable
+import com.woocommerce.android.ui.prefs.plugins.PluginsViewState.Loading
 import com.woocommerce.android.util.isGreaterThanPluginVersion
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -36,7 +35,7 @@ class PluginsViewModel @Inject constructor(
     private val wooCommerceStore: WooCommerceStore,
     private val resourceProvider: ResourceProvider
 ) : ScopedViewModel(savedStateHandle) {
-    private val _viewState = MutableSharedFlow<ViewState>(1)
+    private val _viewState = MutableSharedFlow<PluginsViewState>(1)
     val viewState = _viewState.asLiveData()
 
     init {
@@ -104,27 +103,5 @@ class PluginsViewModel @Inject constructor(
 
     fun onBackPressed() {
         triggerEvent(Exit)
-    }
-
-    sealed interface ViewState {
-        data object Loading : ViewState
-        data object Error : ViewState
-        data class Loaded(
-            val plugins: List<Plugin> = emptyList()
-        ) : ViewState {
-            data class Plugin(
-                val name: String,
-                val authorName: String?,
-                val version: String,
-                val status: PluginStatus
-            ) {
-                sealed class PluginStatus {
-                    data class UpToDate(val title: String, @ColorRes val color: Int) : PluginStatus()
-                    data class UpdateAvailable(val title: String, @ColorRes val color: Int) : PluginStatus()
-                    data class Inactive(val title: String, @ColorRes val color: Int) : PluginStatus()
-                    data object Unknown : PluginStatus()
-                }
-            }
-        }
     }
 }
