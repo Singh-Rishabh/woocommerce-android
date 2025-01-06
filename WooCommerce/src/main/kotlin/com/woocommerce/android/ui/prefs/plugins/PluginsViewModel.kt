@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.adminUrlOrDefault
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Error
@@ -94,8 +95,10 @@ class PluginsViewModel @Inject constructor(
         when (plugin.status) {
             is Inactive -> {}
             Unknown -> {}
-            is UpToDate -> TODO()
-            is UpdateAvailable -> TODO()
+            is UpToDate -> {}
+            is UpdateAvailable -> {
+                triggerEvent(PluginsEvent.NavigateToPluginsWeb("${site.get().adminUrlOrDefault}/plugins.php"))
+            }
         }
     }
 
