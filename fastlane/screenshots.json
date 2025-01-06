@@ -75,41 +75,41 @@
   "entries": [
     // Track sales and bestselling products
     {
-      "background": "#674399",
       "device": "Pixel 9",
       "filename": "Pixel 9-01.png",
+      "background": "playstoreres/assets/background-light.png",
       "screenshot": "images/phoneScreenshots/1-order-dashboard-dark.png",
       "text": "metadata/android/{locale}/promo_screenshot_1.txt"
     },
     // Create orders on the fly
     {
-      "background": "#C9356E",
       "device": "Pixel 9",
       "filename": "Pixel 9-02.png",
+      "background": "playstoreres/assets/background-dark.png",
       "screenshot": "images/phoneScreenshots/2-add-order-light.png",
       "text": "metadata/android/{locale}/promo_screenshot_2.txt"
     },
     // Take payments in person
     {
-      "background": "#674399",
       "device": "Pixel 9",
       "filename": "Pixel 9-03.png",
+      "background": "playstoreres/assets/background-light.png",
       "screenshot": "images/phoneScreenshots/3-in-person-payments-dark.png",
       "text": "metadata/android/{locale}/promo_screenshot_3.txt"
     },
     // Add and edit products with a touch
     {
-      "background": "#C9356E",
       "device": "Pixel 9",
       "filename": "Pixel 9-04.png",
+      "background": "playstoreres/assets/background-dark.png",
       "screenshot": "images/phoneScreenshots/4-add-product-light.png",
       "text": "metadata/android/{locale}/promo_screenshot_4.txt"
     },
     // Get notified of every sale
     {
-      "background": "#674399",
       "device": "Pixel 9",
       "filename": "Pixel 9-05.png",
+      "background": "playstoreres/assets/background-light.png",
       "screenshot": "images/phoneScreenshots/5-push-notifications-dark.png",
       "text": "metadata/android/{locale}/promo_screenshot_5.txt"
     }
