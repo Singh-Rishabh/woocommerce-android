@@ -539,7 +539,6 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED,
     IN_PERSON_PAYMENTS_LEARN_MORE_TAPPED,
     PAYMENTS_HUB_TAP_TO_PAY_TAPPED,
-    PAYMENTS_HUB_TAP_TO_PAY_FEEDBACK_TAPPED,
     PAYMENTS_HUB_TAP_TO_PAY_ABOUT_TAPPED,
 
     // -- Payments Hub - Payout Summary (Previously called Deposit summary)

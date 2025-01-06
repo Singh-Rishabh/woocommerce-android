@@ -1209,7 +1209,6 @@ Language: ru
     <string name="card_reader_type_selection_bluetooth_reader_description">Устройство чтения карт принимает платежи дебетовыми и кредитными картами. Их можно прикладывать, проводить или вставлять.</string>
     <string name="card_reader_type_selection_tap_to_pay_description">Принимайте бесконтактные платежи прямо в телефоне.</string>
     <string name="card_reader_tap_to_pay_description">Для получения платежей по карте используйте\nсвой телефон. Попробуйте прямо сейчас.</string>
-    <string name="card_reader_tap_to_pay_share_feedback">Отправить отзыв</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">Не удалось войти, поскольку не разрешается создавать пароль приложения.</string>
     <string name="login_site_credentials_fetching_site">Получение сайта…</string>
     <string name="login_site_credentials_fetching_site_failed">Произошла ошибка при получении веб-сайта</string>
