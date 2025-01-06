@@ -8,6 +8,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -73,14 +74,22 @@ fun PluginsScreen(viewModel: PluginsViewModel) {
                 .padding(paddingValues)
         ) {
             viewModel.viewState.observeAsState().value?.let { state ->
-                PluginsScreen(state, viewModel::onRetryClicked)
+                PluginsScreen(
+                    state = state,
+                    onRetryTapped = viewModel::onRetryClicked,
+                    onPluginClicked = viewModel::onPluginClicked,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun PluginsScreen(state: ViewState, onRetryTapped: () -> Unit) {
+private fun PluginsScreen(
+    state: ViewState,
+    onRetryTapped: () -> Unit,
+    onPluginClicked: (Plugin) -> Unit,
+) {
     Crossfade(targetState = state, label = "") {
         when (it) {
             is ViewState.Loading -> {
@@ -92,17 +101,23 @@ private fun PluginsScreen(state: ViewState, onRetryTapped: () -> Unit) {
             }
 
             is ViewState.Loaded -> {
-                Plugins(it.plugins)
+                Plugins(
+                    it.plugins,
+                    onPluginClicked,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun Plugins(plugins: List<Plugin>) {
+private fun Plugins(
+    plugins: List<Plugin>,
+    onPluginClicked: (Plugin) -> Unit
+) {
     LazyColumn {
         items(plugins) { plugin ->
-            PluginItem(plugin)
+            PluginItem(plugin, onPluginClicked)
 
             if (plugins.last() != plugin) {
                 Divider()
@@ -112,11 +127,15 @@ private fun Plugins(plugins: List<Plugin>) {
 }
 
 @Composable
-private fun PluginItem(plugin: Plugin) {
+private fun PluginItem(
+    plugin: Plugin,
+    onPluginClicked: (Plugin) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(dimensionResource(R.dimen.major_100))
+            .clickable(onClick = { onPluginClicked(plugin) })
     ) {
         Column(
             modifier = Modifier
@@ -297,7 +316,8 @@ private fun PreviewPlugins() {
                     Plugin("Plugin 5", "Blabla", "5.0", Unknown)
                 )
             ),
-            onRetryTapped = {}
+            onRetryTapped = {},
+            onPluginClicked = {},
         )
     }
 }
@@ -308,7 +328,8 @@ private fun PreviewError() {
     WooThemeWithBackground {
         PluginsScreen(
             ViewState.Error,
-            onRetryTapped = {}
+            onRetryTapped = {},
+            onPluginClicked = {},
         )
     }
 }
@@ -319,7 +340,8 @@ private fun PreviewLoading() {
     WooThemeWithBackground {
         PluginsScreen(
             ViewState.Loading,
-            onRetryTapped = {}
+            onRetryTapped = {},
+            onPluginClicked = {},
         )
     }
 }

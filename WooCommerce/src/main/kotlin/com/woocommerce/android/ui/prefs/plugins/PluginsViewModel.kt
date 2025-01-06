@@ -11,7 +11,6 @@ import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Error
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Inactive
-import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Unknown
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.UpToDate
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.UpdateAvailable
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loading
@@ -51,13 +50,18 @@ class PluginsViewModel @Inject constructor(
                     Loaded(
                         plugins = response.model!!
                             .filter { it.version.isNotNullOrEmpty() && it.name.isNotNullOrEmpty() }
-                            .map {
-                                Plugin(
-                                    name = StringEscapeUtils.unescapeHtml4(it.name),
-                                    authorName = StringEscapeUtils.unescapeHtml4(it.authorName),
-                                    version = it.version!!,
-                                    status = it.getState()
-                                )
+                            .mapNotNull {
+                                val status = it.getStatus()
+                                if (status == null) {
+                                    null
+                                } else {
+                                    Plugin(
+                                        name = StringEscapeUtils.unescapeHtml4(it.name),
+                                        authorName = StringEscapeUtils.unescapeHtml4(it.authorName),
+                                        version = it.version!!,
+                                        status = status
+                                    )
+                                }
                             }
                     )
                 )
@@ -67,13 +71,13 @@ class PluginsViewModel @Inject constructor(
         }
     }
 
-    private fun SystemPluginModel.getState(): Plugin.PluginStatus {
+    private fun SystemPluginModel.getStatus(): Plugin.PluginStatus? {
         return when {
             !isActive -> Inactive(
                 resourceProvider.getString(R.string.plugin_state_inactive),
                 R.color.color_on_surface_disabled,
             )
-            versionLatest.isNullOrEmpty() -> Unknown
+            versionLatest.isNullOrEmpty() -> null
             isUpdateAvailable() -> UpdateAvailable(
                 resourceProvider.getString(R.string.plugin_state_update_available, versionLatest!!),
                 R.color.color_primary,
@@ -88,6 +92,14 @@ class PluginsViewModel @Inject constructor(
 
     fun onRetryClicked() {
         loadPlugins()
+    }
+
+    fun onPluginClicked(plugin: Plugin) {
+        when (plugin.status) {
+            is Inactive -> {}
+            is UpToDate -> TODO()
+            is UpdateAvailable -> TODO()
+        }
     }
 
     fun onBackPressed() {
@@ -110,7 +122,6 @@ class PluginsViewModel @Inject constructor(
                     data class UpToDate(val title: String, @ColorRes val color: Int) : PluginStatus()
                     data class UpdateAvailable(val title: String, @ColorRes val color: Int) : PluginStatus()
                     data class Inactive(val title: String, @ColorRes val color: Int) : PluginStatus()
-                    data object Unknown : PluginStatus()
                 }
             }
         }
