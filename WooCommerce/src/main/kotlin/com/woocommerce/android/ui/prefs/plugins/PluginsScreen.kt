@@ -44,6 +44,7 @@ import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.preview.LightDarkThemePreviews
+import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin
 import com.woocommerce.android.ui.prefs.plugins.PluginsViewModel.ViewState.Loaded.Plugin.PluginStatus.Inactive
@@ -252,33 +253,39 @@ private fun Error(onRetryTapped: () -> Unit) {
 @LightDarkThemePreviews
 @Composable
 private fun PreviewPlugins() {
-    PluginsScreen(
-        ViewState.Loaded(
-            plugins = listOf(
-                Plugin("Plugin 1", "Automattic", "1.0", UpToDate("Up-to-date")),
-                Plugin("Plugin 2", null, "2.0", UpdateAvailable("Update available (4.9)")),
-                Plugin("Plugin 3", "Gutenberg", "3.0", Inactive("Inactive")),
-                Plugin("Plugin 5", "Blabla", "5.0", Unknown)
-            )
-        ),
-        onRetryTapped = {}
-    )
+    WooThemeWithBackground {
+        PluginsScreen(
+            ViewState.Loaded(
+                plugins = listOf(
+                    Plugin("Plugin 1", "Automattic", "1.0", UpToDate("Up-to-date")),
+                    Plugin("Plugin 2", null, "2.0", UpdateAvailable("Update available (4.9)")),
+                    Plugin("Plugin 3", "Gutenberg", "3.0", Inactive("Inactive")),
+                    Plugin("Plugin 5", "Blabla", "5.0", Unknown)
+                )
+            ),
+            onRetryTapped = {}
+        )
+    }
 }
 
 @LightDarkThemePreviews
 @Composable
 private fun PreviewError() {
-    PluginsScreen(
-        ViewState.Error,
-        onRetryTapped = {}
-    )
+    WooThemeWithBackground {
+        PluginsScreen(
+            ViewState.Error,
+            onRetryTapped = {}
+        )
+    }
 }
 
 @LightDarkThemePreviews
 @Composable
 private fun PreviewLoading() {
-    PluginsScreen(
-        ViewState.Loading,
-        onRetryTapped = {}
-    )
+    WooThemeWithBackground {
+        PluginsScreen(
+            ViewState.Loading,
+            onRetryTapped = {}
+        )
+    }
 }
