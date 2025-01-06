@@ -65,6 +65,12 @@
     <color name="graph_grid_color">@color/woo_white_alpha_012</color>
     <color name="graph_highlight_color">@color/woo_white</color>
 
+    <!-- Prologue colors-->
+    <color name="prologue_carousel_shape_color">@color/woo_gray_80</color>
+    <color name="prologue_login_background_color">@color/color_surface</color>
+    <color name="prologue_login_shape_color">@color/woo_gray_80</color>
+    <color name="prologue_login_button_color">@color/color_primary</color>
+
     <!--
         Rating widget colors
     -->

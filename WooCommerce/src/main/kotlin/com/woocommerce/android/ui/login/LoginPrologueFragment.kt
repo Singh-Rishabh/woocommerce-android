@@ -3,6 +3,10 @@ package com.woocommerce.android.ui.login
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup.MarginLayoutParams
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.R
@@ -24,7 +28,6 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
         fun onPrimaryButtonClicked()
         fun onSecondaryButtonClicked()
         fun onNewToWooButtonClicked()
-        fun onEdgeToEdgeLayoutForPrologue()
     }
 
     @Inject
@@ -36,9 +39,15 @@ class LoginPrologueFragment : Fragment(R.layout.fragment_login_prologue) {
     private var prologueListener: PrologueListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        prologueListener?.onEdgeToEdgeLayoutForPrologue()
+        (activity as? DynamicEdgeToEdgeActivity)?.enableDynamicEdgeToEdge(forceDarkStatusBar = true)
 
         with(FragmentLoginPrologueBinding.bind(view)) {
+            ViewCompat.setOnApplyWindowInsetsListener(loginButtons) { v, windowInsets ->
+                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updateLayoutParams<MarginLayoutParams> { bottomMargin = insets.bottom }
+                WindowInsetsCompat.CONSUMED
+            }
+
             buttonLoginStore.setOnClickListener {
                 // Login with site address
                 prologueListener?.onPrimaryButtonClicked()

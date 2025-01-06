@@ -12,7 +12,8 @@
         android:layout_height="match_parent"
         android:importantForAccessibility="no"
         android:scaleType="centerCrop"
-        android:src="@drawable/img_prologue_bg" />
+        android:src="@drawable/img_prologue_bg_white"
+        app:tint="@color/prologue_carousel_shape_color" />
 
     <ImageView
         android:id="@+id/image_prologue"

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -97,11 +98,12 @@ import kotlin.text.RegexOption.IGNORE_CASE
 @AndroidEntryPoint
 class LoginActivity :
     AppCompatActivity(),
+    HasAndroidInjector,
+    DynamicEdgeToEdgeActivity,
     LoginListener,
     GoogleListener,
     PrologueListener,
     PrologueCarouselListener,
-    HasAndroidInjector,
     LoginNoJetpackListener,
     LoginEmailHelpDialogFragment.Listener,
     WooLoginEmailFragment.Listener,
@@ -158,10 +160,6 @@ class LoginActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // The Prologue screen requires an edge-to-edge layout, but the login screens do not. Since both the prologue
-        // and login screens are part of this activity, insets are manually managed based on the current fragment using
-        // the addWindowInsets() and removeWindowInsets() functions.
-        enableEdgeToEdge()
 
         ChromeCustomTabUtils.registerForPartialTabUsage(this)
         onBackPressedDispatcher.addCallback(
@@ -331,17 +329,32 @@ class LoginActivity :
 
     override fun onPrimaryButtonClicked() {
         unifiedLoginTracker.trackClick(Click.LOGIN_WITH_SITE_ADDRESS)
-        addWindowInsets()
+        disableDynamicEdgeToEdge()
         loginViaSiteAddress()
     }
 
     override fun onSecondaryButtonClicked() {
         unifiedLoginTracker.trackClick(Click.CONTINUE_WITH_WORDPRESS_COM)
-        addWindowInsets()
+        disableDynamicEdgeToEdge()
         startLoginViaWPCom()
     }
 
-    private fun addWindowInsets() {
+    override fun enableDynamicEdgeToEdge(forceDarkStatusBar: Boolean) {
+        if (forceDarkStatusBar) {
+            enableEdgeToEdge(statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT))
+        } else {
+            enableEdgeToEdge()
+        }
+
+        // Remove system bar insets from the fragment's root
+        ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot, null)
+        binding.snackRoot.updatePadding(0, 0, 0, 0)
+    }
+
+    override fun disableDynamicEdgeToEdge() {
+        enableEdgeToEdge()
+
+        // Add system bar insets to the fragment's root
         ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
@@ -349,18 +362,9 @@ class LoginActivity :
         }
     }
 
-    private fun removeWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot, null)
-        binding.snackRoot.updatePadding(0, 0, 0, 0)
-    }
-
     override fun onNewToWooButtonClicked() {
         ChromeCustomTabUtils.launchUrl(this, AppUrls.HOSTING_OPTIONS_DOC)
     }
-
-    override fun onEdgeToEdgeLayoutForPrologue() = removeWindowInsets()
-
-    override fun onEdgeToEdgeLayoutForCarousel() = removeWindowInsets()
 
     private fun showMainActivityAndFinish() {
         experimentTracker.log(ExperimentTracker.LOGIN_SUCCESSFUL_EVENT)
