@@ -310,7 +310,12 @@ private fun PreviewPlugins() {
             PluginsViewState.Loaded(
                 plugins = listOf(
                     Plugin("Plugin 1", "Automattic", "1.0", UpToDate("Up-to-date", R.color.color_info)),
-                    Plugin("Plugin 2", "Something", "2.0", UpdateAvailable("Update available (4.9)", R.color.color_primary)),
+                    Plugin(
+                        "Plugin 2",
+                        "Something",
+                        "2.0",
+                        UpdateAvailable("Update available (4.9)", R.color.color_primary)
+                    ),
                     Plugin("Plugin 3", "Gutenberg", "3.0", Inactive("Inactive", R.color.color_on_surface_disabled)),
                     Plugin("Plugin 5", "Blabla", "5.0", Unknown)
                 )
