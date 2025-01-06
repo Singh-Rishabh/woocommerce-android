@@ -16,16 +16,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -83,9 +86,11 @@ private fun PluginsScreen(state: ViewState, onRetryTapped: () -> Unit) {
             is ViewState.Loading -> {
                 ShimmerPluginsList()
             }
+
             is ViewState.Error -> {
                 Error(onRetryTapped)
             }
+
             is ViewState.Loaded -> {
                 Plugins(it.plugins)
             }
@@ -134,12 +139,41 @@ private fun PluginItem(plugin: Plugin) {
                 )
             }
 
-            if (plugin.status !is Unknown) {
-                Text(
+            when (plugin.status) {
+                is Inactive -> Text(
                     text = plugin.status.title,
                     color = colorResource(id = plugin.status.color),
                     fontWeight = FontWeight.Bold
                 )
+
+                is UpToDate -> Text(
+                    text = plugin.status.title,
+                    color = colorResource(id = plugin.status.color),
+                    fontWeight = FontWeight.Bold
+                )
+
+                is UpdateAvailable -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = plugin.status.title,
+                            tint = colorResource(id = plugin.status.color),
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+
+                        Text(
+                            text = plugin.status.title,
+                            color = colorResource(id = plugin.status.color),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+
+                Unknown -> {}
             }
         }
     }
@@ -257,9 +291,9 @@ private fun PreviewPlugins() {
         PluginsScreen(
             ViewState.Loaded(
                 plugins = listOf(
-                    Plugin("Plugin 1", "Automattic", "1.0", UpToDate("Up-to-date")),
-                    Plugin("Plugin 2", null, "2.0", UpdateAvailable("Update available (4.9)")),
-                    Plugin("Plugin 3", "Gutenberg", "3.0", Inactive("Inactive")),
+                    Plugin("Plugin 1", "Automattic", "1.0", UpToDate("Up-to-date", R.color.color_info)),
+                    Plugin("Plugin 2", "Something", "2.0", UpdateAvailable("Update available (4.9)", R.color.color_primary)),
+                    Plugin("Plugin 3", "Gutenberg", "3.0", Inactive("Inactive", R.color.color_on_surface_disabled)),
                     Plugin("Plugin 5", "Blabla", "5.0", Unknown)
                 )
             ),

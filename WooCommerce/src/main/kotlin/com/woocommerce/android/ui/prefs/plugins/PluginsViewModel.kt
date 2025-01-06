@@ -69,12 +69,16 @@ class PluginsViewModel @Inject constructor(
 
     private fun SystemPluginModel.getState(): Plugin.PluginStatus {
         return when {
-            !isActive -> Inactive(resourceProvider.getString(R.string.plugin_state_inactive))
+            !isActive -> Inactive(
+                resourceProvider.getString(R.string.plugin_state_inactive),
+                R.color.color_on_surface_disabled,
+            )
             versionLatest.isNullOrEmpty() -> Unknown
             isUpdateAvailable() -> UpdateAvailable(
-                resourceProvider.getString(R.string.plugin_state_update_available, versionLatest!!)
+                resourceProvider.getString(R.string.plugin_state_update_available, versionLatest!!),
+                R.color.color_primary,
             )
-            else -> UpToDate(resourceProvider.getString(R.string.plugin_state_up_to_date))
+            else -> UpToDate(resourceProvider.getString(R.string.plugin_state_up_to_date), R.color.color_info)
         }
     }
 
@@ -102,14 +106,11 @@ class PluginsViewModel @Inject constructor(
                 val version: String,
                 val status: PluginStatus
             ) {
-                sealed class PluginStatus(open val title: String, @ColorRes val color: Int) {
-                    data class UpToDate(override val title: String) : PluginStatus(title, R.color.color_info)
-                    data class UpdateAvailable(override val title: String) : PluginStatus(title, R.color.color_alert)
-                    data class Inactive(override val title: String) : PluginStatus(
-                        title,
-                        R.color.color_on_surface_disabled
-                    )
-                    data object Unknown : PluginStatus("", R.color.color_on_surface_disabled)
+                sealed class PluginStatus {
+                    data class UpToDate(val title: String, @ColorRes val color: Int) : PluginStatus()
+                    data class UpdateAvailable(val title: String, @ColorRes val color: Int) : PluginStatus()
+                    data class Inactive(val title: String, @ColorRes val color: Int) : PluginStatus()
+                    data object Unknown : PluginStatus()
                 }
             }
         }
