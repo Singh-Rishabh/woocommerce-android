@@ -1209,7 +1209,6 @@ Language: ar
     <string name="card_reader_type_selection_bluetooth_reader_description">يقبل قارئ البطاقات المدفوعات من خلال الضغط والرقائق والسحب باستخدام بطاقات الخصم والائتمان.</string>
     <string name="card_reader_type_selection_tap_to_pay_description">اقبل مدفوعات لا حصر لها بأمان وبشكل مباشر من هاتفك.</string>
     <string name="card_reader_tap_to_pay_description">استخدم هاتفك لقبول الدفع\nبالبطاقة. جربها الآن.</string>
-    <string name="card_reader_tap_to_pay_share_feedback">مشاركة ملاحظات</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">يتعذر تسجيل الدخول لأن إنشاء كلمة مرور التطبيق غير معتمد.</string>
     <string name="login_site_credentials_fetching_site">جارٍ إحضار الموقع…</string>
     <string name="login_site_credentials_fetching_site_failed">حدث خطأ في أثناء إحضار موقعك على الويب</string>

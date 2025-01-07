@@ -365,6 +365,7 @@
     <!--
         Site picker
     -->
+    <string name="site_picker_select_store_list_header_with_hidden_sites">Select store to connect (%d hidden)</string>
     <string name="login_site_picker_enter_site_address">Enter a site address</string>
     <string name="login_site_picker_add_a_store">Connect another store</string>
     <string name="site_picker_create_new_store">Create a new store</string>
@@ -615,6 +616,8 @@
     <string name="orderlist_selection_count">%d orders selected</string>
     <string name="orderlist_selection_count_single">%d order selected</string>
     <string name="orderlist_selection_menu_update_status">Update status</string>
+    <string name="orderlist_bulk_update_status_updated">Status updated!</string>
+    <string name="orderlist_bulk_update_maximum_reached">Maximum selection count (%d) is reached.</string>
 
     <!--
          Simple Payments
@@ -1565,7 +1568,6 @@
     <string name="card_reader_tap_to_pay_header">TAP TO PAY</string>
     <string name="card_reader_about_tap_to_pay">About Tap to Pay</string>
     <string name="card_reader_tap_to_pay_description">Use your phone to accept card\npayments. Try it now.</string>
-    <string name="card_reader_tap_to_pay_share_feedback">Share Feedback</string>
     <string name="card_reader_tap_to_pay_not_available_error_check_requirements_button">Check Requirements</string>
     <string name="card_reader_tap_to_pay_not_available_error_title">Tap to Pay is not available</string>
     <string name="card_reader_tap_to_pay_not_available_error_nfc">To use Tap To Pay on Android, your device needs an NFC chip. To accept in-person payments, please purchase a Bluetooth card reader.</string>
@@ -4446,5 +4448,9 @@
     <string name="woo_shipping_labels_package_creation_error">Failed to load the package data</string>
     <string name="woo_shipping_labels_package_creation_box_type">Box</string>
     <string name="woo_shipping_labels_package_creation_envelope_type">Envelope</string>
+    <string name="woo_shipping_labels_package_creation_error_title">We couldn\'t save the package as template</string>
+    <string name="woo_shipping_labels_package_creation_error_message">Do you want to proceed without saving it?</string>
+    <string name="woo_shipping_labels_package_creation_error_proceed">Proceed</string>
+    <string name="woo_shipping_labels_package_creation_error_cancel">Cancel</string>
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
 </resources>

@@ -1209,7 +1209,6 @@ Language: zh_TW
     <string name="card_reader_type_selection_bluetooth_reader_description">讀卡機接受信用卡和簽帳金融卡的輕觸、晶片和刷卡付款。</string>
     <string name="card_reader_type_selection_tap_to_pay_description">直接從手機安全地接受零接觸付款。</string>
     <string name="card_reader_tap_to_pay_description">使用手機接受信用卡\n付款。 立即試用。</string>
-    <string name="card_reader_tap_to_pay_share_feedback">分享意見反應</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">無法登入，因為未核准建立應用程式密碼。</string>
     <string name="login_site_credentials_fetching_site">正在擷取網站…</string>
     <string name="login_site_credentials_fetching_site_failed">擷取你的網站時發生錯誤</string>
