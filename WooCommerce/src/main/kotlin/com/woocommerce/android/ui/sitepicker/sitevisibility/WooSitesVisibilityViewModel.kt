@@ -3,6 +3,9 @@ package com.woocommerce.android.ui.sitepicker.sitevisibility
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import com.woocommerce.android.R
+import com.woocommerce.android.analytics.AnalyticsEvent
+import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ERROR
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.NotificationStore
+import org.wordpress.android.fluxc.store.NotificationStore.NotificationSettingsUpdateError
 import org.wordpress.android.fluxc.store.NotificationStore.SiteNotificationSetting
 import javax.inject.Inject
 
@@ -24,6 +28,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
     private val selectedSite: SelectedSite,
     private val visibleSitesDataStore: VisibleWooSitesDataStore,
     private val notificationsStore: NotificationStore,
+    private val trackerWrapper: AnalyticsTrackerWrapper,
     savedStateHandle: SavedStateHandle
 ) : ScopedViewModel(savedStateHandle) {
     private var initiallySelectedSiteIds: List<Long> = emptyList()
@@ -55,6 +60,12 @@ class WooSitesVisibilityViewModel @Inject constructor(
     }
 
     fun onSaveTapped() {
+        trackerWrapper.track(
+            stat = AnalyticsEvent.SITE_PICKER_LIST_SAVE_BUTTON_TAPPED,
+            properties = mapOf(
+                "hidden_site_count" to _wooStoresState.value.wooStores.count { !it.isSelected }
+            )
+        )
         _wooStoresState.value = _wooStoresState.value.copy(isLoading = true)
         launch {
             notificationsStore.updateNotificationSettingsFor(
@@ -67,6 +78,7 @@ class WooSitesVisibilityViewModel @Inject constructor(
                 }
             ).fold(
                 onSuccess = {
+                    trackerWrapper.track(stat = AnalyticsEvent.SITE_PICKER_LIST_SAVING_SUCCESS)
                     visibleSitesDataStore.updateSiteVisibilityStatus(
                         _wooStoresState.value.wooStores
                             .associate { it.siteId to it.isSelected }
@@ -74,6 +86,12 @@ class WooSitesVisibilityViewModel @Inject constructor(
                     triggerEvent(ExitWithResult(data = true))
                 },
                 onFailure = {
+                    if (it is NotificationSettingsUpdateError) {
+                        trackerWrapper.track(
+                            stat = AnalyticsEvent.SITE_PICKER_LIST_SAVING_FAILURE,
+                            properties = mapOf(KEY_ERROR to it.type.toString())
+                        )
+                    }
                     triggerEvent(
                         Event.ShowDialog(
                             titleId = R.string.site_picker_edit_store_list_error_title,

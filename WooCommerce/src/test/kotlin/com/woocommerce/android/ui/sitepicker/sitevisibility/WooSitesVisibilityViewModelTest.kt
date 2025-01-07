@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.sitepicker.sitevisibility
 
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.sitepicker.SitePickerRepository
 import com.woocommerce.android.ui.sitepicker.SitePickerTestUtils
@@ -66,6 +67,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
     private val visibleWooSitesDataStore: VisibleWooSitesDataStore = mock {
         onBlocking { isSiteVisible(any()) } doReturn flowOf(true)
     }
+    private val trackerWrapper: AnalyticsTrackerWrapper = mock()
 
     private val notificationStore: NotificationStore = mock()
 
@@ -78,6 +80,7 @@ class WooSitesVisibilityViewModelTest : BaseUnitTest() {
             selectedSite = selectedSite,
             visibleSitesDataStore = visibleWooSitesDataStore,
             notificationsStore = notificationStore,
+            trackerWrapper = trackerWrapper,
             savedStateHandle = mock()
         )
     }
