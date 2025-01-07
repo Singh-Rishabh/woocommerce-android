@@ -20,6 +20,7 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -33,7 +34,8 @@ class PluginsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val site: SelectedSite,
     private val wooCommerceStore: WooCommerceStore,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ScopedViewModel(savedStateHandle) {
     private val _viewState = MutableSharedFlow<PluginsViewState>(1)
     val viewState = _viewState.asLiveData()
@@ -43,7 +45,7 @@ class PluginsViewModel @Inject constructor(
     }
 
     private fun loadPlugins() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             _viewState.emit(Loading)
             val response = wooCommerceStore.fetchSystemPlugins(site.get())
             if (!response.isError && response.model != null) {
