@@ -36,6 +36,7 @@ import com.woocommerce.android.ui.orders.list.OrderListItemIdentifier
 import com.woocommerce.android.ui.orders.list.OrderListItemUIType
 import com.woocommerce.android.ui.orders.list.OrderListRepository
 import com.woocommerce.android.ui.orders.list.OrderListViewModel
+import com.woocommerce.android.ui.orders.list.OrderListViewModel.Companion.BULK_UPDATE_COUNT_LIMIT
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.OnAddingProductViaScanningFailed
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowErrorSnack
@@ -1087,6 +1088,25 @@ class OrderListViewModelTest : BaseUnitTest() {
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
         assertThat(viewModel.isSelecting()).isFalse()
+
+    @Test
+    fun `when selection count reaches limit, then show error message`() {
+        // when
+        viewModel.onSelectionChanged(BULK_UPDATE_COUNT_LIMIT)
+
+        // then
+        assertEquals(BULK_UPDATE_COUNT_LIMIT, viewModel.viewState.selectionCount)
+
+        viewModel.event.getOrAwaitValue().let { event ->
+            assertTrue(event is OrderListEvent.ShowSnackbarString)
+            assertEquals(
+                event.message,
+                resourceProvider.getString(
+                    R.string.orderlist_bulk_update_maximum_reached,
+                    BULK_UPDATE_COUNT_LIMIT
+                )
+            )
+        }
     }
 
     private companion object {

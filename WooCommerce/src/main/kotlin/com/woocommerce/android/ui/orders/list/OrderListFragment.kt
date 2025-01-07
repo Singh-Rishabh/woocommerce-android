@@ -124,7 +124,9 @@ class OrderListFragment :
 
     private var tracker: SelectionTracker<Long>? = null
     private var actionMode: ActionMode? = null
-    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>()
+    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>(
+        maxSelectionCount = OrderListViewModel.BULK_UPDATE_COUNT_LIMIT
+    )
     private val viewModel: OrderListViewModel by viewModels()
     private val communicationViewModel: OrdersCommunicationViewModel by activityViewModels()
     private var snackBar: Snackbar? = null
@@ -275,6 +277,8 @@ class OrderListFragment :
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     val selectionCount = tracker?.selection?.size() ?: 0
+                    selectionPredicate.currentSelectionCount = selectionCount
+
                     viewModel.onSelectionChanged(selectionCount)
                 }
             }
@@ -356,7 +360,11 @@ class OrderListFragment :
 
     private fun adjustLayoutForNonTablet(savedInstanceState: Bundle?) {
         if (wasLastWindowSizeLargerThanCompact(savedInstanceState)) {
-            displayDetailPaneOnly()
+            if (viewModel.isSelecting()) {
+                displayListPaneOnly()
+            } else {
+                displayDetailPaneOnly()
+            }
         } else {
             displayListPaneOnly()
         }
@@ -406,6 +414,23 @@ class OrderListFragment :
                 outState.putBoolean(LAST_WINDOW_SIZE_WAS_LARGER_THAN_COMPACT, true)
             }
         }
+        tracker?.onSaveInstanceState(outState)
+        viewModel.orderIdAndPositionBackup =
+            ((binding.orderListView.ordersList.adapter as? OrderListAdapter)?.orderIdAndPosition ?: emptyMap())
+                as MutableMap<Long, Int>
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        tracker?.run {
+            onRestoreInstanceState(savedInstanceState)
+            (binding.orderListView.ordersList.adapter as? OrderListAdapter)?.orderIdAndPosition =
+                viewModel.orderIdAndPositionBackup
+            if (hasSelection()) {
+                setItemsSelected(selection.toList(), true)
+            }
+        }
+
+        super.onViewStateRestored(savedInstanceState)
     }
 
     override fun onDestroyView() {
@@ -414,6 +439,8 @@ class OrderListFragment :
         searchView = null
         orderListMenu = null
         searchMenuItem = null
+        tracker = null
+        actionMode = null
         super.onDestroyView()
         _binding = null
     }
@@ -608,13 +635,16 @@ class OrderListFragment :
                     actionText = event.actionText,
                     action = event.action
                 )
+
                 is OrderListViewModel.OrderListEvent.RetryLoadingOrders -> refreshOrders()
                 is OrderListViewModel.OrderListEvent.OpenOrderCreationWithSimplePaymentsMigration ->
                     openOrderCreationFragment(indicateSimplePaymentsMigration = true)
+
                 is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
                     showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
                 }
 
+                is OrderListViewModel.OrderListEvent.ShowSnackbarString -> uiMessageResolver.showSnack(event.message)
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
 
                 else -> event.isHandled = false
@@ -627,6 +657,7 @@ class OrderListFragment :
                     viewModel.trashOrder(event.orderId)
                     selectedOrder.selectOrder(-1L)
                 }
+
                 else -> event.isHandled = false
             }
         }
@@ -893,23 +924,6 @@ class OrderListFragment :
         binding.orderListView.submitPagedList(pagedListData)
     }
 
-    //  Some edge cases in order selection mode, like tapping the screen with 4 fingers or using TalkBack,
-    //  cause the order's onClick listener to gain focus over the selection tracker.
-    //  This quick fix will prevent the app from entering an unexpected status when the app is in selection mode.
-    private fun shouldPreventDetailNavigation(orderId: Long): Boolean {
-        if (viewModel.isSelecting()) {
-            tracker?.let { selectionTracker ->
-                if (selectionTracker.isSelected(orderId)) {
-                    selectionTracker.deselect(orderId)
-                } else {
-                    selectionTracker.select(orderId)
-                }
-            }
-            return true
-        }
-        return false
-    }
-
     override fun openOrderDetail(
         orderId: Long,
         allOrderIds: List<Long>,
@@ -917,8 +931,6 @@ class OrderListFragment :
         sharedView: View?,
         startPaymentsFlow: Boolean,
     ) {
-        if (shouldPreventDetailNavigation(orderId)) return
-
         viewModel.trackOrderClickEvent(
             orderId,
             orderStatus,

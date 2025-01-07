@@ -127,6 +127,10 @@ class OrderListViewModel @Inject constructor(
 ) : ScopedViewModel(savedState), LifecycleOwner {
     private val navArgs: OrderListFragmentArgs by savedState.navArgs()
 
+    companion object {
+        const val BULK_UPDATE_COUNT_LIMIT = 100
+    }
+
     private val lifecycleRegistry: LifecycleRegistry by lazy {
         LifecycleRegistry(this)
     }
@@ -180,6 +184,8 @@ class OrderListViewModel @Inject constructor(
     val isEmpty: LiveData<Boolean> = _isEmpty
 
     val orderId: LiveData<Long> = savedState.getLiveData<Long>("orderId")
+
+    var orderIdAndPositionBackup = mutableMapOf<Long, Int>()
 
     private val _emptyViewType: ThrottleLiveData<EmptyViewType?> by lazy {
         ThrottleLiveData(
@@ -913,12 +919,25 @@ class OrderListViewModel @Inject constructor(
     fun onSelectionChanged(count: Int) {
         when {
             count == 0 -> exitSelectionMode()
+            count >= BULK_UPDATE_COUNT_LIMIT -> {
+                viewState = viewState.copy(selectionCount = count)
+                showMaximumBulkSelectionNotice()
+            }
             count > 0 && !isSelecting() -> enterSelectionMode(count)
             count > 0 -> viewState = viewState.copy(selectionCount = count)
         }
     }
 
+    private fun showMaximumBulkSelectionNotice() {
+        val message = resourceProvider.getString(
+            R.string.orderlist_bulk_update_maximum_reached,
+            BULK_UPDATE_COUNT_LIMIT
+        )
+        triggerEvent(OrderListEvent.ShowSnackbarString(message))
+    }
+
     private fun enterSelectionMode(count: Int) {
+        analyticsTracker.track(AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SELECTION_ENABLED)
         viewState = viewState.copy(
             orderListState = ViewState.OrderListState.Selecting,
             selectionCount = count,
@@ -935,6 +954,14 @@ class OrderListViewModel @Inject constructor(
     }
 
     fun onBulkUpdateStatusClicked() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_REQUESTED,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                AnalyticsTracker.KEY_SELECTED_ORDERS_COUNT to viewState.selectionCount
+            )
+        )
+
         launch(dispatchers.io) {
             orderDetailRepository
                 .getOrderStatusOptions().toTypedArray()
@@ -953,12 +980,21 @@ class OrderListViewModel @Inject constructor(
         if (networkStatus.isConnected()) {
             if (orderIds.isEmpty()) {
                 val errorMessage = "Trying to bulk update order status but order Ids list is empty"
+                trackBulkOrderUpdateFailure()
                 if (BuildConfig.DEBUG) {
                     throw IllegalStateException(errorMessage)
                 } else {
                     WooLog.e(ORDERS, errorMessage)
                 }
             } else {
+                analyticsTracker.track(
+                    AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_CONFIRMED,
+                    mapOf(
+                        AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                        AnalyticsTracker.KEY_SELECTED_ORDERS_COUNT to viewState.selectionCount
+                    )
+                )
+
                 viewState = viewState.copy(isBulkUpdating = true)
                 launch {
                     val result = orderListRepository.bulkUpdateOrderStatus(
@@ -968,21 +1004,40 @@ class OrderListViewModel @Inject constructor(
 
                     if (result.isFailure) {
                         viewState = viewState.copy(isBulkUpdating = false)
+                        trackBulkOrderUpdateFailure()
                         triggerEvent(Event.ShowSnackbar(R.string.error_generic))
                     } else {
                         isQueueingBulkUpdateSuccessMessage = true
                         ordersPagedListWrapper?.fetchFirstPage()
+
+                        analyticsTracker.track(
+                            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
+                            mapOf(
+                                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+                            )
+                        )
                     }
                 }
             }
         } else {
+            trackBulkOrderUpdateFailure()
             triggerEvent(Event.ShowSnackbar(R.string.offline_error))
         }
         exitSelectionMode()
     }
 
+    private fun trackBulkOrderUpdateFailure() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_FAILURE,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+            )
+        )
+    }
+
     sealed class OrderListEvent : Event() {
         data class ShowErrorSnack(@StringRes val messageRes: Int) : OrderListEvent()
+        data class ShowSnackbarString(val message: String) : OrderListEvent()
         object ShowOrderFilters : OrderListEvent()
         data class OpenPurchaseCardReaderLink(
             val url: String,
