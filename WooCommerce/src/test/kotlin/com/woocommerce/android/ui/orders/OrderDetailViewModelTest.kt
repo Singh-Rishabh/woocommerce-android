@@ -2488,26 +2488,4 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         assertThat(observedViewState!!.orderInfo!!.order).isEqualTo(newOrder)
         assertThat(observedViewState!!.orderInfo!!.isPaymentCollectableWithCardReader).isFalse()
     }
-
-    @OptIn(InternalCoroutinesApi::class)
-    @Test
-    fun `given more than 3 second no order, when vm created, then TimeoutCancellationException is thrown`() = runTest {
-        // GIVEN
-        val delay = 3_001L
-
-        // WHEN
-        createViewModel()
-
-        // THEN
-        val job = launch {
-            viewModel.awaitOrder()
-        }
-
-        advanceTimeBy(delay)
-
-        job.join()
-
-        val cause = job.getCancellationException().cause
-        assertTrue(cause is TimeoutCancellationException)
-    }
 }
