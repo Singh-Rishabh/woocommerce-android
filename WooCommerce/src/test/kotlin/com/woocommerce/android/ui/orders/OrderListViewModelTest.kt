@@ -1088,6 +1088,7 @@ class OrderListViewModelTest : BaseUnitTest() {
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
         assertThat(viewModel.isSelecting()).isFalse()
+    }
 
     @Test
     fun `when selection count reaches limit, then show error message`() {
