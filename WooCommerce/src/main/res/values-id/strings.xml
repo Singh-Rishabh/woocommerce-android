@@ -1209,7 +1209,6 @@ Language: id
     <string name="card_reader_type_selection_bluetooth_reader_description">Pembaca kartu menerima pembayaran dengan chip serta secara mengetuk dan menggesek menggunakan kartu debit atau kartu kredit.</string>
     <string name="card_reader_type_selection_tap_to_pay_description">Terima pembayaran nirsentuh dengan aman langsung dari ponsel Anda. </string>
     <string name="card_reader_tap_to_pay_description">Gunakan ponsel Anda untuk menerima pembayaran\nkartu. Coba sekarang.</string>
-    <string name="card_reader_tap_to_pay_share_feedback">Bagikan Feedback</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">Tidak dapat login karena pembuatan kata sandi aplikasi tidak disetujui.</string>
     <string name="login_site_credentials_fetching_site">Mengambil situs…</string>
     <string name="login_site_credentials_fetching_site_failed">Terjadi error saat mengambil situs web Anda.</string>
