@@ -997,12 +997,17 @@ class IssueRefundViewModelTest : BaseUnitTest() {
         val items = listOf(
             mock<Order.Item> {
                 on { productId }.thenReturn(1L)
+                on { itemId }.thenReturn(1L)
                 on { quantity }.thenReturn(1.0F)
             },
             mock {
+                on { productId }.thenReturn(2L)
+                on { itemId }.thenReturn(2L)
                 on { quantity }.thenReturn(1.0F)
             },
             mock {
+                on { productId }.thenReturn(3L)
+                on { itemId }.thenReturn(3L)
                 on { quantity }.thenReturn(1.0F)
             },
         )
@@ -1059,14 +1064,17 @@ class IssueRefundViewModelTest : BaseUnitTest() {
             val items = listOf(
                 mock<Order.Item> {
                     on { productId }.thenReturn(1L)
+                    on { itemId }.thenReturn(1L)
                     on { quantity }.thenReturn(2.0F)
                 },
                 mock {
                     on { productId }.thenReturn(2L)
+                    on { itemId }.thenReturn(2L)
                     on { quantity }.thenReturn(2.0F)
                 },
                 mock {
                     on { productId }.thenReturn(3L)
+                    on { itemId }.thenReturn(3L)
                     on { quantity }.thenReturn(2.0F)
                 },
             )
@@ -1124,5 +1132,107 @@ class IssueRefundViewModelTest : BaseUnitTest() {
             // THEN
             assertThat(viewModel.refundItems.value).hasSize(1)
             assertThat(viewModel.refundItems.value!!.first().maxQuantity).isEqualTo(2.0F)
+        }
+
+    @Test
+    fun `given order with 5 product each and some fully refunded some partially, when vm init, then the rest are shown`() =
+        testBlocking {
+            // GIVEN
+            val items = listOf(
+                mock<Order.Item> {
+                    on { productId }.thenReturn(1L)
+                    on { itemId }.thenReturn(1L)
+                    on { quantity }.thenReturn(2.0F)
+                },
+                mock {
+                    on { productId }.thenReturn(2L)
+                    on { itemId }.thenReturn(2L)
+                    on { quantity }.thenReturn(2.0F)
+                },
+                mock {
+                    on { productId }.thenReturn(3L)
+                    on { itemId }.thenReturn(3L)
+                    on { quantity }.thenReturn(2.0F)
+                },
+                mock {
+                    on { productId }.thenReturn(4L)
+                    on { itemId }.thenReturn(4L)
+                    on { quantity }.thenReturn(2.0F)
+                },
+                mock {
+                    on { productId }.thenReturn(5L)
+                    on { itemId }.thenReturn(5L)
+                    on { quantity }.thenReturn(2.0F)
+                },
+            )
+            val order = mock<Order> {
+                on { this.items }.thenReturn(items)
+                on { this.total }.thenReturn(BigDecimal.TEN)
+                on { this.refundTotal }.thenReturn(BigDecimal.ZERO)
+                on { this.currency }.thenReturn("USD")
+                on { this.shippingTotal }.thenReturn(BigDecimal.ZERO)
+                on { this.feesTotal }.thenReturn(BigDecimal.ZERO)
+                on { this.paymentMethod }.thenReturn("cod")
+            }
+            val orderEntity = mock<OrderEntity>()
+            val orderMapper = mock<OrderMapper> {
+                on { toAppModel(orderEntity) }.thenReturn(order)
+            }
+            val refundedItems = listOf(
+                mock<WCRefundItem> {
+                    on { productId }.thenReturn(1L)
+                    on { quantity }.thenReturn(-2)
+                    on { subtotal }.thenReturn(BigDecimal.ZERO)
+                    on { total }.thenReturn(BigDecimal.ZERO)
+                    on { sku }.thenReturn("")
+                    on { price }.thenReturn(BigDecimal.ZERO)
+                    on { totalTax }.thenReturn(BigDecimal.ZERO)
+                    on { metaData }.thenReturn(null)
+                },
+                mock<WCRefundItem> {
+                    on { productId }.thenReturn(2L)
+                    on { quantity }.thenReturn(-1)
+                    on { subtotal }.thenReturn(BigDecimal.ZERO)
+                    on { total }.thenReturn(BigDecimal.ZERO)
+                    on { sku }.thenReturn("")
+                    on { price }.thenReturn(BigDecimal.ZERO)
+                    on { totalTax }.thenReturn(BigDecimal.ZERO)
+                    on { metaData }.thenReturn(null)
+                },
+                mock<WCRefundItem> {
+                    on { productId }.thenReturn(3L)
+                    on { quantity }.thenReturn(-2)
+                    on { subtotal }.thenReturn(BigDecimal.ZERO)
+                    on { total }.thenReturn(BigDecimal.ZERO)
+                    on { sku }.thenReturn("")
+                    on { price }.thenReturn(BigDecimal.ZERO)
+                    on { totalTax }.thenReturn(BigDecimal.ZERO)
+                    on { metaData }.thenReturn(null)
+                },
+
+            )
+
+            val refund = WCRefundModel(
+                id = 1L,
+                dateCreated = Date(),
+                amount = BigDecimal.ZERO,
+                reason = "",
+                automaticGatewayRefund = false,
+                items = refundedItems,
+                shippingLineItems = listOf(),
+                feeLineItems = listOf()
+            )
+
+            whenever(orderStore.getOrderByIdAndSite(any(), any())).thenReturn(orderEntity)
+            whenever(refundStore.getAllRefunds(any(), any())).thenReturn(listOf(refund))
+
+            // WHEN
+            initViewModel(orderMapper)
+
+            // THEN
+            assertThat(viewModel.refundItems.value).hasSize(3)
+            assertThat(viewModel.refundItems.value!![0].maxQuantity).isEqualTo(1.0F)
+            assertThat(viewModel.refundItems.value!![1].maxQuantity).isEqualTo(2.0F)
+            assertThat(viewModel.refundItems.value!![2].maxQuantity).isEqualTo(2.0F)
         }
 }
