@@ -427,19 +427,22 @@ class OrderListFragment :
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         tracker?.run {
             onRestoreInstanceState(savedInstanceState)
-
             _binding?.let { binding ->
-                val adapter = binding.orderListView.ordersList.adapter as? OrderListAdapter
-                adapter?.let {
-                    it.orderIdAndPosition = viewModel.orderIdAndPositionBackup
-                    if (hasSelection()) {
-                        setItemsSelected(selection.toList(), true)
-                    }
+                restoreAdapterBulkSelectionState(binding)
+                if (hasSelection()) {
+                    setItemsSelected(selection.toList(), true)
                 }
             }
         }
 
         super.onViewStateRestored(savedInstanceState)
+    }
+
+    private fun restoreAdapterBulkSelectionState(binding: FragmentOrderListBinding) {
+        val adapter = binding.orderListView.ordersList.adapter as? OrderListAdapter
+        if (adapter != null) {
+            adapter.orderIdAndPosition = viewModel.orderIdAndPositionBackup
+        }
     }
 
     override fun onDestroyView() {
