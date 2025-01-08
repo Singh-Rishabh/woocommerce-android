@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -367,20 +369,22 @@ fun AddressSelection(
                     bottom = dimensionResource(id = R.dimen.minor_100)
                 )
             )
-            originAddresses.forEach { option ->
-                val isSelected = option == shipFrom
-                AddressSelectionItem(
-                    address = option,
-                    isSelected = isSelected,
-                    onClick = {
-                        onShippingFromAddressChange(option)
-                    },
-                    modifier = Modifier.padding(
-                        top = dimensionResource(id = R.dimen.minor_100),
-                        start = dimensionResource(id = R.dimen.major_100),
-                        end = dimensionResource(id = R.dimen.major_100)
+            LazyColumn {
+                items(originAddresses) { option ->
+                    val isSelected = option == shipFrom
+                    AddressSelectionItem(
+                        address = option,
+                        isSelected = isSelected,
+                        onClick = {
+                            onShippingFromAddressChange(option)
+                        },
+                        modifier = Modifier.padding(
+                            top = dimensionResource(id = R.dimen.minor_100),
+                            start = dimensionResource(id = R.dimen.major_100),
+                            end = dimensionResource(id = R.dimen.major_100)
+                        )
                     )
-                )
+                }
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.major_100)))
         },
@@ -425,7 +429,7 @@ fun AddressSelectionItem(
         Row {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = address.getFormatedName(LocalContext.current),
+                    text = address.getFormattedName(LocalContext.current),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                 )
@@ -496,12 +500,13 @@ internal fun getShipTo() = Address(
     state = AmbiguousLocation.Defined(Location("CA", "California", "USA"))
 )
 
-fun OriginShippingAddress.getFormatedName(context: Context): String {
-    val name = if (firstName.isNotNullOrEmpty() || lastName.isNotNullOrEmpty()) {
-        "$firstName $lastName"
-    } else {
-        company
-            ?: context.getString(R.string.shipping_label_select_origin_address)
+fun OriginShippingAddress.getFormattedName(context: Context): String {
+    val name = when {
+        !firstName.isNullOrEmpty() && !lastName.isNullOrEmpty() -> "$firstName $lastName"
+        !firstName.isNullOrEmpty() -> firstName
+        !lastName.isNullOrEmpty() -> lastName
+        !company.isNullOrEmpty() -> company
+        else -> context.getString(R.string.shipping_label_select_origin_address)
     }
     return if (this.isDefault) {
         context.getString(R.string.shipping_label_select_origin_default_address, name)
