@@ -24,7 +24,6 @@ rootProject.name = 'WCAndroid'
 
 include ':libs:commons'
 include ':libs:cardreader'
-include ':libs:iap'
 include ':libs:apifaker'
 include ':WooCommerce'
 
