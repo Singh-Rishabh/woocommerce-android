@@ -388,6 +388,7 @@ theme across the entire app. Overridden versions should be added to the styles.x
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
+        <item name="hintEnabled">false</item>
     </style>
 
     <!--  Style set at the theme level, no need to set in layout files  -->
