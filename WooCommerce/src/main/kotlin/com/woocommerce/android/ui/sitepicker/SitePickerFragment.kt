@@ -19,6 +19,7 @@ import com.woocommerce.android.NavGraphMainDirections
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
+import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.databinding.FragmentSitePickerBinding
 import com.woocommerce.android.extensions.handleNotice
 import com.woocommerce.android.extensions.handleResult
@@ -49,6 +50,7 @@ import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitePickerState
 import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitePickerState.StoreListState
 import com.woocommerce.android.ui.sitepicker.SitePickerViewModel.SitePickerState.WooNotFoundState
 import com.woocommerce.android.ui.sitepicker.sitediscovery.SitePickerSiteDiscoveryFragment
+import com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityFragment
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Logout
@@ -74,6 +76,9 @@ class SitePickerFragment :
 
     @Inject
     lateinit var uiMessageResolver: UIMessageResolver
+
+    @Inject
+    lateinit var analyticsTrackerWrapper: AnalyticsTrackerWrapper
 
     private var skeletonView = SkeletonView()
     private var progressDialog: CustomProgressDialog? = null
@@ -116,6 +121,7 @@ class SitePickerFragment :
             }
 
             R.id.menu_edit_store_list -> {
+                analyticsTrackerWrapper.track(stat = AnalyticsEvent.SITE_PICKER_EDIT_BUTTON_TAPPED)
                 findNavController().navigateSafely(
                     SitePickerFragmentDirections.actionSitePickerFragmentToStoreVisibilityFragment()
                 )
@@ -249,6 +255,9 @@ class SitePickerFragment :
         }
         handleNotice(AccountMismatchErrorFragment.JETPACK_CONNECTED_NOTICE) {
             viewModel.onJetpackConnected()
+        }
+        handleResult<Boolean>(WooSitesVisibilityFragment.WOO_SITES_VISIBILITY_UPDATED) {
+            viewModel.onWooSitesVisibilityUpdated()
         }
     }
 

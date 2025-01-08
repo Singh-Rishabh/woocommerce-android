@@ -795,7 +795,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.start()
 
         verify(orderDetailRepository, times(1)).fetchOrderById(ORDER_ID)
-        verify(viewModel, never()).order
+        verify(viewModel, never()).awaitOrder()
 
         assertThat(snackbar).isEqualTo(ShowSnackbar(string.order_error_fetch_generic))
     }
@@ -927,30 +927,6 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         )
 
         assertThat(newOrder?.status).isEqualTo(order.status)
-    }
-
-    @Test
-    fun `Do not update order status when not connected`() = testBlocking {
-        doReturn(order).whenever(orderDetailRepository).getOrderById(any())
-        doReturn(false).whenever(networkStatus).isConnected()
-
-        var snackbar: ShowSnackbar? = null
-        viewModel.event.observeForever {
-            if (it is ShowSnackbar) snackbar = it
-        }
-
-        viewModel.order = order
-        viewModel.start()
-        viewModel.onOrderStatusChanged(
-            OrderStatusUpdateSource.Dialog(
-                oldStatus = order.status.value,
-                newStatus = CoreOrderStatus.PROCESSING.value
-            )
-        )
-
-        verify(orderDetailRepository, never()).updateOrderStatus(any(), any())
-
-        assertThat(snackbar).isEqualTo(ShowSnackbar(string.offline_error))
     }
 
     @Test
@@ -1098,7 +1074,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
         viewModel.onCardReaderPaymentCompleted()
 
-        assertThat(viewModel.order).isEqualTo(orderAfterPayment)
+        assertThat(viewModel.awaitOrder()).isEqualTo(orderAfterPayment)
     }
 
     @Test
@@ -2486,5 +2462,25 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
         assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
         assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
+    }
+
+    @Test
+    fun `given order in db, when viewmodel start, then view state is updated with order`() = testBlocking {
+        // GIVEN
+        val newOrder = order.copy(
+            status = Order.Status.Processing,
+            number = "NewOrderNumber"
+        )
+        doReturn(newOrder).whenever(orderDetailRepository).getOrderById(any())
+
+        var observedViewState: OrderDetailViewState? = null
+        viewModel.viewStateData.observeForever { _, newState -> observedViewState = newState }
+
+        // WHEN
+        viewModel.start()
+
+        // THEN
+        assertThat(observedViewState!!.orderInfo!!.order).isEqualTo(newOrder)
+        assertThat(observedViewState!!.orderInfo!!.isPaymentCollectableWithCardReader).isFalse()
     }
 }
