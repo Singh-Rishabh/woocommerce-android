@@ -280,9 +280,10 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = InitialState
                     }
 
-                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState(
-                        event.paymentMethod
-                    )
+                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> {
+                        cancelPaymentAction()
+                        showSuccessfulPaymentState(event.paymentMethod)
+                    }
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                 }
