@@ -478,14 +478,11 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
             doReturn(true).whenever(orderDetailRepository).hasVirtualProductsOnly(listOf(3, 4))
             doReturn(virtualOrder).whenever(orderDetailRepository).getOrderById(any())
-            doReturn(virtualOrder).whenever(orderDetailRepository).fetchOrderById(any())
 
             doReturn(testOrderRefunds).whenever(orderDetailRepository).getOrderRefunds(any())
 
-            doReturn(true).whenever(orderDetailRepository).fetchOrderNotes(any())
             doReturn(testOrderNotes).whenever(orderDetailRepository).getOrderNotes(any())
             doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).getOrderShippingLabels(any())
-            doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).fetchOrderShippingLabels(any())
 
             viewModel.start()
 
