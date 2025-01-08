@@ -1309,6 +1309,8 @@
     <string name="shipping_label_purchased_tracking_error">We currently do not support Tracking for this carrier</string>
     <string name="shipping_label_purchased_print_error">Something went wrong with this Shipping Label, try again later</string>
     <string name="shipping_label_purchased_purchase_failed_error">We can\'t confirm the Shipping Label purchase right now, try again later</string>
+    <string name="shipping_label_select_origin_default_address">%s (default)</string>
+    <string name="shipping_label_select_origin_address">Address</string>
 
 
     <!--
