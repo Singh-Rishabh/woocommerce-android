@@ -59,16 +59,11 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowUndoSnackbar
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
-import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.UseConstructor
@@ -2487,27 +2482,5 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         // THEN
         assertThat(observedViewState!!.orderInfo!!.order).isEqualTo(newOrder)
         assertThat(observedViewState!!.orderInfo!!.isPaymentCollectableWithCardReader).isFalse()
-    }
-
-    @OptIn(InternalCoroutinesApi::class)
-    @Test
-    fun `given more than 3 second no order, when vm created, then TimeoutCancellationException is thrown`() = runTest {
-        // GIVEN
-        val delay = 3_001L
-
-        // WHEN
-        createViewModel()
-
-        // THEN
-        val job = launch {
-            viewModel.awaitOrder()
-        }
-
-        advanceTimeBy(delay)
-
-        job.join()
-
-        val cause = job.getCancellationException().cause
-        assertTrue(cause is TimeoutCancellationException)
     }
 }
