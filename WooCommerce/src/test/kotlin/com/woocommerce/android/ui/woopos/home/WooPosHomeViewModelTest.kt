@@ -417,6 +417,23 @@ class WooPosHomeViewModelTest {
             )
         }
 
+    @Test
+    fun `given OrderSuccessfullyPaid by cash, then redirect back to items screen`() =
+        runTest {
+            // GIVEN
+            val events = MutableSharedFlow<ChildToParentEvent>()
+            whenever(childrenToParentEventReceiver.events).thenReturn(events)
+            val viewModel = createViewModel()
+
+            // WHEN
+            viewModel.onUIEvent(WooPosHomeUIEvent.OnPaymentCompletedViaCash)
+
+            // THEN
+            verify(wooPosItemsNavigator).sendNavigationEvent(
+                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+            )
+        }
+
     private fun createViewModel() = WooPosHomeViewModel(
         childrenToParentEventReceiver,
         parentToChildrenEventSender,
