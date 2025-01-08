@@ -415,18 +415,27 @@ class OrderListFragment :
             }
         }
         tracker?.onSaveInstanceState(outState)
-        viewModel.orderIdAndPositionBackup =
-            ((binding.orderListView.ordersList.adapter as? OrderListAdapter)?.orderIdAndPosition ?: emptyMap())
-                as MutableMap<Long, Int>
+
+        _binding?.let { binding ->
+            val adapter = binding.orderListView.ordersList.adapter as? OrderListAdapter
+            adapter?.let {
+                viewModel.orderIdAndPositionBackup = it.orderIdAndPosition
+            }
+        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         tracker?.run {
             onRestoreInstanceState(savedInstanceState)
-            (binding.orderListView.ordersList.adapter as? OrderListAdapter)?.orderIdAndPosition =
-                viewModel.orderIdAndPositionBackup
-            if (hasSelection()) {
-                setItemsSelected(selection.toList(), true)
+
+            _binding?.let { binding ->
+                val adapter = binding.orderListView.ordersList.adapter as? OrderListAdapter
+                adapter?.let {
+                    it.orderIdAndPosition = viewModel.orderIdAndPositionBackup
+                    if (hasSelection()) {
+                        setItemsSelected(selection.toList(), true)
+                    }
+                }
             }
         }
 
