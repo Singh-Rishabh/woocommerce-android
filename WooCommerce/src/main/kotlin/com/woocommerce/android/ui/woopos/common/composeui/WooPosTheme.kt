@@ -27,7 +27,6 @@ data class CustomColors(
     val paymentProcessingText: Color,
     val dialogSubtitleHighlightBackground: Color = WooPosColors.lightQuaternaryBackground,
     val homeBackground: Color,
-    val warning: Color,
 )
 
 private object WooPosColors {
@@ -174,7 +173,6 @@ private val DarkCustomColors = CustomColors(
     paymentProcessingText = WooPosColors.White,
     homeBackground = WooPosColors.darkCustomColorsHomeBackground,
     paymentProcessingBackground = WooPosColors.WooPurple70,
-    warning = WooPosColors.Orange50,
 )
 
 private val LightCustomColors = CustomColors(
@@ -190,7 +188,6 @@ private val LightCustomColors = CustomColors(
     paymentSuccessIcon = Color.White,
     homeBackground = WooPosColors.Gray0,
     paymentProcessingBackground = WooPosColors.WooPurple70,
-    warning = WooPosColors.Orange40,
 )
 
 private val LocalCustomColors = staticCompositionLocalOf {
