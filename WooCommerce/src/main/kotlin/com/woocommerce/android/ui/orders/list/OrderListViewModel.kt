@@ -230,6 +230,7 @@ class OrderListViewModel @Inject constructor(
     fun isSelecting() = viewState.orderListState == ViewState.OrderListState.Selecting
 
     private var isQueueingBulkUpdateSuccessMessage = false
+    private var bulkUpdateSuccessMessage = ""
 
     init {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
@@ -484,7 +485,7 @@ class OrderListViewModel @Inject constructor(
         pagedListWrapper.data.distinct().observe(this) {
             if (isQueueingBulkUpdateSuccessMessage) {
                 isQueueingBulkUpdateSuccessMessage = false
-                triggerEvent(Event.ShowSnackbar(R.string.orderlist_bulk_update_status_updated))
+                triggerEvent(OrderListEvent.ShowSnackbarString(bulkUpdateSuccessMessage))
             }
         }
 
@@ -1002,21 +1003,7 @@ class OrderListViewModel @Inject constructor(
                         newStatus = newStatus
                     )
 
-                    if (result.isFailure) {
-                        viewState = viewState.copy(isBulkUpdating = false)
-                        trackBulkOrderUpdateFailure()
-                        triggerEvent(Event.ShowSnackbar(R.string.error_generic))
-                    } else {
-                        isQueueingBulkUpdateSuccessMessage = true
-                        ordersPagedListWrapper?.fetchFirstPage()
-
-                        analyticsTracker.track(
-                            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
-                            mapOf(
-                                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
-                            )
-                        )
-                    }
+                    handleBulkUpdateResult(result)
                 }
             }
         } else {
@@ -1024,6 +1011,55 @@ class OrderListViewModel @Inject constructor(
             triggerEvent(Event.ShowSnackbar(R.string.offline_error))
         }
         exitSelectionMode()
+    }
+
+    private fun handleBulkUpdateResult(result: BulkUpdateOrderResult) {
+        when (result) {
+            is BulkUpdateOrderResult.AllSuccess,
+            is BulkUpdateOrderResult.PartialSuccess -> {
+                isQueueingBulkUpdateSuccessMessage = true
+                bulkUpdateSuccessMessage = when (result) {
+                    is BulkUpdateOrderResult.AllSuccess -> resourceProvider.getString(
+                        R.string.orderlist_bulk_update_status_updated
+                    )
+
+                    is BulkUpdateOrderResult.PartialSuccess -> resourceProvider.getString(
+                        R.string.orderlist_bulk_update_result_partial_success,
+                        result.successCount,
+                        result.failureCount
+                    )
+
+                    else -> resourceProvider.getString(R.string.orderlist_bulk_update_status_updated)
+                }
+                ordersPagedListWrapper?.fetchFirstPage()
+                trackBulkOrderUpdateSuccess()
+            }
+
+            is BulkUpdateOrderResult.NoOrdersUpdated,
+            is BulkUpdateOrderResult.AllFailed,
+            is BulkUpdateOrderResult.Error -> {
+                viewState = viewState.copy(isBulkUpdating = false)
+                trackBulkOrderUpdateFailure()
+                val messageRes = when (result) {
+                    is BulkUpdateOrderResult.NoOrdersUpdated ->
+                        R.string.orderlist_bulk_update_result_no_orders_updated
+
+                    is BulkUpdateOrderResult.AllFailed -> R.string.orderlist_bulk_update_result_all_failed
+                    is BulkUpdateOrderResult.Error -> R.string.error_generic
+                    else -> R.string.error_generic
+                }
+                triggerEvent(Event.ShowSnackbar(messageRes))
+            }
+        }
+    }
+
+    private fun trackBulkOrderUpdateSuccess() {
+        analyticsTracker.track(
+            AnalyticsEvent.ORDERS_LIST_BULK_UPDATE_SUCCESS,
+            mapOf(
+                AnalyticsTracker.KEY_PROPERTY to AnalyticsTracker.VALUE_STATUS,
+            )
+        )
     }
 
     private fun trackBulkOrderUpdateFailure() {
