@@ -1121,6 +1121,52 @@ class OrderListViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun `when bulk update fully succeeds, then refresh and exit selection mode`() = testBlocking {
+        // Given
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any()))
+            .thenReturn(BulkUpdateOrderResult.AllSuccess)
+
+        // First load order to initialize orderPagedListWrapper, then enter selection mode
+        viewModel.loadOrders()
+        viewModel.onSelectionChanged(2)
+        assertThat(viewModel.isSelecting()).isTrue()
+
+        // When
+        viewModel.onBulkOrderStatusChanged(listOf(1L, 2L), Order.Status.Completed)
+
+        // Then
+        assertThat(viewModel.isSelecting()).isFalse()
+
+        // Invoked once during loadOrders() and once during onBulkOrderStatusChanged()
+        verify(viewModel.ordersPagedListWrapper, times(2))?.fetchFirstPage()
+    }
+
+    @Test
+    fun `when bulk update partially succeeds, then refresh and exit selection mode`() = testBlocking {
+        // Given
+        val successCount = 3
+        val failureCount = 2
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any()))
+            .thenReturn(BulkUpdateOrderResult.PartialSuccess(successCount, failureCount))
+
+        // First load order to initialize orderPagedListWrapper, then enter selection mode
+        viewModel.loadOrders()
+        viewModel.onSelectionChanged(5)
+        assertThat(viewModel.isSelecting()).isTrue()
+
+        // When
+        viewModel.onBulkOrderStatusChanged(listOf(1L, 2L, 3L, 4L, 5L), Order.Status.Completed)
+
+        // Then
+        assertThat(viewModel.isSelecting()).isFalse()
+
+        // Invoked once during loadOrders() and once during onBulkOrderStatusChanged()
+        verify(viewModel.ordersPagedListWrapper, times(2))?.fetchFirstPage()
+    }
+
+    @Test
     fun `when selection count reaches limit, then show error message`() {
         // when
         viewModel.onSelectionChanged(BULK_UPDATE_COUNT_LIMIT)
