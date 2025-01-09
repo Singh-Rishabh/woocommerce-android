@@ -107,7 +107,7 @@ def versionProperties = loadPropertiesFromFile(file("${rootDir}/version.properti
 android {
     namespace "com.woocommerce.android"
 
-    compileSdkVersion gradle.ext.compileSdkVersion
+    compileSdk gradle.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.woocommerce.android"
