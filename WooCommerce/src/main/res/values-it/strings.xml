@@ -1209,7 +1209,6 @@ Language: it
     <string name="card_reader_type_selection_bluetooth_reader_description">Il lettore di carte accetta pagamenti contactless, chip e tramite strisciata con carte di debito e di credito.</string>
     <string name="card_reader_type_selection_tap_to_pay_description">Accetta in modo sicuro pagamenti contactless direttamente dal tuo telefono.</string>
     <string name="card_reader_tap_to_pay_description">Usa il telefono per accettare i pagamenti\ncon carta. Prova ora.</string>
-    <string name="card_reader_tap_to_pay_share_feedback">Condividi il feedback</string>
     <string name="login_site_credentials_web_authorization_connection_rejected">Impossibile accedere perché la creazione della password dell\'applicazione non è stata approvata.</string>
     <string name="login_site_credentials_fetching_site">Sito in caricamento…</string>
     <string name="login_site_credentials_fetching_site_failed">Si è verificato un errore durante il recupero del sito web</string>

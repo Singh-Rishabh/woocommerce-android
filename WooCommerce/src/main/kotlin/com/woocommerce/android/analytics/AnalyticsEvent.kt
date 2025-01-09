@@ -137,6 +137,11 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     SITE_PICKER_SITE_DISCOVERY(siteless = true),
     SITE_PICKER_JETPACK_TIMEOUT_ERROR_SHOWN(siteless = true),
     SITE_PICKER_JETPACK_TIMEOUT_CONTACT_SUPPORT_CLICKED(siteless = true),
+    SITE_PICKER_EDIT_BUTTON_SHOWN(siteless = true),
+    SITE_PICKER_EDIT_BUTTON_TAPPED(siteless = true),
+    SITE_PICKER_LIST_SAVE_BUTTON_TAPPED(siteless = true),
+    SITE_PICKER_LIST_SAVING_SUCCESS(siteless = true),
+    SITE_PICKER_LIST_SAVING_FAILURE(siteless = true),
 
     // -- Jetpack Installation for Login
     LOGIN_JETPACK_SITE_CREDENTIAL_SCREEN_VIEWED(siteless = true),
@@ -539,7 +544,6 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED,
     IN_PERSON_PAYMENTS_LEARN_MORE_TAPPED,
     PAYMENTS_HUB_TAP_TO_PAY_TAPPED,
-    PAYMENTS_HUB_TAP_TO_PAY_FEEDBACK_TAPPED,
     PAYMENTS_HUB_TAP_TO_PAY_ABOUT_TAPPED,
 
     // -- Payments Hub - Payout Summary (Previously called Deposit summary)
