@@ -29,6 +29,7 @@ import com.woocommerce.android.ui.orders.filters.domain.GetSelectedOrderFiltersC
 import com.woocommerce.android.ui.orders.filters.domain.GetWCOrderListDescriptorWithFilters
 import com.woocommerce.android.ui.orders.filters.domain.GetWCOrderListDescriptorWithFiltersAndSearchQuery
 import com.woocommerce.android.ui.orders.filters.domain.ShouldShowCreateTestOrderScreen
+import com.woocommerce.android.ui.orders.list.BulkUpdateOrderResult
 import com.woocommerce.android.ui.orders.list.FetchOrdersRepository
 import com.woocommerce.android.ui.orders.list.ObserveOrdersListLastUpdate
 import com.woocommerce.android.ui.orders.list.OrderListFragmentArgs
@@ -1057,6 +1058,9 @@ class OrderListViewModelTest : BaseUnitTest() {
     fun `given offline, when bulk update status requested, then show offline error and exit selection mode`() = testBlocking {
         whenever(networkStatus.isConnected()).thenReturn(false)
 
+        // First enter selection mode
+        viewModel.onSelectionChanged(2)
+        assertThat(viewModel.isSelecting()).isTrue()
         viewModel.onBulkOrderStatusChanged(listOf(1L, 2L), Order.Status.Completed)
 
         assertThat(viewModel.event.value).isInstanceOf(Event.ShowSnackbar::class.java)
@@ -1067,7 +1071,12 @@ class OrderListViewModelTest : BaseUnitTest() {
     @Test
     fun `when bulk update fails, then show error message and exit selection`() = testBlocking {
         whenever(networkStatus.isConnected()).thenReturn(true)
-        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any())).thenReturn(Result.failure(Exception()))
+        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any()))
+            .thenReturn(BulkUpdateOrderResult.Error(Exception()))
+
+        // First enter selection mode
+        viewModel.onSelectionChanged(1)
+        assertThat(viewModel.isSelecting()).isTrue()
 
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
@@ -1077,9 +1086,27 @@ class OrderListViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when bulk update completes successfully, then exit selection mode`() = testBlocking {
+    fun `when bulk update results in no orders updated, then show message and exit selection mode`() = testBlocking {
         whenever(networkStatus.isConnected()).thenReturn(true)
-        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any())).thenReturn(Result.success(Unit))
+        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any()))
+            .thenReturn(BulkUpdateOrderResult.NoOrdersUpdated)
+
+        viewModel.onSelectionChanged(1)
+        assertThat(viewModel.isSelecting()).isTrue()
+
+        viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
+
+        assertThat(viewModel.event.value).isInstanceOf(Event.ShowSnackbar::class.java)
+        assertThat((viewModel.event.value as Event.ShowSnackbar).message)
+            .isEqualTo(R.string.orderlist_bulk_update_result_no_orders_updated)
+        assertThat(viewModel.isSelecting()).isFalse()
+    }
+
+    @Test
+    fun `when bulk update fails for all orders, then show message and exit selection mode`() = testBlocking {
+        whenever(networkStatus.isConnected()).thenReturn(true)
+        whenever(orderListRepository.bulkUpdateOrderStatus(any(), any()))
+            .thenReturn(BulkUpdateOrderResult.AllFailed)
 
         // First enter selection mode
         viewModel.onSelectionChanged(1)
@@ -1087,6 +1114,9 @@ class OrderListViewModelTest : BaseUnitTest() {
 
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
+        assertThat(viewModel.event.value).isInstanceOf(Event.ShowSnackbar::class.java)
+        assertThat((viewModel.event.value as Event.ShowSnackbar).message)
+            .isEqualTo(R.string.orderlist_bulk_update_result_all_failed)
         assertThat(viewModel.isSelecting()).isFalse()
     }
 
