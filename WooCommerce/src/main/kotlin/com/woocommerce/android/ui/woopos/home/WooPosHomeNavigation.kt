@@ -30,6 +30,15 @@ fun NavController.navigateToHomeScreenAfterSuccessfulCashPayment() {
     }
 }
 
+fun NavController.navigateToHomeScreenIfHomeScreenNotOpen() {
+    if (currentDestination?.route != HOME_ROUTE) {
+        popBackStack(
+            HOME_ROUTE,
+            false
+        )
+    }
+}
+
 fun NavGraphBuilder.homeScreen(
     onNavigationEvent: (WooPosNavigationEvent) -> Unit
 ) {
