@@ -261,6 +261,7 @@ class VariationDetailFragment :
         }
     }
 
+    @Suppress("LongMethod")
     private fun setupObservers(viewModel: VariationDetailViewModel) {
         viewModel.variationViewStateData.observe(viewLifecycleOwner) { old, new ->
             new.variation.takeIfNotEqualTo(old?.variation) { newVariation ->
