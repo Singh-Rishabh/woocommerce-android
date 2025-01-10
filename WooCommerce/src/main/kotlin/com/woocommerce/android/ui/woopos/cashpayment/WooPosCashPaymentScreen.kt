@@ -32,8 +32,6 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosMoneyInputField
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosToolbar
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
-import com.woocommerce.android.ui.woopos.home.WooPosHomeViewModel
 import com.woocommerce.android.ui.woopos.root.navigation.WooPosNavigationEvent
 import org.wordpress.android.fluxc.model.WCSettingsModel
 import java.math.BigDecimal
@@ -42,18 +40,7 @@ import java.math.BigDecimal
 fun WooPosCashPaymentScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
     val viewModel = hiltViewModel<WooPosCashPaymentViewModel>()
     val state = viewModel.state.collectAsState().value
-    val homeViewModel = hiltViewModel<WooPosHomeViewModel>()
-    LaunchedEffect(homeViewModel) {
-        homeViewModel.navigationEvent.collect { event ->
-            when (event) {
-                NavigationEvent.ReturnHomeFromCashPayment -> {
-                    // interrupting cash payment in case buyer pays with card
-                    onNavigationEvent(WooPosNavigationEvent.GoBackToCheckout)
-                }
-                else -> Unit
-            }
-        }
-    }
+
     WooPosCashPaymentScreen(
         state = state,
         onAmountChanged = { viewModel.onUIEvent(WooPosCashPaymentUIEvent.AmountChanged(it)) },
