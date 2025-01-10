@@ -56,7 +56,7 @@ fun AdDestinationParametersBottomSheet(
         }
     }
 
-    ModalStatusBarBottomSheetLayout(
+    WCModalBottomSheetLayout(
         sheetState = modalSheetState,
         sheetShape = RoundedCornerShape(topStart = roundedCornerRadius, topEnd = roundedCornerRadius),
         sheetContent = {
