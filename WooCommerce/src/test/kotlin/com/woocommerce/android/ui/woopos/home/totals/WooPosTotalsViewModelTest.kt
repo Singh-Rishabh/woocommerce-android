@@ -242,9 +242,11 @@ class WooPosTotalsViewModelTest {
 
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Checkout
-        assertThat(state.orderTotalText).isEqualTo("$5.00")
-        assertThat(state.orderTaxText).isEqualTo("$2.00")
-        assertThat(state.orderSubtotalText).isEqualTo("$3.00")
+        assert(state.totals is WooPosTotalsViewState.Totals.Visible)
+        state.totals as WooPosTotalsViewState.Totals.Visible
+        assertThat(state.totals.orderTotalText).isEqualTo("$5.00")
+        assertThat(state.totals.orderTaxText).isEqualTo("$2.00")
+        assertThat(state.totals.orderSubtotalText).isEqualTo("$3.00")
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
     }
 
@@ -303,10 +305,11 @@ class WooPosTotalsViewModelTest {
             )
 
             // THEN
-            val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
-            assertThat(checkout.orderTotalText).isEqualTo("5.00$")
-            assertThat(checkout.orderTaxText).isEqualTo("2.00$")
-            assertThat(checkout.orderSubtotalText).isEqualTo("3.00$")
+            val state = viewModel.state.value as WooPosTotalsViewState.Checkout
+            state.totals as WooPosTotalsViewState.Totals.Visible
+            assertThat(state.totals.orderTotalText).isEqualTo("5.00$")
+            assertThat(state.totals.orderTaxText).isEqualTo("2.00$")
+            assertThat(state.totals.orderSubtotalText).isEqualTo("3.00$")
         }
 
     @Test
@@ -441,9 +444,10 @@ class WooPosTotalsViewModelTest {
 
         // Ensure the view model state transitions to the success state with correct totals
         val state = viewModel.state.value as WooPosTotalsViewState.Checkout
-        assertThat(state.orderTotalText).isEqualTo("$5.00")
-        assertThat(state.orderTaxText).isEqualTo("$2.00")
-        assertThat(state.orderSubtotalText).isEqualTo("$3.00")
+        state.totals as WooPosTotalsViewState.Totals.Visible
+        assertThat(state.totals.orderTotalText).isEqualTo("$5.00")
+        assertThat(state.totals.orderTaxText).isEqualTo("$2.00")
+        assertThat(state.totals.orderSubtotalText).isEqualTo("$3.00")
     }
 
     @Test
@@ -503,9 +507,10 @@ class WooPosTotalsViewModelTest {
 
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Checkout
-        assertThat(state.orderSubtotalText).isEqualTo("3.00$")
-        assertThat(state.orderTaxText).isEqualTo("2.00$")
-        assertThat(state.orderTotalText).isEqualTo("5.00$")
+        state.totals as WooPosTotalsViewState.Totals.Visible
+        assertThat(state.totals.orderSubtotalText).isEqualTo("3.00$")
+        assertThat(state.totals.orderTaxText).isEqualTo("2.00$")
+        assertThat(state.totals.orderTotalText).isEqualTo("5.00$")
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
     }
 
