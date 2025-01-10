@@ -19,6 +19,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Colors
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -67,7 +68,7 @@ import java.math.BigDecimal
 import kotlin.random.Random
 
 @Suppress("MagicNumber")
-val Colors.selectedRateBackgroundColor: Color get() = if (isLight) Color(0xFFF2EDFF) else Color(0x22F2EDFF)
+val Colors.shippingSelectedBackgroundColor: Color get() = if (isLight) Color(0xFFF2EDFF) else Color(0x22F2EDFF)
 
 @Composable
 internal fun ShippingRatesCard(
@@ -234,6 +235,7 @@ fun ShippingRates(
         edgePadding = dimensionResource(R.dimen.major_100),
         backgroundColor = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.primary,
+        divider = {},
         modifier = tabModifier
     ) {
         shippingRates.keys.forEachIndexed { index, carrier ->
@@ -262,6 +264,8 @@ fun ShippingRates(
             )
         }
     }
+
+    Divider(modifier = Modifier.fillMaxWidth())
 
     HorizontalPager(
         state = pagerState,
@@ -320,7 +324,10 @@ private fun ShippingRateItem(
     }
 
     val backgroundColor = if (isSelected) {
-        animateColorAsState(targetValue = MaterialTheme.colors.selectedRateBackgroundColor, label = "colorAnimation")
+        animateColorAsState(
+            targetValue = MaterialTheme.colors.shippingSelectedBackgroundColor,
+            label = "colorAnimation"
+        )
     } else {
         animateColorAsState(targetValue = MaterialTheme.colors.surface, label = "colorAnimation")
     }
@@ -571,8 +578,8 @@ fun generateRates(carrier: WooShippingCarrier, number: Int): List<ShippingRateUI
         )
         val option = ShippingRateOptionUI(
             title = rate.serviceName,
-            formatedPrice = rate.toString(),
-            formattedFee = rate.toString(),
+            formatedPrice = rate.price.toString(),
+            formattedFee = rate.price.toString(),
             option = rate.option,
             rate = rate,
             shippingRateOptions = listOf(
