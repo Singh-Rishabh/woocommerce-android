@@ -22,10 +22,10 @@ import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -62,7 +62,7 @@ fun WCModalBottomSheetLayout(
             content = content,
         )
     } else {
-        ModalStatusBarBottomSheetLayout(
+        ModalBottomSheetLayoutWithStatusBarWorkAround(
             sheetContent = sheetContent,
             sheetShape = sheetShape,
             sheetState = sheetState,
@@ -82,7 +82,7 @@ fun WCModalBottomSheetLayout(
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ModalStatusBarBottomSheetLayout(
+private fun ModalBottomSheetLayoutWithStatusBarWorkAround(
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetState: ModalBottomSheetState,
