@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.compose.component
 
 import android.util.TypedValue
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -58,8 +59,9 @@ fun WCModalBottomSheetLayout(
             sheetContent = sheetContent,
             sheetShape = sheetShape,
             sheetState = sheetState,
+            scrimColor = scrimColor(),
             modifier = modifier,
-            content = content,
+            content = content
         )
     } else {
         ModalBottomSheetLayoutWithStatusBarWorkAround(
@@ -100,15 +102,16 @@ private fun ModalBottomSheetLayoutWithStatusBarWorkAround(
             sheetContent.invoke(this@ModalBottomSheetLayout)
         }
     },
-    modifier = modifier
-        .imePadding()
-        .navigationBarsPadding()
-        .imeNestedScroll(),
     sheetState = sheetState,
     sheetShape = sheetShape,
     sheetElevation = sheetElevation,
     sheetBackgroundColor = sheetBackgroundColor,
     sheetContentColor = sheetContentColor,
+    scrimColor = scrimColor(),
+    modifier = modifier
+        .imePadding()
+        .navigationBarsPadding()
+        .imeNestedScroll(),
 ) {
     val context = LocalContext.current
     var statusBarColor by remember { mutableStateOf(Color.Transparent) }
@@ -168,4 +171,13 @@ private fun ModalBottomSheetLayoutWithStatusBarWorkAround(
             WindowCompat.setDecorFitsSystemWindows(window, true)
         }
     }
+}
+
+// Overriding scrim color for dark theme because of the following bug affecting ModalBottomSheetLayout:
+// https://issuetracker.google.com/issues/183697056
+@Composable
+private fun scrimColor() = if (isSystemInDarkTheme()) {
+    colorResource(id = R.color.color_scrim_background)
+} else {
+    ModalBottomSheetDefaults.scrimColor
 }
