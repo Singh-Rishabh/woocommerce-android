@@ -1,15 +1,42 @@
 package com.woocommerce.android.ui.compose.component
 
+import android.util.TypedValue
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imeNestedScroll
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.unit.Dp
+import androidx.core.view.WindowCompat
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.findActivity
 
 /**
  * A wrapper around [ModalBottomSheetLayout] that provides default values for the sheet shape and scrim color.
@@ -52,13 +79,13 @@ fun WCModalBottomSheetLayout(
  * Source: https://stackoverflow.com/a/76998328
  *
  */
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ModalStatusBarBottomSheetLayout(
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: ModalBottomSheetState =
-        rememberModalBottomSheetState(Hidden),
+    sheetState: ModalBottomSheetState,
     sheetShape: Shape = MaterialTheme.shapes.large,
     sheetElevation: Dp = ModalBottomSheetDefaults.Elevation,
     sheetBackgroundColor: Color = colorResource(id = R.color.bottom_sheet_background),
@@ -87,7 +114,12 @@ private fun ModalStatusBarBottomSheetLayout(
     var statusBarColor by remember { mutableStateOf(Color.Transparent) }
     val backgroundColor = remember {
         val typedValue = TypedValue()
-        if (context.findActivity()?.theme?.resolveAttribute(attr.windowBackground, typedValue, true) == true) {
+        if (context.findActivity()?.theme?.resolveAttribute(
+                android.R.attr.windowBackground,
+                typedValue,
+                true
+            ) == true
+        ) {
             Color(typedValue.data)
         } else {
             sheetBackgroundColor
@@ -116,7 +148,7 @@ private fun ModalStatusBarBottomSheetLayout(
     val originalNavigationBarColor = remember { window.navigationBarColor }
 
     LaunchedEffect(sheetState.currentValue) {
-        if (sheetState.currentValue != Hidden) {
+        if (sheetState.currentValue != ModalBottomSheetValue.Hidden) {
             window.navigationBarColor = sheetBackgroundColor.toArgb()
         } else {
             window.navigationBarColor = originalNavigationBarColor
