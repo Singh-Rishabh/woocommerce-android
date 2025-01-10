@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Final top-level theme -->
-    <style name="Theme.Woo.DayNight" parent="Theme.Woo"/>
+    <style name="Theme.Woo.DayNight" parent="Theme.Woo" />
 
     <style name="Theme.Woo.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_background</item>
@@ -15,6 +15,7 @@
         <item name="android:statusBarColor">@color/color_status_bar</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
+
     <style name="Theme.WooBase" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Colors -->
         <item name="colorPrimary">@color/color_primary</item>
@@ -46,9 +47,13 @@
         <item name="minTouchTargetSize">@dimen/min_tap_target</item>
 
         <!-- Shapes -->
-        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Theme.Woo.SmallComponent</item>
-        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Theme.Woo.MediumComponent</item>
-        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Theme.Woo.LargeComponent</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Theme.Woo.SmallComponent
+        </item>
+        <item name="shapeAppearanceMediumComponent">
+            @style/ShapeAppearance.Theme.Woo.MediumComponent
+        </item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Theme.Woo.LargeComponent
+        </item>
 
         <!-- Typography -->
         <item name="textAppearanceHeadline1">@style/TextAppearance.Woo.Headline1</item>
@@ -107,10 +112,18 @@
         <item name="settingsCategoryHeaderStyle">@style/Widget.Woo.Settings.CategoryHeader</item>
         <item name="settingsButtonStyle">@style/Widget.Woo.Settings.Button</item>
         <item name="wcToggleOutlinedButtonStyle">@style/Widget.Woo.WCToggleOutlinedButton</item>
-        <item name="wcToggleOutlinedSelectorButtonStyle">@style/Widget.Woo.WCToggleOutlinedSelectorButton</item>
-        <item name="wcMaterialOutlinedSpinnerViewStyle">@style/Widget.Woo.WCMaterialOutlinedSpinnerView</item>
-        <item name="wcMaterialOutlinedCurrencyEditTextViewStyle">@style/Widget.Woo.WCMaterialOutlinedCurrencyEditTextView</item>
-        <item name="wcMaterialOutlinedEditTextViewStyle">@style/Widget.Woo.WCMaterialOutlinedEditTextView</item>
+        <item name="wcToggleOutlinedSelectorButtonStyle">
+            @style/Widget.Woo.WCToggleOutlinedSelectorButton
+        </item>
+        <item name="wcMaterialOutlinedSpinnerViewStyle">
+            @style/Widget.Woo.WCMaterialOutlinedSpinnerView
+        </item>
+        <item name="wcMaterialOutlinedCurrencyEditTextViewStyle">
+            @style/Widget.Woo.WCMaterialOutlinedCurrencyEditTextView
+        </item>
+        <item name="wcMaterialOutlinedEditTextViewStyle">
+            @style/Widget.Woo.WCMaterialOutlinedEditTextView
+        </item>
         <item name="wcSingleOptionTextViewStyle">@style/Widget.Woo.WCSingleOptionTextView</item>
 
         <!-- Default animations -->
@@ -135,7 +148,8 @@
         <item name="android:windowMinWidthMinor">0%</item>
     </style>
 
-    <style name="Woo.Dialog"/>
+    <style name="Woo.Dialog" />
+
     <style name="Woo.Dialog.ButtonBar">
         <item name="android:paddingStart">@dimen/minor_100</item>
         <item name="android:paddingEnd">@dimen/minor_100</item>
@@ -155,7 +169,15 @@
 
     <style name="MediaPicker.Button.Colored" parent="Woo.Button.Colored" />
 
-    <style name="Theme.Woo.Transparent" parent="Theme.Woo">
+    <style name="Theme.WooPos" parent="Theme.Woo">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+    </style>
+
+    <style name="Theme.WooPos.Transparent" parent="Theme.WooPos">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
