@@ -11,6 +11,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
@@ -352,7 +353,10 @@ class LoginActivity :
     }
 
     override fun disableDynamicEdgeToEdge() {
+        // Call again to reset the statusBarStyle to its default setting
         enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         // Add system bar insets to the fragment's root
         ViewCompat.setOnApplyWindowInsetsListener(binding.snackRoot) { v, windowInsets ->
