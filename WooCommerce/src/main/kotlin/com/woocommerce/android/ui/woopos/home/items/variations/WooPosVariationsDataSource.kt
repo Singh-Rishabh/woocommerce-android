@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.wordpress.android.fluxc.store.ProductsStore
+import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,7 +49,13 @@ class WooPosVariationsDataSource @Inject constructor(
             emit(FetchResult.Cached(cachedVariations))
         }
 
-        val result = handler.fetchVariations(productId, forceRefresh = true)
+        val result = handler.fetchVariations(
+            productId,
+            forceRefresh = true,
+            filterOptions = mapOf(
+                WCProductStore.VariationFilterOption.STATUS to "publish"
+            )
+        )
         if (result.isSuccess) {
             val remoteVariations = handler.getVariationsFlow(productId).firstOrNull()?.applyFilter() ?: emptyList()
             updateCache(productId, remoteVariations)
@@ -64,7 +72,12 @@ class WooPosVariationsDataSource @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     suspend fun loadMore(productId: Long): Result<List<ProductVariation>> = withContext(Dispatchers.IO) {
-        val result = handler.loadMore(productId)
+        val result = handler.loadMore(
+            productId,
+            filterOptions = mapOf(
+                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH
+            )
+        )
         if (result.isSuccess) {
             val fetchedVariations = handler.getVariationsFlow(productId).first().applyFilter()
             Result.success(fetchedVariations)
@@ -74,6 +87,10 @@ class WooPosVariationsDataSource @Inject constructor(
                 result.exceptionOrNull() ?: Exception("Unknown error while loading more variations")
             )
         }
+    }
+
+    companion object {
+        private const val VARIATION_STATUS_PUBLISH = "publish"
     }
 }
 
@@ -89,5 +106,5 @@ sealed class FetchResult<out T> {
 }
 
 private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
-    return filter { it.price != null && !it.isDownloadable && it.isPurchasable }
+    return filter { it.price != null && !it.isDownloadable }
 }
