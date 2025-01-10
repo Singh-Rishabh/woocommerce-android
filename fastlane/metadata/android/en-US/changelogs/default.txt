@@ -1,11 +1,1 @@
-- [*] Fix Dashboard card menu sizing to fit bigger font sizes and longer text. [https://github.com/woocommerce/woocommerce-android/pull/13184]
-- [*] Fixed overlap issue in Settings > WooCommerce Version  [https://github.com/woocommerce/woocommerce-android/pull/13183]
-- [*] Removed Tap To Pay usage survey [https://github.com/woocommerce/woocommerce-android/pull/13207]
-- [**] Fixed a crash when a shop manager was trying to install or activate plugin in the POS onboarding [https://github.com/woocommerce/woocommerce-android/pull/13203]
-- [***] Orders: Merchants can now bulk update the status of their orders [https://github.com/woocommerce/woocommerce-android/pull/13245]
-- [*] Fixed a crash on the order details [https://github.com/woocommerce/woocommerce-android/pull/13191]
-- [**] Introduced fallback logic for the barcode scanner to use the front-facing camera when a back-facing camera is unavailable [https://github.com/woocommerce/woocommerce-android/pull/13230]
-- [*] It possible to quickly open plugins page from the plugins list in the up to update an outdated plugin [https://github.com/woocommerce/woocommerce-android/pull/13246]
-- [**] Fixed a bug when refunded items were displayed on the refund screen [https://github.com/woocommerce/woocommerce-android/pull/13212]
-- [**] Enable hiding and disabling push notification for sites from site picker [https://github.com/woocommerce/woocommerce-android/issues/13107]
-
+This update brings several improvements to the WooCommerce mobile app. Dashboard menus now adapt better to larger fonts, and we've resolved layout issues in Settings. You'll also experience fewer crashes, with fixes for order details, plugin activation, and refunds. Merchants can now bulk update order statuses, barcode scanning is more reliable, and accessing plugin updates is quicker than ever. Additionally, sites can now be hidden from the site picker.
