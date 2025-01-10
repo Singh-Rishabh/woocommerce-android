@@ -385,10 +385,9 @@ theme across the entire app. Overridden versions should be added to the styles.x
         <item name="endIconTint">@color/color_on_surface_medium_selector</item>
         <item name="endIconTintMode">src_atop</item>
         <item name="android:cursorVisible">false</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:background">@drawable/custom_ripple</item>
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
-        <item name="hintEnabled">false</item>
     </style>
 
     <!--  Style set at the theme level, no need to set in layout files  -->
