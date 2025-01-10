@@ -18,8 +18,11 @@ import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
 import com.woocommerce.android.util.PrintHtmlHelper
 import com.woocommerce.android.util.UiHelpers
+import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.IOException
+import java.net.MalformedURLException
 import java.net.URL
 import javax.inject.Inject
 
@@ -96,22 +99,11 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
                         return viewModel.isReceiptDomainTrustable(webResourceRequest.url.toString())
                     }
 
-                    override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
-                        return try {
-                            val connection = URL(request.url.toString()).openConnection()
-                            val inputStream = connection.getInputStream()
-                            val originalHtml = inputStream.bufferedReader().use { it.readText() }
-
-                            val modifiedHtml = receiptHtmlInterceptor.interceptHtmlContent(originalHtml)
-
-                            WebResourceResponse(
-                                "text/html",
-                                "UTF-8",
-                                modifiedHtml.byteInputStream()
-                            )
-                        } catch (e: Exception) {
-                            null
-                        }
+                    override fun shouldInterceptRequest(
+                        view: WebView,
+                        request: WebResourceRequest
+                    ): WebResourceResponse? {
+                        return interceptAndModifyReceiptResponse(request)
                     }
 
                     override fun onPageFinished(view: WebView, url: String) {
@@ -119,6 +111,28 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
                     }
                 }
             }
+        }
+    }
+
+    private fun interceptAndModifyReceiptResponse(request: WebResourceRequest): WebResourceResponse? {
+        return try {
+            val connection = URL(request.url.toString()).openConnection()
+            val inputStream = connection.getInputStream()
+            val originalHtml = inputStream.bufferedReader().use { it.readText() }
+
+            val modifiedHtml = receiptHtmlInterceptor.interceptHtmlContent(originalHtml)
+
+            WebResourceResponse(
+                "text/html",
+                "UTF-8",
+                modifiedHtml.byteInputStream()
+            )
+        } catch (e: MalformedURLException) {
+            WooLog.e(WooLog.T.ORDERS, "Error intercepting receipt url: ${request.url}")
+            null
+        } catch (e: IOException) {
+            WooLog.e(WooLog.T.ORDERS, "Error reading content from receipt url: ${request.url}")
+            null
         }
     }
 
