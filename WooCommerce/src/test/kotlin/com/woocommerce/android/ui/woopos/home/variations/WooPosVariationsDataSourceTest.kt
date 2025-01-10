@@ -147,7 +147,6 @@ class WooPosVariationsDataSourceTest {
 
         sut.fetchFirstPage(productId, forceRefresh = true).first()
 
-
         whenever(
             handler.fetchVariations(
                 productId,
