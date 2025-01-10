@@ -198,7 +198,7 @@ Language: ko_KR
     <string name="woopos_cart_item_content_description">장바구니의 상품 %s, 가격 %s</string>
     <string name="woopos_product_item_content_description">상품 %s, 가격 %s</string>
     <string name="blaze_campaign_status_suspended">중지됨</string>
-    <string name="woopos_success_screen_total">%1$s 결제가 완료되었습니다.</string>
+    <string name="woopos_totals_success_payment_cash">%1$s 결제가 완료되었습니다.</string>
     <string name="woopos_new_order_button">새 주문</string>
     <string name="woopos_dialog_products_info_button_label">확인</string>
     <string name="woopos_dialog_products_info_secondary_message_action_label">+ 스토어 관리에서 주문 생성</string>

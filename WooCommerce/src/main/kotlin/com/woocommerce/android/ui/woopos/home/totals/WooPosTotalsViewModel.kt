@@ -21,13 +21,13 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToCashPayment
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToEmailReceipt
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NewTransactionClicked
-import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.OrderSuccessfullyPaid
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.OrderSuccessfullyPaidByCard
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.ToastMessageDisplayed
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
+import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccessfullyPaid.PaymentMethod
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentFailed
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentInProgress
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
@@ -61,7 +61,6 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
-    private val wooPosItemsNavigator: WooPosItemsNavigator,
     private val isReceiptSendingSupported: WooPosEmailReceiptIsSendingSupported,
     private val cardReaderPaymentControllerFactory: CardReaderPaymentControllerFactory,
     private val uiStringParser: UiStringParser,
@@ -279,7 +278,9 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = InitialState
                     }
 
-                    ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState()
+                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState(
+                        event.paymentMethod
+                    )
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                 }
@@ -302,11 +303,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
-                        wooPosItemsNavigator.sendNavigationEvent(
-                            WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
-                        )
-                        showSuccessfulPaymentState(paymentState)
-                        childrenToParentEventSender.sendToParent(OrderSuccessfullyPaid)
+                        childrenToParentEventSender.sendToParent(OrderSuccessfullyPaidByCard)
                     }
 
                     is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment -> {
@@ -430,25 +427,20 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private fun showSuccessfulPaymentState() {
+    private fun showSuccessfulPaymentState(paymentMethod: PaymentMethod) {
         viewModelScope.launch {
             val dataState = dataState.value
             checkNotNull(dataState.orderTotal)
+            val template = when (paymentMethod) {
+                PaymentMethod.CARD -> R.string.woopos_totals_success_payment_card
+                PaymentMethod.CASH -> R.string.woopos_totals_success_payment_cash
+            }
             val orderTotalText = resourceProvider.getString(
-                R.string.woopos_success_screen_total,
+                template,
                 priceFormat(dataState.orderTotal)
             )
             uiState.value = WooPosTotalsViewState.PaymentSuccess(
                 orderTotalText = orderTotalText
-            )
-        }
-    }
-
-    private fun showSuccessfulPaymentState(cardPaymentSuccess: CardReaderPaymentState.PaymentSuccessful) {
-        viewModelScope.launch {
-            val orderTotalText = cardPaymentSuccess.amountWithCurrencyLabel
-            uiState.value = WooPosTotalsViewState.PaymentSuccess(
-                orderTotalText = orderTotalText,
             )
         }
     }
