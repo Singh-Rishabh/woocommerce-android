@@ -10,7 +10,9 @@
 - [***] Orders: Merchants can now bulk update the status of their orders [https://github.com/woocommerce/woocommerce-android/pull/13245]
 - [*] Fixed a crash on the order details [https://github.com/woocommerce/woocommerce-android/pull/13191]
 - [**] Introduced fallback logic for the barcode scanner to use the front-facing camera when a back-facing camera is unavailable [https://github.com/woocommerce/woocommerce-android/pull/13230]
+- [*] It possible to quickly open plugins page from the plugins list in the up to update an outdated plugin [https://github.com/woocommerce/woocommerce-android/pull/13246]
 - [**] Fixed a bug when refunded items were displayed on the refund screen [https://github.com/woocommerce/woocommerce-android/pull/13212]
+- [**] Enable hiding and disabling push notification for sites from site picker [https://github.com/woocommerce/woocommerce-android/issues/13107]
 
 21.3
 -----
@@ -27,6 +29,7 @@
 - [**] Improved UX of card reader payment flow in Point of Sale, allowing faster payment collection [https://github.com/woocommerce/woocommerce-android/pull/12977]
 - [*] Fixed crash when trying to open barcode scanner on device without camera [https://github.com/woocommerce/woocommerce-android/pull/13172]
 - [Internal] Woo POS now accepts cash payments and there is a functionality of sending receipts [https://github.com/woocommerce/woocommerce-android/pull/13157]
+- [**] Fixed a bug that caused the app to not show the list of refunded products in the order details screen [https://github.com/woocommerce/woocommerce-android/pull/13261]
 
 -----
 21.2
