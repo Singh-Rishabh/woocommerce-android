@@ -23,6 +23,6 @@ fun NavHostController.handleNavigationEvent(
             navigateToHomeScreenAfterSuccessfulCashPayment()
 
         is WooPosNavigationEvent.OpenEmailReceipt -> navigateToEmailReceipt(event.orderId)
-        WooPosNavigationEvent.GoBackToCheckout -> navigateToHomeScreenIfHomeScreenNotOpen()
+        WooPosNavigationEvent.ReturnHomeFromCashPayment -> navigateToHomeScreenIfHomeScreenNotOpen()
     }
 }
