@@ -74,8 +74,8 @@ private fun WooPosTotalsScreen(
     onUIEvent: (WooPosTotalsUIEvent) -> Unit,
 ) {
     Box(modifier = modifier) {
-        StateChangeAnimated(visible = state is WooPosTotalsViewState.Totals) {
-            if (state is WooPosTotalsViewState.Totals) {
+        StateChangeAnimated(visible = state is WooPosTotalsViewState.Checkout) {
+            if (state is WooPosTotalsViewState.Checkout) {
                 TotalsLoaded(
                     state = state,
                     onUIEvent = onUIEvent,
@@ -140,7 +140,7 @@ private fun StateChangeAnimated(
 
 @Composable
 private fun TotalsLoaded(
-    state: WooPosTotalsViewState.Totals,
+    state: WooPosTotalsViewState.Checkout,
     onUIEvent: (WooPosTotalsUIEvent) -> Unit,
 ) {
     Column(
@@ -285,40 +285,44 @@ private fun ReaderDisconnected(
 }
 
 @Composable
-private fun TotalsGrid(state: WooPosTotalsViewState.Totals) {
-    Column(
-        modifier = Modifier
-            .padding(24.dp.toAdaptivePadding())
-            .width(382.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        TotalsGridRow(
-            textOne = stringResource(R.string.woopos_payment_subtotal_label),
-            textTwo = state.orderSubtotalText,
-        )
+private fun TotalsGrid(state: WooPosTotalsViewState.Checkout) {
+    when (state.totals) {
+        is WooPosTotalsViewState.Totals.Hidden -> Unit
+        is WooPosTotalsViewState.Totals.Visible ->
+            Column(
+                modifier = Modifier
+                    .padding(24.dp.toAdaptivePadding())
+                    .width(382.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                TotalsGridRow(
+                    textOne = stringResource(R.string.woopos_payment_subtotal_label),
+                    textTwo = state.totals.orderSubtotalText,
+                )
 
-        Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
 
-        TotalsGridRow(
-            textOne = stringResource(R.string.woopos_payment_tax_label),
-            textTwo = state.orderTaxText,
-        )
+                TotalsGridRow(
+                    textOne = stringResource(R.string.woopos_payment_tax_label),
+                    textTwo = state.totals.orderTaxText,
+                )
 
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
-        Divider(color = WooPosTheme.colors.border, thickness = 1.dp)
+                Divider(color = WooPosTheme.colors.border, thickness = 1.dp)
 
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
-        TotalsGridRow(
-            textOne = stringResource(R.string.woopos_payment_total_label),
-            textTwo = state.orderTotalText,
-            styleOne = MaterialTheme.typography.h4,
-            styleTwo = MaterialTheme.typography.h4,
-            fontWeightOne = FontWeight.Medium,
-            fontWeightTwo = FontWeight.Bold,
-        )
+                TotalsGridRow(
+                    textOne = stringResource(R.string.woopos_payment_total_label),
+                    textTwo = state.totals.orderTotalText,
+                    styleOne = MaterialTheme.typography.h4,
+                    styleTwo = MaterialTheme.typography.h4,
+                    fontWeightOne = FontWeight.Medium,
+                    fontWeightTwo = FontWeight.Bold,
+                )
+            }
     }
 }
 
@@ -410,10 +414,12 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
     WooPosTheme {
         WooPosTotalsScreen(
             modifier = modifier,
-            state = WooPosTotalsViewState.Totals(
-                orderSubtotalText = "$420.00",
-                orderTotalText = "$462.00",
-                orderTaxText = "$42.00",
+            state = WooPosTotalsViewState.Checkout(
+                totals = WooPosTotalsViewState.Totals.Visible(
+                    orderSubtotalText = "$420.00",
+                    orderTotalText = "$462.00",
+                    orderTaxText = "$42.00",
+                ),
                 readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
                     title = "Ready for payment",
                     subtitle = "Tap, swipe or insert card"
@@ -430,10 +436,12 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
     WooPosTheme {
         WooPosTotalsScreen(
             modifier = modifier,
-            state = WooPosTotalsViewState.Totals(
-                orderSubtotalText = "$420.00",
-                orderTotalText = "$462.00",
-                orderTaxText = "$42.00",
+            state = WooPosTotalsViewState.Checkout(
+                totals = WooPosTotalsViewState.Totals.Visible(
+                    orderSubtotalText = "$420.00",
+                    orderTotalText = "$462.00",
+                    orderTaxText = "$42.00",
+                ),
                 readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
@@ -451,10 +459,12 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
     WooPosTheme {
         WooPosTotalsScreen(
             modifier = Modifier,
-            state = WooPosTotalsViewState.Totals(
-                orderSubtotalText = "$420.00",
-                orderTotalText = "$462.00",
-                orderTaxText = "$42.00",
+            state = WooPosTotalsViewState.Checkout(
+                totals = WooPosTotalsViewState.Totals.Visible(
+                    orderSubtotalText = "$420.00",
+                    orderTotalText = "$462.00",
+                    orderTaxText = "$42.00",
+                ),
                 readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",

@@ -241,7 +241,7 @@ class WooPosTotalsViewModelTest {
         )
 
         // THEN
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assertThat(state.orderTotalText).isEqualTo("$5.00")
         assertThat(state.orderTaxText).isEqualTo("$2.00")
         assertThat(state.orderSubtotalText).isEqualTo("$3.00")
@@ -303,10 +303,10 @@ class WooPosTotalsViewModelTest {
             )
 
             // THEN
-            val totals = viewModel.state.value as WooPosTotalsViewState.Totals
-            assertThat(totals.orderTotalText).isEqualTo("5.00$")
-            assertThat(totals.orderTaxText).isEqualTo("2.00$")
-            assertThat(totals.orderSubtotalText).isEqualTo("3.00$")
+            val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
+            assertThat(checkout.orderTotalText).isEqualTo("5.00$")
+            assertThat(checkout.orderTaxText).isEqualTo("2.00$")
+            assertThat(checkout.orderSubtotalText).isEqualTo("3.00$")
         }
 
     @Test
@@ -440,7 +440,7 @@ class WooPosTotalsViewModelTest {
         viewModel.onUIEvent(WooPosTotalsUIEvent.RetryOrderCreationClicked)
 
         // Ensure the view model state transitions to the success state with correct totals
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assertThat(state.orderTotalText).isEqualTo("$5.00")
         assertThat(state.orderTaxText).isEqualTo("$2.00")
         assertThat(state.orderSubtotalText).isEqualTo("$3.00")
@@ -502,7 +502,7 @@ class WooPosTotalsViewModelTest {
         )
 
         // THEN
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assertThat(state.orderSubtotalText).isEqualTo("3.00$")
         assertThat(state.orderTaxText).isEqualTo("2.00$")
         assertThat(state.orderTotalText).isEqualTo("5.00$")
@@ -578,7 +578,7 @@ class WooPosTotalsViewModelTest {
         )
 
         // THEN
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.Preparing::class.java)
     }
 
@@ -651,8 +651,8 @@ class WooPosTotalsViewModelTest {
         val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
 
         // THEN
-        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Checkout::class.java)
+        val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assertThat(state.readerStatus).isNotNull()
         with(state.readerStatus as WooPosTotalsViewState.ReaderStatus.Disconnected) {
             assertThat(title).isEqualTo("Reader not connected")
@@ -667,8 +667,8 @@ class WooPosTotalsViewModelTest {
         val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
 
         // THEN
-        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
-        val state = viewModel.state.value as WooPosTotalsViewState.Totals
+        assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Checkout::class.java)
+        val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assertThat(state.readerStatus).isInstanceOf(WooPosTotalsViewState.ReaderStatus.Preparing::class.java)
     }
 
@@ -682,7 +682,7 @@ class WooPosTotalsViewModelTest {
 
             // WHEN
             val viewModel = createViewModelAndSetupForSuccessfulOrderCreation()
-            assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Totals::class.java)
+            assertThat(viewModel.state.value).isInstanceOf(WooPosTotalsViewState.Checkout::class.java)
             viewModel.onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked)
 
             // THEN
@@ -791,7 +791,7 @@ class WooPosTotalsViewModelTest {
             val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
 
             // THEN
-            val totalState = vm.state.value as WooPosTotalsViewState.Totals
+            val totalState = vm.state.value as WooPosTotalsViewState.Checkout
             assertThat(totalState.readerStatus).isInstanceOf(
                 WooPosTotalsViewState.ReaderStatus.ReadyForPayment::class.java
             )
