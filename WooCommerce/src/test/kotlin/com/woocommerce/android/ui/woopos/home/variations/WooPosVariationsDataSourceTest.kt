@@ -17,6 +17,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import org.wordpress.android.fluxc.store.WCProductStore
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
@@ -152,7 +153,13 @@ class WooPosVariationsDataSourceTest {
         sut.fetchFirstPage(productId, forceRefresh = true).first()
 
         // Simulate a failed remote load
-        whenever(handler.fetchVariations(productId, forceRefresh = true))
+        whenever(
+            handler.fetchVariations(
+                productId,
+                forceRefresh = true,
+                mapOf(WCProductStore.VariationFilterOption.STATUS to "publish")
+            )
+        )
             .thenReturn(Result.failure(exception))
 
         // WHEN
@@ -207,7 +214,9 @@ class WooPosVariationsDataSourceTest {
         whenever(handler.canLoadMore(5)).thenReturn(true)
         whenever(handler.getVariationsFlow(productId)).thenReturn(flowOf(sampleProducts))
         val exception = Exception("Load more failed")
-        whenever(handler.loadMore(productId)).thenReturn(Result.failure(exception))
+        whenever(
+            handler.loadMore(productId, mapOf(WCProductStore.VariationFilterOption.STATUS to "publish")),
+        ).thenReturn(Result.failure(exception))
         whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
         val sut = WooPosVariationsDataSource(handler, variationsCache)
 
@@ -237,7 +246,11 @@ class WooPosVariationsDataSourceTest {
         whenever(handler.getVariationsFlow(productId)).thenReturn(flowOf(emptyList()))
         val exception = Exception("Remote load failed")
         whenever(
-            handler.fetchVariations(productId, forceRefresh = true)
+            handler.fetchVariations(
+                productId,
+                forceRefresh = true,
+                mapOf(WCProductStore.VariationFilterOption.STATUS to "publish")
+            )
         ).thenReturn(Result.failure(exception))
         whenever(variationsCache.get(productId)).thenReturn(emptyList())
 
@@ -443,39 +456,6 @@ class WooPosVariationsDataSourceTest {
         val remoteResult = flow[1] as FetchResult.Remote
 
         // Ensure downloadable variations are filtered out
-        assertThat(remoteResult.result.getOrNull()?.any { it.remoteVariationId == 1L }).isFalse()
-    }
-
-    @Test
-    fun `given remote variations, when fetchFirstPage called, then filter out variations that are not purchasable`() = runTest {
-        // GIVEN
-        val productId = 1L
-        whenever(handler.canLoadMore(5)).thenReturn(true)
-        whenever(handler.getVariationsFlow(productId)).thenReturn(
-            flowOf(
-                listOf(
-                    ProductTestUtils.generateProductVariation(
-                        variationId = 1,
-                        amount = "0",
-                        isPurchasable = false
-                    ),
-                    ProductTestUtils.generateProductVariation(
-                        variationId = 2,
-                        amount = "20.0",
-                    )
-                )
-            )
-        )
-        whenever(handler.fetchVariations(productId, forceRefresh = true)).thenReturn(Result.success(Unit))
-        whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
-        val sut = WooPosVariationsDataSource(handler, variationsCache)
-
-        // WHEN
-        val flow = sut.fetchFirstPage(productId, forceRefresh = true).toList()
-
-        // THEN
-        val remoteResult = flow[1] as FetchResult.Remote
-
         assertThat(remoteResult.result.getOrNull()?.any { it.remoteVariationId == 1L }).isFalse()
     }
 }
