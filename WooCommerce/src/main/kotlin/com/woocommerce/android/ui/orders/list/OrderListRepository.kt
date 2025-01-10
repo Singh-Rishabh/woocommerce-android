@@ -209,6 +209,7 @@ class OrderListRepository @Inject constructor(
     }
 
     private fun logBulkOrderUpdateResults(model: WCOrderStore.UpdateOrdersStatusResult) {
+        WooLog.i(ORDERS, "Bulk update order status completed.")
         if (model.updatedOrders.isNotEmpty()) {
             WooLog.i(ORDERS, "Successfully updated ${model.updatedOrders.size} orders")
         }
