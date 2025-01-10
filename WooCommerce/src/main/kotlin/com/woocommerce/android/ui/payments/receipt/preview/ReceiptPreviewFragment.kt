@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.view.MenuProvider
@@ -19,6 +20,7 @@ import com.woocommerce.android.util.PrintHtmlHelper
 import com.woocommerce.android.util.UiHelpers
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.net.URL
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,6 +30,8 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
     @Inject lateinit var printHtmlHelper: PrintHtmlHelper
 
     @Inject lateinit var uiMessageResolver: UIMessageResolver
+
+    @Inject lateinit var receiptHtmlInterceptor: ReceiptHtmlInterceptor
 
     private var _binding: FragmentReceiptPreviewBinding? = null
     private val binding get() = _binding!!
@@ -91,27 +95,28 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
                     ): Boolean {
                         return viewModel.isReceiptDomainTrustable(webResourceRequest.url.toString())
                     }
-                    override fun onPageFinished(view: WebView, url: String) {
-                        view.evaluateJavascript(
-                            "document.body.style.zoom = 1.0; " +
-                                "var meta = document.createElement('meta'); " +
-                                "meta.name = 'viewport'; " +
-                                "meta.content = 'width=device-width, initial-scale=1.0'; " +
-                                "document.getElementsByTagName('head')[0].appendChild(meta);",
+
+                    override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
+                        return try {
+                            val connection = URL(request.url.toString()).openConnection()
+                            val inputStream = connection.getInputStream()
+                            val originalHtml = inputStream.bufferedReader().use { it.readText() }
+
+                            val modifiedHtml = receiptHtmlInterceptor.interceptHtmlContent(originalHtml)
+
+                            WebResourceResponse(
+                                "text/html",
+                                "UTF-8",
+                                modifiedHtml.byteInputStream()
+                            )
+                        } catch (e: Exception) {
                             null
-                        )
+                        }
+                    }
+
+                    override fun onPageFinished(view: WebView, url: String) {
                         viewModel.onReceiptLoaded()
                     }
-                }
-                settings.apply {
-                    javaScriptEnabled = true
-                    loadWithOverviewMode = true
-                    useWideViewPort = true
-                    builtInZoomControls = true
-                    displayZoomControls = false
-                    allowFileAccess = false
-                    allowContentAccess = false
-                    domStorageEnabled = false
                 }
             }
         }
