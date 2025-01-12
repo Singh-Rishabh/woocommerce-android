@@ -318,12 +318,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         uiState.update { it.copy(markOrderComplete = value) }
     }
 
-    fun onShipmentDetailsExpandedChange(value: Boolean) {
-        uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+    fun onShipmentDetailsExpandedChange(value: Boolean): Boolean {
+        return if (uiState.value.isAddressSelectionExpanded.not()) {
+            uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+            true
+        } else {
+            false
+        }
     }
 
-    fun onSelectAddressExpandedChange(value: Boolean) {
+    fun onSelectAddressExpandedChange(value: Boolean): Boolean {
         uiState.update { it.copy(isAddressSelectionExpanded = value) }
+        return true
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
