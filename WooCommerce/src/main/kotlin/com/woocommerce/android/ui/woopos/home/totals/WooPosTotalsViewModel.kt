@@ -303,7 +303,10 @@ class WooPosTotalsViewModel @Inject constructor(
                         val state = uiState.value
                         if (state is WooPosTotalsViewState.Checkout) {
                             uiState.value = state.copy(totals = Totals.Hidden)
-                            delay(300)
+                            // allow the UI to show "shrinking" exit animation of totals grid before showing
+                            // the "payment in progress" state.
+                            @Suppress("MagicNumber")
+                            delay(384)
                         }
                         uiState.value = buildPaymentInProgressState(paymentState)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
