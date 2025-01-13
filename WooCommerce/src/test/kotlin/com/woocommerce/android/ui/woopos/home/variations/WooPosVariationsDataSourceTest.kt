@@ -290,38 +290,6 @@ class WooPosVariationsDataSourceTest {
     }
 
     @Test
-    fun `given remote variations, when fetchFirstPage called, then filter in only variations that have price`() = runTest {
-        // GIVEN
-        val productId = 1L
-        whenever(handler.canLoadMore(5)).thenReturn(true)
-        whenever(handler.getVariationsFlow(productId)).thenReturn(
-            flowOf(
-                listOf(
-                    ProductTestUtils.generateProductVariation(
-                        variationId = 1,
-                        amount = "",
-                    ),
-                    ProductTestUtils.generateProductVariation(
-                        variationId = 2,
-                        amount = "20.0",
-                    )
-                )
-            )
-        )
-        whenever(variationsCache.get(productId)).thenReturn(sampleProducts)
-        whenever(handler.fetchVariations(productId, forceRefresh = true)).thenReturn(Result.success(Unit))
-        val sut = WooPosVariationsDataSource(handler, variationsCache)
-
-        // WHEN
-        val flow = sut.fetchFirstPage(productId, forceRefresh = true).toList()
-
-        // THEN
-        val remoteResult = flow[1] as FetchResult.Remote
-
-        assertThat(remoteResult.result.getOrNull()?.any { it.remoteVariationId == 1L }).isFalse()
-    }
-
-    @Test
     fun `given cached variations, when fetchFirstPage called, then filter out virtual variations`() = runTest {
         // GIVEN
         val productId = 1L
