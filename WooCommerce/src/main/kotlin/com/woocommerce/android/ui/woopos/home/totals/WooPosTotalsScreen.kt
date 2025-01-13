@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.fadeIn
@@ -52,6 +53,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorS
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals
 import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.inprogress.WooPosPaymentInProgressScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
@@ -174,26 +176,36 @@ private fun TotalsLoaded(
                 }
             }
         }
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 40.dp.toAdaptivePadding(),
-                    vertical = 16.dp.toAdaptivePadding()
-                )
-                .weight(.9f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            TotalsGrid(state = state)
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
-                WooPosOutlinedButton(
-                    text = stringResource(R.string.woopos_payment_take_cash_payment_label),
-                    onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
-                )
-                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        AnimatedContent(
+            targetState = state.totals,
+            label = "totals_grid_animation",
+        ) { state ->
+            when (state) {
+                is Totals.Hidden -> Unit
+                is Totals.Visible -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = 40.dp.toAdaptivePadding(),
+                                vertical = 16.dp.toAdaptivePadding()
+                            )
+                            .weight(.9f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        TotalsGrid(totals = state)
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                            WooPosOutlinedButton(
+                                text = stringResource(R.string.woopos_payment_take_cash_payment_label),
+                                onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
+                            )
+                            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                        }
+                    }
+                }
             }
         }
     }
@@ -285,44 +297,40 @@ private fun ReaderDisconnected(
 }
 
 @Composable
-private fun TotalsGrid(state: WooPosTotalsViewState.Checkout) {
-    when (state.totals) {
-        is WooPosTotalsViewState.Totals.Hidden -> Unit
-        is WooPosTotalsViewState.Totals.Visible ->
-            Column(
-                modifier = Modifier
-                    .padding(24.dp.toAdaptivePadding())
-                    .width(382.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                TotalsGridRow(
-                    textOne = stringResource(R.string.woopos_payment_subtotal_label),
-                    textTwo = state.totals.orderSubtotalText,
-                )
+private fun TotalsGrid(totals: Totals.Visible) {
+    Column(
+        modifier = Modifier
+            .padding(24.dp.toAdaptivePadding())
+            .width(382.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        TotalsGridRow(
+            textOne = stringResource(R.string.woopos_payment_subtotal_label),
+            textTwo = totals.orderSubtotalText,
+        )
 
-                Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
 
-                TotalsGridRow(
-                    textOne = stringResource(R.string.woopos_payment_tax_label),
-                    textTwo = state.totals.orderTaxText,
-                )
+        TotalsGridRow(
+            textOne = stringResource(R.string.woopos_payment_tax_label),
+            textTwo = totals.orderTaxText,
+        )
 
-                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
-                Divider(color = WooPosTheme.colors.border, thickness = 1.dp)
+        Divider(color = WooPosTheme.colors.border, thickness = 1.dp)
 
-                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
-                TotalsGridRow(
-                    textOne = stringResource(R.string.woopos_payment_total_label),
-                    textTwo = state.totals.orderTotalText,
-                    styleOne = MaterialTheme.typography.h4,
-                    styleTwo = MaterialTheme.typography.h4,
-                    fontWeightOne = FontWeight.Medium,
-                    fontWeightTwo = FontWeight.Bold,
-                )
-            }
+        TotalsGridRow(
+            textOne = stringResource(R.string.woopos_payment_total_label),
+            textTwo = totals.orderTotalText,
+            styleOne = MaterialTheme.typography.h4,
+            styleTwo = MaterialTheme.typography.h4,
+            fontWeightOne = FontWeight.Medium,
+            fontWeightTwo = FontWeight.Bold,
+        )
     }
 }
 
@@ -415,7 +423,7 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
         WooPosTotalsScreen(
             modifier = modifier,
             state = WooPosTotalsViewState.Checkout(
-                totals = WooPosTotalsViewState.Totals.Visible(
+                totals = Totals.Visible(
                     orderSubtotalText = "$420.00",
                     orderTotalText = "$462.00",
                     orderTaxText = "$42.00",
@@ -437,7 +445,7 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
         WooPosTotalsScreen(
             modifier = modifier,
             state = WooPosTotalsViewState.Checkout(
-                totals = WooPosTotalsViewState.Totals.Visible(
+                totals = Totals.Visible(
                     orderSubtotalText = "$420.00",
                     orderTotalText = "$462.00",
                     orderTaxText = "$42.00",
@@ -460,7 +468,7 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
         WooPosTotalsScreen(
             modifier = Modifier,
             state = WooPosTotalsViewState.Checkout(
-                totals = WooPosTotalsViewState.Totals.Visible(
+                totals = Totals.Visible(
                     orderSubtotalText = "$420.00",
                     orderTotalText = "$462.00",
                     orderTaxText = "$42.00",

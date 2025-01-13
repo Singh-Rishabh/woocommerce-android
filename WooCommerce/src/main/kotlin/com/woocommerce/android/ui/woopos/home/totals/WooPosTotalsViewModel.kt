@@ -303,7 +303,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         val state = uiState.value
                         if (state is WooPosTotalsViewState.Checkout) {
                             uiState.value = state.copy(totals = Totals.Hidden)
-                            delay(400)
+                            delay(300)
                         }
                         uiState.value = buildPaymentInProgressState(paymentState)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
