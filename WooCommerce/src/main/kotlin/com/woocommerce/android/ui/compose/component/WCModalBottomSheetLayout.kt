@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.core.view.WindowCompat
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.findActivity
+import com.woocommerce.android.util.SystemVersionUtils
 
 /**
  * A wrapper around [ModalBottomSheetLayout] that provides default values for the sheet shape and scrim color.
@@ -54,7 +55,15 @@ fun WCModalBottomSheetLayout(
     ),
     content: @Composable () -> Unit
 ) {
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+    if (SystemVersionUtils.isAtMostU()) {
+        ModalBottomSheetLayoutWithStatusBarWorkAround(
+            sheetContent = sheetContent,
+            sheetShape = sheetShape,
+            sheetState = sheetState,
+            modifier = modifier,
+            content = content,
+        )
+    } else {
         ModalBottomSheetLayout(
             sheetContent = sheetContent,
             sheetShape = sheetShape,
@@ -62,14 +71,6 @@ fun WCModalBottomSheetLayout(
             scrimColor = scrimColor(),
             modifier = modifier,
             content = content
-        )
-    } else {
-        ModalBottomSheetLayoutWithStatusBarWorkAround(
-            sheetContent = sheetContent,
-            sheetShape = sheetShape,
-            sheetState = sheetState,
-            modifier = modifier,
-            content = content,
         )
     }
 }
