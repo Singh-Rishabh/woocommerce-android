@@ -5,14 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
@@ -42,7 +40,6 @@ import com.woocommerce.android.util.SystemVersionUtils
 /**
  * A wrapper around [ModalBottomSheetLayout] that provides default values for the sheet shape and scrim color.
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WCModalBottomSheetLayout(
     sheetState: ModalBottomSheetState,
@@ -82,7 +79,6 @@ fun WCModalBottomSheetLayout(
  *
  */
 @Suppress("DEPRECATION")
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
 private fun ModalBottomSheetLayoutWithStatusBarWorkaround(
     sheetContent: @Composable ColumnScope.() -> Unit,
