@@ -297,13 +297,13 @@ class WooPosTotalsViewModel @Inject constructor(
         viewModelScope.launch {
             cardReaderPaymentController?.paymentState?.collect { paymentState ->
                 when (paymentState) {
-                    is CardReaderPaymentState.CollectingPayment -> handleCollectingPaymentState()
+                    is CardReaderPaymentState.CollectingPayment -> handleCollectingPaymentState(paymentState)
 
                     is CardReaderPaymentState.LoadingData -> handleReaderLoadingPaymentState()
 
                     is CardReaderPaymentState.ProcessingPayment,
                     is CardReaderPaymentState.PaymentCapturing -> {
-                        uiState.value = buildPaymentInProgressState(paymentState)
+                        uiState.value = buildPaymentInProgressState()
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
                         childrenToParentEventSender.sendToParent(
                             NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted
@@ -332,13 +332,15 @@ class WooPosTotalsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleCollectingPaymentState() {
+    private suspend fun handleCollectingPaymentState(paymentState: CardReaderPaymentState.CollectingPayment) {
         val totalsState = uiState.value
         if (totalsState is WooPosTotalsViewState.Totals) {
             uiState.value = totalsState.copy(
                 readerStatus = WooPosTotalsViewState.ReaderStatus.ReadyForPayment(
                     title = resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_title),
-                    subtitle = resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_subtitle)
+                    subtitle = resourceProvider.getString(
+                        paymentState.cardReaderHint ?: R.string.woopos_totals_reader_ready_for_payment_subtitle
+                    )
                 )
             )
         } else {
@@ -386,16 +388,12 @@ class WooPosTotalsViewModel @Inject constructor(
         )
     }
 
-    private fun buildPaymentInProgressState(paymentState: CardReaderPaymentOrRefundState): PaymentInProgress {
-        val subtitle = when (paymentState) {
-            is CardReaderPaymentState.ProcessingPayment -> R.string.woo_pos_payment_remove_card
-            else -> R.string.woopos_success_totals_payment_processing_subtitle
-        }
+    private fun buildPaymentInProgressState(): PaymentInProgress {
         return PaymentInProgress(
             title = resourceProvider.getString(
                 R.string.woopos_success_totals_payment_processing_title
             ),
-            subtitle = resourceProvider.getString(subtitle)
+            subtitle = resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle)
         )
     }
 
