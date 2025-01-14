@@ -138,7 +138,7 @@ class WooPosHomeViewModel @Inject constructor(
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Checkout.FullScreenTotals
                         )
-                        _navigationEvent.emit(NavigationEvent.ReturnHomeFromCashPayment)
+                        _navigationEvent.emit(NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted)
                     }
 
                     is ChildToParentEvent.GoBackToCheckoutAfterFailedPayment,
