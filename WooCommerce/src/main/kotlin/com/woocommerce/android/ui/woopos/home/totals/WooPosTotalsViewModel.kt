@@ -279,7 +279,10 @@ class WooPosTotalsViewModel @Inject constructor(
                     }
 
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> {
-                        cancelPaymentAction()
+                        if (event.paymentMethod == PaymentMethod.CASH) {
+                            // Cancel payment intent if order is marked completed by cash
+                            cancelPaymentAction()
+                        }
                         showSuccessfulPaymentState(event.paymentMethod)
                     }
 
