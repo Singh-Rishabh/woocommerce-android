@@ -54,6 +54,7 @@ class AccountMismatchRepository @Inject constructor(
                 val wpcomEmail = it?.wpcomEmail
                 if (wpcomEmail.isNullOrEmpty()) {
                     WooLog.w(WooLog.T.LOGIN, "Cannot find Jetpack Email in response")
+                    @Suppress("TooGenericExceptionThrown")
                     throw Exception("Email missing from response")
                 } else {
                     WooLog.d(WooLog.T.LOGIN, "Jetpack User fetched successfully")
