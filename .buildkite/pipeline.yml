@@ -35,9 +35,7 @@ steps:
           queue: "linter"
 
       - label: "detekt"
-        command: |
-          echo "--- 🧹 Linting"
-          ./gradlew detektAll
+        command: ./gradlew detektAll
         plugins: [$CI_TOOLKIT]
         artifact_paths:
           - "**/build/reports/detekt/detekt.html"
