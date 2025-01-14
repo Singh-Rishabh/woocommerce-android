@@ -60,11 +60,6 @@ static def readPropertiesFromFile(File file) {
 allprojects {
     apply plugin: libs.plugins.detekt.get().pluginId
 
-    repositories {
-        google()
-        mavenCentral()
-    }
-
     tasks.withType(KotlinCompile).all {
         kotlinOptions {
             jvmTarget = libs.versions.java.get()
