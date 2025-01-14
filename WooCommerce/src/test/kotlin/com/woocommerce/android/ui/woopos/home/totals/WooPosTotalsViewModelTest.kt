@@ -861,7 +861,7 @@ class WooPosTotalsViewModelTest {
             assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
             with(processingState) {
                 assertThat(title).isEqualTo("Processing payment")
-                assertThat(subtitle).isEqualTo("Remove card")
+                assertThat(subtitle).isEqualTo("Please wait…")
             }
         }
 
