@@ -672,4 +672,120 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val currentViewState = sut.viewState.value
         assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
     }
+
+    @Test
+    fun `when address selection is collapsed then changes shipment details are allowed`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(null)
+
+        createViewModel()
+
+        advanceUntilIdle()
+        // Collapse shipment details and select address
+        var changeAccepted = sut.onShipmentDetailsExpandedChange(false)
+        assertThat(changeAccepted).isTrue()
+        changeAccepted = sut.onSelectAddressExpandedChange(false)
+        assertThat(changeAccepted).isTrue()
+
+        // Check all changes are accepted
+        changeAccepted = sut.onShipmentDetailsExpandedChange(false)
+        assertThat(changeAccepted).isTrue()
+        changeAccepted = sut.onShipmentDetailsExpandedChange(true)
+        assertThat(changeAccepted).isTrue()
+    }
+
+    @Test
+    fun `when address selection is expanded then prevent any change on the shipment details`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(null)
+
+        createViewModel()
+
+        advanceUntilIdle()
+        // Expand shipment details and select address
+        var changeAccepted = sut.onShipmentDetailsExpandedChange(true)
+        assertThat(changeAccepted).isTrue()
+
+        changeAccepted = sut.onSelectAddressExpandedChange(true)
+        assertThat(changeAccepted).isTrue()
+
+        // Check no changes are accepted when select address is expanded
+        changeAccepted = sut.onShipmentDetailsExpandedChange(false)
+        assertThat(changeAccepted).isFalse()
+        changeAccepted = sut.onShipmentDetailsExpandedChange(true)
+        assertThat(changeAccepted).isFalse()
+    }
+
+    @Test
+    fun `when a bottom sheet is expanded then the back gesture closes the sheet`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(null)
+
+        createViewModel()
+
+        advanceUntilIdle()
+        // Expand shipment details and select address
+        sut.onShipmentDetailsExpandedChange(true)
+        sut.onSelectAddressExpandedChange(true)
+
+        // Close address selection
+        var shouldNavigateBack = sut.onNavigateBack()
+        assertThat(shouldNavigateBack).isFalse()
+
+        // Close shipment details
+        shouldNavigateBack = sut.onNavigateBack()
+        assertThat(shouldNavigateBack).isFalse()
+
+        // Navigate back
+        shouldNavigateBack = sut.onNavigateBack()
+        assertThat(shouldNavigateBack).isTrue()
+    }
+
+    @Test
+    fun `when shipment details is expanded then the back gesture closes the sheet`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(null)
+
+        createViewModel()
+
+        advanceUntilIdle()
+        sut.onShipmentDetailsExpandedChange(true)
+
+        // Close shipment details
+        var shouldNavigateBack = sut.onNavigateBack()
+        assertThat(shouldNavigateBack).isFalse()
+
+        // Navigate back
+        shouldNavigateBack = sut.onNavigateBack()
+        assertThat(shouldNavigateBack).isTrue()
+    }
+
+    @Test
+    fun `when there is no bottom sheet expanded, then on back navigates to the previous screen`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(null)
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        // Navigate back
+        val shouldNavigateBack = sut.onNavigateBack()
+        assertThat(shouldNavigateBack).isTrue()
+    }
 }
