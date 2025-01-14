@@ -56,7 +56,7 @@ fun WCModalBottomSheetLayout(
     content: @Composable () -> Unit
 ) {
     if (SystemVersionUtils.isAtMostU()) {
-        ModalBottomSheetLayoutWithStatusBarWorkAround(
+        ModalBottomSheetLayoutWithStatusBarWorkaround(
             sheetContent = sheetContent,
             sheetShape = sheetShape,
             sheetState = sheetState,
@@ -85,7 +85,7 @@ fun WCModalBottomSheetLayout(
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
 @Composable
-private fun ModalBottomSheetLayoutWithStatusBarWorkAround(
+private fun ModalBottomSheetLayoutWithStatusBarWorkaround(
     sheetContent: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     sheetState: ModalBottomSheetState,
