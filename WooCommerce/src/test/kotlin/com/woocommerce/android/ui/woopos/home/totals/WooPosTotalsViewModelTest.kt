@@ -52,6 +52,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -761,6 +762,7 @@ class WooPosTotalsViewModelTest {
 
             // WHEN
             paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
+            advanceUntilIdle()
 
             // THEN
             assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
@@ -831,6 +833,7 @@ class WooPosTotalsViewModelTest {
             // WHEN
             val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
             paymentState.value = CardReaderPaymentState.PaymentCapturing.ExternalReaderPaymentCapturing("")
+            advanceUntilIdle()
 
             // THEN
             val processingState = vm.state.value as WooPosTotalsViewState.PaymentInProgress
@@ -860,6 +863,7 @@ class WooPosTotalsViewModelTest {
             // WHEN
             val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
             paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
+            advanceUntilIdle()
 
             // THEN
             val processingState = vm.state.value as WooPosTotalsViewState.PaymentInProgress
@@ -901,6 +905,7 @@ class WooPosTotalsViewModelTest {
             paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable(
                 errorType = PaymentFlowError.NoNetwork, failedPaymentRetryAction
             )
+            advanceUntilIdle()
             assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
             assertTrue(
                 (paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment).onRetry != null
@@ -942,6 +947,7 @@ class WooPosTotalsViewModelTest {
             paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.Cancelable(
                 errorType = PaymentFlowError.NoNetwork, onRetry = null, onCancel = {}, amountWithCurrencyLabel = ""
             )
+            advanceUntilIdle()
             assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
             assertTrue(
                 (paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment).onRetry == null
@@ -985,6 +991,8 @@ class WooPosTotalsViewModelTest {
         paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.Cancelable(
             errorType = PaymentFlowError.NoNetwork, onRetry = null, onCancel = {}, amountWithCurrencyLabel = ""
         )
+        advanceUntilIdle()
+
         assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
         assertTrue(
             (paymentState.value as CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment).onRetry == null
@@ -992,6 +1000,7 @@ class WooPosTotalsViewModelTest {
 
         // WHEN
         vm.onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked)
+        advanceUntilIdle()
 
         // THEN
         verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout)
@@ -1023,6 +1032,7 @@ class WooPosTotalsViewModelTest {
             paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable(
                 errorType = PaymentFlowError.NoNetwork, {}
             )
+            advanceUntilIdle()
             assertThat(vm.state.value).isInstanceOf(WooPosTotalsViewState.PaymentFailed::class.java)
 
             // WHEN
