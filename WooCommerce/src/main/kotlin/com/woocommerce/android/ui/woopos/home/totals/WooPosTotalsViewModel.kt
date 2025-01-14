@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToCashPayment
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToEmailReceipt
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NewTransactionClicked
@@ -304,6 +305,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     is CardReaderPaymentState.PaymentCapturing -> {
                         uiState.value = buildPaymentInProgressState(paymentState)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
+                        childrenToParentEventSender.sendToParent(NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted)
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
