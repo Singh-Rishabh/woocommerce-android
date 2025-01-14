@@ -40,7 +40,7 @@ fun NavController.navigateToHomeScreenIfHomeScreenNotOpen() {
 }
 
 fun NavGraphBuilder.homeScreen(
-    onNavigationEvent: (WooPosNavigationEvent) -> Unit
+    homeViewModel: WooPosHomeViewModel,
 ) {
     composable(
         route = HOME_ROUTE,
@@ -79,7 +79,7 @@ fun NavGraphBuilder.homeScreen(
 
         WooPosHomeScreen(
             isPaymentCompletedViaCash = isPaymentCompletedViaCash,
-            onNavigationEvent = onNavigationEvent,
+            viewModel = homeViewModel,
         )
     }
 }
