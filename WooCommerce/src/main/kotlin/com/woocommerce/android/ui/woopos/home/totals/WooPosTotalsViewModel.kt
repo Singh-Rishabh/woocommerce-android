@@ -305,7 +305,9 @@ class WooPosTotalsViewModel @Inject constructor(
                     is CardReaderPaymentState.PaymentCapturing -> {
                         uiState.value = buildPaymentInProgressState(paymentState)
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
-                        childrenToParentEventSender.sendToParent(NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted)
+                        childrenToParentEventSender.sendToParent(
+                            NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted
+                        )
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
