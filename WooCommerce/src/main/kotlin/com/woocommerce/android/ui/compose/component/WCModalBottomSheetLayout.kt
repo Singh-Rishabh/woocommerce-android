@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imeNestedScroll
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -112,7 +111,6 @@ private fun ModalBottomSheetLayoutWithStatusBarWorkaround(
     modifier = modifier
         .imePadding()
         .navigationBarsPadding()
-        .imeNestedScroll(),
 ) {
     val context = LocalContext.current
     var statusBarColor by remember { mutableStateOf(Color.Transparent) }
