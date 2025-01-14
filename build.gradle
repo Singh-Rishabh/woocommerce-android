@@ -72,12 +72,6 @@ allprojects {
     }
 }
 
-subprojects {
-    configurations {
-        compile.exclude group: 'org.jetbrains', module: 'annotations-java5'
-    }
-}
-
 tasks.register("detektAll", Detekt) {
     description = "Custom DETEKT build for all modules"
     parallel = true
