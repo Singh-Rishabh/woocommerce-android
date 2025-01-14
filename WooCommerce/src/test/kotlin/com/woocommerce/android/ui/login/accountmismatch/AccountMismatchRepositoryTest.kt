@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.login.accountmismatch
 
+import com.woocommerce.android.FakeDispatcher
 import com.woocommerce.android.ui.login.WPApiSiteRepository
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,11 +22,13 @@ class AccountMismatchRepositoryTest : BaseUnitTest() {
     private val wpApiSiteRepository = mock<WPApiSiteRepository> {
         onBlocking { fetchSite(any(), any(), any()) }.thenReturn(Result.success(SiteModel()))
     }
+    private val dispatcher = FakeDispatcher()
 
     private val sut = AccountMismatchRepository(
         jetpackStore = jetpackStore,
         siteStore = siteStore,
-        wpApiSiteRepository = wpApiSiteRepository
+        wpApiSiteRepository = wpApiSiteRepository,
+        dispatcher = dispatcher
     )
 
     @Test

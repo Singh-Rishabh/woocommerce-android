@@ -5,6 +5,8 @@ import com.woocommerce.android.ui.login.WPApiSiteRepository
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.wordpress.android.fluxc.Dispatcher
+import org.wordpress.android.fluxc.generated.SiteActionBuilder
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.jetpack.JetpackUser
 import org.wordpress.android.fluxc.store.JetpackStore
@@ -15,10 +17,15 @@ import javax.inject.Inject
 class AccountMismatchRepository @Inject constructor(
     private val jetpackStore: JetpackStore,
     private val siteStore: SiteStore,
-    private val wpApiSiteRepository: WPApiSiteRepository
+    private val wpApiSiteRepository: WPApiSiteRepository,
+    private val dispatcher: Dispatcher
 ) {
     suspend fun getSiteByUrl(url: String): SiteModel? = withContext(Dispatchers.IO) {
         SiteUtils.getSiteByMatchingUrl(siteStore, url)
+    }
+
+    fun removeSiteFromDB(site: SiteModel) {
+        dispatcher.dispatch(SiteActionBuilder.newRemoveSiteAction(site))
     }
 
     suspend fun fetchJetpackConnectionUrl(site: SiteModel): Result<String> {
