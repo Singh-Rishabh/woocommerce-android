@@ -5,44 +5,91 @@ import com.woocommerce.android.ui.products.variations.selector.VariationListHand
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WooPosVariationsDataSource @Inject constructor(
-    private val handler: VariationListHandler
+    private val handler: VariationListHandler,
+    private val variationCache: VariationsLRUCache<Long, List<ProductVariation>>
 ) {
-    fun getVariationsFlow(productId: Long): Flow<List<ProductVariation>> {
-        return handler.getVariationsFlow(productId)
+    private suspend fun getCachedVariations(productId: Long): List<ProductVariation> {
+        return variationCache.get(productId) ?: emptyList()
     }
 
-    fun canLoadMore(): Boolean {
-        return handler.canLoadMore()
+    private suspend fun updateCache(productId: Long, variations: List<ProductVariation>) {
+        variationCache.put(productId, variations)
     }
 
-    suspend fun fetchVariations(productId: Long, forceRefresh: Boolean = true): Result<Unit> {
-        val result = handler.fetchVariations(productId, forceRefresh = forceRefresh)
-        return if (result.isSuccess) {
-            Result.success(Unit)
-        } else {
-            result.logFailure()
-            Result.failure(
-                result.exceptionOrNull() ?: Exception("Unknown error while loading more variations")
-            )
+    suspend fun resetState() {
+        handler.resetState()
+    }
+
+    fun canLoadMore(numOfVariations: Int): Boolean {
+        return handler.canLoadMore(numOfVariations)
+    }
+
+    fun fetchFirstPage(
+        productId: Long,
+        forceRefresh: Boolean = true
+    ): Flow<FetchResult> = flow {
+        if (forceRefresh) {
+            updateCache(productId, emptyList())
         }
-    }
 
-    suspend fun loadMore(productId: Long): Result<Unit> = withContext(Dispatchers.IO) {
-        val result = handler.loadMore(productId)
+        val cachedVariations = getCachedVariations(productId)
+        if (cachedVariations.isNotEmpty()) {
+            emit(FetchResult.Cached(cachedVariations))
+        }
+
+        val result = handler.fetchVariations(
+            productId,
+            forceRefresh = true,
+            filterOptions = mapOf(
+                WCProductStore.VariationFilterOption.STATUS to "publish"
+            )
+        )
         if (result.isSuccess) {
-            Result.success(Unit)
+            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull()?.applyFilter() ?: emptyList()
+            updateCache(productId, remoteVariations)
+            emit(FetchResult.Remote(Result.success(remoteVariations)))
+        } else {
+            emit(
+                FetchResult.Remote(
+                    Result.failure(
+                        result.exceptionOrNull() ?: Exception("Unknown error while fetching variations")
+                    )
+                )
+            )
+        }
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun loadMore(productId: Long): Result<List<ProductVariation>> = withContext(Dispatchers.IO) {
+        val result = handler.loadMore(
+            productId,
+            filterOptions = mapOf(
+                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH
+            )
+        )
+        if (result.isSuccess) {
+            val fetchedVariations = handler.getVariationsFlow(productId).first().applyFilter()
+            Result.success(fetchedVariations)
         } else {
             result.logFailure()
             Result.failure(
                 result.exceptionOrNull() ?: Exception("Unknown error while loading more variations")
             )
         }
+    }
+
+    companion object {
+        private const val VARIATION_STATUS_PUBLISH = "publish"
     }
 }
 
@@ -50,4 +97,13 @@ private fun Result<Unit>.logFailure() {
     val error = exceptionOrNull()
     val errorMessage = error?.message ?: "Unknown error"
     WooLog.e(WooLog.T.POS, "Loading variations failed - $errorMessage", error)
+}
+
+sealed class FetchResult {
+    data class Cached(val data: List<ProductVariation>) : FetchResult()
+    data class Remote(val result: Result<List<ProductVariation>>) : FetchResult()
+}
+
+private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
+    return filter { it.price != null && !it.isDownloadable }
 }

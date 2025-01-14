@@ -14,10 +14,8 @@ enum class FeatureFlag {
     ENDLESS_CAMPAIGNS_SUPPORT,
     REVAMP_WOO_SHIPPING,
     OBJECTIVE_SECTION,
-    POS_NON_SIMPLE_PRODUCT_TYPES,
-    POS_CASH_PAYMENTS,
-    POS_RECEIPTS,
-    PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT;
+    BULK_UPDATE_ORDERS_STATUS,
+    HIDE_SITES_FROM_SITE_PICKER;
 
     fun isEnabled(context: Context? = null): Boolean {
         return when (this) {
@@ -28,15 +26,13 @@ enum class FeatureFlag {
             WC_SHIPPING_BANNER,
             BETTER_CUSTOMER_SEARCH_M2,
             ORDER_CREATION_AUTO_TAX_RATE,
-            REVAMP_WOO_SHIPPING,
-            POS_NON_SIMPLE_PRODUCT_TYPES,
-            POS_CASH_PAYMENTS,
-            POS_RECEIPTS,
-            PRODUCT_GLOBAL_UNIQUE_IDENTIFIER_SUPPORT -> PackageUtils.isDebugBuild()
+            REVAMP_WOO_SHIPPING -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
             ENDLESS_CAMPAIGNS_SUPPORT,
-            OBJECTIVE_SECTION -> true
+            OBJECTIVE_SECTION,
+            BULK_UPDATE_ORDERS_STATUS,
+            HIDE_SITES_FROM_SITE_PICKER -> true
         }
     }
 }

@@ -47,7 +47,6 @@ object AppUrls {
     const val CROWDSIGNAL_STORE_SETUP_SURVEY =
         "https://automattic.survey.fm/woo-mobile-%E2%80%93-store-setup-survey-2022"
 
-    const val CROWDSIGNAL_TAP_TO_PAY_SURVEY = "https://automattic.survey.fm/woo-app-%E2%80%93-first-ttp-survey"
     val CROWDSIGNAL_PRODCUT_CREATION_WITH_AI_SURVEY =
         if (BuildConfig.DEBUG) {
             "https://automattic.survey.fm/testing-debug-product-creation-with-ai-dec-2023"
@@ -60,9 +59,6 @@ object AppUrls {
     } else {
         "https://automattic.survey.fm/order-creation-shipping-lines-survey-production"
     }
-
-    // Will be used later when the feature is fully launched.
-    const val COUPONS_SURVEY = "https://automattic.survey.fm/woo-app-coupon-management-production"
 
     const val WOOCOMMERCE_USER_ROLES =
         "https://woocommerce.com/posts/a-guide-to-woocommerce-user-roles-permissions-and-security/"

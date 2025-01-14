@@ -25,9 +25,13 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingL
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CARRIER
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.CUSTOM
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PageType.SAVED
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCarrierPackageContent
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCarrierPackageScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingCustomPackageCreationScreen
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingSavedPackageContent
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.WooShippingSavedPackageScreen
 
 @Composable
@@ -109,39 +113,50 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
             ),
             createCustomPackageScreen = {
                 WooShippingCustomPackageCreationScreen(
+                    packageName = "Custom Package Name",
                     packageType = "Envelope",
                     packageLength = "10",
                     packageWidth = "10",
                     packageHeight = "10",
+                    packageWeight = "10",
                     isAddPackageEnabled = true,
+                    isSaveAsTemplateChecked = true,
                     onAddPackageClick = {},
                     onPackageTypeClick = {},
                     onLengthChange = {},
                     onWidthChange = {},
                     onHeightChange = {},
-                    onSavePackageChanged = { }
+                    onWeightChange = {},
+                    onPackageNameChange = {},
+                    onSavePackageChanged = {}
                 )
             },
             createSavedPackageScreen = {
-                WooShippingSavedPackageScreen(
+                WooShippingSavedPackageContent(
                     savedPackages = listOf(
                         PackageData(
                             name = "Small Flat Rate Box",
-                            dimensions = "10 x 10 x 10 cm",
+                            dimensions = "10 x 10 x 10",
+                            weight = "10",
                             isSelected = true,
-                            isLetter = true
+                            isLetter = true,
+                            id = "1",
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
-                            dimensions = "20 x 20 x 20 cm",
+                            dimensions = "20 x 20 x 20",
+                            weight = "10",
                             isSelected = false,
-                            isLetter = false
+                            isLetter = false,
+                            id = "1",
                         ),
                         PackageData(
                             name = "Small Flat Rate Box",
-                            dimensions = "30 x 30 x 30 cm",
+                            dimensions = "30 x 30 x 30",
+                            weight = "10",
                             isSelected = false,
-                            isLetter = false
+                            isLetter = false,
+                            id = "1",
                         )
                     ),
                     isAddPackageEnabled = true,
@@ -149,7 +164,80 @@ fun WooShippingLabelsPackageCreationScreenPreview() {
                     onSavedPackageSelected = { _, _ -> }
                 )
             },
-            createCarrierPackageScreen = { }
+            createCarrierPackageScreen = {
+                WooShippingCarrierPackageContent(
+                    carrierPackages = mapOf(
+                        Carrier.DHL to listOf(
+                            CarrierPackageGroup(
+                                groupName = "Group 1",
+                                packages = listOf(
+                                    PackageData(
+                                        name = "Package 1 - Carrier 1",
+                                        dimensions = "10 x 10 x 10",
+                                        weight = "10",
+                                        isSelected = false,
+                                        isLetter = false,
+                                        id = "1",
+                                    ),
+                                    PackageData(
+                                        name = "Package 2 - Carrier 1",
+                                        dimensions = "20 x 20 x 20",
+                                        weight = "20",
+                                        isSelected = false,
+                                        isLetter = false,
+                                        id = "1",
+                                    )
+                                )
+                            ),
+                            CarrierPackageGroup(
+                                groupName = "Group 2",
+                                packages = listOf(
+                                    PackageData(
+                                        name = "Package 3 - Carrier 1",
+                                        dimensions = "30 x 30 x 30",
+                                        weight = "30",
+                                        isSelected = false,
+                                        isLetter = false,
+                                        id = "1",
+                                    ),
+                                    PackageData(
+                                        name = "Package 4 - Carrier 1",
+                                        dimensions = "40 x 40 x 40",
+                                        weight = "40",
+                                        isSelected = false,
+                                        isLetter = false,
+                                        id = "1",
+                                    )
+                                )
+                            )
+                        ),
+                        Carrier.USPS to listOf(
+                            CarrierPackageGroup(
+                                groupName = "Group 2",
+                                packages = listOf(
+                                    PackageData(
+                                        name = "Package 1 - Carrier 2",
+                                        dimensions = "10 x 10 x 10",
+                                        weight = "10",
+                                        isSelected = false,
+                                        isLetter = false,
+                                        id = "1",
+                                    ),
+                                    PackageData(
+                                        name = "Package 2 Carrier - 2",
+                                        dimensions = "20 x 20 x 20",
+                                        weight = "20",
+                                        isSelected = false,
+                                        isLetter = false,
+                                        id = "1",
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    onPackageSelected = { _, _ -> }
+                )
+            }
         )
     }
 }

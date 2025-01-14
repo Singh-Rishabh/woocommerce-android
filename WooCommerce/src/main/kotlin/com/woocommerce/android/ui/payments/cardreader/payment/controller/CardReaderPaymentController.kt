@@ -72,7 +72,10 @@ import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.FAILED
 import com.woocommerce.android.util.PrintHtmlHelper.PrintJobResult.STARTED
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -88,7 +91,6 @@ private const val CANADA_FEE_FLAT_IN_CENTS = 15L
 
 @Suppress("LongParameterList", "LargeClass")
 class CardReaderPaymentController(
-    private val scope: CoroutineScope,
     private val cardReaderManager: CardReaderManager,
     private val orderRepository: OrderDetailRepository,
     private val selectedSite: SelectedSite,
@@ -113,6 +115,8 @@ class CardReaderPaymentController(
     private val cardReaderType: CardReaderType,
     private val isTTPPaymentInProgress: KMutableProperty0<Boolean>,
 ) {
+    private var scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
     private val _paymentState: MutableStateFlow<CardReaderPaymentOrRefundState> =
         MutableStateFlow(CardReaderPaymentState.LoadingData(::onCancelPaymentFlow))
     val paymentState: StateFlow<CardReaderPaymentOrRefundState> = _paymentState
@@ -123,10 +127,6 @@ class CardReaderPaymentController(
 
     private var refetchOrderJob: Job? = null
 
-    private val CardReaderFlowParam.PaymentOrRefund.isPOS: Boolean
-        get() = this is CardReaderFlowParam.PaymentOrRefund.Payment &&
-            this.paymentType == CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS
-
     private val _event: MutableSharedFlow<CardReaderPaymentEvent> = MutableSharedFlow()
     val event: Flow<CardReaderPaymentEvent> = _event
 
@@ -135,6 +135,8 @@ class CardReaderPaymentController(
     }
 
     fun start() {
+        scope.cancel()
+        scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         if (cardReaderManager.readerStatus.value is CardReaderStatus.Connected) {
             startFlowWhenReaderConnected()
         } else {
@@ -292,7 +294,8 @@ class CardReaderPaymentController(
                 storeName = selectedSite.get().name.ifEmpty { null },
                 siteUrl = selectedSite.get().url.ifEmpty { null },
                 countryCode = countryCode,
-                feeAmount = calculateFeeInCents(countryCode)
+                feeAmount = calculateFeeInCents(countryCode),
+                channel = determinePaymentChannel(paymentOrRefund)
             )
         ).collect { paymentStatus ->
             onPaymentStatusChanged(
@@ -317,6 +320,7 @@ class CardReaderPaymentController(
                 _paymentState.value =
                     CardReaderPaymentState.LoadingData(::onCancelPaymentFlow)
             }
+
             CollectingPayment -> {
                 _paymentState.value = paymentStateProvider.provideCollectingPaymentState(
                     cardReaderType,
@@ -422,6 +426,7 @@ class CardReaderPaymentController(
             InitializingInteracRefund -> {
                 _paymentState.value = CardReaderInteracRefundState.LoadingData(::onCancelPaymentFlow)
             }
+
             CollectingInteracRefund -> {
                 _paymentState.value = CardReaderInteracRefundState.CollectingInteracRefund(
                     amountWithCurrencyLabel = amountLabel,
@@ -432,6 +437,7 @@ class CardReaderPaymentController(
             ProcessingInteracRefund -> {
                 _paymentState.value = CardReaderInteracRefundState.ProcessingInteracRefund(amountLabel)
             }
+
             is InteracRefundSuccess -> {
                 _paymentState.value = CardReaderInteracRefundState.InteracRefundSuccessful(amountLabel)
                 triggerEvent(CardReaderPaymentEvent.InteracRefundSuccessful)
@@ -457,20 +463,10 @@ class CardReaderPaymentController(
     ) {
         paymentReceiptHelper.storeReceiptUrl(orderId, paymentStatus.receiptUrl)
         appPrefs.setCardReaderSuccessfulPaymentTime()
-        if (paymentOrRefund.isPOS) {
-            scope.launch {
-                syncOrderStatus(orderId)
-                triggerEvent(CardReaderPaymentEvent.Exit)
-            }
-        } else {
-            triggerEvent(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
-            showPaymentSuccessfulState()
-            reFetchOrder()
-        }
-    }
 
-    private suspend fun syncOrderStatus(orderId: Long) {
-        orderRepository.fetchOrderById(orderId)
+        triggerEvent(CardReaderPaymentEvent.PlaySuccessfulPaymentSound)
+        showPaymentSuccessfulState()
+        reFetchOrder()
     }
 
     @VisibleForTesting
@@ -576,6 +572,7 @@ class CardReaderPaymentController(
             ),
             onCancel = ::onBackPressed
         )
+
         is PaymentFlowError.BuiltInReader.NfcDisabled -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
@@ -586,12 +583,14 @@ class CardReaderPaymentController(
                 onCallToActionTapped = { onEnableNfcClicked() }
             )
         )
+
         is PaymentFlowError.NonRetryableError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
             amountWithCurrencyLabel = amountLabel,
             onCancel = ::onBackPressed,
         )
+
         is PaymentFlowError.PurchaseHardwareReaderError -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             cta = CardReaderPaymentOrRefundState.CallToAction(
@@ -602,6 +601,7 @@ class CardReaderPaymentController(
             amountWithCurrencyLabel = amountLabel,
             onCancel = ::onBackPressed,
         )
+
         else -> paymentStateProvider.provideCancellableFailedPaymentState(
             cardReaderType = cardReaderType,
             errorType = errorType,
@@ -792,10 +792,11 @@ class CardReaderPaymentController(
         }
     }
 
-    fun onCleared() {
+    fun stop() {
         paymentDataForRetry?.let {
             cardReaderManager.cancelPayment(it)
         }
+        scope.cancel()
     }
 
     fun onBackPressed() {
@@ -873,5 +874,21 @@ class CardReaderPaymentController(
             CANADA_FEE_FLAT_IN_CENTS
         } else {
             null
+        }
+
+    private fun determinePaymentChannel(flow: CardReaderFlowParam.PaymentOrRefund): PaymentInfo.PaymentChannel? =
+        when (flow) {
+            is CardReaderFlowParam.PaymentOrRefund.Payment -> {
+                when (flow.paymentType) {
+                    CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.WOO_POS -> PaymentInfo.PaymentChannel.Pos
+                    CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.SIMPLE,
+                    CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER,
+                    CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER_CREATION,
+                    CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.TRY_TAP_TO_PAY ->
+                        PaymentInfo.PaymentChannel.StoreManager
+                }
+            }
+
+            is CardReaderFlowParam.PaymentOrRefund.Refund -> null
         }
 }

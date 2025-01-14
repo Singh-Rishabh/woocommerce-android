@@ -9,15 +9,20 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
+import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartPackageSelection
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment.Companion.PACKAGE_SELECTION_RESULT
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WooShippingLabelCreationFragment : BaseFragment() {
+class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
     private val viewModel: WooShippingLabelCreationViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -36,6 +41,7 @@ class WooShippingLabelCreationFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
+        setupResultHandlers()
     }
 
     override val activityAppBarStatus: AppBarStatus = AppBarStatus.Hidden
@@ -50,13 +56,20 @@ class WooShippingLabelCreationFragment : BaseFragment() {
 
                 is WooShippingLabelCreationViewModel.LabelPurchased -> {
                     WooShippingLabelCreationFragmentDirections
-                        .actionWooShippingLabelCreationFragmentToWooShippingLabelPurchasedFragment()
-                        .let {
-                            val navController = findNavController()
-                            navController.navigateSafely(it)
-                        }
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelPurchasedFragment(
+                            purchaseData = event.purchaseData
+                        ).let { findNavController().navigateSafely(it) }
                 }
+                is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
             }
         }
     }
+
+    private fun setupResultHandlers() {
+        handleResult<PackageData>(PACKAGE_SELECTION_RESULT) {
+            viewModel.onPackageSelected(it)
+        }
+    }
+
+    override fun onRequestAllowBackPress(): Boolean = viewModel.onNavigateBack()
 }

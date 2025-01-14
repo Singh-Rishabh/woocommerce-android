@@ -22,10 +22,9 @@ plugins {
 
 rootProject.name = 'WCAndroid'
 
-include ':quicklogin'
 include ':libs:commons'
 include ':libs:cardreader'
-include ':libs:iap'
+include ':libs:apifaker'
 include ':WooCommerce'
 
 gradle.ext.fluxCBinaryPath = "org.wordpress:fluxc"

@@ -17,7 +17,6 @@ import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_FEEDBACK_ACTION
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_FEEDBACK_CONTEXT
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_ANALYTICS_HUB_FEEDBACK
-import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_COUPONS_FEEDBACK
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_FEEDBACK_CANCELED
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_FEEDBACK_GENERAL_CONTEXT
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_FEEDBACK_OPENED
@@ -27,7 +26,6 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_ORDER_
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_PRODUCT_ADDONS_FEEDBACK
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_SHIPPING_LABELS_M4_FEEDBACK
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_SIMPLE_PAYMENTS_FEEDBACK
-import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_TAP_TO_PAY_FEEDBACK
 import com.woocommerce.android.databinding.FragmentFeedbackSurveyBinding
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
@@ -55,10 +53,8 @@ class FeedbackSurveyFragment : BaseFragment(R.layout.fragment_feedback_survey) {
             SurveyType.STORE_ONBOARDING -> VALUE_FEEDBACK_STORE_SETUP_CONTEXT
             SurveyType.ORDER_CREATION -> VALUE_SIMPLE_PAYMENTS_FEEDBACK
             SurveyType.SHIPPING_LABELS -> VALUE_SHIPPING_LABELS_M4_FEEDBACK
-            SurveyType.COUPONS -> VALUE_COUPONS_FEEDBACK
             SurveyType.ADDONS -> VALUE_PRODUCT_ADDONS_FEEDBACK
             SurveyType.ANALYTICS_HUB -> VALUE_ANALYTICS_HUB_FEEDBACK
-            SurveyType.PAYMENTS_HUB_TAP_TO_PAY -> VALUE_TAP_TO_PAY_FEEDBACK
             SurveyType.ORDER_SHIPPING_LINES -> VALUE_ORDER_SHIPPING_LINES_FEEDBACK
         }
     }

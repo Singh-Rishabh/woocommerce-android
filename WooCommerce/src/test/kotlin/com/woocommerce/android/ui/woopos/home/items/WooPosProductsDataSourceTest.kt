@@ -1,10 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.items
 
-import com.woocommerce.android.ui.products.ProductStatus
 import com.woocommerce.android.ui.products.ProductTestUtils
-import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.products.selector.ProductListHandler
-import com.woocommerce.android.ui.woopos.featureflags.IsNonSimpleProductTypesEnabled
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,11 +13,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.wordpress.android.fluxc.store.WCProductStore
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
@@ -71,14 +67,13 @@ class WooPosProductsDataSourceTest {
     )
 
     private val handler: ProductListHandler = mock()
-    private val isNonSimpleProductTypesEnabled: IsNonSimpleProductTypesEnabled = mock()
 
     @Test
     fun `given force refresh, when loadSimpleProducts called, then should clear cache`() = runTest {
         // GIVEN
         whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
         whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+        val sut = WooPosProductsDataSource(handler)
 
         // Pre-populate the cache
         sut.loadSimpleProducts(forceRefreshProducts = false).first()
@@ -102,8 +97,8 @@ class WooPosProductsDataSourceTest {
         // GIVEN
         whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
         whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+        whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+        val sut = WooPosProductsDataSource(handler)
 
         // WHEN
         sut.loadSimpleProducts(forceRefreshProducts = false).first()
@@ -121,8 +116,8 @@ class WooPosProductsDataSourceTest {
             // GIVEN
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
@@ -144,14 +139,16 @@ class WooPosProductsDataSourceTest {
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
             val exception = Exception("Remote load failed")
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
 
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             // Prepopulate the cache by calling loadSimpleProducts once
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
 
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.failure(exception))
+            whenever(
+                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())
+            ).thenReturn(Result.failure(exception))
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -175,7 +172,7 @@ class WooPosProductsDataSourceTest {
                 flowOf(sampleProducts + additionalProducts)
             )
             whenever(handler.loadMore()).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
 
@@ -200,7 +197,7 @@ class WooPosProductsDataSourceTest {
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
             val exception = Exception("Load more failed")
             whenever(handler.loadMore()).thenReturn(Result.failure(exception))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             sut.loadSimpleProducts(forceRefreshProducts = false).first()
 
@@ -224,9 +221,11 @@ class WooPosProductsDataSourceTest {
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(emptyList()))
             val exception = Exception("Remote load failed")
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.failure(exception))
+            whenever(
+                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())
+            ).thenReturn(Result.failure(exception))
 
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -246,8 +245,8 @@ class WooPosProductsDataSourceTest {
             // GIVEN
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(emptyList()))
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -286,8 +285,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -323,85 +322,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
-
-            // WHEN
-            val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
-
-            // THEN
-            val remoteResult = flow[1] as WooPosProductsDataSource.ProductsResult.Remote
-            assertThat(remoteResult.productsResult.getOrNull()?.any { it.remoteId == 1L }).isFalse()
-        }
-
-    @Test
-    fun `given cached products, when loadSimpleProducts called, then filter out virtual products`() =
-        runTest {
-            // GIVEN
-            whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-            whenever(handler.productsFlow).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProduct(
-                            productId = 1,
-                            productName = "Product 1",
-                            amount = "0",
-                            productType = "simple",
-                            isVirtual = true,
-                            isDownloadable = false,
-                        ),
-                        ProductTestUtils.generateProduct(
-                            productId = 2,
-                            productName = "Product 2",
-                            amount = "20.0",
-                            productType = "simple",
-                            isVirtual = false,
-                            isDownloadable = false
-                        ).copy(firstImageUrl = "https://test.com")
-                    )
-                )
-            )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
-
-            // WHEN
-            val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
-
-            // THEN
-            val cachedResult = flow[0] as WooPosProductsDataSource.ProductsResult.Cached
-
-            assertFalse(cachedResult.products.any { it.remoteId == 1L })
-        }
-
-    @Test
-    fun `given remote products, when loadSimpleProducts called, then filter out virtual products`() =
-        runTest {
-            // GIVEN
-            whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-            whenever(handler.productsFlow).thenReturn(
-                flowOf(
-                    listOf(
-                        ProductTestUtils.generateProduct(
-                            productId = 1,
-                            productName = "Product 1",
-                            amount = "0",
-                            productType = "simple",
-                            isVirtual = true,
-                            isDownloadable = false,
-                        ),
-                        ProductTestUtils.generateProduct(
-                            productId = 2,
-                            productName = "Product 2",
-                            amount = "20.0",
-                            productType = "simple",
-                            isVirtual = false,
-                            isDownloadable = false
-                        ).copy(firstImageUrl = "https://test.com")
-                    )
-                )
-            )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
@@ -437,8 +359,8 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
             val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
@@ -450,7 +372,7 @@ class WooPosProductsDataSourceTest {
         }
 
     @Test
-    fun `given remote products, when loadSimpleProducts called, then filter out downloadable products`() =
+    fun `given remote products, when loadSimpleProducts called, then do not filter out variable products even if price is null `() =
         runTest {
             // GIVEN
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
@@ -460,9 +382,8 @@ class WooPosProductsDataSourceTest {
                         ProductTestUtils.generateProduct(
                             productId = 1,
                             productName = "Product 1",
-                            amount = "0",
-                            productType = "simple",
-                            isDownloadable = true,
+                            amount = "",
+                            productType = "variable",
                         ),
                         ProductTestUtils.generateProduct(
                             productId = 2,
@@ -475,57 +396,15 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any())).thenReturn(Result.success(Unit))
-            val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
+            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            val sut = WooPosProductsDataSource(handler)
 
             // WHEN
-            val flow = sut.loadSimpleProducts(forceRefreshProducts = true).toList()
+            val flow = sut.loadSimpleProducts(forceRefreshProducts = false).toList()
 
             // THEN
             val remoteResult = flow[1] as WooPosProductsDataSource.ProductsResult.Remote
-            assertThat(remoteResult.productsResult.getOrNull()?.any { it.remoteId == 1L }).isFalse()
+
+            assertEquals(2, remoteResult.productsResult.getOrNull()?.size)
         }
-
-    @Test
-    fun `given non-simple product types feature disabled, when loadSimpleProducts called, then add filter to display only simple products`() = runTest {
-        // GIVEN
-        whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-        whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        whenever(isNonSimpleProductTypesEnabled.invoke()).thenReturn(false)
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
-
-        // WHEN
-        sut.loadSimpleProducts(forceRefreshProducts = true).first()
-
-        // THEN
-        verify(handler).loadFromCacheAndFetch(
-            forceRefresh = true,
-            searchType = ProductListHandler.SearchType.DEFAULT,
-            filters = mapOf(
-                WCProductStore.ProductFilterOption.TYPE to ProductType.SIMPLE.value,
-                WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value
-            )
-        )
-    }
-
-    @Test
-    fun `given non-simple product types feature enabled, when loadSimpleProducts called, then do not add filter to display only simple products`() = runTest {
-        // GIVEN
-        whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
-        whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
-        whenever(isNonSimpleProductTypesEnabled.invoke()).thenReturn(true)
-        val sut = WooPosProductsDataSource(handler, isNonSimpleProductTypesEnabled)
-
-        // WHEN
-        sut.loadSimpleProducts(forceRefreshProducts = true).first()
-
-        // THEN
-        verify(handler).loadFromCacheAndFetch(
-            forceRefresh = true,
-            searchType = ProductListHandler.SearchType.DEFAULT,
-            filters = mapOf(
-                WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value
-            )
-        )
-    }
 }
