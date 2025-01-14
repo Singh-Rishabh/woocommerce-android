@@ -445,8 +445,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
-    fun onNavigateBack() {
-        triggerEvent(Event.Exit)
+    fun onNavigateBack(): Boolean {
+        val state = uiState.value
+        return when {
+            state.isAddressSelectionExpanded -> {
+                uiState.update { it.copy(isAddressSelectionExpanded = false) }
+                false
+            }
+            state.isShipmentDetailsExpanded -> {
+                uiState.update { it.copy(isShipmentDetailsExpanded = false) }
+                false
+            }
+            else -> true
+        }
     }
 
     data object StartPackageSelection : Event()
