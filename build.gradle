@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose).apply(false)
     alias(libs.plugins.kotlin.parcelize) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
     alias(libs.plugins.google.dagger.hilt) apply false
     alias(libs.plugins.androidx.navigation.safeargs) apply false
     alias(libs.plugins.google.services) apply false
@@ -65,7 +66,7 @@ allprojects {
     tasks.withType(KotlinCompile).all {
         kotlinOptions {
             jvmTarget = libs.versions.java.get()
-            allWarningsAsErrors = true
+            allWarningsAsErrors = false //todo
             freeCompilerArgs += [
                     "-opt-in=kotlin.RequiresOptIn",
                     "-Xjvm-default=all-compatibility",

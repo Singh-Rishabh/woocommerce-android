@@ -77,6 +77,9 @@ include ':libs:commons'
 include ':libs:cardreader'
 include ':libs:apifaker'
 include ':WooCommerce'
+include ':libs:fluxc', ':libs:fluxc-annotations', ':libs:fluxc-processor', ':libs:plugins:woocommerce'
+include ':libs:login'
+
 
 gradle.ext.fluxCBinaryPath = "org.wordpress:fluxc"
 gradle.ext.fluxCWooCommercePluginBinaryPath = "org.wordpress.fluxc.plugins:woocommerce"

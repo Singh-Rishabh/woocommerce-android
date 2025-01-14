@@ -1,18 +1,39 @@
 plugins {
-    alias(sharedLibs.plugins.android.library)
-    alias(sharedLibs.plugins.kotlin.android)
-    alias(sharedLibs.plugins.kotlin.kapt)
-    alias(sharedLibs.plugins.automattic.publishToS3)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+}
+
+repositories {
+    maven {
+        url 'https://a8c-libs.s3.amazonaws.com/android'
+        content {
+            includeGroup "org.wordpress"
+            includeGroup "org.wordpress.fluxc"
+            includeGroup "org.wordpress.fluxc.plugins"
+            includeGroup "org.wordpress.wellsql"
+            includeGroup "org.wordpress.mediapicker"
+            includeGroup "com.automattic"
+            includeGroup "com.automattic.tracks"
+        }
+    }
+
+    maven {
+        url "https://a8c-libs.s3.amazonaws.com/android/jcenter-mirror"
+        content {
+            includeVersion "com.android.volley", "volley", "1.1.1"
+        }
+    }
 }
 
 android {
     namespace "org.wordpress.android.fluxc.plugins.woocommerce"
 
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdkVersion gradle.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion gradle.ext.minSdkVersion
+        targetSdkVersion gradle.ext.targetSdkVersion
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
@@ -35,12 +56,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        sourceCompatibility libs.versions.java.get()
+        targetCompatibility libs.versions.java.get()
     }
 
     testOptions {
@@ -48,64 +65,51 @@ android {
     }
 }
 
+
 dependencies {
-    implementation fluxcProjectDependency
+    implementation project(":libs:fluxc")
 
     // WordPress libs
-    implementation(sharedLibs.wordpress.utils) {
+    implementation(libs.wordpress.utils) {
         // Using official volley package
         exclude group: "com.mcxiaoke.volley"
         exclude group: "com.android.support"
     }
 
-    api sharedLibs.wellsql
-    kapt sharedLibs.wellsql.processor
+    api libs.wellsql
+    kapt libs.wellsql.processor
 
     // FluxC annotations
-    api fluxcAnnotationsProjectDependency
-    kapt fluxcProcessorProjectDependency
+    api project(":libs:fluxc-annotations")
+    kapt project(":libs:fluxc-processor")
 
-    implementation sharedLibs.google.gson
+    implementation libs.google.gson
 
     // Dagger
-    implementation sharedLibs.google.dagger
-    kapt sharedLibs.google.dagger.compiler
-    compileOnly sharedLibs.glassfish.javax.annotation
+    implementation libs.google.dagger
+    kapt libs.google.dagger.compiler
+    compileOnly libs.glassfish.javax.annotation
 
     // Coroutines
-    implementation sharedLibs.kotlinx.coroutines.core
-    implementation sharedLibs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
 
-    implementation sharedLibs.androidx.room.runtime
-    kapt sharedLibs.androidx.room.compiler
-    api sharedLibs.androidx.room.ktx
+    implementation libs.androidx.room.runtime
+    kapt libs.androidx.room.compiler
+    api libs.androidx.room.ktx
 
-    testImplementation sharedLibs.junit
-    testImplementation sharedLibs.robolectric
-    testImplementation sharedLibs.androidx.test.core
-    testImplementation sharedLibs.assertj.core
-    testImplementation sharedLibs.mockito.core
-    testImplementation sharedLibs.mockito.kotlin
-    testImplementation sharedLibs.kotlinx.coroutines.test
+    testImplementation libs.junit
+    testImplementation libs.robolectric
+    testImplementation libs.androidx.test.main.core
+    testImplementation libs.assertj.core
+    testImplementation libs.mockito.core
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.kotlinx.coroutines.test
 
-    androidTestImplementation sharedLibs.androidx.room.testing
-    androidTestImplementation sharedLibs.androidx.test.runner
-    androidTestImplementation sharedLibs.androidx.test.ext.junit
-    androidTestImplementation sharedLibs.assertj.core
+    androidTestImplementation libs.androidx.room.testing
+    androidTestImplementation libs.androidx.test.main.runner
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.assertj.core
 
-    lintChecks sharedLibs.wordpress.lint
-}
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            PluginWoocommercePublication(MavenPublication) {
-                from components.release
-
-                groupId "org.wordpress.fluxc.plugins"
-                artifactId "woocommerce"
-                // version is set by 'publish-to-s3' plugin
-            }
-        }
-    }
+    lintChecks libs.wordpress.lint
 }

@@ -1,9 +1,30 @@
 plugins {
-    alias(sharedLibs.plugins.android.library)
-    alias(sharedLibs.plugins.kotlin.android)
-    alias(sharedLibs.plugins.kotlin.parcelize)
-    alias(sharedLibs.plugins.kotlin.kapt)
-    alias(sharedLibs.plugins.automattic.publishToS3)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.kapt)
+}
+
+repositories {
+    maven {
+        url 'https://a8c-libs.s3.amazonaws.com/android'
+        content {
+            includeGroup "org.wordpress"
+            includeGroup "org.wordpress.fluxc"
+            includeGroup "org.wordpress.fluxc.plugins"
+            includeGroup "org.wordpress.wellsql"
+            includeGroup "org.wordpress.mediapicker"
+            includeGroup "com.automattic"
+            includeGroup "com.automattic.tracks"
+        }
+    }
+
+    maven {
+        url "https://a8c-libs.s3.amazonaws.com/android/jcenter-mirror"
+        content {
+            includeVersion "com.android.volley", "volley", "1.1.1"
+        }
+    }
 }
 
 android {
@@ -11,11 +32,11 @@ android {
 
     namespace "org.wordpress.android.fluxc"
 
-    compileSdkVersion rootProject.compileSdkVersion
+    compileSdkVersion gradle.ext.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion rootProject.minSdkVersion
-        targetSdkVersion rootProject.targetSdkVersion
+        minSdkVersion gradle.ext.minSdkVersion
+        targetSdkVersion gradle.ext.targetSdkVersion
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
@@ -38,6 +59,11 @@ android {
 
     buildFeatures {
         buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility libs.versions.java.get()
+        targetCompatibility libs.versions.java.get()
     }
 }
 
@@ -63,82 +89,68 @@ android.buildTypes.all { buildType ->
 }
 
 dependencies {
-    implementation sharedLibs.androidx.exifinterface
-    implementation sharedLibs.androidx.security.crypto
+    implementation libs.androidx.exifinterface
+    implementation libs.androidx.security.crypto
 
-    implementation(sharedLibs.wordpress.utils) {
+    implementation(libs.wordpress.utils) {
         // Using official volley package
         exclude group: "com.mcxiaoke.volley"
         exclude group: "com.android.support"
     }
 
     // Custom WellSql version
-    api sharedLibs.wellsql
-    kapt sharedLibs.wellsql.processor
+    api libs.wellsql
+    kapt libs.wellsql.processor
 
     // FluxC annotations
-    api fluxcAnnotationsProjectDependency
-    kapt fluxcProcessorProjectDependency
+    api project(":libs:fluxc-annotations")
+    kapt project(":libs:fluxc-processor")
 
     // External libs
-    api sharedLibs.eventbus.android
-    api sharedLibs.eventbus.java
-    api sharedLibs.squareup.okhttp3
-    implementation sharedLibs.squareup.okhttp3.urlconnection
-    api sharedLibs.volley
-    implementation sharedLibs.google.gson
+    api libs.eventbus.android
+    api libs.eventbus.java
+    api libs.squareup.okhttp3
+    implementation libs.squareup.okhttp3.urlconnection
+    api libs.volley
+    implementation libs.google.gson
 
-    implementation sharedLibs.apache.commons.text
-    api sharedLibs.androidx.paging.runtime
-    implementation sharedLibs.androidx.room.runtime
-    kapt sharedLibs.androidx.room.compiler
-    implementation sharedLibs.androidx.room.ktx
+    implementation libs.apache.commons.text
+    api libs.androidx.paging.runtime
+    implementation libs.androidx.room.runtime
+    kapt libs.androidx.room.compiler
+    implementation libs.androidx.room.ktx
 
     // Dagger
-    implementation sharedLibs.google.dagger
-    kapt sharedLibs.google.dagger.compiler
-    compileOnly sharedLibs.glassfish.javax.annotation
+    implementation libs.google.dagger
+    kapt libs.google.dagger.compiler
+    compileOnly libs.glassfish.javax.annotation
 
     // Coroutines
-    implementation sharedLibs.kotlinx.coroutines.core
-    implementation sharedLibs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
 
     // Encrypted Logging
     api "com.goterl:lazysodium-android:5.0.2@aar"
     api "net.java.dev.jna:jna:5.5.0@aar"
 
     // Unit tests
-    testImplementation sharedLibs.junit
-    testImplementation sharedLibs.kotlin.test.junit
-    testImplementation sharedLibs.kotlinx.coroutines.test
-    testImplementation sharedLibs.androidx.test.core
-    testImplementation sharedLibs.robolectric
-    testImplementation sharedLibs.mockito.core
-    testImplementation sharedLibs.mockito.kotlin
-    testImplementation sharedLibs.mockito.inline
+    testImplementation libs.junit
+    testImplementation libs.kotlin.test.junit
+    testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.androidx.test.main.core
+    testImplementation libs.robolectric
+    testImplementation libs.mockito.core
+    testImplementation libs.mockito.kotlin
+    testImplementation libs.mockito.inline
 
-    lintChecks sharedLibs.wordpress.lint
+    lintChecks libs.wordpress.lint
 }
 
 dependencyAnalysis {
     issues {
         onUnusedDependencies {
             // This dependency is actually needed otherwise the app will crash with a runtime exception.
-            exclude(sharedLibs.eventbus.android.get().module.toString())
+            exclude(libs.eventbus.android.get().module.toString())
         }
     }
-}
-
-project.afterEvaluate {
-    publishing {
-        publications {
-            FluxCPublication(MavenPublication) {
-                from components.release
-
-                groupId "org.wordpress"
-                artifactId "fluxc"
-                // version is set by 'publish-to-s3' plugin
-            }
-        }
-   }
 }
