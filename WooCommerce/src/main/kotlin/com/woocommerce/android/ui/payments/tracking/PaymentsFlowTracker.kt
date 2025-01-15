@@ -72,6 +72,7 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Generic
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tracker.OrderDurationRecorder
+import com.woocommerce.android.ui.AppMode
 import com.woocommerce.android.ui.payments.cardreader.cardReaderBatteryLevelPercent
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState
 import com.woocommerce.android.ui.payments.cardreader.onboarding.OnboardingCtaReasonTapped
@@ -90,6 +91,7 @@ class PaymentsFlowTracker @Inject constructor(
     private val selectedSite: SelectedSite,
     private val cardReaderTrackingInfoProvider: CardReaderTrackingInfoProvider,
     private val paymentReceiptHelper: PaymentReceiptHelper,
+    private val appFlow: AppMode,
 ) {
     @VisibleForTesting
     fun track(
