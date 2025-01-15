@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.items.products
 
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductStatus
+import com.woocommerce.android.ui.products.ProductType.VARIABLE
 import com.woocommerce.android.ui.products.selector.ProductListHandler
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.Dispatchers
