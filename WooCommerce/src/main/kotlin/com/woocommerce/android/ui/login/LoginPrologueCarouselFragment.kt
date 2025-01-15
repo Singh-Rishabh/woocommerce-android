@@ -54,9 +54,9 @@ class LoginPrologueCarouselFragment : Fragment(R.layout.fragment_login_prologue_
         val binding = FragmentLoginPrologueCarouselBinding.bind(view)
 
         val isTablet = DisplayUtils.isTablet(context) || DisplayUtils.isXLargeTablet(context)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.buttonSkip) { v, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updateLayoutParams<MarginLayoutParams> {
+            binding.buttonSkip.updateLayoutParams<MarginLayoutParams> {
                 val currentBottomMargin = resources.getDimension(R.dimen.prologue_button_skip_bottom_margin)
                 bottomMargin = currentBottomMargin.roundToInt() + insets.bottom
                 if (!isTablet) {
