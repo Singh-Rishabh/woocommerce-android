@@ -21,7 +21,7 @@ echo "--- 🧹 Download Lint Dependencies [Lint Mobile App]"
 echo ""
 
 echo "--- 🧪 Download Unit Test Dependencies [Assemble Unit Tests]"
-./gradlew assembleJalapenoDebugUnitTest lib:cardreader:assembleDebugUnitTest
+./gradlew assembleJalapenoDebugUnitTest assembleDebugUnitTest
 echo ""
 
 echo "--- 🧪 Download Android Test Dependencies [Assemble Android Tests]"
