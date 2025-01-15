@@ -52,11 +52,12 @@ class WooPosVariationsDataSource @Inject constructor(
             productId,
             forceRefresh = true,
             filterOptions = mapOf(
-                WCProductStore.VariationFilterOption.STATUS to "publish"
+                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH,
+                WCProductStore.VariationFilterOption.DOWNLOADABLE to VARIATION_DOWNLOADABLE_FALSE
             )
         )
         if (result.isSuccess) {
-            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull()?.applyFilter() ?: emptyList()
+            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull() ?: emptyList()
             updateCache(productId, remoteVariations)
             emit(FetchResult.Remote(Result.success(remoteVariations)))
         } else {
@@ -74,11 +75,12 @@ class WooPosVariationsDataSource @Inject constructor(
         val result = handler.loadMore(
             productId,
             filterOptions = mapOf(
-                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH
+                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH,
+                WCProductStore.VariationFilterOption.DOWNLOADABLE to VARIATION_DOWNLOADABLE_FALSE
             )
         )
         if (result.isSuccess) {
-            val fetchedVariations = handler.getVariationsFlow(productId).first().applyFilter()
+            val fetchedVariations = handler.getVariationsFlow(productId).first()
             Result.success(fetchedVariations)
         } else {
             result.logFailure()
@@ -90,6 +92,7 @@ class WooPosVariationsDataSource @Inject constructor(
 
     companion object {
         private const val VARIATION_STATUS_PUBLISH = "publish"
+        private const val VARIATION_DOWNLOADABLE_FALSE = "false"
     }
 }
 
@@ -102,8 +105,4 @@ private fun Result<Unit>.logFailure() {
 sealed class FetchResult {
     data class Cached(val data: List<ProductVariation>) : FetchResult()
     data class Remote(val result: Result<List<ProductVariation>>) : FetchResult()
-}
-
-private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
-    return filter { it.price != null && !it.isDownloadable }
 }
