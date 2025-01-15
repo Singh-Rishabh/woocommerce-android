@@ -56,7 +56,6 @@ import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.ChromeCustomTabUtils.Height.Partial.ThreeQuarters
 import com.woocommerce.android.util.UrlUtils
 import com.woocommerce.android.util.WooLog
-import com.woocommerce.android.util.getBuildConfigValueOrNull
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasAndroidInjector
@@ -352,8 +351,7 @@ class LoginActivity :
         clearCachedSites()
 
         if (authOptions != null) {
-            val forcePasswordLogin = BuildConfig.DEBUG &&
-                getBuildConfigValueOrNull<Boolean>("FORCE_PASSWORD_LOGIN") == true
+            val forcePasswordLogin = BuildConfig.DEBUG && BuildConfig.FORCE_PASSWORD_LOGIN
 
             if (authOptions.isPasswordless && !forcePasswordLogin) {
                 showMagicLinkRequestScreen(email, verifyEmail, allowPassword = false, forceRequestAtStart = true)
