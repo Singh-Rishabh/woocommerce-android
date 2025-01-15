@@ -4,6 +4,7 @@
 21.5
 -----
 - [*] Puerto Rico is now available in the list of countries that are supported by in-person payments [https://github.com/woocommerce/woocommerce-android/pull/13200]
+- [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
 
 21.4
 -----
