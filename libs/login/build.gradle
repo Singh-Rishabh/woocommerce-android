@@ -4,44 +4,6 @@ plugins {
     id "org.jetbrains.kotlin.kapt"
 }
 
-repositories {
-    maven {
-        url "https://a8c-libs.s3.amazonaws.com/android"
-        content {
-            includeGroup "org.wordpress"
-            includeGroup "org.wordpress.fluxc"
-            includeGroup "org.wordpress.wellsql"
-            includeGroup "com.gravatar"
-        }
-    }
-    mavenCentral()
-    google()
-    jcenter()
-    maven { url "https://www.jitpack.io" }
-}
-
-repositories {
-    maven {
-        url 'https://a8c-libs.s3.amazonaws.com/android'
-        content {
-            includeGroup "org.wordpress"
-            includeGroup "org.wordpress.fluxc"
-            includeGroup "org.wordpress.fluxc.plugins"
-            includeGroup "org.wordpress.wellsql"
-            includeGroup "org.wordpress.mediapicker"
-            includeGroup "com.automattic"
-            includeGroup "com.automattic.tracks"
-        }
-    }
-
-    maven {
-        url "https://a8c-libs.s3.amazonaws.com/android/jcenter-mirror"
-        content {
-            includeVersion "com.android.volley", "volley", "1.1.1"
-        }
-    }
-}
-
 android {
     compileOptions {
         sourceCompatibility libs.versions.java.get()

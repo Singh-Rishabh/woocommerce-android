@@ -4,28 +4,6 @@ plugins {
     alias(libs.plugins.kotlin.kapt)
 }
 
-repositories {
-    maven {
-        url 'https://a8c-libs.s3.amazonaws.com/android'
-        content {
-            includeGroup "org.wordpress"
-            includeGroup "org.wordpress.fluxc"
-            includeGroup "org.wordpress.fluxc.plugins"
-            includeGroup "org.wordpress.wellsql"
-            includeGroup "org.wordpress.mediapicker"
-            includeGroup "com.automattic"
-            includeGroup "com.automattic.tracks"
-        }
-    }
-
-    maven {
-        url "https://a8c-libs.s3.amazonaws.com/android/jcenter-mirror"
-        content {
-            includeVersion "com.android.volley", "volley", "1.1.1"
-        }
-    }
-}
-
 android {
     namespace "org.wordpress.android.fluxc.plugins.woocommerce"
 
@@ -105,6 +83,7 @@ dependencies {
     testImplementation libs.mockito.core
     testImplementation libs.mockito.kotlin
     testImplementation libs.kotlinx.coroutines.test
+    testImplementation libs.kotlin.test.junit
 
     androidTestImplementation libs.androidx.room.testing
     androidTestImplementation libs.androidx.test.main.runner
