@@ -462,7 +462,7 @@ class WooPosTotalsViewModel @Inject constructor(
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
             readerStatus = readerStatus,
-            isFreeOrder = totalAmount.compareTo(BigDecimal.ZERO) == 1
+            isFreeOrder = totalAmount.compareTo(BigDecimal.ZERO) == 0
         )
     }
 
