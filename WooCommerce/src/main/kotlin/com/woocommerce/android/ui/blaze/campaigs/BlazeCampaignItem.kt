@@ -73,7 +73,7 @@ fun BlazeCampaignItem(
                 FlowRow(
                     modifier = Modifier
                         .padding(top = dimensionResource(id = R.dimen.major_100))
-                        .fillMaxWidth(),
+                        .wrapContentWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     CampaignStat(
