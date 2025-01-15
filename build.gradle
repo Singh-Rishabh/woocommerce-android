@@ -68,8 +68,7 @@ allprojects {
     tasks.withType(KotlinCompile).all {
         kotlinOptions {
             jvmTarget = libs.versions.java.get()
-            // todo revert back before merging
-            allWarningsAsErrors = false
+            allWarningsAsErrors = true
             freeCompilerArgs += [
                     "-opt-in=kotlin.RequiresOptIn",
                     "-Xjvm-default=all-compatibility",
