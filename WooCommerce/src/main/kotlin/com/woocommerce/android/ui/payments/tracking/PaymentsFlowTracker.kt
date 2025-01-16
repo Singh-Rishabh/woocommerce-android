@@ -251,7 +251,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackCashOnDeliveryToggled(isEnabled: Boolean) {
         track(
-            PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED,
+            eventProvider.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED,
             mutableMapOf(
                 KEY_IS_ENABLED to isEnabled
             )
@@ -260,7 +260,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackCashOnDeliveryEnabledSuccess(source: CashOnDeliverySource) {
         track(
-            ENABLE_CASH_ON_DELIVERY_SUCCESS,
+            eventProvider.ENABLE_CASH_ON_DELIVERY_SUCCESS,
             mutableMapOf(
                 KEY_CASH_ON_DELIVERY_SOURCE to source.toString()
             )
@@ -269,7 +269,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackCashOnDeliveryEnabledFailure(source: CashOnDeliverySource, errorMessage: String?) {
         track(
-            ENABLE_CASH_ON_DELIVERY_FAILED,
+            eventProvider.ENABLE_CASH_ON_DELIVERY_FAILED,
             errorDescription = errorMessage,
             properties = mutableMapOf(
                 KEY_CASH_ON_DELIVERY_SOURCE to source.toString()
@@ -279,7 +279,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackCashOnDeliveryDisabledSuccess(source: CashOnDeliverySource) {
         track(
-            DISABLE_CASH_ON_DELIVERY_SUCCESS,
+            eventProvider.DISABLE_CASH_ON_DELIVERY_SUCCESS,
             mutableMapOf(
                 KEY_CASH_ON_DELIVERY_SOURCE to source.toString()
             )

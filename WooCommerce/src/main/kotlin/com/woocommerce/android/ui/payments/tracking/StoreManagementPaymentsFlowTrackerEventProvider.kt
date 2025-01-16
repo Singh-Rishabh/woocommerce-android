@@ -21,4 +21,16 @@ class StoreManagementPaymentsFlowTrackerEventProvider : PaymentsFlowTrackerEvent
 
     override val CARD_PRESENT_ONBOARDING_CTA_FAILED: IAnalyticsEvent
         get() = AnalyticsEvent.CARD_PRESENT_ONBOARDING_CTA_FAILED
+
+    override val PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED: IAnalyticsEvent
+        get() = AnalyticsEvent.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED
+
+    override val ENABLE_CASH_ON_DELIVERY_SUCCESS: IAnalyticsEvent
+        get() = AnalyticsEvent.ENABLE_CASH_ON_DELIVERY_SUCCESS
+
+    override val ENABLE_CASH_ON_DELIVERY_FAILED: IAnalyticsEvent
+        get() = AnalyticsEvent.ENABLE_CASH_ON_DELIVERY_FAILED
+
+    override val DISABLE_CASH_ON_DELIVERY_SUCCESS: IAnalyticsEvent
+        get() = AnalyticsEvent.DISABLE_CASH_ON_DELIVERY_SUCCESS
 }
