@@ -86,7 +86,7 @@ class WooPosVariationsViewModel @Inject constructor(
                                         items = variations.map {
                                             WooPosItem.Variation(
                                                 id = it.remoteVariationId,
-                                                name = it.getName(getProductById(productId)),
+                                                name = it.getNameForPOS(getProductById(productId)),
                                                 productId = it.remoteProductId,
                                                 price = priceFormat(it.price),
                                                 imageUrl = it.image?.source
@@ -119,7 +119,7 @@ class WooPosVariationsViewModel @Inject constructor(
                 items = variations.map {
                     WooPosItem.Variation(
                         id = it.remoteVariationId,
-                        name = it.getName(getProductById(productId)),
+                        name = it.getNameForPOS(getProductById(productId)),
                         productId = it.remoteProductId,
                         price = priceFormat(it.price),
                         imageUrl = it.image?.source
@@ -157,7 +157,7 @@ class WooPosVariationsViewModel @Inject constructor(
                     items = result.getOrThrow().map {
                         WooPosItem.Variation(
                             id = it.remoteVariationId,
-                            name = it.getName(getProductById(productId)),
+                            name = it.getNameForPOS(getProductById(productId)),
                             productId = it.remoteProductId,
                             price = priceFormat(it.price),
                             imageUrl = it.image?.source
