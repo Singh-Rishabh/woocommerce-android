@@ -11,11 +11,6 @@ import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_COLLECT_PAY
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_COLLECT_PAYMENT_FAILED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_COLLECT_PAYMENT_SUCCESS
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_CONNECTION_LEARN_MORE_TAPPED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_COMPLETED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_CTA_FAILED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_CTA_TAPPED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_NOT_COMPLETED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_STEP_SKIPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_PAYMENT_FAILED_CONTACT_SUPPORT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_SELECT_READER_TYPE_BLUETOOTH_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_SELECT_READER_TYPE_BUILT_IN_TAPPED
@@ -218,9 +213,9 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackOnboardingState(state: CardReaderOnboardingState) {
         when (state) {
-            is CardReaderOnboardingState.OnboardingCompleted -> track(CARD_PRESENT_ONBOARDING_COMPLETED)
+            is CardReaderOnboardingState.OnboardingCompleted -> track(eventProvider.CARD_PRESENT_ONBOARDING_COMPLETED)
             else -> getOnboardingNotCompletedReason(state)?.let {
-                track(CARD_PRESENT_ONBOARDING_NOT_COMPLETED, mutableMapOf(KEY_REASON to it))
+                track(eventProvider.CARD_PRESENT_ONBOARDING_NOT_COMPLETED, mutableMapOf(KEY_REASON to it))
             }
         }
     }
@@ -228,7 +223,7 @@ class PaymentsFlowTracker @Inject constructor(
     fun trackOnboardingSkippedState(state: CardReaderOnboardingState) {
         getOnboardingNotCompletedReason(state)?.let {
             track(
-                CARD_PRESENT_ONBOARDING_STEP_SKIPPED,
+                eventProvider.CARD_PRESENT_ONBOARDING_STEP_SKIPPED,
                 mutableMapOf(
                     KEY_REASON to it,
                     "remind_later" to false
@@ -239,14 +234,14 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackOnboardingCtaTapped(reason: OnboardingCtaReasonTapped) {
         track(
-            CARD_PRESENT_ONBOARDING_CTA_TAPPED,
+            eventProvider.CARD_PRESENT_ONBOARDING_CTA_TAPPED,
             mutableMapOf(KEY_REASON to reason.value)
         )
     }
 
     fun trackOnboardingCtaFailed(reason: OnboardingCtaReasonTapped, description: String) {
         track(
-            CARD_PRESENT_ONBOARDING_CTA_FAILED,
+            eventProvider.CARD_PRESENT_ONBOARDING_CTA_FAILED,
             mutableMapOf(
                 KEY_REASON to reason.value,
                 KEY_ERROR_DESC to description,
