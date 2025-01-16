@@ -50,11 +50,7 @@ static def loadPropertiesWithFallback(Logger logger, File fallbackFile, File pri
         primaryProperties = new Properties()
     }
 
-    primaryProperties.each { key, value ->
-        defaultProperties.setProperty(key, value)
-    }
-
-    return defaultProperties
+    return defaultProperties + primaryProperties
 }
 
 static def readPropertiesFromFile(File file) {
