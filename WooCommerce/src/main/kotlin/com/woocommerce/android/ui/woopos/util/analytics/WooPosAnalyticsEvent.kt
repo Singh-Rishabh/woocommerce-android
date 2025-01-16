@@ -94,6 +94,10 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
             override val name: String = "card_present_payment_failed_contact_support_tapped"
         }
 
+        data object CardPresentPaymentGatewaySelected : PaymentFlowTrackerEvent() {
+            override val name: String = "card_present_payment_gateway_selected"
+        }
+
         data object CardPresentSelectReaderTypeBluetoothTapped : PaymentFlowTrackerEvent() {
             override val name: String = "card_present_select_reader_type_bluetooth_tapped"
         }

@@ -34,4 +34,16 @@ class WooPosPaymentsFlowTrackerEventProvider : PaymentsFlowTrackerEventProvider 
 
     override val DISABLE_CASH_ON_DELIVERY_SUCCESS: IAnalyticsEvent
         get() = PaymentFlowTrackerEvent.DisableCashOnDeliverySuccess
+
+    override val DISABLE_CASH_ON_DELIVERY_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.DisableCashOnDeliveryFailed
+
+    override val PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsHubCashOnDeliveryToggledLearnMoreTapped
+
+    override val CARD_PRESENT_PAYMENT_GATEWAY_SELECTED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentPaymentGatewaySelected
+
+    override val CARD_READER_SOFTWARE_UPDATE_STARTED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateStarted
 }

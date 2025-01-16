@@ -31,17 +31,10 @@ import com.woocommerce.android.analytics.AnalyticsEvent.CARD_READER_LOCATION_SUC
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_ALERT_SHOWN
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_FAILED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_STARTED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_SUCCESS
-import com.woocommerce.android.analytics.AnalyticsEvent.DISABLE_CASH_ON_DELIVERY_FAILED
-import com.woocommerce.android.analytics.AnalyticsEvent.DISABLE_CASH_ON_DELIVERY_SUCCESS
-import com.woocommerce.android.analytics.AnalyticsEvent.ENABLE_CASH_ON_DELIVERY_FAILED
-import com.woocommerce.android.analytics.AnalyticsEvent.ENABLE_CASH_ON_DELIVERY_SUCCESS
 import com.woocommerce.android.analytics.AnalyticsEvent.IN_PERSON_PAYMENTS_LEARN_MORE_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.MANAGE_CARD_READERS_AUTOMATIC_DISCONNECT_BUILT_IN_READER
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_FLOW_ORDER_COLLECT_PAYMENT_TAPPED
-import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED
-import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_ONBOARDING_DISMISSED
 import com.woocommerce.android.analytics.AnalyticsEvent.PAYMENTS_ONBOARDING_SHOWN
 import com.woocommerce.android.analytics.AnalyticsEvent.RECEIPT_EMAIL_FAILED
@@ -288,7 +281,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackCashOnDeliveryDisabledFailure(source: CashOnDeliverySource, errorMessage: String?) {
         track(
-            DISABLE_CASH_ON_DELIVERY_FAILED,
+            eventProvider.DISABLE_CASH_ON_DELIVERY_FAILED,
             errorDescription = errorMessage,
             properties = mutableMapOf(
                 KEY_CASH_ON_DELIVERY_SOURCE to source.toString()
@@ -297,7 +290,7 @@ class PaymentsFlowTracker @Inject constructor(
     }
 
     fun trackCashOnDeliveryLearnMoreTapped() {
-        track(PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED)
+        track(eventProvider.PAYMENTS_HUB_CASH_ON_DELIVERY_TOGGLED_LEARN_MORE_TAPPED)
     }
 
     fun trackPaymentGatewaySelected(pluginType: PluginType) {
@@ -306,13 +299,13 @@ class PaymentsFlowTracker @Inject constructor(
             STRIPE_EXTENSION_GATEWAY -> "woocommerce-stripe-gateway"
         }
         track(
-            AnalyticsEvent.CARD_PRESENT_PAYMENT_GATEWAY_SELECTED,
+            eventProvider.CARD_PRESENT_PAYMENT_GATEWAY_SELECTED,
             mutableMapOf(KEY_PAYMENT_GATEWAY to preferredPlugin)
         )
     }
 
     fun trackSoftwareUpdateStarted(requiredUpdate: Boolean) {
-        trackSoftwareUpdateEvent(CARD_READER_SOFTWARE_UPDATE_STARTED, requiredUpdate)
+        trackSoftwareUpdateEvent(eventProvider.CARD_READER_SOFTWARE_UPDATE_STARTED, requiredUpdate)
     }
 
     fun trackSoftwareUpdateAlertShown() {
@@ -498,7 +491,7 @@ class PaymentsFlowTracker @Inject constructor(
     }
 
     private fun trackSoftwareUpdateEvent(
-        event: AnalyticsEvent,
+        event: IAnalyticsEvent,
         requiredUpdate: Boolean,
         errorDescription: String? = null,
     ) {
