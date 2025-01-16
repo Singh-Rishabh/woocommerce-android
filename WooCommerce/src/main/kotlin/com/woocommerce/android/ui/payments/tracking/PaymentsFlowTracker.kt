@@ -333,7 +333,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackSoftwareUpdateCancelled(requiredUpdate: Boolean) {
         trackSoftwareUpdateEvent(
-            CARD_READER_SOFTWARE_UPDATE_FAILED,
+            eventProvider.CARD_READER_SOFTWARE_UPDATE_FAILED,
             requiredUpdate,
             "User manually cancelled the flow"
         )
@@ -341,7 +341,7 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackReadersDiscovered(count: Int) {
         track(
-            CARD_READER_DISCOVERY_READER_DISCOVERED,
+            eventProvider.CARD_READER_DISCOVERY_READER_DISCOVERED,
             mutableMapOf("reader_count" to count)
         )
     }
