@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToCashPayment
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToEmailReceipt
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NewTransactionClicked
@@ -278,9 +279,13 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = InitialState
                     }
 
-                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> showSuccessfulPaymentState(
-                        event.paymentMethod
-                    )
+                    is ParentToChildrenEvent.OrderSuccessfullyPaid -> {
+                        if (event.paymentMethod == PaymentMethod.CASH) {
+                            // Cancel payment intent if order is marked completed by cash
+                            cancelPaymentAction()
+                        }
+                        showSuccessfulPaymentState(event.paymentMethod)
+                    }
 
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                 }
@@ -300,6 +305,9 @@ class WooPosTotalsViewModel @Inject constructor(
                     is CardReaderPaymentState.PaymentCapturing -> {
                         uiState.value = buildPaymentInProgressState()
                         childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
+                        childrenToParentEventSender.sendToParent(
+                            NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted
+                        )
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
