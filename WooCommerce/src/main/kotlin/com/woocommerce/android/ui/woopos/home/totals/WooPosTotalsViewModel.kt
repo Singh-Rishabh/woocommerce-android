@@ -123,6 +123,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = state.copy(readerStatus = buildTotalsReaderNotConnectedError())
                         cancelPaymentAction()
                     }
+
                     is Connected -> {
                         val state = uiState.value
                         if (state !is WooPosTotalsViewState.Totals) return@collect
@@ -254,7 +255,10 @@ class WooPosTotalsViewModel @Inject constructor(
         } else {
             val orderId = dataState.value.orderId
             check(orderId != EMPTY_ORDER_ID)
-            if (cardReaderFacade.readerStatus.value is Connected) {
+            if (
+                cardReaderFacade.readerStatus.value is Connected &&
+                dataState.value.orderTotal?.compareTo(BigDecimal.ZERO) == 1
+            ) {
                 val state = uiState.value
                 check(state is WooPosTotalsViewState.Totals)
                 check(uiState.value is WooPosTotalsViewState.Totals)
@@ -464,6 +468,7 @@ class WooPosTotalsViewModel @Inject constructor(
             orderTaxText = priceFormat(taxAmount),
             orderTotalText = priceFormat(totalAmount),
             readerStatus = readerStatus,
+            isFreeOrder = totalAmount.compareTo(BigDecimal.ZERO) == 0
         )
     }
 
