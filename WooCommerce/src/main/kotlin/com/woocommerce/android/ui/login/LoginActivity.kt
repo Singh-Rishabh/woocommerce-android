@@ -364,15 +364,10 @@ class LoginActivity :
         }
     }
 
-    private fun showEmailPasswordScreen(
-        email: String?,
-        verifyEmail: Boolean,
-        password: String? = null
-    ) {
+    private fun showEmailPasswordScreen(email: String?, verifyEmail: Boolean) {
         val wooLoginEmailPasswordFragment = WooLoginEmailPasswordFragment
             .newInstance(
                 emailAddress = email,
-                password = password,
                 verifyMagicLinkEmail = verifyEmail
             )
         changeFragment(wooLoginEmailPasswordFragment, true, LoginEmailPasswordFragment.TAG)
@@ -969,7 +964,7 @@ class LoginActivity :
                     stat = AnalyticsEvent.LOGIN_APP_LOGIN_LINK_SUCCESS,
                     properties = mapOf(KEY_FLOW to VALUE_WP_COM)
                 )
-                showEmailPasswordScreen(email = wpComEmail, verifyEmail = false, password = null)
+                showEmailPasswordScreen(email = wpComEmail, verifyEmail = false)
             }
 
             siteUrl.isNotEmpty() && username.isNotEmpty() -> {
