@@ -66,6 +66,7 @@ import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import java.util.Date
 import kotlin.test.Test
+import kotlin.test.assertFalse
 
 @ExperimentalCoroutinesApi
 class WooPosTotalsViewModelTest {
@@ -1180,6 +1181,65 @@ class WooPosTotalsViewModelTest {
             // THEN
             val totals = viewModel.state.value as WooPosTotalsViewState.Totals
             assertTrue(totals.isFreeOrder)
+        }
+
+    @Test
+    fun `given checkout started and order contains non-free products, when vm created, then totals state correctly calculated`() =
+        runTest {
+            // GIVEN
+            whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+                .thenReturn("Getting ready")
+            whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+                .thenReturn("Checking order")
+            whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
+                .thenReturn("No internet")
+            val itemClickedData = listOf(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+            )
+            val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
+            val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+                on { events }.thenReturn(parentToChildrenEventFlow)
+            }
+            val order = Order.getEmptyOrder(
+                dateCreated = Date(),
+                dateModified = Date()
+            ).copy(
+                totalTax = BigDecimal("2.00"),
+                items = listOf(
+                    Order.Item.EMPTY.copy(
+                        subtotal = BigDecimal("1.00"),
+                    ),
+                    Order.Item.EMPTY.copy(
+                        subtotal = BigDecimal("1.00"),
+                    ),
+                    Order.Item.EMPTY.copy(
+                        subtotal = BigDecimal("1.00"),
+                    )
+                ),
+                total = BigDecimal("5.00"),
+                productsTotal = BigDecimal("3.00"),
+            )
+            val totalsRepository: WooPosTotalsRepository = mock {
+                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                    Result.success(order)
+                )
+            }
+            val priceFormat: WooPosFormatPrice = mock {
+                onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
+                onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
+                onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
+            }
+
+            // WHEN
+            val viewModel = createViewModel(
+                parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+                totalsRepository = totalsRepository,
+                priceFormat = priceFormat,
+            )
+
+            // THEN
+            val totals = viewModel.state.value as WooPosTotalsViewState.Totals
+            assertFalse(totals.isFreeOrder)
         }
 
     private fun createNonEmptyOrder() = Order.getEmptyOrder(
