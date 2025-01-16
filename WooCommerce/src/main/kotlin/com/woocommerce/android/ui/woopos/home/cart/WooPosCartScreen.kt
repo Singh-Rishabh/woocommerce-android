@@ -62,6 +62,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
@@ -471,6 +472,16 @@ private fun ProductItem(
                         modifier = Modifier.clearAndSetSemantics { }
                     )
                     Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
+                    if (item.description.isNotNullOrEmpty()) {
+                        Text(
+                            text = item.description!!,
+                            style = MaterialTheme.typography.body1,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.clearAndSetSemantics { }
+                        )
+                        Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
+                    }
                     Text(
                         text = item.price,
                         style = MaterialTheme.typography.body1,
@@ -527,6 +538,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             imageUrl = "",
                             name = "VW California, VW California VW California, VW California VW California, " +
                                 "VW California VW California, VW California,VW California",
+                            description = "test description",
                             price = "€50,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,
@@ -539,6 +551,8 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             ),
                             imageUrl = "",
                             name = "VW California",
+                            description = "test description test description test description test description" +
+                            " test description test description test description test description test description",
                             price = "$150,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,
@@ -551,6 +565,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             ),
                             imageUrl = "",
                             name = "VW California",
+                            description = "",
                             price = "€250,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,
@@ -586,6 +601,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             ),
                             imageUrl = "",
                             name = "VW California",
+                            description = null,
                             price = "€50,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,
@@ -598,6 +614,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             ),
                             imageUrl = "",
                             name = "VW California",
+                            description = null,
                             price = "$150,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,
@@ -610,6 +627,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             ),
                             imageUrl = "",
                             name = "VW California",
+                            description = null,
                             price = "€250,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,

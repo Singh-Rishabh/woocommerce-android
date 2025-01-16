@@ -264,6 +264,7 @@ class WooPosCartViewModel @Inject constructor(
                 itemNumber = itemNumber
             ),
             name = name,
+            description = null,
             price = formatPrice(price),
             imageUrl = firstImageUrl,
             isAppearanceAnimationPlayed = false,
@@ -280,7 +281,8 @@ class WooPosCartViewModel @Inject constructor(
                 variationId = remoteVariationId,
                 itemNumber = itemNumber
             ),
-            name = getName(product),
+            name = product.name,
+            description = getNameForPOS(product),
             price = formatPrice(price),
             imageUrl = image?.source,
             isAppearanceAnimationPlayed = false,
