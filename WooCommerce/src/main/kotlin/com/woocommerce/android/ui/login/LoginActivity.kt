@@ -901,8 +901,8 @@ class LoginActivity :
         TODO("Not yet implemented")
     }
 
-    override fun useMagicLinkInstead(email: String?, verifyEmail: Boolean) {
-        showMagicLinkRequestScreen(email, verifyEmail, allowPassword = false, forceRequestAtStart = true)
+    override fun useMagicLinkInstead(email: String?, verifyEmail: Boolean, requestAtStart: Boolean) {
+        showMagicLinkRequestScreen(email, verifyEmail, allowPassword = false, forceRequestAtStart = requestAtStart)
     }
 
     /**

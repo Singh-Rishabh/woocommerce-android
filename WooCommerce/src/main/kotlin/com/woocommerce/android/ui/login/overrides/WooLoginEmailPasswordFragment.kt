@@ -74,7 +74,7 @@ class WooLoginEmailPasswordFragment : LoginEmailPasswordFragment() {
         rootView.findViewById<Button>(R.id.bottom_button_magic_link)?.apply {
             isVisible = true // this button was intentionally hidden until the password screen is shown
             setOnClickListener {
-                loginListener?.useMagicLinkInstead(email, false)
+                loginListener?.useMagicLinkInstead(email, false, true)
             }
         }
 
