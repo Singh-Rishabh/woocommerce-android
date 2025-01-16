@@ -45,4 +45,17 @@ class StoreManagementPaymentsFlowTrackerEventProvider : PaymentsFlowTrackerEvent
 
     override val CARD_READER_SOFTWARE_UPDATE_STARTED: IAnalyticsEvent
         get() = AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_STARTED
+
+    override val CARD_READER_SOFTWARE_UPDATE_ALERT_SHOWN: IAnalyticsEvent
+        get() = AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_ALERT_SHOWN
+
+    override val CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED: IAnalyticsEvent
+        get() = AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED
+
+    override val CARD_READER_SOFTWARE_UPDATE_FAILED: IAnalyticsEvent
+        get() = AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_FAILED
+
+    override val CARD_READER_SOFTWARE_UPDATE_SUCCESS: IAnalyticsEvent
+        get() = AnalyticsEvent.CARD_READER_SOFTWARE_UPDATE_SUCCESS
+
 }

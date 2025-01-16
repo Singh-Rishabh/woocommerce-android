@@ -46,4 +46,17 @@ class WooPosPaymentsFlowTrackerEventProvider : PaymentsFlowTrackerEventProvider 
 
     override val CARD_READER_SOFTWARE_UPDATE_STARTED: IAnalyticsEvent
         get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateStarted
+
+    override val CARD_READER_SOFTWARE_UPDATE_ALERT_SHOWN: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateAlertShown
+
+    override val CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateAlertInstallClicked
+
+    override val CARD_READER_SOFTWARE_UPDATE_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateFailed
+
+    override val CARD_READER_SOFTWARE_UPDATE_SUCCESS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateSuccess
+
 }

@@ -309,26 +309,26 @@ class PaymentsFlowTracker @Inject constructor(
     }
 
     fun trackSoftwareUpdateAlertShown() {
-        track(CARD_READER_SOFTWARE_UPDATE_ALERT_SHOWN)
+        track(eventProvider.CARD_READER_SOFTWARE_UPDATE_ALERT_SHOWN)
     }
 
     fun trackSoftwareUpdateAlertInstallClicked() {
-        track(CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED)
+        track(eventProvider.CARD_READER_SOFTWARE_UPDATE_ALERT_INSTALL_CLICKED)
     }
 
     fun trackSoftwareUpdateUnknownStatus() {
         track(
-            CARD_READER_SOFTWARE_UPDATE_FAILED,
+            eventProvider.CARD_READER_SOFTWARE_UPDATE_FAILED,
             errorDescription = "Unknown software update status"
         )
     }
 
     fun trackSoftwareUpdateSucceeded(requiredUpdate: Boolean) {
-        trackSoftwareUpdateEvent(CARD_READER_SOFTWARE_UPDATE_SUCCESS, requiredUpdate)
+        trackSoftwareUpdateEvent(eventProvider.CARD_READER_SOFTWARE_UPDATE_SUCCESS, requiredUpdate)
     }
 
     fun trackSoftwareUpdateFailed(status: Failed, requiredUpdate: Boolean) {
-        trackSoftwareUpdateEvent(CARD_READER_SOFTWARE_UPDATE_FAILED, requiredUpdate, status.message)
+        trackSoftwareUpdateEvent(eventProvider.CARD_READER_SOFTWARE_UPDATE_FAILED, requiredUpdate, status.message)
     }
 
     fun trackSoftwareUpdateCancelled(requiredUpdate: Boolean) {
