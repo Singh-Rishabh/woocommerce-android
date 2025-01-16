@@ -57,7 +57,7 @@ class WooPosVariationsDataSource @Inject constructor(
             )
         )
         if (result.isSuccess) {
-            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull() ?: emptyList()
+            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull()?.applyFilter() ?: emptyList()
             updateCache(productId, remoteVariations)
             emit(FetchResult.Remote(Result.success(remoteVariations)))
         } else {
@@ -80,7 +80,7 @@ class WooPosVariationsDataSource @Inject constructor(
             )
         )
         if (result.isSuccess) {
-            val fetchedVariations = handler.getVariationsFlow(productId).first()
+            val fetchedVariations = handler.getVariationsFlow(productId).first().applyFilter()
             Result.success(fetchedVariations)
         } else {
             result.logFailure()
@@ -105,4 +105,9 @@ private fun Result<Unit>.logFailure() {
 sealed class FetchResult {
     data class Cached(val data: List<ProductVariation>) : FetchResult()
     data class Remote(val result: Result<List<ProductVariation>>) : FetchResult()
+}
+
+private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
+    return filter { !it.isDownloadable } // Keeping this filter for now, but it should be removed in the future after
+    // WC 9.7.0 is released. https://a8c.slack.com/archives/C070SJRA8DP/p1736795937571479
 }
