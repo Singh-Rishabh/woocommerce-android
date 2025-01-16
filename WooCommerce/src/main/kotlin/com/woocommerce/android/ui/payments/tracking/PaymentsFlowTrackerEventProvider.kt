@@ -22,4 +22,9 @@ interface PaymentsFlowTrackerEventProvider {
     val CARD_READER_SOFTWARE_UPDATE_FAILED: IAnalyticsEvent
     val CARD_READER_SOFTWARE_UPDATE_SUCCESS: IAnalyticsEvent
     val CARD_READER_DISCOVERY_READER_DISCOVERED: IAnalyticsEvent
+    val CARD_READER_DISCOVERY_FAILED: IAnalyticsEvent
+    val CARD_READER_DISCOVERY_TAPPED: IAnalyticsEvent
+    val CARD_READER_AUTO_CONNECTION_STARTED: IAnalyticsEvent
+    val CARD_READER_CONNECTION_TAPPED: IAnalyticsEvent
+    val CARD_READER_LOCATION_SUCCESS: IAnalyticsEvent
 }

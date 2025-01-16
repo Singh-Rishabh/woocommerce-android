@@ -348,25 +348,25 @@ class PaymentsFlowTracker @Inject constructor(
 
     fun trackReaderDiscoveryFailed(errorMessage: String) {
         track(
-            CARD_READER_DISCOVERY_FAILED,
+            eventProvider.CARD_READER_DISCOVERY_FAILED,
             errorDescription = errorMessage
         )
     }
 
     fun trackDiscoveryTapped() {
-        track(CARD_READER_DISCOVERY_TAPPED)
+        track(eventProvider.CARD_READER_DISCOVERY_TAPPED)
     }
 
     fun trackAutoConnectionStarted() {
-        track(CARD_READER_AUTO_CONNECTION_STARTED)
+        track(eventProvider.CARD_READER_AUTO_CONNECTION_STARTED)
     }
 
     fun trackOnConnectTapped() {
-        track(CARD_READER_CONNECTION_TAPPED)
+        track(eventProvider.CARD_READER_CONNECTION_TAPPED)
     }
 
     fun trackFetchingLocationSucceeded() {
-        track(CARD_READER_LOCATION_SUCCESS)
+        track(eventProvider.CARD_READER_LOCATION_SUCCESS)
     }
 
     fun trackFetchingLocationFailed(errorDescription: String?) {

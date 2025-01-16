@@ -59,4 +59,22 @@ class WooPosPaymentsFlowTrackerEventProvider : PaymentsFlowTrackerEventProvider 
     override val CARD_READER_SOFTWARE_UPDATE_SUCCESS: IAnalyticsEvent
         get() = PaymentFlowTrackerEvent.CardReaderSoftwareUpdateSuccess
 
+    override val CARD_READER_DISCOVERY_READER_DISCOVERED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderDiscoveryReaderDiscovered
+
+    override val CARD_READER_DISCOVERY_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderDiscoveryFailed
+
+    override val CARD_READER_DISCOVERY_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderDiscoveryTapped
+
+    override val CARD_READER_AUTO_CONNECTION_STARTED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderAutoConnectionStarted
+
+    override val CARD_READER_CONNECTION_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderConnectionTapped
+
+    override val CARD_READER_LOCATION_SUCCESS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderLocationSuccess
+
 }
