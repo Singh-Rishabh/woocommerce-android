@@ -117,7 +117,7 @@ class WooPosTotalsRepository @Inject constructor(
             attributesList = variationResult.attributes
                 .filterNot { it.name.isNullOrEmpty() || it.option.isNullOrEmpty() }
                 .map { Order.Item.Attribute(it.name!!, it.option!!) },
-            name = variationResult.getName(productResult),
+            name = variationResult.getNameForPOS(productResult),
         )
     }
 
