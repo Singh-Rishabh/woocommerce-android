@@ -3,10 +3,12 @@ package com.woocommerce.android.di
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.AppMode
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoProvider
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
+import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTrackerEventProvider
+import com.woocommerce.android.ui.payments.tracking.StoreManagementPaymentsFlowTrackerEventProvider
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosPaymentsFlowTrackerEventProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,15 +20,15 @@ import javax.inject.Qualifier
 @InstallIn(ViewModelComponent::class, SingletonComponent::class)
 class AppModeModule {
     @Provides
-    fun provideAppMode(): AppMode = AppMode.StoreManagement
+    fun provideAppMode(): PaymentsFlowTrackerEventProvider = StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
     @PointOfSaleMode
-    fun providePointOfSaleMode(): AppMode = AppMode.PointOfSale
+    fun providePointOfSaleMode(): PaymentsFlowTrackerEventProvider = WooPosPaymentsFlowTrackerEventProvider()
 
     @Provides
     @StoreManagementMode
-    fun provideStoreManagementMode(): AppMode = AppMode.StoreManagement
+    fun provideStoreManagementMode(): PaymentsFlowTrackerEventProvider = StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
     @PointOfSaleMode
@@ -37,14 +39,14 @@ class AppModeModule {
         selectedSite: SelectedSite,
         cardReaderTrackingInfoProvider: CardReaderTrackingInfoProvider,
         paymentReceiptHelper: PaymentReceiptHelper,
-        @PointOfSaleMode appFlow: AppMode
+        @PointOfSaleMode paymentsFlowTrackerEventProvider: PaymentsFlowTrackerEventProvider,
     ): PaymentsFlowTracker = PaymentsFlowTracker(
-        trackerWrapper,
-        appPrefsWrapper,
-        selectedSite,
-        cardReaderTrackingInfoProvider,
-        paymentReceiptHelper,
-        appFlow
+        trackerWrapper = trackerWrapper,
+        appPrefsWrapper = appPrefsWrapper,
+        selectedSite = selectedSite,
+        cardReaderTrackingInfoProvider = cardReaderTrackingInfoProvider,
+        paymentReceiptHelper = paymentReceiptHelper,
+        eventProvider = paymentsFlowTrackerEventProvider,
     )
 
     @Provides
@@ -56,14 +58,14 @@ class AppModeModule {
         selectedSite: SelectedSite,
         cardReaderTrackingInfoProvider: CardReaderTrackingInfoProvider,
         paymentReceiptHelper: PaymentReceiptHelper,
-        @StoreManagementMode appFlow: AppMode
+        @StoreManagementMode paymentsFlowTrackerEventProvider: PaymentsFlowTrackerEventProvider,
     ): PaymentsFlowTracker = PaymentsFlowTracker(
-        trackerWrapper,
-        appPrefsWrapper,
-        selectedSite,
-        cardReaderTrackingInfoProvider,
-        paymentReceiptHelper,
-        appFlow
+        trackerWrapper = trackerWrapper,
+        appPrefsWrapper = appPrefsWrapper,
+        selectedSite = selectedSite,
+        cardReaderTrackingInfoProvider = cardReaderTrackingInfoProvider,
+        paymentReceiptHelper = paymentReceiptHelper,
+        eventProvider = paymentsFlowTrackerEventProvider,
     )
 }
 

@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.payments.tracking
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.analytics.AnalyticsEvent
@@ -13,7 +14,6 @@ import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_CONNECTION_
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_COMPLETED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_CTA_FAILED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_CTA_TAPPED
-import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_LEARN_MORE_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_NOT_COMPLETED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_ONBOARDING_STEP_SKIPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.CARD_PRESENT_PAYMENT_FAILED_CONTACT_SUPPORT_TAPPED
@@ -66,13 +66,13 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_PAYMENT_
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_POS_ONBOARDING_STATE
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_REASON
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.analytics.IAnalyticsEvent
 import com.woocommerce.android.cardreader.connection.event.SoftwareUpdateStatus.Failed
 import com.woocommerce.android.cardreader.payments.CardInteracRefundStatus.RefundStatusErrorType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Generic
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tracker.OrderDurationRecorder
-import com.woocommerce.android.ui.AppMode
 import com.woocommerce.android.ui.payments.cardreader.cardReaderBatteryLevelPercent
 import com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingState
 import com.woocommerce.android.ui.payments.cardreader.onboarding.OnboardingCtaReasonTapped
@@ -91,11 +91,11 @@ class PaymentsFlowTracker @Inject constructor(
     private val selectedSite: SelectedSite,
     private val cardReaderTrackingInfoProvider: CardReaderTrackingInfoProvider,
     private val paymentReceiptHelper: PaymentReceiptHelper,
-    private val appFlow: AppMode,
+    private val eventProvider: PaymentsFlowTrackerEventProvider,
 ) {
     @VisibleForTesting
     fun track(
-        stat: AnalyticsEvent,
+        stat: IAnalyticsEvent,
         properties: MutableMap<String, Any> = mutableMapOf(),
         errorType: String? = null,
         errorDescription: String? = null,
@@ -213,7 +213,7 @@ class PaymentsFlowTracker @Inject constructor(
     }
 
     fun trackOnboardingLearnMoreTapped() {
-        track(CARD_PRESENT_ONBOARDING_LEARN_MORE_TAPPED)
+        track(eventProvider.CARD_PRESENT_ONBOARDING_LEARN_MORE_TAPPED)
     }
 
     fun trackOnboardingState(state: CardReaderOnboardingState) {
@@ -409,6 +409,7 @@ class PaymentsFlowTracker @Inject constructor(
     }
 
     fun trackPaymentSucceeded() {
+        Log.d("PaymentsFlowTracker", "trackPaymentSucceeded: ${this.eventProvider}")
         track(CARD_PRESENT_COLLECT_PAYMENT_SUCCESS, getAndResetFlowsDuration())
     }
 
