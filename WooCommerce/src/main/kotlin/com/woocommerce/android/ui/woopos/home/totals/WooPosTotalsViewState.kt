@@ -10,6 +10,7 @@ sealed class WooPosTotalsViewState : Parcelable {
     data class Checkout(
         val totals: Totals,
         val readerStatus: ReaderStatus,
+        val isFreeOrder: Boolean,
     ) : WooPosTotalsViewState()
 
     sealed class Totals : Parcelable {

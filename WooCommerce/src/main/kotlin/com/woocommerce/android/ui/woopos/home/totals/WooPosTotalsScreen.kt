@@ -153,26 +153,28 @@ private fun TotalsLoaded(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1.1f)
-                .background(WooPosTheme.colors.totalsErrorBackground),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            when (val readerStatus = state.readerStatus) {
-                is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
-                    ReaderDisconnected(modifier = Modifier, status = readerStatus, onUIEvent = onUIEvent)
-                }
+        if (!state.isFreeOrder) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1.1f)
+                    .background(WooPosTheme.colors.totalsErrorBackground),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                when (val readerStatus = state.readerStatus) {
+                    is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
+                        ReaderDisconnected(modifier = Modifier, status = readerStatus, onUIEvent = onUIEvent)
+                    }
 
-                is WooPosTotalsViewState.ReaderStatus.Preparing,
-                is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
-                    PreparingReader(readerStatus)
-                }
+                    is WooPosTotalsViewState.ReaderStatus.Preparing,
+                    is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
+                        PreparingReader(readerStatus)
+                    }
 
-                is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
-                    ReaderReadyForPayment(readerStatus)
+                    is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
+                        ReaderReadyForPayment(readerStatus)
+                    }
                 }
             }
         }
@@ -432,6 +434,7 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                     title = "Ready for payment",
                     subtitle = "Tap, swipe or insert card"
                 ),
+                isFreeOrder = false
             ),
             onUIEvent = {},
         )
@@ -454,7 +457,8 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
                     actionButtonLabel = "Connect to a reader",
-                )
+                ),
+                isFreeOrder = false
             ),
             onUIEvent = {},
         )
@@ -477,7 +481,30 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
                     actionButtonLabel = "Connect to a reader",
-                )
+                ),
+                isFreeOrder = false
+            ),
+            onUIEvent = {},
+        )
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosTotalsScreenPreviewForFreeOrders() {
+    WooPosTheme {
+        WooPosTotalsScreen(
+            modifier = Modifier,
+            state = WooPosTotalsViewState.Totals(
+                orderSubtotalText = "$420.00",
+                orderTotalText = "$462.00",
+                orderTaxText = "$42.00",
+                readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
+                    title = "Reader not connected",
+                    subtitle = "To process this payment, please connect your reader.",
+                    actionButtonLabel = "Connect to a reader",
+                ),
+                isFreeOrder = true
             ),
             onUIEvent = {},
         )
