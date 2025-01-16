@@ -77,4 +77,108 @@ class WooPosPaymentsFlowTrackerEventProvider : PaymentsFlowTrackerEventProvider 
     override val CARD_READER_LOCATION_SUCCESS: IAnalyticsEvent
         get() = PaymentFlowTrackerEvent.CardReaderLocationSuccess
 
+    override val CARD_READER_LOCATION_FAILURE: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderLocationFailure
+
+    override val CARD_READER_LOCATION_MISSING_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderLocationMissingTapped
+
+    override val CARD_READER_CONNECTION_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderConnectionFailed
+
+    override val CARD_READER_CONNECTION_SUCCESS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderConnectionSuccess
+
+    override val CARD_PRESENT_COLLECT_PAYMENT_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentCollectPaymentFailed
+
+    override val CARD_PRESENT_COLLECT_PAYMENT_SUCCESS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentCollectPaymentSuccess
+
+    override val CARD_PRESENT_COLLECT_INTERAC_PAYMENT_SUCCESS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentCollectInteracPaymentSuccess
+
+    override val CARD_PRESENT_COLLECT_INTERAC_PAYMENT_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentCollectInteracPaymentFailed
+
+    override val RECEIPT_PRINT_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptPrintTapped
+
+    override val RECEIPT_EMAIL_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptEmailTapped
+
+    override val RECEIPT_PRINT_CANCELED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptPrintCanceled
+
+    override val RECEIPT_PRINT_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptPrintFailed
+
+    override val RECEIPT_PRINT_SUCCESS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptPrintSuccess
+
+    override val RECEIPT_VIEW_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptViewTapped
+
+    override val RECEIPT_URL_FETCHING_FAILS: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptUrlFetchingFails
+
+    override val CARD_PRESENT_COLLECT_PAYMENT_CANCELLED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentCollectPaymentCancelled
+
+    override val PAYMENTS_FLOW_ORDER_COLLECT_PAYMENT_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsFlowOrderCollectPaymentTapped
+
+    override val CARD_READER_DISCONNECT_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderDisconnectTapped
+
+    override val CARD_PRESENT_COLLECT_INTERAC_REFUND_CANCELLED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentCollectInteracRefundCancelled
+
+    override val CARD_PRESENT_CONNECTION_LEARN_MORE_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentConnectionLearnMoreTapped
+
+    override val IN_PERSON_PAYMENTS_LEARN_MORE_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.InPersonPaymentsLearnMoreTapped
+
+    override val CARD_PRESENT_SELECT_READER_TYPE_BUILT_IN_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentSelectReaderTypeBuiltInTapped
+
+    override val CARD_PRESENT_SELECT_READER_TYPE_BLUETOOTH_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentSelectReaderTypeBluetoothTapped
+
+    override val MANAGE_CARD_READERS_AUTOMATIC_DISCONNECT_BUILT_IN_READER: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ManageCardReadersAutomaticDisconnectBuiltInReader
+
+    override val CARD_PRESENT_TAP_TO_PAY_NOT_AVAILABLE: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentTapToPayNotAvailable
+
+    override val CARD_READER_AUTOMATIC_DISCONNECT: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardReaderAutomaticDisconnect
+
+    override val CARD_PRESENT_PAYMENT_FAILED_CONTACT_SUPPORT_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentPaymentFailedContactSupportTapped
+
+    override val CARD_PRESENT_TAP_TO_PAY_PAYMENT_FAILED_ENABLE_NFC_TAPPED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.CardPresentTapToPayPaymentFailedEnableNfcTapped
+
+    override val PAYMENTS_FLOW_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsFlowFailed
+
+    override val PAYMENTS_FLOW_CANCELED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsFlowCanceled
+
+    override val PAYMENTS_FLOW_COLLECT: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsFlowCollect
+
+    override val PAYMENTS_FLOW_COMPLETED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsFlowCompleted
+
+    override val RECEIPT_EMAIL_FAILED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.ReceiptEmailFailed
+
+    override val PAYMENTS_ONBOARDING_SHOWN: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsOnboardingShown
+
+    override val PAYMENTS_ONBOARDING_DISMISSED: IAnalyticsEvent
+        get() = PaymentFlowTrackerEvent.PaymentsOnboardingDismissed
 }

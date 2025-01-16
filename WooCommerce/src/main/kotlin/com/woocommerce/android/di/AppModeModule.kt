@@ -28,7 +28,8 @@ class AppModeModule {
 
     @Provides
     @StoreManagementMode
-    fun provideStoreManagementMode(): PaymentsFlowTrackerEventProvider = StoreManagementPaymentsFlowTrackerEventProvider()
+    fun provideStoreManagementMode(): PaymentsFlowTrackerEventProvider =
+        StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
     @PointOfSaleMode
