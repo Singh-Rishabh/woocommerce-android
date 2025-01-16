@@ -552,7 +552,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             imageUrl = "",
                             name = "VW California",
                             description = "test description test description test description test description" +
-                            " test description test description test description test description test description",
+                                " test description test description test description test description test description",
                             price = "$150,000",
                             isAppearanceAnimationPlayed = true,
                             productType = ProductType.Simple,
