@@ -1125,6 +1125,63 @@ class WooPosTotalsViewModelTest {
             assertThat(successState.orderTotalText).isEqualTo("Paid 5.00$ in Cash")
         }
 
+    @Test
+    fun `given checkout started and order contains only free products, when vm created, then totals state correctly calculated`() =
+        runTest {
+            // GIVEN
+            whenever(resourceProvider.getString(R.string.woopos_totals_reader_getting_ready))
+                .thenReturn("Getting ready")
+            whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
+                .thenReturn("Checking order")
+            whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
+                .thenReturn("No internet")
+            val itemClickedData = listOf(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+            )
+            val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
+            val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+                on { events }.thenReturn(parentToChildrenEventFlow)
+            }
+            val order = Order.getEmptyOrder(
+                dateCreated = Date(),
+                dateModified = Date()
+            ).copy(
+                totalTax = BigDecimal("0.00"),
+                items = listOf(
+                    Order.Item.EMPTY.copy(
+                        subtotal = BigDecimal("0.00"),
+                    ),
+                    Order.Item.EMPTY.copy(
+                        subtotal = BigDecimal("0.00"),
+                    ),
+                    Order.Item.EMPTY.copy(
+                        subtotal = BigDecimal("0.00"),
+                    )
+                ),
+                total = BigDecimal("0.00"),
+                productsTotal = BigDecimal("0.00"),
+            )
+            val totalsRepository: WooPosTotalsRepository = mock {
+                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                    Result.success(order)
+                )
+            }
+            val priceFormat: WooPosFormatPrice = mock {
+                onBlocking { invoke(BigDecimal("0.00")) }.thenReturn("0.00$")
+            }
+
+            // WHEN
+            val viewModel = createViewModel(
+                parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+                totalsRepository = totalsRepository,
+                priceFormat = priceFormat,
+            )
+
+            // THEN
+            val totals = viewModel.state.value as WooPosTotalsViewState.Totals
+            assertTrue(totals.isFreeOrder)
+        }
+
     private fun createNonEmptyOrder() = Order.getEmptyOrder(
         dateCreated = Date(),
         dateModified = Date()
