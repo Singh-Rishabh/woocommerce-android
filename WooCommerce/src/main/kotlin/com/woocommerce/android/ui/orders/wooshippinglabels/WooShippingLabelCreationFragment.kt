@@ -14,6 +14,7 @@ import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
+import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment.Companion.PACKAGE_SELECTION_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
@@ -21,7 +22,7 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WooShippingLabelCreationFragment : BaseFragment() {
+class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
     private val viewModel: WooShippingLabelCreationViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -69,4 +70,6 @@ class WooShippingLabelCreationFragment : BaseFragment() {
             viewModel.onPackageSelected(it)
         }
     }
+
+    override fun onRequestAllowBackPress(): Boolean = viewModel.onNavigateBack()
 }
