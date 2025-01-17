@@ -119,7 +119,6 @@ dependencies {
     testImplementation libs.robolectric
     testImplementation libs.mockito.core
     testImplementation libs.mockito.kotlin
-    testImplementation libs.mockito.inline
     testImplementation libs.assertj.core
     testImplementation libs.androidx.arch.core.testing
 
