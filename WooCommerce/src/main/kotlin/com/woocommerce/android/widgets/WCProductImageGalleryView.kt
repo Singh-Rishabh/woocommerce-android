@@ -202,7 +202,15 @@ class WCProductImageGalleryView @JvmOverloads constructor(
                 // use a negative id so we can check it in isPlaceholder() below
                 val id = (-index - 1).toLong()
                 // set the image src to this uri so we can preview it while uploading
-                placeholders.add(0, Product.Image(id, "", imageUriList[index].toString(), Date()))
+                placeholders.add(
+                    0, Product.Image(
+                        id = id,
+                        name = "",
+                        source = imageUriList[index].toString(),
+                        dateCreated = Date(),
+                        isCoverImage = false
+                    )
+                )
             }
 
             adapter.setPlaceholderImages(placeholders)
@@ -249,7 +257,8 @@ class WCProductImageGalleryView @JvmOverloads constructor(
                         id = ADD_IMAGE_ITEM_ID,
                         name = "",
                         source = "",
-                        dateCreated = Date()
+                        dateCreated = Date(),
+                        isCoverImage = false
                     )
                 )
             }
@@ -423,11 +432,13 @@ class WCProductImageGalleryView @JvmOverloads constructor(
                     viewBinding.uploadProgess.visibility = View.VISIBLE
                     viewBinding.addImageContainer.visibility = View.GONE
                 }
+
                 VIEW_TYPE_ADD_IMAGE -> {
                     viewBinding.productImage.visibility = View.GONE
                     viewBinding.uploadProgess.visibility = View.GONE
                     viewBinding.addImageContainer.visibility = View.VISIBLE
                 }
+
                 else -> {
                     viewBinding.productImage.visibility = View.VISIBLE
                     viewBinding.productImage.alpha = 1.0F
@@ -438,6 +449,10 @@ class WCProductImageGalleryView @JvmOverloads constructor(
 
             viewBinding.deleteImageButton.setOnClickListener {
                 listener.onGalleryImageDeleteIconClicked(image)
+            }
+            viewBinding.coverTag.visibility = when {
+                image.isCoverImage -> View.VISIBLE
+                else -> View.GONE
             }
         }
 
