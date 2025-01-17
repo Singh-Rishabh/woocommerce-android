@@ -205,7 +205,6 @@ open class ProductVariation(
         }
     }
 
-
     open fun copy(
         remoteProductId: Long = this.remoteProductId,
         remoteVariationId: Long = this.remoteVariationId,
