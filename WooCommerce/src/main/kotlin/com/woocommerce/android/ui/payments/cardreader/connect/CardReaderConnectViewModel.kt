@@ -123,7 +123,7 @@ class CardReaderConnectViewModel @Inject constructor(
 
     init {
         startFlow()
-        tracker = when(arguments.cardReaderFlowParam) {
+        tracker = when (arguments.cardReaderFlowParam) {
             is CardReaderFlowParam.WooPosConnection -> storeManagementPaymentsFlowTracker
             else -> pointOfSalePaymentsFlowTracker
         }
