@@ -259,12 +259,7 @@ class ProductImagesViewModel @Inject constructor(
     }
 
     private fun List<Product.Image>.updateProductCoverImageToFirstItem() =
-        this.mapIndexed { index, image ->
-            when {
-                index == 0 -> image.copy(isCoverImage = true)
-                else -> image.copy(isCoverImage = false)
-            }
-        }
+        this.mapIndexed { index, image -> image.copy(isCoverImage = index == 0) }
 
     private fun List<Product.Image>.uncheckProductCoverImage() = this.map { it.copy(isCoverImage = false) }
 
