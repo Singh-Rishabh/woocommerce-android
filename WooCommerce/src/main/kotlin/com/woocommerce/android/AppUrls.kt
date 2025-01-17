@@ -35,8 +35,6 @@ object AppUrls {
 
     const val CROWDSIGNAL_MAIN_SURVEY = "https://automattic.survey.fm/woo-app-general-feedback-user-survey"
     const val CROWDSIGNAL_PRODUCT_SURVEY = "https://automattic.survey.fm/woo-app-feature-feedback-products"
-    const val CROWDSIGNAL_SHIPPING_LABELS_SURVEY =
-        "https://automattic.survey.fm/woo-app-feature-feedback-shipping-labels"
 
     const val CROWDSIGNAL_ANALYTICS_HUB_SURVEY = "https://automattic.survey.fm/woo-app-analytics-hub-production"
 
@@ -47,7 +45,6 @@ object AppUrls {
     const val CROWDSIGNAL_STORE_SETUP_SURVEY =
         "https://automattic.survey.fm/woo-mobile-%E2%80%93-store-setup-survey-2022"
 
-    const val CROWDSIGNAL_TAP_TO_PAY_SURVEY = "https://automattic.survey.fm/woo-app-%E2%80%93-first-ttp-survey"
     val CROWDSIGNAL_PRODCUT_CREATION_WITH_AI_SURVEY =
         if (BuildConfig.DEBUG) {
             "https://automattic.survey.fm/testing-debug-product-creation-with-ai-dec-2023"

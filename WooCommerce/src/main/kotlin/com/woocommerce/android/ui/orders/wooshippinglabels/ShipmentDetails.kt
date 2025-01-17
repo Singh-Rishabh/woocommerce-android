@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -24,11 +25,13 @@ import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -43,7 +46,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.appendWithIfNotEmpty
-import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionLandscape
@@ -52,88 +54,82 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Composable
 fun ShipmentDetails(
     scaffoldState: BottomSheetScaffoldState,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     shippableItems: ShippableItemsUI,
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
     modifier: Modifier = Modifier,
+    isShipmentDetailsExpanded: Boolean = false,
+    onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     markOrderComplete: Boolean = false,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
-    onShippingToAddressChange: (Address) -> Unit = {},
     handlerModifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
-    val scope = rememberCoroutineScope()
-    Column(
-        handlerModifier
-            .clickable(
-                onClick = {
-                    scope.launch {
-                        if (scaffoldState.bottomSheetState.isCollapsed) {
-                            scaffoldState.bottomSheetState.expand()
-                        } else {
-                            scaffoldState.bottomSheetState.collapse()
-                        }
-                    }
+    Column {
+        Column(
+            handlerModifier
+                .clickable(
+                    onClick = { onShipmentDetailsExpandedChange(isShipmentDetailsExpanded.not()) },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                )
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.minor_100)),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100)),
+                painter = if (scaffoldState.bottomSheetState.isExpanded) {
+                    painterResource(R.drawable.ic_arrow_down_26)
+                } else {
+                    painterResource(R.drawable.ic_arrow_up_26)
                 },
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
+                contentDescription = stringResource(R.string.order_creation_expand_collapse_order_totals),
+                tint = colorResource(id = R.color.color_primary),
             )
-            .fillMaxWidth()
-            .padding(dimensionResource(R.dimen.minor_100)),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            modifier = Modifier.padding(top = dimensionResource(R.dimen.minor_100)),
-            painter = if (scaffoldState.bottomSheetState.isExpanded) {
-                painterResource(R.drawable.ic_arrow_down_26)
-            } else {
-                painterResource(R.drawable.ic_arrow_up_26)
-            },
-            contentDescription = stringResource(R.string.order_creation_expand_collapse_order_totals),
-            tint = colorResource(id = R.color.color_primary),
-        )
-        AnimatedVisibility(visible = scaffoldState.bottomSheetState.isCollapsed) {
-            Text(
-                text = stringResource(R.string.shipping_label_shipment_details_title),
-                color = MaterialTheme.colors.primary,
-                modifier = Modifier
-                    .padding(top = dimensionResource(R.dimen.minor_100))
+            AnimatedVisibility(isShipmentDetailsExpanded.not()) {
+                Column {
+                    Text(
+                        text = stringResource(R.string.shipping_label_shipment_details_title),
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier
+                            .padding(top = dimensionResource(R.dimen.minor_100))
+                    )
+                    Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
+                }
+            }
+        }
+        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ShipmentDetailsLandscape(
+                shippableItems = shippableItems,
+                shippingLines = shippingLines,
+                shippingAddresses = shippingAddresses,
+                shippingRateSummary = shippingRateSummary,
+                modifier = modifier.padding(top = dimensionResource(R.dimen.major_100)),
+                isReadOnly = isReadOnly,
+                shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState
+            )
+        } else {
+            ShipmentDetailsPortrait(
+                shippableItems = shippableItems,
+                shippingLines = shippingLines,
+                markOrderComplete = markOrderComplete,
+                onMarkOrderCompleteChange = onMarkOrderCompleteChange,
+                shippingAddresses = shippingAddresses,
+                shippingRateSummary = shippingRateSummary,
+                modifier = modifier.padding(top = dimensionResource(R.dimen.minor_100)),
+                isReadOnly = isReadOnly,
+                shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState
             )
         }
-    }
-    if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-        ShipmentDetailsLandscape(
-            shippableItems = shippableItems,
-            shippingLines = shippingLines,
-            shippingAddresses = shippingAddresses,
-            onShippingFromAddressChange = onShippingFromAddressChange,
-            onShippingToAddressChange = onShippingToAddressChange,
-            shippingRateSummary = shippingRateSummary,
-            modifier = modifier,
-            isReadOnly = isReadOnly
-        )
-    } else {
-        ShipmentDetailsPortrait(
-            shippableItems = shippableItems,
-            shippingLines = shippingLines,
-            markOrderComplete = markOrderComplete,
-            onMarkOrderCompleteChange = onMarkOrderCompleteChange,
-            shippingAddresses = shippingAddresses,
-            onShippingFromAddressChange = onShippingFromAddressChange,
-            onShippingToAddressChange = onShippingToAddressChange,
-            shippingRateSummary = shippingRateSummary,
-            modifier = modifier,
-            isReadOnly = isReadOnly
-        )
     }
 }
 
@@ -145,28 +141,25 @@ private fun ShipmentDetailsPortrait(
     markOrderComplete: Boolean,
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     shippingRateSummary: ShippingRateSummaryUI?,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
-    onShippingToAddressChange: (Address) -> Unit = {},
     isReadOnly: Boolean = false
 ) {
     Column(modifier) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(top = dimensionResource(R.dimen.major_200))
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
 
         ) {
             OrderDetailsSection(
                 shippingAddresses = shippingAddresses,
-                onShippingFromAddressChange = onShippingFromAddressChange,
-                onShippingToAddressChange = onShippingToAddressChange,
                 totalItems = shippableItems.shippableItems.size,
                 totalItemsCost = shippableItems.formattedTotalPrice,
                 shippingLines = shippingLines,
-                isReadOnly = isReadOnly
+                isReadOnly = isReadOnly,
+                shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState
             )
             Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
             ShipmentCostSection(
@@ -190,26 +183,23 @@ private fun ShipmentDetailsLandscape(
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit = {},
-    onShippingToAddressChange: (Address) -> Unit = {},
     isReadOnly: Boolean = false
 ) {
     Column(modifier) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(top = dimensionResource(R.dimen.major_200))
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
 
         ) {
             AddressSectionLandscape(
                 shippingAddresses = shippingAddresses,
-                onShippingFromAddressChange = onShippingFromAddressChange,
-                onShippingToAddressChange = onShippingToAddressChange,
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
-                isReadOnly = isReadOnly
+                isReadOnly = isReadOnly,
+                shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState
             )
             Row(
                 modifier = Modifier
@@ -235,7 +225,7 @@ private fun ShipmentDetailsLandscape(
 }
 
 @Composable
-private fun ShipmentDetailsSectionTitle(
+internal fun ShipmentDetailsSectionTitle(
     title: String,
     modifier: Modifier = Modifier
 ) {
@@ -258,11 +248,10 @@ private fun ShipmentDetailsSectionTitlePreview() {
 @Composable
 private fun OrderDetailsSection(
     shippingAddresses: WooShippingAddresses,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
-    onShippingToAddressChange: (Address) -> Unit,
     totalItems: Int,
     totalItemsCost: String,
     shippingLines: List<ShippingLineSummaryUI>,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -274,11 +263,9 @@ private fun OrderDetailsSection(
         Spacer(modifier = Modifier.height(dimensionResource(R.dimen.major_100)))
         AddressSectionPortrait(
             shippingAddresses = shippingAddresses,
-            originAddresses = shippingAddresses.originAddresses,
-            onShippingFromAddressChange = onShippingFromAddressChange,
-            onShippingToAddressChange = onShippingToAddressChange,
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
-            isReadOnly = isReadOnly
+            isReadOnly = isReadOnly,
+            shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState
         )
         TotalCard(
             totalItems = totalItems,
@@ -330,7 +317,8 @@ fun ShipmentDetailsLandscapePreview() {
                     shipTo = getShipTo(),
                     originAddresses = listOf(getShipFrom())
                 ),
-                shippingRateSummary = null
+                shippingRateSummary = null,
+                shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
             )
         }
     }
