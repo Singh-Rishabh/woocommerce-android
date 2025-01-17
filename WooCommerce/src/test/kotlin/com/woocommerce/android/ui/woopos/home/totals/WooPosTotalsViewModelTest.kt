@@ -1194,8 +1194,8 @@ class WooPosTotalsViewModelTest {
             )
 
             // THEN
-            val totals = viewModel.state.value as WooPosTotalsViewState.Totals
-            assertTrue(totals.isFreeOrder)
+            val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
+            assertTrue(checkout.isFreeOrder)
         }
 
     @Test
@@ -1253,8 +1253,8 @@ class WooPosTotalsViewModelTest {
             )
 
             // THEN
-            val totals = viewModel.state.value as WooPosTotalsViewState.Totals
-            assertFalse(totals.isFreeOrder)
+            val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
+            assertFalse(checkout.isFreeOrder)
         }
 
     private fun createNonEmptyOrder() = Order.getEmptyOrder(
