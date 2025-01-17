@@ -39,7 +39,6 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccess
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
-import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -80,8 +79,6 @@ class WooPosTotalsViewModelTest {
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
     private val networkStatus: WooPosNetworkStatus = mock()
-
-    private val wooPosItemsNavigator: WooPosItemsNavigator = mock()
 
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val resourceProvider: ResourceProvider = mock()
@@ -864,7 +861,7 @@ class WooPosTotalsViewModelTest {
             assertThat(processingState).isInstanceOf(WooPosTotalsViewState.PaymentInProgress::class.java)
             with(processingState) {
                 assertThat(title).isEqualTo("Processing payment")
-                assertThat(subtitle).isEqualTo("Remove card")
+                assertThat(subtitle).isEqualTo("Please wait…")
             }
         }
 
@@ -1183,8 +1180,6 @@ class WooPosTotalsViewModelTest {
             .thenReturn("Ready for payment")
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_ready_for_payment_subtitle))
             .thenReturn("Tap, swipe or insert card")
-        whenever(resourceProvider.getString(R.string.woo_pos_payment_remove_card))
-            .thenReturn("Remove card")
         whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
             .thenReturn("No internet")
         whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
@@ -1251,7 +1246,6 @@ class WooPosTotalsViewModelTest {
         analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
-        wooPosItemsNavigator = wooPosItemsNavigator,
         isReceiptSendingSupported = isReceiptSendingSupported,
         uiStringParser = uiStringParser,
         savedState = savedState,

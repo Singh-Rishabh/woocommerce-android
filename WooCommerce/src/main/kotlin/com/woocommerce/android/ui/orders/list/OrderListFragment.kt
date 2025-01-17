@@ -41,6 +41,7 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ORDER_ID
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_START_PAYMENT_FLOW
 import com.woocommerce.android.databinding.FragmentOrderListBinding
 import com.woocommerce.android.extensions.WindowSizeClass
+import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.pinFabAboveBottomNavigationBar
@@ -49,6 +50,7 @@ import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.FeatureFeedbackSettings
 import com.woocommerce.android.model.FeatureFeedbackSettings.Feature.SIMPLE_PAYMENTS_AND_ORDER_CREATION
 import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState
+import com.woocommerce.android.model.Order
 import com.woocommerce.android.support.help.HelpOrigin
 import com.woocommerce.android.support.requests.SupportRequestFormActivity
 import com.woocommerce.android.tools.SelectedSite
@@ -69,6 +71,7 @@ import com.woocommerce.android.ui.orders.OrdersCommunicationViewModel
 import com.woocommerce.android.ui.orders.creation.CodeScannerStatus
 import com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper.BarcodeFormat
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel
+import com.woocommerce.android.ui.orders.details.OrderStatusSelectorDialog
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowErrorSnack
 import com.woocommerce.android.ui.orders.list.OrderListViewModel.OrderListEvent.ShowOrderFilters
 import com.woocommerce.android.ui.products.MutableMultipleSelectionPredicate
@@ -104,6 +107,7 @@ class OrderListFragment :
         private const val TABLET_PORTRAIT_WIDTH_RATIO = 0.40f
         private const val LAST_WINDOW_SIZE_WAS_LARGER_THAN_COMPACT = "last_window_size_was_larger_than_compact"
         private const val HANDLER_DELAY = 200L
+        private const val TOP_OFFSET_PROGRESS_WITH_ACTION_MODE = 200
     }
 
     @Inject
@@ -120,7 +124,9 @@ class OrderListFragment :
 
     private var tracker: SelectionTracker<Long>? = null
     private var actionMode: ActionMode? = null
-    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>()
+    private val selectionPredicate = MutableMultipleSelectionPredicate<Long>(
+        maxSelectionCount = OrderListViewModel.BULK_UPDATE_COUNT_LIMIT
+    )
     private val viewModel: OrderListViewModel by viewModels()
     private val communicationViewModel: OrdersCommunicationViewModel by activityViewModels()
     private var snackBar: Snackbar? = null
@@ -237,6 +243,9 @@ class OrderListFragment :
                 refreshOrders()
             }
         }
+        // When Action Mode bar appears, the progress bar can be covered up by it, so we're pushing it down
+        // to make sure it stays visible.
+        binding.listPaneContainer.setProgressViewOffset(false, 0, TOP_OFFSET_PROGRESS_WITH_ACTION_MODE)
 
         initObservers()
         initializeResultHandlers()
@@ -268,6 +277,8 @@ class OrderListFragment :
             object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                     val selectionCount = tracker?.selection?.size() ?: 0
+                    selectionPredicate.currentSelectionCount = selectionCount
+
                     viewModel.onSelectionChanged(selectionCount)
                 }
             }
@@ -349,7 +360,11 @@ class OrderListFragment :
 
     private fun adjustLayoutForNonTablet(savedInstanceState: Bundle?) {
         if (wasLastWindowSizeLargerThanCompact(savedInstanceState)) {
-            displayDetailPaneOnly()
+            if (viewModel.isSelecting()) {
+                displayListPaneOnly()
+            } else {
+                displayDetailPaneOnly()
+            }
         } else {
             displayListPaneOnly()
         }
@@ -399,6 +414,35 @@ class OrderListFragment :
                 outState.putBoolean(LAST_WINDOW_SIZE_WAS_LARGER_THAN_COMPACT, true)
             }
         }
+        tracker?.onSaveInstanceState(outState)
+
+        _binding?.let { binding ->
+            val adapter = binding.orderListView.ordersList.adapter as? OrderListAdapter
+            adapter?.let {
+                viewModel.orderIdAndPositionBackup = it.orderIdAndPosition
+            }
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        tracker?.run {
+            onRestoreInstanceState(savedInstanceState)
+            _binding?.let { binding ->
+                restoreAdapterBulkSelectionState(binding)
+                if (hasSelection()) {
+                    setItemsSelected(selection.toList(), true)
+                }
+            }
+        }
+
+        super.onViewStateRestored(savedInstanceState)
+    }
+
+    private fun restoreAdapterBulkSelectionState(binding: FragmentOrderListBinding) {
+        val adapter = binding.orderListView.ordersList.adapter as? OrderListAdapter
+        if (adapter != null) {
+            adapter.orderIdAndPosition = viewModel.orderIdAndPositionBackup
+        }
     }
 
     override fun onDestroyView() {
@@ -407,6 +451,8 @@ class OrderListFragment :
         searchView = null
         orderListMenu = null
         searchMenuItem = null
+        tracker = null
+        actionMode = null
         super.onDestroyView()
         _binding = null
     }
@@ -601,9 +647,18 @@ class OrderListFragment :
                     actionText = event.actionText,
                     action = event.action
                 )
+
                 is OrderListViewModel.OrderListEvent.RetryLoadingOrders -> refreshOrders()
                 is OrderListViewModel.OrderListEvent.OpenOrderCreationWithSimplePaymentsMigration ->
                     openOrderCreationFragment(indicateSimplePaymentsMigration = true)
+
+                is OrderListViewModel.OrderListEvent.ShowUpdateStatusDialog -> {
+                    showBulkUpdateStatusDialog(event.currentStatus, event.orderStatusList)
+                }
+
+                is OrderListViewModel.OrderListEvent.ShowSnackbarString -> uiMessageResolver.showSnack(event.message)
+                is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
+
                 else -> event.isHandled = false
             }
         }
@@ -614,6 +669,7 @@ class OrderListFragment :
                     viewModel.trashOrder(event.orderId)
                     selectedOrder.selectOrder(-1L)
                 }
+
                 else -> event.isHandled = false
             }
         }
@@ -697,10 +753,27 @@ class OrderListFragment :
             new.isAddOrderButtonVisible.takeIfNotEqualTo(old?.isAddOrderButtonVisible) { isVisible ->
                 showAddOrderButton(show = isVisible)
             }
+            new.isBulkUpdating.takeIfNotEqualTo(old?.isBulkUpdating) { isBulkUpdating ->
+                // Instead of recreating a new progress bar, re-use the progress bar in the SwipeRefreshLayout
+                binding.listPaneContainer.isRefreshing = isBulkUpdating
+            }
         }
         viewModel.lastUpdateOrdersList.observe(viewLifecycleOwner) { lastUpdate ->
             binding.orderFiltersCard.updateLastUpdate(lastUpdate)
         }
+    }
+
+    private fun showBulkUpdateStatusDialog(
+        currentStatus: String,
+        orderStatusList: Array<Order.OrderStatus>
+    ) {
+        findNavController().navigateSafely(
+            OrderListFragmentDirections.actionOrderListFragmentToOrdersListStatusSelectorDialog(
+                currentStatus,
+                orderStatusList,
+                R.string.dialog_ok
+            )
+        )
     }
 
     private fun handleListState(orderListState: OrderListViewModel.ViewState.OrderListState) {
@@ -807,6 +880,15 @@ class OrderListFragment :
                 openSpecificOrder(it, true)
             }
         }
+        handleDialogResult<OrderStatusUpdateSource>(
+            key = OrderStatusSelectorDialog.KEY_ORDER_STATUS_RESULT,
+            entryId = R.id.orders,
+        ) {
+            viewModel.onBulkOrderStatusChanged(
+                orderIds = tracker?.selection?.toList() ?: emptyList(),
+                newStatus = Order.Status.fromValue(it.newStatus)
+            )
+        }
     }
 
     private fun showOrderFilters() {
@@ -854,23 +936,6 @@ class OrderListFragment :
         binding.orderListView.submitPagedList(pagedListData)
     }
 
-    //  Some edge cases in order selection mode, like tapping the screen with 4 fingers or using TalkBack,
-    //  cause the order's onClick listener to gain focus over the selection tracker.
-    //  This quick fix will prevent the app from entering an unexpected status when the app is in selection mode.
-    private fun shouldPreventDetailNavigation(orderId: Long): Boolean {
-        if (viewModel.isSelecting()) {
-            tracker?.let { selectionTracker ->
-                if (selectionTracker.isSelected(orderId)) {
-                    selectionTracker.deselect(orderId)
-                } else {
-                    selectionTracker.select(orderId)
-                }
-            }
-            return true
-        }
-        return false
-    }
-
     override fun openOrderDetail(
         orderId: Long,
         allOrderIds: List<Long>,
@@ -878,8 +943,6 @@ class OrderListFragment :
         sharedView: View?,
         startPaymentsFlow: Boolean,
     ) {
-        if (shouldPreventDetailNavigation(orderId)) return
-
         viewModel.trackOrderClickEvent(
             orderId,
             orderStatus,
@@ -1177,7 +1240,7 @@ class OrderListFragment :
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_orderlist_update_status -> {
-                // todo: implement bulk update status
+                viewModel.onBulkUpdateStatusClicked()
                 true
             }
 

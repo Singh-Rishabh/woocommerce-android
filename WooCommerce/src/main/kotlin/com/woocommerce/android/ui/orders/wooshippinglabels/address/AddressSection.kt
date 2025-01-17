@@ -1,54 +1,64 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
+import android.content.Context
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
+import com.woocommerce.android.ui.compose.component.BottomSheetHandle
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
+import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetailsSectionTitle
 import com.woocommerce.android.ui.orders.wooshippinglabels.VerticalDivider
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.toShippingFromString
+import kotlinx.coroutines.launch
 
 @Composable
 @Suppress("DestructuringDeclarationWithTooManyEntries", "UnusedParameter")
 internal fun AddressSectionPortrait(
     shippingAddresses: WooShippingAddresses,
-    originAddresses: List<OriginShippingAddress>,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
-    onShippingToAddressChange: (Address) -> Unit,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -66,7 +76,7 @@ internal fun AddressSectionPortrait(
 
             val barrier = createEndBarrier(shipFromLabel, shipToLabel)
             val endBarrier = createStartBarrier(shipFromSelect)
-            var expanded by remember { mutableStateOf(false) }
+            val scope = rememberCoroutineScope()
 
             Text(
                 text = stringResource(id = R.string.orderdetail_shipping_label_item_shipfrom),
@@ -103,7 +113,13 @@ internal fun AddressSectionPortrait(
             )
             if (isReadOnly.not()) {
                 IconButton(
-                    onClick = { expanded = true },
+                    onClick = {
+                        if (shipFromSelectionBottomSheetState.isVisible.not()) {
+                            scope.launch {
+                                shipFromSelectionBottomSheetState.show()
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .constrainAs(shipFromSelect) {
                             top.linkTo(shipFromLabel.top)
@@ -119,24 +135,6 @@ internal fun AddressSectionPortrait(
                         contentDescription = null,
                         tint = MaterialTheme.colors.primary
                     )
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        modifier = Modifier.sizeIn(minWidth = 150.dp)
-                    ) {
-                        originAddresses.forEach { option ->
-                            DropdownMenuItem(onClick = {
-                                onShippingFromAddressChange(option)
-                                expanded = false
-                            }) {
-                                Text(
-                                    text = option.toShippingFromString().uppercase(),
-                                    style = MaterialTheme.typography.subtitle1,
-                                    modifier = Modifier.padding(8.dp)
-                                )
-                            }
-                        }
-                    }
                 }
             }
             Divider(
@@ -207,9 +205,8 @@ private fun AddressSectionPortraitPreview() {
                     shipTo = getShipTo(),
                     originAddresses = listOf(getShipFrom())
                 ),
-                originAddresses = listOf(getShipFrom()),
-                onShippingFromAddressChange = {},
-                onShippingToAddressChange = {}
+                shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+                isReadOnly = false
             )
         }
     }
@@ -219,8 +216,7 @@ private fun AddressSectionPortraitPreview() {
 @Suppress("UnusedParameter")
 internal fun AddressSectionLandscape(
     shippingAddresses: WooShippingAddresses,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
-    onShippingToAddressChange: (Address) -> Unit,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -232,9 +228,8 @@ internal fun AddressSectionLandscape(
         ) {
             ShipFromSelection(
                 shipFrom = shippingAddresses.shipFrom,
-                originAddresses = shippingAddresses.originAddresses,
-                onShippingFromAddressChange = onShippingFromAddressChange,
                 modifier = Modifier.weight(1f),
+                shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
                 isReadOnly = isReadOnly
             )
             VerticalDivider()
@@ -293,12 +288,10 @@ internal fun AddressSectionLandscape(
 @Composable
 private fun ShipFromSelection(
     shipFrom: OriginShippingAddress,
-    originAddresses: List<OriginShippingAddress>,
-    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    shipFromSelectionBottomSheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
-    var expanded by remember { mutableStateOf(false) }
     Row(modifier = modifier) {
         Text(
             text = stringResource(id = R.string.orderdetail_shipping_label_item_shipfrom),
@@ -324,8 +317,15 @@ private fun ShipFromSelection(
                 .weight(1f)
         )
         if (isReadOnly.not()) {
+            val scope = rememberCoroutineScope()
             IconButton(
-                onClick = { expanded = true },
+                onClick = {
+                    if (shipFromSelectionBottomSheetState.isVisible.not()) {
+                        scope.launch {
+                            shipFromSelectionBottomSheetState.show()
+                        }
+                    }
+                },
                 modifier = Modifier
                     .padding(
                         top = dimensionResource(R.dimen.minor_50),
@@ -337,24 +337,114 @@ private fun ShipFromSelection(
                     contentDescription = null,
                     tint = MaterialTheme.colors.primary
                 )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier.sizeIn(minWidth = 150.dp)
-                ) {
-                    originAddresses.forEach { option ->
-                        DropdownMenuItem(onClick = {
+            }
+        }
+    }
+}
+
+@Composable
+fun AddressSelection(
+    modalBottomSheetState: ModalBottomSheetState,
+    shipFrom: OriginShippingAddress,
+    originAddresses: List<OriginShippingAddress>,
+    onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit = {}
+) {
+    ModalBottomSheetLayout(
+        modifier = modifier,
+        sheetState = modalBottomSheetState,
+        sheetContent = {
+            BottomSheetHandle(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = dimensionResource(id = R.dimen.minor_100))
+            )
+            ShipmentDetailsSectionTitle(
+                title = stringResource(R.string.orderdetail_shipping_label_item_shipfrom),
+                modifier = Modifier.padding(
+                    start = dimensionResource(id = R.dimen.major_100),
+                    top = dimensionResource(id = R.dimen.major_100),
+                    bottom = dimensionResource(id = R.dimen.minor_100)
+                )
+            )
+            LazyColumn {
+                items(originAddresses) { option ->
+                    val isSelected = option == shipFrom
+                    AddressSelectionItem(
+                        address = option,
+                        isSelected = isSelected,
+                        onClick = {
                             onShippingFromAddressChange(option)
-                            expanded = false
-                        }) {
-                            Text(
-                                text = option.toShippingFromString().uppercase(),
-                                style = MaterialTheme.typography.subtitle1,
-                                modifier = Modifier.padding(8.dp)
-                            )
-                        }
-                    }
+                        },
+                        modifier = Modifier.padding(
+                            top = dimensionResource(id = R.dimen.minor_100),
+                            start = dimensionResource(id = R.dimen.major_100),
+                            end = dimensionResource(id = R.dimen.major_100)
+                        )
+                    )
                 }
+            }
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.major_100)))
+        },
+        sheetShape = RoundedCornerShape(
+            topStart = dimensionResource(id = R.dimen.corner_radius_large),
+            topEnd = dimensionResource(id = R.dimen.corner_radius_large)
+        ),
+        content = content
+    )
+}
+
+@Composable
+fun AddressSelectionItem(
+    address: OriginShippingAddress,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val borderColor = if (isSelected) {
+        MaterialTheme.colors.primary
+    } else {
+        colorResource(R.color.divider_color)
+    }
+
+    val backgroundColor = if (isSelected) {
+        animateColorAsState(
+            targetValue = MaterialTheme.colors.shippingSelectedBackgroundColor,
+            label = "colorAnimation"
+        )
+    } else {
+        animateColorAsState(targetValue = MaterialTheme.colors.surface, label = "colorAnimation")
+    }
+
+    RoundedCornerBoxWithBorder(
+        modifier = modifier,
+        innerModifier = Modifier
+            .clickable { onClick() }
+            .padding(dimensionResource(id = R.dimen.major_100)),
+        borderColor = borderColor,
+        backgroundColor = backgroundColor.value
+    ) {
+        Row {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = address.getFormattedName(LocalContext.current),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                )
+                Text(
+                    text = address.toShippingFromString(),
+                    modifier = Modifier.padding(top = dimensionResource(id = R.dimen.minor_100))
+                )
+            }
+            IconButton(
+                onClick = { }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_edit_pencil),
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary,
+                )
             }
         }
     }
@@ -371,8 +461,8 @@ private fun AddressSectionLandscapePreview() {
                     shipTo = getShipTo(),
                     originAddresses = listOf(getShipFrom())
                 ),
-                onShippingFromAddressChange = {},
-                onShippingToAddressChange = {}
+                shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+                isReadOnly = false
             )
         }
     }
@@ -408,3 +498,18 @@ internal fun getShipTo() = Address(
     country = Location("US", "USA"),
     state = AmbiguousLocation.Defined(Location("CA", "California", "USA"))
 )
+
+fun OriginShippingAddress.getFormattedName(context: Context): String {
+    val name = when {
+        !firstName.isNullOrEmpty() && !lastName.isNullOrEmpty() -> "$firstName $lastName"
+        !firstName.isNullOrEmpty() -> firstName
+        !lastName.isNullOrEmpty() -> lastName
+        !company.isNullOrEmpty() -> company
+        else -> context.getString(R.string.shipping_label_select_origin_address)
+    }
+    return if (this.isDefault) {
+        context.getString(R.string.shipping_label_select_origin_default_address, name)
+    } else {
+        name
+    }
+}
