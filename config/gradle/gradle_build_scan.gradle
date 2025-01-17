@@ -10,4 +10,10 @@ if (isBuildOnCI) {
             uploadInBackground = false
         }
     }
+} else {
+    develocity {
+        buildScan {
+            publishing.onlyIf { false }
+        }
+    }
 }
