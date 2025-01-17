@@ -251,7 +251,7 @@ class WCProductImageGalleryView @JvmOverloads constructor(
             imageList.addAll(images)
 
             // restore the "Add image" icon (never shown when list is empty)
-            if (showAddImageIcon && imageList.size > 0) {
+            if (showAddImageIcon && imageList.isNotEmpty()) {
                 imageList.add(
                     Product.Image(
                         id = ADD_IMAGE_ITEM_ID,
@@ -299,7 +299,7 @@ class WCProductImageGalleryView @JvmOverloads constructor(
             }
 
             for (index in images.indices) {
-                if (images[index].id != actualImages[index].id) {
+                if (images[index] != actualImages[index]) {
                     return false
                 }
             }
@@ -451,7 +451,7 @@ class WCProductImageGalleryView @JvmOverloads constructor(
                 listener.onGalleryImageDeleteIconClicked(image)
             }
             viewBinding.coverTag.visibility = when {
-                image.isCoverImage && !viewBinding.deleteImageButton.isVisible  -> View.VISIBLE
+                image.isCoverImage -> View.VISIBLE
                 else -> View.GONE
             }
         }
