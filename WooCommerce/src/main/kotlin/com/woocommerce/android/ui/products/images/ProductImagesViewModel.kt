@@ -232,8 +232,7 @@ class ProductImagesViewModel @Inject constructor(
 
     fun onGalleryImageDragStarted() {
         when (viewState.productImagesState) {
-            is Dragging -> { /* no-op*/
-            }
+            is Dragging -> { /* no-op*/ }
 
             Browsing -> viewState = viewState.copy(
                 images = images.uncheckProductCoverImage(),
