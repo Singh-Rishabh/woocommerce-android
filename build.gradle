@@ -34,7 +34,7 @@ ext {
 measureBuilds {
     enable = secretProperties.get('measureBuildsEnabled')?.toBoolean() ?: false
     automatticProject = MeasureBuildsExtension.AutomatticProject.WooCommerce
-    attachGradleScanId = true
+    attachGradleScanId = false
     authToken = secretProperties.get('appsMetricsToken')
 }
 
