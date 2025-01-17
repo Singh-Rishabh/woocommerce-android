@@ -44,7 +44,7 @@ class CardReaderPaymentViewModel @Inject constructor(
     paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     interacRefundableChecker: CardReaderInteracRefundableChecker,
     @StoreManagementMode tracker: PaymentsFlowTracker,
-    trackCancelledFlow: CardReaderTrackCanceledFlowAction,
+    @StoreManagementMode trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     currencyFormatter: CurrencyFormatter,
     errorMapper: CardReaderPaymentErrorMapper,
     interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,

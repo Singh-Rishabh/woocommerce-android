@@ -36,7 +36,7 @@ class WooPosCardReaderPaymentControllerFactory @Inject constructor(
     private val paymentCollectibilityChecker: CardReaderPaymentCollectibilityChecker,
     private val interacRefundableChecker: CardReaderInteracRefundableChecker,
     @PointOfSaleMode private val tracker: PaymentsFlowTracker,
-    private val trackCancelledFlow: CardReaderTrackCanceledFlowAction,
+    @PointOfSaleMode private val trackCancelledFlow: CardReaderTrackCanceledFlowAction,
     private val currencyFormatter: CurrencyFormatter,
     private val errorMapper: CardReaderPaymentErrorMapper,
     private val interacRefundErrorMapper: CardReaderInteracRefundErrorMapper,

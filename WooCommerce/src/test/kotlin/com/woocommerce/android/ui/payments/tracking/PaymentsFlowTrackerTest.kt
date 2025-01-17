@@ -102,7 +102,7 @@ class PaymentsFlowTrackerTest : BaseUnitTest() {
         selectedSite,
         cardReaderTrackingInfoProvider,
         paymentReceiptHelper,
-        eventProvider = StoreManagementPaymentsFlowTrackerEventProvider()
+        StoreManagementPaymentsFlowTrackerEventProvider()
     )
 
     @Test
