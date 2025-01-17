@@ -2654,7 +2654,7 @@
     <string name="enter_username_instead">Log in with your username.</string>
     <string name="enter_verification_code">Almost there! Please enter the verification code for WordPress.com from your authenticator app.</string>
     <string name="enter_verification_code_sms">We sent a text message to the phone number ending in %s. Please enter the verification code in the SMS.</string>
-
+    <string name="login_use_wpcom_username_instead">Use username and password instead</string>
 
     <string name="requesting_otp">Requesting a verification code via SMS.</string>
     <string name="requesting_sms_otp_success">SMS requested, please check your messages for the code.</string>
