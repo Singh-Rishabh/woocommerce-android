@@ -41,12 +41,16 @@ measureBuilds {
 }
 
 static def loadPropertiesWithFallback(Logger logger, File fallbackFile, File primaryFile) {
+    def defaultProperties = readPropertiesFromFile(fallbackFile)
+    def primaryProperties
     if (primaryFile.exists()) {
-        return readPropertiesFromFile(primaryFile)
+        primaryProperties = readPropertiesFromFile(primaryFile)
     } else {
         logger.warn("Primary properties file not found: ${primaryFile}. Using fallback: ${fallbackFile}.")
-        return readPropertiesFromFile(fallbackFile)
+        primaryProperties = new Properties()
     }
+
+    return defaultProperties + primaryProperties
 }
 
 static def readPropertiesFromFile(File file) {
