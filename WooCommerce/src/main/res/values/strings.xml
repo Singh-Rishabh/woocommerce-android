@@ -2397,6 +2397,7 @@
     <string name="product_add_photo">Add photo</string>
     <string name="product_replace_photo">Replace photo</string>
     <string name="product_remove_photo">Remove photo</string>
+    <string name="product_cover_photo_tag">Cover</string>
     <string name="product_image_add">Add a product image</string>
     <string name="product_image_error_removing">Error removing product image</string>
     <string name="product_image_service_error_uploading">Error uploading product image</string>
