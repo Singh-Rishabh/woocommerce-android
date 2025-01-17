@@ -203,7 +203,8 @@ class WCProductImageGalleryView @JvmOverloads constructor(
                 val id = (-index - 1).toLong()
                 // set the image src to this uri so we can preview it while uploading
                 placeholders.add(
-                    0, Product.Image(
+                    0,
+                    Product.Image(
                         id = id,
                         name = "",
                         source = imageUriList[index].toString(),
