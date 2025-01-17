@@ -112,4 +112,3 @@ tasks.register("installGitHooks", Copy) {
 }
 
 apply from: './config/gradle/jacoco.gradle'
-apply from: './config/gradle/gradle_build_scan.gradle'
