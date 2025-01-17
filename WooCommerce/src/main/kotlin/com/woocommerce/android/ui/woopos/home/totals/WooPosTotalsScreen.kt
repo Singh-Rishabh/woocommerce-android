@@ -495,10 +495,12 @@ fun WooPosTotalsScreenPreviewForFreeOrders() {
     WooPosTheme {
         WooPosTotalsScreen(
             modifier = Modifier,
-            state = WooPosTotalsViewState.Totals(
-                orderSubtotalText = "$420.00",
-                orderTotalText = "$462.00",
-                orderTaxText = "$42.00",
+            state = WooPosTotalsViewState.Checkout(
+                totals = Totals.Visible(
+                    orderSubtotalText = "$420.00",
+                    orderTotalText = "$462.00",
+                    orderTaxText = "$42.00",
+                ),
                 readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
                     title = "Reader not connected",
                     subtitle = "To process this payment, please connect your reader.",
