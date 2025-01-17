@@ -128,11 +128,9 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
                 modifiedHtml.byteInputStream()
             )
         } catch (e: MalformedURLException) {
-            WooLog.e(WooLog.T.ORDERS, "Error intercepting receipt url: ${request.url}")
-            null
+            throw IllegalArgumentException("Invalid receipt URL: ${request.url}", e)
         } catch (e: IOException) {
-            WooLog.e(WooLog.T.ORDERS, "Error reading content from receipt url: ${request.url}")
-            null
+            throw IOException("Failed to read content from receipt URL: ${request.url}", e)
         }
     }
 
