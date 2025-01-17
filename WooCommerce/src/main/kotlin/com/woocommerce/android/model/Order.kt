@@ -183,7 +183,7 @@ data class Order(
                 .firstOrNull()?.groupValues
                 ?.takeIf { it.size == addonAttributeGroupSize }
                 ?.toMutableList()
-                ?.apply { removeFirst() }
+                ?.apply { removeAt(0) }
 
             @IgnoredOnParcel
             val addonName = keyAsAddonRegexGroup

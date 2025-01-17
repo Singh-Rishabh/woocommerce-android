@@ -12,6 +12,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         val orderTaxText: String,
         val orderTotalText: String,
         val readerStatus: ReaderStatus,
+        val isFreeOrder: Boolean,
     ) : WooPosTotalsViewState()
 
     data class PaymentSuccess(val orderTotalText: String) : WooPosTotalsViewState()
