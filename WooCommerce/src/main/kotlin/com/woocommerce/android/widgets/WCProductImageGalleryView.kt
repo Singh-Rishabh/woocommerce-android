@@ -451,7 +451,7 @@ class WCProductImageGalleryView @JvmOverloads constructor(
                 listener.onGalleryImageDeleteIconClicked(image)
             }
             viewBinding.coverTag.visibility = when {
-                image.isCoverImage -> View.VISIBLE
+                image.isCoverImage && !viewBinding.deleteImageButton.isVisible  -> View.VISIBLE
                 else -> View.GONE
             }
         }
