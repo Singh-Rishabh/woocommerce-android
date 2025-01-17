@@ -12,6 +12,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.generated.endpoint.WOOCOMMERCE
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.WCProductModel
@@ -110,6 +111,7 @@ class ProductRestClientTest {
     @Test
     fun `when fetch products called with exact sku search, then correct params is used for network call`() {
         runBlockingTest {
+            whenever(wooNetwork.executeGetGsonRequest(any(), any(), eq(Array<ProductApiResponse>::class.java), any(), any(), any(), any(), any(), any())).thenReturn(WPAPIResponse.Success(null))
             sut.fetchProducts(
                 site = site,
                 searchQuery = "test query",
@@ -138,6 +140,7 @@ class ProductRestClientTest {
     @Test
     fun `when fetch products called with partial sku search, then correct params is used for network call`() {
         runBlockingTest {
+            whenever(wooNetwork.executeGetGsonRequest(any(), any(), eq(Array<ProductApiResponse>::class.java), any(), any(), any(), any(), any(), any())).thenReturn(WPAPIResponse.Success(null))
             sut.fetchProducts(
                 site = site,
                 searchQuery = "test query",
@@ -165,6 +168,7 @@ class ProductRestClientTest {
     @Test
     fun `when fetch products called with the global unique id, then correct params is used for network call`() {
         runBlockingTest {
+            whenever(wooNetwork.executeGetGsonRequest(any(), any(), eq(Array<ProductApiResponse>::class.java), any(), any(), any(), any(), any(), any())).thenReturn(WPAPIResponse.Success(null))
             val globalUniqueIdSearchQuery = "test global unique id"
             sut.fetchProducts(
                 site = site,
