@@ -1,6 +1,6 @@
 Boolean isBuildOnCI = (System.getenv('CI') ?: false).toBoolean()
 
-if (isBuildOnCI || userEnabledTracking) {
+if (isBuildOnCI) {
     buildScan {
         termsOfServiceUrl = 'https://gradle.com/terms-of-service'
         termsOfServiceAgree = 'yes'
