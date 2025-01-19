@@ -257,7 +257,7 @@ class SitePickerViewModelTest : BaseUnitTest() {
                 assertion: Assert<*, *>.() -> Unit
             ): MutableList<SitesListItem> {
                 assertThat(first()).assertion()
-                removeFirst()
+                removeAt(0)
                 return this
             }
 

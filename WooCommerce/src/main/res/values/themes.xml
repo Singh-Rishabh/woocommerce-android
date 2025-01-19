@@ -155,7 +155,12 @@
 
     <style name="MediaPicker.Button.Colored" parent="Woo.Button.Colored" />
 
-    <style name="Theme.Woo.Transparent" parent="Theme.Woo">
+    <style name="Theme.WooPos" parent="Theme.Woo">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.WooPos.Transparent" parent="Theme.WooPos">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
