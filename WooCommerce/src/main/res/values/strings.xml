@@ -224,9 +224,9 @@
     <string name="login_prologue_label_orders">Manage and edit orders on the go</string>
     <string name="login_prologue_label_products">Edit and add new products from anywhere</string>
     <string name="login_prologue_new_to_woo">New to WooCommerce</string>
-    <string name="login_prologue_label_analytics_subtitle">We know it\'s essential to your business</string>
-    <string name="login_prologue_label_orders_subtitle">You can manage them quickly and easily</string>
-    <string name="login_prologue_label_products_subtitle">We enable you to process them effortlessly</string>
+    <string name="login_prologue_label_analytics_subtitle">We know it\'s essential to your business.</string>
+    <string name="login_prologue_label_orders_subtitle">You can manage them quickly and easily.</string>
+    <string name="login_prologue_label_products_subtitle">We enable you to process them effortlessly.</string>
 
     <string name="login_prologue_survey_title">What brings you to WooCommerce?</string>
     <string name="login_prologue_survey_button_exploring">Just exploring</string>
@@ -373,9 +373,9 @@
     <string name="login_site_picker_new_to_woo">New to WooCommerce</string>
     <string name="site_picker_edit_store_list">Edit Stores</string>
     <string name="site_picker_edit_store_list_title">Visible Stores</string>
-    <string name="site_picker_edit_store_list_footer">Unselected stores won\'t be shown in the app site\'s picker and won\'t receive push notifications for new orders or product reviews</string>
+    <string name="site_picker_edit_store_list_footer">Unselected stores won\'t be shown in the app site\'s picker and won\'t receive push notifications for new orders or product reviews.</string>
     <string name="site_picker_edit_store_current_site_header">Current Store</string>
-    <string name="site_picker_edit_store_current_site_footer">Please switch to another store if you want to hide this one</string>
+    <string name="site_picker_edit_store_current_site_footer">Please switch to another store if you want to hide this one.</string>
     <string name="site_picker_edit_store_list_header">Other Stores</string>
     <string name="site_picker_edit_store_list_error_title">There was an error when updating notification settings. Please try again</string>
 
@@ -2173,7 +2173,7 @@
     <string name="product_catalog_visibility_search">Search results only</string>
     <string name="product_catalog_visibility_hidden">Hidden</string>
     <string name="product_featured">Featured product</string>
-    <string name="product_visibility_headline">This setting determines which shop pages products will be listed on</string>
+    <string name="product_visibility_headline">This setting determines which shop pages products will be listed on.</string>
     <string name="product_slug">Slug</string>
     <string name="product_slug_label">This is the URL-friendly version of the product title</string>
     <string name="product_enable_reviews">Enable reviews</string>
