@@ -500,6 +500,52 @@ class WooPosVariationsViewModelTest {
         assertThat(attributeName).isEqualTo("Any Color")
     }
 
+    @Test
+    fun `given non-variation-enabled attributes in variation, when getNameForPOS is called, then it ignores those attributes`() = runTest {
+        // GIVEN
+        val parentProduct = ProductTestUtils.generateProduct(
+            1,
+            productAttributes = """[
+            {
+                "id": 1,
+                "name": "Color",
+                "variation": true,
+                "options": ["Blue", "Green", "Red"]
+            },
+            {
+                "id": 2,
+                "name": "Material",
+                "variation": false,
+                "options": ["Cotton", "Polyester"]
+            }
+        ]"""
+        )
+        val variableProduct = ProductTestUtils.generateProductVariation(
+            1,
+            1,
+            "10.0",
+            productAttributes = """[
+            {
+                "id": 1,
+                "name": "Color",
+                "option": "Blue"
+            },
+            {
+                "id": 2,
+                "name": "Material",
+                "option": "Cotton"
+            }
+        ]"""
+        )
+
+        // WHEN
+        val attributeName = variableProduct.getNameForPOS(parentProduct)
+
+        // THEN
+        assertThat(attributeName).isEqualTo("Color: Blue")
+    }
+
+
     private fun createViewModel() =
         WooPosVariationsViewModel(
             fromChildToParentEventSender,
