@@ -545,7 +545,6 @@ class WooPosVariationsViewModelTest {
         assertThat(attributeName).isEqualTo("Color: Blue")
     }
 
-
     private fun createViewModel() =
         WooPosVariationsViewModel(
             fromChildToParentEventSender,
