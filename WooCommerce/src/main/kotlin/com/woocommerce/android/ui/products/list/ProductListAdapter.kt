@@ -7,10 +7,13 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.ListAdapter
 import com.woocommerce.android.databinding.ProductListItemBinding
 import com.woocommerce.android.model.Product
+import com.woocommerce.android.ui.media.MediaFileUploadHandler
 import com.woocommerce.android.ui.products.OnLoadMoreListener
 import com.woocommerce.android.ui.products.ProductItemDiffCallback
 import com.woocommerce.android.ui.products.ProductItemViewHolder
 import com.woocommerce.android.util.CurrencyFormatter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 typealias OnProductClickListener = (remoteProductId: Long, sharedView: View?) -> Unit
 
@@ -18,13 +21,30 @@ class ProductListAdapter(
     private val clickListener: OnProductClickListener? = null,
     private val loadMoreListener: OnLoadMoreListener,
     private val currencyFormatter: CurrencyFormatter,
+    private val mediaFileUploadHandler: MediaFileUploadHandler? = null,
+    private val coroutineScope: CoroutineScope? = null,
     private val isProductHighlighted: (Long) -> Boolean,
 ) : ListAdapter<Product, ProductItemViewHolder>(ProductItemDiffCallback) {
     // allow the selection library to track the selections of the user
     var tracker: SelectionTracker<Long>? = null
+    private var activeUploadIds = setOf<Long>()
 
     init {
         setHasStableIds(true)
+        if (coroutineScope != null && mediaFileUploadHandler != null) {
+            coroutineScope.launch {
+                mediaFileUploadHandler.activeUploadProductIds.collect { newIds ->
+                    val oldIds = activeUploadIds
+                    activeUploadIds = newIds
+
+                    currentList.forEachIndexed { index, product ->
+                        if (newIds.contains(product.remoteId) != oldIds.contains(product.remoteId)) {
+                            notifyItemChanged(index)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun getItemId(position: Int) = getItem(position).remoteId
@@ -46,6 +66,7 @@ class ProductListAdapter(
             product,
             currencyFormatter,
             isActivated = tracker?.isSelected(product.remoteId) ?: false,
+            isUploadingMedia = activeUploadIds.contains(product.remoteId),
             isProductHighlighted = isProductHighlighted(product.remoteId),
             isLastItem = position == itemCount - 1,
         )
