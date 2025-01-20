@@ -163,7 +163,7 @@
     <string name="receipt_fetching_error">Sorry, we couldn\'t load a receipt for this order</string>
     <string name="store_name_default">Store name</string>
     <string name="sorted_by">Sorted by 1%s</string>
-
+    <string name="add">Add %s</string>
     <!--
         Date/Time Labels
     -->
@@ -4457,4 +4457,15 @@
     <string name="woo_shipping_labels_package_creation_error_proceed">Proceed</string>
     <string name="woo_shipping_labels_package_creation_error_cancel">Cancel</string>
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
+
+    <string name="woo_shipping_edit_origin_address_title">Edit Origin</string>
+    <string name="woo_shipping_label_name">Name</string>
+    <string name="woo_shipping_label_company">Company</string>
+    <string name="woo_shipping_label_country">Country</string>
+    <string name="woo_shipping_label_address">Address</string>
+    <string name="woo_shipping_label_city">City</string>
+    <string name="woo_shipping_label_state">State</string>
+    <string name="woo_shipping_label_post_code">Postal Code</string>
+    <string name="woo_shipping_label_email">Email</string>
+    <string name="woo_shipping_label_phone">Phone</string>
 </resources>
