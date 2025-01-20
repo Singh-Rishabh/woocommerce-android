@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.items.variations.FetchResult
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsDataSource
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsUIEvents
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsViewModel
+import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -275,6 +276,43 @@ class WooPosVariationsViewModelTest {
                 WooPosItemsViewModel.ItemClickedData.Variation(123L, 1L)
             )
         )
+    }
+
+    @Test
+    fun `given variable product, getNameForPOS returns correct name when parent product has variation enabled attributes`() = runTest {
+        // GIVEN
+        val parentProduct = ProductTestUtils.generateProduct(
+            1,
+            isVariable = true,
+            productAttributes = """[
+                                {
+                                    "id": 1,
+                                    "name":"Color",
+                                    "position":0",
+                                    "visible":"true",
+                                    "variation":"true",
+                                    "options": ["Blue","Green","Red"]
+                                }
+                            ]"""
+        )
+        val variableProduct = ProductTestUtils.generateProductVariation(
+            1,
+            1,
+            "10.0",
+            productAttributes = """[
+                                {
+                                    "id": 1,
+                                    "name":"Color",
+                                    "option": "Blue"
+                                }
+                            ]"""
+        )
+
+        // WHEN
+        val attributeName = variableProduct.getNameForPOS(parentProduct)
+
+        // Then
+        assertThat(attributeName).isEqualTo("Color: Blue")
     }
 
     private fun createViewModel() =
