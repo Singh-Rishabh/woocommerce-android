@@ -472,6 +472,33 @@ class WooPosVariationsViewModelTest {
         assertThat(attributeName).isEqualTo("Any Color, Any Size")
     }
 
+    @Test
+    fun `given variation with no attributes, when getNameForPOS is called, then it returns 'Any {attribute}'`() = runTest {
+        // GIVEN
+        val parentProduct = ProductTestUtils.generateProduct(
+            1,
+            productAttributes = """[
+            {
+                "id": 1,
+                "name": "Color",
+                "variation": true,
+                "options": ["Blue", "Green", "Red"]
+            }
+        ]"""
+        )
+        val variableProduct = ProductTestUtils.generateProductVariation(
+            1,
+            1,
+            "10.0",
+            productAttributes = "[]"
+        )
+
+        // WHEN
+        val attributeName = variableProduct.getNameForPOS(parentProduct)
+
+        // THEN
+        assertThat(attributeName).isEqualTo("Any Color")
+    }
 
     private fun createViewModel() =
         WooPosVariationsViewModel(
