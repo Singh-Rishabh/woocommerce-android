@@ -86,6 +86,7 @@ class LoginMagicLinkSentImprovedFragment : Fragment(R.layout.fragment_login_magi
                         loginListener?.usePasswordInstead(email)
                     }
                     MagicLinkFallbackButton.UsernameAndPassword -> {
+                        mAnalyticsListener.trackLoginWithWpComUsernamePasswordClick()
                         loginListener?.loginViaWpcomUsernameInstead()
                     }
                     MagicLinkFallbackButton.None -> error("This button should not be visible")
