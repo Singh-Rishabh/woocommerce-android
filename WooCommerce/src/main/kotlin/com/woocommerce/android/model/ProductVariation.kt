@@ -188,23 +188,6 @@ open class ProductVariation(
         } ?: attributes.filter { it.option != null }.joinToString(" - ") { o -> o.option!! }
     }
 
-    fun getNameForPOS(parentProduct: Product? = null): String {
-        return parentProduct?.variationEnabledAttributes?.joinToString(", ") { attribute ->
-            val option = attributes.firstOrNull { it.name == attribute.name }
-            if (option?.option != null) {
-                "${attribute.name}: ${option.option}"
-            } else {
-                "Any ${attribute.name}"
-            }
-        } ?: attributes.joinToString(", ") { attribute ->
-            if (attribute.option != null) {
-                "${attribute.name}: ${attribute.option}"
-            } else {
-                "Any ${attribute.name}"
-            }
-        }
-    }
-
     open fun copy(
         remoteProductId: Long = this.remoteProductId,
         remoteVariationId: Long = this.remoteVariationId,

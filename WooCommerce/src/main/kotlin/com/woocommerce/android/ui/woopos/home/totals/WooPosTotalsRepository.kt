@@ -7,6 +7,7 @@ import com.woocommerce.android.ui.orders.creation.OrderCreateEditRepository
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.util.DateUtils
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
@@ -107,6 +108,7 @@ class WooPosTotalsRepository @Inject constructor(
             productId = itemData.productId,
             variationId = itemData.id
         )!!
+        variationResult.getNameForPOS(productResult)
         return Order.Item.EMPTY.copy(
             itemId = 0L,
             productId = itemData.productId,
@@ -117,7 +119,7 @@ class WooPosTotalsRepository @Inject constructor(
             attributesList = variationResult.attributes
                 .filterNot { it.name.isNullOrEmpty() || it.option.isNullOrEmpty() }
                 .map { Order.Item.Attribute(it.name!!, it.option!!) },
-            name = variationResult.getNameForPOS(productResult),
+            name = variationResult.getName(productResult),
         )
     }
 

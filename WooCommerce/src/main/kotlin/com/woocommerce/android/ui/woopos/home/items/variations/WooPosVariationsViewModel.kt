@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home.items.variations
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.model.Product
 import com.woocommerce.android.model.ProductVariation
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -204,5 +205,22 @@ class WooPosVariationsViewModel @Inject constructor(
 
     private fun onEndOfVariationsListReached(productId: Long, numOfVariations: Int) {
         loadMore(productId, numOfVariations)
+    }
+}
+
+fun ProductVariation.getNameForPOS(parentProduct: Product? = null): String {
+    return parentProduct?.variationEnabledAttributes?.joinToString(", ") { attribute ->
+        val option = attributes.firstOrNull { it.name == attribute.name }
+        if (option?.option != null) {
+            "${attribute.name}: ${option.option}"
+        } else {
+            "Any ${attribute.name}"
+        }
+    } ?: attributes.joinToString(", ") { attribute ->
+        if (attribute.option != null) {
+            "${attribute.name}: ${attribute.option}"
+        } else {
+            "Any ${attribute.name}"
+        }
     }
 }
