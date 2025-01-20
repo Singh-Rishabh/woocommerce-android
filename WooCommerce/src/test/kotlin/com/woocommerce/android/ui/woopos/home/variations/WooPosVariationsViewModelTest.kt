@@ -343,6 +343,45 @@ class WooPosVariationsViewModelTest {
         assertThat(attributeName).isEqualTo("Color: Blue, Size: M")
     }
 
+    @Test
+    fun `given parent product with non-matching attributes, when getNameForPOS is called, then it returns 'Any {attribute}'`() = runTest {
+        // GIVEN
+        val parentProduct = ProductTestUtils.generateProduct(
+            1,
+            productAttributes = """[
+            {
+                "id": 3,
+                "name": "Material",
+                "variation": true,
+                "options": ["Cotton", "Polyester"]
+            }
+        ]"""
+        )
+        val variableProduct = ProductTestUtils.generateProductVariation(
+            1,
+            1,
+            "10.0",
+            productAttributes = """[
+            {
+                "id": 1,
+                "name": "Color",
+                "option": "Blue"
+            },
+            {
+                "id": 2,
+                "name": "Size",
+                "option": "M"
+            }
+        ]"""
+        )
+
+        // WHEN
+        val attributeName = variableProduct.getNameForPOS(parentProduct)
+
+        // THEN
+        assertThat(attributeName).isEqualTo("Any Material")
+    }
+
     private fun createViewModel() =
         WooPosVariationsViewModel(
             fromChildToParentEventSender,
