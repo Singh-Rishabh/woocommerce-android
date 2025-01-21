@@ -91,7 +91,7 @@ class CardReaderOnboardingErrorCtaClickHandler @Inject constructor(
     }
 
     private fun buildReactionToOpenStripeExtensionSetup(): Reaction {
-        val url = selectedSite.get().adminUrlOrDefault.slashJoin(STRIPE_PAYMENTS_TAP_URL)
+        val url = selectedSite.get().adminUrlOrDefault.slashJoin(STRIPE_EXTENSION_PAYMENTS_TAP_URL)
         return Reaction.OpenBrowser(url)
     }
 
@@ -112,8 +112,8 @@ class CardReaderOnboardingErrorCtaClickHandler @Inject constructor(
 
         private const val PAYMENTS_TAP_URL = "/admin.php?page=wc-admin&path=%2Fpayments%2Fconnect"
 
-        private const val STRIPE_PAYMENTS_TAP_URL = "/admin.php?page=wc-settings&tab=checkout&section=stripe" +
-            "&panel=settings"
+        private const val STRIPE_EXTENSION_PAYMENTS_TAP_URL = "/admin.php?page=wc-settings&tab=checkout&" +
+            "section=stripe&panel=settings"
     }
 }
 
