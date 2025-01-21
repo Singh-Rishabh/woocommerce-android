@@ -15,6 +15,7 @@ import androidx.lifecycle.withStarted
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.AppUrls
 import com.woocommerce.android.AppUrls.LOGIN_WITH_EMAIL_WHAT_IS_WORDPRESS_COM_ACCOUNT
+import com.woocommerce.android.BuildConfig
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
@@ -351,7 +352,9 @@ class LoginActivity :
         clearCachedSites()
 
         if (authOptions != null) {
-            if (authOptions.isPasswordless) {
+            val forcePasswordLogin = BuildConfig.DEBUG && BuildConfig.FORCE_PASSWORD_LOGIN
+
+            if (authOptions.isPasswordless && !forcePasswordLogin) {
                 showMagicLinkRequestScreen(
                     email = email,
                     verifyEmail = verifyEmail,
