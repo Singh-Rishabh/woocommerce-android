@@ -112,7 +112,8 @@ class CardReaderOnboardingErrorCtaClickHandler @Inject constructor(
 
         private const val PAYMENTS_TAP_URL = "/admin.php?page=wc-admin&path=%2Fpayments%2Fconnect"
 
-        private const val STRIPE_PAYMENTS_TAP_URL = "/admin.php?page=wc-settings&tab=checkout&section=stripe"
+        private const val STRIPE_PAYMENTS_TAP_URL = "/admin.php?page=wc-settings&tab=checkout&section=stripe" +
+            "&panel=settings"
     }
 }
 
