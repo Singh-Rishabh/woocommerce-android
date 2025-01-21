@@ -26,11 +26,15 @@ class AddressValidationHelper @Inject constructor(
     fun validateCustomsPhone(value: String): String? {
         return when {
             value.isEmpty() || value.isBlank() -> resourceProvider.getString(R.string.woo_shipping_field_required_error)
-            value.replace(Regex("^1|[^\\d]"), "").length != 10 -> {
+            value.replace(Regex("^1|[^\\d]"), "").length != US_PHONE_NUMBER_LENGTH -> {
                 resourceProvider.getString(R.string.shipping_label_destination_address_phone_invalid)
             }
 
             else -> null
         }
+    }
+
+    companion object {
+        private const val US_PHONE_NUMBER_LENGTH = 10
     }
 }
