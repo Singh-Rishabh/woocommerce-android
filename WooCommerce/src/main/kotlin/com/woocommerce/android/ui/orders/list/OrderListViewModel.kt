@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -31,6 +32,7 @@ import com.woocommerce.android.analytics.IsScreenLargerThanCompactValue
 import com.woocommerce.android.analytics.deviceTypeToAnalyticsString
 import com.woocommerce.android.extensions.NotificationReceivedEvent
 import com.woocommerce.android.extensions.WindowSizeClass
+import com.woocommerce.android.extensions.drop
 import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.filterNotNull
 import com.woocommerce.android.extensions.runWithContext
@@ -87,7 +89,6 @@ import org.wordpress.android.fluxc.store.ListStore.ListErrorType.PARSE_ERROR
 import org.wordpress.android.fluxc.store.ListStore.ListErrorType.TIMEOUT_ERROR
 import org.wordpress.android.fluxc.store.WCOrderStore
 import org.wordpress.android.fluxc.store.WCOrderStore.OnOrderSummariesFetched
-import org.wordpress.android.mediapicker.util.distinct
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -228,9 +229,6 @@ class OrderListViewModel @Inject constructor(
         }.asLiveData()
 
     fun isSelecting() = viewState.orderListState == ViewState.OrderListState.Selecting
-
-    private var isQueueingBulkUpdateSuccessMessage = false
-    private var bulkUpdateSuccessMessage = ""
 
     init {
         lifecycleRegistry.currentState = Lifecycle.State.CREATED
@@ -479,14 +477,6 @@ class OrderListViewModel @Inject constructor(
         }
         _isLoadingMore.addSource(pagedListWrapper.isLoadingMore) {
             _isLoadingMore.value = it
-        }
-
-        // Observe status changes in the data
-        pagedListWrapper.data.distinct().observe(this) {
-            if (isQueueingBulkUpdateSuccessMessage) {
-                isQueueingBulkUpdateSuccessMessage = false
-                triggerEvent(OrderListEvent.ShowSnackbarString(bulkUpdateSuccessMessage))
-            }
         }
 
         pagedListWrapper.listError
@@ -924,6 +914,7 @@ class OrderListViewModel @Inject constructor(
                 viewState = viewState.copy(selectionCount = count)
                 showMaximumBulkSelectionNotice()
             }
+
             count > 0 && !isSelecting() -> enterSelectionMode(count)
             count > 0 -> viewState = viewState.copy(selectionCount = count)
         }
@@ -1017,20 +1008,31 @@ class OrderListViewModel @Inject constructor(
         when (result) {
             is BulkUpdateOrderResult.AllSuccess,
             is BulkUpdateOrderResult.PartialSuccess -> {
-                isQueueingBulkUpdateSuccessMessage = true
-                bulkUpdateSuccessMessage = when (result) {
-                    is BulkUpdateOrderResult.AllSuccess -> resourceProvider.getString(
-                        R.string.orderlist_bulk_update_status_updated
-                    )
+                // Prepare to show a success message after the list has been updated
+                val observable = ordersPagedListWrapper?.data?.drop(1)
+                observable?.observe(
+                    this,
+                    object : Observer<PagedOrdersList> {
+                        override fun onChanged(value: PagedOrdersList) {
+                            val message = when (result) {
+                                is BulkUpdateOrderResult.AllSuccess -> resourceProvider.getString(
+                                    R.string.orderlist_bulk_update_status_updated
+                                )
 
-                    is BulkUpdateOrderResult.PartialSuccess -> resourceProvider.getString(
-                        R.string.orderlist_bulk_update_result_partial_success,
-                        result.successCount,
-                        result.failureCount
-                    )
+                                is BulkUpdateOrderResult.PartialSuccess -> resourceProvider.getString(
+                                    R.string.orderlist_bulk_update_result_partial_success,
+                                    result.successCount,
+                                    result.failureCount
+                                )
 
-                    else -> resourceProvider.getString(R.string.orderlist_bulk_update_status_updated)
-                }
+                                else -> resourceProvider.getString(R.string.orderlist_bulk_update_status_updated)
+                            }
+                            triggerEvent(OrderListEvent.ShowSnackbarString(message))
+                            observable.removeObserver(this)
+                        }
+                    }
+                )
+
                 ordersPagedListWrapper?.fetchFirstPage()
                 trackBulkOrderUpdateSuccess()
             }
