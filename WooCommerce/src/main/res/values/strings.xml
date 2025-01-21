@@ -2400,6 +2400,7 @@
     <string name="product_add_photo">Add photo</string>
     <string name="product_replace_photo">Replace photo</string>
     <string name="product_remove_photo">Remove photo</string>
+    <string name="product_cover_photo_tag">Cover</string>
     <string name="product_image_add">Add a product image</string>
     <string name="product_image_error_removing">Error removing product image</string>
     <string name="product_image_service_error_uploading">Error uploading product image</string>
@@ -2419,7 +2420,7 @@
     <string name="media_picker_dialog_title">Select Media Source</string>
     <string name="wpmedia_picker_title">WordPress media library</string>
     <string name="product_images_image_limit_warning">Only one photo can be displayed per product variation</string>
-    <string name="product_images_drag_and_drop_description">Drag and drop to re-order photos</string>
+    <string name="product_images_drag_and_drop_to_reorder">Drag and drop to re-order photos. The first photo will be set as the cover.</string>
     <string name="product_images_validate_drag_and_drop">Validate</string>
     <string name="product_image_service_error_media_null">Media could not be found</string>
     <string name="product_image_service_error_uploading_single">%d file couldn\'t be uploaded</string>
