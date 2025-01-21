@@ -84,6 +84,7 @@ import org.wordpress.android.login.LoginMagicLinkRequestFragment
 import org.wordpress.android.login.LoginMode
 import org.wordpress.android.login.LoginSiteAddressFragment
 import org.wordpress.android.login.LoginUsernamePasswordFragment
+import org.wordpress.android.login.MagicLinkFallbackButton
 import org.wordpress.android.util.ToastUtils
 import javax.inject.Inject
 import kotlin.text.RegexOption.IGNORE_CASE
@@ -351,13 +352,23 @@ class LoginActivity :
 
         if (authOptions != null) {
             if (authOptions.isPasswordless) {
-                showMagicLinkRequestScreen(email, verifyEmail, allowPassword = false, forceRequestAtStart = true)
+                showMagicLinkRequestScreen(
+                    email = email,
+                    verifyEmail = verifyEmail,
+                    fallbackButton = MagicLinkFallbackButton.None,
+                    forceRequestAtStart = true
+                )
             } else {
                 showEmailPasswordScreen(email, verifyEmail)
             }
         } else {
             if (isMagicLinkEnabled) {
-                showMagicLinkRequestScreen(email, verifyEmail, allowPassword = true, forceRequestAtStart = false)
+                showMagicLinkRequestScreen(
+                    email = email,
+                    verifyEmail = verifyEmail,
+                    fallbackButton = MagicLinkFallbackButton.Password,
+                    forceRequestAtStart = false
+                )
             } else {
                 showEmailPasswordScreen(email, verifyEmail)
             }
@@ -376,7 +387,7 @@ class LoginActivity :
     private fun showMagicLinkRequestScreen(
         email: String?,
         verifyEmail: Boolean,
-        allowPassword: Boolean,
+        fallbackButton: MagicLinkFallbackButton,
         forceRequestAtStart: Boolean
     ) {
         val scheme = WOOCOMMERCE
@@ -387,7 +398,7 @@ class LoginActivity :
                 false,
                 null,
                 verifyEmail,
-                allowPassword,
+                fallbackButton,
                 forceRequestAtStart
             )
         changeFragment(loginMagicLinkRequestFragment, true, LoginMagicLinkRequestFragment.TAG, false)
@@ -445,8 +456,8 @@ class LoginActivity :
         changeFragment(loginUsernamePasswordFragment, true, LoginUsernamePasswordFragment.TAG)
     }
 
-    override fun showMagicLinkSentScreen(email: String?, allowPassword: Boolean) {
-        val loginMagicLinkSentFragment = LoginMagicLinkSentImprovedFragment.newInstance(email, allowPassword)
+    override fun showMagicLinkSentScreen(email: String?, fallbackButton: MagicLinkFallbackButton) {
+        val loginMagicLinkSentFragment = LoginMagicLinkSentImprovedFragment.newInstance(email, fallbackButton)
         changeFragment(loginMagicLinkSentFragment, true, LoginMagicLinkSentImprovedFragment.TAG, false)
     }
 
@@ -896,9 +907,17 @@ class LoginActivity :
         TODO("Not yet implemented")
     }
 
-    override fun useMagicLinkInstead(email: String?, verifyEmail: Boolean, requestAtStart: Boolean) {
-        showMagicLinkRequestScreen(email, verifyEmail, allowPassword = false, forceRequestAtStart = requestAtStart)
-    }
+    override fun useMagicLinkInstead(
+        email: String?,
+        verifyEmail: Boolean,
+        requestAtStart: Boolean,
+        fallbackButton: MagicLinkFallbackButton
+    ) = showMagicLinkRequestScreen(
+        email = email,
+        verifyEmail = verifyEmail,
+        fallbackButton = fallbackButton,
+        forceRequestAtStart = requestAtStart
+    )
 
     /**
      * Allows for special handling of errors that come up during the login by address: check site address.
