@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,9 +39,41 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.EditableAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel
 
 @Composable
 fun WooShippingEditAddressScreen(
+    viewModel: WooShippingEditOriginViewModel,
+    modifier: Modifier = Modifier
+) {
+    when (val viewState = viewModel.viewState.collectAsState().value) {
+        is WooShippingEditOriginViewModel.EditOrderViewState.DataState -> {
+            WooShippingEditAddressScreen(
+                editableAddress = viewState.editableAddress,
+                onNameChange = viewModel::onNameChange,
+                onCompanyChange = viewModel::onCompanyChange,
+                onAddressChange = viewModel::onAddressChange,
+                onCityChange = viewModel::onCityChange,
+                onPostalCodeChange = viewModel::onPostalCodeChange,
+                onEmailChange = viewModel::onEmailChange,
+                onPhoneChange = viewModel::onPhoneChange,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun WooShippingEditAddressScreen(
+    editableAddress: EditableAddress,
+    onNameChange: (String) -> Unit,
+    onCompanyChange: (String) -> Unit,
+    onAddressChange: (String) -> Unit,
+    onCityChange: (String) -> Unit,
+    onPostalCodeChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPhoneChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -60,8 +93,9 @@ fun WooShippingEditAddressScreen(
         ) {
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_name)} *",
-                text = "",
-                onTextChange = {},
+                text = editableAddress.name.value,
+                error = editableAddress.name.error,
+                onTextChange = onNameChange,
             )
 
             var isExpanded by remember { mutableStateOf(false) }
@@ -74,35 +108,37 @@ fun WooShippingEditAddressScreen(
             ) {
                 RoundedBorderTextFieldWithLabel(
                     label = stringResource(id = R.string.woo_shipping_label_company),
-                    text = "",
-                    onTextChange = {},
+                    text = editableAddress.company.value,
+                    onTextChange = onCompanyChange,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
 
             RoundedBorderDropDownWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_country)} *",
-                text = "United States",
+                text = editableAddress.country,
                 modifier = Modifier.padding(top = 24.dp),
                 onClick = {}
             )
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_address)} *",
-                text = "",
-                onTextChange = {},
+                text = editableAddress.address.value,
+                error = editableAddress.address.error,
+                onTextChange = onAddressChange,
                 modifier = Modifier.padding(top = 8.dp)
             )
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_city)} *",
-                text = "",
-                onTextChange = {},
+                text = editableAddress.city.value,
+                error = editableAddress.city.error,
+                onTextChange = onCityChange,
                 modifier = Modifier.padding(top = 8.dp)
             )
 
             Row {
                 RoundedBorderDropDownWithLabel(
                     label = "${stringResource(id = R.string.woo_shipping_label_state)} *",
-                    text = "United States",
+                    text = editableAddress.state,
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .weight(1f),
@@ -111,9 +147,10 @@ fun WooShippingEditAddressScreen(
                 Spacer(modifier = Modifier.size(8.dp))
                 RoundedBorderTextFieldWithLabel(
                     label = "${stringResource(id = R.string.woo_shipping_label_post_code)} *",
-                    text = "",
+                    text = editableAddress.postalCode.value,
+                    error = editableAddress.postalCode.error,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    onTextChange = {},
+                    onTextChange = onPostalCodeChange,
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .weight(1f)
@@ -122,14 +159,18 @@ fun WooShippingEditAddressScreen(
 
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_email)} *",
-                text = "",
-                onTextChange = {},
+                text = editableAddress.email.value,
+                error = editableAddress.email.error,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                onTextChange = onEmailChange,
                 modifier = Modifier.padding(top = 32.dp)
             )
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_phone)} *",
-                text = "",
-                onTextChange = {},
+                text = editableAddress.phone.value,
+                error = editableAddress.phone.error,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                onTextChange = onPhoneChange,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
