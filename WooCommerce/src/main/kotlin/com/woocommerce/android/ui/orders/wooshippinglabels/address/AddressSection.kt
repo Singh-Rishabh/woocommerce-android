@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
+import android.content.Context
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -10,12 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
@@ -26,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -40,6 +43,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.compose.component.BottomSheetHandle
+import com.woocommerce.android.ui.compose.component.WCModalBottomSheetLayout
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetailsSectionTitle
@@ -344,10 +348,11 @@ fun AddressSelection(
     shipFrom: OriginShippingAddress,
     originAddresses: List<OriginShippingAddress>,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
+    onEditOriginAddress: (OriginShippingAddress) -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit = {}
 ) {
-    ModalBottomSheetLayout(
+    WCModalBottomSheetLayout(
         modifier = modifier,
         sheetState = modalBottomSheetState,
         sheetContent = {
@@ -364,20 +369,23 @@ fun AddressSelection(
                     bottom = dimensionResource(id = R.dimen.minor_100)
                 )
             )
-            originAddresses.forEach { option ->
-                val isSelected = option == shipFrom
-                AddressSelectionItem(
-                    address = option,
-                    isSelected = isSelected,
-                    onClick = {
-                        onShippingFromAddressChange(option)
-                    },
-                    modifier = Modifier.padding(
-                        top = dimensionResource(id = R.dimen.minor_100),
-                        start = dimensionResource(id = R.dimen.major_100),
-                        end = dimensionResource(id = R.dimen.major_100)
+            LazyColumn {
+                items(originAddresses) { option ->
+                    val isSelected = option == shipFrom
+                    AddressSelectionItem(
+                        address = option,
+                        isSelected = isSelected,
+                        onEdit = onEditOriginAddress,
+                        onClick = {
+                            onShippingFromAddressChange(option)
+                        },
+                        modifier = Modifier.padding(
+                            top = dimensionResource(id = R.dimen.minor_100),
+                            start = dimensionResource(id = R.dimen.major_100),
+                            end = dimensionResource(id = R.dimen.major_100)
+                        )
                     )
-                )
+                }
             }
             Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.major_100)))
         },
@@ -394,6 +402,7 @@ fun AddressSelectionItem(
     address: OriginShippingAddress,
     isSelected: Boolean,
     onClick: () -> Unit,
+    onEdit: (OriginShippingAddress) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val borderColor = if (isSelected) {
@@ -422,7 +431,7 @@ fun AddressSelectionItem(
         Row {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Address Name",
+                    text = address.getFormattedName(LocalContext.current),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                 )
@@ -432,7 +441,7 @@ fun AddressSelectionItem(
                 )
             }
             IconButton(
-                onClick = { }
+                onClick = { onEdit(address) }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_edit_pencil),
@@ -492,3 +501,18 @@ internal fun getShipTo() = Address(
     country = Location("US", "USA"),
     state = AmbiguousLocation.Defined(Location("CA", "California", "USA"))
 )
+
+fun OriginShippingAddress.getFormattedName(context: Context): String {
+    val name = when {
+        !firstName.isNullOrEmpty() && !lastName.isNullOrEmpty() -> "$firstName $lastName"
+        !firstName.isNullOrEmpty() -> firstName
+        !lastName.isNullOrEmpty() -> lastName
+        !company.isNullOrEmpty() -> company
+        else -> context.getString(R.string.shipping_label_select_origin_address)
+    }
+    return if (this.isDefault) {
+        context.getString(R.string.shipping_label_select_origin_default_address, name)
+    } else {
+        name
+    }
+}

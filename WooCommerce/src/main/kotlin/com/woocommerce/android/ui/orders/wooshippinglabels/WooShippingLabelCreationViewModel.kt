@@ -304,6 +304,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    fun onEditOriginAddress(address: OriginShippingAddress) {
+        triggerEvent(StartOriginAddressEdit(address))
+    }
+
     fun onShippingToAddressChange(address: Address) {
         shippingAddresses.value?.let {
             shippingAddresses.value = it.copy(shipTo = address)
@@ -318,12 +322,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         uiState.update { it.copy(markOrderComplete = value) }
     }
 
-    fun onShipmentDetailsExpandedChange(value: Boolean) {
-        uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+    fun onShipmentDetailsExpandedChange(value: Boolean): Boolean {
+        return if (uiState.value.isAddressSelectionExpanded.not()) {
+            uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+            true
+        } else {
+            false
+        }
     }
 
-    fun onSelectAddressExpandedChange(value: Boolean) {
+    fun onSelectAddressExpandedChange(value: Boolean): Boolean {
         uiState.update { it.copy(isAddressSelectionExpanded = value) }
+        return true
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
@@ -439,12 +449,26 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
-    fun onNavigateBack() {
-        triggerEvent(Event.Exit)
+    fun onNavigateBack(): Boolean {
+        val state = uiState.value
+        return when {
+            state.isAddressSelectionExpanded -> {
+                uiState.update { it.copy(isAddressSelectionExpanded = false) }
+                false
+            }
+
+            state.isShipmentDetailsExpanded -> {
+                uiState.update { it.copy(isShipmentDetailsExpanded = false) }
+                false
+            }
+
+            else -> true
+        }
     }
 
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
+    data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
