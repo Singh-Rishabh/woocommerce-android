@@ -8,6 +8,7 @@
 - [*] Puerto Rico is now available in the list of countries that are supported by in-person payments [https://github.com/woocommerce/woocommerce-android/pull/13200]
 - [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
 - [*] Removed the outdated feedback survey for shipping labels [https://github.com/woocommerce/woocommerce-android/pull/13319]
+- [*] Bulk update order status now shows improved result messages, including for partial success. [https://github.com/woocommerce/woocommerce-android/pull/13275]
 
 21.4
 -----
