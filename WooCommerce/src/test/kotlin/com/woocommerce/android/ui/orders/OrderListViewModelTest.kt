@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders
 
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagedList
 import com.google.android.material.snackbar.Snackbar
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.FeedbackPrefs
@@ -1126,6 +1127,8 @@ class OrderListViewModelTest : BaseUnitTest() {
         whenever(networkStatus.isConnected()).thenReturn(true)
         whenever(orderListRepository.bulkUpdateOrderStatus(any(), any()))
             .thenReturn(BulkUpdateOrderResult.AllSuccess)
+        val pagedListData = MutableLiveData<PagedList<OrderListItemUIType>>(mock())
+        whenever(pagedListWrapper.data).thenReturn(pagedListData)
 
         // First load order to initialize orderPagedListWrapper, then enter selection mode
         viewModel.loadOrders()
@@ -1134,9 +1137,15 @@ class OrderListViewModelTest : BaseUnitTest() {
 
         // When
         viewModel.onBulkOrderStatusChanged(listOf(1L, 2L), Order.Status.Completed)
+        // Sending a different instance of PagedList to trigger the Snackbar
+        pagedListData.value = mock()
 
         // Then
         assertThat(viewModel.isSelecting()).isFalse()
+        val expectedEvent = OrderListEvent.ShowSnackbarString(
+            resourceProvider.getString(R.string.orderlist_bulk_update_status_updated)
+        )
+        assertThat(viewModel.event.value).isEqualTo(expectedEvent)
 
         // Invoked once during loadOrders() and once during onBulkOrderStatusChanged()
         verify(viewModel.ordersPagedListWrapper, times(2))?.fetchFirstPage()
