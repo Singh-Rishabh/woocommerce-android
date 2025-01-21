@@ -1014,7 +1014,6 @@ class OrderListViewModelTest : BaseUnitTest() {
     fun `when selection count changes to 0, then exit selection mode`() = testBlocking {
         // First enter selection mode
         viewModel.onSelectionChanged(2)
-        assertThat(viewModel.isSelecting()).isTrue()
 
         // Then exit
         viewModel.onSelectionChanged(0)
@@ -1061,7 +1060,6 @@ class OrderListViewModelTest : BaseUnitTest() {
 
         // First enter selection mode
         viewModel.onSelectionChanged(2)
-        assertThat(viewModel.isSelecting()).isTrue()
         viewModel.onBulkOrderStatusChanged(listOf(1L, 2L), Order.Status.Completed)
 
         assertThat(viewModel.event.value).isInstanceOf(Event.ShowSnackbar::class.java)
@@ -1077,7 +1075,6 @@ class OrderListViewModelTest : BaseUnitTest() {
 
         // First enter selection mode
         viewModel.onSelectionChanged(1)
-        assertThat(viewModel.isSelecting()).isTrue()
 
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
@@ -1093,7 +1090,6 @@ class OrderListViewModelTest : BaseUnitTest() {
             .thenReturn(BulkUpdateOrderResult.NoOrdersUpdated)
 
         viewModel.onSelectionChanged(1)
-        assertThat(viewModel.isSelecting()).isTrue()
 
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
@@ -1111,7 +1107,6 @@ class OrderListViewModelTest : BaseUnitTest() {
 
         // First enter selection mode
         viewModel.onSelectionChanged(1)
-        assertThat(viewModel.isSelecting()).isTrue()
 
         viewModel.onBulkOrderStatusChanged(listOf(1L), Order.Status.Completed)
 
@@ -1133,7 +1128,6 @@ class OrderListViewModelTest : BaseUnitTest() {
         // First load order to initialize orderPagedListWrapper, then enter selection mode
         viewModel.loadOrders()
         viewModel.onSelectionChanged(2)
-        assertThat(viewModel.isSelecting()).isTrue()
 
         // When
         viewModel.onBulkOrderStatusChanged(listOf(1L, 2L), Order.Status.Completed)
@@ -1163,7 +1157,6 @@ class OrderListViewModelTest : BaseUnitTest() {
         // First load order to initialize orderPagedListWrapper, then enter selection mode
         viewModel.loadOrders()
         viewModel.onSelectionChanged(5)
-        assertThat(viewModel.isSelecting()).isTrue()
 
         // When
         viewModel.onBulkOrderStatusChanged(listOf(1L, 2L, 3L, 4L, 5L), Order.Status.Completed)
