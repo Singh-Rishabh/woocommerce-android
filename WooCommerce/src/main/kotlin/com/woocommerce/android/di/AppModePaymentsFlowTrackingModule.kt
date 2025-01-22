@@ -19,17 +19,19 @@ import javax.inject.Qualifier
 
 @Module
 @InstallIn(ViewModelComponent::class, SingletonComponent::class)
-class AppModeModule {
+class AppModePaymentsFlowTrackingModule {
     @Provides
-    fun provideAppMode(): PaymentsFlowTrackerEventProvider = StoreManagementPaymentsFlowTrackerEventProvider()
+    fun provideDefaultPaymentsFlowTrackerEventProvider(): PaymentsFlowTrackerEventProvider =
+        StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
     @PointOfSaleMode
-    fun providePointOfSaleMode(): PaymentsFlowTrackerEventProvider = WooPosPaymentsFlowTrackerEventProvider()
+    fun providePointOfSaleModePaymentsFlowTrackerEventProvider(): PaymentsFlowTrackerEventProvider =
+        WooPosPaymentsFlowTrackerEventProvider()
 
     @Provides
     @StoreManagementMode
-    fun provideStoreManagementMode(): PaymentsFlowTrackerEventProvider =
+    fun provideStoreManagementModePaymentsFlowTrackerEventProvider(): PaymentsFlowTrackerEventProvider =
         StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
