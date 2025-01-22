@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.transformLatest
-import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,11 +40,13 @@ class WooShippingEditOriginViewModel @Inject constructor(
             Pair(name, company)
         }.transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
-            transformAfterIndex = 1
         ) { inputValues ->
             inputValues.copy(
                 first = inputValues.first.copy(
-                    error = addressValidator.validateAtLeastOneOf(inputValues.first.value, inputValues.second.value)
+                    error = addressValidator.validateAtLeastOneOf(
+                        inputValues.first.value,
+                        inputValues.second.value
+                    )
                 )
             )
         }
@@ -53,7 +54,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private val addressValidatedFlow = snapshotFlow { address }
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
-            transformAfterIndex = 1
         ) { inputValue ->
             inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
         }
@@ -61,7 +61,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private val cityValidatedFlow = snapshotFlow { city }
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
-            transformAfterIndex = 1
         ) { inputValue ->
             inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
         }
@@ -69,7 +68,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private val postalCodeValidatedFlow = snapshotFlow { postalCode }
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
-            transformAfterIndex = 1
         ) { inputValue ->
             inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
         }
@@ -77,7 +75,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private val emailValidatedFlow = snapshotFlow { email }
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
-            transformAfterIndex = 1
         ) { inputValue ->
             inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
         }
@@ -85,7 +82,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private val phoneValidatedFlow = snapshotFlow { phone }
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
-            transformAfterIndex = 1
         ) { inputValue ->
             inputValue.copy(error = addressValidator.validateCustomsPhone(inputValue.value))
         }
@@ -168,14 +164,11 @@ class WooShippingEditOriginViewModel @Inject constructor(
 @OptIn(ExperimentalCoroutinesApi::class)
 fun <T> Flow<T>.transformLatestWithDelay(
     delayMillis: Long,
-    transformAfterIndex: Int = 0,
     transform: (T) -> T,
-): Flow<T> = this.withIndex().transformLatest { (index, value) ->
+): Flow<T> = this.transformLatest { value ->
     emit(value)
-    if (index > transformAfterIndex - 1) {
-        delay(delayMillis)
-        emit(transform(value))
-    }
+    delay(delayMillis)
+    emit(transform(value))
 }
 
 data class EditableAddress(
