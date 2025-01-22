@@ -14,7 +14,7 @@ class AddressValidationHelperTest : BaseUnitTest() {
     private val invalidPhoneError = "Please enter a valid phone number"
     private val resourceProvider: ResourceProvider = mock {
         on { getString(R.string.woo_shipping_field_required_error) }.thenReturn(fieldRequiredError)
-        on { getString(R.string.woo_shipping_field_required_error) }.thenReturn(invalidPhoneError)
+        on { getString(R.string.shipping_label_destination_address_phone_invalid) }.thenReturn(invalidPhoneError)
     }
     private val sut = AddressValidationHelper(resourceProvider)
 
@@ -74,7 +74,7 @@ class AddressValidationHelperTest : BaseUnitTest() {
 
     @Test
     fun `when value is a valid US phone number validateUSCustomsPhone should return null`() {
-        val result = sut.validateUSCustomsPhone("1234567890")
+        val result = sut.validateUSCustomsPhone("12345678910")
         assertThat(result).isNull()
     }
 
