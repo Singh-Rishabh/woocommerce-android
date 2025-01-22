@@ -37,7 +37,7 @@ class MediaUploadErrorListFragment : BaseFragment(R.layout.fragment_media_upload
         setupObservers(viewModel)
 
         setupTabletSecondPaneToolbar(
-            title = getString(R.string.product_downloadable_files_upload_failed),
+            title = getString(R.string.product_upload_error_title),
             onMenuItemSelected = { _ -> false },
             onCreateMenu = { toolbar ->
                 toolbar.setNavigationOnClickListener {
