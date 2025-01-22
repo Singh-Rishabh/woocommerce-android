@@ -42,7 +42,6 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onItnChanged = { /*TODO*/ },
         onReturnToSenderChanged = { /*TODO*/ },
     ) {
-
     }
 }
 

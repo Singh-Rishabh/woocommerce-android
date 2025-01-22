@@ -7,13 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
 
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
     savedState: SavedStateHandle
-): ScopedViewModel(savedState) {
+) : ScopedViewModel(savedState) {
 
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
