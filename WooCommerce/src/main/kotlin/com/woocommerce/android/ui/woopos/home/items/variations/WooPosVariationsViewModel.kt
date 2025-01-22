@@ -89,7 +89,11 @@ class WooPosVariationsViewModel @Inject constructor(
                                                 id = it.remoteVariationId,
                                                 name = it.getNameForPOS(getProductById(productId)),
                                                 productId = it.remoteProductId,
-                                                price = priceFormat(it.price),
+                                                price = if (it.price != null) {
+                                                    priceFormat(it.price)
+                                                } else {
+                                                    "-"
+                                                },
                                                 imageUrl = it.image?.source
                                             )
                                         },
@@ -122,7 +126,11 @@ class WooPosVariationsViewModel @Inject constructor(
                         id = it.remoteVariationId,
                         name = it.getNameForPOS(getProductById(productId)),
                         productId = it.remoteProductId,
-                        price = priceFormat(it.price),
+                        price = if (it.price != null) {
+                            priceFormat(it.price)
+                        } else {
+                            "-"
+                        },
                         imageUrl = it.image?.source
                     )
                 }
@@ -160,7 +168,11 @@ class WooPosVariationsViewModel @Inject constructor(
                             id = it.remoteVariationId,
                             name = it.getNameForPOS(getProductById(productId)),
                             productId = it.remoteProductId,
-                            price = priceFormat(it.price),
+                            price = if (it.price != null) {
+                                priceFormat(it.price)
+                            } else {
+                                "-"
+                            },
                             imageUrl = it.image?.source
                         )
                     }
