@@ -174,7 +174,8 @@ object ProductTestUtils {
             id = imageId,
             name = "Image $imageId",
             source = "Image $imageId source",
-            dateCreated = Date.from(Instant.EPOCH)
+            dateCreated = Date.from(Instant.EPOCH),
+            isCoverImage = false
         )
 
     fun generateProductImagesList() =
