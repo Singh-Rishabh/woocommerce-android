@@ -226,6 +226,19 @@ class SitePickerViewModelTest : BaseUnitTest() {
         }
 
     @Test
+    fun `given that user signing in, when site picker is shown, then show edit sites button`() =
+        testBlocking {
+            givenTheScreenIsFromLogin(true)
+            whenSitesAreFetched(sitesFromDb = defaultExpectedSiteList)
+            whenViewModelIsCreated()
+
+            var sitePickerData: SitePickerViewModel.SitePickerViewState? = null
+            viewModel.sitePickerViewStateData.observeForever { _, new -> sitePickerData = new }
+
+            assertThat(sitePickerData?.editStoreListEnabled).isFalse()
+        }
+
+    @Test
     fun `given that the view model is created, when stores fetch succeeds, then stores are displayed correctly`() =
         testBlocking {
             whenSitesAreFetched()
