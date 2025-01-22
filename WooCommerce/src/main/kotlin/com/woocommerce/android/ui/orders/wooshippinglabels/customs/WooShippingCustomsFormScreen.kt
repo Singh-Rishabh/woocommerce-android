@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 
 @Composable
 fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
@@ -22,8 +24,11 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
 @Composable
 fun WooShippingCustomsFormScreen(
     modifier: Modifier = Modifier,
+    contentType: String,
     isAddCustomsButtonEnabled: Boolean,
-    onAddCustomsDataClick: () -> Unit
+    onContentTypeClick: () -> Unit,
+    onAddCustomsDataClick: () -> Unit,
+
 ) {
     Column(
         modifier = modifier
@@ -33,9 +38,15 @@ fun WooShippingCustomsFormScreen(
         Column(
             modifier = modifier
                 .weight(1f)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
+            WCOutlinedSpinner(
+                onClick = onContentTypeClick,
+                value = contentType,
+                label = stringResource(id = R.string.woo_shipping_labels_customs_content_type_label),
+                modifier = modifier.fillMaxWidth()
+            )
         }
         Button(
             modifier = modifier.fillMaxWidth(),
