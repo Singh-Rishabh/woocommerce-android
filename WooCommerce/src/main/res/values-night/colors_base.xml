@@ -164,6 +164,7 @@
     -->
     <color name="light_colored_button_text">@color/color_primary</color>
     <color name="light_colored_button_background">@color/woo_black_80</color>
+    <color name="light_colored_button_text_secondary">@color/white</color>
 
     <!--
     Analytics
