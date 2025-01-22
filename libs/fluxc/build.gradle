@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -123,6 +125,12 @@ dependencies {
     testImplementation libs.androidx.arch.core.testing
 
     lintChecks libs.wordpress.lint
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    compilerOptions {
+        allWarningsAsErrors = false
+    }
 }
 
 dependencyAnalysis {
