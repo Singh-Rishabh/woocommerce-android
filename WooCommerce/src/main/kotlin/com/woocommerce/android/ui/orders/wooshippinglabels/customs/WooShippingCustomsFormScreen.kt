@@ -19,10 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
+import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
 @Composable
 fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
@@ -103,5 +105,24 @@ fun WooShippingCustomsFormScreen(
         ) {
             Text(stringResource(id = R.string.woo_shipping_labels_customs_add_missing_information))
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewWooShippingCustomsFormScreen() {
+    WooThemeWithBackground {
+        WooShippingCustomsFormScreen(
+            contentType = "Merchandise",
+            restrictionType = "None",
+            itnValue = "123456",
+            returnToSenderChecked = false,
+            isAddCustomsButtonEnabled = true,
+            onContentTypeClick = {},
+            onRestrictionTypeClick = {},
+            onItnChanged = {},
+            onReturnToSenderChanged = {},
+            onAddCustomsDataClick = {}
+        )
     }
 }
