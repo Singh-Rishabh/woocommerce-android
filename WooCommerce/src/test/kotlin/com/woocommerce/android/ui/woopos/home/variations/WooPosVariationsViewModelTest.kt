@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.variations
 
 import app.cash.turbine.test
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -15,6 +16,7 @@ import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsV
 import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
+import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flow
@@ -41,6 +43,7 @@ class WooPosVariationsViewModelTest {
     private val getProductById: WooPosGetProductById = mock()
     private val variationsDataSource: WooPosVariationsDataSource = mock()
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
+    private val resourceProvider: ResourceProvider = mock()
     private val priceFormat: WooPosFormatPrice = mock {
         onBlocking { invoke(BigDecimal("10.0")) }.thenReturn("$10.0")
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
@@ -265,51 +268,53 @@ class WooPosVariationsViewModelTest {
     }
 
     @Test
-    fun `given fetching variations first page and load more call is also happening, when view model created, then view state updated correctly`() = runTest {
-        // GIVEN
-        val variations = listOf(
-            ProductTestUtils.generateProductVariation(1, 1, "10.0"),
-            ProductTestUtils.generateProductVariation(2, 1, "20.0")
-        )
-        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
-            flowOf(FetchResult.Remote(Result.success(variations)))
-        )
+    fun `given fetching variations first page and load more call is also happening, when view model created, then view state updated correctly`() =
+        runTest {
+            // GIVEN
+            val variations = listOf(
+                ProductTestUtils.generateProductVariation(1, 1, "10.0"),
+                ProductTestUtils.generateProductVariation(2, 1, "20.0")
+            )
+            whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+                flowOf(FetchResult.Remote(Result.success(variations)))
+            )
 
-        // WHEN
-        val viewModel = createViewModel()
-        val activeJob = Job()
-        viewModel.loadMoreJob = activeJob
-        viewModel.init(1L)
-        viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L, 10))
+            // WHEN
+            val viewModel = createViewModel()
+            val activeJob = Job()
+            viewModel.loadMoreJob = activeJob
+            viewModel.init(1L)
+            viewModel.onUIEvent(WooPosVariationsUIEvents.EndOfItemsListReached(1L, 10))
 
-        viewModel.viewState.test {
-            // THEN
-            val state = awaitItem() as WooPosVariationsViewState.Content
-            assertThat(state.paginationState).isEqualTo(PaginationState.Loading)
+            viewModel.viewState.test {
+                // THEN
+                val state = awaitItem() as WooPosVariationsViewState.Content
+                assertThat(state.paginationState).isEqualTo(PaginationState.Loading)
+            }
         }
-    }
 
     @Test
-    fun `given fetching variations first page and load more call is not happening, when view model created, then view state updated correctly`() = runTest {
-        // GIVEN
-        val variations = listOf(
-            ProductTestUtils.generateProductVariation(1, 1, "10.0"),
-            ProductTestUtils.generateProductVariation(2, 1, "20.0")
-        )
-        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
-            flowOf(FetchResult.Remote(Result.success(variations)))
-        )
+    fun `given fetching variations first page and load more call is not happening, when view model created, then view state updated correctly`() =
+        runTest {
+            // GIVEN
+            val variations = listOf(
+                ProductTestUtils.generateProductVariation(1, 1, "10.0"),
+                ProductTestUtils.generateProductVariation(2, 1, "20.0")
+            )
+            whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+                flowOf(FetchResult.Remote(Result.success(variations)))
+            )
 
-        // WHEN
-        val viewModel = createViewModel()
-        viewModel.init(1L)
+            // WHEN
+            val viewModel = createViewModel()
+            viewModel.init(1L)
 
-        viewModel.viewState.test {
-            // THEN
-            val state = awaitItem() as WooPosVariationsViewState.Content
-            assertThat(state.paginationState).isEqualTo(PaginationState.None)
+            viewModel.viewState.test {
+                // THEN
+                val state = awaitItem() as WooPosVariationsViewState.Content
+                assertThat(state.paginationState).isEqualTo(PaginationState.None)
+            }
         }
-    }
 
     @Test
     fun `given variation clicked, when item clicked, then send event to parent`() = runTest {
@@ -328,12 +333,13 @@ class WooPosVariationsViewModelTest {
     }
 
     @Test
-    fun `given variable product, getNameForPOS returns correct name when parent product has variation enabled attributes`() = runTest {
-        // GIVEN
-        val parentProduct = ProductTestUtils.generateProduct(
-            1,
-            isVariable = true,
-            productAttributes = """[
+    fun `given variable product, getNameForPOS returns correct name when parent product has variation enabled attributes`() =
+        runTest {
+            // GIVEN
+            val parentProduct = ProductTestUtils.generateProduct(
+                1,
+                isVariable = true,
+                productAttributes = """[
                                 {
                                     "id": 1,
                                     "name":"Color",
@@ -343,26 +349,26 @@ class WooPosVariationsViewModelTest {
                                     "options": ["Blue","Green","Red"]
                                 }
                             ]"""
-        )
-        val variableProduct = ProductTestUtils.generateProductVariation(
-            1,
-            1,
-            "10.0",
-            productAttributes = """[
+            )
+            val variableProduct = ProductTestUtils.generateProductVariation(
+                1,
+                1,
+                "10.0",
+                productAttributes = """[
                                 {
                                     "id": 1,
                                     "name":"Color",
                                     "option": "Blue"
                                 }
                             ]"""
-        )
+            )
 
-        // WHEN
-        val attributeName = variableProduct.getNameForPOS(parentProduct)
+            // WHEN
+            val attributeName = variableProduct.getNameForPOS(parentProduct, resourceProvider)
 
-        // Then
-        assertThat(attributeName).isEqualTo("Color: Blue")
-    }
+            // Then
+            assertThat(attributeName).isEqualTo("Color: Blue")
+        }
 
     @Test
     fun `given no parent product, when getNameForPOS is called, then it returns variation attributes`() = runTest {
@@ -386,18 +392,19 @@ class WooPosVariationsViewModelTest {
         )
 
         // WHEN
-        val attributeName = variableProduct.getNameForPOS(null)
+        val attributeName = variableProduct.getNameForPOS(null, resourceProvider)
 
         // THEN
         assertThat(attributeName).isEqualTo("Color: Blue, Size: M")
     }
 
     @Test
-    fun `given parent product with non-matching attributes, when getNameForPOS is called, then it returns 'Any {attribute}'`() = runTest {
-        // GIVEN
-        val parentProduct = ProductTestUtils.generateProduct(
-            1,
-            productAttributes = """[
+    fun `given parent product with non-matching attributes, when getNameForPOS is called, then it returns 'Any {attribute}'`() =
+        runTest {
+            // GIVEN
+            val parentProduct = ProductTestUtils.generateProduct(
+                1,
+                productAttributes = """[
             {
                 "id": 3,
                 "name": "Material",
@@ -405,12 +412,12 @@ class WooPosVariationsViewModelTest {
                 "options": ["Cotton", "Polyester"]
             }
         ]"""
-        )
-        val variableProduct = ProductTestUtils.generateProductVariation(
-            1,
-            1,
-            "10.0",
-            productAttributes = """[
+            )
+            val variableProduct = ProductTestUtils.generateProductVariation(
+                1,
+                1,
+                "10.0",
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -422,21 +429,25 @@ class WooPosVariationsViewModelTest {
                 "option": "M"
             }
         ]"""
-        )
+            )
+            whenever(
+                resourceProvider.getString(R.string.woopos_variations_any_variation, "Material")
+            ).thenReturn("Any Material")
 
-        // WHEN
-        val attributeName = variableProduct.getNameForPOS(parentProduct)
+            // WHEN
+            val attributeName = variableProduct.getNameForPOS(parentProduct, resourceProvider)
 
-        // THEN
-        assertThat(attributeName).isEqualTo("Any Material")
-    }
+            // THEN
+            assertThat(attributeName).isEqualTo("Any Material")
+        }
 
     @Test
-    fun `given matching attributes in parent product and variation, when getNameForPOS is called, then it returns the correct attribute names`() = runTest {
-        // GIVEN
-        val parentProduct = ProductTestUtils.generateProduct(
-            1,
-            productAttributes = """[
+    fun `given matching attributes in parent product and variation, when getNameForPOS is called, then it returns the correct attribute names`() =
+        runTest {
+            // GIVEN
+            val parentProduct = ProductTestUtils.generateProduct(
+                1,
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -450,12 +461,12 @@ class WooPosVariationsViewModelTest {
                 "options": ["S", "M", "L"]
             }
         ]"""
-        )
-        val variableProduct = ProductTestUtils.generateProductVariation(
-            1,
-            1,
-            "10.0",
-            productAttributes = """[
+            )
+            val variableProduct = ProductTestUtils.generateProductVariation(
+                1,
+                1,
+                "10.0",
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -467,21 +478,22 @@ class WooPosVariationsViewModelTest {
                 "option": "M"
             }
         ]"""
-        )
+            )
 
-        // WHEN
-        val attributeName = variableProduct.getNameForPOS(parentProduct)
+            // WHEN
+            val attributeName = variableProduct.getNameForPOS(parentProduct, resourceProvider)
 
-        // THEN
-        assertThat(attributeName).isEqualTo("Color: Blue, Size: M")
-    }
+            // THEN
+            assertThat(attributeName).isEqualTo("Color: Blue, Size: M")
+        }
 
     @Test
-    fun `given attributes with missing options, when getNameForPOS is called, then it returns 'Any {attribute}'`() = runTest {
-        // GIVEN
-        val parentProduct = ProductTestUtils.generateProduct(
-            1,
-            productAttributes = """[
+    fun `given attributes with missing options, when getNameForPOS is called, then it returns 'Any {attribute}'`() =
+        runTest {
+            // GIVEN
+            val parentProduct = ProductTestUtils.generateProduct(
+                1,
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -495,12 +507,12 @@ class WooPosVariationsViewModelTest {
                 "options": ["S", "M", "L"]
             }
         ]"""
-        )
-        val variableProduct = ProductTestUtils.generateProductVariation(
-            1,
-            1,
-            "10.0",
-            productAttributes = """[
+            )
+            val variableProduct = ProductTestUtils.generateProductVariation(
+                1,
+                1,
+                "10.0",
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -512,21 +524,28 @@ class WooPosVariationsViewModelTest {
                 "option": null
             }
         ]"""
-        )
+            )
+            whenever(
+                resourceProvider.getString(R.string.woopos_variations_any_variation, "Color")
+            ).thenReturn("Any Color")
+            whenever(
+                resourceProvider.getString(R.string.woopos_variations_any_variation, "Size")
+            ).thenReturn("Any Size")
 
-        // WHEN
-        val attributeName = variableProduct.getNameForPOS(parentProduct)
+            // WHEN
+            val attributeName = variableProduct.getNameForPOS(parentProduct, resourceProvider)
 
-        // THEN
-        assertThat(attributeName).isEqualTo("Any Color, Any Size")
-    }
+            // THEN
+            assertThat(attributeName).isEqualTo("Any Color, Any Size")
+        }
 
     @Test
-    fun `given variation with no attributes, when getNameForPOS is called, then it returns 'Any {attribute}'`() = runTest {
-        // GIVEN
-        val parentProduct = ProductTestUtils.generateProduct(
-            1,
-            productAttributes = """[
+    fun `given variation with no attributes, when getNameForPOS is called, then it returns 'Any {attribute}'`() =
+        runTest {
+            // GIVEN
+            val parentProduct = ProductTestUtils.generateProduct(
+                1,
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -534,27 +553,31 @@ class WooPosVariationsViewModelTest {
                 "options": ["Blue", "Green", "Red"]
             }
         ]"""
-        )
-        val variableProduct = ProductTestUtils.generateProductVariation(
-            1,
-            1,
-            "10.0",
-            productAttributes = "[]"
-        )
+            )
+            val variableProduct = ProductTestUtils.generateProductVariation(
+                1,
+                1,
+                "10.0",
+                productAttributes = "[]"
+            )
+            whenever(
+                resourceProvider.getString(R.string.woopos_variations_any_variation, "Color")
+            ).thenReturn("Any Color")
 
-        // WHEN
-        val attributeName = variableProduct.getNameForPOS(parentProduct)
+            // WHEN
+            val attributeName = variableProduct.getNameForPOS(parentProduct, resourceProvider)
 
-        // THEN
-        assertThat(attributeName).isEqualTo("Any Color")
-    }
+            // THEN
+            assertThat(attributeName).isEqualTo("Any Color")
+        }
 
     @Test
-    fun `given non-variation-enabled attributes in variation, when getNameForPOS is called, then it ignores those attributes`() = runTest {
-        // GIVEN
-        val parentProduct = ProductTestUtils.generateProduct(
-            1,
-            productAttributes = """[
+    fun `given non-variation-enabled attributes in variation, when getNameForPOS is called, then it ignores those attributes`() =
+        runTest {
+            // GIVEN
+            val parentProduct = ProductTestUtils.generateProduct(
+                1,
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -568,12 +591,12 @@ class WooPosVariationsViewModelTest {
                 "options": ["Cotton", "Polyester"]
             }
         ]"""
-        )
-        val variableProduct = ProductTestUtils.generateProductVariation(
-            1,
-            1,
-            "10.0",
-            productAttributes = """[
+            )
+            val variableProduct = ProductTestUtils.generateProductVariation(
+                1,
+                1,
+                "10.0",
+                productAttributes = """[
             {
                 "id": 1,
                 "name": "Color",
@@ -585,20 +608,21 @@ class WooPosVariationsViewModelTest {
                 "option": "Cotton"
             }
         ]"""
-        )
+            )
 
-        // WHEN
-        val attributeName = variableProduct.getNameForPOS(parentProduct)
+            // WHEN
+            val attributeName = variableProduct.getNameForPOS(parentProduct, resourceProvider)
 
-        // THEN
-        assertThat(attributeName).isEqualTo("Color: Blue")
-    }
+            // THEN
+            assertThat(attributeName).isEqualTo("Color: Blue")
+        }
 
     private fun createViewModel() =
         WooPosVariationsViewModel(
             fromChildToParentEventSender,
             getProductById,
             variationsDataSource,
-            priceFormat
+            priceFormat,
+            resourceProvider
         )
 }

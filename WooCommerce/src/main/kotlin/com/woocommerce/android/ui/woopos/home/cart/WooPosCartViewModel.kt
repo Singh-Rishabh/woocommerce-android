@@ -283,7 +283,7 @@ class WooPosCartViewModel @Inject constructor(
                 itemNumber = itemNumber
             ),
             name = product.name,
-            description = getNameForPOS(product),
+            description = getNameForPOS(product, resourceProvider),
             price = formatPrice(price),
             imageUrl = image?.source,
             isAppearanceAnimationPlayed = false,

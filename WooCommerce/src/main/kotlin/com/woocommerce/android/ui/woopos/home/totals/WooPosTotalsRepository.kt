@@ -9,6 +9,7 @@ import com.woocommerce.android.ui.woopos.common.data.WooPosGetVariationById
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.util.DateUtils
+import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
@@ -25,6 +26,7 @@ class WooPosTotalsRepository @Inject constructor(
     private val orderStore: WCOrderStore,
     private val selectedSite: SelectedSite,
     private val orderMapper: OrderMapper,
+    private val resourceProvider: ResourceProvider,
 ) {
     private var orderCreationJob: Deferred<Result<Order>>? = null
 
@@ -108,7 +110,7 @@ class WooPosTotalsRepository @Inject constructor(
             productId = itemData.productId,
             variationId = itemData.id
         )!!
-        variationResult.getNameForPOS(productResult)
+        variationResult.getNameForPOS(productResult, resourceProvider)
         return Order.Item.EMPTY.copy(
             itemId = 0L,
             productId = itemData.productId,
