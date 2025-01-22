@@ -106,8 +106,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
         )
     }
 
-    val viewState: MutableStateFlow<EditOrderViewState> =
-        MutableStateFlow(EditOrderViewState.DataState(EditableAddress()))
+    val viewState: MutableStateFlow<EditAddressViewState> =
+        MutableStateFlow(EditAddressViewState.DataState(EditableAddress()))
 
     init {
         launch { observeAddressChanges() }
@@ -116,7 +116,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private suspend fun observeAddressChanges() {
         editableAddress
             .collectLatest {
-                viewState.value = EditOrderViewState.DataState(it)
+                viewState.value = EditAddressViewState.DataState(it)
             }
     }
 
@@ -148,10 +148,10 @@ class WooShippingEditOriginViewModel @Inject constructor(
         phone = InputValue(value)
     }
 
-    sealed class EditOrderViewState {
+    sealed class EditAddressViewState {
         data class DataState(
             val editableAddress: EditableAddress
-        ) : EditOrderViewState()
+        ) : EditAddressViewState()
     }
 
     companion object {

@@ -48,7 +48,7 @@ fun WooShippingEditAddressScreen(
     modifier: Modifier = Modifier
 ) {
     when (val viewState = viewModel.viewState.collectAsState().value) {
-        is WooShippingEditOriginViewModel.EditOrderViewState.DataState -> {
+        is WooShippingEditOriginViewModel.EditAddressViewState.DataState -> {
             WooShippingEditAddressScreen(
                 editableAddress = viewState.editableAddress,
                 onNameChange = viewModel::onNameChange,
