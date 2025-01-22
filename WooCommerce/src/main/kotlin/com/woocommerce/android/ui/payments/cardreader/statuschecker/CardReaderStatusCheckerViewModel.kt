@@ -43,12 +43,12 @@ class CardReaderStatusCheckerViewModel
     override val event: LiveData<MultiLiveEvent.Event> = _event
 
     init {
-        launch {
-            checkStatus()
-        }
         paymentsFlowTracker = when (arguments.cardReaderFlowParam) {
             is CardReaderFlowParam.WooPosConnection -> pointOfSaleModePaymentsFlowTracker
             else -> storeManagementModePaymentsFlowTracker
+        }
+        launch {
+            checkStatus()
         }
     }
 
