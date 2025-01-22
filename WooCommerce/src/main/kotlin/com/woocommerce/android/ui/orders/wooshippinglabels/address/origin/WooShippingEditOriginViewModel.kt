@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.address.origin
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -94,7 +93,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
         emailValidatedFlow,
         phoneValidatedFlow
     ) { name, address, city, postalCode, email, phone ->
-        Log.d("Name Input", name.toString())
         EditableAddress(
             name = name.first,
             company = name.second,
