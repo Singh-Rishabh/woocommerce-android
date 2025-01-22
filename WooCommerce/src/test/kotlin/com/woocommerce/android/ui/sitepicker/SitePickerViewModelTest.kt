@@ -174,7 +174,10 @@ class SitePickerViewModelTest : BaseUnitTest() {
         var sitePickerData: SitePickerViewModel.SitePickerViewState? = null
         viewModel.sitePickerViewStateData.observeForever { _, new -> sitePickerData = new }
 
-        assertThat(sitePickerData).isEqualTo(SitePickerTestUtils.getDefaultLoginViewState(defaultSitePickerViewState))
+        assertThat(sitePickerData).isEqualTo(
+            SitePickerTestUtils.getDefaultLoginViewState(defaultSitePickerViewState)
+                .copy(editStoreListEnabled = false)
+        )
     }
 
     @Test
