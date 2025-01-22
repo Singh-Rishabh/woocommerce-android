@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,8 +10,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -30,10 +35,12 @@ fun WooShippingCustomsFormScreen(
     contentType: String,
     restrictionType: String,
     itnValue: String,
+    returnToSenderChecked: Boolean,
     isAddCustomsButtonEnabled: Boolean,
     onContentTypeClick: () -> Unit,
     onRestrictionTypeClick: () -> Unit,
     onItnChanged: (String) -> Unit,
+    onReturnToSenderChanged: (Boolean) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -54,12 +61,14 @@ fun WooShippingCustomsFormScreen(
                 label = stringResource(id = R.string.woo_shipping_labels_customs_content_type_label),
                 modifier = modifier.fillMaxWidth()
             )
+
             WCOutlinedSpinner(
                 onClick = onRestrictionTypeClick,
                 value = restrictionType,
                 label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_type_label),
                 modifier = modifier.fillMaxWidth()
             )
+
             WCOutlinedTextField(
                 value = itnValue,
                 onValueChange = onItnChanged,
@@ -68,6 +77,24 @@ fun WooShippingCustomsFormScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = modifier.fillMaxWidth()
             )
+
+            Row(
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(id = R.string.woo_shipping_labels_customs_return_to_sender_label),
+                    modifier = modifier.align(Alignment.CenterVertically)
+                )
+                Checkbox(
+                    checked = returnToSenderChecked,
+                    onCheckedChange = onReturnToSenderChanged,
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = MaterialTheme.colors.primary,
+                        uncheckedColor = MaterialTheme.colors.onSurface
+                    ),
+                )
+            }
         }
         Button(
             modifier = modifier.fillMaxWidth(),

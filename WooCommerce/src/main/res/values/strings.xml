@@ -4460,6 +4460,7 @@
     <string name="woo_shipping_labels_customs_content_type_label">Content Type</string>
     <string name="woo_shipping_labels_customs_restriction_type_label">Restriction Type</string>
     <string name="woo_shipping_labels_customs_itn_label">International Transaction Number</string>
+    <string name="woo_shipping_labels_customs_return_to_sender_label">Return to sender if package is not able to be delivered</string>
 
 
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
