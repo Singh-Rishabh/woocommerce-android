@@ -13,22 +13,23 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
 
 @Module
-@InstallIn(ViewModelComponent::class, SingletonComponent::class)
-class AppModeModule {
+@InstallIn(ViewModelComponent::class)
+class AppModePaymentsFlowTrackingModule {
     @Provides
-    fun provideAppMode(): PaymentsFlowTrackerEventProvider = StoreManagementPaymentsFlowTrackerEventProvider()
+    fun provideDefaultPaymentsFlowTrackerEventProvider(): PaymentsFlowTrackerEventProvider =
+        StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
     @PointOfSaleMode
-    fun providePointOfSaleMode(): PaymentsFlowTrackerEventProvider = WooPosPaymentsFlowTrackerEventProvider()
+    fun providePointOfSaleModePaymentsFlowTrackerEventProvider(): PaymentsFlowTrackerEventProvider =
+        WooPosPaymentsFlowTrackerEventProvider()
 
     @Provides
     @StoreManagementMode
-    fun provideStoreManagementMode(): PaymentsFlowTrackerEventProvider =
+    fun provideStoreManagementModePaymentsFlowTrackerEventProvider(): PaymentsFlowTrackerEventProvider =
         StoreManagementPaymentsFlowTrackerEventProvider()
 
     @Provides
