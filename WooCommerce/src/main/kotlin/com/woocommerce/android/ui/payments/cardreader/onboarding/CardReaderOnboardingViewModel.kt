@@ -102,13 +102,13 @@ class CardReaderOnboardingViewModel @Inject constructor(
         }
 
     init {
-        when (val onboardingParam = arguments.cardReaderOnboardingParam) {
-            is Check -> refreshState(onboardingParam.pluginType)
-            is Failed -> showOnboardingState(onboardingParam.onboardingState)
-        }
         paymentsFlowTracker = when {
             isPos -> pointOfSalePaymentsFlowTracker
             else -> storeManagementPaymentsFlowTracker
+        }
+        when (val onboardingParam = arguments.cardReaderOnboardingParam) {
+            is Check -> refreshState(onboardingParam.pluginType)
+            is Failed -> showOnboardingState(onboardingParam.onboardingState)
         }
     }
 
