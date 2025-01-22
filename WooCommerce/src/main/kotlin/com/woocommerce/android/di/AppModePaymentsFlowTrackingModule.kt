@@ -3,6 +3,7 @@ package com.woocommerce.android.di
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderTrackCanceledFlowAction
 import com.woocommerce.android.ui.payments.receipt.PaymentReceiptHelper
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoProvider
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
@@ -70,6 +71,18 @@ class AppModePaymentsFlowTrackingModule {
         paymentReceiptHelper = paymentReceiptHelper,
         eventProvider = paymentsFlowTrackerEventProvider,
     )
+
+    @Provides
+    @PointOfSaleMode
+    fun providePointOfSaleModeCardReaderTrackCanceledFlowAction(
+        @PointOfSaleMode tracker: PaymentsFlowTracker
+    ): CardReaderTrackCanceledFlowAction = CardReaderTrackCanceledFlowAction(tracker)
+
+    @Provides
+    @StoreManagementMode
+    fun provideStoreManagementModeCardReaderTrackCanceledFlowAction(
+        @StoreManagementMode tracker: PaymentsFlowTracker
+    ): CardReaderTrackCanceledFlowAction = CardReaderTrackCanceledFlowAction(tracker)
 }
 
 @Qualifier
