@@ -28,6 +28,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.math.BigDecimal
 import kotlin.test.Test
 
 @ExperimentalCoroutinesApi
@@ -41,7 +42,9 @@ class WooPosVariationsViewModelTest {
     private val variationsDataSource: WooPosVariationsDataSource = mock()
     private val fromChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val priceFormat: WooPosFormatPrice = mock {
-        onBlocking { invoke(any()) }.thenReturn("$10.0")
+        onBlocking { invoke(BigDecimal("10.0")) }.thenReturn("$10.0")
+        onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
+        onBlocking { invoke(BigDecimal("0.00")) }.thenReturn("$0.00")
     }
 
     @Test
@@ -65,6 +68,29 @@ class WooPosVariationsViewModelTest {
             assertThat(state.items).hasSize(2)
             assertThat(state.items[0].id).isEqualTo(1)
             assertThat(state.items[0].price).isEqualTo("$10.0")
+        }
+    }
+
+    @Test
+    fun `given variation has zero price, when view model created, then view state updated correctly`() = runTest {
+        // GIVEN
+        val variations = listOf(
+            ProductTestUtils.generateProductVariation(1, 1, "0.00"),
+        )
+        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+            flowOf(FetchResult.Remote(Result.success(variations)))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.init(1L)
+
+        viewModel.viewState.test {
+            // THEN
+            val state = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(state.items).hasSize(1)
+            assertThat(state.items[0].id).isEqualTo(1)
+            assertThat(state.items[0].price).isEqualTo("$0.00")
         }
     }
 
