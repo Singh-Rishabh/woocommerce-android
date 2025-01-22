@@ -91,7 +91,7 @@ class AddressValidationHelperTest : BaseUnitTest() {
     }
 
     @Test
-    fun `validateCustomsPhone should return null when value contains at least one digit`() {
+    fun `when value contains at least one digit validateCustomsPhone should return null`() {
         val result = sut.validateCustomsPhone("123")
         assertThat(result).isNull()
     }
