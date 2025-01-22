@@ -25,8 +25,10 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
 fun WooShippingCustomsFormScreen(
     modifier: Modifier = Modifier,
     contentType: String,
+    restrictionType: String,
     isAddCustomsButtonEnabled: Boolean,
     onContentTypeClick: () -> Unit,
+    onRestrictionTypeClick: () -> Unit,
     onAddCustomsDataClick: () -> Unit,
 
 ) {
@@ -45,6 +47,12 @@ fun WooShippingCustomsFormScreen(
                 onClick = onContentTypeClick,
                 value = contentType,
                 label = stringResource(id = R.string.woo_shipping_labels_customs_content_type_label),
+                modifier = modifier.fillMaxWidth()
+            )
+            WCOutlinedSpinner(
+                onClick = onRestrictionTypeClick,
+                value = restrictionType,
+                label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_type_label),
                 modifier = modifier.fillMaxWidth()
             )
         }

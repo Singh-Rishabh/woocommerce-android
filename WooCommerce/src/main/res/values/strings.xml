@@ -4458,6 +4458,7 @@
     <string name="woo_shipping_labels_package_creation_error_cancel">Cancel</string>
     <string name="woo_shipping_labels_customs_add_missing_information">Add Missing Information</string>
     <string name="woo_shipping_labels_customs_content_type_label">Content Type</string>
+    <string name="woo_shipping_labels_customs_restriction_type_label">Restriction Type</string>
 
 
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
