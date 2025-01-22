@@ -23,13 +23,23 @@ class AddressValidationHelper @Inject constructor(
         }
     }
 
-    fun validateCustomsPhone(value: String): String? {
+    fun validateUSCustomsPhone(value: String): String? {
         return when {
             value.isEmpty() || value.isBlank() -> resourceProvider.getString(R.string.woo_shipping_field_required_error)
             value.replace(Regex("^1|[^\\d]"), "").length != US_PHONE_NUMBER_LENGTH -> {
                 resourceProvider.getString(R.string.shipping_label_destination_address_phone_invalid)
             }
 
+            else -> null
+        }
+    }
+
+    fun validateCustomsPhone(value: String): String? {
+        return when {
+            value.isEmpty() || value.isBlank() -> resourceProvider.getString(R.string.woo_shipping_field_required_error)
+            value.contains(Regex("\\d")).not() -> {
+                resourceProvider.getString(R.string.shipping_label_destination_address_phone_invalid)
+            }
             else -> null
         }
     }
