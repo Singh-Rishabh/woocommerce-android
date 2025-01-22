@@ -82,7 +82,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
         ) { inputValue ->
-            inputValue.copy(error = addressValidator.validateCustomsPhone(inputValue.value))
+            inputValue.copy(error = addressValidator.validateUSCustomsPhone(inputValue.value))
         }
 
     private val editableAddress = combine(
