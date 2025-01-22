@@ -95,6 +95,29 @@ class WooPosVariationsViewModelTest {
     }
 
     @Test
+    fun `given variation has no price set, when view model created, then view state updated correctly`() = runTest {
+        // GIVEN
+        val variations = listOf(
+            ProductTestUtils.generateProductVariation(1, 1, ""),
+        )
+        whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
+            flowOf(FetchResult.Remote(Result.success(variations)))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.init(1L)
+
+        viewModel.viewState.test {
+            // THEN
+            val state = awaitItem() as WooPosVariationsViewState.Content
+            assertThat(state.items).hasSize(1)
+            assertThat(state.items[0].id).isEqualTo(1)
+            assertThat(state.items[0].price).isEqualTo("-")
+        }
+    }
+
+    @Test
     fun `given empty variations list returned, when view model created, then view state is empty`() = runTest {
         // GIVEN
         whenever(variationsDataSource.fetchFirstPage(any(), any())).thenReturn(
