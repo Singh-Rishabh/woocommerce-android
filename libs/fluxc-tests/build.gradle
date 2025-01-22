@@ -58,76 +58,18 @@ android {
         lintConfig file("${project.rootDir}/config/lint/lint.xml")
         enable += 'UnknownNullness'
     }
-
-//    buildFeatures {
-//        buildConfig true
-//        viewBinding true
-//        compose true
-//    }
-
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = sharedLibs.versions.androidx.compose.compiler.get()
-//    }
-
-//    sourceSets {
-//        // Adds exported schema location as test app assets.
-//        getByName("androidTest").assets.srcDirs += "$projectDir/../fluxc/schemas"
-//    }
 }
 
-//if (["tests.properties", "tests.properties-extra"].any { file(it).exists() }) {
-//    throw new InvalidUserDataException("'example/tests.properties' and 'example/tests.properties-extra' property files are deprecated. Please see 'example/properties-example/README.md' for details.")
-//}
-//
-//android.buildTypes.all { buildType ->
-//    // Add properties named "wp.xxx" to our BuildConfig
-//    Properties apiProperties = loadPropertiesOrUseExampleProperties("api.properties",
-//            "example app can't access WordPress.com servers")
-//    apiProperties.any { property ->
-//        if (property.key.toLowerCase().startsWith("wp.")) {
-//            buildType.buildConfigField "String", property.key.replace("wp.", "").replace(".", "_").toUpperCase(),
-//                    "\"${property.value}\""
-//        }
-//    }
-//
-//    // Load test properties and add them to BuildConfig
-//    Properties testProperties = loadPropertiesOrUseExampleProperties("tests.properties",
-//            "tests won't pass")
-//    testProperties.any { property ->
-//        buildType.buildConfigField "String", property.key.replace(".", "_").toUpperCase(), "\"${property.value}\""
-//    }
-//}
-//
 dependencies {
     implementation project(':libs:fluxc')
     implementation project(':libs:fluxc-plugin')
-
-//    implementation libs.androidx.appcompat
-//    implementation libs.androidx.swiperefreshlayout
-//    implementation libs.androidx.recyclerview
-//    implementation libs.androidx.constraintlayout
-//    implementation libs.androidx.annotation
-//    implementation libs.androidx.lifecycle.runtime.ktx
-
     testImplementation(libs.wordpress.utils) {
         // Using official volley package
         exclude group: "com.mcxiaoke.volley"
         exclude group: "com.android.support"
     }
-
     testImplementation libs.google.gson
-
     testImplementation libs.androidx.room.runtime
-//    androidTestImplementation libs.androidx.room.runtime
-//    androidTestImplementation libs.androidx.room.testing
-
-    // Dagger
-//    implementation libs.google.dagger
-//    kapt libs.google.dagger.compiler
-//    compileOnly libs.glassfish.javax.annotation
-//    implementation libs.google.dagger.android.support
-//    kapt libs.google.dagger.android.processor
-
     testImplementation libs.junit
     testImplementation libs.kotlin.test.junit
     testImplementation libs.robolectric
@@ -136,68 +78,4 @@ dependencies {
     testImplementation libs.mockito.kotlin
     testImplementation libs.assertj.core
     testImplementation libs.androidx.arch.core.testing
-
-//    implementation platform(libs.androidx.compose.bom)
-//    implementation libs.androidx.compose.material
-//    implementation libs.androidx.compose.ui.tooling
-
-//    androidTestImplementation libs.assertj.core
-//    androidTestImplementation libs.androidx.arch.core.testing
-//    androidTestCompileOnly libs.glassfish.javax.annotation
-//    // Test orchestrator
-//    androidTestImplementation libs.androidx.test.runner
-//    androidTestUtil libs.androidx.test.orchestrator
-
-//    androidTestImplementation "com.goterl:lazysodium-android:5.0.2@aar"
-//    androidTestImplementation "net.java.dev.jna:jna:5.5.0@aar"
-
-    // Debug dependencies
-//    debugImplementation libs.facebook.flipper
-//    debugImplementation libs.facebook.soloader
-//    debugImplementation libs.facebook.flipper.network.plugin
-//
-    // Coroutines
-//    implementation libs.kotlinx.coroutines.core
-//    implementation libs.kotlinx.coroutines.android
-
-//    lintChecks libs.wordpress.lint
-}
-
-//def loadPropertiesOrUseExampleProperties(fileName, warningDetail) {
-//    Properties properties = new Properties()
-//    File propertiesFile = file(propertiesFilePath(fileName))
-//    if (propertiesFile.exists()) {
-//        properties.load(new InputStreamReader(new FileInputStream(propertiesFile), "utf-8"))
-//    } else {
-//        def examplePropertiesFilePath = examplePropertiesFilePath(fileName)
-//        logger.quiet("WARNING: you're using the '$examplePropertiesFilePath' file - $warningDetail")
-//        properties.load(new InputStreamReader(new FileInputStream(file(examplePropertiesFilePath)), "utf-8"))
-//    }
-//    return properties
-//}
-//
-//def propertiesFilePath(fileName) {
-//    return "properties/$fileName"
-//}
-//
-//def examplePropertiesFilePath(fileName) {
-//    return "properties-example/$fileName"
-//}
-//
-tasks.register("combineTestsPropertiesWithExtraTestsProperties") {
-    doLast {
-        Properties properties = new Properties()
-
-        File testsProperties = file(propertiesFilePath("tests.properties"))
-        File testsPropertiesExtra = file(propertiesFilePath("tests.properties-extra"))
-        if (testsProperties.exists()) {
-            properties.load(new InputStreamReader(new FileInputStream(testsProperties), "utf-8"))
-        }
-        if (testsPropertiesExtra.exists()) {
-            properties.load(new InputStreamReader(new FileInputStream(testsPropertiesExtra), "utf-8"))
-        }
-
-        def comment = "This file is generated by combineTestsPropertiesWithExtraTestsProperties Gradle task which combines existing tests.properties file with tests.properties-extra file. It prioritizes the values in tests.properties-extra file"
-        properties.store(new FileOutputStream(testsProperties), comment)
-    }
 }
