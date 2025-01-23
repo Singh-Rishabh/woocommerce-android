@@ -476,7 +476,7 @@ private fun ProductItem(
                         Text(
                             text = item.description!!,
                             style = MaterialTheme.typography.body1,
-                            maxLines = 1,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colors.secondaryVariant,
                             modifier = Modifier.clearAndSetSemantics { }
