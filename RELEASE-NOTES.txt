@@ -10,6 +10,7 @@
 - [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
 - [*] Removed the outdated feedback survey for shipping labels [https://github.com/woocommerce/woocommerce-android/pull/13319]
 - [*] Bulk update order status now shows improved result messages, including for partial success. [https://github.com/woocommerce/woocommerce-android/pull/13275]
+- [*] Updated WooPayments to use the recommended Connect URL for onboarding and corrected the Stripe Gateway setup URL to point to the appropriate settings page. [https://github.com/woocommerce/woocommerce-android/pull/13356]
 
 21.4
 -----
