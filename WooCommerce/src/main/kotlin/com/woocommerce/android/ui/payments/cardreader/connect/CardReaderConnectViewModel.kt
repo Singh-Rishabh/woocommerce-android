@@ -85,8 +85,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CardReaderConnectViewModel @Inject constructor(
     savedState: SavedStateHandle,
-    @PointOfSaleMode storeManagementPaymentsFlowTracker: PaymentsFlowTracker,
-    @StoreManagementMode pointOfSalePaymentsFlowTracker: PaymentsFlowTracker,
+    @StoreManagementMode storeManagementPaymentsFlowTracker: PaymentsFlowTracker,
+    @PointOfSaleMode pointOfSalePaymentsFlowTracker: PaymentsFlowTracker,
     private val dispatchers: CoroutineDispatchers,
     private val appPrefs: AppPrefsWrapper,
     private val developerOptionsRepository: DeveloperOptionsRepository,
