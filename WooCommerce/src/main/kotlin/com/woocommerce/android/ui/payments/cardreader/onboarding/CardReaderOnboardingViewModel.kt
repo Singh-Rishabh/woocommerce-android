@@ -83,7 +83,7 @@ class CardReaderOnboardingViewModel @Inject constructor(
     private val errorClickHandler: CardReaderOnboardingErrorCtaClickHandler,
 ) : ScopedViewModel(savedState) {
     private val arguments: CardReaderOnboardingFragmentArgs by savedState.navArgs()
-    private val paymentsFlowTracker: PaymentsFlowTracker  = when {
+    private val paymentsFlowTracker: PaymentsFlowTracker = when {
         isPos -> pointOfSalePaymentsFlowTracker
         else -> storeManagementPaymentsFlowTracker
     }
