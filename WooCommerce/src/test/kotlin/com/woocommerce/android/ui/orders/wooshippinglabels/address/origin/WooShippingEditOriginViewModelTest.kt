@@ -312,4 +312,43 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(editableAddress.phone.error).isNull()
     }
+
+    @Test
+    fun `when company is NOT empty, then company control is expanded`() = testBlocking {
+        val company = "company"
+        val address = OriginShippingAddress.EMPTY.copy(
+            company = company
+        )
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        Snapshot.withMutableSnapshot {
+            createViewModel(address)
+        }
+
+        advanceUntilIdle()
+
+        val result = sut.viewState.value
+
+        assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.EditAddressViewState::class.java)
+        val isCompanyExpanded = (result as WooShippingEditOriginViewModel.EditAddressViewState.DataState).isCompanyExpanded
+
+        assertThat(isCompanyExpanded).isTrue()
+    }
+
+    @Test
+    fun `when company is empty, then company control is NOT expanded`() = testBlocking {
+        val address = OriginShippingAddress.EMPTY
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        Snapshot.withMutableSnapshot {
+            createViewModel(address)
+        }
+
+        advanceUntilIdle()
+
+        val result = sut.viewState.value
+
+        assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.EditAddressViewState::class.java)
+        val isCompanyExpanded = (result as WooShippingEditOriginViewModel.EditAddressViewState.DataState).isCompanyExpanded
+
+        assertThat(isCompanyExpanded).isFalse()
+    }
 }
