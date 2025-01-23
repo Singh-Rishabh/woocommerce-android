@@ -184,9 +184,9 @@ fun WCOutlinedButton(
 
 @Composable
 fun WCRemoveButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
-    modifier: Modifier = Modifier,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
