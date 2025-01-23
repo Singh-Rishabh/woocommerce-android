@@ -72,8 +72,8 @@ private const val UNIX_TO_JAVA_TIMESTAMP_OFFSET = 1000L
 @HiltViewModel
 class CardReaderOnboardingViewModel @Inject constructor(
     savedState: SavedStateHandle,
-    @PointOfSaleMode storeManagementPaymentsFlowTracker: PaymentsFlowTracker,
-    @StoreManagementMode pointOfSalePaymentsFlowTracker: PaymentsFlowTracker,
+    @StoreManagementMode storeManagementPaymentsFlowTracker: PaymentsFlowTracker,
+    @PointOfSaleMode pointOfSalePaymentsFlowTracker: PaymentsFlowTracker,
     private val cardReaderChecker: CardReaderOnboardingChecker,
     private val learnMoreUrlProvider: LearnMoreUrlProvider,
     private val selectedSite: SelectedSite,
@@ -83,7 +83,10 @@ class CardReaderOnboardingViewModel @Inject constructor(
     private val errorClickHandler: CardReaderOnboardingErrorCtaClickHandler,
 ) : ScopedViewModel(savedState) {
     private val arguments: CardReaderOnboardingFragmentArgs by savedState.navArgs()
-    private val paymentsFlowTracker: PaymentsFlowTracker
+    private val paymentsFlowTracker: PaymentsFlowTracker  = when {
+        isPos -> pointOfSalePaymentsFlowTracker
+        else -> storeManagementPaymentsFlowTracker
+    }
 
     override val _event = SingleLiveEvent<Event>()
     override val event: LiveData<Event> = _event
@@ -102,10 +105,6 @@ class CardReaderOnboardingViewModel @Inject constructor(
         }
 
     init {
-        paymentsFlowTracker = when {
-            isPos -> pointOfSalePaymentsFlowTracker
-            else -> storeManagementPaymentsFlowTracker
-        }
         when (val onboardingParam = arguments.cardReaderOnboardingParam) {
             is Check -> refreshState(onboardingParam.pluginType)
             is Failed -> showOnboardingState(onboardingParam.onboardingState)
