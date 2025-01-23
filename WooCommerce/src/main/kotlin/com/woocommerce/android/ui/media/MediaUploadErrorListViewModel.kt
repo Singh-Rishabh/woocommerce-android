@@ -2,17 +2,20 @@ package com.woocommerce.android.ui.media
 
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asLiveData
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.media.MediaFileUploadHandler.ProductImageUploadData
 import com.woocommerce.android.ui.media.MediaFileUploadHandler.UploadStatus
-import com.woocommerce.android.viewmodel.LiveDataDelegate
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
+import com.woocommerce.android.viewmodel.getStateFlow
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -24,14 +27,12 @@ class MediaUploadErrorListViewModel @Inject constructor(
 ) : ScopedViewModel(savedState) {
     private val navArgs: MediaUploadErrorListFragmentArgs by savedState.navArgs()
 
-    /**
-     * Saving more data than necessary into the SavedState has associated risks which were not known at the time this
-     * field was implemented - after we ensure we don't save unnecessary data, we can replace @Suppress("OPT_IN_USAGE")
-     * with @OptIn(LiveDelegateSavedStateAPI::class).
-     */
-    @Suppress("OPT_IN_USAGE")
-    val viewStateData = LiveDataDelegate(savedState, ViewState())
-    private var viewState by viewStateData
+    private var _viewState = savedState.getStateFlow(
+        scope = this,
+        initialValue = ViewState(),
+        key = "uploadErrorsListState"
+    )
+    val viewState = _viewState.asLiveData()
 
     init {
         val errorList = navArgs.errorList
@@ -39,32 +40,40 @@ class MediaUploadErrorListViewModel @Inject constructor(
             val currentErrors = errorList.map<ProductImageUploadData, ErrorUiModel> {
                 ErrorUiModel(it.uploadStatus as UploadStatus.Failed)
             }
-            viewState = viewState.copy(
-                uploadErrorList = currentErrors,
-                toolBarTitle = resourceProvider.getString(
-                    R.string.product_images_error_detail_title,
-                    currentErrors.size
+            _viewState.update {
+                _viewState.value.copy(
+                    uploadErrorList = currentErrors,
+                    toolBarTitle = resourceProvider.getString(
+                        R.string.product_images_error_detail_title,
+                        currentErrors.size
+                    )
                 )
-            )
+            }
             mediaFileUploadHandler.clearImageErrors(navArgs.remoteId)
         } else {
             mediaFileUploadHandler.observeCurrentUploadErrors(navArgs.remoteId)
                 .filter { it.isNotEmpty() }
                 .onEach { errors ->
-                    val currentErrors =
-                        viewState.uploadErrorList + errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed) }
-                    viewState = viewState.copy(
-                        uploadErrorList = currentErrors,
-                        toolBarTitle = resourceProvider.getString(
-                            R.string.product_images_error_detail_title,
-                            currentErrors.size
+                    val currentErrors = _viewState.value.uploadErrorList +
+                        errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed) }
+                    _viewState.update {
+                        _viewState.value.copy(
+                            uploadErrorList = currentErrors,
+                            toolBarTitle = resourceProvider.getString(
+                                R.string.product_images_error_detail_title,
+                                currentErrors.size
+                            )
                         )
-                    )
+                    }
                     // Remove errors from mediaFileUploadHandler to avoid duplicate notifications
                     mediaFileUploadHandler.clearImageErrors(navArgs.remoteId)
                 }
                 .launchIn(this)
         }
+    }
+
+    fun onBackPressed() {
+        triggerEvent(Exit)
     }
 
     @Parcelize
