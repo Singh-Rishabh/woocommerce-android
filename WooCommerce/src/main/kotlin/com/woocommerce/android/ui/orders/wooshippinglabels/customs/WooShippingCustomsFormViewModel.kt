@@ -33,7 +33,14 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onITNChanged(newItnValue: String) {
         _viewState.update {
-             it.copy(itnValue = newItnValue)        }
+            it.copy(itnValue = newItnValue)
+        }
+    }
+
+    fun onReturnToSenderChanged(isChecked: Boolean) {
+        _viewState.update {
+            it.copy(returnToSenderChecked = isChecked)
+        }
     }
 
     @Parcelize

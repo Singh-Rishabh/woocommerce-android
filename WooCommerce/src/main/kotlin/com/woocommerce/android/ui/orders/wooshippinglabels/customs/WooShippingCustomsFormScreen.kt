@@ -40,7 +40,7 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onContentTypeClick = viewModel::onContentTypeClick,
         onRestrictionTypeClick = viewModel::onContentTypeClick,
         onItnChanged = viewModel::onITNChanged,
-        onReturnToSenderChanged = { /*TODO*/ },
+        onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
     ) {
     }
 }
