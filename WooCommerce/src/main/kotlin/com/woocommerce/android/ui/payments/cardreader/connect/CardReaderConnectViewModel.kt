@@ -122,11 +122,11 @@ class CardReaderConnectViewModel @Inject constructor(
     val viewStateData: LiveData<CardReaderConnectViewState> = viewState
 
     init {
-        startFlow()
         tracker = when (arguments.cardReaderFlowParam) {
             is CardReaderFlowParam.WooPosConnection -> pointOfSalePaymentsFlowTracker
             else -> storeManagementPaymentsFlowTracker
         }
+        startFlow()
     }
 
     private fun startFlow() {
