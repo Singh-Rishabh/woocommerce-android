@@ -29,47 +29,39 @@ class MediaUploadErrorListViewModel @Inject constructor(
 
     private var _viewState = savedStateHandle.getStateFlow(
         scope = this,
-        initialValue = ViewState(),
+        initialValue = ViewState(
+            uploadErrorList = navArgs.errorList
+                ?.map<ProductImageUploadData, ErrorUiModel> {
+                    ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri)
+                } ?: emptyList(),
+        ),
         key = "uploadErrorsListState"
     )
     val viewState = _viewState.asLiveData()
 
     init {
-        val errorList = navArgs.errorList
-        if (errorList?.isNotEmpty() == true) {
-            val currentErrors = errorList.map<ProductImageUploadData, ErrorUiModel> {
-                ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri)
-            }
-            _viewState.update {
-                _viewState.value.copy(
-                    uploadErrorList = currentErrors,
-                    toolBarTitle = resourceProvider.getString(
-                        R.string.product_images_error_detail_title,
-                        currentErrors.size
-                    )
-                )
-            }
+        if (navArgs.errorList?.isNotEmpty() == true) {
+            // Clear errors to avoid duplicated error items and notifications
             mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
-        } else {
-            mediaFileUploadHandler.observeCurrentUploadErrors(navArgs.remoteProductId)
-                .filter { it.isNotEmpty() }
-                .onEach { errors ->
-                    val currentErrors = _viewState.value.uploadErrorList +
-                        errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri) }
-                    _viewState.update {
-                        _viewState.value.copy(
-                            uploadErrorList = currentErrors,
-                            toolBarTitle = resourceProvider.getString(
-                                R.string.product_images_error_detail_title,
-                                currentErrors.size
-                            )
-                        )
-                    }
-                    // Remove errors from mediaFileUploadHandler to avoid duplicate notifications
-                    mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
-                }
-                .launchIn(this)
         }
+        mediaFileUploadHandler.observeCurrentUploadErrors(navArgs.remoteProductId)
+            .filter { it.isNotEmpty() }
+            .onEach { errors ->
+                val currentErrors = _viewState.value.uploadErrorList +
+                    errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri) }
+                _viewState.update {
+                    _viewState.value.copy(
+                        uploadErrorList = currentErrors,
+                        toolBarTitle = resourceProvider.getString(
+                            R.string.product_images_error_detail_title,
+                            currentErrors.size
+                        )
+                    )
+                }
+                // Remove errors from mediaFileUploadHandler to avoid duplicate notifications
+                mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
+            }
+            .launchIn(this)
     }
 
     fun onBackPressed() {

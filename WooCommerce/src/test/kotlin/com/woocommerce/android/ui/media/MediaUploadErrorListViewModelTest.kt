@@ -8,7 +8,6 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
-import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.wordpress.android.fluxc.store.MediaStore.MediaErrorType
@@ -43,17 +42,23 @@ class MediaUploadErrorListViewModelTest : BaseUnitTest() {
         }
     }
 
-    private val resourceProvider: ResourceProvider = mock {
-        on { getString(any(), any()) }.thenReturn("Errors")
-    }
+    private val resourceProvider: ResourceProvider = mock()
     private val mediaFileUploadHandler: MediaFileUploadHandler = mock()
 
     private lateinit var viewModel: MediaUploadErrorListViewModel
 
     @Test
-    fun `given no errors passed as fragment args, when viewmodel is created, then observe error updates for product`() =
+    fun `given some errors passed as fragment args, when viewmodel is created, clear image errors`() =
         testBlocking {
-            createViewModel(null)
+            createViewModel(SOME_UPLOAD_ERRORS)
+
+            verify(mediaFileUploadHandler).clearImageErrors(REMOTE_PRODUCT_ID)
+        }
+
+    @Test
+    fun `when viewmodel is created, then observe error updates for product`() =
+        testBlocking {
+            createViewModel(SOME_UPLOAD_ERRORS)
 
             verify(mediaFileUploadHandler).observeCurrentUploadErrors(REMOTE_PRODUCT_ID)
         }
