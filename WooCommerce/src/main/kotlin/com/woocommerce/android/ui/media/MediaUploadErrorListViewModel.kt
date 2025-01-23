@@ -83,7 +83,7 @@ class MediaUploadErrorListViewModel @Inject constructor(
                 uploadErrorList = _viewState.value.uploadErrorList - error
             )
         }
-        if(viewState.value?.uploadErrorList?.isEmpty() == true) {
+        if (viewState.value?.uploadErrorList?.isEmpty() == true) {
             mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
             triggerEvent(Exit)
         }
