@@ -26,6 +26,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         triggerEvent(ContentTypeClicked)
     }
 
+    fun onRestrictionTypeClick() {
+        triggerEvent(RestrictionTypeClicked)
+    }
+
     @Parcelize
     data class ViewState(
         val contentType: String = "",
@@ -36,4 +40,5 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     ) : Parcelable
 
     object ContentTypeClicked: MultiLiveEvent.Event()
+    object RestrictionTypeClicked: MultiLiveEvent.Event()
 }
