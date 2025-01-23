@@ -98,7 +98,12 @@ class CardReaderConnectViewModel @Inject constructor(
     private val learnMoreUrlProvider: LearnMoreUrlProvider,
 ) : ScopedViewModel(savedState) {
     private val arguments: CardReaderConnectDialogFragmentArgs by savedState.navArgs()
-    private val tracker: PaymentsFlowTracker
+    private val tracker: PaymentsFlowTracker = when (arguments.cardReaderFlowParam) {
+        is CardReaderFlowParam.WooPosConnection -> pointOfSalePaymentsFlowTracker
+        is CardReaderFlowParam.CardReadersHub -> storeManagementPaymentsFlowTracker
+        is CardReaderFlowParam.PaymentOrRefund.Payment -> storeManagementPaymentsFlowTracker
+        is CardReaderFlowParam.PaymentOrRefund.Refund -> storeManagementPaymentsFlowTracker
+    }
 
     /**
      * This is a workaround for a bug in MultiLiveEvent, which can't be fixed without vital changes.
@@ -122,10 +127,6 @@ class CardReaderConnectViewModel @Inject constructor(
     val viewStateData: LiveData<CardReaderConnectViewState> = viewState
 
     init {
-        tracker = when (arguments.cardReaderFlowParam) {
-            is CardReaderFlowParam.WooPosConnection -> pointOfSalePaymentsFlowTracker
-            else -> storeManagementPaymentsFlowTracker
-        }
         startFlow()
     }
 
