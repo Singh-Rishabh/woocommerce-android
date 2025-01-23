@@ -39,7 +39,7 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
         onContentTypeClick = viewModel::onContentTypeClick,
         onRestrictionTypeClick = viewModel::onContentTypeClick,
-        onItnChanged = { /*TODO*/ },
+        onItnChanged = viewModel::onITNChanged,
         onReturnToSenderChanged = { /*TODO*/ },
     ) {
     }
