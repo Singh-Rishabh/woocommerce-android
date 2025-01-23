@@ -23,11 +23,11 @@ import javax.inject.Inject
 class MediaUploadErrorListViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val mediaFileUploadHandler: MediaFileUploadHandler,
-    savedState: SavedStateHandle
-) : ScopedViewModel(savedState) {
-    private val navArgs: MediaUploadErrorListFragmentArgs by savedState.navArgs()
+    savedStateHandle: SavedStateHandle
+) : ScopedViewModel(savedStateHandle) {
+    private val navArgs: MediaUploadErrorListFragmentArgs by savedStateHandle.navArgs()
 
-    private var _viewState = savedState.getStateFlow(
+    private var _viewState = savedStateHandle.getStateFlow(
         scope = this,
         initialValue = ViewState(),
         key = "uploadErrorsListState"
@@ -36,7 +36,7 @@ class MediaUploadErrorListViewModel @Inject constructor(
 
     init {
         val errorList = navArgs.errorList
-        if (errorList != null) {
+        if (errorList?.isNotEmpty() == true) {
             val currentErrors = errorList.map<ProductImageUploadData, ErrorUiModel> {
                 ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri)
             }
