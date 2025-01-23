@@ -8,6 +8,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
 import com.woocommerce.android.viewmodel.ScopedViewModel
+import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -33,6 +34,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private var postalCode by mutableStateOf(InputValue(""))
     private var email by mutableStateOf(InputValue(""))
     private var phone by mutableStateOf(InputValue(""))
+
+    private val navArgs: WooShippingEditOriginAddressFragmentArgs by savedState.navArgs()
 
     private val nameValidatedFlow = snapshotFlow { name }
         .combine(snapshotFlow { company }) { name, company ->
@@ -111,6 +114,21 @@ class WooShippingEditOriginViewModel @Inject constructor(
 
     init {
         launch { observeAddressChanges() }
+        fillAddressForm()
+    }
+
+    private fun fillAddressForm() {
+        val fullName = "${navArgs.originAddress.firstName.orEmpty()} ${navArgs.originAddress.lastName.orEmpty()}"
+        val fullAddress = "${navArgs.originAddress.address1.orEmpty()} ${navArgs.originAddress.address2.orEmpty()}"
+        name = InputValue(fullName)
+        company = InputValue(navArgs.originAddress.company.orEmpty())
+        country = navArgs.originAddress.country
+        address = InputValue(fullAddress)
+        city = InputValue(navArgs.originAddress.city.orEmpty())
+        state = navArgs.originAddress.state.orEmpty()
+        postalCode = InputValue(navArgs.originAddress.postcode)
+        email = InputValue(navArgs.originAddress.email.orEmpty())
+        phone = InputValue(navArgs.originAddress.phone.orEmpty())
     }
 
     private suspend fun observeAddressChanges() {
