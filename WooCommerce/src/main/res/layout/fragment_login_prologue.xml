@@ -45,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="47dp"
         android:layout_marginBottom="0dp"
+        android:breakStrategy="balanced"
         android:gravity="center_horizontal"
         android:text="@string/simplified_login_prologue_intro"
         android:textColor="@color/white"
