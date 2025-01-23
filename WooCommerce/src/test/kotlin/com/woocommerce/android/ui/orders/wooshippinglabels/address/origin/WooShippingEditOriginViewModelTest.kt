@@ -14,7 +14,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingEditOriginViewModelTest : BaseUnitTest() {
     private val addressValidator: AddressValidationHelper = mock()
@@ -329,7 +328,8 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
         val result = sut.viewState.value
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.EditAddressViewState::class.java)
-        val isCompanyExpanded = (result as WooShippingEditOriginViewModel.EditAddressViewState.DataState).isCompanyExpanded
+        val isCompanyExpanded =
+            (result as WooShippingEditOriginViewModel.EditAddressViewState.DataState).isCompanyExpanded
 
         assertThat(isCompanyExpanded).isTrue()
     }
@@ -347,7 +347,8 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
         val result = sut.viewState.value
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.EditAddressViewState::class.java)
-        val isCompanyExpanded = (result as WooShippingEditOriginViewModel.EditAddressViewState.DataState).isCompanyExpanded
+        val isCompanyExpanded =
+            (result as WooShippingEditOriginViewModel.EditAddressViewState.DataState).isCompanyExpanded
 
         assertThat(isCompanyExpanded).isFalse()
     }
