@@ -41,7 +41,8 @@ fun MediaUploadErrorListScreen(viewModel: MediaUploadErrorListViewModel) {
     viewModel.viewState.observeAsState().value?.let { state ->
         MediaUploadErrorListScreen(
             state = state,
-            viewModel::onBackPressed
+            viewModel::onBackPressed,
+            viewModel::onRetryUploadClicked
         )
     }
 }
@@ -49,7 +50,8 @@ fun MediaUploadErrorListScreen(viewModel: MediaUploadErrorListViewModel) {
 @Composable
 private fun MediaUploadErrorListScreen(
     state: MediaUploadErrorListViewModel.ViewState,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit,
+    onRetryClicked: (ErrorUiModel) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -62,6 +64,7 @@ private fun MediaUploadErrorListScreen(
         content = {
             MediaUploadErrorList(
                 errors = state.uploadErrorList,
+                onRetryClicked = onRetryClicked,
                 modifier = Modifier
                     .background(MaterialTheme.colors.surface)
                     .padding(it)
@@ -74,11 +77,16 @@ private fun MediaUploadErrorListScreen(
 @Composable
 private fun MediaUploadErrorList(
     errors: List<ErrorUiModel>,
+    onRetryClicked: (ErrorUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier.fillMaxWidth()) {
         items(errors) { error ->
-            MediaUploadErrorListItem(error)
+            MediaUploadErrorListItem(
+                error = error,
+                onRetryClicked = onRetryClicked,
+                modifier = Modifier.animateItem()
+            )
         }
     }
 }
@@ -86,7 +94,7 @@ private fun MediaUploadErrorList(
 @Composable
 fun MediaUploadErrorListItem(
     error: ErrorUiModel,
-    onRetryClick: () -> Unit = {},
+    onRetryClicked: (ErrorUiModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -97,7 +105,7 @@ fun MediaUploadErrorListItem(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(error.filePath)
+                .data(error.localUri)
                 .crossfade(true)
                 .build(),
             fallback = painterResource(R.drawable.ic_product),
@@ -126,7 +134,7 @@ fun MediaUploadErrorListItem(
             )
         }
         IconButton(
-            onClick = onRetryClick
+            onClick = { onRetryClicked(error) },
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_gridicons_refresh),
@@ -145,16 +153,17 @@ fun MediaUploadErrorListItemPreview() {
                 ErrorUiModel(
                     fileName = "image1345211331.jpg",
                     errorMessage = "Upload timeout",
-                    filePath = ""
+                    localUri = ""
                 ),
                 ErrorUiModel(
                     fileName = "image987654.jpg",
                     errorMessage = "Upload failed, very long error message with multiple lines to check how" +
                         " the row behaves",
-                    filePath = ""
+                    localUri = ""
                 )
             )
         ),
-        onBackPressed = {}
+        onBackPressed = {},
+        onRetryClicked = {}
     )
 }

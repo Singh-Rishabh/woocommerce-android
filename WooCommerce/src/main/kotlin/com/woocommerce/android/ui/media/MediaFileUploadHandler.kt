@@ -174,6 +174,24 @@ class MediaFileUploadHandler @Inject constructor(
         }
     }
 
+//    fun retryFailedUpload(remoteProductId: Long, uri: String){
+//        uploadsStatus.update { list ->
+//            list.map {
+//                when{
+//                    it.remoteProductId == remoteProductId && it.localUri == uri -> {
+//                        ProductImageUploadData(
+//                            remoteProductId = remoteProductId,
+//                            localUri = uri,
+//                            uploadStatus = UploadStatus.InProgress
+//                        )
+//                    }
+//                    else -> it
+//                }
+//            }
+//        }
+//        worker.enqueueWork(Work.FetchMedia(remoteProductId, uri))
+//    }
+
     fun cancelUpload(remoteProductId: Long) {
         uploadsStatus.update { list -> list.filterNot { it.remoteProductId == remoteProductId } }
 

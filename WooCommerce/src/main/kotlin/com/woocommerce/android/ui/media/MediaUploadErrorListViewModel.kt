@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MediaUploadErrorListViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
-    mediaFileUploadHandler: MediaFileUploadHandler,
+    private val mediaFileUploadHandler: MediaFileUploadHandler,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private val navArgs: MediaUploadErrorListFragmentArgs by savedState.navArgs()
@@ -38,7 +38,7 @@ class MediaUploadErrorListViewModel @Inject constructor(
         val errorList = navArgs.errorList
         if (errorList != null) {
             val currentErrors = errorList.map<ProductImageUploadData, ErrorUiModel> {
-                ErrorUiModel(it.uploadStatus as UploadStatus.Failed)
+                ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri)
             }
             _viewState.update {
                 _viewState.value.copy(
@@ -49,13 +49,13 @@ class MediaUploadErrorListViewModel @Inject constructor(
                     )
                 )
             }
-            mediaFileUploadHandler.clearImageErrors(navArgs.remoteId)
+            mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
         } else {
-            mediaFileUploadHandler.observeCurrentUploadErrors(navArgs.remoteId)
+            mediaFileUploadHandler.observeCurrentUploadErrors(navArgs.remoteProductId)
                 .filter { it.isNotEmpty() }
                 .onEach { errors ->
                     val currentErrors = _viewState.value.uploadErrorList +
-                        errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed) }
+                        errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri) }
                     _viewState.update {
                         _viewState.value.copy(
                             uploadErrorList = currentErrors,
@@ -66,7 +66,7 @@ class MediaUploadErrorListViewModel @Inject constructor(
                         )
                     }
                     // Remove errors from mediaFileUploadHandler to avoid duplicate notifications
-                    mediaFileUploadHandler.clearImageErrors(navArgs.remoteId)
+                    mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
                 }
                 .launchIn(this)
         }
@@ -74,6 +74,19 @@ class MediaUploadErrorListViewModel @Inject constructor(
 
     fun onBackPressed() {
         triggerEvent(Exit)
+    }
+
+    fun onRetryUploadClicked(error: ErrorUiModel) {
+        mediaFileUploadHandler.enqueueUpload(navArgs.remoteProductId, listOf(error.localUri))
+        _viewState.update {
+            _viewState.value.copy(
+                uploadErrorList = _viewState.value.uploadErrorList - error
+            )
+        }
+        if(viewState.value?.uploadErrorList?.isEmpty() == true) {
+            mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
+            triggerEvent(Exit)
+        }
     }
 
     @Parcelize
@@ -86,12 +99,12 @@ class MediaUploadErrorListViewModel @Inject constructor(
     data class ErrorUiModel(
         val fileName: String,
         val errorMessage: String,
-        val filePath: String
+        val localUri: String
     ) : Parcelable {
-        constructor(state: UploadStatus.Failed) : this(
+        constructor(state: UploadStatus.Failed, localUri: String) : this(
             fileName = state.media?.fileName.orEmpty(),
             errorMessage = state.mediaErrorMessage,
-            filePath = state.media?.filePath.orEmpty()
+            localUri = localUri
         )
     }
 }
