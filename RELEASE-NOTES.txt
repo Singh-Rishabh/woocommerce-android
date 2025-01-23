@@ -10,12 +10,14 @@
 - [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
 - [*] Removed the outdated feedback survey for shipping labels [https://github.com/woocommerce/woocommerce-android/pull/13319]
 - [*] Bulk update order status now shows improved result messages, including for partial success. [https://github.com/woocommerce/woocommerce-android/pull/13275]
+- [*] Updated WooPayments to use the recommended Connect URL for onboarding and corrected the Stripe Gateway setup URL to point to the appropriate settings page. [https://github.com/woocommerce/woocommerce-android/pull/13356]
 
 21.4
 -----
 - [*] Fix Dashboard card menu sizing to fit bigger font sizes and longer text. [https://github.com/woocommerce/woocommerce-android/pull/13184]
 - [*] Fixed overlap issue in Settings > WooCommerce Version  [https://github.com/woocommerce/woocommerce-android/pull/13183]
 - [**] Fixed a crash when a shop manager was trying to install or activate plugin in the POS onboarding [https://github.com/woocommerce/woocommerce-android/pull/13203]
+- [*] Introduced WCRemoveButton for streamlined removal actions like 'Remove Coupon' and 'Remove Discount' with a distinct red-bordered style [https://github.com/woocommerce/woocommerce-android/pull/13229]
 - [*] Removed Tap To Pay usage survey [https://github.com/woocommerce/woocommerce-android/pull/13207]
 - [**] Fixed a crash when a shop manager was trying to install or activate plugin in the POS onboarding [https://github.com/woocommerce/woocommerce-android/pull/13203]
 - [***] Orders: Merchants can now bulk update the status of their orders [https://github.com/woocommerce/woocommerce-android/pull/13245]
