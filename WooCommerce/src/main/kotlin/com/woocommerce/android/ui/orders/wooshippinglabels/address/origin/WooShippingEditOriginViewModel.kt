@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.extensions.combine
+import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
@@ -88,6 +89,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
             inputValue.copy(error = addressValidator.validateUSCustomsPhone(inputValue.value))
         }
 
+    private val isCompanyExpanded = MutableStateFlow(false)
+
     private val editableAddress = combine(
         nameValidatedFlow,
         addressValidatedFlow,
@@ -109,8 +112,12 @@ class WooShippingEditOriginViewModel @Inject constructor(
         )
     }
 
-    val viewState: MutableStateFlow<EditAddressViewState> =
-        MutableStateFlow(EditAddressViewState.DataState(EditableAddress()))
+    val viewState: MutableStateFlow<EditAddressViewState> = MutableStateFlow(
+        EditAddressViewState.DataState(
+            isCompanyExpanded = false,
+            editableAddress = EditableAddress()
+        )
+    )
 
     init {
         launch { observeAddressChanges() }
@@ -129,12 +136,22 @@ class WooShippingEditOriginViewModel @Inject constructor(
         postalCode = InputValue(navArgs.originAddress.postcode)
         email = InputValue(navArgs.originAddress.email.orEmpty())
         phone = InputValue(navArgs.originAddress.phone.orEmpty())
+        isCompanyExpanded.value = navArgs.originAddress.company.isNotNullOrEmpty()
+    }
+
+    fun onExpandCompany() {
+        isCompanyExpanded.value = true
     }
 
     private suspend fun observeAddressChanges() {
-        editableAddress
+        editableAddress.combine(isCompanyExpanded) { address, isExpanded ->
+            EditAddressViewState.DataState(
+                isCompanyExpanded = isExpanded,
+                editableAddress = address
+            )
+        }
             .collectLatest {
-                viewState.value = EditAddressViewState.DataState(it)
+                viewState.value = it
             }
     }
 
@@ -168,6 +185,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
 
     sealed class EditAddressViewState {
         data class DataState(
+            val isCompanyExpanded: Boolean,
             val editableAddress: EditableAddress
         ) : EditAddressViewState()
     }
