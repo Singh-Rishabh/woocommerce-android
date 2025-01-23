@@ -37,7 +37,7 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         itnValue = viewState?.itnValue.orEmpty(),
         returnToSenderChecked = viewState?.returnToSenderChecked ?: false,
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
-        onContentTypeClick = { /*TODO*/ },
+        onContentTypeClick = viewModel::onContentTypeClick,
         onRestrictionTypeClick = { /*TODO*/ },
         onItnChanged = { /*TODO*/ },
         onReturnToSenderChanged = { /*TODO*/ },

@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     )
     val viewState = _viewState.asLiveData()
 
+    fun onContentTypeClick() {
+        triggerEvent(ContentTypeClicked)
+    }
+
     @Parcelize
     data class ViewState(
         val contentType: String = "",
@@ -29,4 +34,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val returnToSenderChecked: Boolean = false,
         val isAddCustomsButtonEnabled: Boolean = false
     ) : Parcelable
+
+    object ContentTypeClicked: MultiLiveEvent.Event()
 }
