@@ -1371,7 +1371,6 @@ Language: sv_SE
     <string name="domain_contact_information_description">För din bekvämlighet har vi förfyllt din WordPress.com\n        kontaktinformation. Granska det för att vara säker på att det är rätt information du vill använda för denna domän.</string>
     <string name="domain_contact_information_organization_hint">Organisation (valfritt)</string>
     <string name="domain_registration_privacy_protection_description">Domänägare måste uppge kontaktinformation i en publik databas som omfattar alla domäner. Med integritetsskydd publicerar vi våra uppgifter istället för dina, och vidarebefordrar sedan privat eventuella meddelanden till dig.</string>
-    <string name="domain_registration_privacy_protection_tos">I och med att du registrerar denna domän accepterar du våra %1$savtalsvillkor%2$s</string>
     <string name="domain_registration_contact_form_input_error">Ange en giltig %s</string>
     <string name="domain_privacy_option_on_title">Registrera privat med integritetsskydd</string>
     <string name="domain_privacy_option_off_title">Registrera publikt</string>

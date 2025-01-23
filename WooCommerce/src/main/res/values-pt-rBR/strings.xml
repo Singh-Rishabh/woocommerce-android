@@ -1370,7 +1370,6 @@ Language: pt_BR
     <string name="domain_contact_information_description">Para agilizar o processo, preenchemos com suas informações de contato do WordPress.com automaticamente.\nVerifique as informações para ter certeza de que são os dados que você deseja usar para esse domínio.</string>
     <string name="domain_contact_information_organization_hint">Empresa (opcional)</string>
     <string name="domain_registration_privacy_protection_description">Donos de domínios precisam compartilhar as informações de contato em um banco de dados público para todos os domínios.\nCom a proteção de privacidade, nós publicaremos nossos próprios dados ao invés dos seus e encaminharemos qualquer comunicação para você de forma privada.</string>
-    <string name="domain_registration_privacy_protection_tos">Ao registrar esse domínio, você concorda com nossos %1$stermos e condições%2$s</string>
     <string name="domain_registration_contact_form_input_error">Digite um %s válido</string>
     <string name="domain_privacy_option_on_title">Registrar com proteção de privacidade</string>
     <string name="domain_privacy_option_off_title">Registrar publicamente</string>

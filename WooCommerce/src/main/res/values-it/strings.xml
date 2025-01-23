@@ -1373,7 +1373,6 @@ Language: it
     <string name="domain_privacy_option_off_title">Registra pubblicamente</string>
     <string name="domain_privacy_option_on_title">Registra privatamente con protezione della privacy</string>
     <string name="domain_registration_contact_form_input_error">Per %s, inserisci un valore valido</string>
-    <string name="domain_registration_privacy_protection_tos">Registrando questo dominio accetti i nostri %1$sterme e le nostre condizioni%2$s</string>
     <string name="domain_registration_privacy_protection_description">I proprietari del dominio devono condividere le informazioni di contatto in un database pubblico di tutti i domini.\n Con la Protezione della privacy, pubblichiamo le nostre informazioni al posto delle tue e ti inoltriamo privatamente qualsiasi comunicazione.</string>
     <string name="domain_registration_privacy_protection_title">Protezione della privacy</string>
     <string name="domains_access_error_title">Solo gli amministratori del negozio possono accedere alle impostazioni del dominio</string>

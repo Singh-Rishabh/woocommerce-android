@@ -1371,7 +1371,6 @@ Language: es
     <string name="domain_contact_information_description">Para tu comodidad, hemos precompletado tu información de contacto\n de WordPress.com. Por favor, comprueba que es la información correcta que quieres usar para este dominio.</string>
     <string name="domain_contact_information_organization_hint">Organización (opcional)</string>
     <string name="domain_registration_privacy_protection_description">Los propietarios de dominios tienen que compartir información en una base de datos pública de todos los dominios.\n   Con la protección de privacidad publicamos nuestra propia información en vez de la tuya, y te redirigiremos de forma privada cualquier comunicación dirigida a ti. </string>
-    <string name="domain_registration_privacy_protection_tos">Al registrar este dominio aceptas nuestros %1$stérminos y condiciones%2$s</string>
     <string name="domain_registration_contact_form_input_error">Por favor, introduce un %s válido</string>
     <string name="domain_privacy_option_on_title">Registrar privadamente con protección de privacidad</string>
     <string name="domain_privacy_option_off_title">Registrar públicamente</string>
