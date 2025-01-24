@@ -38,7 +38,6 @@ class ProductItemViewHolder(val viewBinding: ProductListItemBinding) :
             currencyFormatter = currencyFormatter,
             isActivated = isActivated,
             isUploadingMedia = isUploadingMedia
-
         )
 
         ViewCompat.setTransitionName(
