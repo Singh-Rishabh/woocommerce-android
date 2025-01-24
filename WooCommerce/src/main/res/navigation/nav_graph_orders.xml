@@ -779,4 +779,12 @@
             android:name="originAddress"
             app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
     </fragment>
+    <fragment
+        android:id="@+id/wooShippingLabelCustomsFormFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment"
+        android:label="WooShippingLabelCustomsFormFragment" >
+        <action
+            android:id="@+id/action_wooShippingLabelCustomsFormFragment_to_itemSelectorDialog"
+            app:destination="@id/itemSelectorDialog" />
+    </fragment>
 </navigation>
