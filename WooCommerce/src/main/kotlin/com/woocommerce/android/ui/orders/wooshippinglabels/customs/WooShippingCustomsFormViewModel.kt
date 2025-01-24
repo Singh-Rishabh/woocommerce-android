@@ -48,6 +48,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             it.copy(contentType = contentType.name)
         }
     }
+
+    fun onRestrictionTypeSelected(restrictionType: RestrictionType) {
+        _viewState.update {
+            it.copy(restrictionType = restrictionType.name)
+        }
+    }
+
     @Parcelize
     data class ViewState(
         val contentType: String = "",
@@ -63,6 +70,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         RETURNED_GOODS,
         SAMPLE,
         DOCUMENTS,
+        OTHER
+    }
+
+    enum class RestrictionType {
+        NONE,
+        QUARANTINE,
+        SANITARY_INSPECTION,
         OTHER
     }
 
