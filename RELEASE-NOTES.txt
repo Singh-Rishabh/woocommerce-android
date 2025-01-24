@@ -8,6 +8,8 @@
 - [*] Puerto Rico is now available in the list of countries that are supported by in-person payments [https://github.com/woocommerce/woocommerce-android/pull/13200]
 - [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
 - [*] Removed the outdated feedback survey for shipping labels [https://github.com/woocommerce/woocommerce-android/pull/13319]
+- [*] Product list screen now shows loading indicator on products that have ongoing image uploads. [https://github.com/woocommerce/woocommerce-android/pull/13351]
+- [Internal] [*] Image gallery on Products details now loads lower quality images for thumbnails to improve load time. [https://github.com/woocommerce/woocommerce-android/pull/13371]
 
 21.4
 -----
