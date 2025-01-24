@@ -5,9 +5,6 @@ plugins {
 java {
     sourceCompatibility libs.versions.java.get()
     targetCompatibility libs.versions.java.get()
-
-    withSourcesJar()
-    withJavadocJar()
 }
 
 dependencies {
