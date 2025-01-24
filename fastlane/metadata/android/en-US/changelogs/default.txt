@@ -1,11 +1,1 @@
-- [**] Enhanced WebView to dynamically scale receipt content, ensuring optimal fit across all device screen sizes. [https://github.com/woocommerce/woocommerce-android/pull/13266]
-- [*] Fixes missing text in Blaze Campaigns card on larger display and font sizes [https://github.com/woocommerce/woocommerce-android/pull/13300]
-- [*] Puerto Rico is now available in the list of countries that are supported by in-person payments [https://github.com/woocommerce/woocommerce-android/pull/13200]
-- [*] [Internal] Improved login flow for accounts using emails marked as suspicious [https://github.com/woocommerce/woocommerce-android/pull/13345]
-- [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
-- [*] Removed the outdated feedback survey for shipping labels [https://github.com/woocommerce/woocommerce-android/pull/13319]
-- [*] Product list screen now shows loading indicator on products that have ongoing image uploads. [https://github.com/woocommerce/woocommerce-android/pull/13351]
-- [Internal] [*] Image gallery on Products details now loads lower quality images for thumbnails to improve load time. [https://github.com/woocommerce/woocommerce-android/pull/13371]
-- [*] Bulk update order status now shows improved result messages, including for partial success. [https://github.com/woocommerce/woocommerce-android/pull/13275]
-- [*] Updated WooPayments to use the recommended Connect URL for onboarding and corrected the Stripe Gateway setup URL to point to the appropriate settings page. [https://github.com/woocommerce/woocommerce-android/pull/13356]
-
+Get ready for a smoother experience! We’ve optimized receipt scaling, added Puerto Rico for in-person payments, and improved Blaze Campaigns display. Enjoy faster product gallery loading, better bulk order updates, and real-time image upload indicators. Plus, WooPayments onboarding is now easier than ever!
