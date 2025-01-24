@@ -154,6 +154,10 @@ class ProductImagesFragment :
             }
         }
 
+        binding.openUploadScreenButton.setOnClickListener {
+            viewModel.openUploadScreen()
+        }
+
         setupTabletSecondPaneToolbar(
             title = getString(R.string.product_images_title),
             onMenuItemSelected = ::onMenuItemSelected,

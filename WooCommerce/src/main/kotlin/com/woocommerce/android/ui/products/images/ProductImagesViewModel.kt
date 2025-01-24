@@ -260,6 +260,10 @@ class ProductImagesViewModel @Inject constructor(
         }
     }
 
+    fun openUploadScreen() {
+        triggerEvent(ProductNavigationTarget.ViewMediaUploadErrors(navArgs.remoteId))
+    }
+
     private fun List<Product.Image>.updateProductCoverImageToFirstItem() =
         this.mapIndexed { index, image -> image.copy(isCoverImage = index == 0) }
 
