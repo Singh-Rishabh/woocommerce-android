@@ -18,12 +18,12 @@ import kotlinx.coroutines.launch
 typealias OnProductClickListener = (remoteProductId: Long, sharedView: View?) -> Unit
 
 class ProductListAdapter(
-    private val clickListener: OnProductClickListener? = null,
     private val loadMoreListener: OnLoadMoreListener,
     private val currencyFormatter: CurrencyFormatter,
-    private val mediaFileUploadHandler: MediaFileUploadHandler? = null,
-    private val coroutineScope: CoroutineScope? = null,
     private val isProductHighlighted: (Long) -> Boolean,
+    private val clickListener: OnProductClickListener? = null,
+    private val mediaFileUploadHandler: MediaFileUploadHandler? = null,
+    coroutineScope: CoroutineScope? = null,
 ) : ListAdapter<Product, ProductItemViewHolder>(ProductItemDiffCallback) {
     // allow the selection library to track the selections of the user
     var tracker: SelectionTracker<Long>? = null
