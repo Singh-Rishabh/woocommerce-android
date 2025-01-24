@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentTypeClicked
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionTypeClicked
@@ -41,5 +43,23 @@ class WooShippingCustomsFormFragment : BaseFragment() {
                 }
             }
         }
+    }
+
+    private fun handleItemSelection(
+        currentSelection: String,
+        selectionEntries: Array<String>,
+        translatedEntries: Array<String>
+    ) {
+        WooShippingCustomsFormFragmentDirections
+            .actionWooShippingLabelCustomsFormFragmentToItemSelectorDialog(
+                requestKey = SELECTOR_REQUEST_KEY,
+                selectedItem = currentSelection,
+                values = selectionEntries,
+                keys = translatedEntries
+            ).let { findNavController().navigateSafely(it) }
+    }
+
+    companion object {
+        const val SELECTOR_REQUEST_KEY = "label_customs_selector"
     }
 }
