@@ -10,8 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
-import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentTypeClicked
-import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionTypeClicked
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowContentTypeDialog
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowRestrictionTypeDialog
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,11 +37,24 @@ class WooShippingCustomsFormFragment : BaseFragment() {
     private fun bindEventListener() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is ContentTypeClicked -> {
-
+                is ShowContentTypeDialog -> {
+                    handleItemSelection(
+                        currentSelection = event.currentSelection.name,
+                        selectionEntries = ContentType.entries.map { it.name }.toTypedArray(),
+                        translatedEntries = ContentType.entries
+                            .map { getString(it.resourceId) }
+                            .toTypedArray()
+                    )
                 }
-                is RestrictionTypeClicked -> {
 
+                is ShowRestrictionTypeDialog -> {
+                    handleItemSelection(
+                        currentSelection = event.currentSelection.name,
+                        selectionEntries = RestrictionType.entries.map { it.name }.toTypedArray(),
+                        translatedEntries = RestrictionType.entries
+                            .map { getString(it.resourceId) }
+                            .toTypedArray()
+                    )
                 }
             }
         }
