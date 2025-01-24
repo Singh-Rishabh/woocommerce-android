@@ -24,11 +24,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     fun onContentTypeClick() {
-        triggerEvent(ContentTypeClicked)
+        val currentSelection = _viewState.value.contentType
+        triggerEvent(ShowContentTypeDialog(currentSelection))
     }
 
     fun onRestrictionTypeClick() {
-        triggerEvent(RestrictionTypeClicked)
+        val currentSelection = _viewState.value.restrictionType
+        triggerEvent(ShowRestrictionTypeDialog(currentSelection))
     }
 
     fun onITNChanged(newItnValue: String) {
@@ -45,20 +47,20 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onContentTypeSelected(contentType: ContentType) {
         _viewState.update {
-            it.copy(contentType = contentType.name)
+            it.copy(contentType = contentType)
         }
     }
 
     fun onRestrictionTypeSelected(restrictionType: RestrictionType) {
         _viewState.update {
-            it.copy(restrictionType = restrictionType.name)
+            it.copy(restrictionType = restrictionType)
         }
     }
 
     @Parcelize
     data class ViewState(
-        val contentType: String = "",
-        val restrictionType: String = "",
+        val contentType: ContentType = ContentType.MERCHANDISE,
+        val restrictionType: RestrictionType = RestrictionType.NONE,
         val itnValue: String = "",
         val returnToSenderChecked: Boolean = false,
         val isAddCustomsButtonEnabled: Boolean = false
@@ -80,6 +82,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         OTHER
     }
 
-    object ContentTypeClicked: MultiLiveEvent.Event()
-    object RestrictionTypeClicked: MultiLiveEvent.Event()
+    data class ShowContentTypeDialog(val currentSelection: ContentType): MultiLiveEvent.Event()
+    data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType): MultiLiveEvent.Event()
 }
