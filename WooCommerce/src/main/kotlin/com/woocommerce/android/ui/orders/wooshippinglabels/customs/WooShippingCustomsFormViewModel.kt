@@ -9,9 +9,9 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
-import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
@@ -83,6 +83,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         OTHER(R.string.woo_shipping_labels_customs_restriction_other)
     }
 
-    data class ShowContentTypeDialog(val currentSelection: ContentType): MultiLiveEvent.Event()
-    data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType): MultiLiveEvent.Event()
+    data class ShowContentTypeDialog(val currentSelection: ContentType) : MultiLiveEvent.Event()
+    data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType) : MultiLiveEvent.Event()
 }
