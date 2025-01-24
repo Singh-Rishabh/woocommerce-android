@@ -43,6 +43,11 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         }
     }
 
+    fun onContentTypeSelected(contentType: ContentType) {
+        _viewState.update {
+            it.copy(contentType = contentType.name)
+        }
+    }
     @Parcelize
     data class ViewState(
         val contentType: String = "",
@@ -51,6 +56,15 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val returnToSenderChecked: Boolean = false,
         val isAddCustomsButtonEnabled: Boolean = false
     ) : Parcelable
+
+    enum class ContentType {
+        MERCHANDISE,
+        GIFT,
+        RETURNED_GOODS,
+        SAMPLE,
+        DOCUMENTS,
+        OTHER
+    }
 
     object ContentTypeClicked: MultiLiveEvent.Event()
     object RestrictionTypeClicked: MultiLiveEvent.Event()
