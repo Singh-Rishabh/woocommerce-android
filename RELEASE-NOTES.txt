@@ -9,6 +9,8 @@
 - [*] [Internal] Improved login flow for accounts using emails marked as suspicious [https://github.com/woocommerce/woocommerce-android/pull/13345]
 - [Internal] [*] XMLRPC is not needed now for Jetpack Connection during an Account Mismatch flow [https://github.com/woocommerce/woocommerce-android/pull/13308]
 - [*] Removed the outdated feedback survey for shipping labels [https://github.com/woocommerce/woocommerce-android/pull/13319]
+- [*] Product list screen now shows loading indicator on products that have ongoing image uploads. [https://github.com/woocommerce/woocommerce-android/pull/13351]
+- [Internal] [*] Image gallery on Products details now loads lower quality images for thumbnails to improve load time. [https://github.com/woocommerce/woocommerce-android/pull/13371]
 - [*] Bulk update order status now shows improved result messages, including for partial success. [https://github.com/woocommerce/woocommerce-android/pull/13275]
 - [*] Updated WooPayments to use the recommended Connect URL for onboarding and corrected the Stripe Gateway setup URL to point to the appropriate settings page. [https://github.com/woocommerce/woocommerce-android/pull/13356]
 
