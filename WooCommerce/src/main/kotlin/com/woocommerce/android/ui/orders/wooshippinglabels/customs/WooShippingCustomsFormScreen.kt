@@ -27,13 +27,15 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
 
 @Composable
 fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingCustomsFormScreen(
-        contentType = viewState?.contentType.orEmpty(),
-        restrictionType = viewState?.restrictionType.orEmpty(),
+        contentType = viewState?.contentType ?: ContentType.MERCHANDISE,
+        restrictionType = viewState?.restrictionType ?: RestrictionType.NONE,
         itnValue = viewState?.itnValue.orEmpty(),
         returnToSenderChecked = viewState?.returnToSenderChecked ?: false,
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
@@ -48,8 +50,8 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
 @Composable
 fun WooShippingCustomsFormScreen(
     modifier: Modifier = Modifier,
-    contentType: String,
-    restrictionType: String,
+    contentType: ContentType,
+    restrictionType: RestrictionType,
     itnValue: String,
     returnToSenderChecked: Boolean,
     isAddCustomsButtonEnabled: Boolean,
@@ -73,14 +75,14 @@ fun WooShippingCustomsFormScreen(
         ) {
             WCOutlinedSpinner(
                 onClick = onContentTypeClick,
-                value = contentType,
+                value = stringResource(id = contentType.resourceId),
                 label = stringResource(id = R.string.woo_shipping_labels_customs_content_type_label),
                 modifier = modifier.fillMaxWidth()
             )
 
             WCOutlinedSpinner(
                 onClick = onRestrictionTypeClick,
-                value = restrictionType,
+                value = stringResource(id = restrictionType.resourceId),
                 label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_type_label),
                 modifier = modifier.fillMaxWidth()
             )
@@ -127,8 +129,8 @@ fun WooShippingCustomsFormScreen(
 fun PreviewWooShippingCustomsFormScreen() {
     WooThemeWithBackground {
         WooShippingCustomsFormScreen(
-            contentType = "Merchandise",
-            restrictionType = "None",
+            contentType = ContentType.MERCHANDISE,
+            restrictionType = RestrictionType.NONE,
             itnValue = "123456",
             returnToSenderChecked = false,
             isAddCustomsButtonEnabled = true,
