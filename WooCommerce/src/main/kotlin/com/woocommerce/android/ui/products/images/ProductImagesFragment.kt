@@ -194,6 +194,9 @@ class ProductImagesFragment :
                     }
                 }
             }
+            new.hasUploadErrors?.takeIfNotEqualTo(old?.hasUploadErrors) { hasErrors ->
+                binding.openUploadScreenButton.visibility = if (hasErrors) View.VISIBLE else View.GONE
+            }
             new.isDragDropDescriptionVisible?.takeIfNotEqualTo(old?.isDragDropDescriptionVisible) { isVisible ->
                 binding.dragAndDropDescription.isVisible = isVisible
             }

@@ -219,6 +219,10 @@ class ProductImagesViewModel @Inject constructor(
 
         mediaFileUploadHandler.observeCurrentUploadErrors(remoteProductId)
             .filter { it.isNotEmpty() }
+            .map {
+                viewState = viewState.copy(hasUploadErrors = true)
+                it
+            }
             .onEach {
                 triggerEvent(
                     MultiLiveEvent.Event.ShowActionSnackbar(
@@ -227,6 +231,11 @@ class ProductImagesViewModel @Inject constructor(
                     ) { triggerEvent(ProductNavigationTarget.ViewMediaUploadErrors(remoteProductId)) }
                 )
             }
+            .launchIn(this)
+
+        mediaFileUploadHandler.observeCurrentUploadErrors(remoteProductId)
+            .filter { it.isEmpty() }
+            .map { viewState = viewState.copy(hasUploadErrors = false) }
             .launchIn(this)
     }
 
@@ -270,6 +279,7 @@ class ProductImagesViewModel @Inject constructor(
         val images: List<Product.Image>? = null,
         val chooserButtonButtonTitleRes: Int? = null,
         val isWarningVisible: Boolean? = null,
+        val hasUploadErrors: Boolean? = null,
         val isDragDropDescriptionVisible: Boolean? = null,
         val productImagesState: ProductImagesState = Browsing
     ) : Parcelable
