@@ -2134,8 +2134,10 @@ class ProductDetailViewModel @Inject constructor(
                     mediaFileUploadHandler.observeCurrentUploadErrors(productId)
                         .onEach { errorList ->
                             if (errorList.isEmpty()) {
+                                viewState = viewState.copy(hasUploadErrors = false)
                                 triggerEvent(HideImageUploadErrorSnackbar)
                             } else {
+                                viewState = viewState.copy(hasUploadErrors = true)
                                 triggerEvent(
                                     ShowActionSnackbar(
                                         message = resources.getMediaUploadErrorMessage(errorList.size),
@@ -2651,6 +2653,10 @@ class ProductDetailViewModel @Inject constructor(
         }
     }
 
+    fun openUploadScreen() {
+        triggerEvent(ProductNavigationTarget.ViewMediaUploadErrors(getRemoteProductId()))
+    }
+
     /**
      * Sealed class that handles the back navigation for the product detail screens while providing a common
      * interface for managing them as a single type. Currently used in all the product sub detail screens when
@@ -2720,6 +2726,7 @@ class ProductDetailViewModel @Inject constructor(
         val productAggregateDraft: ProductAggregate? = null,
         val auxiliaryState: AuxiliaryState = AuxiliaryState.None,
         val uploadingImageUris: List<Uri>? = null,
+        val hasUploadErrors: Boolean? = null,
         val isProgressDialogShown: Boolean? = null,
         val showBottomSheetButton: Boolean? = null,
         val isConfirmingTrash: Boolean = false,

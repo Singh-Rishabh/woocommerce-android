@@ -223,6 +223,10 @@ class ProductDetailFragment :
         }
         binding.cardsRecyclerView.layoutManager = layoutManager
         binding.cardsRecyclerView.itemAnimator = null
+
+        binding.openUploadScreenButton.setOnClickListener {
+            viewModel.openUploadScreen()
+        }
     }
 
     private fun initializeViewModel() {
@@ -360,6 +364,9 @@ class ProductDetailFragment :
                 } else {
                     hideProgressDialog()
                 }
+            }
+            new.hasUploadErrors?.takeIfNotEqualTo(old?.hasUploadErrors) { hasErrors ->
+                binding.openUploadScreenButton.visibility = if (hasErrors) View.VISIBLE else View.GONE
             }
         }
 
