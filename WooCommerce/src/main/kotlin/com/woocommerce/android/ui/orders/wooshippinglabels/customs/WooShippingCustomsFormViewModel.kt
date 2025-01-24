@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.R
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
@@ -66,20 +67,20 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val isAddCustomsButtonEnabled: Boolean = false
     ) : Parcelable
 
-    enum class ContentType {
-        MERCHANDISE,
-        GIFT,
-        RETURNED_GOODS,
-        SAMPLE,
-        DOCUMENTS,
-        OTHER
+    enum class ContentType(val resourceId: Int) {
+        MERCHANDISE(R.string.woo_shipping_labels_customs_content_merchandise),
+        GIFT(R.string.woo_shipping_labels_customs_content_gift),
+        RETURNED_GOODS(R.string.woo_shipping_labels_customs_content_returned_goods),
+        SAMPLE(R.string.woo_shipping_labels_customs_content_sample),
+        DOCUMENTS(R.string.woo_shipping_labels_customs_content_documents),
+        OTHER(R.string.woo_shipping_labels_customs_content_other)
     }
 
-    enum class RestrictionType {
-        NONE,
-        QUARANTINE,
-        SANITARY_INSPECTION,
-        OTHER
+    enum class RestrictionType(val resourceId: Int) {
+        NONE(R.string.woo_shipping_labels_customs_restriction_none),
+        QUARANTINE(R.string.woo_shipping_labels_customs_restriction_quarantine),
+        SANITARY_INSPECTION(R.string.woo_shipping_labels_customs_restriction_sanitary),
+        OTHER(R.string.woo_shipping_labels_customs_restriction_other)
     }
 
     data class ShowContentTypeDialog(val currentSelection: ContentType): MultiLiveEvent.Event()
