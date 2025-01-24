@@ -38,11 +38,14 @@ class WooPosProductsDataSource @Inject constructor(
             forceRefresh = forceRefreshProducts,
             searchType = ProductListHandler.SearchType.DEFAULT,
             includeType = listOf(WCProductStore.IncludeType.Simple, WCProductStore.IncludeType.Variable),
-            filters = mapOf(WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value)
+            filters = mapOf(
+                WCProductStore.ProductFilterOption.STATUS to ProductStatus.PUBLISH.value,
+                WCProductStore.ProductFilterOption.DOWNLOADABLE to WCProductStore.DownloadableOptions.FALSE.toString(),
+            )
         )
 
         if (result.isSuccess) {
-            val remoteProducts = handler.productsFlow.first().applyPosProductFilter()
+            val remoteProducts = handler.productsFlow.first()
             updateProductCache(remoteProducts)
             emit(ProductsResult.Remote(Result.success(productCache)))
         } else {
@@ -60,7 +63,7 @@ class WooPosProductsDataSource @Inject constructor(
     suspend fun loadMore(): Result<List<Product>> = withContext(Dispatchers.IO) {
         val result = handler.loadMore()
         if (result.isSuccess) {
-            val moreProducts = handler.productsFlow.first().applyPosProductFilter()
+            val moreProducts = handler.productsFlow.first()
             updateProductCache(moreProducts)
             Result.success(productCache)
         } else {
@@ -78,19 +81,6 @@ class WooPosProductsDataSource @Inject constructor(
         val errorMessage = error?.message ?: "Unknown error"
         WooLog.e(WooLog.T.POS, "Loading products failed - $errorMessage", error)
     }
-
-    private fun List<Product>.applyPosProductFilter() = this.filter { product ->
-        isProductHasAPrice(product) &&
-            isProductNotVirtual(product) &&
-            isProductNotDownloadable(product)
-    }
-
-    private fun isProductNotDownloadable(product: Product) = !product.isDownloadable
-
-    private fun isProductNotVirtual(product: Product) = !product.isVirtual
-
-    private fun isProductHasAPrice(product: Product) =
-        (product.price != null)
 
     sealed class ProductsResult {
         data class Cached(val products: List<Product>) : ProductsResult()
