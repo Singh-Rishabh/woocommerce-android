@@ -46,7 +46,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             emailOrUsername = navArgs.emailOrUsername,
             avatarUrl = avatarUrlFromEmail(navArgs.emailOrUsername),
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
-            allowPasswordLogin = navArgs.fallbackButton == MagicLinkFallbackButton.Password,
+            magicLinkFallbackButton = navArgs.fallbackButton,
             isLoadingDialogShown = false
         )
     )
@@ -62,7 +62,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
         triggerEvent(OpenEmailClient)
     }
 
-    fun onUsePasswordClick() {
+    fun onFallbackButtonClick() {
         triggerEvent(Exit)
     }
 
@@ -93,7 +93,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             emailOrUsername = navArgs.emailOrUsername,
             avatarUrl = avatarUrlFromEmail(navArgs.emailOrUsername),
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
-            allowPasswordLogin = navArgs.fallbackButton == MagicLinkFallbackButton.Password,
+            magicLinkFallbackButton = navArgs.fallbackButton,
             isLoadingDialogShown = true
         )
         val source = when {
@@ -111,7 +111,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
                 _viewState.value = ViewState.MagicLinkSentState(
                     email = navArgs.emailOrUsername.takeIf { it.isAnEmail() },
                     isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
-                    allowPasswordLogin = navArgs.fallbackButton == MagicLinkFallbackButton.Password,
+                    magicLinkFallbackButton = navArgs.fallbackButton,
                 )
             },
             onFailure = {
@@ -142,14 +142,14 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
 
     sealed interface ViewState : Parcelable {
         val isJetpackInstalled: Boolean
-        val allowPasswordLogin: Boolean
+        val magicLinkFallbackButton: MagicLinkFallbackButton
 
         @Parcelize
         data class MagicLinkRequestState(
             val emailOrUsername: String,
             val avatarUrl: String,
             override val isJetpackInstalled: Boolean,
-            override val allowPasswordLogin: Boolean,
+            override val magicLinkFallbackButton: MagicLinkFallbackButton,
             val isLoadingDialogShown: Boolean
         ) : ViewState
 
@@ -157,7 +157,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
         data class MagicLinkSentState(
             val email: String?,
             override val isJetpackInstalled: Boolean,
-            override val allowPasswordLogin: Boolean
+            override val magicLinkFallbackButton: MagicLinkFallbackButton
         ) : ViewState
     }
 
