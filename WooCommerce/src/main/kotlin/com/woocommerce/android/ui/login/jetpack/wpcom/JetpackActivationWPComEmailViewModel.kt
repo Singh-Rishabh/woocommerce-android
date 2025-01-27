@@ -123,8 +123,13 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                     }
 
                     AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED -> {
-                        errorMessage.value = R.string.error_user_username_instead_of_email
-                        this@JetpackActivationWPComEmailViewModel.emailOrUsername.value = ""
+                        triggerEvent(
+                            ShowMagicLinkScreen(
+                                emailOrUsername,
+                                navArgs.jetpackStatus,
+                                isNewWpComAccount = false
+                            )
+                        )
                     }
 
                     else -> {
