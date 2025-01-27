@@ -97,7 +97,9 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                         ShowMagicLinkScreen(
                             emailOrUsername = emailOrUsername,
                             jetpackStatus = navArgs.jetpackStatus,
-                            magicLinkFallbackButton = MagicLinkFallbackButton.None, isNewWpComAccount = false
+                            magicLinkFallbackButton = MagicLinkFallbackButton.None,
+                            requestAtStart = true,
+                            isNewWpComAccount = false
                         )
                     )
                 } else {
@@ -120,6 +122,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                                         emailOrUsername = emailOrUsername,
                                         jetpackStatus = navArgs.jetpackStatus,
                                         magicLinkFallbackButton = MagicLinkFallbackButton.None,
+                                        requestAtStart = true,
                                         isNewWpComAccount = true
                                     )
                                 )
@@ -134,6 +137,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                                 emailOrUsername = emailOrUsername,
                                 jetpackStatus = navArgs.jetpackStatus,
                                 magicLinkFallbackButton = MagicLinkFallbackButton.UsernameAndPassword,
+                                requestAtStart = false,
                                 isNewWpComAccount = false
                             )
                         )
@@ -179,6 +183,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
         val emailOrUsername: String,
         val jetpackStatus: JetpackStatus,
         val magicLinkFallbackButton: MagicLinkFallbackButton,
+        val requestAtStart: Boolean,
         val isNewWpComAccount: Boolean,
     ) : MultiLiveEvent.Event()
 }

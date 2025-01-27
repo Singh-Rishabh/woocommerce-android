@@ -147,6 +147,9 @@
             android:name="fallbackButton"
             app:argType="org.wordpress.android.login.MagicLinkFallbackButton" />
         <argument
+            android:name="requestAtStart"
+            app:argType="boolean" />
+        <argument
             android:name="isNewWpComAccount"
             app:argType="boolean" />
     </fragment>

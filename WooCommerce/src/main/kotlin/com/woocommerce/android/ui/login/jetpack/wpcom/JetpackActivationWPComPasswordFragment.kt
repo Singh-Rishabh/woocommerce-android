@@ -100,6 +100,7 @@ class JetpackActivationWPComPasswordFragment : BaseFragment() {
                     emailOrUsername = event.emailOrUsername,
                     jetpackStatus = event.jetpackStatus,
                     fallbackButton = MagicLinkFallbackButton.Password,
+                    requestAtStart = true,
                     isNewWpComAccount = false
                 )
         )

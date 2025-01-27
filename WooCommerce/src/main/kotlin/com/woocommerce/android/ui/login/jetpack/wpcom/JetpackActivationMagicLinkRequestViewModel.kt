@@ -53,7 +53,9 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     init {
-        requestMagicLink()
+        if (navArgs.requestAtStart) {
+            requestMagicLink()
+        }
     }
 
     fun onRequestMagicLinkClick() = requestMagicLink()
