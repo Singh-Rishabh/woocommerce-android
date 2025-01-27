@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.parcelize)
-    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -20,41 +18,9 @@ android {
     defaultConfig {
         minSdkVersion gradle.ext.minSdkVersion
         targetSdkVersion gradle.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += [
-                        "room.schemaLocation":"$projectDir/schemas".toString(),
-                        "room.incremental":"true",
-                        "room.expandProjection":"true"]
-            }
-        }
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    testOptions {
-        // Don't use the test orchestrator yet, some of our connected testsare sharing state to reduce network
-        // pressure on the API (authentication/fetch profile/fetch sites).
-        // Uncomment the next line to enable the Orchestrator.
-        // execution 'ANDROID_TEST_ORCHESTRATOR'
-        unitTests.includeAndroidResources  = true
-        unitTests.all {
-            if (project.hasProperty('testsMaxHeapSize')) {
-                // maxHeapSize for tests is not limited unless we give an explicit value
-                // See https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html
-                maxHeapSize project.properties.get('testsMaxHeapSize')
-            }
-        }
-    }
+    testOptions.unitTests.includeAndroidResources = true
 
     lint {
         lintConfig file("${project.rootDir}/config/lint/lint.xml")
