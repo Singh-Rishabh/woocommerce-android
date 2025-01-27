@@ -37,7 +37,7 @@ class CustomerListSelectionViewModel @Inject constructor(
     override fun onCustomerSelected(customerModel: WCCustomerModel) {
         analyticsTracker.track(
             AnalyticsEvent.ORDER_CREATION_CUSTOMER_ADDED,
-            mapOf("is_customer_registered" to (customerModel.remoteCustomerId > 0L))
+            mapOf("is_customer_registered" to (customerModel.remoteCustomerId > 0L).toString())
         )
         when {
             customerModel.remoteCustomerId > 0L -> {
