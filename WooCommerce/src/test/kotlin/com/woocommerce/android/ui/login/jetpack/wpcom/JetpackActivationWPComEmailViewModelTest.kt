@@ -108,10 +108,11 @@ class JetpackActivationWPComEmailViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `given email not allowed, when onContinueClick clicked, then show user name not wpcom error`() =
+    fun `given email not allowed, when onContinueClick clicked, then show magic link screen`() =
         testBlocking {
-            setup(UNKNOWN_USERNAME)
-            whenever(wpComLoginRepository.fetchAuthOptions(UNKNOWN_USERNAME)).thenReturn(
+            val suspiciousEmail = "suspicious@test.com"
+            setup(suspiciousEmail)
+            whenever(wpComLoginRepository.fetchAuthOptions(suspiciousEmail)).thenReturn(
                 Result.failure(
                     OnChangedException(
                         AuthOptionsError(AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED, "")
@@ -119,11 +120,11 @@ class JetpackActivationWPComEmailViewModelTest : BaseUnitTest() {
                 )
             )
 
-            val state = viewModel.viewState.runAndCaptureValues {
+            val event = viewModel.event.runAndCaptureValues {
                 viewModel.onContinueClick()
             }.last()
 
-            assertThat(state.errorMessage).isEqualTo(R.string.error_user_username_instead_of_email)
+            assertThat(event).isEqualTo(ShowMagicLinkScreen(suspiciousEmail, JETPACK_STATUS, isNewWpComAccount = false))
         }
 
     @Test
