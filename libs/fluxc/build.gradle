@@ -12,11 +12,12 @@ android {
 
     namespace "org.wordpress.android.fluxc"
 
-    compileSdkVersion gradle.ext.compileSdkVersion
 
     defaultConfig {
         minSdkVersion gradle.ext.minSdkVersion
         targetSdkVersion gradle.ext.targetSdkVersion
+        compileSdk gradle.ext.compileSdkVersion
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [

@@ -8,8 +8,6 @@ plugins {
 android {
     namespace "org.wordpress.android.fluxc.example"
 
-    compileSdkVersion gradle.ext.compileSdkVersion
-
     compileOptions {
         sourceCompatibility libs.versions.java.get()
         targetCompatibility libs.versions.java.get()
@@ -18,6 +16,7 @@ android {
     defaultConfig {
         minSdkVersion gradle.ext.minSdkVersion
         targetSdkVersion gradle.ext.targetSdkVersion
+        compileSdk gradle.ext.compileSdkVersion
     }
 
     testOptions.unitTests.includeAndroidResources = true
