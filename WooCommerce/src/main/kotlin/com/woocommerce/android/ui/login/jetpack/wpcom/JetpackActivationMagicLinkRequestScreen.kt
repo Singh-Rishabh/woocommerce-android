@@ -215,8 +215,7 @@ private fun MagicLinkRequestPreview() {
                 avatarUrl = "avatar",
                 isJetpackInstalled = false,
                 allowPasswordLogin = true,
-                isLoadingDialogShown = false,
-                isNewWpComAccount = false
+                isLoadingDialogShown = false
             )
         )
     }
