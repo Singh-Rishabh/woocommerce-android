@@ -13,6 +13,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent.JETPACK_SETUP_LOGIN_FLOW
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.MagicLinkFlow
 import com.woocommerce.android.ui.login.MagicLinkSource
 import com.woocommerce.android.ui.login.WPComLoginRepository
@@ -65,7 +66,11 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
     }
 
     fun onFallbackButtonClick() {
-        triggerEvent(Exit)
+        when (navArgs.fallbackButton) {
+            MagicLinkFallbackButton.Password -> triggerEvent(ShowPasswordScreen(navArgs.emailOrUsername, navArgs.jetpackStatus))
+            MagicLinkFallbackButton.UsernameAndPassword -> triggerEvent(ShowUsernameScreen(navArgs.jetpackStatus))
+            MagicLinkFallbackButton.None -> error("No fallback button should be shown")
+        }
     }
 
     fun onCloseClick() {
@@ -164,4 +169,11 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
     }
 
     object OpenEmailClient : MultiLiveEvent.Event()
+
+    data class ShowPasswordScreen(
+        val emailOrUsername: String,
+        val jetpackStatus: JetpackStatus
+    ) : MultiLiveEvent.Event()
+
+    data class ShowUsernameScreen(val jetpackStatus: JetpackStatus): MultiLiveEvent.Event()
 }

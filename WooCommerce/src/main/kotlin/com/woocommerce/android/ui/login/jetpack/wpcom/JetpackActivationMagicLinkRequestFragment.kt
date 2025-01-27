@@ -50,6 +50,8 @@ class JetpackActivationMagicLinkRequestFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is OpenEmailClient -> openEmailClient()
+                is JetpackActivationMagicLinkRequestViewModel.ShowPasswordScreen -> openPasswordScreen(event)
+                is JetpackActivationMagicLinkRequestViewModel.ShowUsernameScreen -> openUsernameScreen(event)
                 is ShowSnackbar -> uiMessageResolver.showSnack(event.message)
                 is Exit -> findNavController().navigateUp()
             }
@@ -62,5 +64,24 @@ class JetpackActivationMagicLinkRequestFragment : BaseFragment() {
         } else {
             uiMessageResolver.showSnack(R.string.login_email_client_not_found)
         }
+    }
+
+    private fun openPasswordScreen(event: JetpackActivationMagicLinkRequestViewModel.ShowPasswordScreen) {
+        findNavController().navigate(
+            JetpackActivationMagicLinkRequestFragmentDirections
+                .actionJetpackActivationMagicLinkRequestFragmentToJetpackActivationWPComPasswordFragment(
+                    emailOrUsername = event.emailOrUsername,
+                    jetpackStatus = event.jetpackStatus
+                )
+        )
+    }
+
+    private fun openUsernameScreen(event: JetpackActivationMagicLinkRequestViewModel.ShowUsernameScreen) {
+        findNavController().navigate(
+            JetpackActivationMagicLinkRequestFragmentDirections
+                .actionJetpackActivationMagicLinkRequestFragmentToJetpackActivationWPComEmailFragment(
+                    jetpackStatus = event.jetpackStatus
+                )
+        )
     }
 }
