@@ -25,11 +25,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    lint {
-        lintConfig file("${project.rootDir}/config/lint/lint.xml")
-        enable += 'UnknownNullness'
-    }
-
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
