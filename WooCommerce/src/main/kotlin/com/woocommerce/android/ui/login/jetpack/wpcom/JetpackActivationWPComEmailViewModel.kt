@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsError
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsErrorType
+import org.wordpress.android.login.MagicLinkFallbackButton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -93,7 +94,11 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
             onSuccess = {
                 if (it.isPasswordless) {
                     triggerEvent(
-                        ShowMagicLinkScreen(emailOrUsername, navArgs.jetpackStatus, isNewWpComAccount = false)
+                        ShowMagicLinkScreen(
+                            emailOrUsername = emailOrUsername,
+                            jetpackStatus = navArgs.jetpackStatus,
+                            magicLinkFallbackButton = MagicLinkFallbackButton.None, isNewWpComAccount = false
+                        )
                     )
                 } else {
                     triggerEvent(ShowPasswordScreen(emailOrUsername, navArgs.jetpackStatus))
@@ -112,8 +117,9 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                             else -> {
                                 triggerEvent(
                                     ShowMagicLinkScreen(
-                                        emailOrUsername,
-                                        navArgs.jetpackStatus,
+                                        emailOrUsername = emailOrUsername,
+                                        jetpackStatus = navArgs.jetpackStatus,
+                                        magicLinkFallbackButton = MagicLinkFallbackButton.None,
                                         isNewWpComAccount = true
                                     )
                                 )
@@ -125,8 +131,9 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                     AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED -> {
                         triggerEvent(
                             ShowMagicLinkScreen(
-                                emailOrUsername,
-                                navArgs.jetpackStatus,
+                                emailOrUsername = emailOrUsername,
+                                jetpackStatus = navArgs.jetpackStatus,
+                                magicLinkFallbackButton = MagicLinkFallbackButton.UsernameAndPassword,
                                 isNewWpComAccount = false
                             )
                         )
@@ -171,6 +178,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
     data class ShowMagicLinkScreen(
         val emailOrUsername: String,
         val jetpackStatus: JetpackStatus,
+        val magicLinkFallbackButton: MagicLinkFallbackButton,
         val isNewWpComAccount: Boolean,
     ) : MultiLiveEvent.Event()
 }

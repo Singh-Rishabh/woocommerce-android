@@ -27,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import org.wordpress.android.login.MagicLinkFallbackButton
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,7 +46,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             emailOrUsername = navArgs.emailOrUsername,
             avatarUrl = avatarUrlFromEmail(navArgs.emailOrUsername),
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
-            allowPasswordLogin = !navArgs.isAccountPasswordless,
+            allowPasswordLogin = navArgs.fallbackButton == MagicLinkFallbackButton.Password,
             isLoadingDialogShown = false
         )
     )
@@ -92,7 +93,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
             emailOrUsername = navArgs.emailOrUsername,
             avatarUrl = avatarUrlFromEmail(navArgs.emailOrUsername),
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
-            allowPasswordLogin = !navArgs.isAccountPasswordless,
+            allowPasswordLogin = navArgs.fallbackButton == MagicLinkFallbackButton.Password,
             isLoadingDialogShown = true
         )
         val source = when {
@@ -110,7 +111,7 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
                 _viewState.value = ViewState.MagicLinkSentState(
                     email = navArgs.emailOrUsername.takeIf { it.isAnEmail() },
                     isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
-                    allowPasswordLogin = !navArgs.isAccountPasswordless,
+                    allowPasswordLogin = navArgs.fallbackButton == MagicLinkFallbackButton.Password,
                 )
             },
             onFailure = {

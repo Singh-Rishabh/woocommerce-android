@@ -144,8 +144,8 @@
             android:name="emailOrUsername"
             app:argType="string" />
         <argument
-            android:name="isAccountPasswordless"
-            app:argType="boolean" />
+            android:name="fallbackButton"
+            app:argType="org.wordpress.android.login.MagicLinkFallbackButton" />
         <argument
             android:name="isNewWpComAccount"
             app:argType="boolean" />
