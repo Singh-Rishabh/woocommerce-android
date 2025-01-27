@@ -53,6 +53,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
         errorMessage
     ) { emailOrUsername, isLoadingDialogShown, errorMessage ->
         ViewState(
+            usernameOnly = navArgs.usernameOnly,
             emailOrUsername = emailOrUsername,
             isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
             isLoadingDialogShown = isLoadingDialogShown,
@@ -166,6 +167,7 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
     }
 
     data class ViewState(
+        val usernameOnly: Boolean,
         val emailOrUsername: String,
         val isJetpackInstalled: Boolean,
         val isLoadingDialogShown: Boolean = false,

@@ -95,6 +95,10 @@
         <action
             android:id="@+id/action_jetpackActivationWPComEmailFragment_to_jetpackActivationMagicLinkRequestFragment"
             app:destination="@id/jetpackActivationMagicLinkRequestFragment" />
+        <argument
+            android:name="usernameOnly"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationWPComPasswordFragment"

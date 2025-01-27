@@ -80,6 +80,7 @@ class JetpackActivationMagicLinkRequestFragment : BaseFragment() {
         findNavController().navigate(
             JetpackActivationMagicLinkRequestFragmentDirections
                 .actionJetpackActivationMagicLinkRequestFragmentToJetpackActivationWPComEmailFragment(
+                    usernameOnly = true,
                     jetpackStatus = event.jetpackStatus
                 )
         )
