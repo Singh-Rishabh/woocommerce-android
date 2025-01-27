@@ -19,6 +19,7 @@ import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsError
 import org.wordpress.android.fluxc.store.AccountStore.AuthOptionsErrorType
 import org.wordpress.android.login.AuthOptions
+import org.wordpress.android.login.MagicLinkFallbackButton
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -80,8 +81,10 @@ class JetpackActivationWPComEmailViewModelTest : BaseUnitTest() {
 
             assertThat(event).isEqualTo(
                 ShowMagicLinkScreen(
-                    UNKNOWN_EMAIL,
-                    JETPACK_STATUS,
+                    emailOrUsername = UNKNOWN_EMAIL,
+                    jetpackStatus = JETPACK_STATUS,
+                    magicLinkFallbackButton = MagicLinkFallbackButton.None,
+                    requestAtStart = true,
                     isNewWpComAccount = true
                 )
             )
@@ -124,7 +127,15 @@ class JetpackActivationWPComEmailViewModelTest : BaseUnitTest() {
                 viewModel.onContinueClick()
             }.last()
 
-            assertThat(event).isEqualTo(ShowMagicLinkScreen(suspiciousEmail, JETPACK_STATUS, isNewWpComAccount = false))
+            assertThat(event).isEqualTo(
+                ShowMagicLinkScreen(
+                    emailOrUsername = suspiciousEmail,
+                    jetpackStatus = JETPACK_STATUS,
+                    magicLinkFallbackButton = MagicLinkFallbackButton.UsernameAndPassword,
+                    requestAtStart = false,
+                    isNewWpComAccount = false
+                )
+            )
         }
 
     @Test
@@ -171,8 +182,10 @@ class JetpackActivationWPComEmailViewModelTest : BaseUnitTest() {
 
             assertThat(event).isEqualTo(
                 ShowMagicLinkScreen(
-                    WPCOM_EMAIL,
-                    JETPACK_STATUS,
+                    emailOrUsername = WPCOM_EMAIL,
+                    jetpackStatus = JETPACK_STATUS,
+                    magicLinkFallbackButton = MagicLinkFallbackButton.None,
+                    requestAtStart = true,
                     isNewWpComAccount = false
                 )
             )
