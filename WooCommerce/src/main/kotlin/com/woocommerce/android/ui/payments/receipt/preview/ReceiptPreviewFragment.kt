@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
 import com.woocommerce.android.util.PrintHtmlHelper
 import com.woocommerce.android.util.UiHelpers
+import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
@@ -115,6 +116,7 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
 
     private fun interceptAndModifyReceiptResponse(request: WebResourceRequest): WebResourceResponse? {
         return try {
+            println("request.url: ${request.url}")
             val connection = URL(request.url.toString()).openConnection()
             val inputStream = connection.getInputStream()
             val originalHtml = inputStream.bufferedReader().use { it.readText() }
@@ -129,7 +131,8 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
         } catch (e: MalformedURLException) {
             throw IllegalArgumentException("Invalid receipt URL: ${request.url}", e)
         } catch (e: IOException) {
-            throw IOException("Failed to read content from receipt URL: ${request.url}", e)
+            WooLog.e(WooLog.T.ORDERS, "Failed to read content from receipt URL: ${request.url}", e)
+            null
         }
     }
 
