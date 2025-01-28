@@ -64,8 +64,8 @@ fun WooShippingCustomsFormScreen(
     otherRestrictionDetailsInput: String,
     returnToSenderChecked: Boolean,
     isAddCustomsButtonEnabled: Boolean,
-    shouldDisplayContentTypeInput:Boolean,
-    shouldDisplayRestrictionTypeInput:Boolean,
+    shouldDisplayContentTypeInput: Boolean,
+    shouldDisplayRestrictionTypeInput: Boolean,
     onContentTypeClick: () -> Unit,
     onRestrictionTypeClick: () -> Unit,
     onItnChanged: (String) -> Unit,
@@ -118,7 +118,9 @@ fun WooShippingCustomsFormScreen(
                     onValueChange = onOtherRestrictionDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_label),
                     singleLine = true,
-                    helperText = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_description),
+                    helperText = stringResource(
+                        id = R.string.woo_shipping_labels_customs_restriction_details_description
+                    ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = modifier.fillMaxWidth()
                 )
