@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.woocommerce.android.R
+import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
@@ -32,6 +34,7 @@ class WooShippingCustomsFormFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bindEventListener()
+        bindResultHandlers()
     }
 
     private fun bindEventListener() {
@@ -59,6 +62,26 @@ class WooShippingCustomsFormFragment : BaseFragment() {
                     )
                 }
             }
+        }
+    }
+
+    private fun bindResultHandlers() {
+        handleDialogResult<String>(
+            key = SELECTOR_CONTENT_REQUEST_KEY,
+            entryId = R.id.wooShippingLabelCustomsFormFragment
+        ) { result ->
+            ContentType.entries
+                .firstOrNull { it.toString() == result }
+                ?.let { viewModel.onContentTypeSelected(it) }
+        }
+
+        handleDialogResult<String>(
+            key = SELECTOR_RESTRICTION_REQUEST_KEY,
+            entryId = R.id.wooShippingLabelCustomsFormFragment
+        ) { result ->
+            RestrictionType.entries
+                .firstOrNull { it.toString() == result }
+                ?.let { viewModel.onRestrictionTypeSelected(it) }
         }
     }
 
