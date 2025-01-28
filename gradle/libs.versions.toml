@@ -77,7 +77,6 @@ lottie = '5.2.0'
 kotlin = '2.0.21'
 kotlinx-coroutines = '1.8.1'
 ksp = '2.0.21-1.0.27'
-mockito-inline = '5.2.0'
 mockito-kotlin = '5.4.0'
 mpandroidchart = 'v3.1.0'
 photoview = '2.3.0'
@@ -222,7 +221,6 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
-mockito-inline = { group = "org.mockito", name = "mockito-inline", version.ref = "mockito-inline" }
 mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 photoview = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoview" }
