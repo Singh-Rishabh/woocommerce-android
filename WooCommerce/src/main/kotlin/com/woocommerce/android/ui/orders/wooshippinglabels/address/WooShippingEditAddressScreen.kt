@@ -63,6 +63,7 @@ fun WooShippingEditAddressScreen(
                 onPostalCodeChange = viewModel::onPostalCodeChange,
                 onEmailChange = viewModel::onEmailChange,
                 onPhoneChange = viewModel::onPhoneChange,
+                onCountryChange = viewModel::onCountryChange,
                 modifier = modifier
             )
         }
@@ -81,6 +82,7 @@ fun WooShippingEditAddressScreen(
     onPostalCodeChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
+    onCountryChange: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -148,7 +150,7 @@ fun WooShippingEditAddressScreen(
                 label = "${stringResource(id = R.string.woo_shipping_label_country)} *",
                 text = editableAddress.country,
                 modifier = Modifier.padding(top = 24.dp),
-                onClick = {}
+                onClick = onCountryChange
             )
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_address)} *",
