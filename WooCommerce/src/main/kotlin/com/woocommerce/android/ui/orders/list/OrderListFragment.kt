@@ -100,7 +100,6 @@ class OrderListFragment :
 
         private const val JITM_FRAGMENT_TAG = "jitm_orders_fragment"
         private const val TABLET_LANDSCAPE_WIDTH_RATIO = 0.3f
-        private const val TABLET_PORTRAIT_WIDTH_RATIO = 0.40f
         private const val LAST_WINDOW_SIZE_WAS_LARGER_THAN_COMPACT = "last_window_size_was_larger_than_compact"
         private const val HANDLER_DELAY = 200L
     }

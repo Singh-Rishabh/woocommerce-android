@@ -177,10 +177,8 @@ class TabletLayoutSetupHelper @Inject constructor(private val context: Context) 
 
     private companion object {
         private const val TABLET_LANDSCAPE_WIDTH_RATIO = 0.3f
-        private const val TABLET_PORTRAIT_WIDTH_RATIO = 0.40f
 
         private const val MARGINS_FOR_TABLET: Float = 0.1F
-        private const val MARGINS_FOR_SMALL_TABLET_PORTRAIT: Float = 0.025F
     }
 
     interface Screen {

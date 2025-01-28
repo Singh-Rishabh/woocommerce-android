@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.orders.creation.totals
 
 import com.woocommerce.android.R
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.isNotEqualTo
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.extensions.sumByBigDecimal

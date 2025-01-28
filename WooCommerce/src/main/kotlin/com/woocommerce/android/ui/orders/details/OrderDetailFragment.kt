@@ -117,7 +117,6 @@ class OrderDetailFragment :
     companion object {
         val TAG: String = OrderDetailFragment::class.java.simpleName
         private const val MARGINS_FOR_TABLET: Float = 0.1F
-        private const val MARGINS_FOR_SMALL_TABLET_PORTRAIT: Float = 0.025F
     }
 
     private val viewModel: OrderDetailViewModel by viewModels()

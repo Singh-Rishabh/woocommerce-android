@@ -80,7 +80,6 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_PRODUC
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.analytics.IsScreenLargerThanCompactValue
 import com.woocommerce.android.analytics.deviceTypeToAnalyticsString
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.extensions.runWithContext
 import com.woocommerce.android.model.Address
