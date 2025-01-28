@@ -5,8 +5,23 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 class ShouldRequireCustomsForm {
 
     operator fun invoke(addressData: WooShippingAddresses): Boolean {
-        return false
+        if (addressData.isDifferentCountryShipment) return true
+
+        val isOriginAddressMilitary = isAddressInMilitaryState(
+            addressData.shipFrom.country,
+            addressData.shipFrom.state.orEmpty()
+        )
+
+        val isShippingAddressMilitary = isAddressInMilitaryState(
+            addressData.shipTo.country.code,
+            addressData.shipTo.state.codeOrRaw
+        )
+
+        return isOriginAddressMilitary || isShippingAddressMilitary
     }
+
+    private val WooShippingAddresses.isDifferentCountryShipment
+        get() = shipFrom.country != shipTo.country.code
 
     private fun isAddressInMilitaryState(
         countryCode: String,
