@@ -28,8 +28,8 @@ class AboutConfigBuilder @Inject constructor(
             rateUsConfig = RateUsConfig.fromContext(activity),
             shareConfigFactory = { createShareConfig(activity) },
             socialsConfig = SocialsConfig(
-                twitterUsername = AppConstants.TWITTER_USERNAME,
                 instagramUsername = AppConstants.INSTAGRAM_USERNAME,
+                xUsername = AppConstants.X_USERNAME,
             ),
             legalConfig = LegalConfig(
                 tosUrl = AppUrls.AUTOMATTIC_TOS,
