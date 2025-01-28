@@ -24,10 +24,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -51,6 +47,8 @@ fun WooShippingEditAddressScreen(
         is WooShippingEditOriginViewModel.EditAddressViewState.DataState -> {
             WooShippingEditAddressScreen(
                 editableAddress = viewState.editableAddress,
+                isCompanyExpanded = viewState.isCompanyExpanded,
+                onExpandCompany = viewModel::onExpandCompany,
                 onNameChange = viewModel::onNameChange,
                 onCompanyChange = viewModel::onCompanyChange,
                 onAddressChange = viewModel::onAddressChange,
@@ -67,6 +65,8 @@ fun WooShippingEditAddressScreen(
 @Composable
 fun WooShippingEditAddressScreen(
     editableAddress: EditableAddress,
+    isCompanyExpanded: Boolean,
+    onExpandCompany: () -> Unit,
     onNameChange: (String) -> Unit,
     onCompanyChange: (String) -> Unit,
     onAddressChange: (String) -> Unit,
@@ -98,12 +98,10 @@ fun WooShippingEditAddressScreen(
                 onTextChange = onNameChange,
             )
 
-            var isExpanded by remember { mutableStateOf(false) }
-
             CollapsedField(
-                isExpanded = isExpanded,
+                isExpanded = isCompanyExpanded,
                 label = stringResource(id = R.string.woo_shipping_label_company),
-                onExpand = { isExpanded = !isExpanded },
+                onExpand = onExpandCompany,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 RoundedBorderTextFieldWithLabel(
