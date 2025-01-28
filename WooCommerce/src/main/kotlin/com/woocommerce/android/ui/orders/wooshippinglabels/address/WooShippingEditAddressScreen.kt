@@ -26,6 +26,11 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarDuration
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.SnackbarResult
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -66,6 +71,8 @@ fun WooShippingEditAddressScreen(
             WooShippingEditAddressScreen(
                 editableAddress = viewState.editableAddress,
                 isCompanyExpanded = viewState.isCompanyExpanded,
+                shouldDisplayLoadingCountries = viewState.shouldDisplayLoadingCountries,
+                shouldDisplayLoadingCountriesError = viewState.shouldDisplayLoadingCountriesError,
                 onExpandCompany = viewModel::onExpandCompany,
                 onNameChange = viewModel::onNameChange,
                 onCompanyChange = viewModel::onCompanyChange,
@@ -75,6 +82,7 @@ fun WooShippingEditAddressScreen(
                 onEmailChange = viewModel::onEmailChange,
                 onPhoneChange = viewModel::onPhoneChange,
                 onCountryChange = viewModel::onCountryChange,
+                onRefreshCountries = viewModel::onRefreshCountries,
                 modifier = modifier
             )
         }
@@ -84,6 +92,8 @@ fun WooShippingEditAddressScreen(
 @Composable
 fun WooShippingEditAddressScreen(
     editableAddress: EditableAddress,
+    shouldDisplayLoadingCountries: Boolean,
+    shouldDisplayLoadingCountriesError: Boolean,
     isCompanyExpanded: Boolean,
     onExpandCompany: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -94,9 +104,14 @@ fun WooShippingEditAddressScreen(
     onEmailChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
     onCountryChange: () -> Unit,
+    onRefreshCountries: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.woo_shipping_edit_origin_address_title),
@@ -118,6 +133,24 @@ fun WooShippingEditAddressScreen(
             val emailFocusRequester = remember { FocusRequester() }
             val phoneFocusRequester = remember { FocusRequester() }
             val keyboardController = LocalSoftwareKeyboardController.current
+
+            val errorMessage = stringResource(id = R.string.woo_shipping_fetching_countries_and_states_failed)
+            val retry = stringResource(id = R.string.retry)
+            LaunchedEffect(shouldDisplayLoadingCountriesError) {
+                if (shouldDisplayLoadingCountriesError) {
+                    val result = snackbarHostState.showSnackbar(
+                        message = errorMessage,
+                        duration = SnackbarDuration.Indefinite,
+                        actionLabel = retry
+                    )
+                    when (result) {
+                        SnackbarResult.Dismissed -> {}
+                        SnackbarResult.ActionPerformed -> {
+                            onRefreshCountries()
+                        }
+                    }
+                }
+            }
 
             RoundedBorderTextFieldWithLabel(
                 label = "${stringResource(id = R.string.woo_shipping_label_name)} *",
