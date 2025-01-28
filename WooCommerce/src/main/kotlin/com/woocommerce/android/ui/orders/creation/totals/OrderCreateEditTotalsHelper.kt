@@ -71,7 +71,7 @@ class OrderCreateEditTotalsHelper @Inject constructor(
     private fun ViewState.getRecalculateButton(
         onRecalculateButtonClicked: () -> Unit
     ): TotalsSectionsState.Button? {
-        return if (windowSizeClass != WindowSizeClass.Compact && isRecalculateNeeded) {
+        return if (isTwoPaneLayout && isRecalculateNeeded) {
             TotalsSectionsState.Button(
                 text = resourceProvider.getString(R.string.order_creation_recalculate_button),
                 enabled = canCreateOrder,
@@ -87,7 +87,7 @@ class OrderCreateEditTotalsHelper @Inject constructor(
         onMainButtonClicked: () -> Unit,
         onRecalculateButtonClicked: () -> Unit
     ): TotalsSectionsState.Button {
-        return if (windowSizeClass == WindowSizeClass.Compact) {
+        return if (!isTwoPaneLayout) {
             TotalsSectionsState.Button(
                 text = mode.toButtonText(),
                 enabled = canCreateOrder,

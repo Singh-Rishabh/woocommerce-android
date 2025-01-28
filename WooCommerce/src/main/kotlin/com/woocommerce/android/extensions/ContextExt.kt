@@ -18,8 +18,8 @@ import kotlinx.parcelize.Parcelize
 import kotlin.math.max
 import kotlin.math.min
 
-val Context.windowSizeClass: WindowSizeClass
-    get() = determineWindowSizeClassByDimensions(
+val Context.isTwoPanesShouldBeUsed: Boolean
+    get() = determineIfTwoPanesShouldBeUsed(
         resources.configuration.screenWidthDp,
         resources.configuration.screenHeightDp
     )
@@ -27,19 +27,14 @@ val Context.windowSizeClass: WindowSizeClass
 val Context.windowHeightSizeClass: WindowSizeClass
     get() = determineWindowHeightSizeClassByGivenSize(resources.configuration.screenHeightDp)
 
-private fun determineWindowSizeClassByDimensions(widthDp: Int, heightDp: Int): WindowSizeClass {
+private fun determineIfTwoPanesShouldBeUsed(widthDp: Int, heightDp: Int) : Boolean {
+    val minScreenShortSizeDP = 674
+    val minScreenLongSizeDP = 800
+
     val shortSize = min(widthDp, heightDp)
     val longSize = max(widthDp, heightDp)
 
-    return when {
-        shortSize < WindowSizeClass.Compact.maxWidthDp || longSize < WindowSizeClass.Compact.maxHeightDp -> {
-            WindowSizeClass.Compact
-        }
-        shortSize < WindowSizeClass.Medium.maxWidthDp || longSize < WindowSizeClass.Medium.maxHeightDp -> {
-            WindowSizeClass.Medium
-        }
-        else -> WindowSizeClass.ExpandedAndBigger
-    }
+    return shortSize >= minScreenShortSizeDP && longSize >= minScreenLongSizeDP
 }
 
 private fun determineWindowHeightSizeClassByGivenSize(sizeDp: Int): WindowSizeClass {

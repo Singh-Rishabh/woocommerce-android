@@ -39,18 +39,17 @@ import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_ORDER_ID
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_START_PAYMENT_FLOW
 import com.woocommerce.android.cardreader.CardReaderManager
 import com.woocommerce.android.databinding.FragmentOrderDetailBinding
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.handleDialogNotice
 import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.handleNotice
 import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.hide
+import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.show
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.extensions.whenNotNullNorEmpty
-import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.FeatureFeedbackSettings
 import com.woocommerce.android.model.FeatureFeedbackSettings.Feature.SHIPPING_LABEL_M4
 import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState
@@ -213,7 +212,7 @@ class OrderDetailFragment :
          * during the payment collection process. If this is the case, it navigates to the
          * Select Payment screen on both phone and tablet devices.
          */
-        val isScreenLargerThanCompact = requireContext().windowSizeClass != WindowSizeClass.Compact
+        val isScreenLargerThanCompact = requireContext().isTwoPanesShouldBeUsed
         if (isOrderListFragmentNotVisible() && isScreenLargerThanCompact && !navArgs.startPaymentFlow) {
             navigateBackWithResult(KEY_ORDER_ID, navArgs.orderId)
             return
@@ -260,18 +259,8 @@ class OrderDetailFragment :
     private fun setMarginsIfTablet() {
         val windowWidth = DisplayUtils.getWindowPixelWidth(requireContext())
         val layoutParams = binding.orderDetailContainer.layoutParams as FrameLayout.LayoutParams
-        when (requireContext().windowSizeClass) {
-            WindowSizeClass.Medium -> {
-                val marginHorizontal = (windowWidth * MARGINS_FOR_SMALL_TABLET_PORTRAIT).toInt()
-                layoutParams.setMargins(
-                    marginHorizontal,
-                    layoutParams.topMargin,
-                    marginHorizontal,
-                    layoutParams.bottomMargin
-                )
-            }
-
-            WindowSizeClass.ExpandedAndBigger -> {
+        when (requireContext().isTwoPanesShouldBeUsed) {
+            true -> {
                 val marginHorizontal = (windowWidth * MARGINS_FOR_TABLET).toInt()
                 layoutParams.setMargins(
                     marginHorizontal,
@@ -281,7 +270,7 @@ class OrderDetailFragment :
                 )
             }
 
-            WindowSizeClass.Compact -> return
+            false -> return
         }
         binding.orderDetailContainer.layoutParams = layoutParams
     }
@@ -298,7 +287,7 @@ class OrderDetailFragment :
 
     private fun setupToolbarMenu(menu: Menu) {
         onPrepareMenu(menu)
-        if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
+        if (requireContext().isTwoPanesShouldBeUsed) {
             binding.toolbar.navigationIcon = null
         } else {
             binding.toolbar.navigationIcon = AppCompatResources.getDrawable(requireActivity(), R.drawable.ic_back_24dp)
@@ -394,7 +383,7 @@ class OrderDetailFragment :
         viewModel.viewStateData.observe(viewLifecycleOwner) { old, new ->
             new.orderInfo?.takeIfNotEqualTo(old?.orderInfo) {
                 showOrderDetail(it.order!!, it.isPaymentCollectableWithCardReader, it.receiptButtonStatus)
-                if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
+                if (requireContext().isTwoPanesShouldBeUsed) {
                     orderEditingViewModel.setOrderId(it.order.id)
                 }
                 onPrepareMenu(binding.toolbar.menu)
@@ -661,7 +650,7 @@ class OrderDetailFragment :
                 viewModel.onSeeReceiptClicked()
             },
             onCollectPaymentClickListener = {
-                viewModel.onCollectPaymentClicked(requireContext().windowSizeClass != WindowSizeClass.Compact)
+                viewModel.onCollectPaymentClicked(requireContext().isTwoPanesShouldBeUsed)
             },
             onPrintingInstructionsClickListener = {
                 viewModel.onPrintingInstructionsClicked()

@@ -3,12 +3,11 @@ package com.woocommerce.android.analytics
 import android.content.Context
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_DEVICE_TYPE_COMPACT
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.VALUE_DEVICE_TYPE_REGULAR
-import com.woocommerce.android.extensions.WindowSizeClass
-import com.woocommerce.android.extensions.windowSizeClass
+import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 
 val Context.deviceTypeToAnalyticsString: String
     get() = buildAnalyticsDeviceTypeValue(
-        IsScreenLargerThanCompactValue(value = windowSizeClass != WindowSizeClass.Compact)
+        IsScreenLargerThanCompactValue(value = isTwoPanesShouldBeUsed)
     )
 
 val IsScreenLargerThanCompactValue.deviceTypeToAnalyticsString: String
