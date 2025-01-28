@@ -125,12 +125,14 @@ class WooShippingEditOriginViewModel @Inject constructor(
     val viewState: MutableStateFlow<EditAddressViewState> = MutableStateFlow(
         EditAddressViewState.DataState(
             isCompanyExpanded = false,
-            editableAddress = EditableAddress()
+            editableAddress = EditableAddress(),
+            shouldDisplayLoadingCountries = false,
+            shouldDisplayLoadingCountriesError = false
         )
     )
 
     init {
-        launch { observeAddressChanges() }
+        launch { observeChanges() }
         fillAddressForm()
         launch { loadCountries() }
     }
@@ -168,7 +170,6 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     private suspend fun loadCountries() {
-        countriesState.value = CountriesState.Loading
         getAcceptedOriginCountries().fold(
             onSuccess = {
                 countriesState.value = CountriesState.Loaded(it)
@@ -182,11 +183,17 @@ class WooShippingEditOriginViewModel @Inject constructor(
         isCompanyExpanded.value = true
     }
 
-    private suspend fun observeAddressChanges() {
-        editableAddress.combine(isCompanyExpanded) { address, isExpanded ->
+    private suspend fun observeChanges() {
+        combine(
+            editableAddress,
+            isCompanyExpanded,
+            countriesState
+        ) { address, isExpanded, countriesState ->
             EditAddressViewState.DataState(
                 isCompanyExpanded = isExpanded,
-                editableAddress = address
+                editableAddress = address,
+                shouldDisplayLoadingCountries = countriesState is CountriesState.DisplayLoading,
+                shouldDisplayLoadingCountriesError = countriesState is CountriesState.Error
             )
         }
             .collectLatest {
@@ -236,7 +243,10 @@ class WooShippingEditOriginViewModel @Inject constructor(
         }
     }
 
-    fun onRefreshCountries() { launch { loadCountries() } }
+    fun onRefreshCountries() {
+        countriesState.value = CountriesState.DisplayLoading
+        launch { loadCountries() }
+    }
 
     fun onCountryChanged(code: LocationCode) {
         country.value = findCountryByCountryCode(code)
@@ -245,7 +255,9 @@ class WooShippingEditOriginViewModel @Inject constructor(
     sealed class EditAddressViewState {
         data class DataState(
             val isCompanyExpanded: Boolean,
-            val editableAddress: EditableAddress
+            val editableAddress: EditableAddress,
+            val shouldDisplayLoadingCountries: Boolean,
+            val shouldDisplayLoadingCountriesError: Boolean,
         ) : EditAddressViewState()
     }
 
