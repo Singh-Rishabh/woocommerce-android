@@ -21,7 +21,7 @@ class MediaUploadErrorListViewModelTest : BaseUnitTest() {
             ProductImageUploadData(
                 localUri = "file://test1.jpg",
                 remoteProductId = REMOTE_PRODUCT_ID,
-                uploadStatus = MediaFileUploadHandler.UploadStatus.Failed(
+                uploadStatus = UploadStatus.Failed(
                     media = null,
                     mediaErrorType = MediaErrorType.GENERIC_ERROR,
                     mediaErrorMessage = "test.jpg"
@@ -30,7 +30,7 @@ class MediaUploadErrorListViewModelTest : BaseUnitTest() {
             ProductImageUploadData(
                 localUri = "file://test2.jpg",
                 remoteProductId = REMOTE_PRODUCT_ID,
-                uploadStatus = MediaFileUploadHandler.UploadStatus.Failed(
+                uploadStatus = UploadStatus.Failed(
                     media = null,
                     mediaErrorType = MediaErrorType.GENERIC_ERROR,
                     mediaErrorMessage = "test.jpg"
