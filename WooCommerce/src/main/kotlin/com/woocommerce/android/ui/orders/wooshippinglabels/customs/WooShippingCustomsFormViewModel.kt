@@ -61,11 +61,19 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,
+        val otherContentInput: String = "",
         val restrictionType: RestrictionType = RestrictionType.NONE,
+        val otherRestrictionInput: String = "",
         val itnValue: String = "",
         val returnToSenderChecked: Boolean = false,
         val isAddCustomsButtonEnabled: Boolean = false
-    ) : Parcelable
+    ) : Parcelable {
+        val shouldDisplayContentTypeInput: Boolean
+            get() = contentType == ContentType.OTHER
+
+        val shouldDisplayRestrictionTypeInput: Boolean
+            get() = restrictionType == RestrictionType.OTHER
+    }
 
     enum class ContentType(val resourceId: Int) {
         MERCHANDISE(R.string.woo_shipping_labels_customs_content_merchandise),
