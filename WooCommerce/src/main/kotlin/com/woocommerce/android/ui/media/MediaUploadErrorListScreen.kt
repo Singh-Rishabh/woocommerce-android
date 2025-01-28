@@ -111,7 +111,7 @@ fun MediaUploadErrorListItem(
             fallback = painterResource(R.drawable.ic_product),
             placeholder = painterResource(R.drawable.ic_product),
             error = painterResource(R.drawable.ic_product),
-            contentDescription = "",
+            contentDescription = stringResource(id = R.string.product_image_content_description),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .width(48.dp)
