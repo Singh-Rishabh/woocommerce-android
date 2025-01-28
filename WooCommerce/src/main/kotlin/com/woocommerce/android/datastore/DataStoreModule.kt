@@ -16,6 +16,7 @@ import com.woocommerce.android.datastore.DataStoreType.DASHBOARD_STATS
 import com.woocommerce.android.datastore.DataStoreType.LAST_UPDATE
 import com.woocommerce.android.datastore.DataStoreType.SHIPPING_LABEL_ADDRESS
 import com.woocommerce.android.datastore.DataStoreType.SHIPPING_LABEL_CONFIGURATION
+import com.woocommerce.android.datastore.DataStoreType.SITE_PICKER_WOO_VISIBLE_SITES
 import com.woocommerce.android.datastore.DataStoreType.TOP_PERFORMER_PRODUCTS
 import com.woocommerce.android.datastore.DataStoreType.TRACKER
 import com.woocommerce.android.di.AppCoroutineScope
@@ -156,6 +157,24 @@ class DataStoreModule {
         },
         corruptionHandler = ReplaceFileCorruptionHandler {
             crashLogging.recordEvent("Corrupted data store. DataStore Type: ${LAST_UPDATE.name}")
+            emptyPreferences()
+        },
+        scope = CoroutineScope(appCoroutineScope.coroutineContext + Dispatchers.IO)
+    )
+
+    @Provides
+    @Singleton
+    @DataStoreQualifier(SITE_PICKER_WOO_VISIBLE_SITES)
+    fun provideWooVisibleSitesDataStore(
+        appContext: Context,
+        crashLogging: CrashLogging,
+        @AppCoroutineScope appCoroutineScope: CoroutineScope
+    ) = PreferenceDataStoreFactory.create(
+        produceFile = {
+            appContext.preferencesDataStoreFile("site_picker_visible_sites")
+        },
+        corruptionHandler = ReplaceFileCorruptionHandler {
+            crashLogging.recordEvent("Corrupted data store. DataStore Type: ${SITE_PICKER_WOO_VISIBLE_SITES.name}")
             emptyPreferences()
         },
         scope = CoroutineScope(appCoroutineScope.coroutineContext + Dispatchers.IO)

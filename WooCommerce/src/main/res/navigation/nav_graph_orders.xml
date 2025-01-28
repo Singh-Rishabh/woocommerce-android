@@ -319,6 +319,9 @@
         <argument
             android:name="orderStatusList"
             app:argType="com.woocommerce.android.model.Order$OrderStatus[]" />
+        <argument
+            android:name="positiveButtonLabel"
+            app:argType="integer" />
     </dialog>
     <fragment
         android:id="@+id/printShippingLabelInfoFragment"
@@ -742,6 +745,9 @@
             android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelPurchasedFragment"
             app:destination="@id/wooShippingLabelPurchasedFragment"
             app:popUpTo="@id/orderDetailFragment" />
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingEditOriginAddressFragment"
+            app:destination="@id/wooShippingEditOriginAddressFragment" />
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPackageCreationFragment"
@@ -764,5 +770,13 @@
         <action
             android:id="@+id/action_wooShippingLabelPurchasedFragment_to_printShippingLabelInfoFragment"
             app:destination="@id/printShippingLabelInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/wooShippingEditOriginAddressFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginAddressFragment"
+        android:label="WooShippingEditOriginAddressFragment" >
+        <argument
+            android:name="originAddress"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
     </fragment>
 </navigation>

@@ -1,3 +1,1 @@
-In this update, we've improved the WooCommerce app with several fixes and enhancements. The "One-time shipping" label now correctly matches its availability in Product Subscriptions, and issues with product conversion have been resolved. We've also streamlined the card reader payment flow for faster transactions, fixed a barcode scanner crash, and improved login error handling. Plus, if your site has no products, the Blaze Campaign screen now offers an easy way to create one.
-
------
+Get ready for a smoother experience! We’ve optimized receipt scaling, added Puerto Rico for in-person payments, and improved Blaze Campaigns display. Enjoy faster product gallery loading, better bulk order updates, and real-time image upload indicators. Plus, WooPayments onboarding is now easier than ever!
