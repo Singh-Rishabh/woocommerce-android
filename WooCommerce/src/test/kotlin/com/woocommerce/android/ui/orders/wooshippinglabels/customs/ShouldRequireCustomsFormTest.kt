@@ -1,10 +1,10 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
-import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
