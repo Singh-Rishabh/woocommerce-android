@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/prologue_login_background_color">
@@ -43,11 +42,12 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/prologueIntro"
-        style="@style/Woo.TextView.Headline6"
+        style="@style/Woo.TextView.Headline5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="55dp"
         android:layout_marginBottom="0dp"
+        android:breakStrategy="balanced"
         android:gravity="center_horizontal"
         android:text="@string/simplified_login_prologue_intro"
         android:textColor="@color/white"
@@ -70,7 +70,6 @@
         android:text="@string/simplified_login_prologue_title"
         android:textAlignment="gravity"
         android:textColor="@color/white"
-        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/loginButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
