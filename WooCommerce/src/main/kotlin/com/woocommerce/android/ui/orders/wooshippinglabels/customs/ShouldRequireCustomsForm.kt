@@ -1,9 +1,9 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
+import javax.inject.Inject
 
-class ShouldRequireCustomsForm {
-
+class ShouldRequireCustomsForm @Inject constructor() {
     operator fun invoke(addressData: WooShippingAddresses): Boolean {
         if (addressData.isDifferentCountryShipment) return true
 
