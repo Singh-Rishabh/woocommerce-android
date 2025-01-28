@@ -116,7 +116,6 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
 
     private fun interceptAndModifyReceiptResponse(request: WebResourceRequest): WebResourceResponse? {
         return try {
-            println("request.url: ${request.url}")
             val connection = URL(request.url.toString()).openConnection()
             val inputStream = connection.getInputStream()
             val originalHtml = inputStream.bufferedReader().use { it.readText() }
