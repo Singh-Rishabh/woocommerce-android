@@ -58,6 +58,18 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         }
     }
 
+    fun onOtherContentInputChanged(newValue: String) {
+        _viewState.update {
+            it.copy(otherContentInput = newValue)
+        }
+    }
+
+    fun onRestrictionDetailsInputChanged(newValue: String) {
+        _viewState.update {
+            it.copy(otherRestrictionInput = newValue)
+        }
+    }
+
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,

@@ -38,6 +38,8 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         contentType = viewState?.contentType ?: ContentType.MERCHANDISE,
         restrictionType = viewState?.restrictionType ?: RestrictionType.NONE,
         itnValue = viewState?.itnValue.orEmpty(),
+        otherContentDetailsInput = viewState?.otherContentInput.orEmpty(),
+        otherRestrictionDetailsInput = viewState?.otherRestrictionInput.orEmpty(),
         returnToSenderChecked = viewState?.returnToSenderChecked ?: false,
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
         shouldDisplayContentTypeInput = viewState?.shouldDisplayContentTypeInput ?: false,
@@ -45,6 +47,8 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onContentTypeClick = viewModel::onContentTypeClick,
         onRestrictionTypeClick = viewModel::onRestrictionTypeClick,
         onItnChanged = viewModel::onITNChanged,
+        onOtherContentDetailsInputChanged = viewModel::onOtherContentInputChanged,
+        onOtherRestrictionDetailsInputChanged = viewModel::onRestrictionDetailsInputChanged,
         onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
     ) {
     }
@@ -56,8 +60,8 @@ fun WooShippingCustomsFormScreen(
     contentType: ContentType,
     restrictionType: RestrictionType,
     itnValue: String,
-    contentDetailsInput: String,
-    restrictionDetailsInput: String,
+    otherContentDetailsInput: String,
+    otherRestrictionDetailsInput: String,
     returnToSenderChecked: Boolean,
     isAddCustomsButtonEnabled: Boolean,
     shouldDisplayContentTypeInput:Boolean,
@@ -66,8 +70,8 @@ fun WooShippingCustomsFormScreen(
     onRestrictionTypeClick: () -> Unit,
     onItnChanged: (String) -> Unit,
     onReturnToSenderChanged: (Boolean) -> Unit,
-    onContentDetailsInputChanged: (String) -> Unit,
-    onRestrictionDetailsInputChanged: (String) -> Unit,
+    onOtherContentDetailsInputChanged: (String) -> Unit,
+    onOtherRestrictionDetailsInputChanged: (String) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -91,8 +95,8 @@ fun WooShippingCustomsFormScreen(
 
             AnimatedVisibility(shouldDisplayContentTypeInput) {
                 WCOutlinedTextField(
-                    value = contentDetailsInput,
-                    onValueChange = onContentDetailsInputChanged,
+                    value = otherContentDetailsInput,
+                    onValueChange = onOtherContentDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_content_details_label),
                     singleLine = true,
                     helperText = stringResource(id = R.string.woo_shipping_labels_customs_content_details_description),
@@ -110,8 +114,8 @@ fun WooShippingCustomsFormScreen(
 
             AnimatedVisibility(shouldDisplayRestrictionTypeInput) {
                 WCOutlinedTextField(
-                    value = restrictionDetailsInput,
-                    onValueChange = onRestrictionDetailsInputChanged,
+                    value = otherRestrictionDetailsInput,
+                    onValueChange = onOtherRestrictionDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_label),
                     singleLine = true,
                     helperText = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_description),
@@ -165,8 +169,8 @@ fun PreviewWooShippingCustomsFormScreen() {
             contentType = ContentType.MERCHANDISE,
             restrictionType = RestrictionType.NONE,
             itnValue = "123456",
-            contentDetailsInput = "Important Stuff",
-            restrictionDetailsInput = "Restricted Stuff",
+            otherContentDetailsInput = "Important Stuff",
+            otherRestrictionDetailsInput = "Restricted Stuff",
             returnToSenderChecked = false,
             isAddCustomsButtonEnabled = true,
             shouldDisplayContentTypeInput = true,
@@ -175,8 +179,8 @@ fun PreviewWooShippingCustomsFormScreen() {
             onRestrictionTypeClick = {},
             onItnChanged = {},
             onReturnToSenderChanged = {},
-            onContentDetailsInputChanged = {},
-            onRestrictionDetailsInputChanged = {},
+            onOtherContentDetailsInputChanged = {},
+            onOtherRestrictionDetailsInputChanged = {},
             onAddCustomsDataClick = {}
         )
     }
