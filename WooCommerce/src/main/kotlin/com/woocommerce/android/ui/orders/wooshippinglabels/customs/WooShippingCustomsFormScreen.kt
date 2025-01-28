@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -84,12 +85,36 @@ fun WooShippingCustomsFormScreen(
                 modifier = modifier.fillMaxWidth()
             )
 
+            AnimatedVisibility(shouldDisplayContentTypeInput) {
+                WCOutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    label = stringResource(id = R.string.woo_shipping_labels_customs_content_details_label),
+                    singleLine = true,
+                    helperText = stringResource(id = R.string.woo_shipping_labels_customs_content_details_description),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.fillMaxWidth()
+                )
+            }
+
             WCOutlinedSpinner(
                 onClick = onRestrictionTypeClick,
                 value = stringResource(id = restrictionType.resourceId),
                 label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_type_label),
                 modifier = modifier.fillMaxWidth()
             )
+
+            AnimatedVisibility(shouldDisplayRestrictionTypeInput) {
+                WCOutlinedTextField(
+                    value = "",
+                    onValueChange = {},
+                    label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_label),
+                    singleLine = true,
+                    helperText = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_description),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.fillMaxWidth()
+                )
+            }
 
             WCOutlinedTextField(
                 value = itnValue,
@@ -139,7 +164,7 @@ fun PreviewWooShippingCustomsFormScreen() {
             returnToSenderChecked = false,
             isAddCustomsButtonEnabled = true,
             shouldDisplayContentTypeInput = true,
-            shouldDisplayRestrictionTypeInput = true,
+            shouldDisplayRestrictionTypeInput = false,
             onContentTypeClick = {},
             onRestrictionTypeClick = {},
             onItnChanged = {},
