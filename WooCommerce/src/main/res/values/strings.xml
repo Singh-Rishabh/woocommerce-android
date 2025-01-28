@@ -4475,4 +4475,5 @@
     <string name="woo_shipping_label_post_code">Postal Code</string>
     <string name="woo_shipping_label_email">Email</string>
     <string name="woo_shipping_label_phone">Phone</string>
+    <string name="woo_shipping_field_required_error">This field is required.</string>
 </resources>
