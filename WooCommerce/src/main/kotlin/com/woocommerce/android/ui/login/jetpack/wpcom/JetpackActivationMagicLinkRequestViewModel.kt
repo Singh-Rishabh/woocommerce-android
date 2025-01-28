@@ -67,7 +67,12 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
 
     fun onFallbackButtonClick() {
         when (navArgs.fallbackButton) {
-            MagicLinkFallbackButton.Password -> triggerEvent(ShowPasswordScreen(navArgs.emailOrUsername, navArgs.jetpackStatus))
+            MagicLinkFallbackButton.Password -> triggerEvent(
+                ShowPasswordScreen(
+                    emailOrUsername = navArgs.emailOrUsername,
+                    jetpackStatus = navArgs.jetpackStatus
+                )
+            )
             MagicLinkFallbackButton.UsernameAndPassword -> triggerEvent(ShowUsernameScreen(navArgs.jetpackStatus))
             MagicLinkFallbackButton.None -> error("No fallback button should be shown")
         }
@@ -175,5 +180,5 @@ class JetpackActivationMagicLinkRequestViewModel @Inject constructor(
         val jetpackStatus: JetpackStatus
     ) : MultiLiveEvent.Event()
 
-    data class ShowUsernameScreen(val jetpackStatus: JetpackStatus): MultiLiveEvent.Event()
+    data class ShowUsernameScreen(val jetpackStatus: JetpackStatus) : MultiLiveEvent.Event()
 }

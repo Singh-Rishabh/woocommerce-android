@@ -108,52 +108,56 @@ class JetpackActivationWPComEmailViewModel @Inject constructor(
                 }
             },
             onFailure = {
-                val failure = (it as? OnChangedException)?.error as? AuthOptionsError
-                var isSignup = false
+                handleLoginFailure(it, emailOrUsername)
+            }
+        )
+        isLoadingDialogShown.value = false
+    }
 
-                when (failure?.type) {
-                    AuthOptionsErrorType.UNKNOWN_USER -> {
-                        when {
-                            !stringUtils.isValidEmail(emailOrUsername) ->
-                                errorMessage.value = R.string.username_not_registered_wpcom
+    private fun handleLoginFailure(error: Throwable, emailOrUsername: String) {
+        val failure = (error as? OnChangedException)?.error as? AuthOptionsError
+        var isSignup = false
 
-                            else -> {
-                                triggerEvent(
-                                    ShowMagicLinkScreen(
-                                        emailOrUsername = emailOrUsername,
-                                        jetpackStatus = navArgs.jetpackStatus,
-                                        magicLinkFallbackButton = MagicLinkFallbackButton.None,
-                                        requestAtStart = true,
-                                        isNewWpComAccount = true
-                                    )
-                                )
-                                isSignup = true
-                            }
-                        }
-                    }
+        when (failure?.type) {
+            AuthOptionsErrorType.UNKNOWN_USER -> {
+                when {
+                    !stringUtils.isValidEmail(emailOrUsername) ->
+                        errorMessage.value = R.string.username_not_registered_wpcom
 
-                    AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED -> {
+                    else -> {
                         triggerEvent(
                             ShowMagicLinkScreen(
                                 emailOrUsername = emailOrUsername,
                                 jetpackStatus = navArgs.jetpackStatus,
-                                magicLinkFallbackButton = MagicLinkFallbackButton.UsernameAndPassword,
-                                requestAtStart = false,
-                                isNewWpComAccount = false
+                                magicLinkFallbackButton = MagicLinkFallbackButton.None,
+                                requestAtStart = true,
+                                isNewWpComAccount = true
                             )
                         )
+                        isSignup = true
                     }
-
-                    else -> {
-                        triggerEvent(ShowSnackbar(R.string.error_generic))
-                    }
-                }
-                if (!isSignup) {
-                    trackLoginFlowAuthOptionError(failure)
                 }
             }
-        )
-        isLoadingDialogShown.value = false
+
+            AuthOptionsErrorType.EMAIL_LOGIN_NOT_ALLOWED -> {
+                triggerEvent(
+                    ShowMagicLinkScreen(
+                        emailOrUsername = emailOrUsername,
+                        jetpackStatus = navArgs.jetpackStatus,
+                        magicLinkFallbackButton = MagicLinkFallbackButton.UsernameAndPassword,
+                        requestAtStart = false,
+                        isNewWpComAccount = false
+                    )
+                )
+            }
+
+            else -> {
+                triggerEvent(ShowSnackbar(R.string.error_generic))
+            }
+        }
+        if (!isSignup) {
+            trackLoginFlowAuthOptionError(failure)
+        }
     }
 
     private fun trackLoginFlowAuthOptionError(failure: AuthOptionsError?) {

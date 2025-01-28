@@ -103,7 +103,6 @@ fun JetpackActivationMagicLinkRequestScreen(
                     onClick = onFallbackButtonClick,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-
                     Text(text = stringResource(id = it))
                 }
             }
