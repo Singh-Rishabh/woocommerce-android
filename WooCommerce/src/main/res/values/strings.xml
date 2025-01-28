@@ -4466,12 +4466,16 @@
     <string name="woo_shipping_labels_customs_restriction_type_label">Restriction Type</string>
     <string name="woo_shipping_labels_customs_itn_label">International Transaction Number</string>
     <string name="woo_shipping_labels_customs_return_to_sender_label">Return to sender if package is not able to be delivered</string>
+    <string name="woo_shipping_labels_customs_content_details_label">Content Details</string>
+    <string name="woo_shipping_labels_customs_content_details_description">Please describe what kind of goods this package contains</string>
     <string name="woo_shipping_labels_customs_content_merchandise">Merchandise</string>
     <string name="woo_shipping_labels_customs_content_gift">Gift</string>
     <string name="woo_shipping_labels_customs_content_returned_goods">Returned Goods</string>
     <string name="woo_shipping_labels_customs_content_sample">Sample</string>
     <string name="woo_shipping_labels_customs_content_documents">Documents</string>
     <string name="woo_shipping_labels_customs_content_other">Other</string>
+    <string name="woo_shipping_labels_customs_restriction_details_label">Restriction Details</string>
+    <string name="woo_shipping_labels_customs_restriction_details_description">Please describe what kind of restrictions this package must have</string>
     <string name="woo_shipping_labels_customs_restriction_none">None</string>
     <string name="woo_shipping_labels_customs_restriction_quarantine">Quarantine</string>
     <string name="woo_shipping_labels_customs_restriction_sanitary">Sanitary / Phytosanitary inspection</string>
