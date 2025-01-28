@@ -4473,4 +4473,6 @@
     <string name="woo_shipping_label_email">Email</string>
     <string name="woo_shipping_label_phone">Phone</string>
     <string name="woo_shipping_field_required_error">This field is required.</string>
+    <string name="woo_shipping_fetching_countries_and_states_failed">We were unable to retrieve country and state information. Please try again.</string>
+    <string name="woo_shipping_fetching_countries_and_states">Fetching countries and states.</string>
 </resources>
