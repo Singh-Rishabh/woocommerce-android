@@ -61,13 +61,13 @@ private fun MediaUploadErrorListScreen(
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
             )
         },
-        content = {
+        content = { padding ->
             MediaUploadErrorList(
                 errors = state.uploadErrorList,
                 onRetryClicked = onRetryClicked,
                 modifier = Modifier
+                    .padding(padding)
                     .background(MaterialTheme.colors.surface)
-                    .padding(it)
                     .padding(horizontal = 16.dp)
             )
         }
