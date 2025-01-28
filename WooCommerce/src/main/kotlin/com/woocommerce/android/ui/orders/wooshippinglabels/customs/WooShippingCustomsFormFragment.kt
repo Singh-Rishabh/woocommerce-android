@@ -39,6 +39,7 @@ class WooShippingCustomsFormFragment : BaseFragment() {
             when (event) {
                 is ShowContentTypeDialog -> {
                     handleItemSelection(
+                        requestKey = SELECTOR_CONTENT_REQUEST_KEY,
                         currentSelection = event.currentSelection.name,
                         selectionEntries = ContentType.entries.map { it.name }.toTypedArray(),
                         translatedEntries = ContentType.entries
@@ -49,6 +50,7 @@ class WooShippingCustomsFormFragment : BaseFragment() {
 
                 is ShowRestrictionTypeDialog -> {
                     handleItemSelection(
+                        requestKey = SELECTOR_RESTRICTION_REQUEST_KEY,
                         currentSelection = event.currentSelection.name,
                         selectionEntries = RestrictionType.entries.map { it.name }.toTypedArray(),
                         translatedEntries = RestrictionType.entries
@@ -61,13 +63,14 @@ class WooShippingCustomsFormFragment : BaseFragment() {
     }
 
     private fun handleItemSelection(
+        requestKey: String,
         currentSelection: String,
         selectionEntries: Array<String>,
         translatedEntries: Array<String>
     ) {
         WooShippingCustomsFormFragmentDirections
             .actionWooShippingLabelCustomsFormFragmentToItemSelectorDialog(
-                requestKey = SELECTOR_REQUEST_KEY,
+                requestKey = requestKey,
                 selectedItem = currentSelection,
                 values = selectionEntries,
                 keys = translatedEntries
@@ -75,6 +78,7 @@ class WooShippingCustomsFormFragment : BaseFragment() {
     }
 
     companion object {
-        const val SELECTOR_REQUEST_KEY = "label_customs_selector"
+        const val SELECTOR_CONTENT_REQUEST_KEY = "label_customs_content_selector"
+        const val SELECTOR_RESTRICTION_REQUEST_KEY = "label_customs_restriction_selector"
     }
 }
