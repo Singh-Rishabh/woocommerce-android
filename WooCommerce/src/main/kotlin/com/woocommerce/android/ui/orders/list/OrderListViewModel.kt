@@ -31,8 +31,8 @@ import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.analytics.IsScreenLargerThanCompactValue
 import com.woocommerce.android.analytics.deviceTypeToAnalyticsString
 import com.woocommerce.android.extensions.NotificationReceivedEvent
-import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.drop
+import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.filterNotNull
 import com.woocommerce.android.extensions.runWithContext
 import com.woocommerce.android.model.FeatureFeedbackSettings

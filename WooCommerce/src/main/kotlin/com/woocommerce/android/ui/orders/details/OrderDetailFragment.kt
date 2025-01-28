@@ -47,12 +47,6 @@ import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.show
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.extensions.whenNotNullNorEmpty
-import com.woocommerce.android.model.FeatureFeedbackSettings
-import com.woocommerce.android.model.FeatureFeedbackSettings.Feature.SHIPPING_LABEL_M4
-import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState
-import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState.DISMISSED
-import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState.GIVEN
-import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState.UNANSWERED
 import com.woocommerce.android.model.GiftCardSummary
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.Order.OrderStatus
