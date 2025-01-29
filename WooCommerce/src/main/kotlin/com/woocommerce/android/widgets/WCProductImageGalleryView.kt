@@ -422,7 +422,12 @@ class WCProductImageGalleryView @JvmOverloads constructor(
             if (viewType == VIEW_TYPE_PLACEHOLDER) {
                 glideRequest.load(Uri.parse(image.source)).apply(glideTransform).into(viewBinding.productImage)
             } else if (viewType == VIEW_TYPE_IMAGE) {
-                val photonUrl = PhotonUtils.getPhotonImageUrl(image.source, 0, imageSize)
+                val photonUrl = PhotonUtils.getPhotonImageUrl(
+                    image.source,
+                    0,
+                    imageSize,
+                    PhotonUtils.Quality.LOW
+                )
                 glideRequest.load(photonUrl).apply(glideTransform).into(viewBinding.productImage)
             }
 
