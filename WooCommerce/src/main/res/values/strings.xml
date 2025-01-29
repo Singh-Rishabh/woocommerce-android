@@ -2430,6 +2430,8 @@
     <string name="product_update_success_notification_title">Product Updated</string>
     <string name="product_update_success_notification_content">%1$d images have been added to the product %2$s</string>
     <string name="product_update_failure_notification">Updating product %1$s failed</string>
+    <string name="product_upload_error_title">Image upload errors</string>
+    <string name="product_upload_error_retry_button_content_description">Retry uploading product image</string>
 
     <!--
         Empty list messages
@@ -4473,4 +4475,5 @@
     <string name="woo_shipping_label_post_code">Postal Code</string>
     <string name="woo_shipping_label_email">Email</string>
     <string name="woo_shipping_label_phone">Phone</string>
+    <string name="woo_shipping_field_required_error">This field is required.</string>
 </resources>
