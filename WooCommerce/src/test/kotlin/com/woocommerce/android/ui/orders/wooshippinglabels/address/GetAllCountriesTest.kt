@@ -24,7 +24,7 @@ class GetAllCountriesTest : BaseUnitTest() {
     private val dataStore: WCDataStore = mock()
     private val selectedSite: SelectedSite = mock()
 
-    private val sut = GetAllCountries(dataStore, selectedSite)
+    private val sut = GetAllCountries(dataStore, selectedSite, coroutinesTestRule.testDispatchers)
 
     private val countries = listOf(
         WCLocationModel(1).also {
