@@ -429,6 +429,7 @@ private fun CustomsCard(
                     color = colorResource(R.color.divider_color),
                     shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
                 )
+                .padding(start = 16.dp, top = 6.dp, bottom = 6.dp, end = 8.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.shipping_labels_customs_title),
@@ -437,7 +438,6 @@ private fun CustomsCard(
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
-                    .padding(24.dp)
                     .align(Alignment.CenterVertically)
                     .weight(1f)
             )
