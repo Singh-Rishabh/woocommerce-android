@@ -205,7 +205,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val savedState: SavedStateHandle =
         WooShippingLabelCreationFragmentArgs(orderId = orderId).toSavedStateHandle()
 
-    private val shouldRequireCustomsForm : ShouldRequireCustomsForm = mock {
+    private val shouldRequireCustomsForm: ShouldRequireCustomsForm = mock {
         on { invoke(any()) } doReturn true
     }
 
