@@ -543,10 +543,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val currencyCode: String?
     )
 
-    // This will be extended later with the data coming from the Customs form
-    data class CustomsState(
-        val requiresCustomsForm: Boolean
-    )
+    // This will be extended later introducing the state with data coming from the Customs form
+    sealed class CustomsState {
+        data object NotRequired: CustomsState()
+        data object Unavailable: CustomsState()
+    }
 
     companion object {
         private const val TYPING_DELAY = 800L
