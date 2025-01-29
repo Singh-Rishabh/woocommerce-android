@@ -565,8 +565,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     // This will be extended later introducing the state with data coming from the Customs form
     sealed class CustomsState {
-        data object NotRequired: CustomsState()
-        data object Unavailable: CustomsState()
+        data object NotRequired : CustomsState()
+        data object Unavailable : CustomsState()
     }
 
     companion object {

@@ -454,7 +454,7 @@ private fun CustomsCard(
                     style = MaterialTheme.typography.caption,
                     color = MaterialTheme.colors.onSurface,
                     modifier = Modifier
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
             }
 
