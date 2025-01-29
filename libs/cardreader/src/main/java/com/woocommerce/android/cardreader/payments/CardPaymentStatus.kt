@@ -24,7 +24,7 @@ sealed class CardPaymentStatus {
 
         sealed class DeclinedByBackendError : CardPaymentStatusErrorType() {
             /**
-             * The specified amount is less than the minimum amount allowed (50 cents at the moment)
+             * The specified amount is less than the minimum amount allowed
              */
             object AmountTooSmall : DeclinedByBackendError()
 
