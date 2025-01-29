@@ -13,6 +13,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
@@ -44,6 +45,8 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(
@@ -108,6 +111,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch { observePackageChanges() }
         launch { observeShippingRates() }
         launch { observeShippingRatesState() }
+        launch { observeCustomsDataChanges() }
     }
 
     private suspend fun getOrderInformation() {
@@ -212,6 +216,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }.collectLatest {
             packageSelection.value = it
         }
+    }
+
+    // This logic will be updated later once the Customs data state is available
+    private suspend fun observeCustomsDataChanges() {
+        combine(
+            shippingAddresses,
+            customsState
+        ) { addresses, _ ->
+            when {
+                addresses != null && shouldRequireCustoms(addresses) -> Unavailable
+                else -> NotRequired
+            }
+        }.collectLatest { customsState.value = it }
     }
 
     private suspend fun getShippingAddresses() {
