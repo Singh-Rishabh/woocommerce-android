@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -203,6 +204,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val savedState: SavedStateHandle =
         WooShippingLabelCreationFragmentArgs(orderId = orderId).toSavedStateHandle()
 
+    private val shouldRequireCustomsForm : ShouldRequireCustomsForm = mock {
+        on { invoke(any()) } doReturn true
+    }
+
     private val observeOriginAddresses: ObserveOriginAddresses = mock()
     private val getShippingRates: GetShippingRates = mock()
     private val purchaseShippingLabel: PurchaseShippingLabel = mock()
@@ -219,6 +224,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             getShippingRates = getShippingRates,
             purchaseShippingLabel = purchaseShippingLabel,
             observeStoreOptions = observeStoreOptions,
+            shouldRequireCustoms = shouldRequireCustomsForm,
             savedState = savedState
         )
     }
