@@ -39,6 +39,8 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
     private var _binding: FragmentReceiptPreviewBinding? = null
     private val binding get() = _binding!!
 
+    private var urlToLoad: String? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -59,10 +61,12 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
                 viewModel.onPrintClicked()
                 true
             }
+
             R.id.menu_send -> {
                 viewModel.onShareClicked()
                 true
             }
+
             else -> false
         }
     }
@@ -102,9 +106,12 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
                     override fun shouldInterceptRequest(
                         view: WebView,
                         request: WebResourceRequest
-                    ): WebResourceResponse? {
-                        return interceptAndModifyReceiptResponse(request)
-                    }
+                    ): WebResourceResponse? =
+                        if (request.url.toString() == urlToLoad) {
+                            interceptAndModifyReceiptResponse(request)
+                        } else {
+                            null
+                        }
 
                     override fun onPageFinished(view: WebView, url: String) {
                         viewModel.onReceiptLoaded()
@@ -142,7 +149,10 @@ class ReceiptPreviewFragment : BaseFragment(R.layout.fragment_receipt_preview), 
         }
         viewModel.event.observe(viewLifecycleOwner) {
             when (it) {
-                is LoadUrl -> binding.receiptPreviewPreviewWebview.loadUrl(it.url)
+                is LoadUrl -> {
+                    urlToLoad = it.url
+                    binding.receiptPreviewPreviewWebview.loadUrl(it.url)
+                }
                 is PrintReceipt -> printHtmlHelper.printReceipt(requireActivity(), it.receiptUrl, it.documentName)
                 is ShowSnackbar -> uiMessageResolver.showSnack(it.message)
                 else -> it.isHandled = false
