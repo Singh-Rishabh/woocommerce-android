@@ -418,18 +418,26 @@ private fun CustomsCard(
                     color = MaterialTheme.colors.surface,
                     shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
                 )
+                .border(
+                    width = dimensionResource(R.dimen.minor_10),
+                    color = colorResource(R.color.divider_color),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
         ) {
             Text(
                 text = stringResource(id = R.string.shipping_labels_customs_title),
                 style = MaterialTheme.typography.subtitle1,
                 color = MaterialTheme.colors.onSurface,
+                textAlign = TextAlign.Start,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.major_200))
+                    .padding(24.dp)
                     .align(Alignment.CenterVertically)
+                    .weight(1f)
             )
             Text(
                 text = stringResource(id = R.string.shipping_labels_customs_missing_info_badge),
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.caption,
                 color = colorResource(id = R.color.color_on_surface_medium),
                 modifier = Modifier
                     .padding(dimensionResource(id = R.dimen.minor_100))
