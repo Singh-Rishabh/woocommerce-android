@@ -6,13 +6,14 @@ import com.stripe.stripeterminal.external.models.TerminalException.TerminalError
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse.Error.NetworkError
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse.Error.ServerError
-import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.*
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.DeviceIsNotSupported
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.InvalidAppSetup
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.NfcDisabled
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Canceled
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.CardReadTimeOut
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmall
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined.CardNotSupported
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined.CurrencyNotSupported
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined.DuplicateTransaction
@@ -115,10 +116,7 @@ internal class PaymentErrorMapper {
             "testmode_decline" -> TestCard
 
             "test_mode_live_card" -> TestModeLiveCard
-            else -> when (exception.apiError?.code) {
-                "amount_too_small" -> DeclinedByBackendError.AmountTooSmall
-                else -> DeclinedByBackendError.Unknown
-            }
+            else -> DeclinedByBackendError.Unknown
         }
 
     fun mapCapturePaymentError(
@@ -129,8 +127,20 @@ internal class PaymentErrorMapper {
         val message = "Capturing payment failed: $capturePaymentResponse"
         val type = when (capturePaymentResponse) {
             is NetworkError -> NoNetwork
-            is ServerError -> CardPaymentStatusErrorType.Server(capturePaymentResponse.message)
-            else -> Generic
+            is ServerError -> Server(capturePaymentResponse.message)
+            is CapturePaymentResponse.Error.CaptureError -> {
+                when (capturePaymentResponse) {
+                    is CapturePaymentResponse.Error.CaptureError.AmountTooSmall -> {
+                        AmountTooSmall(
+                            message = capturePaymentResponse.message,
+                            minAmountInMicroUnits = capturePaymentResponse.minAmountInMicroUnits,
+                            currency = capturePaymentResponse.currency,
+                        )
+                    }
+                }
+            }
+            is CapturePaymentResponse.Error.GenericError -> Generic
+            is CapturePaymentResponse.Error.MissingOrder -> Generic
         }
         return PaymentFailed(type, paymentData, message)
     }

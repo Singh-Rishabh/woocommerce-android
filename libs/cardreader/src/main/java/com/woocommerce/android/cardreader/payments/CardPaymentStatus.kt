@@ -26,7 +26,11 @@ sealed class CardPaymentStatus {
             /**
              * The specified amount is less than the minimum amount allowed
              */
-            object AmountTooSmall : DeclinedByBackendError()
+            data class AmountTooSmall(
+                val message: String,
+                val minAmountInMicroUnits: Long,
+                val currency: String,
+            ) : DeclinedByBackendError()
 
             /**
              * Declined by stripe api with unknown reason
