@@ -4,6 +4,7 @@
 21.6
 -----
 - [**] The UK customers have access to the POS now [https://github.com/woocommerce/woocommerce-android/pull/13386]
+- [Internal] [*] Fixed a bug that could lead to a crash when formatting dates and times [https://github.com/woocommerce/woocommerce-android/pull/13393]
 
 21.5
 -----
