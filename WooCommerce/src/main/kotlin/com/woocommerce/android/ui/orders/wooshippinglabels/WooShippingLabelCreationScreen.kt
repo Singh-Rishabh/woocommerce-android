@@ -188,6 +188,7 @@ fun WooShippingLabelCreationScreen(
             scaffoldState = scaffoldState,
             shippingLines = shippingLines,
             shippingAddresses = shippingAddresses,
+            customsState = customsState,
             shippingRatesState = shippingRatesState,
             packageSelectionState = packageSelectionState,
             onShippingFromAddressChange = onShippingFromAddressChange,
@@ -258,6 +259,7 @@ private fun LabelCreationScreenWithBottomSheet(
     shippingLines: List<ShippingLineSummaryUI>,
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     packageSelectionState: PackageSelectionState,
+    customsState: CustomsState,
     onSelectPackageClick: () -> Unit,
     shippingAddresses: WooShippingAddresses,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
@@ -343,6 +345,12 @@ private fun LabelCreationScreenWithBottomSheet(
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)
                 )
+                CustomsCard(
+                    customsState = customsState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
                 PackageCard(
                     modifier = Modifier.padding(16.dp),
                     packageSelectionState = packageSelectionState,
@@ -394,6 +402,22 @@ internal fun HazmatCard(
                 .align(Alignment.CenterVertically)
                 .padding(end = dimensionResource(R.dimen.minor_50))
         )
+    }
+}
+
+@Composable
+private fun CustomsCard(
+    modifier: Modifier = Modifier,
+    customsState: CustomsState
+) {
+    Column(
+        modifier = modifier
+            .background(
+                color = MaterialTheme.colors.surface,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+            )
+    ) {
+
     }
 }
 
