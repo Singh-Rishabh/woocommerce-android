@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.payments.cardreader.payment
 
 import com.woocommerce.android.R
-import com.woocommerce.android.cardreader.config.CardReaderConfigForSupportedCountry
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmall
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined
@@ -17,13 +16,12 @@ class CardReaderPaymentErrorMapper @Inject constructor(
 ) {
     fun mapPaymentErrorToUiError(
         errorType: CardPaymentStatus.CardPaymentStatusErrorType,
-        config: CardReaderConfigForSupportedCountry,
         isTapToPayPayment: Boolean,
     ): PaymentFlowError =
         when (errorType) {
             CardPaymentStatus.CardPaymentStatusErrorType.NoNetwork -> PaymentFlowError.NoNetwork
             is CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError ->
-                mapPaymentDeclinedErrorType(errorType, config, isTapToPayPayment)
+                mapPaymentDeclinedErrorType(errorType, isTapToPayPayment)
             CardPaymentStatus.CardPaymentStatusErrorType.CardReadTimeOut,
             CardPaymentStatus.CardPaymentStatusErrorType.Generic -> PaymentFlowError.Generic
             is CardPaymentStatus.CardPaymentStatusErrorType.Server -> PaymentFlowError.Server
@@ -40,10 +38,9 @@ class CardReaderPaymentErrorMapper @Inject constructor(
     @Suppress("ComplexMethod")
     private fun mapPaymentDeclinedErrorType(
         cardPaymentStatusErrorType: CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError,
-        config: CardReaderConfigForSupportedCountry,
         isTapToPayPayment: Boolean,
     ) = when (cardPaymentStatusErrorType) {
-        AmountTooSmall -> generateAmountToSmallErrorFor(config)
+        is AmountTooSmall -> generateAmountToSmallErrorFor(cardPaymentStatusErrorType)
 
         Unknown -> PaymentFlowError.Unknown
 
@@ -71,11 +68,11 @@ class CardReaderPaymentErrorMapper @Inject constructor(
         CardDeclined.TooManyPinTries -> PaymentFlowError.Declined.TooManyPinTries
     }
 
-    private fun generateAmountToSmallErrorFor(config: CardReaderConfigForSupportedCountry):
+    private fun generateAmountToSmallErrorFor(data: AmountTooSmall):
         PaymentFlowError.AmountTooSmall {
         val minChargeAmountString = currencyFormatter.formatAmountWithCurrency(
-            config.minimumAllowedChargeAmount.toDouble(),
-            config.currency
+            data.minAmountInMicroUnits.toDouble(),
+            data.currency,
         )
         val message =
             resources.getString(R.string.card_reader_payment_failed_amount_too_small)

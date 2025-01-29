@@ -20,6 +20,8 @@ interface CardReaderStore {
                     val minAmountInMicroUnits: Long,
                     val currency: String,
                 ) : CaptureError(message)
+
+                data class Generic(override val message: String) : CaptureError(message)
             }
             data class ServerError(override val message: String) : Error(message)
             data class NetworkError(override val message: String) : Error(message)

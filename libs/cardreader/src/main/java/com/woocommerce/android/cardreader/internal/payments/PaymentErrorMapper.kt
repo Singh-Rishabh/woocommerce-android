@@ -137,6 +137,8 @@ internal class PaymentErrorMapper {
                             currency = capturePaymentResponse.currency,
                         )
                     }
+
+                    is CapturePaymentResponse.Error.CaptureError.Generic -> Generic
                 }
             }
             is CapturePaymentResponse.Error.GenericError -> Generic
