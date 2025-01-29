@@ -62,6 +62,8 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
@@ -93,6 +95,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 shippingAddresses = viewState.shippingAddresses,
                 shippingRatesState = viewState.shippingRates,
                 packageSelectionState = viewState.packageSelection,
+                customsState = viewState.customsState,
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
                 onEditOriginAddress = viewModel::onEditOriginAddress,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
@@ -124,6 +127,7 @@ fun WooShippingLabelCreationScreen(
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     packageSelectionState: PackageSelectionState,
     shippingAddresses: WooShippingAddresses,
+    customsState: CustomsState,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
     onSelectPackageClick: () -> Unit,
@@ -635,6 +639,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             ),
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             packageSelectionState = NotSelected,
+            customsState = NotRequired,
             onShippingFromAddressChange = {},
             onRefreshShippingRates = {},
             onSelectedRateSortOrderChanged = {},
