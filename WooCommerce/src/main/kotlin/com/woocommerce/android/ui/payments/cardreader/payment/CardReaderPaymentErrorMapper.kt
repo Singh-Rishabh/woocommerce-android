@@ -68,8 +68,7 @@ class CardReaderPaymentErrorMapper @Inject constructor(
         CardDeclined.TooManyPinTries -> PaymentFlowError.Declined.TooManyPinTries
     }
 
-    private fun generateAmountToSmallErrorFor(data: AmountTooSmall):
-        PaymentFlowError.AmountTooSmall {
+    private fun generateAmountToSmallErrorFor(data: AmountTooSmall): PaymentFlowError.AmountTooSmall {
         val minChargeAmountString = currencyFormatter.formatAmountWithCurrency(
             data.minAmountInMicroUnits.toDouble(),
             data.currency,
