@@ -109,7 +109,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onNavigateBack = viewModel::onNavigateBack,
                 purchaseState = viewState.purchaseState,
                 onShipmentDetailsExpandedChange = viewModel::onShipmentDetailsExpandedChange,
-                onSelectAddressExpandedChange = viewModel::onSelectAddressExpandedChange
+                onSelectAddressExpandedChange = viewModel::onSelectAddressExpandedChange,
+                onEditCustomsClick = {}
             )
         }
 
@@ -143,6 +144,7 @@ fun WooShippingLabelCreationScreen(
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onSelectAddressExpandedChange: (Boolean) -> Boolean,
     purchaseState: WooShippingLabelCreationViewModel.PurchaseState,
+    onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -203,7 +205,8 @@ fun WooShippingLabelCreationScreen(
             onNavigateBack = onNavigateBack,
             onMarkOrderCompleteChange = onMarkOrderCompleteChange,
             shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
-            onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange
+            onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
+            onEditCustomsClick = onEditCustomsClick
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -276,6 +279,7 @@ private fun LabelCreationScreenWithBottomSheet(
     onMarkOrderCompleteChange: (Boolean) -> Unit,
     onNavigateBack: () -> Unit,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
+    onEditCustomsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
@@ -348,6 +352,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 )
                 CustomsCard(
                     customsState = customsState,
+                    onEditCustomsClick = onEditCustomsClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -409,7 +414,8 @@ internal fun HazmatCard(
 @Composable
 private fun CustomsCard(
     modifier: Modifier = Modifier,
-    customsState: CustomsState
+    customsState: CustomsState,
+    onEditCustomsClick: () -> Unit
 ) {
     if (customsState !is NotRequired) {
         Row(
@@ -449,6 +455,18 @@ private fun CustomsCard(
                     color = MaterialTheme.colors.onSurface,
                     modifier = Modifier
                         .padding(horizontal = 12.dp, vertical = 8.dp)
+                )
+            }
+
+            IconButton(
+                onClick = onEditCustomsClick,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    tint = colorResource(id = R.color.color_icon_menu),
+                    contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
                 )
             }
         }
@@ -714,7 +732,8 @@ private fun WooShippingLabelCreationScreenPreview() {
                 isAddressSelectionExpanded = false
             ),
             onShipmentDetailsExpandedChange = { true },
-            onSelectAddressExpandedChange = { true }
+            onSelectAddressExpandedChange = { true },
+            onEditCustomsClick = {}
         )
     }
 }
