@@ -6,6 +6,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.LabelPurchased
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PurchaseState
@@ -564,6 +565,58 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         assertThat(dataState.packageSelection).isInstanceOf(DataAvailable::class.java)
         val dataAvailable = dataState.packageSelection as DataAvailable
         assertThat(dataAvailable.selectedPackage).isEqualTo(newPackageData)
+    }
+
+    @Test
+    fun `CustomState is NotRequired when shouldRequireCustomsForm returns false`() = testBlocking {
+        var currentViewState: WooShippingViewState? = null
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        sut.viewState.asLiveData().observeForever {
+            currentViewState = it
+        }
+
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        val dataState = currentViewState as DataState
+
+        assertThat(dataState.customsState).isEqualTo(CustomsState.NotRequired)
+    }
+
+    @Test
+    fun `CustomState is Unavailable when shouldRequireCustomsForm returns true`() = testBlocking {
+        var currentViewState: WooShippingViewState? = null
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        sut.viewState.asLiveData().observeForever {
+            currentViewState = it
+        }
+
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        val dataState = currentViewState as DataState
+
+        assertThat(dataState.customsState).isEqualTo(CustomsState.NotRequired)
     }
 
     @Test
