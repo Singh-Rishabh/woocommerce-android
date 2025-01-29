@@ -2,10 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/payments_dialog_width"
-    android:layout_height="@dimen/payments_dialog_height"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@color/color_surface_elevated"
     android:keepScreenOn="true"
+    android:minWidth="@dimen/payments_dialog_width"
+    android:minHeight="@dimen/payments_dialog_height"
     android:paddingVertical="@dimen/major_175"
     tools:context="com.woocommerce.android.ui.payments.cardreader.update.CardReaderUpdateDialogFragment">
 
