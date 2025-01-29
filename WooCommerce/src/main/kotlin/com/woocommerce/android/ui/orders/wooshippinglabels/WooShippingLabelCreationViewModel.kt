@@ -12,6 +12,7 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
@@ -68,6 +69,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageSelected = MutableStateFlow<PackageData?>(null)
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
+    private val customsState = MutableStateFlow<CustomsState>(NotRequired)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -262,7 +264,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelection,
             uiState,
             purchaseState,
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState ->
+            customsState
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState ->
             if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -287,7 +290,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 shippingRates = shippingRates,
                 packageSelection = packageSelection,
                 uiState = uiState,
-                purchaseState = purchaseState
+                purchaseState = purchaseState,
+                customsState = customsState
             )
         }.collectLatest {
             viewState.value = it
@@ -482,7 +486,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingRates: ShippingRatesState,
             val packageSelection: PackageSelectionState,
             val uiState: UIControlsState,
-            val purchaseState: PurchaseState
+            val purchaseState: PurchaseState,
+            val customsState: CustomsState
         ) : WooShippingViewState()
     }
 
