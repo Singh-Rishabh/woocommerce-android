@@ -17,11 +17,12 @@ class GetAllCountries @Inject constructor(
         } else {
             val siteModel = site.getOrNull() ?: return Result.failure(Exception("No site selected"))
             val result = dataStore.fetchCountriesAndStates(siteModel)
-            if (result.isError) {
-                val error = result.error.message ?: "Unknown error"
+            val countries = result.model
+            if (result.isError || countries == null) {
+                val error = result.error?.message ?: "Unknown error"
                 Result.failure(Exception(error))
             } else {
-                Result.success(dataStore.getCountries().map { it.toAppModel() })
+                Result.success(countries.map { it.toAppModel() })
             }
         }
     }
