@@ -64,6 +64,7 @@ import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
@@ -410,14 +411,31 @@ private fun CustomsCard(
     modifier: Modifier = Modifier,
     customsState: CustomsState
 ) {
-    Column(
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colors.surface,
-                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+    if (customsState !is NotRequired) {
+        Row(
+            modifier = modifier
+                .background(
+                    color = MaterialTheme.colors.surface,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+        ) {
+            Text(
+                text = stringResource(id = R.string.shipping_labels_customs_title),
+                style = MaterialTheme.typography.subtitle1,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.major_200))
+                    .align(Alignment.CenterVertically)
             )
-    ) {
-
+            Text(
+                text = stringResource(id = R.string.shipping_labels_customs_missing_info_badge),
+                style = MaterialTheme.typography.subtitle1,
+                color = colorResource(id = R.color.color_on_surface_medium),
+                modifier = Modifier
+                    .padding(dimensionResource(id = R.dimen.minor_100))
+                    .align(Alignment.CenterVertically)
+            )
+        }
     }
 }
 
@@ -663,7 +681,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             ),
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             packageSelectionState = NotSelected,
-            customsState = NotRequired,
+            customsState = Unavailable,
             onShippingFromAddressChange = {},
             onRefreshShippingRates = {},
             onSelectedRateSortOrderChanged = {},
