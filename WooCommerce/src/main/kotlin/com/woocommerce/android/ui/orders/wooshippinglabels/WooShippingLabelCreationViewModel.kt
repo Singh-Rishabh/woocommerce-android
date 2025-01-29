@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.orders.details.OrderDetailRepository
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
@@ -52,7 +53,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
     private val purchaseShippingLabel: PurchaseShippingLabel,
-    private val observeStoreOptions: ObserveStoreOptions
+    private val observeStoreOptions: ObserveStoreOptions,
+    private val shouldRequireCustoms: ShouldRequireCustomsForm
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -539,6 +541,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val shipTo: Address,
         val weight: Float,
         val currencyCode: String?
+    )
+
+    // This will be extended later with the data coming from the Customs form
+    data class CustomsState(
+        val requiresCustomsForm: Boolean
     )
 
     companion object {
