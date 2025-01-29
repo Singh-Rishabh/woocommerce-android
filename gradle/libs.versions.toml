@@ -90,7 +90,7 @@ wordpress-aztec = 'v2.1.4'
 wordpress-fluxc = '2.103.0'
 wordpress-login = '1.20.0'
 wordpress-libaddressinput = '0.0.2'
-wordpress-mediapicker = '85-7e1e91ee21e554ea5f93f348f734a0c9968b5d68'
+wordpress-mediapicker = 'trunk-d6daa7a662b48d9cd9af5d18d2258d39b0a44901'
 wordpress-utils = '3.15.0'
 zendesk = '5.0.8'
 
