@@ -435,14 +435,22 @@ private fun CustomsCard(
                     .align(Alignment.CenterVertically)
                     .weight(1f)
             )
-            Text(
-                text = stringResource(id = R.string.shipping_labels_customs_missing_info_badge),
-                style = MaterialTheme.typography.caption,
-                color = colorResource(id = R.color.color_on_surface_medium),
+            Box(
                 modifier = Modifier
-                    .padding(dimensionResource(id = R.dimen.minor_100))
+                    .background(
+                        color = colorResource(id = R.color.woo_red_20),
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_medium))
+                    )
                     .align(Alignment.CenterVertically)
-            )
+            ) {
+                Text(
+                    text = stringResource(id = R.string.shipping_labels_customs_missing_info_badge),
+                    style = MaterialTheme.typography.caption,
+                    color = MaterialTheme.colors.onSurface,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                )
+            }
         }
     }
 }
