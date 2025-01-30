@@ -102,6 +102,7 @@
         android:id="@+id/two_pane_layout_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.0"
         android:orientation="vertical" />
 
     <androidx.fragment.app.FragmentContainerView
