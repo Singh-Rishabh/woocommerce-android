@@ -470,6 +470,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
+    fun onEditCustomsClick() {
+
+    }
+
     fun onNavigateBack(): Boolean {
         val state = uiState.value
         return when {
