@@ -14,13 +14,9 @@ import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.*
-import org.mockito.kotlin.mock
 
 @ExperimentalCoroutinesApi
 class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
-    private var eventObserver: Observer<MultiLiveEvent.Event> = mock()
-
     private lateinit var viewModel: WooShippingCustomsFormViewModel
 
     @Before
@@ -28,19 +24,26 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
         viewModel = WooShippingCustomsFormViewModel(
             savedState = SavedStateHandle()
         )
-        viewModel.event.observeForever(eventObserver)
     }
 
     @Test
     fun `onContentTypeClick should trigger ShowContentTypeDialog event`() = testBlocking {
+        var latestEvent: MultiLiveEvent.Event? = null
+        viewModel.event.observeForever {
+            latestEvent = it
+        }
         viewModel.onContentTypeClick()
-        verify(eventObserver).onChanged(ShowContentTypeDialog(ContentType.MERCHANDISE))
+        assertThat(latestEvent).isEqualTo(ShowContentTypeDialog(ContentType.MERCHANDISE))
     }
 
     @Test
     fun `onRestrictionTypeClick should trigger ShowRestrictionTypeDialog event`() = testBlocking {
+        var latestEvent: MultiLiveEvent.Event? = null
+        viewModel.event.observeForever {
+            latestEvent = it
+        }
         viewModel.onRestrictionTypeClick()
-        verify(eventObserver).onChanged(ShowRestrictionTypeDialog(RestrictionType.NONE))
+        assertThat(latestEvent).isEqualTo(ShowRestrictionTypeDialog(RestrictionType.NONE))
     }
 
     @Test
