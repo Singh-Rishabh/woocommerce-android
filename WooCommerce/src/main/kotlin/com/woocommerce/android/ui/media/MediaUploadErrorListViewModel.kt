@@ -46,9 +46,11 @@ class MediaUploadErrorListViewModel @Inject constructor(
         }
         mediaFileUploadHandler.observeCurrentUploadErrors(navArgs.remoteProductId)
             .filter { it.isNotEmpty() }
-            .onEach { errors ->
+            .onEach { newErrors ->
                 val currentErrors = _viewState.value.uploadErrorList +
-                    errors.map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri) }
+                    newErrors
+                        .map { ErrorUiModel(it.uploadStatus as UploadStatus.Failed, it.localUri) }
+                        .filter { _viewState.value.uploadErrorList.contains(it).not() } // Filter duplicates
                 _viewState.update {
                     _viewState.value.copy(
                         uploadErrorList = currentErrors,
@@ -58,8 +60,6 @@ class MediaUploadErrorListViewModel @Inject constructor(
                         )
                     )
                 }
-                // Remove errors from mediaFileUploadHandler to avoid duplicate notifications
-                mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId)
             }
             .launchIn(this)
     }
