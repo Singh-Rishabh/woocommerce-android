@@ -28,10 +28,9 @@ import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_LIST_PRODUCT_BARCO
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_HORIZONTAL_SIZE_CLASS
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
-import com.woocommerce.android.analytics.IsScreenLargerThanCompactValue
+import com.woocommerce.android.analytics.IsScreenInTwoPaneLayout
 import com.woocommerce.android.analytics.deviceTypeToAnalyticsString
 import com.woocommerce.android.extensions.NotificationReceivedEvent
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.drop
 import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.filterNotNull
@@ -428,19 +427,19 @@ class OrderListViewModel @Inject constructor(
      * Track user clicked to open an order and the status of that order, along with some
      * data about the order custom fields
      */
-    fun trackOrderClickEvent(orderId: Long, orderStatus: String, windowSize: WindowSizeClass) {
+    fun trackOrderClickEvent(orderId: Long, orderStatus: String, isTwoPaneLayout: Boolean) {
         AnalyticsTracker.track(
             AnalyticsEvent.ORDER_OPEN,
             mapOf(
                 AnalyticsTracker.KEY_ID to orderId,
                 AnalyticsTracker.KEY_STATUS to orderStatus,
-                KEY_HORIZONTAL_SIZE_CLASS to getScreenSizeClassNameForAnalytics(windowSize)
+                KEY_HORIZONTAL_SIZE_CLASS to getScreenSizeClassNameForAnalytics(isTwoPaneLayout)
             )
         )
     }
 
-    private fun getScreenSizeClassNameForAnalytics(windowSize: WindowSizeClass) =
-        IsScreenLargerThanCompactValue(windowSize != WindowSizeClass.Compact).deviceTypeToAnalyticsString
+    private fun getScreenSizeClassNameForAnalytics(isTwoPaneLayout: Boolean) =
+        IsScreenInTwoPaneLayout(isTwoPaneLayout).deviceTypeToAnalyticsString
 
     /**
      * Activates the provided list by first removing the LiveData sources for the active list,
