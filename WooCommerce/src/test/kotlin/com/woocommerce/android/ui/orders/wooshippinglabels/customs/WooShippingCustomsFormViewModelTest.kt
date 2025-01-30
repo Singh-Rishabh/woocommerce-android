@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
-import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
@@ -10,7 +9,6 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCu
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -47,7 +45,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onITNChanged should update itnValue in viewState`() = runBlockingTest {
+    fun `onITNChanged should update itnValue in viewState`() = testBlocking {
         val newItnValue = "123456"
         var capturedViewState: ViewState? = null
         viewModel.viewState.observeForever {
