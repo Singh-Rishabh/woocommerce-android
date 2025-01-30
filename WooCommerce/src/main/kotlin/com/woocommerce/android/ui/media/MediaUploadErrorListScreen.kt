@@ -61,13 +61,13 @@ private fun MediaUploadErrorListScreen(
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
             )
         },
-        content = {
+        content = { padding ->
             MediaUploadErrorList(
                 errors = state.uploadErrorList,
                 onRetryClicked = onRetryClicked,
                 modifier = Modifier
+                    .padding(padding)
                     .background(MaterialTheme.colors.surface)
-                    .padding(it)
                     .padding(horizontal = 16.dp)
             )
         }
@@ -111,7 +111,7 @@ fun MediaUploadErrorListItem(
             fallback = painterResource(R.drawable.ic_product),
             placeholder = painterResource(R.drawable.ic_product),
             error = painterResource(R.drawable.ic_product),
-            contentDescription = "",
+            contentDescription = stringResource(id = R.string.product_image_content_description),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .width(48.dp)

@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.address.origin
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
 import androidx.compose.ui.unit.dp
+import androidx.fragment.app.viewModels
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
@@ -20,6 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WooShippingEditOriginAddressFragment : BaseFragment() {
+
+    private val viewModel: WooShippingEditOriginViewModel by viewModels()
 
     override val activityAppBarStatus: AppBarStatus = AppBarStatus.Hidden
 
@@ -30,6 +32,7 @@ class WooShippingEditOriginAddressFragment : BaseFragment() {
                 WooThemeWithBackground {
                     Surface {
                         WooShippingEditAddressScreen(
+                            viewModel = viewModel,
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(16.dp)

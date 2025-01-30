@@ -4339,6 +4339,7 @@
     <string name="woopos_variations_empty_list_title">No supported variations found</string>
     <string name="woopos_variations_empty_list_message">POS currently only supports simple, variable, and virtual products – \ncreate one to get started.</string>
     <string name="woopos_variations_empty_list_image_description">No variations</string>
+    <string name="woopos_variations_any_variation">Any %s</string>
 
     <string name="woopos_success_totals_error_reader_not_connected_title">Reader not connected</string>
     <string name="woopos_success_totals_error_reader_not_connected_subtitle">To process this payment, please connect your reader.</string>
@@ -4475,4 +4476,5 @@
     <string name="woo_shipping_label_post_code">Postal Code</string>
     <string name="woo_shipping_label_email">Email</string>
     <string name="woo_shipping_label_phone">Phone</string>
+    <string name="woo_shipping_field_required_error">This field is required.</string>
 </resources>
