@@ -42,6 +42,7 @@ import com.woocommerce.android.model.ProductTag
 import com.woocommerce.android.model.RequestResult
 import com.woocommerce.android.model.SubscriptionDetails
 import com.woocommerce.android.model.SubscriptionPeriod
+import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.model.addTags
 import com.woocommerce.android.model.sortCategories
 import com.woocommerce.android.model.toAppModel
@@ -93,9 +94,9 @@ import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.LaunchUrlInChromeTab
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowActionSnackbar
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowUiStringSnackbar
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getNullableStateFlow
@@ -2139,12 +2140,11 @@ class ProductDetailViewModel @Inject constructor(
                             } else {
                                 viewState = viewState.copy(hasUploadErrors = true)
                                 triggerEvent(
-                                    ShowActionSnackbar(
-                                        message = resources.getMediaUploadErrorMessage(errorList.size),
-                                        actionText = resources.getString(R.string.details)
-                                    ) {
-                                        triggerEvent(ProductNavigationTarget.ViewMediaUploadErrors(productId))
-                                    }
+                                    ShowUiStringSnackbar(
+                                        message = UiStringText(
+                                            resources.getMediaUploadErrorMessage(errorList.size)
+                                        ),
+                                    )
                                 )
                             }
                         }

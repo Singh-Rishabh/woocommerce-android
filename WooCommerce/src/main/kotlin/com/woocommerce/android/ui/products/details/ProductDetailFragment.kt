@@ -37,6 +37,7 @@ import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.model.Product.Image
+import com.woocommerce.android.model.UiString
 import com.woocommerce.android.ui.aztec.AztecEditorFragment
 import com.woocommerce.android.ui.aztec.AztecEditorFragment.Companion.ARG_AZTEC_EDITOR_TEXT
 import com.woocommerce.android.ui.aztec.AztecEditorFragment.Companion.ARG_AZTEC_TITLE_FROM_AI_DESCRIPTION
@@ -83,9 +84,10 @@ import com.woocommerce.android.ui.products.variations.VariationListViewModel.Var
 import com.woocommerce.android.ui.promobanner.PromoBanner
 import com.woocommerce.android.ui.promobanner.PromoBannerType
 import com.woocommerce.android.util.ChromeCustomTabUtils
+import com.woocommerce.android.util.UiHelpers.getTextOfUiString
 import com.woocommerce.android.util.WooAnimUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.LaunchUrlInChromeTab
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowActionSnackbar
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowUiStringSnackbar
 import com.woocommerce.android.widgets.CustomProgressDialog
 import com.woocommerce.android.widgets.SkeletonView
 import com.woocommerce.android.widgets.WCProductImageGalleryView.OnGalleryImageInteractionListener
@@ -183,9 +185,11 @@ class ProductDetailFragment :
                         ProductsCommunicationViewModel.CommunicationEvent.ProductSelected(mode.remoteProductId)
                     )
                 }
+
                 is Mode.Loading, is Mode.Empty -> {
                     findNavController().popBackStack()
                 }
+
                 is Mode.AddNewProduct -> {
                 }
             }
@@ -399,11 +403,7 @@ class ProductDetailFragment :
                     )
                 }
 
-                is ShowActionSnackbar -> displayProductImageUploadErrorSnackBar(
-                    event.message,
-                    event.actionText,
-                    event.action
-                )
+                is ShowUiStringSnackbar -> displayProductImageUploadErrorSnackBar(event.message)
 
                 is HideImageUploadErrorSnackbar -> imageUploadErrorsSnackbar?.dismiss()
                 is ShowLinkedProductPromoBanner -> showLinkedProductPromoBanner()
@@ -424,6 +424,7 @@ class ProductDetailFragment :
                 is ProductUpdated -> productsCommunicationViewModel.pushEvent(
                     ProductsCommunicationViewModel.CommunicationEvent.ProductUpdated
                 )
+
                 is ProductDetailViewModel.ShowUpdateProductError -> showUpdateProductError(event.message)
                 else -> event.isHandled = false
             }
@@ -528,19 +529,11 @@ class ProductDetailFragment :
         }
     }
 
-    private fun displayProductImageUploadErrorSnackBar(
-        message: String,
-        actionText: String,
-        actionListener: View.OnClickListener
-    ) {
+    private fun displayProductImageUploadErrorSnackBar(uiString: UiString) {
         if (imageUploadErrorsSnackbar == null) {
-            imageUploadErrorsSnackbar = uiMessageResolver.getIndefiniteActionSnack(
-                message = message,
-                actionText = actionText,
-                actionListener = actionListener
-            )
+            imageUploadErrorsSnackbar = uiMessageResolver.getUiStringSnack(message = uiString)
         } else {
-            imageUploadErrorsSnackbar?.setText(message)
+            imageUploadErrorsSnackbar?.setText(getTextOfUiString(requireContext(), uiString))
         }
         imageUploadErrorsSnackbar?.show()
     }
@@ -562,6 +555,7 @@ class ProductDetailFragment :
                 Loading, None -> {
                     binding.productErrorStateContainer.isVisible = false
                 }
+
                 is Error -> {
                     binding.productErrorStateContainer.isVisible = true
                     binding.productDetailRoot.isVisible = false
