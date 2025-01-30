@@ -77,7 +77,6 @@ class ProductImagesViewModel @Inject constructor(
     init {
         if (viewState.showSourceChooser == true) {
             viewState = viewState.copy(showSourceChooser = false)
-            // clearImageUploadErrors()
             triggerEvent(ShowImageSourceDialog)
         } else if (navArgs.selectedImage != null) {
             triggerEvent(ShowImageDetail(navArgs.selectedImage!!))
