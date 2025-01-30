@@ -204,9 +204,9 @@ class MediaFileUploadHandler @Inject constructor(
     private fun clearImageError(remoteProductId: Long, uris: List<String>) {
         uploadsStatus.update { list ->
             list.filterNot {
-                it.remoteProductId == remoteProductId
-                    && it.uploadStatus is UploadStatus.Failed
-                    && uris.contains(it.localUri)
+                it.remoteProductId == remoteProductId &&
+                    it.uploadStatus is UploadStatus.Failed &&
+                    uris.contains(it.localUri)
             }
         }
     }
