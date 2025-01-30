@@ -12,8 +12,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.text.HtmlCompat
 import com.woocommerce.android.extensions.WindowSizeClass
+import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 import com.woocommerce.android.extensions.windowHeightSizeClass
-import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.UiDimen
 import com.woocommerce.android.model.UiDimen.UiDimenDPInt
 import com.woocommerce.android.model.UiDimen.UiDimenRes
@@ -108,9 +108,5 @@ object UiHelpers {
 }
 
 class IsWindowClassLargeThanCompact @Inject constructor(val context: Context) {
-    operator fun invoke() = context.windowSizeClass != WindowSizeClass.Compact
-}
-
-class IsWindowClassExpandedAndBigger @Inject constructor(val context: Context) {
-    operator fun invoke() = context.windowSizeClass >= WindowSizeClass.ExpandedAndBigger
+    operator fun invoke() = context.isTwoPanesShouldBeUsed
 }
