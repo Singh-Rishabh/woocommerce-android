@@ -30,6 +30,5 @@ class GetAllCountries @Inject constructor(
                 }
             }
         }
-
     }
 }
