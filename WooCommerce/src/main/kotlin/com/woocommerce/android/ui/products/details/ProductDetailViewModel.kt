@@ -931,6 +931,7 @@ class ProductDetailViewModel @Inject constructor(
             val positiveAction = DialogInterface.OnClickListener { _, _ ->
                 // Make sure to cancel any remaining image uploads
                 mediaFileUploadHandler.cancelUpload(getRemoteProductId())
+                mediaFileUploadHandler.clearImageErrors(getRemoteProductId())
                 triggerEvent(ProductNavigationTarget.ExitProduct)
             }
 
