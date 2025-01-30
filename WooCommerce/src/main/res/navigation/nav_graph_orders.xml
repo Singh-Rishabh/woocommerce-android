@@ -748,6 +748,9 @@
         <action
             android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingEditOriginAddressFragment"
             app:destination="@id/wooShippingEditOriginAddressFragment" />
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelCustomsFormFragment"
+            app:destination="@id/wooShippingLabelCustomsFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPackageCreationFragment"
