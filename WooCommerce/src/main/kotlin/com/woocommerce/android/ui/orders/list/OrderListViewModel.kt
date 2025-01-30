@@ -19,7 +19,6 @@ import androidx.paging.PagedList
 import com.google.android.material.snackbar.Snackbar
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.BuildConfig
-import com.woocommerce.android.FeedbackPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDERS_LIST_AUTOMATIC_TIMEOUT_RETRY
@@ -35,7 +34,6 @@ import com.woocommerce.android.extensions.drop
 import com.woocommerce.android.extensions.filter
 import com.woocommerce.android.extensions.filterNotNull
 import com.woocommerce.android.extensions.runWithContext
-import com.woocommerce.android.model.FeatureFeedbackSettings
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.model.RequestResult.SUCCESS
 import com.woocommerce.android.network.ConnectionChangeReceiver.ConnectionChangeEvent
@@ -116,7 +114,6 @@ class OrderListViewModel @Inject constructor(
     private val orderListTransactionLauncher: OrderListTransactionLauncher,
     private val shouldShowCreateTestOrderScreen: ShouldShowCreateTestOrderScreen,
     private val analyticsTracker: AnalyticsTrackerWrapper,
-    private val feedbackPrefs: FeedbackPrefs,
     private val barcodeScanningTracker: BarcodeScanningTracker,
     private val notificationChannelsHandler: NotificationChannelsHandler,
     private val appPrefs: AppPrefsWrapper,
@@ -137,11 +134,6 @@ class OrderListViewModel @Inject constructor(
 
     override val lifecycle: Lifecycle
         get() = lifecycleRegistry
-
-    private val simplePaymentsAndOrderCreationFeedbackState
-        get() = feedbackPrefs.getFeatureFeedbackSettings(
-            FeatureFeedbackSettings.Feature.SIMPLE_PAYMENTS_AND_ORDER_CREATION
-        )?.feedbackState ?: FeatureFeedbackSettings.FeedbackState.UNANSWERED
 
     val performanceObserver: LifecycleObserver = orderListTransactionLauncher
 
@@ -207,14 +199,6 @@ class OrderListViewModel @Inject constructor(
 
     private var dismissListErrors = false
     var searchQuery = ""
-
-    private val isSimplePaymentsAndOrderCreationFeedbackVisible: Boolean
-        get() {
-            val simplePaymentsAndOrderFeedbackDismissed =
-                simplePaymentsAndOrderCreationFeedbackState == FeatureFeedbackSettings.FeedbackState.DISMISSED
-            val isTroubleshootingBannerVisible = viewState.shouldDisplayTroubleshootingBanner
-            return !simplePaymentsAndOrderFeedbackDismissed && !isTroubleshootingBannerVisible
-        }
 
     private var _lastUpdateOrdersList = MutableStateFlow<Long?>(null)
     val lastUpdateOrdersList: LiveData<String?> = _lastUpdateOrdersList
@@ -313,7 +297,6 @@ class OrderListViewModel @Inject constructor(
     fun changeTroubleshootingBannerVisibility(show: Boolean) {
         viewState = viewState.copy(
             shouldDisplayTroubleshootingBanner = show,
-            isSimplePaymentsAndOrderCreationFeedbackVisible = !show
         )
     }
 
@@ -486,7 +469,6 @@ class OrderListViewModel @Inject constructor(
                     PARSE_ERROR -> {
                         viewState = viewState.copy(
                             isErrorFetchingDataBannerVisible = true,
-                            isSimplePaymentsAndOrderCreationFeedbackVisible = false
                         )
                     }
 
@@ -517,13 +499,12 @@ class OrderListViewModel @Inject constructor(
     private fun displayOrdersBannerOrJitm() {
         viewModelScope.launch {
             when {
-                !isSimplePaymentsAndOrderCreationFeedbackVisible -> {
+                !viewState.shouldDisplayTroubleshootingBanner -> {
                     viewState = viewState.copy(
                         jitmEnabled = true
                     )
                 }
             }
-            refreshOrdersBannerVisibility()
         }
     }
 
@@ -794,23 +775,6 @@ class OrderListViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    private fun refreshOrdersBannerVisibility() {
-        viewState = viewState.copy(
-            isSimplePaymentsAndOrderCreationFeedbackVisible = isSimplePaymentsAndOrderCreationFeedbackVisible
-        )
-    }
-
-    fun onDismissOrderCreationSimplePaymentsFeedback() {
-        analyticsTracker.track(
-            AnalyticsEvent.FEATURE_FEEDBACK_BANNER,
-            mapOf(
-                AnalyticsTracker.KEY_FEEDBACK_CONTEXT to AnalyticsTracker.VALUE_SIMPLE_PAYMENTS_FEEDBACK,
-                AnalyticsTracker.KEY_FEEDBACK_ACTION to AnalyticsTracker.VALUE_FEEDBACK_DISMISSED
-            )
-        )
-        refreshOrdersBannerVisibility()
     }
 
     private fun checkChaChingSoundSettings() {
@@ -1137,7 +1101,6 @@ class OrderListViewModel @Inject constructor(
         val isRefreshPending: Boolean = false,
         val arePaymentGatewaysFetched: Boolean = false,
         val filterCount: Int = 0,
-        val isSimplePaymentsAndOrderCreationFeedbackVisible: Boolean = false,
         val jitmEnabled: Boolean = false,
         val isErrorFetchingDataBannerVisible: Boolean = false,
         val shouldDisplayTroubleshootingBanner: Boolean = false,
