@@ -11,6 +11,7 @@ import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.orders.details.editing.address.LocationCode
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetStatesByCountryCode
 import com.woocommerce.android.util.StringUtils.combineStrings
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,19 +33,31 @@ import javax.inject.Inject
 class WooShippingEditOriginViewModel @Inject constructor(
     private val addressValidator: AddressValidationHelper,
     private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
+    private val getStatesByCountryCode: GetStatesByCountryCode,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private var name by mutableStateOf(InputValue(""))
     private var company by mutableStateOf(InputValue(""))
     private var address by mutableStateOf(InputValue(""))
     private var city by mutableStateOf(InputValue(""))
-    private var state by mutableStateOf("")
     private var postalCode by mutableStateOf(InputValue(""))
     private var email by mutableStateOf(InputValue(""))
     private var phone by mutableStateOf(InputValue(""))
 
     private var country = MutableStateFlow(Location.EMPTY)
-    private val countriesState = MutableStateFlow<CountriesState>(CountriesState.Loading)
+
+    private var rawState by mutableStateOf("")
+    private val selectedState = MutableStateFlow(Location.EMPTY)
+
+    private val state = combine(
+        snapshotFlow { rawState },
+        selectedState
+    ) { rawState, selectedState ->
+        if (selectedState != Location.EMPTY) selectedState else AmbiguousLocation.Raw(rawState).asLocation()
+    }
+
+    private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
+    private val statesState = MutableStateFlow<LocationState>(LocationState.Loading)
 
     private val navArgs: WooShippingEditOriginAddressFragmentArgs by savedState.navArgs()
 
@@ -107,13 +121,14 @@ class WooShippingEditOriginViewModel @Inject constructor(
         postalCodeValidatedFlow,
         emailValidatedFlow,
         phoneValidatedFlow,
-        country
-    ) { name, address, city, postalCode, email, phone, country ->
+        country,
+        state
+    ) { name, address, city, postalCode, email, phone, country, state ->
         EditableAddress(
             name = name.first,
             company = name.second,
             country = country.name,
-            state = state,
+            state = state.name,
             address = address,
             city = city,
             postalCode = postalCode,
@@ -127,7 +142,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
             isCompanyExpanded = false,
             editableAddress = EditableAddress(),
             shouldDisplayLoadingCountries = false,
-            shouldDisplayLoadingCountriesError = false
+            shouldDisplayLoadingCountriesError = false,
+            shouldUseSelectionStates = false
         )
     )
 
@@ -135,6 +151,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
         launch { observeChanges() }
         fillAddressForm()
         launch { loadCountries() }
+        launch { loadStates() }
     }
 
     private fun fillAddressForm() {
@@ -148,21 +165,21 @@ class WooShippingEditOriginViewModel @Inject constructor(
         )
         name = InputValue(fullName)
         company = InputValue(navArgs.originAddress.company.orEmpty())
-        country.value = findCountryByCountryCode(navArgs.originAddress.country)
+        country.value = findLocationByCode(navArgs.originAddress.country, countriesState.value)
         address = InputValue(fullAddress)
         city = InputValue(navArgs.originAddress.city.orEmpty())
-        state = navArgs.originAddress.state.orEmpty()
+        selectedState.value = findLocationByCode(navArgs.originAddress.state.orEmpty(), statesState.value)
         postalCode = InputValue(navArgs.originAddress.postcode)
         email = InputValue(navArgs.originAddress.email.orEmpty())
         phone = InputValue(navArgs.originAddress.phone.orEmpty())
         isCompanyExpanded.value = navArgs.originAddress.company.isNotNullOrEmpty()
     }
 
-    private fun findCountryByCountryCode(countryCode: String): Location {
-        val default = AmbiguousLocation.Raw(countryCode).asLocation()
-        return when (val currentState = countriesState.value) {
-            is CountriesState.Loaded -> {
-                currentState.countries.firstOrNull { it.code == countryCode } ?: default
+    private fun findLocationByCode(code: String, state: LocationState): Location {
+        val default = AmbiguousLocation.Raw(code).asLocation()
+        return when (val currentState = state) {
+            is LocationState.Loaded -> {
+                currentState.locations.firstOrNull { it.code == code } ?: default
             }
 
             else -> default
@@ -172,11 +189,29 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private suspend fun loadCountries() {
         getAcceptedOriginCountries().fold(
             onSuccess = {
-                countriesState.value = CountriesState.Loaded(it)
-                country.value = findCountryByCountryCode(country.value.code)
+                countriesState.value = LocationState.Loaded(it)
+                country.value = findLocationByCode(country.value.code, countriesState.value)
             },
-            onFailure = { countriesState.value = CountriesState.Error }
+            onFailure = { countriesState.value = LocationState.Error }
         )
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private suspend fun loadStates() {
+        country.mapLatest { country -> getStatesByCountryCode(country.code) }
+            .collectLatest { states ->
+                statesState.value = LocationState.Loaded(states)
+                rawState = ""
+                if (states.isNotEmpty()) {
+                    findLocationByCode(selectedState.value.code, statesState.value)
+                        .takeIf { it != Location.EMPTY }
+                        ?.let { selectedState.value = it } ?: run {
+                        selectedState.value = states.first()
+                    }
+                } else {
+                    selectedState.value = Location.EMPTY
+                }
+            }
     }
 
     fun onExpandCompany() {
@@ -187,13 +222,15 @@ class WooShippingEditOriginViewModel @Inject constructor(
         combine(
             editableAddress,
             isCompanyExpanded,
-            countriesState
-        ) { address, isExpanded, countriesState ->
+            countriesState,
+            statesState
+        ) { address, isExpanded, countriesState, statesState ->
             EditAddressViewState.DataState(
                 isCompanyExpanded = isExpanded,
                 editableAddress = address,
-                shouldDisplayLoadingCountries = countriesState is CountriesState.DisplayLoading,
-                shouldDisplayLoadingCountriesError = countriesState is CountriesState.Error
+                shouldDisplayLoadingCountries = countriesState is LocationState.DisplayLoading,
+                shouldDisplayLoadingCountriesError = countriesState is LocationState.Error,
+                shouldUseSelectionStates = statesState is LocationState.Loaded && statesState.locations.isNotEmpty()
             )
         }
             .collectLatest {
@@ -229,14 +266,32 @@ class WooShippingEditOriginViewModel @Inject constructor(
         phone = InputValue(value)
     }
 
+    fun onRawStateChange(value: String) {
+        rawState = value
+    }
+
     fun onCountryChange() {
         when (val state = countriesState.value) {
-            is CountriesState.Loaded -> {
-                triggerEvent(ShowCountrySelector(state.countries))
+            is LocationState.Loaded -> {
+                triggerEvent(ShowCountrySelector(state.locations))
             }
 
-            is CountriesState.Loading -> {
-                countriesState.value = CountriesState.DisplayLoading
+            is LocationState.Loading -> {
+                countriesState.value = LocationState.DisplayLoading
+            }
+
+            else -> {}
+        }
+    }
+
+    fun onStateChange() {
+        when (val state = statesState.value) {
+            is LocationState.Loaded -> {
+                triggerEvent(ShowStateSelector(state.locations))
+            }
+
+            is LocationState.Loading -> {
+                countriesState.value = LocationState.DisplayLoading
             }
 
             else -> {}
@@ -244,12 +299,16 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onRefreshCountries() {
-        countriesState.value = CountriesState.DisplayLoading
+        countriesState.value = LocationState.DisplayLoading
         launch { loadCountries() }
     }
 
     fun onCountryChanged(code: LocationCode) {
-        country.value = findCountryByCountryCode(code)
+        country.value = findLocationByCode(code, countriesState.value)
+    }
+
+    fun onStateChanged(code: LocationCode) {
+        selectedState.value = findLocationByCode(code, statesState.value)
     }
 
     sealed class EditAddressViewState {
@@ -258,18 +317,23 @@ class WooShippingEditOriginViewModel @Inject constructor(
             val editableAddress: EditableAddress,
             val shouldDisplayLoadingCountries: Boolean,
             val shouldDisplayLoadingCountriesError: Boolean,
+            val shouldUseSelectionStates: Boolean
         ) : EditAddressViewState()
     }
 
-    sealed class CountriesState {
-        data object Loading : CountriesState()
-        data object DisplayLoading : CountriesState()
-        data object Error : CountriesState()
-        data class Loaded(val countries: List<Location>) : CountriesState()
+    sealed class LocationState {
+        data object Loading : LocationState()
+        data object DisplayLoading : LocationState()
+        data object Error : LocationState()
+        data class Loaded(val locations: List<Location>) : LocationState()
     }
 
     data class ShowCountrySelector(
         val countries: List<Location>
+    ) : MultiLiveEvent.Event()
+
+    data class ShowStateSelector(
+        val states: List<Location>
     ) : MultiLiveEvent.Event()
 
     companion object {
