@@ -11,6 +11,7 @@ import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.*
@@ -50,7 +51,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onITNChanged(newItnValue)
-        assert(capturedViewState?.itnValue == newItnValue)
+        assertThat(capturedViewState?.itnValue).isEqualTo(newItnValue)
     }
 
     @Test
@@ -61,7 +62,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onReturnToSenderChanged(isChecked)
-        assert(capturedViewState?.returnToSenderChecked == isChecked)
+        assertThat(capturedViewState?.returnToSenderChecked).isEqualTo(isChecked)
     }
 
     @Test
@@ -72,7 +73,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onContentTypeSelected(contentType)
-        assert(capturedViewState?.contentType == contentType)
+        assertThat(capturedViewState?.contentType).isEqualTo(contentType)
     }
 
     @Test
@@ -83,7 +84,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onRestrictionTypeSelected(restrictionType)
-        assert(capturedViewState?.restrictionType == restrictionType)
+        assertThat(capturedViewState?.restrictionType).isEqualTo(restrictionType)
     }
 
     @Test
@@ -94,7 +95,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onOtherContentInputChanged(newValue)
-        assert(capturedViewState?.otherContentInput == newValue)
+        assertThat(capturedViewState?.otherContentInput).isEqualTo(newValue)
     }
 
     @Test
@@ -105,6 +106,6 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onRestrictionDetailsInputChanged(newValue)
-        assert(capturedViewState?.otherRestrictionInput == newValue)
+        assertThat(capturedViewState?.otherRestrictionInput).isEqualTo(newValue)
     }
 }
