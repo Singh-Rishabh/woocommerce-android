@@ -11,6 +11,7 @@ import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.extensions.areSameImagesAs
 import com.woocommerce.android.model.Product
+import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.model.toAppModel
 import com.woocommerce.android.tools.NetworkStatus
 import com.woocommerce.android.ui.media.MediaFileUploadHandler
@@ -222,10 +223,11 @@ class ProductImagesViewModel @Inject constructor(
                 } else {
                     viewState = viewState.copy(hasUploadErrors = true)
                     triggerEvent(
-                        MultiLiveEvent.Event.ShowActionSnackbar(
-                            message = resourceProvider.getMediaUploadErrorMessage(errorList.size),
-                            actionText = resourceProvider.getString(R.string.details)
-                        ) { triggerEvent(ProductNavigationTarget.ViewMediaUploadErrors(remoteProductId)) }
+                        MultiLiveEvent.Event.ShowUiStringSnackbar(
+                            message = UiStringText(
+                                resourceProvider.getMediaUploadErrorMessage(errorList.size)
+                            ),
+                        )
                     )
                 }
             }
@@ -234,7 +236,8 @@ class ProductImagesViewModel @Inject constructor(
 
     fun onGalleryImageDragStarted() {
         when (viewState.productImagesState) {
-            is Dragging -> { /* no-op*/ }
+            is Dragging -> { /* no-op*/
+            }
 
             Browsing -> viewState = viewState.copy(
                 images = images.uncheckProductCoverImage(),
