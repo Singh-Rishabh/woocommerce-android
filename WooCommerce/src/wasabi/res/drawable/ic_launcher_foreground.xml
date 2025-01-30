@@ -7,8 +7,8 @@
         android:pivotX="54"
         android:pivotY="54"
         android:rotation="180"
-        android:scaleX="0.7213954"
-        android:scaleY="0.7213954">
+        android:scaleX="0.61"
+        android:scaleY="0.61">
         <clip-path android:pathData="M11,43h85.57v22.21h-85.57z" />
         <path
             android:fillColor="#ffffff"
