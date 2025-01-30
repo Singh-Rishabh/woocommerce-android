@@ -23,6 +23,7 @@
         android:breakStrategy="balanced"
         android:gravity="center"
         android:textStyle="bold"
+        app:lineHeight="29sp"
         tools:text="@string/login_prologue_label_analytics" />
 
     <com.google.android.material.textview.MaterialTextView
