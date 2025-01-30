@@ -7,18 +7,19 @@ import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 
 val Context.deviceTypeToAnalyticsString: String
     get() = buildAnalyticsDeviceTypeValue(
-        IsScreenLargerThanCompactValue(value = isTwoPanesShouldBeUsed)
+        IsScreenInTwoPaneLayout(value = isTwoPanesShouldBeUsed)
     )
 
-val IsScreenLargerThanCompactValue.deviceTypeToAnalyticsString: String
+val IsScreenInTwoPaneLayout.deviceTypeToAnalyticsString: String
     get() = buildAnalyticsDeviceTypeValue(this)
 
-private fun buildAnalyticsDeviceTypeValue(isScreenSizeLargerThanCompact: IsScreenLargerThanCompactValue) =
-    if (isScreenSizeLargerThanCompact.value) {
-        VALUE_DEVICE_TYPE_REGULAR
+private fun buildAnalyticsDeviceTypeValue(isScreenInTwoPaneLayout: IsScreenInTwoPaneLayout) =
+    // Keeping the value as it is to maintain backward compatibility with the existing analytics data
+    if (isScreenInTwoPaneLayout.value) {
+        VALUE_DEVICE_TYPE_REGULAR // 2 pane layout
     } else {
-        VALUE_DEVICE_TYPE_COMPACT
+        VALUE_DEVICE_TYPE_COMPACT // Single pane layout
     }
 
 @JvmInline
-value class IsScreenLargerThanCompactValue(val value: Boolean)
+value class IsScreenInTwoPaneLayout(val value: Boolean)

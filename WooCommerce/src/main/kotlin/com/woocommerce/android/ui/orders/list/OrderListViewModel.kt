@@ -28,7 +28,7 @@ import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_LIST_PRODUCT_BARCO
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_HORIZONTAL_SIZE_CLASS
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
-import com.woocommerce.android.analytics.IsScreenLargerThanCompactValue
+import com.woocommerce.android.analytics.IsScreenInTwoPaneLayout
 import com.woocommerce.android.analytics.deviceTypeToAnalyticsString
 import com.woocommerce.android.extensions.NotificationReceivedEvent
 import com.woocommerce.android.extensions.drop
@@ -439,7 +439,7 @@ class OrderListViewModel @Inject constructor(
     }
 
     private fun getScreenSizeClassNameForAnalytics(isTwoPaneLayout: Boolean) =
-        IsScreenLargerThanCompactValue(isTwoPaneLayout).deviceTypeToAnalyticsString
+        IsScreenInTwoPaneLayout(isTwoPaneLayout).deviceTypeToAnalyticsString
 
     /**
      * Activates the provided list by first removing the LiveData sources for the active list,
