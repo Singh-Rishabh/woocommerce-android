@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.list
 
+import org.wordpress.android.util.ActivityUtils as WPActivityUtils
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -46,9 +47,6 @@ import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.pinFabAboveBottomNavigationBar
 import com.woocommerce.android.extensions.takeIfNotEqualTo
-import com.woocommerce.android.model.FeatureFeedbackSettings
-import com.woocommerce.android.model.FeatureFeedbackSettings.Feature.SIMPLE_PAYMENTS_AND_ORDER_CREATION
-import com.woocommerce.android.model.FeatureFeedbackSettings.FeedbackState
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.support.help.HelpOrigin
 import com.woocommerce.android.support.requests.SupportRequestFormActivity
@@ -57,7 +55,6 @@ import com.woocommerce.android.tracker.OrderDurationRecorder
 import com.woocommerce.android.ui.barcodescanner.BarcodeScanningFragment.Companion.KEY_BARCODE_SCANNING_SCAN_STATUS
 import com.woocommerce.android.ui.base.TopLevelFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
-import com.woocommerce.android.ui.feedback.SurveyType
 import com.woocommerce.android.ui.jitm.JitmFragment
 import com.woocommerce.android.ui.jitm.JitmMessagePathsProvider
 import com.woocommerce.android.ui.main.AppBarStatus
@@ -84,7 +81,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import org.wordpress.android.util.DisplayUtils
 import org.wordpress.android.util.ToastUtils
 import javax.inject.Inject
-import org.wordpress.android.util.ActivityUtils as WPActivityUtils
 
 @AndroidEntryPoint
 @Suppress("LargeClass")
@@ -720,11 +716,6 @@ class OrderListFragment :
             new.jitmEnabled.takeIfNotEqualTo(old?.jitmEnabled) { jitmEnabled ->
                 initJitm(jitmEnabled)
             }
-            new.isSimplePaymentsAndOrderCreationFeedbackVisible.takeIfNotEqualTo(
-                old?.isSimplePaymentsAndOrderCreationFeedbackVisible
-            ) {
-                displaySimplePaymentsWIPCard(it)
-            }
             new.isErrorFetchingDataBannerVisible.takeIfNotEqualTo(old?.isErrorFetchingDataBannerVisible) {
                 displayErrorParsingOrdersCard(it)
             }
@@ -1120,45 +1111,6 @@ class OrderListFragment :
 
     override fun shouldExpandToolbar(): Boolean {
         return binding.orderListView.ordersList.computeVerticalScrollOffset() == 0 && !viewModel.isSearching
-    }
-
-    private fun displaySimplePaymentsWIPCard(show: Boolean) {
-        if (!show) {
-            binding.simplePaymentsWIPcard.isVisible = false
-            return
-        }
-
-        binding.simplePaymentsWIPcard.isVisible = true
-        binding.simplePaymentsWIPcard.initView(
-            getString(R.string.orderlist_simple_payments_wip_title),
-            getString(R.string.orderlist_simple_payments_wip_message_enabled),
-            onGiveFeedbackClick = { onGiveFeedbackClicked() },
-            onDismissClick = {
-                FeatureFeedbackSettings(
-                    FeatureFeedbackSettings.Feature.SIMPLE_PAYMENTS_AND_ORDER_CREATION,
-                    FeedbackState.DISMISSED
-                ).registerItself(feedbackPrefs)
-                viewModel.onDismissOrderCreationSimplePaymentsFeedback()
-            },
-            showFeedbackButton = true
-        )
-    }
-
-    private fun onGiveFeedbackClicked() {
-        AnalyticsTracker.track(
-            AnalyticsEvent.FEATURE_FEEDBACK_BANNER,
-            mapOf(
-                AnalyticsTracker.KEY_FEEDBACK_CONTEXT to AnalyticsTracker.VALUE_SIMPLE_PAYMENTS_FEEDBACK,
-                AnalyticsTracker.KEY_FEEDBACK_ACTION to AnalyticsTracker.VALUE_FEEDBACK_GIVEN
-            )
-        )
-        FeatureFeedbackSettings(
-            SIMPLE_PAYMENTS_AND_ORDER_CREATION,
-            FeedbackState.GIVEN
-        ).registerItself(feedbackPrefs)
-        NavGraphMainDirections
-            .actionGlobalFeedbackSurveyFragment(SurveyType.ORDER_CREATION)
-            .apply { findNavController().navigateSafely(this) }
     }
 
     override fun onSwiped(gestureSource: OrderStatusUpdateSource.SwipeToCompleteGesture) {
