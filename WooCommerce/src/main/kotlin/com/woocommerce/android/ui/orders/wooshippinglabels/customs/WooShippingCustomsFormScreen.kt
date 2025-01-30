@@ -141,7 +141,9 @@ fun WooShippingCustomsFormScreen(
             ) {
                 Text(
                     text = stringResource(id = R.string.woo_shipping_labels_customs_return_to_sender_label),
-                    modifier = modifier.align(Alignment.CenterVertically)
+                    modifier = modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1f)
                 )
                 Checkbox(
                     checked = returnToSenderChecked,
@@ -149,7 +151,7 @@ fun WooShippingCustomsFormScreen(
                     colors = CheckboxDefaults.colors(
                         checkedColor = MaterialTheme.colors.primary,
                         uncheckedColor = MaterialTheme.colors.onSurface
-                    ),
+                    )
                 )
             }
         }
