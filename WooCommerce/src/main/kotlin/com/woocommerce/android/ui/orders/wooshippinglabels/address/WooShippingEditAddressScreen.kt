@@ -73,6 +73,7 @@ fun WooShippingEditAddressScreen(
                 isCompanyExpanded = viewState.isCompanyExpanded,
                 shouldDisplayLoadingCountries = viewState.shouldDisplayLoadingCountries,
                 shouldDisplayLoadingCountriesError = viewState.shouldDisplayLoadingCountriesError,
+                shouldUseSelectionStates = viewState.shouldUseSelectionStates,
                 onExpandCompany = viewModel::onExpandCompany,
                 onNameChange = viewModel::onNameChange,
                 onCompanyChange = viewModel::onCompanyChange,
@@ -83,6 +84,8 @@ fun WooShippingEditAddressScreen(
                 onPhoneChange = viewModel::onPhoneChange,
                 onCountryChange = viewModel::onCountryChange,
                 onRefreshCountries = viewModel::onRefreshCountries,
+                onRawStateChange = viewModel::onRawStateChange,
+                onStateChange = viewModel::onStateChange,
                 modifier = modifier
             )
         }
@@ -94,6 +97,7 @@ fun WooShippingEditAddressScreen(
     editableAddress: EditableAddress,
     shouldDisplayLoadingCountries: Boolean,
     shouldDisplayLoadingCountriesError: Boolean,
+    shouldUseSelectionStates: Boolean,
     isCompanyExpanded: Boolean,
     onExpandCompany: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -105,6 +109,8 @@ fun WooShippingEditAddressScreen(
     onPhoneChange: (String) -> Unit,
     onCountryChange: () -> Unit,
     onRefreshCountries: () -> Unit,
+    onRawStateChange: (String) -> Unit,
+    onStateChange: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -132,6 +138,7 @@ fun WooShippingEditAddressScreen(
             val postalCodeFocusRequester = remember { FocusRequester() }
             val emailFocusRequester = remember { FocusRequester() }
             val phoneFocusRequester = remember { FocusRequester() }
+            val stateFocusRequester = remember { FocusRequester() }
             val keyboardController = LocalSoftwareKeyboardController.current
 
             val errorMessage = stringResource(id = R.string.woo_shipping_fetching_countries_and_states_failed)
@@ -218,7 +225,11 @@ fun WooShippingEditAddressScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = {
-                        postalCodeFocusRequester.requestFocus()
+                        if (shouldUseSelectionStates) {
+                            postalCodeFocusRequester.requestFocus()
+                        } else {
+                            stateFocusRequester.requestFocus()
+                        }
                     }
                 ),
                 focusRequester = cityFocusRequester,
@@ -226,14 +237,35 @@ fun WooShippingEditAddressScreen(
             )
 
             Row {
-                RoundedBorderDropDownWithLabel(
-                    label = "${stringResource(id = R.string.woo_shipping_label_state)} *",
-                    text = editableAddress.state,
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .weight(1f),
-                    onClick = {}
-                )
+                if (shouldUseSelectionStates) {
+                    RoundedBorderDropDownWithLabel(
+                        label = stringResource(id = R.string.woo_shipping_label_state),
+                        text = editableAddress.state,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .weight(1f),
+                        onClick = onStateChange
+                    )
+                } else {
+                    RoundedBorderTextFieldWithLabel(
+                        label = stringResource(id = R.string.woo_shipping_label_state),
+                        text = editableAddress.state,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Text,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                postalCodeFocusRequester.requestFocus()
+                            }
+                        ),
+                        focusRequester = stateFocusRequester,
+                        onTextChange = onRawStateChange,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .weight(1f)
+                    )
+                }
                 Spacer(modifier = Modifier.size(8.dp))
                 RoundedBorderTextFieldWithLabel(
                     label = "${stringResource(id = R.string.woo_shipping_label_post_code)} *",
