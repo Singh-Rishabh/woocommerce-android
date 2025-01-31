@@ -11,6 +11,7 @@
 - [**] Adds new button to retry any failed image upload  [https://github.com/woocommerce/woocommerce-android/issues/13370]
 - [*] Adds new "Cover" tag to clearly indicate which of the product photos will be the cover [https://github.com/woocommerce/woocommerce-android/pull/13344]
 - [*] Optimizes product image fetching for faster loading [https://github.com/woocommerce/woocommerce-android/issues/13357]
+- [*] [Internal] Improved login flow for accounts using emails marked as suspicious during Jetpack Setup [https://github.com/woocommerce/woocommerce-android/pull/13409]
 
 21.5
 -----
