@@ -8,6 +8,10 @@
 - [Internal] [*] Fixed a bug that could lead to a crash when formatting dates and times [https://github.com/woocommerce/woocommerce-android/pull/13393]
 - [Internal] [*] Removed order creation survey from the order's list [https://github.com/woocommerce/woocommerce-android/pull/13423]
 - [***] Updated the app look and feel to match the new WooCommerce branding [https://github.com/woocommerce/woocommerce-android/pull/13254]
+- [**] Adds new button to retry any failed image upload  [https://github.com/woocommerce/woocommerce-android/issues/13370]
+- [*] Adds syncing status to product items on the list when image uploads are in progress [https://github.com/woocommerce/woocommerce-android/pull/13351]
+- [*] Adds new "Cover" tag to clearly indicate which of the product photos will be the cover [https://github.com/woocommerce/woocommerce-android/pull/13344]
+- [*] Optimizes product image fetching for faster loading [https://github.com/woocommerce/woocommerce-android/issues/13357]
 
 21.5
 -----
