@@ -466,6 +466,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    fun onNavigateBack() {
+        if (allowBackNavigation()) triggerEvent(Event.Exit)
+    }
+
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
