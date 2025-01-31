@@ -449,7 +449,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
-    fun onNavigateBack(): Boolean {
+    fun allowBackNavigation(): Boolean {
         val state = uiState.value
         return when {
             state.isAddressSelectionExpanded -> {
