@@ -70,6 +70,7 @@ class MediaUploadErrorListViewModel @Inject constructor(
 
     fun onRetryUploadClicked(error: ErrorUiModel) {
         mediaFileUploadHandler.enqueueUpload(navArgs.remoteProductId, listOf(error.localUri))
+        mediaFileUploadHandler.clearImageErrors(navArgs.remoteProductId, listOf(error.localUri))
         _viewState.update {
             _viewState.value.copy(
                 uploadErrorList = _viewState.value.uploadErrorList - error

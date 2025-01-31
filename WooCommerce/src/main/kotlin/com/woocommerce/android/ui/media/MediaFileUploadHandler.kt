@@ -183,7 +183,6 @@ class MediaFileUploadHandler @Inject constructor(
         uris.forEach {
             worker.enqueueWork(Work.FetchMedia(remoteProductId, it))
         }
-        clearImageError(remoteProductId, uris)
     }
 
     fun cancelUpload(remoteProductId: Long) {
@@ -201,7 +200,7 @@ class MediaFileUploadHandler @Inject constructor(
         notificationHandler.removeUploadFailureNotification(remoteProductId)
     }
 
-    private fun clearImageError(remoteProductId: Long, uris: List<String>) {
+    fun clearImageErrors(remoteProductId: Long, uris: List<String>) {
         uploadsStatus.update { list ->
             list.filterNot {
                 it.remoteProductId == remoteProductId &&
