@@ -141,17 +141,19 @@ class WooShippingEditOriginViewModel @Inject constructor(
         EditAddressViewState.DataState(
             isCompanyExpanded = false,
             editableAddress = EditableAddress(),
-            shouldDisplayLoadingCountries = false,
+            shouldDisplayLoading = false,
             shouldDisplayLoadingCountriesError = false,
-            shouldUseSelectionStates = false
+            shouldUseStatesInput = false
         )
     )
 
     init {
         launch { observeChanges() }
         fillAddressForm()
-        launch { loadCountries() }
-        launch { loadStates() }
+        launch {
+            loadCountries()
+            loadStates()
+        }
     }
 
     private fun fillAddressForm() {
@@ -225,12 +227,14 @@ class WooShippingEditOriginViewModel @Inject constructor(
             countriesState,
             statesState
         ) { address, isExpanded, countriesState, statesState ->
+            val isLoading =
+                countriesState is LocationState.DisplayLoading || statesState is LocationState.DisplayLoading
             EditAddressViewState.DataState(
                 isCompanyExpanded = isExpanded,
                 editableAddress = address,
-                shouldDisplayLoadingCountries = countriesState is LocationState.DisplayLoading,
+                shouldDisplayLoading = isLoading,
                 shouldDisplayLoadingCountriesError = countriesState is LocationState.Error,
-                shouldUseSelectionStates = statesState is LocationState.Loaded && statesState.locations.isNotEmpty()
+                shouldUseStatesInput = statesState is LocationState.Loaded && statesState.locations.isEmpty()
             )
         }
             .collectLatest {
@@ -315,9 +319,9 @@ class WooShippingEditOriginViewModel @Inject constructor(
         data class DataState(
             val isCompanyExpanded: Boolean,
             val editableAddress: EditableAddress,
-            val shouldDisplayLoadingCountries: Boolean,
+            val shouldDisplayLoading: Boolean,
             val shouldDisplayLoadingCountriesError: Boolean,
-            val shouldUseSelectionStates: Boolean
+            val shouldUseStatesInput: Boolean
         ) : EditAddressViewState()
     }
 

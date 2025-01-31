@@ -71,9 +71,9 @@ fun WooShippingEditAddressScreen(
             WooShippingEditAddressScreen(
                 editableAddress = viewState.editableAddress,
                 isCompanyExpanded = viewState.isCompanyExpanded,
-                shouldDisplayLoadingCountries = viewState.shouldDisplayLoadingCountries,
+                shouldDisplayLoadingCountries = viewState.shouldDisplayLoading,
                 shouldDisplayLoadingCountriesError = viewState.shouldDisplayLoadingCountriesError,
-                shouldUseSelectionStates = viewState.shouldUseSelectionStates,
+                shouldUseStatesInput = viewState.shouldUseStatesInput,
                 onExpandCompany = viewModel::onExpandCompany,
                 onNameChange = viewModel::onNameChange,
                 onCompanyChange = viewModel::onCompanyChange,
@@ -97,7 +97,7 @@ fun WooShippingEditAddressScreen(
     editableAddress: EditableAddress,
     shouldDisplayLoadingCountries: Boolean,
     shouldDisplayLoadingCountriesError: Boolean,
-    shouldUseSelectionStates: Boolean,
+    shouldUseStatesInput: Boolean,
     isCompanyExpanded: Boolean,
     onExpandCompany: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -225,10 +225,10 @@ fun WooShippingEditAddressScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(
                     onNext = {
-                        if (shouldUseSelectionStates) {
-                            postalCodeFocusRequester.requestFocus()
-                        } else {
+                        if (shouldUseStatesInput) {
                             stateFocusRequester.requestFocus()
+                        } else {
+                            postalCodeFocusRequester.requestFocus()
                         }
                     }
                 ),
@@ -237,16 +237,7 @@ fun WooShippingEditAddressScreen(
             )
 
             Row {
-                if (shouldUseSelectionStates) {
-                    RoundedBorderDropDownWithLabel(
-                        label = stringResource(id = R.string.woo_shipping_label_state),
-                        text = editableAddress.state,
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .weight(1f),
-                        onClick = onStateChange
-                    )
-                } else {
+                if (shouldUseStatesInput) {
                     RoundedBorderTextFieldWithLabel(
                         label = stringResource(id = R.string.woo_shipping_label_state),
                         text = editableAddress.state,
@@ -264,6 +255,15 @@ fun WooShippingEditAddressScreen(
                         modifier = Modifier
                             .padding(top = 8.dp)
                             .weight(1f)
+                    )
+                } else {
+                    RoundedBorderDropDownWithLabel(
+                        label = stringResource(id = R.string.woo_shipping_label_state),
+                        text = editableAddress.state,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .weight(1f),
+                        onClick = onStateChange
                     )
                 }
                 Spacer(modifier = Modifier.size(8.dp))
