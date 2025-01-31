@@ -27,7 +27,6 @@ var Activity.currentScreenBrightness: Float
         window.attributes = window.attributes.apply { screenBrightness = value }
     }
 
-
 fun Activity.adjustActivityTransition(
     overrideTransitionOpen: Boolean = true,
     @AnimRes enterAnim: Int,
