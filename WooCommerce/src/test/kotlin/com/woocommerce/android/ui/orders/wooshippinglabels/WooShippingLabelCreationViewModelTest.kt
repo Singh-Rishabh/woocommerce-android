@@ -738,15 +738,15 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         sut.onSelectAddressExpandedChange(true)
 
         // Close address selection
-        var shouldNavigateBack = sut.onNavigateBack()
+        var shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isFalse()
 
         // Close shipment details
-        shouldNavigateBack = sut.onNavigateBack()
+        shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isFalse()
 
         // Navigate back
-        shouldNavigateBack = sut.onNavigateBack()
+        shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isTrue()
     }
 
@@ -764,11 +764,11 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         sut.onShipmentDetailsExpandedChange(true)
 
         // Close shipment details
-        var shouldNavigateBack = sut.onNavigateBack()
+        var shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isFalse()
 
         // Navigate back
-        shouldNavigateBack = sut.onNavigateBack()
+        shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isTrue()
     }
 
@@ -785,7 +785,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         // Navigate back
-        val shouldNavigateBack = sut.onNavigateBack()
+        val shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isTrue()
     }
 }
