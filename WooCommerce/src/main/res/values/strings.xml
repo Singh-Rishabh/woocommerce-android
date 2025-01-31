@@ -4474,4 +4474,6 @@
     <string name="woo_shipping_field_required_error">This field is required.</string>
     <string name="woo_shipping_fetching_countries_and_states_failed">We were unable to retrieve country and state information. Please try again.</string>
     <string name="woo_shipping_fetching_countries_and_states">Fetching countries and states.</string>
+    <string name="error_user_username_instead_of_email">Please log in using your WordPress.com username instead of your email address.</string>
+    <string name="about_automattic_x_item_title">X</string>
 </resources>
