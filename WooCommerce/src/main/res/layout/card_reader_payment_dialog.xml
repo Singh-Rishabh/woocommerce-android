@@ -114,6 +114,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/payment_state_label"
+        app:layout_constraintBottom_toTopOf="@id/receipt_sent_label"
         tools:text="Tap or insert to pay" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -143,7 +144,7 @@
         style="@style/Woo.Button.Colored"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/major_200"
+        android:layout_marginHorizontal="@dimen/major_150"
         android:layout_marginTop="@dimen/margin_small_medium"
         app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -155,7 +156,7 @@
         style="@style/Woo.Button.Outlined"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/major_200"
+        android:layout_marginHorizontal="@dimen/major_150"
         app:layout_constraintBottom_toTopOf="@id/tertiary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -166,7 +167,7 @@
         style="@style/Woo.Button.TextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/major_200"
+        android:layout_marginHorizontal="@dimen/major_150"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
