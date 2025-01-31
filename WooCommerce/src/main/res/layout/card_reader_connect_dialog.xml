@@ -43,6 +43,14 @@
         app:layout_constraintTop_toBottomOf="@id/header_label"
         tools:srcCompat="@drawable/img_card_reader_scanning" />
 
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/top_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="illustration,header_label" />
+
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/hint_label"
         style="@style/Woo.Card.Body.High"
@@ -52,10 +60,10 @@
         android:layout_marginEnd="@dimen/major_125"
         android:ellipsize="end"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
+        app:layout_constraintBottom_toTopOf="@id/buttons_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/illustration"
+        app:layout_constraintTop_toBottomOf="@id/top_group"
         tools:text="Please wait" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -63,12 +71,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_extra_large"
-        app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
+        app:layout_constraintBottom_toTopOf="@id/buttons_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_label"
+        app:layout_constraintTop_toBottomOf="@id/top_group"
         tools:listitem="@layout/card_reader_connect_reader_item"
         tools:visibility="gone" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/buttons_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="primary_action_btn,secondary_action_btn,tertiary_action_btn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/primary_action_btn"
@@ -80,8 +95,7 @@
         app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hint_label"
-        tools:text="Connect" />
+        tools:text="Connect to a reader" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/secondary_action_btn"
