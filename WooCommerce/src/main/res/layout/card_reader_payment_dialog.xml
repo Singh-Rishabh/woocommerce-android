@@ -52,10 +52,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/major_125"
         android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/amount_label"
-        app:layout_constraintBottom_toTopOf="@id/content_group"
         tools:srcCompat="@drawable/img_card_reader_available" />
 
     <FrameLayout
@@ -64,9 +64,9 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/major_175"
         android:paddingBottom="@dimen/major_150"
+        app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintTop_toBottomOf="@id/amount_label">
 
         <ProgressBar
@@ -96,10 +96,10 @@
         app:autoSizeMinTextSize="@dimen/text_minor_60"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@id/hint_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content_group"
-        app:layout_constraintBottom_toTopOf="@id/hint_label"
         tools:text="Reader is ready" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -116,26 +116,27 @@
         app:layout_constraintTop_toBottomOf="@id/payment_state_label"
         tools:text="Tap or insert to pay" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/receipt_sent_label"
-            style="@style/Woo.TextView.Body2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/major_125"
-            android:layout_marginTop="@dimen/margin_extra_large"
-            android:ellipsize="end"
-            android:gravity="center_horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/hint_label"
-            tools:text="A receipt has been emailed to xyz" />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/receipt_sent_label"
+        style="@style/Woo.TextView.Body2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/major_125"
+        android:layout_marginTop="@dimen/margin_small_medium"
+        android:ellipsize="end"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@id/buttons_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hint_label"
+        tools:text="A receipt has been emailed to xyz" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/text_group"
+        android:id="@+id/buttons_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="receipt_sent_label,hint_label,payment_state_label" />
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="primary_action_btn,secondary_action_btn,tertiary_action_btn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/primary_action_btn"
@@ -144,7 +145,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_200"
         android:layout_marginTop="@dimen/margin_small_medium"
-        app:layout_constraintTop_toBottomOf="@id/text_group"
+        app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Send receipt" />
@@ -155,7 +156,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_200"
-        app:layout_constraintTop_toBottomOf="@id/primary_action_btn"
+        app:layout_constraintBottom_toTopOf="@id/tertiary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Print receipt" />
@@ -168,7 +169,6 @@
         android:layout_marginHorizontal="@dimen/major_200"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Save for later" />
