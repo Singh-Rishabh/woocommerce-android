@@ -186,9 +186,6 @@ class DashboardStatsView @JvmOverloads constructor(
                         DYNAMIC_DASHBOARD_CARD_INTERACTED,
                         mapOf(AnalyticsTracker.KEY_TYPE to DashboardWidget.Type.STATS.trackingIdentifier)
                     )
-                    if (statsTimeRangeSelection.selectionType == SelectionType.CUSTOM) {
-                        usageTracksEventEmitter.interactedWithCustomRange()
-                    }
                 }
         }
     }
