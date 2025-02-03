@@ -63,7 +63,6 @@ dependencies {
     lintChecks libs.wordpress.lint
 
     testImplementation libs.junit
-    testImplementation libs.mockito.core
     testImplementation libs.androidx.arch.core.testing
     testImplementation libs.robolectric
     testImplementation libs.assertj.core
