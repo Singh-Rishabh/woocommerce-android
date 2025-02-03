@@ -22,7 +22,7 @@ data class WCSettingsModel(
 
         companion object {
             private val reverseMap = values().associateBy(CurrencyPosition::name)
-            fun fromString(type: String?) = reverseMap[type?.toUpperCase(Locale.US)] ?: LEFT
+            fun fromString(type: String?) = reverseMap[type?.uppercase(Locale.US)] ?: LEFT
         }
     }
 }

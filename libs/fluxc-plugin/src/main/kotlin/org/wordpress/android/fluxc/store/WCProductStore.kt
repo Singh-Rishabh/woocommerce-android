@@ -375,7 +375,7 @@ class WCProductStore @Inject constructor(
 
         companion object {
             private val reverseMap = values().associateBy(ProductErrorType::name)
-            fun fromString(type: String) = reverseMap[type.toUpperCase(Locale.US)] ?: GENERIC_ERROR
+            fun fromString(type: String) = reverseMap[type.uppercase(Locale.US)] ?: GENERIC_ERROR
         }
     }
 

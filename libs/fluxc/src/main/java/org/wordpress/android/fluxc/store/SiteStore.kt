@@ -1018,7 +1018,7 @@ open class SiteStore @Inject constructor(
             private const val SITE = "SITE"
             @JvmStatic fun fromString(string: String): NewSiteErrorType {
                 if (!TextUtils.isEmpty(string)) {
-                    val siteString = string.toUpperCase(Locale.US).replace(BLOG, SITE)
+                    val siteString = string.lowercase(Locale.US).replace(BLOG, SITE)
                     for (v in values()) {
                         if (siteString.equals(v.name, ignoreCase = true)) {
                             return v

@@ -335,7 +335,7 @@ class WCOrderStore @Inject constructor(
 
         companion object {
             private val reverseMap = values().associateBy(OrderErrorType::name)
-            fun fromString(type: String) = reverseMap[type.toUpperCase(Locale.US)] ?: GENERIC_ERROR
+            fun fromString(type: String) = reverseMap[type.uppercase(Locale.US)] ?: GENERIC_ERROR
         }
     }
 

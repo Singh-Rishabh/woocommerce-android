@@ -103,8 +103,8 @@ class ShippingLabelRestClient @Inject constructor(private val wooNetwork: WooNet
     ): WooPayload<VerifyAddressResponse> {
         val url = WOOCOMMERCE.connect.normalize_address.pathV1
         val body = mapOf(
-                "address" to address.toMap(),
-                "type" to type.name.toLowerCase(Locale.ROOT)
+            "address" to address.toMap(),
+            "type" to type.name.lowercase(Locale.ROOT)
         )
 
         return wooNetwork.executePostGsonRequest(
