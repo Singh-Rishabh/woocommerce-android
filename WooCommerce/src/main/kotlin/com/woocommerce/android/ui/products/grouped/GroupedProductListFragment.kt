@@ -10,7 +10,9 @@ import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.databinding.FragmentGroupedProductListBinding
 import com.woocommerce.android.extensions.handleResult
+import com.woocommerce.android.extensions.hide
 import com.woocommerce.android.extensions.navigateBackWithResult
+import com.woocommerce.android.extensions.show
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
@@ -151,8 +153,10 @@ class GroupedProductListFragment :
             binding.emptyView.show(WCEmptyView.EmptyViewType.GROUPED_PRODUCT_LIST) {
                 viewModel.onAddProductButtonClicked()
             }
+            binding.addGroupedProductView.hide()
         } else {
             binding.emptyView.hide()
+            binding.addGroupedProductView.show()
         }
     }
 
