@@ -524,7 +524,7 @@ class ProductSelectorViewModel @Inject constructor(
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
             loadingState.value = APPENDING
-            listHandler.loadMore()
+            listHandler.loadMore(navArgs.orderCurrency)
             loadingState.value = IDLE
         }
     }
@@ -609,6 +609,7 @@ class ProductSelectorViewModel @Inject constructor(
                 filters = filters.filterOptions,
                 searchQuery = query,
                 searchType = searchType,
+                orderCurrency = navArgs.orderCurrency
             ).onFailure {
                 val message = if (query.isEmpty()) {
                     string.product_selector_loading_failed
