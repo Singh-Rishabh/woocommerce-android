@@ -781,6 +781,9 @@
         <argument
             android:name="originAddress"
             app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
+        <action
+            android:id="@+id/action_search_filter_fragment"
+            app:destination="@id/searchFilterFragment" />
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelCustomsFormFragment"

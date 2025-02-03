@@ -85,5 +85,5 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
         }
     }
 
-    override fun onRequestAllowBackPress(): Boolean = viewModel.onNavigateBack()
+    override fun onRequestAllowBackPress(): Boolean = viewModel.allowBackNavigation()
 }

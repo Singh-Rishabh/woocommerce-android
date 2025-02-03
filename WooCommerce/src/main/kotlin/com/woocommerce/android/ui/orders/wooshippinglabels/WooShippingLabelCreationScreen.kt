@@ -413,9 +413,9 @@ internal fun HazmatCard(
 
 @Composable
 private fun CustomsCard(
-    modifier: Modifier = Modifier,
     customsState: CustomsState,
-    onEditCustomsClick: () -> Unit
+    onEditCustomsClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     if (customsState !is NotRequired) {
         Row(
@@ -475,11 +475,11 @@ private fun CustomsCard(
 
 @Composable
 private fun PackageCard(
-    modifier: Modifier = Modifier,
     packageSelectionState: PackageSelectionState,
     customWeight: String,
     onSelectPackageClick: () -> Unit,
     onCustomWeightChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when (packageSelectionState) {
         is NotSelected -> SelectPackageCard(
@@ -501,8 +501,8 @@ private fun PackageCard(
 
 @Composable
 private fun SelectPackageCard(
-    modifier: Modifier = Modifier,
-    onSelectPackageClick: () -> Unit
+    onSelectPackageClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -551,13 +551,13 @@ private fun SelectPackageCard(
 
 @Composable
 private fun PackageSelectionAvailableCard(
-    modifier: Modifier = Modifier,
     packageData: PackageData,
     defaultWeight: String,
     customWeight: String,
     customWeightUnit: String,
     onSelectPackageClick: () -> Unit,
-    onCustomWeightChange: (String) -> Unit
+    onCustomWeightChange: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.background(color = MaterialTheme.colors.surface)) {
         Row(
