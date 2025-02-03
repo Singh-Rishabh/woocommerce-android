@@ -148,7 +148,9 @@ class GroupedProductListFragment :
 
     private fun showEmptyView(show: Boolean) {
         if (show) {
-            binding.emptyView.show(WCEmptyView.EmptyViewType.GROUPED_PRODUCT_LIST)
+            binding.emptyView.show(WCEmptyView.EmptyViewType.GROUPED_PRODUCT_LIST) {
+                viewModel.onAddProductButtonClicked()
+            }
         } else {
             binding.emptyView.hide()
         }
