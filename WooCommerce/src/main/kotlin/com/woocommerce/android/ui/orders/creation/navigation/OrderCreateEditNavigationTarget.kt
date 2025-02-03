@@ -20,7 +20,8 @@ sealed class OrderCreateEditNavigationTarget : Event() {
     data class SelectItems(
         val selectedItems: List<ProductSelectorViewModel.SelectedItem>,
         val restrictions: List<ProductRestriction>,
-        val mode: OrderCreateEditViewModel.Mode
+        val mode: OrderCreateEditViewModel.Mode,
+        val orderCurrency: String? = null,
     ) : OrderCreateEditNavigationTarget()
 
     data class ShowCreatedOrder(
