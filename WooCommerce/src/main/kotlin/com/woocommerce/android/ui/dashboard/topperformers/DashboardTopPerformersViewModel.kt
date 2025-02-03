@@ -141,28 +141,23 @@ class DashboardTopPerformersViewModel @AssistedInject constructor(
     }
 
     fun onRangeChanged(selectionType: SelectionType) {
-        parentViewModel.trackCardInteracted(DashboardWidget.Type.POPULAR_PRODUCTS.trackingIdentifier)
         usageTracksEventEmitter.interacted()
         if (selectionType != SelectionType.CUSTOM) {
+            parentViewModel.trackCardInteracted(DashboardWidget.Type.POPULAR_PRODUCTS.trackingIdentifier)
             appPrefsWrapper.setActiveTopPerformersTab(selectionType.name)
         } else {
-            if (selectedDateRange.value?.customRange == null) {
-                onEditCustomRangeTapped()
-            } else {
-                appPrefsWrapper.setActiveTopPerformersTab(SelectionType.CUSTOM.name)
-                analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED)
-            }
+            onEditCustomRangeTapped()
         }
     }
 
     fun onEditCustomRangeTapped() {
         parentViewModel.trackCardInteracted(DashboardWidget.Type.POPULAR_PRODUCTS.trackingIdentifier)
-        val event = if (selectedDateRange.value?.customRange == null) {
-            AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED
+        if (selectedDateRange.value?.customRange == null) {
+            analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED)
         } else {
-            AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_EDIT_BUTTON_TAPPED
+            appPrefsWrapper.setActiveTopPerformersTab(SelectionType.CUSTOM.name)
+            analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_EDIT_BUTTON_TAPPED)
         }
-        analyticsTrackerWrapper.track(event)
 
         triggerEvent(
             OpenDatePicker(
@@ -287,7 +282,7 @@ class DashboardTopPerformersViewModel @AssistedInject constructor(
         viewModelScope.launch {
             customDateRangeDataStore.updateDateRange(statsTimeRange)
             if (selectedDateRange.value?.rangeSelection?.selectionType != SelectionType.CUSTOM) {
-                onRangeChanged(SelectionType.CUSTOM)
+                appPrefsWrapper.setActiveTopPerformersTab(SelectionType.CUSTOM.name)
             }
         }
     }
