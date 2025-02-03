@@ -1,0 +1,111 @@
+plugins {
+    alias(sharedLibs.plugins.android.library)
+    alias(sharedLibs.plugins.kotlin.android)
+    alias(sharedLibs.plugins.kotlin.kapt)
+    alias(sharedLibs.plugins.automattic.publishToS3)
+}
+
+android {
+    namespace "org.wordpress.android.fluxc.plugins.woocommerce"
+
+    compileSdkVersion rootProject.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += [
+                        "room.schemaLocation": "$projectDir/schemas".toString(),
+                        "room.incremental"   : "true",
+                ]
+            }
+        }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    lint {
+        lintConfig file("${project.rootDir}/config/lint/lint.xml")
+        enable += 'UnknownNullness'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+}
+
+dependencies {
+    implementation fluxcProjectDependency
+
+    // WordPress libs
+    implementation(sharedLibs.wordpress.utils) {
+        // Using official volley package
+        exclude group: "com.mcxiaoke.volley"
+        exclude group: "com.android.support"
+    }
+
+    api sharedLibs.wellsql
+    kapt sharedLibs.wellsql.processor
+
+    // FluxC annotations
+    api fluxcAnnotationsProjectDependency
+    kapt fluxcProcessorProjectDependency
+
+    implementation sharedLibs.google.gson
+
+    // Dagger
+    implementation sharedLibs.google.dagger
+    kapt sharedLibs.google.dagger.compiler
+    compileOnly sharedLibs.glassfish.javax.annotation
+
+    // Coroutines
+    implementation sharedLibs.kotlinx.coroutines.core
+    implementation sharedLibs.kotlinx.coroutines.android
+
+    implementation sharedLibs.androidx.room.runtime
+    kapt sharedLibs.androidx.room.compiler
+    api sharedLibs.androidx.room.ktx
+
+    testImplementation sharedLibs.junit
+    testImplementation sharedLibs.robolectric
+    testImplementation sharedLibs.androidx.test.core
+    testImplementation sharedLibs.assertj.core
+    testImplementation sharedLibs.mockito.core
+    testImplementation sharedLibs.mockito.kotlin
+    testImplementation sharedLibs.kotlinx.coroutines.test
+
+    androidTestImplementation sharedLibs.androidx.room.testing
+    androidTestImplementation sharedLibs.androidx.test.runner
+    androidTestImplementation sharedLibs.androidx.test.ext.junit
+    androidTestImplementation sharedLibs.assertj.core
+
+    lintChecks sharedLibs.wordpress.lint
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            PluginWoocommercePublication(MavenPublication) {
+                from components.release
+
+                groupId "org.wordpress.fluxc.plugins"
+                artifactId "woocommerce"
+                // version is set by 'publish-to-s3' plugin
+            }
+        }
+    }
+}
