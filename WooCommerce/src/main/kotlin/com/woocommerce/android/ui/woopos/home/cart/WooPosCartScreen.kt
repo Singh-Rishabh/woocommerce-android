@@ -408,7 +408,7 @@ private fun ProductItem(
         modifier = modifier
             .height(96.dp)
             .semantics { contentDescription = itemContentDescription },
-        elevation = 2.dp,
+        elevation = 6.dp,
         shadowType = ShadowType.Soft,
         shape = RoundedCornerShape(8.dp),
     ) {
