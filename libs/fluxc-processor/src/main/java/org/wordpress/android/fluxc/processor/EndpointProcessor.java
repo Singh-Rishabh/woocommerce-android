@@ -91,7 +91,7 @@ public class EndpointProcessor extends AbstractProcessor {
                 generateWPAPIEndpointFile();
                 generateWPORGAPIEndpointFile();
                 generateJPAPIEndpointFile();
-            } else if (outputPath.contains(fs + "plugins" + fs + "woocommerce" + fs + "build" + fs)) {
+            } else if (outputPath.contains(fs + "libs" + fs + "fluxc-plugin" + fs + "build" + fs)) {
                 generateWCWPAPIPluginEndpointFile();
             }
         } catch (IOException e) {

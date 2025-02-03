@@ -68,7 +68,7 @@ class WCStatsStore @Inject constructor(
             }
 
             fun fromString(value: String): StatsGranularity {
-                return fromOrderStatsApiUnit(OrderStatsApiUnit.valueOf(value.toUpperCase()))
+                return fromOrderStatsApiUnit(OrderStatsApiUnit.valueOf(value.uppercase()))
             }
         }
     }
@@ -152,7 +152,7 @@ class WCStatsStore @Inject constructor(
 
         companion object {
             private val reverseMap = OrderStatsErrorType.values().associateBy(OrderStatsErrorType::name)
-            fun fromString(type: String) = reverseMap[type.toUpperCase(Locale.US)] ?: GENERIC_ERROR
+            fun fromString(type: String) = reverseMap[type.uppercase(Locale.US)] ?: GENERIC_ERROR
         }
     }
 

@@ -7,6 +7,7 @@ import com.yarolegovich.wellsql.core.Identifiable
 import com.yarolegovich.wellsql.core.annotation.Column
 import com.yarolegovich.wellsql.core.annotation.PrimaryKey
 import com.yarolegovich.wellsql.core.annotation.Table
+import java.util.Locale
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.WCSettingsModel
 import org.wordpress.android.fluxc.model.WCSettingsModel.CurrencyPosition
@@ -95,7 +96,7 @@ object WCSettingsSqlUtils {
         return WCSettingsBuilder(
                 localSiteId = this.localSiteId,
                 currencyCode = this.currencyCode,
-                currencyPosition = this.currencyPosition.name.toLowerCase(),
+                currencyPosition = this.currencyPosition.name.lowercase(Locale.getDefault()),
                 currencyThousandSeparator = this.currencyThousandSeparator,
                 currencyDecimalSeparator = this.currencyDecimalSeparator,
                 currencyDecimalNumber = this.currencyDecimalNumber,

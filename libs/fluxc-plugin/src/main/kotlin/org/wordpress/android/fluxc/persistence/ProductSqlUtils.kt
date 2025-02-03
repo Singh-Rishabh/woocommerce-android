@@ -326,9 +326,9 @@ object ProductSqlUtils {
      */
     private fun sortProductsByName(products: List<WCProductModel>, descending: Boolean): List<WCProductModel> {
         return if (descending) {
-            products.sortedByDescending { it.name.toLowerCase(Locale.getDefault()) }
+            products.sortedByDescending { it.name.lowercase(Locale.getDefault()) }
         } else {
-            products.sortedBy { it.name.toLowerCase(Locale.getDefault()) }
+            products.sortedBy { it.name.lowercase(Locale.getDefault()) }
         }
     }
 
@@ -689,9 +689,9 @@ object ProductSqlUtils {
         descending: Boolean
     ): List<WCProductCategoryModel> {
         return if (descending) {
-            categories.sortedByDescending { it.name.toLowerCase(Locale.getDefault()) }
+            categories.sortedByDescending { it.name.lowercase(Locale.getDefault()) }
         } else {
-            categories.sortedBy { it.name.toLowerCase(Locale.getDefault()) }
+            categories.sortedBy { it.name.lowercase(Locale.getDefault()) }
         }
     }
 

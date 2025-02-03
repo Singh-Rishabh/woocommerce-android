@@ -1,5 +1,6 @@
 package org.wordpress.android.fluxc.network.rest.wpcom.wc.orderstats
 
+import java.util.Locale
 import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.generated.WCStatsActionBuilder
 import org.wordpress.android.fluxc.generated.endpoint.WOOCOMMERCE
@@ -46,7 +47,7 @@ class OrderStatsRestClient @Inject constructor(
             }
         }
 
-        override fun toString() = name.toLowerCase()
+        override fun toString() = name.lowercase(Locale.getDefault())
     }
 
     /**
