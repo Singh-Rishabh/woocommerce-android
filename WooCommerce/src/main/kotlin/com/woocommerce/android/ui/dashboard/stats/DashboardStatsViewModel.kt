@@ -124,20 +124,29 @@ class DashboardStatsViewModel @AssistedInject constructor(
     }
 
     fun onRangeChanged(selectionType: SelectionType) {
-        parentViewModel.trackCardInteracted(DashboardWidget.Type.STATS.trackingIdentifier)
         usageTracksEventEmitter.interacted()
         if (selectionType != SelectionType.CUSTOM) {
+            parentViewModel.trackCardInteracted(DashboardWidget.Type.STATS.trackingIdentifier)
             appPrefsWrapper.setActiveStatsTab(selectionType.name)
         } else {
-            if (dateRangeState.value?.customRange == null) {
-                onAddCustomRangeClicked()
-            } else {
-                appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
-                analyticsTrackerWrapper.track(
-                    AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED
-                )
-            }
+            onEditCustomRangeTapped()
         }
+    }
+
+    fun onEditCustomRangeTapped() {
+        parentViewModel.trackCardInteracted(DashboardWidget.Type.STATS.trackingIdentifier)
+        if (dateRangeState.value?.customRange == null) {
+            analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED)
+        } else {
+            appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
+            analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_EDIT_BUTTON_TAPPED)
+        }
+        triggerEvent(
+            OpenDatePicker(
+                fromDate = dateRangeState.value?.customRange?.start ?: Date(),
+                toDate = dateRangeState.value?.customRange?.end ?: Date()
+            )
+        )
     }
 
     fun onCustomRangeSelected(range: StatsTimeRange) {
@@ -151,26 +160,9 @@ class DashboardStatsViewModel @AssistedInject constructor(
         viewModelScope.launch {
             customDateRangeDataStore.updateDateRange(range)
             if (dateRangeState.value?.rangeSelection?.selectionType != SelectionType.CUSTOM) {
-                onRangeChanged(SelectionType.CUSTOM)
+                appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
             }
         }
-    }
-
-    fun onAddCustomRangeClicked() {
-        parentViewModel.trackCardInteracted(DashboardWidget.Type.STATS.trackingIdentifier)
-        triggerEvent(
-            OpenDatePicker(
-                fromDate = dateRangeState.value?.customRange?.start ?: Date(),
-                toDate = dateRangeState.value?.customRange?.end ?: Date()
-            )
-        )
-
-        val event = if (dateRangeState.value?.customRange == null) {
-            AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED
-        } else {
-            AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_EDIT_BUTTON_TAPPED
-        }
-        analyticsTrackerWrapper.track(event)
     }
 
     fun onViewAnalyticsClicked() {
@@ -210,6 +202,7 @@ class DashboardStatsViewModel @AssistedInject constructor(
                             properties = mapOf(AnalyticsTracker.KEY_ERROR to it.toString())
                         )
                     }
+
                     is LoadStatsResult.VisitorStatsLoading -> {
                         _visitorStatsState.value = VisitorStatsViewState.NotLoaded
                     }
@@ -239,6 +232,7 @@ class DashboardStatsViewModel @AssistedInject constructor(
                             properties = mapOf(AnalyticsTracker.KEY_ERROR to it.toString())
                         )
                     }
+
                     is LoadStatsResult.VisitorStatUnavailable -> {
                         _visitorStatsState.value = VisitorStatsViewState.Unavailable(
                             showJetpackIcon = !appPrefsWrapper.isSiteWPComSuspended
