@@ -1310,6 +1310,9 @@
     <string name="shipping_label_purchased_purchase_failed_error">We can\'t confirm the Shipping Label purchase right now, try again later</string>
     <string name="shipping_label_select_origin_default_address">%s (default)</string>
     <string name="shipping_label_select_origin_address">Address</string>
+    <string name="shipping_labels_customs_title">Customs</string>
+    <string name="shipping_labels_customs_missing_info_badge">Missing info</string>
+    <string name="shipping_labels_customs_completed_badge">Completed</string>
 
 
     <!--
@@ -2398,6 +2401,7 @@
     <string name="product_add_photo">Add photo</string>
     <string name="product_replace_photo">Replace photo</string>
     <string name="product_remove_photo">Remove photo</string>
+    <string name="product_open_upload_screen">View recent upload failures</string>
     <string name="product_cover_photo_tag">Cover</string>
     <string name="product_image_add">Add a product image</string>
     <string name="product_image_error_removing">Error removing product image</string>
