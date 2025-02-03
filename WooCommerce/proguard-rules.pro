@@ -51,7 +51,6 @@
 
 ###### Dagger - begin
 -dontwarn com.google.errorprone.annotations.*
--keep class com.squareup.kotlinpoet.** { *; }
 ###### Dagger - end
 
 -keep class com.google.common.** { *; }
