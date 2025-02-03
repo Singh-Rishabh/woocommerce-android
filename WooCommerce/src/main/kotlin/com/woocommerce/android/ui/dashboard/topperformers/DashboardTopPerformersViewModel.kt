@@ -293,6 +293,7 @@ class DashboardTopPerformersViewModel @AssistedInject constructor(
     }
 
     private fun onViewAllAnalyticsTapped() {
+        parentViewModel.trackCardInteracted(DashboardWidget.Type.POPULAR_PRODUCTS.trackingIdentifier)
         AnalyticsTracker.track(AnalyticsEvent.DASHBOARD_SEE_MORE_ANALYTICS_TAPPED)
         selectedDateRange.value?.let {
             triggerEvent(OpenAnalytics(it.rangeSelection))
