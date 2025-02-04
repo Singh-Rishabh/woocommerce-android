@@ -22,6 +22,11 @@
         <argument
             android:name="screenMode"
             app:argType="com.woocommerce.android.ui.products.variations.selector.VariationSelectorViewModel$ScreenMode" />
+        <argument
+            android:name="orderCurrency"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
 
     <fragment

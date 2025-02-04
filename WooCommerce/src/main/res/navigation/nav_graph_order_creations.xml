@@ -159,6 +159,11 @@
             android:defaultValue="@null"
             app:argType="java.math.BigDecimal"
             app:nullable="true" />
+        <argument
+            android:name="orderCurrency"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_orderCreationFragment_to_barcodeScanningFragment"
             app:destination="@id/barcodeScanningFragment" />
