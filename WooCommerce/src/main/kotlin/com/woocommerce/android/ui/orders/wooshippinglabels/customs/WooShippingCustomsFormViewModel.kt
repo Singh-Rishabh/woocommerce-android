@@ -87,6 +87,11 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             get() = restrictionType == RestrictionType.OTHER
     }
 
+    sealed class InputValue {
+        data class Content<T>(val value: T) : InputValue()
+        data class Error(val errorMessage: String) : InputValue()
+    }
+
     enum class ContentType(val resourceId: Int) {
         MERCHANDISE(R.string.woo_shipping_labels_customs_content_merchandise),
         GIFT(R.string.woo_shipping_labels_customs_content_gift),
