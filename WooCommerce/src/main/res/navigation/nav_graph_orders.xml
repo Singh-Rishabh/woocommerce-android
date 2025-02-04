@@ -748,6 +748,9 @@
         <action
             android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingEditOriginAddressFragment"
             app:destination="@id/wooShippingEditOriginAddressFragment" />
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelCustomsFormFragment"
+            app:destination="@id/wooShippingLabelCustomsFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPackageCreationFragment"
@@ -778,5 +781,16 @@
         <argument
             android:name="originAddress"
             app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
+        <action
+            android:id="@+id/action_search_filter_fragment"
+            app:destination="@id/searchFilterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/wooShippingLabelCustomsFormFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment"
+        android:label="WooShippingLabelCustomsFormFragment" >
+        <action
+            android:id="@+id/action_wooShippingLabelCustomsFormFragment_to_itemSelectorDialog"
+            app:destination="@id/itemSelectorDialog" />
     </fragment>
 </navigation>
