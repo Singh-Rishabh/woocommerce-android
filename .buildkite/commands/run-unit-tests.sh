@@ -4,7 +4,7 @@
 
 echo "--- 🧪 Testing"
 set +e
-./gradlew testJalapenoDebugUnitTest testDebugUnitTest
+./gradlew testJalapenoDebugUnitTest testDebugUnitTest --console=plain
 TESTS_EXIT_STATUS=$?
 set -e
 
@@ -28,7 +28,7 @@ else
 fi
 
 echo "--- ⚒️ Generating and uploading code coverage"
-./gradlew jacocoTestReport
+./gradlew jacocoTestReport --console=plain
 .buildkite/commands/upload-code-coverage.sh
 
 echo "--- 🧪 Copying test logs for test collector"
