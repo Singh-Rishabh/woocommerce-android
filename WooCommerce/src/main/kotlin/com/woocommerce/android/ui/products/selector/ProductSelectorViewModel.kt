@@ -11,6 +11,7 @@ import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.orders.IsStoreCurrencyMatch
 import com.woocommerce.android.ui.orders.creation.configuration.ProductConfiguration
 import com.woocommerce.android.ui.products.OrderCreationProductRestrictions
 import com.woocommerce.android.ui.products.ProductNavigationTarget
@@ -163,9 +164,15 @@ class ProductSelectorViewModel @Inject constructor(
         monitorSearchQuery()
         monitorProductFilters()
         viewModelScope.launch {
-            loadPopularProducts()
-            loadRecentProducts()
             fetchProducts(searchType = searchState.value.searchType)
+        }
+        viewModelScope.launch {
+            listHandler.productsFlow.collectLatest { products ->
+                if (products.isNotEmpty()) {
+                    loadPopularProducts()
+                    loadRecentProducts()
+                }
+            }
         }
     }
 
@@ -269,7 +276,13 @@ class ProductSelectorViewModel @Inject constructor(
 
         val stockStatus = getStockText(resourceProvider)
 
-        val price = price?.let { PriceUtils.formatCurrency(price, currencyCode, currencyFormatter) }
+        val price = price?.let {
+            PriceUtils.formatCurrency(
+                price,
+                navArgs.orderCurrency ?: currencyCode,
+                currencyFormatter
+            )
+        }
 
         val stockAndPrice = listOfNotNull(stockStatus, price).joinToString(" \u2022 ")
 
@@ -407,7 +420,8 @@ class ProductSelectorViewModel @Inject constructor(
                     productSelectorFlow = productSelectorFlow,
                     productSourceForTracking = productSource,
                     selectionMode = selectionMode,
-                    screenMode = variationSelectorScreenMode
+                    screenMode = variationSelectorScreenMode,
+                    orderCurrency = navArgs.orderCurrency
                 )
             )
         } else {
