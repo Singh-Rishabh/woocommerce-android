@@ -29,6 +29,7 @@ import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
 
 @Composable
@@ -37,9 +38,9 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
     WooShippingCustomsFormScreen(
         contentType = viewState?.contentType ?: ContentType.MERCHANDISE,
         restrictionType = viewState?.restrictionType ?: RestrictionType.NONE,
-        itnValue = viewState?.itnValue.orEmpty(),
-        otherContentDetailsInput = viewState?.otherContentInput.orEmpty(),
-        otherRestrictionDetailsInput = viewState?.otherRestrictionInput.orEmpty(),
+        itnValue = viewState?.itnValue ?: InputValue.EMPTY,
+        otherContentDetailsInput = viewState?.otherContentInput ?: InputValue.EMPTY,
+        otherRestrictionDetailsInput = viewState?.otherRestrictionInput ?: InputValue.EMPTY,
         returnToSenderChecked = viewState?.returnToSenderChecked ?: false,
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
         shouldDisplayContentTypeInput = viewState?.shouldDisplayContentTypeInput ?: false,
@@ -59,9 +60,9 @@ fun WooShippingCustomsFormScreen(
     modifier: Modifier = Modifier,
     contentType: ContentType,
     restrictionType: RestrictionType,
-    itnValue: String,
-    otherContentDetailsInput: String,
-    otherRestrictionDetailsInput: String,
+    itnValue: InputValue,
+    otherContentDetailsInput: InputValue,
+    otherRestrictionDetailsInput: InputValue,
     returnToSenderChecked: Boolean,
     isAddCustomsButtonEnabled: Boolean,
     shouldDisplayContentTypeInput: Boolean,
@@ -95,10 +96,11 @@ fun WooShippingCustomsFormScreen(
 
             AnimatedVisibility(shouldDisplayContentTypeInput) {
                 WCOutlinedTextField(
-                    value = otherContentDetailsInput,
+                    value = otherContentDetailsInput.dataOrError,
                     onValueChange = onOtherContentDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_content_details_label),
                     singleLine = true,
+                    isError = otherContentDetailsInput is InputValue.Error,
                     helperText = stringResource(id = R.string.woo_shipping_labels_customs_content_details_description),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = modifier.fillMaxWidth()
@@ -114,10 +116,11 @@ fun WooShippingCustomsFormScreen(
 
             AnimatedVisibility(shouldDisplayRestrictionTypeInput) {
                 WCOutlinedTextField(
-                    value = otherRestrictionDetailsInput,
+                    value = otherRestrictionDetailsInput.dataOrError,
                     onValueChange = onOtherRestrictionDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_label),
                     singleLine = true,
+                    isError = otherRestrictionDetailsInput is InputValue.Error,
                     helperText = stringResource(
                         id = R.string.woo_shipping_labels_customs_restriction_details_description
                     ),
@@ -127,10 +130,11 @@ fun WooShippingCustomsFormScreen(
             }
 
             WCOutlinedTextField(
-                value = itnValue,
+                value = itnValue.dataOrError,
                 onValueChange = onItnChanged,
                 label = stringResource(id = R.string.woo_shipping_labels_customs_itn_label),
                 singleLine = true,
+                isError = itnValue is InputValue.Error,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = modifier.fillMaxWidth()
             )
@@ -172,9 +176,9 @@ fun PreviewWooShippingCustomsFormScreen() {
         WooShippingCustomsFormScreen(
             contentType = ContentType.MERCHANDISE,
             restrictionType = RestrictionType.NONE,
-            itnValue = "123456",
-            otherContentDetailsInput = "Important Stuff",
-            otherRestrictionDetailsInput = "Restricted Stuff",
+            itnValue = InputValue.Data("123456"),
+            otherContentDetailsInput = InputValue.Data("Important Stuff"),
+            otherRestrictionDetailsInput = InputValue.Data("Restricted Stuff"),
             returnToSenderChecked = false,
             isAddCustomsButtonEnabled = true,
             shouldDisplayContentTypeInput = true,
