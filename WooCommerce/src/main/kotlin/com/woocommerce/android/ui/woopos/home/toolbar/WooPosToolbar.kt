@@ -25,6 +25,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.contentDescription
@@ -54,12 +56,20 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosBackgr
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarState.Menu
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarState.WooPosCardReaderStatus
+import com.woocommerce.android.util.ChromeCustomTabUtils
+import kotlinx.coroutines.flow.collectLatest
 
 private val TOOLBAR_ELEVATION = 6.dp
 
 @Composable
 fun WooPosFloatingToolbar(modifier: Modifier = Modifier) {
     val viewModel: WooPosToolbarViewModel = hiltViewModel()
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.openUrlEvent.collectLatest { url ->
+            ChromeCustomTabUtils.launchUrl(context, url)
+        }
+    }
     WooPosFloatingToolbar(
         modifier = modifier,
         state = viewModel.state.collectAsState(),
@@ -239,7 +249,7 @@ private fun PopUpMenu(
     onClick: (Menu.MenuItem) -> Unit
 ) {
     WooPosCard(
-        modifier = modifier.width(214.dp),
+        modifier = modifier.width(250.dp),
         elevation = TOOLBAR_ELEVATION,
     ) {
         Column {
@@ -480,13 +490,17 @@ fun PreviewWooPosFloatingToolbarStatusConnectedWithMenu() {
                 menu = Menu.Visible(
                     listOf(
                         Menu.MenuItem(
+                            title = R.string.woopos_documentation_title,
+                            icon = R.drawable.ic_woo_pos_info
+                        ),
+                        Menu.MenuItem(
                             title = R.string.woopos_exit_confirmation_title,
                             icon = R.drawable.ic_woo_pos_exit,
                         ),
                         Menu.MenuItem(
                             title = R.string.woopos_get_support_title,
                             icon = R.drawable.woopos_ic_get_support,
-                        )
+                        ),
                     )
                 ),
             )
