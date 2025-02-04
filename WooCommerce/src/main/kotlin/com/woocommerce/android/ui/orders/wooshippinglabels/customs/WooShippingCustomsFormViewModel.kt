@@ -36,7 +36,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onITNChanged(newItnValue: String) {
         _viewState.update {
-            it.copy(itnValue = newItnValue)
+            it.copy(itnValue = InputValue.Data(newItnValue))
         }
     }
 
@@ -60,23 +60,23 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onOtherContentInputChanged(newValue: String) {
         _viewState.update {
-            it.copy(otherContentInput = newValue)
+            it.copy(otherContentInput = InputValue.Data(newValue))
         }
     }
 
     fun onRestrictionDetailsInputChanged(newValue: String) {
         _viewState.update {
-            it.copy(otherRestrictionInput = newValue)
+            it.copy(otherRestrictionInput = InputValue.Data(newValue))
         }
     }
 
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,
-        val otherContentInput: String = "",
+        val otherContentInput: InputValue = InputValue.Data(""),
         val restrictionType: RestrictionType = RestrictionType.NONE,
-        val otherRestrictionInput: String = "",
-        val itnValue: String = "",
+        val otherRestrictionInput: InputValue = InputValue.Data(""),
+        val itnValue: InputValue = InputValue.Data(""),
         val returnToSenderChecked: Boolean = false,
         val isAddCustomsButtonEnabled: Boolean = false
     ) : Parcelable {
@@ -87,8 +87,9 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             get() = restrictionType == RestrictionType.OTHER
     }
 
-    sealed class InputValue {
-        data class Content<T>(val value: T) : InputValue()
+    @Parcelize
+    sealed class InputValue : Parcelable {
+        data class Data(val value: String) : InputValue()
         data class Error(val errorMessage: String) : InputValue()
     }
 
