@@ -73,10 +73,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,
-        val otherContentInput: InputValue = InputValue.Data(""),
+        val otherContentInput: InputValue = InputValue.EMPTY,
         val restrictionType: RestrictionType = RestrictionType.NONE,
-        val otherRestrictionInput: InputValue = InputValue.Data(""),
-        val itnValue: InputValue = InputValue.Data(""),
+        val otherRestrictionInput: InputValue = InputValue.EMPTY,
+        val itnValue: InputValue = InputValue.EMPTY,
         val returnToSenderChecked: Boolean = false,
         val isAddCustomsButtonEnabled: Boolean = false
     ) : Parcelable {
@@ -91,6 +91,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     sealed class InputValue : Parcelable {
         data class Data(val value: String) : InputValue()
         data class Error(val errorMessage: String) : InputValue()
+
+        companion object {
+            val EMPTY = Data("")
+        }
     }
 
     enum class ContentType(val resourceId: Int) {
