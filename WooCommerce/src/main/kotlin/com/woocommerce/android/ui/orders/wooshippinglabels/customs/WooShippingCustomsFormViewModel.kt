@@ -95,6 +95,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         companion object {
             val EMPTY = Data("")
         }
+
+        val dataOrError
+            get() = when (this) {
+                is Data -> value
+                is Error -> errorMessage
+            }
     }
 
     enum class ContentType(val resourceId: Int) {
