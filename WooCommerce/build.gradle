@@ -338,7 +338,7 @@ dependencies {
         exclude group: "com.google.protobuf", module: "protobuf-lite"
     }
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
-    kspAndroidTest(libs.google.dagger.hilt.android.compiler)
+    kspAndroidTest(libs.google.dagger.hilt.compiler)
     androidTestImplementation(libs.androidx.test.uiautomator)
 
     // Dependencies for screenshots
