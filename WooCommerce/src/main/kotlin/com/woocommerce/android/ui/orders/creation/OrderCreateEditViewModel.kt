@@ -334,7 +334,7 @@ class OrderCreateEditViewModel @Inject constructor(
     val customAmounts: LiveData<List<CustomAmountUIModel>> = _orderDraft
         .map { order -> order.feesLines }
         .map { feeLines ->
-            feeLines.map { feeLine -> mapFeeLineToCustomAmountUiModel(feeLine) }
+            feeLines.map { feeLine -> mapFeeLineToCustomAmountUiModel(feeLine, getCurrencySymbol()) }
         }
         .asLiveData()
 
