@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/color_surface_elevated"
     android:gravity="center_horizontal"
     android:minWidth="@dimen/payments_dialog_width"
@@ -134,15 +134,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hint_label"
-        app:layout_constraintBottom_toTopOf="@id/buttons_group"
+        app:layout_constraintBottom_toTopOf="@id/labels_group"
         tools:text="A receipt has been emailed to xyz" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/buttons_group"
+        android:id="@+id/labels_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="primary_action_btn,secondary_action_btn,tertiary_action_btn" />
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="payment_state_label,hint_label,receipt_sent_label" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/primary_action_btn"
@@ -151,7 +151,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:layout_marginTop="@dimen/margin_small_medium"
-        app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
+        app:layout_constraintTop_toBottomOf="@id/labels_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Send receipt" />
@@ -162,7 +162,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
-        app:layout_constraintBottom_toTopOf="@id/tertiary_action_btn"
+        app:layout_constraintTop_toBottomOf="@id/primary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Print receipt" />
@@ -174,7 +174,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:textAllCaps="false"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Save for later" />
