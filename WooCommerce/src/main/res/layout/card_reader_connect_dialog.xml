@@ -56,11 +56,11 @@
         style="@style/Woo.Card.Body.High"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/margin_medium"
         android:layout_marginHorizontal="@dimen/major_75"
+        android:layout_marginVertical="@dimen/margin_medium"
         android:ellipsize="end"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
+        app:layout_constraintBottom_toTopOf="@id/buttons_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_group"
@@ -71,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginVertical="@dimen/margin_extra_large"
-        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
+        app:layout_constraintBottom_toTopOf="@id/buttons_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_group"
@@ -79,11 +79,11 @@
         tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/middle_group"
+        android:id="@+id/buttons_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="hint_label,multiple_card_readers_found_rv" />
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="primary_action_btn,secondary_action_btn,tertiary_action_btn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/primary_action_btn"
@@ -92,9 +92,10 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/middle_group"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Connect to a reader" />
 
     <com.google.android.material.button.MaterialButton
@@ -103,9 +104,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
+        app:layout_constraintBottom_toTopOf="@id/tertiary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/primary_action_btn"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Keep Searching" />
 
     <com.google.android.material.button.MaterialButton
@@ -118,7 +120,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
         tools:text="Cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
