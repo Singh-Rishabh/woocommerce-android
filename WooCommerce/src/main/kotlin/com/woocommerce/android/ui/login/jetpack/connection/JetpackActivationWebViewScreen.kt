@@ -37,7 +37,6 @@ fun JetpackActivationWebViewScreen(
             wpComAuthenticator = wpComAuthenticator,
             onUrlLoaded = onUrlLoaded,
             onUrlFailed = onUrlFailed,
-            clearCache = true,
             modifier = Modifier.padding(paddingValues)
         )
     }

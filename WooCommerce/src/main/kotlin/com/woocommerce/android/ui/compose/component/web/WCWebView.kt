@@ -50,7 +50,6 @@ fun WCWebView(
     webViewClient: DefaultWebViewClient = remember { DefaultWebViewClient() },
     webChromeClient: ComposeWebChromeClient = remember { ComposeWebChromeClient() },
     settings: WCWebViewSettings = WCWebViewSettings(),
-    clearCache: Boolean = false,
     progressIndicator: WebViewProgressIndicator = Linear()
 ) {
     var webView by remember { mutableStateOf<WebView?>(null) }
@@ -132,18 +131,6 @@ fun WCWebView(
                     }
 
                     this.settings.userAgentString = userAgent.userAgent
-                    if (clearCache) {
-                        WebStorage.getInstance().deleteAllData()
-
-                        // Clear all the cookies
-                        CookieManager.getInstance().removeAllCookies(null)
-                        CookieManager.getInstance().flush()
-
-                        this.clearCache(true)
-                        this.clearFormData()
-                        this.clearHistory()
-                        this.clearSslPreferences()
-                    }
                 }.also { webView = it }
             },
             modifier = Modifier

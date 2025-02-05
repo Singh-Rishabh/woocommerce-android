@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.CookieManager
+import android.webkit.WebStorage
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
@@ -48,6 +50,8 @@ class JetpackActivationWebViewFragment : BaseFragment() {
         }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        clearWebViewData()
+
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is JetpackActivationWebViewViewModel.ConnectionResult -> navigateBackWithResult(
@@ -56,5 +60,13 @@ class JetpackActivationWebViewFragment : BaseFragment() {
                 )
             }
         }
+    }
+
+    private fun clearWebViewData() {
+        WebStorage.getInstance().deleteAllData()
+
+        // Clear all the WebView cookies
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
     }
 }

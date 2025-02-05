@@ -32,7 +32,6 @@ fun BlazeCampaignDetailWebViewScreen(
             userAgent = userAgent,
             wpComAuthenticator = wpComAuthenticator,
             onUrlLoaded = onUrlLoaded,
-            clearCache = true,
             modifier = Modifier.padding(paddingValues)
         )
     }
