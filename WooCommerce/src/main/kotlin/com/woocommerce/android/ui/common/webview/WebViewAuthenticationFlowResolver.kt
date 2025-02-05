@@ -2,10 +2,9 @@ package com.woocommerce.android.ui.common.webview
 
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.tools.SelectedSite
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.AccountStore
-import org.wordpress.android.util.UrlUtils
-import java.net.URI
 import javax.inject.Inject
 
 class WebViewAuthenticationFlowResolver @Inject constructor(
@@ -37,9 +36,7 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
         }
     }
 
-    private fun String.findDomain(): String? {
-        return runCatching { URI(UrlUtils.addUrlSchemeIfNeeded(this, false)).host }.getOrNull()
-    }
+    private fun String.findDomain(): String? = toHttpUrl().host
 
     private fun SiteModel.supportsJetpackSSO(): Boolean {
         // TODO
