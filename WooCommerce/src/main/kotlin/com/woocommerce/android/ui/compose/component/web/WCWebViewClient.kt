@@ -10,19 +10,19 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 open class WCWebViewClient : WebViewClient() {
-    private val _eventsObservable = MutableSharedFlow<WebViewEvent>(extraBufferCapacity = Int.MAX_VALUE)
-    val eventsObservable: Flow<WebViewEvent> = _eventsObservable.asSharedFlow()
+    private val _eventsObservable = MutableSharedFlow<WCWebViewEvent>(extraBufferCapacity = Int.MAX_VALUE)
+    val eventsObservable: Flow<WCWebViewEvent> = _eventsObservable.asSharedFlow()
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-        url?.let { _eventsObservable.tryEmit(WebViewEvent.UrlLoaded(it)) }
+        url?.let { _eventsObservable.tryEmit(WCWebViewEvent.UrlLoaded(it)) }
     }
 
     override fun onLoadResource(view: WebView?, url: String?) {
-        url?.let { _eventsObservable.tryEmit(WebViewEvent.UrlLoaded(it)) }
+        url?.let { _eventsObservable.tryEmit(WCWebViewEvent.UrlLoaded(it)) }
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
-        url?.let { _eventsObservable.tryEmit(WebViewEvent.PageFinished(it)) }
+        url?.let { _eventsObservable.tryEmit(WCWebViewEvent.PageFinished(it)) }
     }
 
     override fun onReceivedError(
@@ -31,7 +31,7 @@ open class WCWebViewClient : WebViewClient() {
         error: WebResourceError?
     ) {
         request?.url?.let { url ->
-            _eventsObservable.tryEmit(WebViewEvent.UrlFailed(url.toString(), error?.errorCode))
+            _eventsObservable.tryEmit(WCWebViewEvent.UrlFailed(url.toString(), error?.errorCode))
         }
     }
 
@@ -41,15 +41,7 @@ open class WCWebViewClient : WebViewClient() {
         errorResponse: WebResourceResponse?
     ) {
         request?.url?.let { url ->
-            _eventsObservable.tryEmit(WebViewEvent.UrlFailed(url.toString(), errorResponse?.statusCode))
+            _eventsObservable.tryEmit(WCWebViewEvent.UrlFailed(url.toString(), errorResponse?.statusCode))
         }
-    }
-
-    sealed interface WebViewEvent {
-        val url: String
-
-        data class UrlLoaded(override val url: String) : WebViewEvent
-        data class PageFinished(override val url: String) : WebViewEvent
-        data class UrlFailed(override val url: String, val errorCode: Int?) : WebViewEvent
     }
 }

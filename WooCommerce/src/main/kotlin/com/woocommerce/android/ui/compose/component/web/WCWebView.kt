@@ -27,7 +27,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.woocommerce.android.R.dimen
 import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
-import com.woocommerce.android.ui.compose.component.web.WCWebViewClient.WebViewEvent
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Circular
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Linear
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -70,12 +69,12 @@ fun WCWebView(
         webViewClient.eventsObservable
             .collect {
                 when (it) {
-                    is WebViewEvent.UrlLoaded -> onUrlLoaded(it.url)
-                    is WebViewEvent.PageFinished -> {
+                    is WCWebViewEvent.UrlLoaded -> onUrlLoaded(it.url)
+                    is WCWebViewEvent.PageFinished -> {
                         onPageFinished(it.url)
                         canGoBack = webView?.canGoBack() == true
                     }
-                    is WebViewEvent.UrlFailed -> onUrlFailed(it.url, it.errorCode)
+                    is WCWebViewEvent.UrlFailed -> onUrlFailed(it.url, it.errorCode)
                 }
             }
     }
