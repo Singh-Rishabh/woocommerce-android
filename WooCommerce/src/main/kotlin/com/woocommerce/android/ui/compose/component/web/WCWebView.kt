@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -95,18 +96,21 @@ fun WCWebView(
     }
 
     Box(modifier = modifier) {
-        fun getWebViewAlpha(): Float {
-            return if (progressIndicator is Circular ||
-                progressIndicator is Linear && progressIndicator.message != null
-            ) {
-                if (progress == 100) 1f else 0f
-            } else {
-                1f
+        val webViewAlpha by remember {
+            derivedStateOf {
+                if (progressIndicator is Circular ||
+                    progressIndicator is Linear && progressIndicator.message != null
+                ) {
+                    if (progress == 100) 1f else 0f
+                } else {
+                    1f
+                }
             }
         }
-
-        fun getProgressAlpha(): Float {
-            return if (progress == 100) 0f else 1f
+        val progressAlpha by remember {
+            derivedStateOf {
+                if (progress == 100) 0f else 1f
+            }
         }
 
         AndroidView(
@@ -147,7 +151,7 @@ fun WCWebView(
                 }.also { webView = it }
             },
             modifier = Modifier
-                .alpha(getWebViewAlpha())
+                .alpha(webViewAlpha)
         )
 
         if (progressIndicator is Linear) {
@@ -155,7 +159,7 @@ fun WCWebView(
                 progress = (progress / 100f),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .alpha(getProgressAlpha())
+                    .alpha(progressAlpha)
             )
 
             if (progressIndicator.message != null) {
@@ -163,14 +167,14 @@ fun WCWebView(
                     text = progressIndicator.message,
                     modifier = Modifier
                         .align(Alignment.Center)
-                        .alpha(getProgressAlpha())
+                        .alpha(progressAlpha)
                 )
             }
         } else if (progressIndicator is Circular) {
             Column(
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .alpha(getProgressAlpha())
+                    .alpha(progressAlpha)
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier
