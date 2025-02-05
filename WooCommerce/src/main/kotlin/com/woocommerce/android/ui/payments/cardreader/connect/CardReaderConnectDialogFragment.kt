@@ -48,6 +48,7 @@ import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderActivity
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import com.woocommerce.android.util.LocationUtils
 import com.woocommerce.android.util.UiHelpers
+import com.woocommerce.android.util.UiHelpers.getIllustrationVisibilityForFontScale
 import com.woocommerce.android.util.WooAnimUtils
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooPermissionUtils
@@ -164,12 +165,7 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
     private fun moveToState(binding: CardReaderConnectDialogBinding, viewState: CardReaderConnectViewState) {
         UiHelpers.setTextOrHide(binding.headerLabel, viewState.headerLabel)
         UiHelpers.setImageOrHideInLandscapeOnCompactScreenHeightSizeClass(binding.illustration, viewState.illustration)
-        val illustrationVisibility = if (resources.configuration.fontScale > 1.0f) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
-        binding.illustration.visibility = illustrationVisibility
+        binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
         UiHelpers.setTextOrHide(binding.hintLabel, viewState.hintLabel)
         UiHelpers.setTextOrHide(binding.primaryActionBtn, viewState.primaryActionLabel)
         UiHelpers.setTextOrHide(binding.secondaryActionBtn, viewState.secondaryActionLabel)

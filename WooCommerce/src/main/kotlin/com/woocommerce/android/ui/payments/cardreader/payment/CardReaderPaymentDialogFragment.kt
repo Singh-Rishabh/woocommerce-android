@@ -33,6 +33,7 @@ import com.woocommerce.android.ui.payments.cardreader.payment.ViewState.External
 import com.woocommerce.android.ui.payments.refunds.RefundSummaryFragment.Companion.KEY_INTERAC_SUCCESS
 import com.woocommerce.android.util.PrintHtmlHelper
 import com.woocommerce.android.util.UiHelpers
+import com.woocommerce.android.util.UiHelpers.getIllustrationVisibilityForFontScale
 import com.woocommerce.android.util.UiHelpers.getTextOfUiString
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
@@ -108,12 +109,7 @@ class CardReaderPaymentDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                 binding.illustration,
                 viewState.illustration
             )
-            val illustrationVisibility = if (resources.configuration.fontScale > 1.0f) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-            binding.illustration.visibility = illustrationVisibility
+            binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
             UiHelpers.setTextOrHide(binding.paymentStateLabel, viewState.paymentStateLabel)
             (binding.paymentStateLabel.layoutParams as ViewGroup.MarginLayoutParams)
                 .topMargin = resources.getDimensionPixelSize(viewState.paymentStateLabelTopMargin)
