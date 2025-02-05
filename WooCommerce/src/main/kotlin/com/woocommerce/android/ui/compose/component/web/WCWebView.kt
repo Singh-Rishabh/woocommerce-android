@@ -2,8 +2,6 @@ package com.woocommerce.android.ui.compose.component.web
 
 import android.annotation.SuppressLint
 import android.view.ViewGroup
-import android.webkit.CookieManager
-import android.webkit.WebStorage
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
@@ -51,12 +49,7 @@ fun WCWebView(
     webViewNavigator: WebViewNavigator = rememberWebViewNavigator(),
     webViewClient: DefaultWebViewClient = remember { DefaultWebViewClient() },
     webChromeClient: ComposeWebChromeClient = remember { ComposeWebChromeClient() },
-    loadWithOverviewMode: Boolean = false,
-    useWideViewPort: Boolean = false,
-    isJavaScriptEnabled: Boolean = true,
-    isDomStorageEnabled: Boolean = true,
-    isReadOnly: Boolean = false,
-    initialScale: Int = 0,
+    settings: WCWebViewSettings = WCWebViewSettings(),
     clearCache: Boolean = false,
     progressIndicator: WebViewProgressIndicator = Linear()
 ) {
@@ -93,6 +86,18 @@ fun WCWebView(
             wpComAuthenticator?.authenticateAndLoadUrl(webView, url) ?: webView.loadUrl(url)
             canGoBack = webView.canGoBack()
         }
+
+        LaunchedEffect(settings) {
+            if (settings.isReadOnly) {
+                webView.setOnTouchListener { _, _ -> true }
+            }
+            webView.setInitialScale(settings.initialScale)
+
+            webView.settings.useWideViewPort = settings.useWideViewPort
+            webView.settings.loadWithOverviewMode = settings.loadWithOverviewMode
+            webView.settings.javaScriptEnabled = settings.isJavaScriptEnabled
+            webView.settings.domStorageEnabled = settings.isDomStorageEnabled
+        }
     }
 
     Box(modifier = modifier) {
@@ -126,15 +131,6 @@ fun WCWebView(
                         onProgressChanged = { newProgress -> progress = newProgress }
                     }
 
-                    if (isReadOnly) {
-                        this.setOnTouchListener { _, _ -> true }
-                    }
-
-                    this.setInitialScale(initialScale)
-                    this.settings.useWideViewPort = useWideViewPort
-                    this.settings.loadWithOverviewMode = loadWithOverviewMode
-                    this.settings.javaScriptEnabled = isJavaScriptEnabled
-                    this.settings.domStorageEnabled = isDomStorageEnabled
                     this.settings.userAgentString = userAgent.userAgent
                     if (clearCache) {
                         WebStorage.getInstance().deleteAllData()
