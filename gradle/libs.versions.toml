@@ -102,7 +102,7 @@ wiremock = '2.26.3'
 wordpress-aztec = 'v2.1.4'
 wordpress-libaddressinput = '0.0.2'
 wordpress-lint = "2.1.0"
-wordpress-mediapicker = '0.3.2'
+wordpress-mediapicker = 'trunk-a6366298f9c24516ec5da0c9948d45d07bdb7f06'
 wordpress-utils = '3.15.0'
 zendesk = '5.0.8'
 
@@ -209,7 +209,6 @@ google-dagger = { module = "com.google.dagger:dagger", version.ref = "google-dag
 google-dagger-android-processor = { group = "com.google.dagger", name = "dagger-android-processor", version.ref = "google-dagger" }
 google-dagger-android-support = { group = "com.google.dagger", name = "dagger-android-support", version.ref = "google-dagger" }
 google-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "google-dagger" }
-google-dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "google-dagger" }
 google-dagger-hilt-android-main = { group = "com.google.dagger", name = "hilt-android", version.ref = "google-dagger" }
 google-dagger-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "google-dagger" }
 google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "google-dagger" }
