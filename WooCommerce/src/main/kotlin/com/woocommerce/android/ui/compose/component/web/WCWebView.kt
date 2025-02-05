@@ -27,7 +27,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.woocommerce.android.R.dimen
 import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
-import com.woocommerce.android.ui.compose.component.web.DefaultWebViewClient.WebViewEvent
+import com.woocommerce.android.ui.compose.component.web.WCWebViewClient.WebViewEvent
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Circular
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Linear
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,8 +47,8 @@ fun WCWebView(
     captureBackPresses: Boolean = true,
     wpComAuthenticator: WPComWebViewAuthenticator? = null,
     webViewNavigator: WebViewNavigator = rememberWebViewNavigator(),
-    webViewClient: DefaultWebViewClient = remember { DefaultWebViewClient() },
-    webChromeClient: ComposeWebChromeClient = remember { ComposeWebChromeClient() },
+    webViewClient: WCWebViewClient = remember { WCWebViewClient() },
+    webChromeClient: WCWebChromeClient = remember { WCWebChromeClient() },
     settings: WCWebViewSettings = WCWebViewSettings(),
     progressIndicator: WebViewProgressIndicator = Linear()
 ) {

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-open class DefaultWebViewClient : WebViewClient() {
+open class WCWebViewClient : WebViewClient() {
     private val _eventsObservable = MutableSharedFlow<WebViewEvent>(extraBufferCapacity = Int.MAX_VALUE)
     val eventsObservable: Flow<WebViewEvent> = _eventsObservable.asSharedFlow()
 
