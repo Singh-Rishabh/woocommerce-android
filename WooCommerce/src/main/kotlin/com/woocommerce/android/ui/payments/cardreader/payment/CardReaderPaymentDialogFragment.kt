@@ -115,8 +115,6 @@ class CardReaderPaymentDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                 }
             }
             UiHelpers.setTextOrHide(binding.paymentStateLabel, viewState.paymentStateLabel)
-            (binding.paymentStateLabel.layoutParams as ViewGroup.MarginLayoutParams)
-                .topMargin = resources.getDimensionPixelSize(viewState.paymentStateLabelTopMargin)
             UiHelpers.setTextOrHide(binding.hintLabel, viewState.hintLabel)
             UiHelpers.setTextOrHide(binding.primaryActionBtn, viewState.primaryActionLabel)
             UiHelpers.setTextOrHide(binding.secondaryActionBtn, viewState.secondaryActionLabel)

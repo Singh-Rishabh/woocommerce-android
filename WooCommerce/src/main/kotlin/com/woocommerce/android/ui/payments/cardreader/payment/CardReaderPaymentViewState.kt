@@ -20,7 +20,6 @@ sealed class ViewState(
     @StringRes open val headerLabel: Int? = null,
     val paymentStateLabel: UiString? = null,
     open val receiptSentAutomaticallyHint: UiString? = null,
-    @DimenRes val paymentStateLabelTopMargin: Int = R.dimen.major_275,
     @DrawableRes val illustration: Int? = null,
     open val isProgressVisible: Boolean = false,
     val primaryActionLabel: Int? = null,
@@ -56,7 +55,6 @@ sealed class ViewState(
     ) : ViewState(
         headerLabel = R.string.card_reader_payment_payment_failed_header,
         paymentStateLabel = errorType.message,
-        paymentStateLabelTopMargin = R.dimen.major_100,
         primaryActionLabel = primaryLabel,
         illustration = R.drawable.img_products_error,
         secondaryActionLabel = secondaryLabel
@@ -72,7 +70,6 @@ sealed class ViewState(
     ) : ViewState(
         headerLabel = R.string.card_reader_payment_payment_failed_header,
         paymentStateLabel = errorType.message,
-        paymentStateLabelTopMargin = R.dimen.major_100,
         primaryActionLabel = primaryLabel,
         illustration = R.drawable.img_card_reader_tpp_payment_failed,
         secondaryActionLabel = secondaryLabel
@@ -262,7 +259,6 @@ sealed class ViewState(
     ) : ViewState(
         headerLabel = R.string.card_reader_interac_refund_refund_failed_header,
         paymentStateLabel = errorType.message,
-        paymentStateLabelTopMargin = R.dimen.major_100,
         primaryActionLabel = primaryLabel,
         illustration = R.drawable.img_products_error,
         secondaryActionLabel = secondaryLabel,
