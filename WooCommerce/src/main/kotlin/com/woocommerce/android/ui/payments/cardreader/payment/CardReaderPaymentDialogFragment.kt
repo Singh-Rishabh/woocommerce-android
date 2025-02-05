@@ -108,6 +108,12 @@ class CardReaderPaymentDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                 binding.illustration,
                 viewState.illustration
             )
+            val illustrationVisibility = if (resources.configuration.fontScale > 1.0f) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+            binding.illustration.visibility = illustrationVisibility
             UiHelpers.setTextOrHide(binding.paymentStateLabel, viewState.paymentStateLabel)
             (binding.paymentStateLabel.layoutParams as ViewGroup.MarginLayoutParams)
                 .topMargin = resources.getDimensionPixelSize(viewState.paymentStateLabelTopMargin)
