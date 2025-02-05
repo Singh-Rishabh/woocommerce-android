@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.ComponentDialog
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -108,8 +109,11 @@ class CardReaderPaymentDialogFragment : PaymentsBaseDialogFragment(R.layout.card
             UiHelpers.setImageOrHideInLandscapeOnCompactScreenHeightSizeClass(
                 binding.illustration,
                 viewState.illustration
-            )
-            binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
+            ).also {
+                if (binding.illustration.isVisible) {
+                    binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
+                }
+            }
             UiHelpers.setTextOrHide(binding.paymentStateLabel, viewState.paymentStateLabel)
             (binding.paymentStateLabel.layoutParams as ViewGroup.MarginLayoutParams)
                 .topMargin = resources.getDimensionPixelSize(viewState.paymentStateLabelTopMargin)

@@ -18,6 +18,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
@@ -165,7 +166,11 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
     private fun moveToState(binding: CardReaderConnectDialogBinding, viewState: CardReaderConnectViewState) {
         UiHelpers.setTextOrHide(binding.headerLabel, viewState.headerLabel)
         UiHelpers.setImageOrHideInLandscapeOnCompactScreenHeightSizeClass(binding.illustration, viewState.illustration)
-        binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
+            .also {
+                if (binding.illustration.isVisible) {
+                    binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
+                }
+            }
         UiHelpers.setTextOrHide(binding.hintLabel, viewState.hintLabel)
         UiHelpers.setTextOrHide(binding.primaryActionBtn, viewState.primaryActionLabel)
         UiHelpers.setTextOrHide(binding.secondaryActionBtn, viewState.secondaryActionLabel)
