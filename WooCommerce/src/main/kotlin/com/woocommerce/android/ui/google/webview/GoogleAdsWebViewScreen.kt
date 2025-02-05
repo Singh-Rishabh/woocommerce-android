@@ -43,8 +43,7 @@ fun GoogleAdsWebViewScreen(
     onUrlLoaded: (String) -> Unit,
     onPageFinished: (String) -> Unit,
     onUrlFailed: (String, Int?) -> Unit,
-    onClose: () -> Unit,
-    clearCache: Boolean = false
+    onClose: () -> Unit
 ) {
     BackHandler(onBack = onClose)
     Scaffold(
@@ -67,7 +66,6 @@ fun GoogleAdsWebViewScreen(
             onPageFinished = onPageFinished,
             onUrlFailed = onUrlFailed,
             captureBackPresses = viewState.captureBackButton,
-            clearCache = clearCache,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()

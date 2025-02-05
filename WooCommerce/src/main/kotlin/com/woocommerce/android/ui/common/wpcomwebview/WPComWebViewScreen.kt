@@ -34,8 +34,7 @@ fun WPComWebViewScreen(
     wpcomWebViewAuthenticator: WPComWebViewAuthenticator,
     userAgent: UserAgent,
     onUrlLoaded: (String) -> Unit,
-    onClose: () -> Unit,
-    clearCache: Boolean = false
+    onClose: () -> Unit
 ) {
     BackHandler(onBack = onClose)
     Scaffold(
@@ -56,7 +55,6 @@ fun WPComWebViewScreen(
             wpComAuthenticator = wpcomWebViewAuthenticator,
             onUrlLoaded = onUrlLoaded,
             captureBackPresses = viewState.captureBackButton,
-            clearCache = clearCache,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
