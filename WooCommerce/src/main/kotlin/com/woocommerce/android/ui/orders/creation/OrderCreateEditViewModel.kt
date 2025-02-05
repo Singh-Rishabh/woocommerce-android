@@ -1258,7 +1258,7 @@ class OrderCreateEditViewModel @Inject constructor(
     fun onAddOrEditShippingClicked(itemId: Long? = null) {
         tracker.track(AnalyticsEvent.ORDER_ADD_SHIPPING_TAPPED)
         val shippingLine = itemId?.let { id -> currentDraft.shippingLines.firstOrNull { it.itemId == id } }
-        triggerEvent(EditShipping(shippingLine))
+        triggerEvent(EditShipping(shippingLine, getCurrencySymbol()))
     }
 
     fun onCreateOrderClicked(order: Order, isTablet: Boolean = false) {

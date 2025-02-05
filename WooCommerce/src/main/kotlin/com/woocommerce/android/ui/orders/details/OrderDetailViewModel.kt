@@ -366,7 +366,8 @@ class OrderDetailViewModel @Inject constructor(
                 EditOrder(
                     orderId = awaitOrder().id,
                     giftCard = firstGiftCard?.code,
-                    appliedDiscount = firstGiftCard?.used
+                    appliedDiscount = firstGiftCard?.used,
+                    orderCurrency = awaitOrder().currency
                 )
             )
         }
