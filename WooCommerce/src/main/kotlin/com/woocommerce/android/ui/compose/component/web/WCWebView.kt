@@ -3,12 +3,8 @@ package com.woocommerce.android.ui.compose.component.web
 import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.webkit.CookieManager
-import android.webkit.WebResourceError
-import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebStorage
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +28,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.woocommerce.android.R.dimen
 import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
+import com.woocommerce.android.ui.compose.component.web.DefaultWebViewClient.WebViewEvent
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Circular
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Linear
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -51,6 +48,7 @@ fun WCWebView(
     captureBackPresses: Boolean = true,
     wpComAuthenticator: WPComWebViewAuthenticator? = null,
     webViewNavigator: WebViewNavigator = rememberWebViewNavigator(),
+    webViewClient: DefaultWebViewClient = remember { DefaultWebViewClient() },
     webChromeClient: ComposeWebChromeClient = remember { ComposeWebChromeClient() },
     loadWithOverviewMode: Boolean = false,
     useWideViewPort: Boolean = false,
@@ -76,6 +74,20 @@ fun WCWebView(
         }
     }
 
+    LaunchedEffect(webViewClient) {
+        webViewClient.eventsObservable
+            .collect {
+                when (it) {
+                    is WebViewEvent.UrlLoaded -> onUrlLoaded(it.url)
+                    is WebViewEvent.PageFinished -> {
+                        onPageFinished(it.url)
+                        canGoBack = webView?.canGoBack() == true
+                    }
+                    is WebViewEvent.UrlFailed -> onUrlFailed(it.url, it.errorCode)
+                }
+            }
+    }
+
     Box(modifier = modifier) {
         fun getWebViewAlpha(): Float {
             return if (progressIndicator is Circular ||
@@ -99,41 +111,7 @@ fun WCWebView(
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
 
-                    this.webViewClient = object : WebViewClient() {
-                        override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-                            url?.let { onUrlLoaded(it) }
-                        }
-
-                        override fun onLoadResource(view: WebView?, url: String?) {
-                            url?.let { onUrlLoaded(it) }
-                        }
-
-                        override fun onPageFinished(view: WebView?, url: String?) {
-                            url?.let { onPageFinished(it) }
-                            canGoBack = view?.canGoBack() ?: false
-                        }
-
-                        override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?
-                        ) {
-                            request?.url?.let { url ->
-                                onUrlFailed(url.toString(), error?.errorCode)
-                            }
-                        }
-
-                        override fun onReceivedHttpError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            errorResponse: WebResourceResponse?
-                        ) {
-                            request?.url?.let { url ->
-                                onUrlFailed(url.toString(), errorResponse?.statusCode)
-                            }
-                        }
-                    }
-
+                    this.webViewClient = webViewClient
                     this.webChromeClient = webChromeClient.apply {
                         onProgressChanged = { newProgress -> progress = newProgress }
                     }
