@@ -61,7 +61,6 @@ fun WCWebView(
 ) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var progress by remember { mutableIntStateOf(0) }
-    var lastLoadedUrl by remember { mutableStateOf("") }
     var canGoBack by remember { mutableStateOf(false) }
 
     BackHandler(captureBackPresses && canGoBack) {
@@ -86,6 +85,13 @@ fun WCWebView(
                     is WebViewEvent.UrlFailed -> onUrlFailed(it.url, it.errorCode)
                 }
             }
+    }
+
+    webView?.let { webView ->
+        LaunchedEffect(url) {
+            wpComAuthenticator?.authenticateAndLoadUrl(webView, url) ?: webView.loadUrl(url)
+            canGoBack = webView.canGoBack()
+        }
     }
 
     Box(modifier = modifier) {
@@ -142,12 +148,7 @@ fun WCWebView(
             },
             modifier = Modifier
                 .alpha(getWebViewAlpha())
-        ) { webView ->
-            if (lastLoadedUrl == url) return@AndroidView
-            lastLoadedUrl = url
-            wpComAuthenticator?.authenticateAndLoadUrl(webView, url) ?: webView.loadUrl(url)
-            canGoBack = webView.canGoBack()
-        }
+        )
 
         if (progressIndicator is Linear) {
             LinearProgressIndicator(
