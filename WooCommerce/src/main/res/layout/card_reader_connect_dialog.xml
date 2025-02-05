@@ -38,18 +38,12 @@
         android:layout_gravity="center"
         android:layout_marginVertical="@dimen/margin_extra_extra_medium_large"
         android:contentDescription="@null"
-        app:layout_constraintBottom_toTopOf="@id/top_group"
+        app:layout_constraintBottom_toTopOf="@id/hint_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_label"
+        app:layout_constraintVertical_chainStyle="spread"
         tools:srcCompat="@drawable/img_card_reader_scanning" />
-
-    <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/top_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="illustration,header_label" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/hint_label"
@@ -57,33 +51,37 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_75"
-        android:layout_marginVertical="@dimen/margin_small_medium"
+        android:layout_marginTop="@dimen/margin_small_medium"
+        android:layout_marginBottom="@dimen/margin_small_medium"
         android:ellipsize="end"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/buttons_group"
+        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_group"
+        app:layout_constraintTop_toBottomOf="@id/illustration"
+        app:layout_constraintVertical_chainStyle="spread"
         tools:text="Please wait" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/multiple_card_readers_found_rv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_extra_large"
-        app:layout_constraintBottom_toTopOf="@id/buttons_group"
+        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_group"
+        app:layout_constraintTop_toBottomOf="@id/header_label"
+        app:layout_constraintVertical_chainStyle="spread"
         tools:listitem="@layout/card_reader_connect_reader_item"
         tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Barrier
-        android:id="@+id/buttons_group"
+        android:id="@+id/middle_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="top"
-        app:constraint_referenced_ids="primary_action_btn,secondary_action_btn,tertiary_action_btn" />
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="multiple_card_readers_found_rv,hint_label" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/primary_action_btn"
@@ -91,10 +89,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
-        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toTopOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttons_group"
+        app:layout_constraintTop_toBottomOf="@id/middle_group"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Connect to a reader" />
 
@@ -104,6 +102,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
+        app:layout_constraintBottom_toTopOf="@id/tertiary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/primary_action_btn"
@@ -117,9 +116,11 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
