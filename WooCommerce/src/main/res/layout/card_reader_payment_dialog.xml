@@ -52,11 +52,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/major_125"
         android:contentDescription="@null"
-        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/amount_label"
+        app:layout_constraintVertical_chainStyle="spread"
         tools:srcCompat="@drawable/img_card_reader_available" />
 
     <FrameLayout
@@ -65,11 +65,11 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/major_175"
         android:paddingBottom="@dimen/major_150"
-        app:layout_constraintVertical_chainStyle="spread"
         app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount_label">
+        app:layout_constraintTop_toBottomOf="@id/amount_label"
+        app:layout_constraintVertical_chainStyle="spread">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -98,12 +98,13 @@
         app:autoSizeMinTextSize="@dimen/text_minor_60"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintBottom_toTopOf="@id/hint_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content_group"
-        app:layout_constraintBottom_toTopOf="@id/hint_label"
-        tools:text="Reader is ready" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Reader is ready"
+        tools:visibility="gone" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/hint_label"
@@ -111,14 +112,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_125"
-        android:layout_marginTop="@dimen/margin_small_medium"
+        android:layout_marginVertical="@dimen/margin_small_medium"
         android:ellipsize="end"
         android:gravity="center_horizontal"
-        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintBottom_toTopOf="@id/receipt_sent_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/payment_state_label"
-        app:layout_constraintBottom_toTopOf="@id/receipt_sent_label"
+        app:layout_constraintVertical_chainStyle="packed"
         tools:text="Tap or insert to pay" />
 
     <com.google.android.material.textview.MaterialTextView
@@ -130,12 +131,13 @@
         android:layout_marginTop="@dimen/margin_small_medium"
         android:ellipsize="end"
         android:gravity="center_horizontal"
-        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintBottom_toTopOf="@id/labels_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/hint_label"
-        app:layout_constraintBottom_toTopOf="@id/labels_group"
-        tools:text="A receipt has been emailed to xyz" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="A receipt has been emailed to xyz"
+        tools:visibility="gone" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/labels_group"
@@ -151,9 +153,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:layout_marginTop="@dimen/margin_small_medium"
-        app:layout_constraintTop_toBottomOf="@id/labels_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/labels_group"
         tools:text="Send receipt" />
 
     <com.google.android.material.button.MaterialButton
@@ -162,9 +164,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
-        app:layout_constraintTop_toBottomOf="@id/primary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/primary_action_btn"
         tools:text="Print receipt" />
 
     <com.google.android.material.button.MaterialButton
@@ -174,9 +176,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:textAllCaps="false"
-        app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
         tools:text="Save for later" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
