@@ -313,13 +313,21 @@ class ProductRestClient @Inject constructor(
      *
      * @param [remoteProductId] Unique server id of the product to fetch
      */
-    suspend fun fetchSingleProduct(site: SiteModel, remoteProductId: Long): RemoteProductPayload {
+    suspend fun fetchSingleProduct(
+        site: SiteModel,
+        remoteProductId: Long,
+        orderCurrency: String? = null,
+    ): RemoteProductPayload {
         val url = WOOCOMMERCE.products.id(remoteProductId).pathV3
+
+        val params = mutableMapOf<String, String>().apply {
+            orderCurrency?.let { put("currency", it) }
+        }
 
         val response = wooNetwork.executeGetGsonRequest(
             site = site,
             path = url,
-            params = emptyMap(),
+            params = params,
             clazz = ProductApiResponse::class.java
         )
 
@@ -423,7 +431,8 @@ class ProductRestClient @Inject constructor(
         globalUniqueIdSearchQuery: String? = null,
         includedProductIds: List<Long>? = null,
         filterOptions: Map<ProductFilterOption, String>? = null,
-        excludedProductIds: List<Long>? = null
+        excludedProductIds: List<Long>? = null,
+        orderCurrency: String? = null,
     ) {
         coroutineEngine.launch(AppLog.T.API, this, "fetchProducts") {
             val url = WOOCOMMERCE.products.pathV3
@@ -436,7 +445,8 @@ class ProductRestClient @Inject constructor(
                 globalUniqueIdSearchQuery = globalUniqueIdSearchQuery,
                 includedProductIds = includedProductIds,
                 excludedProductIds = excludedProductIds,
-                filterOptions = filterOptions
+                filterOptions = filterOptions,
+                orderCurrency = orderCurrency,
             )
 
             val response = wooNetwork.executeGetGsonRequest(
@@ -559,7 +569,8 @@ class ProductRestClient @Inject constructor(
         searchQuery: String? = null,
         skuSearchOptions: SkuSearchOptions = SkuSearchOptions.Disabled,
         filterOptions: Map<ProductFilterOption, String>? = null,
-        includeTypes: List<WCProductStore.IncludeType> = emptyList()
+        includeTypes: List<WCProductStore.IncludeType> = emptyList(),
+        orderCurrency: String? = null,
     ): WooPayload<List<ProductWithMetaData>> {
         val params = buildProductParametersMap(
             pageSize = pageSize,
@@ -571,6 +582,7 @@ class ProductRestClient @Inject constructor(
             excludedProductIds = excludedProductIds,
             filterOptions = filterOptions,
             includeTypes = includeTypes,
+            orderCurrency = orderCurrency
         )
 
         val url = WOOCOMMERCE.products.pathV3
@@ -613,7 +625,8 @@ class ProductRestClient @Inject constructor(
         includedProductIds: List<Long>? = null,
         excludedProductIds: List<Long>? = null,
         filterOptions: Map<ProductFilterOption, String>? = null,
-        includeTypes: List<WCProductStore.IncludeType> = emptyList()
+        includeTypes: List<WCProductStore.IncludeType> = emptyList(),
+        orderCurrency: String? = null,
     ): MutableMap<String, String> {
         fun ProductSorting.asOrderByParameter() = when (this) {
             TITLE_ASC, TITLE_DESC -> "title"
@@ -631,7 +644,9 @@ class ProductRestClient @Inject constructor(
             "order" to sortType.asSortOrderParameter(),
             "offset" to offset.toString(),
             "include_types" to includeTypes.joinToString(",") { it.value }
-        )
+        ).apply {
+            orderCurrency?.let { put("currency", it) }
+        }
 
         includedProductIds?.let { includedIds ->
             params.putIfNotEmpty("include" to includedIds.map { it }.joinToString())
@@ -934,6 +949,7 @@ class ProductRestClient @Inject constructor(
         searchQuery: String? = null,
         excludedVariationIds: List<Long> = emptyList(),
         filterOptions: Map<WCProductStore.VariationFilterOption, String>? = null,
+        orderCurrency: String? = null,
     ): WooPayload<List<WCProductVariationModel>> {
         val params = mutableMapOf(
             "per_page" to pageSize.toString(),
@@ -943,6 +959,7 @@ class ProductRestClient @Inject constructor(
         ).putIfNotEmpty("search" to searchQuery)
             .putIfNotEmpty("include" to includedVariationIds.map { it }.joinToString())
             .putIfNotEmpty("exclude" to excludedVariationIds.map { it }.joinToString())
+            .putIfNotEmpty("currency" to orderCurrency)
 
         filterOptions?.let { options ->
             params.putAll(options.map { it.key.toString() to it.value })
