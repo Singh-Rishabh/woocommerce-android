@@ -266,9 +266,9 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                     ToastUtils.showToast(requireContext(), getString(event.message))
                 is CardReaderConnectEvent.ShowToastString ->
                     ToastUtils.showToast(requireContext(), event.message)
-                is CardReaderConnectEvent.OpenWPComWebView ->
+                is CardReaderConnectEvent.OpenAuthenticatedWebView ->
                     findNavController().navigateSafely(
-                        NavGraphPaymentFlowDirections.actionGlobalWPComWebViewFragment(urlToLoad = event.url)
+                        NavGraphPaymentFlowDirections.actionGlobalAuthenticatedWebViewFragment(urlToLoad = event.url)
                     )
                 is CardReaderConnectEvent.OpenGenericWebView ->
                     ChromeCustomTabUtils.launchUrl(requireContext(), event.url)

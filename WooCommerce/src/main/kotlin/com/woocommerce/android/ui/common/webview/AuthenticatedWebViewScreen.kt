@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.common.wpcomwebview
+package com.woocommerce.android.ui.common.webview
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,17 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel.DisplayMode.MODAL
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel.DisplayMode.REGULAR
+import com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel.DisplayMode.MODAL
+import com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel.DisplayMode.REGULAR
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.web.WCWebView
 import org.wordpress.android.fluxc.network.UserAgent
 
 @Composable
-fun WPComWebViewScreen(viewViewModel: WPComWebViewViewModel) {
-    WPComWebViewScreen(
+fun AuthenticatedWebViewScreen(viewViewModel: AuthenticatedWebViewViewModel) {
+    AuthenticatedWebViewScreen(
         viewState = viewViewModel.viewState,
-        wpcomWebViewAuthenticator = viewViewModel.wpComWebViewAuthenticator,
+        wpcomWebViewAuthenticator = viewViewModel.webViewAuthenticator,
         userAgent = viewViewModel.userAgent,
         onUrlLoaded = viewViewModel::onUrlLoaded,
         onClose = viewViewModel::onClose
@@ -29,9 +29,9 @@ fun WPComWebViewScreen(viewViewModel: WPComWebViewViewModel) {
 }
 
 @Composable
-fun WPComWebViewScreen(
-    viewState: WPComWebViewViewModel.ViewState,
-    wpcomWebViewAuthenticator: WPComWebViewAuthenticator,
+private fun AuthenticatedWebViewScreen(
+    viewState: AuthenticatedWebViewViewModel.ViewState,
+    wpcomWebViewAuthenticator: WebViewAuthenticator,
     userAgent: UserAgent,
     onUrlLoaded: (String) -> Unit,
     onClose: () -> Unit
@@ -52,7 +52,7 @@ fun WPComWebViewScreen(
         WCWebView(
             url = viewState.urlToLoad,
             userAgent = userAgent,
-            wpComAuthenticator = wpcomWebViewAuthenticator,
+            authenticator = wpcomWebViewAuthenticator,
             onUrlLoaded = onUrlLoaded,
             captureBackPresses = viewState.captureBackButton,
             modifier = Modifier

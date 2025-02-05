@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
+import com.woocommerce.android.ui.common.webview.WebViewAuthenticator
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.web.WCWebView
 import com.woocommerce.android.ui.google.webview.GoogleAdsWebViewViewModel.DisplayMode.MODAL
@@ -20,7 +20,7 @@ import org.wordpress.android.fluxc.network.UserAgent
 
 @Composable
 fun GoogleAdsWebViewScreen(viewViewModel: GoogleAdsWebViewViewModel) {
-    val authenticator = viewViewModel.wpComWebViewAuthenticator.takeIf {
+    val authenticator = viewViewModel.webViewAuthenticator.takeIf {
         viewViewModel.viewState.canUseAutoLoginWebview
     }
 
@@ -38,7 +38,7 @@ fun GoogleAdsWebViewScreen(viewViewModel: GoogleAdsWebViewViewModel) {
 @Composable
 fun GoogleAdsWebViewScreen(
     viewState: GoogleAdsWebViewViewModel.ViewState,
-    wpcomWebViewAuthenticator: WPComWebViewAuthenticator?,
+    wpcomWebViewAuthenticator: WebViewAuthenticator?,
     userAgent: UserAgent,
     onUrlLoaded: (String) -> Unit,
     onPageFinished: (String) -> Unit,
@@ -61,7 +61,7 @@ fun GoogleAdsWebViewScreen(
         WCWebView(
             url = viewState.urlToLoad,
             userAgent = userAgent,
-            wpComAuthenticator = wpcomWebViewAuthenticator,
+            authenticator = wpcomWebViewAuthenticator,
             onUrlLoaded = onUrlLoaded,
             onPageFinished = onPageFinished,
             onUrlFailed = onUrlFailed,

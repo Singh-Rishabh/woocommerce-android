@@ -29,7 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.woocommerce.android.R
 import com.woocommerce.android.R.string
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
+import com.woocommerce.android.ui.common.webview.WebViewAuthenticator
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedButton
@@ -56,7 +56,7 @@ fun LaunchStoreScreen(viewModel: LaunchStoreViewModel) {
             LaunchStoreScreen(
                 state = state,
                 userAgent = viewModel.userAgent,
-                authenticator = viewModel.wpComWebViewAuthenticator,
+                authenticator = viewModel.webViewAuthenticator,
                 onLaunchStoreClicked = viewModel::launchStore,
                 onShareStoreUrl = viewModel::shareStoreUrl,
                 onBackToStoreClicked = viewModel::onBackPressed,
@@ -73,7 +73,7 @@ fun LaunchStoreScreen(viewModel: LaunchStoreViewModel) {
 private fun LaunchStoreScreen(
     state: LaunchStoreState,
     userAgent: UserAgent,
-    authenticator: WPComWebViewAuthenticator,
+    authenticator: WebViewAuthenticator,
     onLaunchStoreClicked: () -> Unit,
     onShareStoreUrl: () -> Unit,
     onBackToStoreClicked: () -> Unit,
@@ -137,13 +137,13 @@ private fun LaunchStoreScreen(
 private fun WebView(
     url: String,
     userAgent: UserAgent,
-    authenticator: WPComWebViewAuthenticator,
+    authenticator: WebViewAuthenticator,
     isReadOnly: Boolean
 ) {
     WCWebView(
         url = url,
         userAgent = userAgent,
-        wpComAuthenticator = authenticator,
+        authenticator = authenticator,
         captureBackPresses = false,
         settings = WCWebViewSettings(
             loadWithOverviewMode = true,
@@ -219,7 +219,7 @@ private fun ActionsFooter(
 private fun SitePreview(
     url: String,
     userAgent: UserAgent,
-    authenticator: WPComWebViewAuthenticator,
+    authenticator: WebViewAuthenticator,
     modifier: Modifier = Modifier
 ) {
     Box(

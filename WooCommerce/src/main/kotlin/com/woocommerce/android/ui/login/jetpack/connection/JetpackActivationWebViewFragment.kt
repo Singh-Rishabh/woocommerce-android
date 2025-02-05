@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
 import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.ui.base.BaseFragment
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
+import com.woocommerce.android.ui.common.webview.WebViewAuthenticator
 import com.woocommerce.android.ui.main.AppBarStatus
 import dagger.hilt.android.AndroidEntryPoint
 import org.wordpress.android.fluxc.network.UserAgent
@@ -28,7 +28,7 @@ class JetpackActivationWebViewFragment : BaseFragment() {
     private val viewModel: JetpackActivationWebViewViewModel by viewModels()
 
     @Inject
-    lateinit var wpComAuthenticator: WPComWebViewAuthenticator
+    lateinit var authenticator: WebViewAuthenticator
 
     @Inject
     lateinit var userAgent: UserAgent
@@ -40,7 +40,7 @@ class JetpackActivationWebViewFragment : BaseFragment() {
             setContent {
                 JetpackActivationWebViewScreen(
                     viewModel = viewModel,
-                    wpComAuthenticator = wpComAuthenticator,
+                    authenticator = authenticator,
                     userAgent = userAgent,
                     onUrlLoaded = viewModel::onUrlLoaded,
                     onUrlFailed = viewModel::onUrlFailed,

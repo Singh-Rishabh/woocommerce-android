@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
+import com.woocommerce.android.ui.common.webview.WebViewAuthenticator
 import com.woocommerce.android.ui.compose.Screen
 import com.woocommerce.android.ui.compose.Screen.ScreenType
 import com.woocommerce.android.ui.compose.component.web.WCWebView
@@ -27,7 +27,7 @@ fun ThemePreviewWebView(
     url: String,
     userAgent: UserAgent,
     modifier: Modifier = Modifier,
-    wpComAuthenticator: WPComWebViewAuthenticator? = null,
+    authenticator: WebViewAuthenticator? = null,
     previewType: PreviewType
 ) {
     val screen = rememberScreen()
@@ -53,7 +53,7 @@ fun ThemePreviewWebView(
         WCWebView(
             url = url,
             userAgent = userAgent,
-            wpComAuthenticator = wpComAuthenticator,
+            authenticator = authenticator,
             settings = webViewSettings,
             progressIndicator = WebViewProgressIndicator.Linear()
         )
