@@ -36,12 +36,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_extra_extra_medium_large"
+        android:layout_marginVertical="@dimen/margin_extra_extra_medium_large"
         android:contentDescription="@null"
+        app:layout_constraintBottom_toTopOf="@id/top_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/header_label"
-        app:layout_constraintBottom_toTopOf="@id/top_group"
         tools:srcCompat="@drawable/img_card_reader_scanning" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -51,31 +51,30 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="illustration,header_label" />
 
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/hint_label"
         style="@style/Woo.Card.Body.High"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/major_75"
-        android:layout_marginEnd="@dimen/major_75"
+        android:layout_marginVertical="@dimen/margin_medium"
+        android:layout_marginHorizontal="@dimen/major_75"
         android:ellipsize="end"
         android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_group"
-        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
         tools:text="Please wait" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/multiple_card_readers_found_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/margin_extra_large"
+        android:layout_marginVertical="@dimen/margin_extra_large"
+        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_group"
-        app:layout_constraintBottom_toTopOf="@id/primary_action_btn"
         tools:listitem="@layout/card_reader_connect_reader_item"
         tools:visibility="gone" />
 
@@ -93,9 +92,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:layout_marginTop="0dp"
-        app:layout_constraintTop_toBottomOf="@id/middle_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/middle_group"
         tools:text="Connect to a reader" />
 
     <com.google.android.material.button.MaterialButton
@@ -116,6 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_150"
         android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/secondary_action_btn"
