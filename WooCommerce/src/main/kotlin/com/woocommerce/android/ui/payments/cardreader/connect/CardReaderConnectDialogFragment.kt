@@ -186,11 +186,6 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
             viewState.onTertiaryActionClicked?.invoke()
         }
 
-        with(binding.illustration.layoutParams as ViewGroup.MarginLayoutParams) {
-//            topMargin = resources.getDimensionPixelSize(viewState.illustrationTopMargin)
-            // TODO: remove margin property because constraints are improved. VM shouldn't know about that value.
-        }
-
         updateMultipleReadersFoundRecyclerView(binding, viewState)
 
         with(binding.illustration) {
