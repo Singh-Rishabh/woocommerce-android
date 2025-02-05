@@ -29,7 +29,7 @@ sealed class OrderCreateEditNavigationTarget : Event() {
         val startPaymentFlow: Boolean,
         val isTablet: Boolean = false,
     ) : OrderCreateEditNavigationTarget()
-    data class EditShipping(val currentShippingLine: ShippingLine?) :
+    data class EditShipping(val currentShippingLine: ShippingLine?, val orderCurrency: String? = null) :
         OrderCreateEditNavigationTarget()
 
     data class EditFee(

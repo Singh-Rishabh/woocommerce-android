@@ -119,6 +119,7 @@ class OrderCreateEditFormFragment :
     private companion object {
         private const val TABLET_PANES_WIDTH_RATIO = 0.5F
     }
+
     private val viewModel by fixedHiltNavGraphViewModels<OrderCreateEditViewModel>(R.id.nav_graph_order_creations)
     private val sharedViewModel: ProductSelectorSharedViewModel by activityViewModels()
 
@@ -153,6 +154,7 @@ class OrderCreateEditFormFragment :
             selectedItems = viewModel.selectedItems.value.toTypedArray(),
             productSelectorFlow = ProductSelectorViewModel.ProductSelectorFlow.OrderCreation,
             selectionMode = ProductSelectorViewModel.SelectionMode.LIVE,
+            orderCurrency = args.orderCurrency
         )
         navController?.setGraph(R.navigation.nav_graph_product_selector, args.toBundle())
     }
@@ -262,6 +264,7 @@ class OrderCreateEditFormFragment :
                     viewModel.onCreateOrderClicked(viewModel.currentDraft)
                     true
                 }
+
                 else -> false
             }
         }
@@ -416,6 +419,7 @@ class OrderCreateEditFormFragment :
 
         viewModel.event.observe(viewLifecycleOwner) { handleViewModelEvents(it, binding) }
     }
+
     private fun bindShippingLinesSection(binding: FragmentOrderCreateEditFormBinding) {
         binding.shippingLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -425,7 +429,9 @@ class OrderCreateEditFormFragment :
                         ShippingLineFormSection(
                             shippingLineDetails = shippingLineSection.shippingLines,
                             isEnabled = shippingLineSection.isEnabled,
-                            formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
+                            formatCurrency = { amount ->
+                                currencyFormatter.formatCurrency(amount, viewModel.getCurrencySymbol())
+                            },
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAddClicked = { viewModel.onAddOrEditShippingClicked() },
                             onEditClicked = { id -> viewModel.onAddOrEditShippingClicked(id) }
@@ -726,7 +732,10 @@ class OrderCreateEditFormFragment :
             OrderCreateEditNavigator.navigate(
                 this,
                 OrderCreateEditNavigationTarget.CustomAmountDialog(
-                    customAmountUIModel.copy(type = FIXED_CUSTOM_AMOUNT),
+                    customAmountUIModel.copy(
+                        type = FIXED_CUSTOM_AMOUNT,
+                        currency = viewModel.getCurrencySymbol()
+                    ),
                     orderTotal
                 )
             )
@@ -1208,8 +1217,12 @@ class OrderCreateEditFormFragment :
                     this,
                     OrderCreateEditNavigationTarget.CustomAmountDialog(
                         customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
-                            type = event.type
-                        ) ?: CustomAmountUIModel.EMPTY.copy(type = event.type),
+                            type = event.type,
+                            currency = viewModel.getCurrencySymbol()
+                        ) ?: CustomAmountUIModel.EMPTY.copy(
+                            type = event.type,
+                            currency = viewModel.getCurrencySymbol()
+                        ),
                         orderTotal = viewModel.orderDraft.value?.total.toString(),
                     )
                 )

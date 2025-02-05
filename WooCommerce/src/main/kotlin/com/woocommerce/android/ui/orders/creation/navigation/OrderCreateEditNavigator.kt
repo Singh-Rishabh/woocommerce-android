@@ -63,7 +63,8 @@ object OrderCreateEditNavigator {
             is EditShipping -> {
                 OrderCreateEditFormFragmentDirections
                     .actionOrderCreationFragmentToOrderCreateEditUpdateShippingFragment(
-                        target.currentShippingLine
+                        target.currentShippingLine,
+                        target.orderCurrency
                     )
             }
 
