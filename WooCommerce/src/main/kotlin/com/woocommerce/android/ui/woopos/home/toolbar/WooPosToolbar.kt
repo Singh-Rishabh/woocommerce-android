@@ -249,7 +249,7 @@ private fun PopUpMenu(
     onClick: (Menu.MenuItem) -> Unit
 ) {
     WooPosCard(
-        modifier = modifier.width(250.dp),
+        modifier = modifier.width(254.dp),
         elevation = TOOLBAR_ELEVATION,
     ) {
         Column {
