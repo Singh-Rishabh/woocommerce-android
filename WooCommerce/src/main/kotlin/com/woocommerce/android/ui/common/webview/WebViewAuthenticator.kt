@@ -2,7 +2,7 @@ package com.woocommerce.android.ui.common.webview
 
 import android.webkit.CookieManager
 import android.webkit.WebView
-import com.woocommerce.android.extensions.isNotNullOrEmpty
+import com.woocommerce.android.extensions.loginUrlOrDefault
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.compose.component.web.WCWebViewEvent
 import com.woocommerce.android.util.WooLog
@@ -13,7 +13,6 @@ import org.wordpress.android.fluxc.store.AccountStore
 import java.io.UnsupportedEncodingException
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.Locale
 import javax.inject.Inject
 
 class WebViewAuthenticator @Inject constructor(
@@ -44,7 +43,12 @@ class WebViewAuthenticator @Inject constructor(
     }
 
     private fun authenticateWPComAndLoad(webView: WebView, url: String): Boolean {
-        val postData = getWPComPostData(url)
+        val postData = prepareLoginPostData(
+            redirectUrl = url,
+            username = accountStore.account.userName,
+            authorizationParam = "authorization" to "Bearer ${accountStore.accessToken}"
+        )
+
         if (postData != null) {
             webView.postUrl(WPCOM_LOGIN_URL, postData.toByteArray())
             return true
@@ -69,7 +73,7 @@ class WebViewAuthenticator @Inject constructor(
         // Handle SSO login and redirect back to the original URL
         val site = selectedSite.get()
         webViewCookieManager.setCookie(site.url, "jetpack_sso_redirect_to=$url")
-        val ssoLoginUrl = site.loginUrl.toHttpUrl().newBuilder()
+        val ssoLoginUrl = site.loginUrlOrDefault.toHttpUrl().newBuilder()
             .addQueryParameter("action", "jetpack-sso")
             .build()
             .toString()
@@ -78,34 +82,42 @@ class WebViewAuthenticator @Inject constructor(
     }
 
     private fun authenticateUsingSiteCredentialsAndLoad(webView: WebView, url: String) {
-        // TODO
+        val site = selectedSite.get()
+
+        val postData = prepareLoginPostData(
+            redirectUrl = url,
+            username = site.username,
+            authorizationParam = "pwd" to site.password
+        )
+
+        if (postData != null) {
+            webView.postUrl(site.loginUrlOrDefault, postData.toByteArray())
+        } else {
+            webView.loadUrl(url)
+        }
     }
 
-    @Suppress("ReturnCount")
-    private fun getWPComPostData(redirectUrl: String): String? {
-        require(accountStore.account.userName.isNotNullOrEmpty()) { "Username is required" }
-        require(accountStore.accessToken.isNotNullOrEmpty()) { "Access token is required" }
-
-        val username = accountStore.account.userName
-        val token = accountStore.accessToken
-
+    private fun prepareLoginPostData(
+        redirectUrl: String,
+        username: String,
+        authorizationParam: Pair<String, String>,
+    ): String? {
         val utf8 = StandardCharsets.UTF_8.name()
-        try {
-            var postData = String.format(
-                Locale.ROOT,
-                "log=%s&redirect_to=%s",
-                URLEncoder.encode(username, utf8),
-                URLEncoder.encode(redirectUrl, utf8),
-            )
+        val (authorizationKey, authorizationValue) = authorizationParam
+        return try {
+            buildString {
+                append("redirect_to=").append(URLEncoder.encode(redirectUrl, utf8))
 
-            // Add token authorization
-            postData += "&authorization=Bearer " + URLEncoder.encode(token, utf8)
+                append("&log=").append(URLEncoder.encode(username, utf8))
 
-            return postData
+                append("&${URLEncoder.encode(authorizationKey, utf8)}=")
+                    .append(URLEncoder.encode(authorizationValue, utf8))
+
+            }
         } catch (e: UnsupportedEncodingException) {
             WooLog.e(WooLog.T.UTILS, e)
+            null
         }
-        return null
     }
 
     companion object {
