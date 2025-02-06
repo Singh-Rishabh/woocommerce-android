@@ -20,7 +20,6 @@ class ProductSelectorRepository @Inject constructor(
         pageSize: Int,
         searchQuery: String,
         skuSearchOptions: WCProductStore.SkuSearchOptions,
-        orderCurrency: String? = null,
     ): List<Product> {
         return productStore.getProducts(
             selectedSite.get(),

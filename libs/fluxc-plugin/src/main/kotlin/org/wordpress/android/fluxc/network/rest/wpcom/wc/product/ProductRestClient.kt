@@ -615,6 +615,7 @@ class ProductRestClient @Inject constructor(
         return response.toWooPayload { it.toList() }
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun buildProductParametersMap(
         pageSize: Int,
         sortType: ProductSorting,
@@ -628,17 +629,25 @@ class ProductRestClient @Inject constructor(
         includeTypes: List<WCProductStore.IncludeType> = emptyList(),
         orderCurrency: String? = null,
     ): MutableMap<String, String> {
-        fun ProductSorting.asOrderByParameter() = when (this) {
-            TITLE_ASC, TITLE_DESC -> "title"
-            DATE_ASC, DATE_DESC -> "date"
-        }
+        val params = buildBaseParams(pageSize, sortType, offset, includeTypes, orderCurrency)
 
-        fun ProductSorting.asSortOrderParameter() = when (this) {
-            TITLE_ASC, DATE_ASC -> "asc"
-            TITLE_DESC, DATE_DESC -> "desc"
-        }
+        addProductIds(params, "include", includedProductIds)
+        addProductIds(params, "exclude", excludedProductIds)
+        addFilterOptions(params, filterOptions)
+        addSearchParams(params, searchQuery, skuSearchOptions)
+        addGlobalUniqueIdSearchQuery(params, globalUniqueIdSearchQuery)
 
-        val params = mutableMapOf(
+        return params
+    }
+
+    private fun buildBaseParams(
+        pageSize: Int,
+        sortType: ProductSorting,
+        offset: Int,
+        includeTypes: List<WCProductStore.IncludeType>,
+        orderCurrency: String?
+    ): MutableMap<String, String> {
+        return mutableMapOf(
             "per_page" to pageSize.toString(),
             "orderby" to sortType.asOrderByParameter(),
             "order" to sortType.asSortOrderParameter(),
@@ -647,38 +656,47 @@ class ProductRestClient @Inject constructor(
         ).apply {
             orderCurrency?.let { put("currency", it) }
         }
+    }
 
-        includedProductIds?.let { includedIds ->
-            params.putIfNotEmpty("include" to includedIds.map { it }.joinToString())
+    private fun addProductIds(params: MutableMap<String, String>, key: String, productIds: List<Long>?) {
+        productIds?.let { ids ->
+            params.putIfNotEmpty(key to ids.joinToString())
         }
-        excludedProductIds?.let { excludedIds ->
-            params.putIfNotEmpty("exclude" to excludedIds.map { it }.joinToString())
-        }
+    }
+
+    private fun addFilterOptions(params: MutableMap<String, String>, filterOptions: Map<ProductFilterOption, String>?) {
         filterOptions?.let { options ->
             params.putAll(options.map { it.key.toString() to it.value })
         }
+    }
 
-        if (searchQuery.isNullOrEmpty().not()) {
-            when (skuSearchOptions) {
-                SkuSearchOptions.Disabled -> {
-                    params["search"] = searchQuery!!
-                }
+    private fun addSearchParams(
+        params: MutableMap<String, String>,
+        searchQuery: String?,
+        skuSearchOptions: SkuSearchOptions
+    ) {
+        if (searchQuery.isNullOrEmpty()) return
 
-                SkuSearchOptions.ExactSearch -> {
-                    params["sku"] = searchQuery!! // full SKU match
-                }
-
-                SkuSearchOptions.PartialMatch -> {
-                    params["sku"] = searchQuery!! // full SKU match
-                    params["search_sku"] = searchQuery // partial SKU match, added in core v6.6
-                }
+        when (skuSearchOptions) {
+            SkuSearchOptions.Disabled -> params["search"] = searchQuery
+            SkuSearchOptions.ExactSearch -> params["sku"] = searchQuery // full SKU match
+            SkuSearchOptions.PartialMatch -> {
+                params["sku"] = searchQuery // full SKU match
+                params["search_sku"] = searchQuery // partial SKU match, added in core v6.6
             }
         }
-
-        addGlobalUniqueIdSearchQuery(params, globalUniqueIdSearchQuery)
-
-        return params
     }
+
+    private fun ProductSorting.asOrderByParameter(): String = when (this) {
+        TITLE_ASC, TITLE_DESC -> "title"
+        DATE_ASC, DATE_DESC -> "date"
+    }
+
+    private fun ProductSorting.asSortOrderParameter(): String = when (this) {
+        TITLE_ASC, DATE_ASC -> "asc"
+        TITLE_DESC, DATE_DESC -> "desc"
+    }
+
 
     private fun addGlobalUniqueIdSearchQuery(
         params: MutableMap<String, String>,

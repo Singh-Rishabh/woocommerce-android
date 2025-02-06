@@ -1174,73 +1174,72 @@ class OrderCreateEditFormFragment :
     @Suppress("ComplexMethod")
     private fun handleViewModelEvents(event: Event, binding: FragmentOrderCreateEditFormBinding) {
         when (event) {
-            is OrderCreateEditNavigationTarget -> OrderCreateEditNavigator.navigate(this, event)
-            is ViewOrderStatusSelector ->
-                OrderCreateEditFormFragmentDirections
-                    .actionOrderCreationFragmentToOrderStatusSelectorDialog(
-                        currentStatus = event.currentStatus,
-                        orderStatusList = event.orderStatusList,
-                        positiveButtonLabel = R.string.apply
-                    ).let { findNavController().navigateSafely(it) }
-
+            is OrderCreateEditNavigationTarget -> handleNavigation(event)
+            is ViewOrderStatusSelector -> handleOrderStatusSelection(event)
             is ShowSnackbar -> uiMessageResolver.showSnack(event.message)
             is ShowDialog -> event.showDialog()
-            is OnAddingProductViaScanningFailed -> {
-                uiMessageResolver.getRetrySnack(
-                    message = event.message,
-                    isIndefinite = false,
-                    actionListener = event.retry
-                ).show()
-            }
-
-            is OpenBarcodeScanningFragment -> {
-                findNavController().navigateSafely(
-                    OrderCreateEditFormFragmentDirections.actionOrderCreationFragmentToBarcodeScanningFragment()
-                )
-            }
-
-            is VMKilledWhenScanningInProgress -> {
-                ToastUtils.showToast(
-                    context,
-                    event.message
-                )
-            }
-
-            is OnCouponRejectedByBackend -> {
-                uiMessageResolver.getSnack(
-                    stringResId = event.message
-                ).show()
-            }
-
-            is OnCustomAmountTypeSelected -> {
-                OrderCreateEditNavigator.navigate(
-                    this,
-                    OrderCreateEditNavigationTarget.CustomAmountDialog(
-                        customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
-                            type = event.type,
-                            currency = viewModel.getCurrencySymbol()
-                        ) ?: CustomAmountUIModel.EMPTY.copy(
-                            type = event.type,
-                            currency = viewModel.getCurrencySymbol()
-                        ),
-                        orderTotal = viewModel.orderDraft.value?.total.toString(),
-                    )
-                )
-            }
-
-            is OnTotalsSectionHeightChanged -> {
-                binding.scrollView.setPadding(0, 0, 0, event.newHeight)
-            }
-
-            is OnSelectedProductsSyncRequested -> {
-                if (requireContext().isTwoPanesShouldBeUsed) {
-                    sharedViewModel.selectedItems.value.let { viewModel.onProductsSelected(it) }
-                }
-            }
-
+            is OnAddingProductViaScanningFailed -> handleScanningFailure(event)
+            is OpenBarcodeScanningFragment -> navigateToBarcodeScanning()
+            is VMKilledWhenScanningInProgress -> ToastUtils.showToast(context, event.message)
+            is OnCouponRejectedByBackend -> uiMessageResolver.getSnack(stringResId = event.message).show()
+            is OnCustomAmountTypeSelected -> handleCustomAmountSelection(event)
+            is OnTotalsSectionHeightChanged -> updateScrollViewPadding(binding, event.newHeight)
+            is OnSelectedProductsSyncRequested -> syncSelectedProducts()
             is Exit -> findNavController().navigateUp()
-
             is ShippingLinesFeedback -> sendShippingLinesFeedback()
+        }
+    }
+
+    private fun handleNavigation(event: OrderCreateEditNavigationTarget) {
+        OrderCreateEditNavigator.navigate(this, event)
+    }
+
+    private fun handleOrderStatusSelection(event: ViewOrderStatusSelector) {
+        OrderCreateEditFormFragmentDirections
+            .actionOrderCreationFragmentToOrderStatusSelectorDialog(
+                currentStatus = event.currentStatus,
+                orderStatusList = event.orderStatusList,
+                positiveButtonLabel = R.string.apply
+            ).let { findNavController().navigateSafely(it) }
+    }
+
+    private fun handleScanningFailure(event: OnAddingProductViaScanningFailed) {
+        uiMessageResolver.getRetrySnack(
+            message = event.message,
+            isIndefinite = false,
+            actionListener = event.retry
+        ).show()
+    }
+
+    private fun navigateToBarcodeScanning() {
+        findNavController().navigateSafely(
+            OrderCreateEditFormFragmentDirections.actionOrderCreationFragmentToBarcodeScanningFragment()
+        )
+    }
+
+    private fun handleCustomAmountSelection(event: OnCustomAmountTypeSelected) {
+        OrderCreateEditNavigator.navigate(
+            this,
+            OrderCreateEditNavigationTarget.CustomAmountDialog(
+                customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
+                    type = event.type,
+                    currency = viewModel.getCurrencySymbol()
+                ) ?: CustomAmountUIModel.EMPTY.copy(
+                    type = event.type,
+                    currency = viewModel.getCurrencySymbol()
+                ),
+                orderTotal = viewModel.orderDraft.value?.total.toString(),
+            )
+        )
+    }
+
+    private fun updateScrollViewPadding(binding: FragmentOrderCreateEditFormBinding, newHeight: Int) {
+        binding.scrollView.setPadding(0, 0, 0, newHeight)
+    }
+
+    private fun syncSelectedProducts() {
+        if (requireContext().isTwoPanesShouldBeUsed) {
+            sharedViewModel.selectedItems.value.let { viewModel.onProductsSelected(it) }
         }
     }
 
