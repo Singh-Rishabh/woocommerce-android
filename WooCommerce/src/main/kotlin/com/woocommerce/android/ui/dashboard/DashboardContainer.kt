@@ -13,12 +13,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -39,8 +36,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.woocommerce.android.R
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.model.DashboardWidget
 import com.woocommerce.android.ui.blaze.creation.BlazeCampaignCreationDispatcher
 import com.woocommerce.android.ui.compose.component.WCColoredButton
@@ -84,7 +82,12 @@ fun DashboardContainer(
                     .fillMaxSize()
                     .background(MaterialTheme.colors.surface)
                     .padding(vertical = dimensionResource(id = R.dimen.major_100)),
-                numberOfColumns = if (windowSizeClass != WindowSizeClass.Compact) 2 else 1
+                numberOfColumns = when (windowSizeClass.windowWidthSizeClass) {
+                    WindowWidthSizeClass.COMPACT -> 1
+                    WindowWidthSizeClass.MEDIUM -> 2
+                    WindowWidthSizeClass.EXPANDED -> 3
+                    else -> 1
+                }
             )
 
             PullRefreshIndicator(
@@ -99,7 +102,7 @@ fun DashboardContainer(
 
 @Composable
 private fun DashboardWidgets(
-    widgetUiModels: List<DashboardViewModel.DashboardWidgetUiModel>,
+    widgetUiModels: List<DashboardWidgetUiModel>,
     mainActivityViewModel: MainActivityViewModel,
     dashboardViewModel: DashboardViewModel,
     blazeCampaignCreationDispatcher: BlazeCampaignCreationDispatcher,
@@ -112,11 +115,13 @@ private fun DashboardWidgets(
     val nestedScrollInterop = rememberNestedScrollInteropConnection()
 
     if (numberOfColumns == 1) {
-        LazyColumn(
-            modifier = modifier.nestedScroll(nestedScrollInterop),
+        Column(
+            modifier = modifier
+                .nestedScroll(nestedScrollInterop)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(widgetUiModels) { widget ->
+            widgetUiModels.forEach { widget ->
                 AnimatedVisibility(widget.isVisible) {
                     DashboardWidgetCard(
                         widget,
@@ -129,25 +134,46 @@ private fun DashboardWidgets(
             }
         }
     } else {
-        LazyVerticalStaggeredGrid(
-            modifier = modifier.nestedScroll(nestedScrollInterop),
-            columns = StaggeredGridCells.Adaptive(400.dp),
-            verticalItemSpacing = 16.dp,
-            horizontalArrangement = Arrangement.SpaceEvenly,
+        val widgetColumns = splitWidgetsIntoColumns(
+            numberOfColumns = numberOfColumns,
+            visibleUiWidgets = widgetUiModels.filter { it.isVisible }
+        )
+        Row(
+            modifier = modifier
+                .nestedScroll(nestedScrollInterop)
+                .verticalScroll(rememberScrollState())
         ) {
-            items(widgetUiModels) { widget ->
-                AnimatedVisibility(widget.isVisible) {
-                    DashboardWidgetCard(
-                        widget,
-                        mainActivityViewModel,
-                        dashboardViewModel,
-                        blazeCampaignCreationDispatcher,
-                        widgetModifier
-                    )
+            widgetColumns.forEach { columnWidgets ->
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    columnWidgets.forEach { widget ->
+                        AnimatedVisibility(widget.isVisible) {
+                            DashboardWidgetCard(
+                                widget,
+                                mainActivityViewModel,
+                                dashboardViewModel,
+                                blazeCampaignCreationDispatcher,
+                                widgetModifier
+                            )
+                        }
+                    }
                 }
             }
         }
     }
+}
+
+private fun splitWidgetsIntoColumns(
+    numberOfColumns: Int,
+    visibleUiWidgets: List<DashboardWidgetUiModel>
+): MutableList<MutableList<DashboardWidgetUiModel>> {
+    val widgetColumns = MutableList<MutableList<DashboardWidgetUiModel>>(numberOfColumns) { mutableListOf() }
+    for ((index, item) in visibleUiWidgets.withIndex()) {
+        widgetColumns[index % numberOfColumns].add(item)
+    }
+    return widgetColumns
 }
 
 @Composable
@@ -194,7 +220,7 @@ private fun DashboardWidgetCard(
 
 @Composable
 private fun ConfigurableWidgetCard(
-    widgetUiModel: DashboardViewModel.DashboardWidgetUiModel.ConfigurableWidget,
+    widgetUiModel: DashboardWidgetUiModel.ConfigurableWidget,
     mainActivityViewModel: MainActivityViewModel,
     dashboardViewModel: DashboardViewModel,
     blazeCampaignCreationDispatcher: BlazeCampaignCreationDispatcher,
@@ -302,7 +328,7 @@ private fun ShareStoreCard(
 
 @Composable
 private fun FeedbackCard(
-    widget: DashboardViewModel.DashboardWidgetUiModel.FeedbackWidget,
+    widget: DashboardWidgetUiModel.FeedbackWidget,
     modifier: Modifier
 ) {
     LaunchedEffect(Unit) {
@@ -346,7 +372,7 @@ private fun FeedbackCard(
 
 @Composable
 private fun NewWidgetsCard(
-    state: DashboardViewModel.DashboardWidgetUiModel.NewWidgetsCard,
+    state: DashboardWidgetUiModel.NewWidgetsCard,
     modifier: Modifier
 ) {
     Column(

@@ -105,6 +105,7 @@ wordpress-lint = "2.1.0"
 wordpress-mediapicker = 'trunk-a6366298f9c24516ec5da0c9948d45d07bdb7f06'
 wordpress-utils = '3.15.0'
 zendesk = '5.0.8'
+adaptiveAndroid = "1.0.0"
 
 [libraries]
 android-billingclient-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "android-billingclient" }
@@ -269,6 +270,7 @@ wordpress-aztec-main = { group = "org.wordpress", name = "aztec", version.ref = 
 wordpress-aztec-glide-loader = { group = "org.wordpress.aztec", name = "glide-loader", version.ref = "wordpress-aztec" }
 wordpress-utils = { group = "org.wordpress", name = "utils", version.ref = "wordpress-utils" }
 zendesk-support = { group = "com.zendesk", name = "support", version.ref = "zendesk" }
+androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", name = "adaptive-android", version.ref = "adaptiveAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

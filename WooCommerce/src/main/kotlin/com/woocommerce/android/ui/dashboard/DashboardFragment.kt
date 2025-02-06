@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.OptIn
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -33,7 +34,6 @@ import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.showDateRangePicker
 import com.woocommerce.android.extensions.startHelpActivity
 import com.woocommerce.android.extensions.verticalOffsetChanges
-import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.DashboardWidget
 import com.woocommerce.android.support.help.HelpOrigin
 import com.woocommerce.android.tools.SelectedSite
@@ -139,7 +139,7 @@ class DashboardFragment :
                         mainActivityViewModel = mainActivityViewModel,
                         dashboardViewModel = dashboardViewModel,
                         blazeCampaignCreationDispatcher = blazeCampaignCreationDispatcher,
-                        windowSizeClass = requireContext().windowSizeClass
+                        windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
                     )
                 }
             }
