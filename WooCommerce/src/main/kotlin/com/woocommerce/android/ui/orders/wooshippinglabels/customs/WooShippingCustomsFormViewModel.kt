@@ -145,6 +145,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
          * For information regarding the format of the ITN, check the Appendix A of
          * [Export Compliance Customs Data Requirements](https://postalpro.usps.com/node/3973)
          */
-        private const val ITN_REGEX_STRING = """^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))${'$'}"""
+        private const val ITN_REGEX_STRING =
+            """^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))${'$'}"""
     }
 }

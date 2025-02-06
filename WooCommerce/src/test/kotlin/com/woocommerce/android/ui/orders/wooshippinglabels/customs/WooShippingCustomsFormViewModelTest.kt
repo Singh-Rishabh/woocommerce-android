@@ -119,13 +119,15 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onOtherContentInputChanged(newValue)
-        assertThat(capturedViewState?.otherContentInput).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
+        assertThat(
+            capturedViewState?.otherContentInput
+        ).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
     }
 
     @Test
     fun `onRestrictionDetailsInputChanged should update otherRestrictionInput with valid input`() = testBlocking {
         val newValue = "Restricted Stuff"
-        var capturedViewState: WooShippingCustomsFormViewModel.ViewState? = null
+        var capturedViewState: ViewState? = null
         viewModel.viewState.observeForever {
             capturedViewState = it
         }
@@ -136,11 +138,13 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     @Test
     fun `onRestrictionDetailsInputChanged should update otherRestrictionInput with invalid input`() = testBlocking {
         val newValue = ""
-        var capturedViewState: WooShippingCustomsFormViewModel.ViewState? = null
+        var capturedViewState: ViewState? = null
         viewModel.viewState.observeForever {
             capturedViewState = it
         }
         viewModel.onRestrictionDetailsInputChanged(newValue)
-        assertThat(capturedViewState?.otherRestrictionInput).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
+        assertThat(
+            capturedViewState?.otherRestrictionInput
+        ).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
     }
 }
