@@ -1,5 +1,8 @@
 package org.wordpress.android.fluxc.network.rest.wpcom.wc.payments.inperson
 
+import com.android.volley.VolleyError
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import org.wordpress.android.fluxc.generated.endpoint.WOOCOMMERCE
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentError
@@ -27,8 +30,12 @@ import org.wordpress.android.fluxc.store.WCInPersonPaymentsStore.InPersonPayment
 import org.wordpress.android.fluxc.store.WCInPersonPaymentsStore.InPersonPaymentsPluginType.WOOCOMMERCE_PAYMENTS
 import org.wordpress.android.fluxc.utils.toWooPayload
 import javax.inject.Inject
+import org.wordpress.android.util.AppLog
 
-class InPersonPaymentsRestClient @Inject constructor(private val wooNetwork: WooNetwork) {
+class InPersonPaymentsRestClient @Inject constructor(
+    private val wooNetwork: WooNetwork,
+    private val gson: Gson,
+) {
     suspend fun fetchConnectionToken(
         activePlugin: InPersonPaymentsPluginType,
         site: SiteModel
@@ -71,7 +78,10 @@ class InPersonPaymentsRestClient @Inject constructor(private val wooNetwork: Woo
                 response.data?.let { data ->
                     WCCapturePaymentResponsePayload(site, paymentId, orderId, data.status)
                 } ?: WCCapturePaymentResponsePayload(
-                    mapToCapturePaymentError(error = null, message = "status field is null, but isError == false"),
+                    mapToCapturePaymentError(
+                        error = null,
+                        message = "status field is null, but isError == false"
+                    ),
                     site,
                     paymentId,
                     orderId
@@ -79,7 +89,10 @@ class InPersonPaymentsRestClient @Inject constructor(private val wooNetwork: Woo
             }
             is WPAPIResponse.Error -> {
                 WCCapturePaymentResponsePayload(
-                    mapToCapturePaymentError(response.error, response.error.message ?: "Unexpected error"),
+                    mapToCapturePaymentError(
+                        response.error,
+                        response.error.message ?: "Unexpected error"
+                    ),
                     site,
                     paymentId,
                     orderId
@@ -148,7 +161,10 @@ class InPersonPaymentsRestClient @Inject constructor(private val wooNetwork: Woo
             }
             is WPAPIResponse.Error -> {
                 WCTerminalStoreLocationResult(
-                    mapToStoreLocationForSiteError(response.error, response.error.message ?: "Unexpected error")
+                    mapToStoreLocationForSiteError(
+                        response.error,
+                        response.error.message ?: "Unexpected error"
+                    )
                 )
             }
         }
@@ -194,7 +210,10 @@ class InPersonPaymentsRestClient @Inject constructor(private val wooNetwork: Woo
         return response.toWooPayload()
     }
 
-    private fun mapToCapturePaymentError(error: WPAPINetworkError?, message: String): WCCapturePaymentError {
+    private fun mapToCapturePaymentError(
+        error: WPAPINetworkError?,
+        message: String
+    ): WCCapturePaymentError {
         val type = when {
             error == null -> GENERIC_ERROR
             error.errorCode == "wcpay_missing_order" -> MISSING_ORDER
@@ -206,7 +225,23 @@ class InPersonPaymentsRestClient @Inject constructor(private val wooNetwork: Woo
             error.type == GenericErrorType.NETWORK_ERROR -> NETWORK_ERROR
             else -> GENERIC_ERROR
         }
-        return WCCapturePaymentError(type, message)
+        return WCCapturePaymentError(
+            type,
+            message,
+            extraData = error?.volleyError?.getExtraData()
+        )
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun VolleyError.getExtraData(): Map<String, Any>? {
+        val jsonString = this.networkResponse?.data?.toString(Charsets.UTF_8)
+        return try {
+            val mapType = object : TypeToken<Map<String, Any>>() {}.type
+            return gson.fromJson<Map<String, Any>>(jsonString, mapType)["data"] as Map<String, Any>?
+        } catch (e: Throwable) {
+            AppLog.e(AppLog.T.API, "Error parsing volley error $jsonString", e)
+            null
+        }
     }
 
     private fun mapToStoreLocationForSiteError(error: WPAPINetworkError?, message: String):
