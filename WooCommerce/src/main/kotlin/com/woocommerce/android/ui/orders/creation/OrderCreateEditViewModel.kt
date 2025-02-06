@@ -308,7 +308,7 @@ class OrderCreateEditViewModel @Inject constructor(
         .map { order -> order.items.filter { it.quantity > 0 } }
         .distinctUntilChanged()
         .map { items ->
-            orderCreationProductMapper.toOrderProducts(items)
+            orderCreationProductMapper.toOrderProducts(items, _orderDraft.value.currency)
                 .sortedBy { creationProduct -> creationProduct.item.productId }
         }
         .asLiveData()
