@@ -138,7 +138,6 @@ class DashboardStatsViewModel @AssistedInject constructor(
         if (dateRangeState.value?.customRange == null) {
             analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED)
         } else {
-            appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
             analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_EDIT_BUTTON_TAPPED)
         }
         triggerEvent(
