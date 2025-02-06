@@ -39,8 +39,7 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
     private fun String.findDomain(): String? = toHttpUrl().host
 
     private fun SiteModel.supportsJetpackSSO(): Boolean {
-        // TODO
-        return true
+        return jetpackModules?.contains("sso") == true
     }
 
     enum class WebViewAuthenticationFlow {
