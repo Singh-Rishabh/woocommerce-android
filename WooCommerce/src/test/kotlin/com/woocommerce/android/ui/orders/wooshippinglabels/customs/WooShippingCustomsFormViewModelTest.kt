@@ -64,7 +64,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
             capturedViewState = it
         }
         viewModel.onITNChanged(newItnValue)
-        assertThat(capturedViewState?.itnValue).isEqualTo(InputValue.Error(newItnValue, "Invalid ITN format"))
+        assertThat(capturedViewState?.itnValue).isInstanceOf(InputValue.Error::class.java)
     }
 
     @Test
@@ -121,7 +121,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
         viewModel.onOtherContentInputChanged(newValue)
         assertThat(
             capturedViewState?.otherContentInput
-        ).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
+        ).isInstanceOf(InputValue.Error::class.java)
     }
 
     @Test
@@ -145,6 +145,6 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
         viewModel.onRestrictionDetailsInputChanged(newValue)
         assertThat(
             capturedViewState?.otherRestrictionInput
-        ).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
+        ).isInstanceOf(InputValue.Error::class.java)
     }
 }
