@@ -125,7 +125,6 @@ class WebViewAuthenticator @Inject constructor(
 
                 append("&${authorizationKey.urlEncode()}=")
                     .append(authorizationValue.urlEncode())
-
             }
         } catch (e: UnsupportedEncodingException) {
             WooLog.e(WooLog.T.UTILS, e)

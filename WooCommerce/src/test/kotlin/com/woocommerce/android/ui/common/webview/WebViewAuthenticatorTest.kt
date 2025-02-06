@@ -46,12 +46,15 @@ class WebViewAuthenticatorTest : BaseUnitTest() {
 
             sut.authenticateAndLoadUrl(webView, url, emptyFlow())
 
-            verify(webView).postUrl(eq(WebViewAuthenticator.WPCOM_LOGIN_URL), argThat {
-                val content = toString(Charsets.UTF_8)
-                content.contains("log=$DEFAULT_USERNAME") &&
-                    content.contains("authorization=${"Bearer $DEFAULT_TOKEN".urlEncode()}")
-                    && content.contains("redirect_to=${url.urlEncode()}")
-            })
+            verify(webView).postUrl(
+                eq(WebViewAuthenticator.WPCOM_LOGIN_URL),
+                argThat {
+                    val content = toString(Charsets.UTF_8)
+                    content.contains("log=$DEFAULT_USERNAME") &&
+                        content.contains("authorization=${"Bearer $DEFAULT_TOKEN".urlEncode()}") &&
+                        content.contains("redirect_to=${url.urlEncode()}")
+                }
+            )
         }
 
     @Test
@@ -90,12 +93,15 @@ class WebViewAuthenticatorTest : BaseUnitTest() {
 
             sut.authenticateAndLoadUrl(webView, url, emptyFlow())
 
-            verify(webView).postUrl(eq(selectedSite.get().loginUrlOrDefault), argThat {
-                val content = toString(Charsets.UTF_8)
-                content.contains("log=$DEFAULT_USERNAME") &&
-                    content.contains("pwd=$DEFAULT_PASSWORD") &&
-                    content.contains("redirect_to=${url.urlEncode()}")
-            })
+            verify(webView).postUrl(
+                eq(selectedSite.get().loginUrlOrDefault),
+                argThat {
+                    val content = toString(Charsets.UTF_8)
+                    content.contains("log=$DEFAULT_USERNAME") &&
+                        content.contains("pwd=$DEFAULT_PASSWORD") &&
+                        content.contains("redirect_to=${url.urlEncode()}")
+                }
+            )
         }
 
     @Test

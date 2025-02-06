@@ -19,8 +19,8 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
     fun resolve(url: String): WebViewAuthenticationFlow {
         val currentSite = selectedSite.getOrNull()
         val urlDomain = url.findDomain()
-        val isWPComAuthenticated = accountStore.accessToken.isNotNullOrEmpty()
-            && accountStore.account.userName.isNotNullOrEmpty()
+        val isWPComAuthenticated = accountStore.accessToken.isNotNullOrEmpty() &&
+            accountStore.account.userName.isNotNullOrEmpty()
 
         return if (isWPComAuthenticated) {
             when {

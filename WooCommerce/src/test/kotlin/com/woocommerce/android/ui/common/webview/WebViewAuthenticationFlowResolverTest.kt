@@ -14,7 +14,8 @@ class WebViewAuthenticationFlowResolverTest {
     private val accountStore = mock<AccountStore>()
 
     private val sut = WebViewAuthenticationFlowResolver(
-        selectedSite = selectedSite, accountStore = accountStore
+        selectedSite = selectedSite,
+        accountStore = accountStore
     )
 
     @Test
