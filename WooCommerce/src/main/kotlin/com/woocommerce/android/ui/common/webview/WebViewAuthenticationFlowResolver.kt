@@ -11,6 +11,7 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
     private val selectedSite: SelectedSite,
     private val accountStore: AccountStore
 ) {
+    // A list of domains that we know that wordpress.com supports redirecting to
     private val wpComAuthAcceptedDomains
         get() = listOf("wordpress.com", "wp.com", "jetpack.com", "woocommerce.com")
 
@@ -22,21 +23,37 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
 
         return if (isWPComAuthenticated) {
             when {
-                currentSite?.isWPComAtomic == true ||
-                    wpComAuthAcceptedDomains.any { it == urlDomain } -> WebViewAuthenticationFlow.WPCom
+                wpComAuthAcceptedDomains.any { it == urlDomain } ||
+                    (currentSite?.isWPComAtomic == true && url.isPartOf(currentSite)) -> {
+                    WebViewAuthenticationFlow.WPCom
+                }
 
-                currentSite?.supportsJetpackSSO() == true -> WebViewAuthenticationFlow.JetpackSSO
+                currentSite?.supportsJetpackSSO() == true && url.isPartOf(currentSite) -> {
+                    WebViewAuthenticationFlow.JetpackSSO
+                }
 
-                else -> WebViewAuthenticationFlow.None
+                else -> {
+                    WebViewAuthenticationFlow.None
+                }
             }
-        } else if (currentSite?.username.isNotNullOrEmpty() && currentSite?.password.isNotNullOrEmpty()) {
+        } else if (currentSite?.username.isNotNullOrEmpty() &&
+            currentSite.password.isNotNullOrEmpty() &&
+            url.isPartOf(currentSite)
+        ) {
             WebViewAuthenticationFlow.SiteCredentials
         } else {
             WebViewAuthenticationFlow.None
         }
     }
 
-    private fun String.findDomain(): String? = toHttpUrl().host
+
+    private fun String.isPartOf(site: SiteModel): Boolean {
+        // This is not a perfect check, but it should be good enough for our use-case
+        // We are using contains instead of equals to account for potential subdomains
+        return findDomain().contains(site.url.findDomain())
+    }
+
+    private fun String.findDomain(): String = toHttpUrl().host.substringAfter("www.")
 
     private fun SiteModel.supportsJetpackSSO(): Boolean {
         return jetpackModules?.contains("sso") == true
