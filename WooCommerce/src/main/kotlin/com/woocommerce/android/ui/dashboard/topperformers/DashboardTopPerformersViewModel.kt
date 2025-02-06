@@ -155,7 +155,6 @@ class DashboardTopPerformersViewModel @AssistedInject constructor(
         if (selectedDateRange.value?.customRange == null) {
             analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_ADD_BUTTON_TAPPED)
         } else {
-            appPrefsWrapper.setActiveTopPerformersTab(SelectionType.CUSTOM.name)
             analyticsTrackerWrapper.track(AnalyticsEvent.DASHBOARD_STATS_CUSTOM_RANGE_EDIT_BUTTON_TAPPED)
         }
 
