@@ -38,7 +38,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     fun onITNChanged(newItnValue: String) {
         val input = when {
             newItnValue.isEmpty() || itnRegex.matches(newItnValue).not() ->
-                InputValue.Error(newItnValue, "Invalid ITN format")
+                InputValue.Error(
+                    input = newItnValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_itn_error_message
+                )
             else -> InputValue.Data(newItnValue)
         }
         _viewState.update { it.copy(itnValue = input) }
@@ -64,8 +67,11 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onOtherContentInputChanged(newValue: String) {
         val input = when (newValue.isBlank()) {
-            true -> InputValue.Error(newValue, "Details must not be empty")
             false -> InputValue.Data(newValue)
+            true -> InputValue.Error(
+                input = newValue,
+                errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+            )
         }
         _viewState.update {
             it.copy(otherContentInput = input)
@@ -74,8 +80,11 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onRestrictionDetailsInputChanged(newValue: String) {
         val input = when (newValue.isBlank()) {
-            true -> InputValue.Error(newValue, "Details must not be empty")
             false -> InputValue.Data(newValue)
+            true -> InputValue.Error(
+                input = newValue,
+                errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+            )
         }
         _viewState.update {
             it.copy(otherRestrictionInput = input)
@@ -104,7 +113,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         data class Data(val input: String) : InputValue()
         data class Error(
             val input: String,
-            val errorMessage: String
+            val errorMessageId: Int
         ) : InputValue()
 
         companion object {
@@ -117,8 +126,8 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 is Error -> input
             }
 
-        val errorMessageOrNull: String?
-            get() = run { this as? Error }?.errorMessage
+        val errorMessageOrNull: Int?
+            get() = run { this as? Error }?.errorMessageId
     }
 
     enum class ContentType(val resourceId: Int) {
