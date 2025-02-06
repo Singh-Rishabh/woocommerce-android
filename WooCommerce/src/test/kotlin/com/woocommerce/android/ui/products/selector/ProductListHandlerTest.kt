@@ -69,7 +69,12 @@ internal class ProductListHandlerTest : BaseUnitTest() {
         handler.loadMore(orderCurrency = "USD")
 
         verify(repo).fetchProducts(
-            false, 25, 25, emptyMap(), emptyList(), "USD"
+            false,
+            25,
+            25,
+            emptyMap(),
+            emptyList(),
+            "USD"
         )
 
         handler.productsFlow.test {
