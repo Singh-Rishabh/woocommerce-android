@@ -614,8 +614,7 @@ class ProductRestClient @Inject constructor(
 
         return response.toWooPayload { it.toList() }
     }
-
-    @Suppress("CyclomaticComplexMethod")
+    
     private fun buildProductParametersMap(
         pageSize: Int,
         sortType: ProductSorting,
