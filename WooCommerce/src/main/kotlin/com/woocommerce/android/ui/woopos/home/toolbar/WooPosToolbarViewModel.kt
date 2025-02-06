@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.toolbar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.AppUrls.WOO_POS_DOCUMENTATION_URL
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
@@ -90,7 +91,7 @@ class WooPosToolbarViewModel @Inject constructor(
                 }
             R.string.woopos_documentation_title -> {
                 viewModelScope.launch {
-                    _openUrlEvent.emit("https://google.com")
+                    _openUrlEvent.emit(WOO_POS_DOCUMENTATION_URL)
                 }
             }
         }

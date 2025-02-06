@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.toolbar
 
 import app.cash.turbine.test
+import com.woocommerce.android.AppUrls.WOO_POS_DOCUMENTATION_URL
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
@@ -236,7 +237,7 @@ class WooPosToolbarViewModelTest {
             viewModel.onUiEvent(WooPosToolbarUIEvent.MenuItemClicked(menuItem))
 
             // THEN
-            assertEquals("https://google.com", awaitItem())
+            assertEquals(WOO_POS_DOCUMENTATION_URL, awaitItem())
             assertEquals(WooPosToolbarState.Menu.Hidden, viewModel.state.value.menu)
 
             cancelAndConsumeRemainingEvents()
