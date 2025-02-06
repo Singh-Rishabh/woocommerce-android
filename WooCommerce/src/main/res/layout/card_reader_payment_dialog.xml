@@ -49,13 +49,12 @@
         android:id="@+id/illustration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/major_125"
+        android:layout_marginTop="@dimen/margin_small_medium"
         android:contentDescription="@null"
-        app:layout_constraintBottom_toTopOf="@id/payment_state_label"
+        app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/amount_label"
-        app:layout_constraintVertical_chainStyle="spread"
         tools:srcCompat="@drawable/img_card_reader_available" />
 
     <FrameLayout
@@ -64,11 +63,10 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/major_175"
         android:paddingBottom="@dimen/major_150"
-        app:layout_constraintBottom_toTopOf="@id/payment_state_label"
+        app:layout_constraintBottom_toTopOf="@id/content_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/amount_label"
-        app:layout_constraintVertical_chainStyle="spread">
+        app:layout_constraintTop_toBottomOf="@id/amount_label">
 
         <ProgressBar
             android:id="@+id/progress_bar"
@@ -110,7 +108,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_125"
-        android:layout_marginVertical="@dimen/margin_small_medium"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         app:layout_constraintBottom_toTopOf="@id/receipt_sent_label"
@@ -126,7 +123,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/major_125"
-        android:layout_marginTop="@dimen/margin_small_medium"
         android:ellipsize="end"
         android:gravity="center_horizontal"
         app:layout_constraintBottom_toTopOf="@id/labels_group"
@@ -140,8 +136,8 @@
         android:id="@+id/labels_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:barrierDirection="bottom"
-        app:constraint_referenced_ids="payment_state_label,hint_label,receipt_sent_label" />
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="primary_action_btn,secondary_action_btn,tertiary_action_btn" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/primary_action_btn"
