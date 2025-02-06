@@ -210,7 +210,7 @@ private fun MenuButtonWithPopUpMenu(
             onClick = onClick,
             contentPadding = PaddingValues(0.dp),
             colors = ButtonDefaults.textButtonColors(
-                backgroundColor = if (menuCardDisabled) {
+                contentColor = if (menuCardDisabled) {
                     MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                 } else {
                     MaterialTheme.colorScheme.surface
