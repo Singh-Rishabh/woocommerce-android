@@ -27,7 +27,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.woocommerce.android.R.dimen
 import com.woocommerce.android.ui.common.webview.WebViewAuthenticator
-import com.woocommerce.android.ui.compose.component.web.WCWebViewClient.WebViewEvent
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Circular
 import com.woocommerce.android.ui.compose.component.web.WebViewProgressIndicator.Linear
 import kotlinx.coroutines.flow.MutableSharedFlow
