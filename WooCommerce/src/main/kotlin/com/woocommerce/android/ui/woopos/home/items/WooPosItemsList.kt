@@ -206,13 +206,13 @@ private fun ProductInfo(item: WooPosItem) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = item.name,
-            style = MaterialTheme.typography.h5,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.Bold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -252,7 +252,8 @@ private fun SimpleProductDetails(item: SimpleProduct) {
     Text(
         text = item.price,
         style = MaterialTheme.typography.h6,
-        fontWeight = FontWeight.Normal
+        fontWeight = FontWeight.Normal,
+        color = MaterialTheme.colors.secondaryVariant
     )
 }
 
@@ -261,7 +262,8 @@ private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = MaterialTheme.typography.h6,
-        fontWeight = FontWeight.Normal
+        fontWeight = FontWeight.Normal,
+        color = MaterialTheme.colors.secondaryVariant
     )
 }
 
@@ -270,7 +272,8 @@ fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
         style = MaterialTheme.typography.h6,
-        fontWeight = FontWeight.Normal
+        fontWeight = FontWeight.Normal,
+        color = MaterialTheme.colors.secondaryVariant
     )
 }
 
@@ -351,7 +354,7 @@ fun ItemsEmptyList(
         ) {
             Image(
                 modifier = Modifier.size(104.dp),
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_woo_pos_empty_products),
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_not_found),
                 contentDescription = contentDescription,
             )
 
