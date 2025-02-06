@@ -17,6 +17,7 @@ import javax.inject.Inject
 class WooShippingCustomsFormViewModel @Inject constructor(
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
+    private val itnRegex by lazy { ITN_REGEX_STRING.toRegex() }
 
     private val _viewState = savedState.getStateFlow(
         scope = viewModelScope,
@@ -35,9 +36,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onITNChanged(newItnValue: String) {
-        _viewState.update {
-            it.copy(itnValue = InputValue.Data(newItnValue))
+        val input = when {
+            newItnValue.isEmpty() || itnRegex.matches(newItnValue).not() ->
+                InputValue.Error(newItnValue, "Invalid ITN format")
+            else -> InputValue.Data(newItnValue)
         }
+        _viewState.update { it.copy(itnValue = input) }
     }
 
     fun onReturnToSenderChanged(isChecked: Boolean) {
@@ -135,4 +139,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     data class ShowContentTypeDialog(val currentSelection: ContentType) : MultiLiveEvent.Event()
     data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType) : MultiLiveEvent.Event()
+
+    companion object {
+        /**
+         * For information regarding the format of the ITN, check the Appendix A of
+         * [Export Compliance Customs Data Requirements](https://postalpro.usps.com/node/3973)
+         */
+        private const val ITN_REGEX_STRING = """^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))${'$'}"""
+    }
 }
