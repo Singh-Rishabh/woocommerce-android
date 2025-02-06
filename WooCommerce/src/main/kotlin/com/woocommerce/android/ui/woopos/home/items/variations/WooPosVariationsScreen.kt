@@ -235,7 +235,7 @@ private fun VariationsToolbar(
 
         Text(
             text = variableProductData.name,
-            style = MaterialTheme.typography.h4.copy(
+            style = MaterialTheme.typography.headlineMedium.copy(
                 fontWeight = FontWeight.Bold
             ),
             color = MaterialTheme.colorScheme.onSurface,

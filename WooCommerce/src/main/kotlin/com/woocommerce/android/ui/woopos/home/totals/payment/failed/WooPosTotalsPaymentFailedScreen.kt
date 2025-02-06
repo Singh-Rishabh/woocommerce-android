@@ -54,13 +54,13 @@ fun WooPosPaymentFailedScreen(
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         Text(
             text = state.title,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold
         )
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
         Text(
             text = state.subtitle,
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
@@ -78,7 +78,7 @@ fun WooPosPaymentFailedScreen(
                 content = {
                     Text(
                         color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.h5,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout)
                     )

@@ -208,7 +208,7 @@ private fun ItemsToolbar(
     ) {
         Text(
             text = stringResource(id = R.string.woopos_products_screen_title),
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = titleColor,
         )

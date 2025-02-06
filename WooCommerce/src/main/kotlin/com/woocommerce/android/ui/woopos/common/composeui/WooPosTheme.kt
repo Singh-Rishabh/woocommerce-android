@@ -227,7 +227,7 @@ fun WooPosTheme(content: @Composable () -> Unit) {
 
 @Composable
 private fun SurfacedContent(content: @Composable () -> Unit) {
-    Surface(color = MaterialTheme.colorSchemecheme.background) {
+    Surface(color = MaterialTheme.colorScheme.background) {
         content()
     }
 }

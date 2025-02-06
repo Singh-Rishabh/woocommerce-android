@@ -104,7 +104,7 @@ private fun Collecting(
 
         Text(
             text = state.totalText,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .constrainAs(total) {
                     top.linkTo(parent.top, margin = 4.dp)
@@ -132,7 +132,7 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = MaterialTheme.typography.h4,
+            textStyle = MaterialTheme.typography.headlineMedium,
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
@@ -142,7 +142,7 @@ private fun Collecting(
         val smallMargin = 8.dp.toAdaptivePadding()
         Text(
             text = state.changeDueText,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
@@ -157,7 +157,7 @@ private fun Collecting(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(changeDue.bottom, margin = smallMargin)

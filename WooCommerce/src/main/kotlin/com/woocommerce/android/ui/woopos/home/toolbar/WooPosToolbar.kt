@@ -272,7 +272,7 @@ private fun PopUpMenuItem(
                 .weight(1f),
             text = stringResource(id = menuItem.title),
             color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -379,7 +379,7 @@ private fun ReaderStatusText(
         modifier = modifier.padding(horizontal = 8.dp.toAdaptivePadding()),
         text = title,
         color = color,
-        style = MaterialTheme.typography.button
+        style = MaterialTheme.typography.labelLarge
     )
 }
 

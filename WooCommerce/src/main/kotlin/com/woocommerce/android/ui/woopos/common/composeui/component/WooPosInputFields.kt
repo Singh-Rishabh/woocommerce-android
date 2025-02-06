@@ -51,7 +51,7 @@ fun WooPosMoneyInputField(
     currencyPosition: WCSettingsModel.CurrencyPosition,
     decimalSeparator: String,
     numberOfDecimals: Int,
-    textStyle: TextStyle = MaterialTheme.typography.h6,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -172,7 +172,7 @@ fun WooPosInputField(
     onValueChange: (String) -> Unit,
     label: String = "",
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.h6,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -269,7 +269,7 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "longemail@gmail.com",
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.h3,
+                textStyle = MaterialTheme.typography.displaySmall,
                 contentAlignment = Alignment.Center
             )
 
@@ -278,7 +278,7 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "",
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.h3,
+                textStyle = MaterialTheme.typography.displaySmall,
                 label = "Label Label",
             )
         }

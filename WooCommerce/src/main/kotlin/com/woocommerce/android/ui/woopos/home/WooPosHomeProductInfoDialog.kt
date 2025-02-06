@@ -64,7 +64,7 @@ fun WooPosProductInfoDialog(
 
                 Text(
                     text = stringResource(id = state.header),
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                     modifier = Modifier
@@ -90,14 +90,14 @@ fun WooPosProductInfoDialog(
                 ) {
                     Text(
                         text = stringResource(id = state.primaryMessage),
-                        style = MaterialTheme.typography.h5,
+                        style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
-                        style = MaterialTheme.typography.h5,
+                        style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
@@ -117,7 +117,7 @@ fun WooPosProductInfoDialog(
                         ) {
                             Text(
                                 text = stringResource(id = state.tertiaryMessage),
-                                style = MaterialTheme.typography.subtitle1,
+                                style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Normal,
                                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
@@ -141,7 +141,7 @@ fun WooPosProductInfoDialog(
                             modifier = Modifier
                                 .padding(vertical = 20.dp.toAdaptivePadding()),
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.h5,
+                            style = MaterialTheme.typography.headlineSmall,
                             text = stringResource(id = state.primaryButton.label)
                         )
                     }

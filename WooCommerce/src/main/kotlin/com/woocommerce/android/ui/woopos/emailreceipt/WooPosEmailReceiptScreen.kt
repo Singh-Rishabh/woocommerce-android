@@ -97,7 +97,7 @@ private fun EmailState(
             onValueChange = onEmailAddressChanged,
             label = stringResource(R.string.woopos_email_receipt_email_label),
             contentAlignment = Alignment.Center,
-            textStyle = MaterialTheme.typography.h3,
+            textStyle = MaterialTheme.typography.displaySmall,
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email
@@ -113,7 +113,7 @@ private fun EmailState(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(email.bottom, margin = 8.dp)

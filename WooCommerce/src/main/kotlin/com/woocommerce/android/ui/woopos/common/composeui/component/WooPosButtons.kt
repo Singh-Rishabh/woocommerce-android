@@ -56,7 +56,7 @@ fun WooPosButton(
                 Text(
                     text = text,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                 )
             }
@@ -93,7 +93,7 @@ fun WooPosButtonLarge(
         Text(
             text = text,
             color = MaterialTheme.colorScheme.onPrimary,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
         )
     }
@@ -112,7 +112,7 @@ fun WooPosOutlinedButtonSmall(
         Text(
             text = text,
             color = MaterialTheme.colorScheme.primary,
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
         )
     },
@@ -174,7 +174,7 @@ fun WooPosOutlinedButton(
         Text(
             text = text,
             color = MaterialTheme.colorScheme.onBackground,
-            style = MaterialTheme.typography.h5,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
         )
     }

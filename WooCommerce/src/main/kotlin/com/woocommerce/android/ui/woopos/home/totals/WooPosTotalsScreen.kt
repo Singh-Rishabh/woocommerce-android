@@ -219,13 +219,13 @@ private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
-        style = MaterialTheme.typography.h5,
+        style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Medium
     )
     Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
-        style = MaterialTheme.typography.h4,
+        style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
     )
 }
@@ -242,13 +242,13 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
-        style = MaterialTheme.typography.h5,
+        style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Medium
     )
     Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
-        style = MaterialTheme.typography.h4,
+        style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
     )
 }
@@ -277,7 +277,7 @@ private fun ReaderDisconnected(
 
         Text(
             text = status.title,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -285,7 +285,7 @@ private fun ReaderDisconnected(
 
         Text(
             text = status.subtitle,
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
@@ -328,8 +328,8 @@ private fun TotalsGrid(totals: Totals.Visible) {
         TotalsGridRow(
             textOne = stringResource(R.string.woopos_payment_total_label),
             textTwo = totals.orderTotalText,
-            styleOne = MaterialTheme.typography.h4,
-            styleTwo = MaterialTheme.typography.h4,
+            styleOne = MaterialTheme.typography.headlineMedium,
+            styleTwo = MaterialTheme.typography.headlineMedium,
             fontWeightOne = FontWeight.Medium,
             fontWeightTwo = FontWeight.Bold,
         )
@@ -340,8 +340,8 @@ private fun TotalsGrid(totals: Totals.Visible) {
 private fun TotalsGridRow(
     textOne: String,
     textTwo: String,
-    styleOne: TextStyle = MaterialTheme.typography.h5,
-    styleTwo: TextStyle = MaterialTheme.typography.h5,
+    styleOne: TextStyle = MaterialTheme.typography.headlineSmall,
+    styleTwo: TextStyle = MaterialTheme.typography.headlineSmall,
     fontWeightOne: FontWeight = FontWeight.Normal,
     fontWeightTwo: FontWeight = FontWeight.Normal,
 ) {

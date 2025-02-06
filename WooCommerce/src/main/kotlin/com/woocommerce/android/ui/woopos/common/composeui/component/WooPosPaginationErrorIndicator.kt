@@ -101,12 +101,12 @@ private fun WooPosPaginationErrorIndicatorContent(
                 Column {
                     Text(
                         text = message,
-                        style = MaterialTheme.typography.h5,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.h5,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Normal,
                         modifier = Modifier.padding(top = 8.dp.toAdaptivePadding())
                     )

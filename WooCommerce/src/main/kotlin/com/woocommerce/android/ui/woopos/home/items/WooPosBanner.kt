@@ -92,7 +92,7 @@ fun WooPosBanner(
 
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
@@ -140,7 +140,7 @@ fun WooPosBanner(
                                 bottom = 8.dp.toAdaptivePadding(),
                             ),
                         text = annotatedText,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f)
                     )

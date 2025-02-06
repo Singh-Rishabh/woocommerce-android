@@ -62,14 +62,14 @@ fun WooPosPaymentInProgressScreen(
                 Text(
                     text = state.title,
                     color = WooPosTheme.colors.paymentProcessingText,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Normal,
                 )
                 Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
                 Text(
                     text = state.subtitle,
                     color = WooPosTheme.colors.paymentProcessingText,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                 )
             }

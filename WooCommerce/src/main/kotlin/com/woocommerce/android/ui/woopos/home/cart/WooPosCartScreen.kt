@@ -217,7 +217,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(32.dp.toAdaptivePadding()))
         Text(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Normal,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
@@ -333,7 +333,7 @@ private fun CartToolbar(
 
         Text(
             text = stringResource(R.string.woopos_cart_title),
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
@@ -361,7 +361,7 @@ private fun CartToolbar(
             val itemsEndMargin = 16.dp.toAdaptivePadding()
             Text(
                 text = it,
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondaryVariant.copy(alpha = 0.6f),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
@@ -465,7 +465,7 @@ private fun ProductItem(
                 ) {
                     Text(
                         text = item.name,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -475,7 +475,7 @@ private fun ProductItem(
                     if (item.description.isNotNullOrEmpty()) {
                         Text(
                             text = item.description!!,
-                            style = MaterialTheme.typography.body1,
+                            style = MaterialTheme.typography.bodyLarge,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                             color = MaterialTheme.colorScheme.secondaryVariant,
@@ -485,7 +485,7 @@ private fun ProductItem(
                     }
                     Text(
                         text = item.price,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.secondaryVariant,
                         modifier = Modifier.clearAndSetSemantics { }
                     )

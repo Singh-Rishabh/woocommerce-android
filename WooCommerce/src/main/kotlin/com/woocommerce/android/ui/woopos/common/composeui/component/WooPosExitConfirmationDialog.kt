@@ -53,14 +53,14 @@ fun WooPosExitConfirmationDialog(
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = modifier.height(16.dp.toAdaptivePadding()))
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.h5,
+                    style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = modifier.height(56.dp.toAdaptivePadding()))

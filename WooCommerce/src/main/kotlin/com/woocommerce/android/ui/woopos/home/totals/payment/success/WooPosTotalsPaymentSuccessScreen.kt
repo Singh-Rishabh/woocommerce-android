@@ -99,7 +99,7 @@ private fun WooPosPaymentSuccessScreen(
             val textsMargin = 8.dp.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -113,7 +113,7 @@ private fun WooPosPaymentSuccessScreen(
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
             Text(
                 text = state.orderTotalText,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.onSurface,

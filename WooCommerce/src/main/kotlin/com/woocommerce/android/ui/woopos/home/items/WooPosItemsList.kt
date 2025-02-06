@@ -211,7 +211,7 @@ private fun ProductInfo(item: WooPosItem) {
     ) {
         Text(
             text = item.name,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
@@ -251,7 +251,7 @@ private fun ProductImage(item: WooPosItem) {
 private fun SimpleProductDetails(item: SimpleProduct) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
         color = MaterialTheme.colorScheme.secondaryVariant
     )
@@ -261,7 +261,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
         color = MaterialTheme.colorScheme.secondaryVariant
     )
@@ -271,7 +271,7 @@ private fun VariableProductDetails() {
 fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
         color = MaterialTheme.colorScheme.secondaryVariant
     )
@@ -362,7 +362,7 @@ fun ItemsEmptyList(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
@@ -371,7 +371,7 @@ fun ItemsEmptyList(
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.h5,
+                style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center
             )

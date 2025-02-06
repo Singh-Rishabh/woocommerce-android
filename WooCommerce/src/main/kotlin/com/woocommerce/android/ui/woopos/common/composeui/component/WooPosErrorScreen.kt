@@ -60,7 +60,7 @@ fun WooPosErrorScreen(
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.SemiBold
             )
 
@@ -68,7 +68,7 @@ fun WooPosErrorScreen(
 
             Text(
                 text = reason,
-                style = MaterialTheme.typography.h5
+                style = MaterialTheme.typography.headlineSmall
             )
             Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         }

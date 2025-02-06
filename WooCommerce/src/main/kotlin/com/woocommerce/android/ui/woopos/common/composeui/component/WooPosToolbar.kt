@@ -56,7 +56,7 @@ fun WooPosToolbar(
         val iconTitlePadding = 8.dp.toAdaptivePadding()
         Text(
             text = titleText,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
