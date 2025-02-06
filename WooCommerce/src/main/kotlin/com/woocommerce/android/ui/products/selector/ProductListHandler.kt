@@ -62,11 +62,11 @@ class ProductListHandler @Inject constructor(private val repository: ProductSele
         return if (searchQuery.isNotEmpty()) {
             when (searchType) {
                 SearchType.DEFAULT -> {
-                    searchInCache(orderCurrency)
+                    searchInCache()
                     remoteSearch(orderCurrency)
                 }
                 SearchType.SKU -> {
-                    searchInCache(orderCurrency)
+                    searchInCache()
                     remoteSearch(orderCurrency)
                 }
             }
@@ -105,7 +105,7 @@ class ProductListHandler @Inject constructor(private val repository: ProductSele
         }.map { }
     }
 
-    private fun searchInCache(orderCurrency: String? = null) {
+    private fun searchInCache() {
         val searchOptions = if (searchType.value == SearchType.SKU) {
             SkuSearchOptions.PartialMatch
         } else {
@@ -116,7 +116,6 @@ class ProductListHandler @Inject constructor(private val repository: ProductSele
             pageSize = PAGE_SIZE,
             searchQuery = searchQuery.value,
             skuSearchOptions = searchOptions,
-            orderCurrency = orderCurrency,
         ).let { loadedProducts ->
             searchResults.update { list -> updateSearchResult(list, loadedProducts) }
         }
