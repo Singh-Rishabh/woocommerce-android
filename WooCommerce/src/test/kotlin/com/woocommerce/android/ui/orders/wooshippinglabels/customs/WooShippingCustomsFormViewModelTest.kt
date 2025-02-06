@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowContentTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowRestrictionTypeDialog
@@ -45,14 +46,25 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onITNChanged should update itnValue in viewState`() = testBlocking {
-        val newItnValue = "123456"
+    fun `onITNChanged should update itnValue with valid input`() = testBlocking {
+        val newItnValue = "AES X20201234567890"
         var capturedViewState: ViewState? = null
         viewModel.viewState.observeForever {
             capturedViewState = it
         }
         viewModel.onITNChanged(newItnValue)
-        assertThat(capturedViewState?.itnValue).isEqualTo(newItnValue)
+        assertThat(capturedViewState?.itnValue).isEqualTo(InputValue.Data(newItnValue))
+    }
+
+    @Test
+    fun `onITNChanged should update itnValue with invalid input`() = testBlocking {
+        val newItnValue = "INVALID_ITN"
+        var capturedViewState: ViewState? = null
+        viewModel.viewState.observeForever {
+            capturedViewState = it
+        }
+        viewModel.onITNChanged(newItnValue)
+        assertThat(capturedViewState?.itnValue).isEqualTo(InputValue.Error(newItnValue, "Invalid ITN format"))
     }
 
     @Test
