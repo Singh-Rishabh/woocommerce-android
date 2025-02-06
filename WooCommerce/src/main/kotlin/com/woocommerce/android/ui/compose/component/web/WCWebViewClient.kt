@@ -50,8 +50,7 @@ open class WCWebViewClient : WebViewClient() {
     @CallSuper
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
         return if (request?.url?.toString() == WebViewAuthenticator.JETPACK_SSO_TEMP_REDIRECT_URL) {
-            // Cancel loading for the temporary redirect URL, and notify the observers
-            _eventsObservable.tryEmit(WCWebViewEvent.UrlLoaded(WebViewAuthenticator.JETPACK_SSO_TEMP_REDIRECT_URL))
+            // Cancel loading for the temporary redirect URL
             true
         } else {
             false

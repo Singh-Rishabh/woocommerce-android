@@ -69,7 +69,7 @@ class WebViewAuthenticatorTest : BaseUnitTest() {
             launch {
                 sut.authenticateAndLoadUrl(webView, url, webViewEvents)
             }
-            webViewEvents.emit(WCWebViewEvent.UrlLoaded(WebViewAuthenticator.JETPACK_SSO_TEMP_REDIRECT_URL))
+            webViewEvents.emit(WCWebViewEvent.PageFinished(WebViewAuthenticator.JETPACK_SSO_TEMP_REDIRECT_URL))
 
             verify(webView).postUrl(eq(WebViewAuthenticator.WPCOM_LOGIN_URL), any())
             verify(webViewCookieManager).setCookie("https://example.com", "jetpack_sso_redirect_to=$url")

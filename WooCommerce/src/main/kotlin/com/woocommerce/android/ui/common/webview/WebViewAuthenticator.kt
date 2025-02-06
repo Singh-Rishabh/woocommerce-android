@@ -69,7 +69,7 @@ class WebViewAuthenticator @Inject constructor(
         }
 
         // Wait for the WPCom login to complete
-        webViewEvents.first { it is WCWebViewEvent.UrlLoaded && it.url == JETPACK_SSO_TEMP_REDIRECT_URL }
+        webViewEvents.first { it is WCWebViewEvent.PageFinished && it.url == JETPACK_SSO_TEMP_REDIRECT_URL }
 
         // Handle SSO login and redirect back to the original URL
         val site = selectedSite.get()
