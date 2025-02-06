@@ -28,7 +28,7 @@ fun WooPosButton(
     modifier: Modifier = Modifier,
     text: String,
     colors: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.primary,
         contentColor = MaterialTheme.colorScheme.onPrimary,
     ),
     state: WooPosButtonState = WooPosButtonState.ENABLED,
@@ -41,14 +41,7 @@ fun WooPosButton(
         colors = colors,
         modifier = modifier
             .fillMaxWidth()
-            .height(72.dp),
-        elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
-        )
+            .height(72.dp)
     ) {
         when (state) {
             WooPosButtonState.ENABLED,
@@ -60,7 +53,6 @@ fun WooPosButton(
                     fontWeight = FontWeight.Bold,
                 )
             }
-
             WooPosButtonState.LOADING -> {
                 WooPosCircularLoadingIndicator(
                     modifier = Modifier.size(32.dp),
@@ -79,13 +71,6 @@ fun WooPosButtonLarge(
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            focusedElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            disabledElevation = 0.dp
-        ),
         modifier = modifier
             .fillMaxWidth()
             .height(160.dp)
@@ -131,17 +116,10 @@ fun WooPosOutlinedButton(
         onClick = onClick,
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.onBackground,
         ),
         shape = shape,
-        elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
-        ),
         content = content
     )
 }
@@ -160,15 +138,8 @@ fun WooPosOutlinedButton(
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
+            containerColor = Color.Transparent,
             contentColor = MaterialTheme.colorScheme.onBackground,
-        ),
-        elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
         )
     ) {
         Text(
@@ -229,7 +200,7 @@ fun WooPosButtonsPreview() {
             WooPosButton(
                 text = "Button Black And White",
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = MaterialTheme.colorScheme.onBackground
                 ),
                 onClick = {},
             )
