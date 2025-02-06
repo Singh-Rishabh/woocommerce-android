@@ -1,6 +1,8 @@
 package com.woocommerce.android.extensions
 
 import org.apache.commons.text.StringEscapeUtils
+import java.net.URLEncoder
+import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.contracts.ExperimentalContracts
@@ -137,4 +139,8 @@ fun String.readableFileSize(): String {
 
     return DecimalFormat("#,##0.#")
         .format(size / BYTES_IN_KILOBYTE.pow(digitGroups.toDouble())) + " " + units[digitGroups]
+}
+
+fun String.urlEncode(charset: Charset = Charsets.UTF_8): String {
+    return URLEncoder.encode(this, charset.name())
 }
