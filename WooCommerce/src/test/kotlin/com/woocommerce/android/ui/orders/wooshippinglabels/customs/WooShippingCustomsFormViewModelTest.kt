@@ -101,24 +101,46 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `onOtherContentInputChanged should update otherContentInput in viewState`() = testBlocking {
+    fun `onOtherContentInputChanged should update otherContentInput with valid input`() = testBlocking {
         val newValue = "Important Stuff"
         var capturedViewState: ViewState? = null
         viewModel.viewState.observeForever {
             capturedViewState = it
         }
         viewModel.onOtherContentInputChanged(newValue)
-        assertThat(capturedViewState?.otherContentInput).isEqualTo(newValue)
+        assertThat(capturedViewState?.otherContentInput).isEqualTo(InputValue.Data(newValue))
     }
 
     @Test
-    fun `onRestrictionDetailsInputChanged should update otherRestrictionInput in viewState`() = testBlocking {
-        val newValue = "Restricted Stuff"
+    fun `onOtherContentInputChanged should update otherContentInput with invalid input`() = testBlocking {
+        val newValue = ""
         var capturedViewState: ViewState? = null
         viewModel.viewState.observeForever {
             capturedViewState = it
         }
+        viewModel.onOtherContentInputChanged(newValue)
+        assertThat(capturedViewState?.otherContentInput).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
+    }
+
+    @Test
+    fun `onRestrictionDetailsInputChanged should update otherRestrictionInput with valid input`() = testBlocking {
+        val newValue = "Restricted Stuff"
+        var capturedViewState: WooShippingCustomsFormViewModel.ViewState? = null
+        viewModel.viewState.observeForever {
+            capturedViewState = it
+        }
         viewModel.onRestrictionDetailsInputChanged(newValue)
-        assertThat(capturedViewState?.otherRestrictionInput).isEqualTo(newValue)
+        assertThat(capturedViewState?.otherRestrictionInput).isEqualTo(InputValue.Data(newValue))
+    }
+
+    @Test
+    fun `onRestrictionDetailsInputChanged should update otherRestrictionInput with invalid input`() = testBlocking {
+        val newValue = ""
+        var capturedViewState: WooShippingCustomsFormViewModel.ViewState? = null
+        viewModel.viewState.observeForever {
+            capturedViewState = it
+        }
+        viewModel.onRestrictionDetailsInputChanged(newValue)
+        assertThat(capturedViewState?.otherRestrictionInput).isEqualTo(InputValue.Error(newValue, "Details must not be empty"))
     }
 }
