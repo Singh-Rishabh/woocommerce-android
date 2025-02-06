@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ElevationOverlay
-import androidx.compose.material3.LocalAbsoluteElevation
-import androidx.compose.material3.LocalElevationOverlay
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -51,20 +48,14 @@ fun WooPosCard(
     shadowType: ShadowType = ShadowType.Normal,
     content: @Composable () -> Unit
 ) {
-    val absoluteElevation = LocalAbsoluteElevation.current + elevation
     CompositionLocalProvider(
         LocalContentColor provides contentColor,
-        LocalAbsoluteElevation provides absoluteElevation
     ) {
         Box(
             modifier = modifier
                 .surface(
                     shape = shape,
-                    backgroundColor = surfaceColorAtElevation(
-                        color = backgroundColor,
-                        elevationOverlay = LocalElevationOverlay.current,
-                        absoluteElevation = absoluteElevation
-                    ),
+                    backgroundColor = backgroundColor,
                     border = border,
                     elevation = elevation,
                     shadowType = shadowType
@@ -100,19 +91,6 @@ private fun Modifier.surface(
         .then(if (border != null) Modifier.border(border, shape) else Modifier)
         .background(color = backgroundColor, shape = shape)
         .clip(shape)
-}
-
-@Composable
-private fun surfaceColorAtElevation(
-    color: Color,
-    elevationOverlay: ElevationOverlay?,
-    absoluteElevation: Dp
-): Color {
-    return if (color == MaterialTheme.colorScheme.surface && elevationOverlay != null) {
-        elevationOverlay.apply(color, absoluteElevation)
-    } else {
-        color
-    }
 }
 
 @Composable
