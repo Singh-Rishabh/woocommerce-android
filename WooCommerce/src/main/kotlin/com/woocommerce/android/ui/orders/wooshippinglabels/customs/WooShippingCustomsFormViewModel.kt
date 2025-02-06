@@ -89,18 +89,24 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     @Parcelize
     sealed class InputValue : Parcelable {
-        data class Data(val value: String) : InputValue()
-        data class Error(val errorMessage: String) : InputValue()
+        data class Data(val input: String) : InputValue()
+        data class Error(
+            val input: String,
+            val errorMessage: String
+        ) : InputValue()
 
         companion object {
             val EMPTY = Data("")
         }
 
-        val dataOrError
+        val currentInput
             get() = when (this) {
-                is Data -> value
-                is Error -> errorMessage
+                is Data -> input
+                is Error -> input
             }
+
+        val errorMessageOrNull: String?
+            get() = run { this as? Error }?.errorMessage
     }
 
     enum class ContentType(val resourceId: Int) {
