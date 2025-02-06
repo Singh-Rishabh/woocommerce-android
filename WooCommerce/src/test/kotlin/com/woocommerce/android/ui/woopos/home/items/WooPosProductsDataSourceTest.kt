@@ -120,8 +120,10 @@ class WooPosProductsDataSourceTest {
             whenever(handler.canLoadMore).thenReturn(AtomicBoolean(true))
             whenever(handler.productsFlow).thenReturn(flowOf(sampleProducts))
             whenever(
-                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any(), any())).thenReturn(Result.success(Unit)
-                )
+                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any(), any())
+            ).thenReturn(
+                Result.success(Unit)
+            )
             val sut = WooPosProductsDataSource(handler)
 
             // WHEN
@@ -146,8 +148,16 @@ class WooPosProductsDataSourceTest {
             val exception = Exception("Remote load failed")
             whenever(
                 handler.loadFromCacheAndFetch(
-                    any(), any(), any(), any(), any(), any())).thenReturn(Result.success(Unit)
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any(),
+                    any()
                 )
+            ).thenReturn(
+                Result.success(Unit)
+            )
 
             val sut = WooPosProductsDataSource(handler)
 
@@ -295,7 +305,9 @@ class WooPosProductsDataSourceTest {
                     )
                 )
             )
-            whenever(handler.loadFromCacheAndFetch(any(), any(), any(), any(), any(), any())).thenReturn(Result.success(Unit))
+            whenever(
+                handler.loadFromCacheAndFetch(any(), any(), any(), any(), any(), any())
+            ).thenReturn(Result.success(Unit))
             val sut = WooPosProductsDataSource(handler)
 
             // WHEN
