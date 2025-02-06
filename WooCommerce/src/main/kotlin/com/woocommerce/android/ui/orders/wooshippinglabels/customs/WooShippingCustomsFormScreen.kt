@@ -96,14 +96,15 @@ fun WooShippingCustomsFormScreen(
 
             AnimatedVisibility(shouldDisplayContentTypeInput) {
                 WCOutlinedTextField(
-                    value = otherContentDetailsInput.dataOrError,
+                    value = otherContentDetailsInput.currentInput,
                     onValueChange = onOtherContentDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_content_details_label),
                     singleLine = true,
                     isError = otherContentDetailsInput is InputValue.Error,
-                    helperText = stringResource(id = R.string.woo_shipping_labels_customs_content_details_description),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    modifier = modifier.fillMaxWidth()
+                    modifier = modifier.fillMaxWidth(),
+                    helperText = otherContentDetailsInput.errorMessageOrNull
+                        ?: stringResource(id = R.string.woo_shipping_labels_customs_content_details_description)
                 )
             }
 
@@ -116,27 +117,28 @@ fun WooShippingCustomsFormScreen(
 
             AnimatedVisibility(shouldDisplayRestrictionTypeInput) {
                 WCOutlinedTextField(
-                    value = otherRestrictionDetailsInput.dataOrError,
+                    value = otherRestrictionDetailsInput.currentInput,
                     onValueChange = onOtherRestrictionDetailsInputChanged,
                     label = stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_label),
                     singleLine = true,
                     isError = otherRestrictionDetailsInput is InputValue.Error,
-                    helperText = stringResource(
-                        id = R.string.woo_shipping_labels_customs_restriction_details_description
-                    ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                    modifier = modifier.fillMaxWidth()
+                    modifier = modifier.fillMaxWidth(),
+                    helperText = otherContentDetailsInput.errorMessageOrNull
+                        ?: stringResource(id = R.string.woo_shipping_labels_customs_restriction_details_description
+                    )
                 )
             }
 
             WCOutlinedTextField(
-                value = itnValue.dataOrError,
+                value = itnValue.currentInput,
                 onValueChange = onItnChanged,
                 label = stringResource(id = R.string.woo_shipping_labels_customs_itn_label),
                 singleLine = true,
                 isError = itnValue is InputValue.Error,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth(),
+                helperText = itnValue.errorMessageOrNull
             )
 
             Row(
