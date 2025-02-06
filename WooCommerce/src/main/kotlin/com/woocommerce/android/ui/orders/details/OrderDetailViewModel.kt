@@ -34,7 +34,6 @@ import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.ProductImageMap.OnProductFetchedListener
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
-import com.woocommerce.android.ui.orders.CurrencyMatchResult
 import com.woocommerce.android.ui.orders.IsStoreCurrencyMatch
 import com.woocommerce.android.ui.orders.OrderNavigationTarget
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderNote
@@ -351,10 +350,9 @@ class OrderDetailViewModel @Inject constructor(
         launch {
             val isCurrencyMatch = isStoreCurrencyMatch(awaitOrder().currency)
             if (!isCurrencyMatch.isMatch) {
-                handleEditClickWhenCurrencyMismatch(isCurrencyMatch)
-            } else {
-                handleEditClick()
+                tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
             }
+            handleEditClick()
         }
     }
 
@@ -368,18 +366,6 @@ class OrderDetailViewModel @Inject constructor(
                     giftCard = firstGiftCard?.code,
                     appliedDiscount = firstGiftCard?.used,
                     orderCurrency = awaitOrder().currency
-                )
-            )
-        }
-    }
-
-    private fun handleEditClickWhenCurrencyMismatch(isCurrencyMatch: CurrencyMatchResult) {
-        launch {
-            tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
-            triggerEvent(
-                ShowSnackbar(
-                    message = string.order_detail_edit_store_currency_mismatch,
-                    args = arrayOf(awaitOrder().currency, isCurrencyMatch.storeCurrency.orEmpty())
                 )
             )
         }
