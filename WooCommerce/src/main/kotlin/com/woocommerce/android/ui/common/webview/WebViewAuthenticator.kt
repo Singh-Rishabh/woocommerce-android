@@ -33,7 +33,7 @@ class WebViewAuthenticator @Inject constructor(
             }
 
             WebViewAuthenticationFlowResolver.WebViewAuthenticationFlow.SiteCredentials -> {
-                authenticateUsingSiteCredentialsAndLoad(webView, url)
+                authenticateUsingSiteCredentialsAndLoad(webView, url, webViewEvents)
             }
 
             WebViewAuthenticationFlowResolver.WebViewAuthenticationFlow.None -> {
@@ -81,7 +81,11 @@ class WebViewAuthenticator @Inject constructor(
         webView.loadUrl(ssoLoginUrl)
     }
 
-    private fun authenticateUsingSiteCredentialsAndLoad(webView: WebView, url: String) {
+    private suspend fun authenticateUsingSiteCredentialsAndLoad(
+        webView: WebView,
+        url: String,
+        webViewEvents: Flow<WCWebViewEvent>
+    ) {
         val site = selectedSite.get()
 
         val postData = prepareLoginPostData(
@@ -93,6 +97,15 @@ class WebViewAuthenticator @Inject constructor(
         if (postData != null) {
             webView.postUrl(site.loginUrlOrDefault, postData.toByteArray())
         } else {
+            webView.loadUrl(url)
+        }
+
+        val event = webViewEvents.first { it is WCWebViewEvent.PageFinished || it is WCWebViewEvent.UrlFailed }
+        if (event is WCWebViewEvent.UrlFailed && event.url == site.loginUrlOrDefault) {
+            // In case we failed to authenticate, load the original URL
+            // The failure could happen if  some other security measures were added that would prevent
+            // native handling of login (like using a custom login page or a captcha)
+            WooLog.w(WooLog.T.UTILS, "Failed to authenticate the WebView using site credentials, load the original URL")
             webView.loadUrl(url)
         }
     }
