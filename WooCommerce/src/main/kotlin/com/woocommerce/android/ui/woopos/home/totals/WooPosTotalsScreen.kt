@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -321,7 +321,7 @@ private fun TotalsGrid(totals: Totals.Visible) {
 
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
-        Divider(color = WooPosTheme.colors.border, thickness = 1.dp)
+        HorizontalDivider(color = WooPosTheme.colors.border, thickness = 1.dp)
 
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
