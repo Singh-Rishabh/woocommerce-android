@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.common.webview
 
+import androidx.annotation.VisibleForTesting
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.tools.SelectedSite
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -46,9 +47,9 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
         }
     }
 
-
-    private fun String.isPartOf(site: SiteModel): Boolean {
-        // This is not a perfect check, but it should be good enough for our use-case
+    @VisibleForTesting
+    fun String.isPartOf(site: SiteModel): Boolean {
+        // This is a simple check, so it could miss some edge cases, but it should be good enough for our use-case
         // We are using contains instead of equals to account for potential subdomains
         return findDomain().contains(site.url.findDomain())
     }

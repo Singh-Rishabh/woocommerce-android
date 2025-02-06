@@ -40,6 +40,7 @@ import com.woocommerce.android.ui.analytics.ranges.StatsTimeRangeSelection.Selec
 import com.woocommerce.android.ui.analytics.ranges.StatsTimeRangeSelection.SelectionType.LAST_YEAR
 import com.woocommerce.android.ui.analytics.ranges.StatsTimeRangeSelection.SelectionType.TODAY
 import com.woocommerce.android.ui.analytics.ranges.StatsTimeRangeSelection.SelectionType.WEEK_TO_DATE
+import com.woocommerce.android.ui.common.webview.CanAutoAuthenticateInWebView
 import com.woocommerce.android.ui.dashboard.DashboardStatsUsageTracksEventEmitter
 import com.woocommerce.android.ui.dashboard.domain.ObserveLastUpdate
 import com.woocommerce.android.ui.feedback.FeedbackRepository
@@ -100,6 +101,7 @@ class AnalyticsHubViewModelTest : BaseUnitTest() {
     private val dateUtils: DateUtils = mock()
     private val trackerEventEmitter: DashboardStatsUsageTracksEventEmitter = mock()
     private val observeAnalyticsCardsConfiguration: ObserveAnalyticsCardsConfiguration = mock()
+    private val canAutoAuthenticateInWebView: CanAutoAuthenticateInWebView = mock()
 
     private lateinit var localeProvider: LocaleProvider
     private lateinit var testLocale: Locale
@@ -1035,6 +1037,7 @@ class AnalyticsHubViewModelTest : BaseUnitTest() {
             selectedSite,
             getReportUrl,
             observeAnalyticsCardsConfiguration,
+            canAutoAuthenticateInWebView,
             savedState
         )
     }

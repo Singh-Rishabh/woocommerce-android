@@ -10,6 +10,7 @@ import com.woocommerce.android.ui.compose.component.web.WCWebViewEvent
 import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.wordpress.android.fluxc.store.AccountStore
 import java.io.UnsupportedEncodingException
@@ -100,7 +101,7 @@ class WebViewAuthenticator @Inject constructor(
             webView.loadUrl(url)
         }
 
-        val event = webViewEvents.first { it is WCWebViewEvent.PageFinished || it is WCWebViewEvent.UrlFailed }
+        val event = webViewEvents.firstOrNull { it is WCWebViewEvent.PageFinished || it is WCWebViewEvent.UrlFailed }
         if (event is WCWebViewEvent.UrlFailed && event.url == site.loginUrlOrDefault) {
             // In case we failed to authenticate, load the original URL
             // The failure could happen if  some other security measures were added that would prevent
