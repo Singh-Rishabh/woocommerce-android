@@ -77,7 +77,7 @@ fun WooPosPaymentFailedScreen(
                     .width(604.dp),
                 content = {
                     Text(
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colorScheme.primary,
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Bold,
                         text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout)

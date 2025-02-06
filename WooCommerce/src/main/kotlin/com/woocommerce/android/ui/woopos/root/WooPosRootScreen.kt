@@ -19,7 +19,7 @@ fun WooPosRootScreen(modifier: Modifier = Modifier) {
     val rootController = rememberNavController()
     val activity = LocalContext.current as ComponentActivity
 
-    Box(modifier = modifier.background(MaterialTheme.colors.background)) {
+    Box(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
         WooPosRootHost(
             modifier = Modifier.fillMaxSize(),
             rootController = rootController,

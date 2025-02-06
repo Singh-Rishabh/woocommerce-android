@@ -91,7 +91,7 @@ private fun WooPosCartScreen(
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         val (topMargin, toolbar, body, checkoutButton, overlay) = createRefs()
 
@@ -196,7 +196,7 @@ private fun CartOverlay(
         modifier = modifier
             .fillMaxSize()
             .background(
-                color = MaterialTheme.colors.background.copy(alpha = cartOverlayIntensityAnimated),
+                color = MaterialTheme.colorScheme.background.copy(alpha = cartOverlayIntensityAnimated),
             )
     )
 }
@@ -219,7 +219,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
             text = stringResource(R.string.woopos_cart_empty_subtitle),
             style = MaterialTheme.typography.h6,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
     }
@@ -325,7 +325,7 @@ private fun CartToolbar(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
                     contentDescription = stringResource(R.string.woopos_cart_back_content_description),
-                    tint = MaterialTheme.colors.onBackground,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(iconSize)
                 )
             }
@@ -334,7 +334,7 @@ private fun CartToolbar(
         Text(
             text = stringResource(R.string.woopos_cart_title),
             style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier
@@ -362,7 +362,7 @@ private fun CartToolbar(
             Text(
                 text = it,
                 style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.secondaryVariant.copy(alpha = 0.6f),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 modifier = Modifier
@@ -478,7 +478,7 @@ private fun ProductItem(
                             style = MaterialTheme.typography.body1,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colors.secondaryVariant,
+                            color = MaterialTheme.colorScheme.secondaryVariant,
                             modifier = Modifier.clearAndSetSemantics { }
                         )
                         Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
@@ -486,7 +486,7 @@ private fun ProductItem(
                     Text(
                         text = item.price,
                         style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.secondaryVariant,
+                        color = MaterialTheme.colorScheme.secondaryVariant,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
                 }
@@ -506,7 +506,7 @@ private fun ProductItem(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                            tint = MaterialTheme.colors.onBackground,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             contentDescription = null,
                         )
                     }

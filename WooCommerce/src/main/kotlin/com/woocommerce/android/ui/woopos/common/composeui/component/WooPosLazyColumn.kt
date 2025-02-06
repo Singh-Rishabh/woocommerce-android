@@ -106,7 +106,7 @@ fun WooPosLazyColumnPreview() {
                             .height(64.dp)
                             .fillMaxWidth(),
                         style = MaterialTheme.typography.h6,
-                        color = MaterialTheme.colors.onSurface,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }

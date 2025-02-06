@@ -102,7 +102,7 @@ private fun WooPosPaymentSuccessScreen(
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(title) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -116,7 +116,7 @@ private fun WooPosPaymentSuccessScreen(
                 style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -181,7 +181,7 @@ private fun CheckMarkIcon(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_woo_pos_check),
-            tint = MaterialTheme.colors.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = stringResource(id = R.string.woopos_payment_successful_label),
             modifier = Modifier
                 .size(iconSize)

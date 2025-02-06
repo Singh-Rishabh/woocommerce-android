@@ -153,7 +153,7 @@ private fun WooPosHomeScreen(
             )
             WooPosHomeScreenCart(
                 modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
+                    .background(MaterialTheme.colorScheme.surface)
                     .width(cartWidthDp)
             )
             WooPosHomeScreenTotals(

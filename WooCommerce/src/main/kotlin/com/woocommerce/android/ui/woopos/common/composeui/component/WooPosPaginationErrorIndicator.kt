@@ -68,7 +68,7 @@ private fun WooPosPaginationErrorIndicatorContent(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = 6.dp,
         shadowType = ShadowType.Soft,
     ) {

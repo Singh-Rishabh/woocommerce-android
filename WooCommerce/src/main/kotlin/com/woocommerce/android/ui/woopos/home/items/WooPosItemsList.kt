@@ -181,7 +181,7 @@ private fun ItemCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = 6.dp,
         shadowType = ShadowType.Soft,
     ) {
@@ -253,7 +253,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
         text = item.price,
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colors.secondaryVariant
+        color = MaterialTheme.colorScheme.secondaryVariant
     )
 }
 
@@ -263,7 +263,7 @@ private fun VariableProductDetails() {
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colors.secondaryVariant
+        color = MaterialTheme.colorScheme.secondaryVariant
     )
 }
 
@@ -273,7 +273,7 @@ fun VariationProductDetails(item: Variation) {
         text = item.price,
         style = MaterialTheme.typography.h6,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colors.secondaryVariant
+        color = MaterialTheme.colorScheme.secondaryVariant
     )
 }
 
@@ -297,7 +297,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = 6.dp,
         shadowType = ShadowType.Soft,
     ) {
@@ -364,7 +364,7 @@ fun ItemsEmptyList(
                 text = title,
                 style = MaterialTheme.typography.h4,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
 
             Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
@@ -372,7 +372,7 @@ fun ItemsEmptyList(
             Text(
                 text = message,
                 style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center
             )
 

@@ -66,7 +66,7 @@ fun WooPosProductInfoDialog(
                     text = stringResource(id = state.header),
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                     modifier = Modifier
                         .padding(
                             top = 40.dp.toAdaptivePadding(),
@@ -91,14 +91,14 @@ fun WooPosProductInfoDialog(
                     Text(
                         text = stringResource(id = state.primaryMessage),
                         style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
                         style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
                     )
@@ -120,7 +120,7 @@ fun WooPosProductInfoDialog(
                                 style = MaterialTheme.typography.subtitle1,
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                             )
                         }
                     }
@@ -134,7 +134,7 @@ fun WooPosProductInfoDialog(
                             .semantics {
                                 contentDescription = primaryButtonContentDescription
                             },
-                        border = BorderStroke(2.dp, MaterialTheme.colors.primary),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp),
                     ) {
                         Text(

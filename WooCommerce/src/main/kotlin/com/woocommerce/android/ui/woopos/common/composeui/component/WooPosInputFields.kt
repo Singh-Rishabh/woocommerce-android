@@ -52,7 +52,7 @@ fun WooPosMoneyInputField(
     decimalSeparator: String,
     numberOfDecimals: Int,
     textStyle: TextStyle = MaterialTheme.typography.h6,
-    textColor: Color = MaterialTheme.colors.onBackground,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -160,7 +160,7 @@ fun WooPosMoneyInputField(
                     visualTransformation.filter(it)
                 }
             },
-            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             modifier = textFieldModifier,
         )
     }
@@ -173,7 +173,7 @@ fun WooPosInputField(
     label: String = "",
     modifier: Modifier = Modifier,
     textStyle: TextStyle = MaterialTheme.typography.h6,
-    textColor: Color = MaterialTheme.colors.onBackground,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     contentAlignment: Alignment = Alignment.CenterStart,
@@ -212,7 +212,7 @@ fun WooPosInputField(
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions,
             modifier = textFieldModifier,
-            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
         )
     }
 }

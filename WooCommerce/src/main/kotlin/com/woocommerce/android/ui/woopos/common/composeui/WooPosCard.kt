@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 fun WooPosCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
-    backgroundColor: Color = MaterialTheme.colors.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(backgroundColor),
     border: BorderStroke? = null,
     elevation: Dp = 1.dp,
@@ -108,7 +108,7 @@ private fun surfaceColorAtElevation(
     elevationOverlay: ElevationOverlay?,
     absoluteElevation: Dp
 ): Color {
-    return if (color == MaterialTheme.colors.surface && elevationOverlay != null) {
+    return if (color == MaterialTheme.colorScheme.surface && elevationOverlay != null) {
         elevationOverlay.apply(color, absoluteElevation)
     } else {
         color
@@ -201,7 +201,7 @@ private fun Preview(elevation: Dp) {
         WooPosCard(
             modifier = Modifier.padding(16.dp),
             shape = RoundedCornerShape(8.dp),
-            backgroundColor = MaterialTheme.colors.surface,
+            backgroundColor = MaterialTheme.colorScheme.surface,
             elevation = elevation,
         ) {
             Text(

@@ -55,13 +55,13 @@ fun WooPosExitConfirmationDialog(
                     text = title,
                     style = MaterialTheme.typography.h4,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = modifier.height(16.dp.toAdaptivePadding()))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = modifier.height(56.dp.toAdaptivePadding()))
                 WooPosButton(
@@ -90,7 +90,7 @@ fun WooPosExitConfirmationDialog(
                     ),
                     modifier = modifier
                         .size(40.dp),
-                    tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
         }

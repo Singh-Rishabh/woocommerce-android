@@ -229,7 +229,7 @@ private fun VariationsToolbar(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = stringResource(id = R.string.woopos_variations_back_content_description),
-                tint = MaterialTheme.colors.onSurface
+                tint = MaterialTheme.colorScheme.onSurface
             )
         }
 
@@ -238,7 +238,7 @@ private fun VariationsToolbar(
             style = MaterialTheme.typography.h4.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.constrainAs(productName) {
                 start.linkTo(backButton.end, margin = 8.dp)
                 top.linkTo(parent.top, margin = 8.dp)

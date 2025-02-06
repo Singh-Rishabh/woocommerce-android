@@ -112,7 +112,7 @@ private fun EmailState(
         if (state.errorMessage != null) {
             Text(
                 text = state.errorMessage,
-                color = MaterialTheme.colors.error,
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {

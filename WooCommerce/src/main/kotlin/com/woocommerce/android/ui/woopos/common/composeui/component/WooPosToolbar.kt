@@ -48,7 +48,7 @@ fun WooPosToolbar(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
                 contentDescription = stringResource(R.string.woopos_toolbar_icon_content_description),
-                tint = MaterialTheme.colors.onBackground,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -57,7 +57,7 @@ fun WooPosToolbar(
         Text(
             text = titleText,
             style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.onBackground,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier

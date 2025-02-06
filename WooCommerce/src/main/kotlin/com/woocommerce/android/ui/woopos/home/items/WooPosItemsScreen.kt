@@ -143,9 +143,9 @@ private fun MainItemsList(
             val titleColor = when (state.value) {
                 is WooPosItemsViewState.Loading,
                 is WooPosItemsViewState.Empty,
-                is WooPosItemsViewState.Error -> MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                is WooPosItemsViewState.Error -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
 
-                is WooPosItemsViewState.Content -> MaterialTheme.colors.onSurface
+                is WooPosItemsViewState.Content -> MaterialTheme.colorScheme.onSurface
             }
             ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
 
@@ -226,7 +226,7 @@ private fun ItemsToolbar(
                             contentDescription = stringResource(
                                 id = R.string.woopos_banner_simple_products_info_content_description
                             ),
-                            tint = MaterialTheme.colors.onSurface.copy(ContentAlpha.high),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(ContentAlpha.high),
                         )
                     }
                 }

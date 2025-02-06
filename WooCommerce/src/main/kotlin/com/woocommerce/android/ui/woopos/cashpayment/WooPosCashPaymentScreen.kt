@@ -143,7 +143,7 @@ private fun Collecting(
         Text(
             text = state.changeDueText,
             style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.secondary,
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
                 .constrainAs(changeDue) {
@@ -156,7 +156,7 @@ private fun Collecting(
         if (state.errorMessage != null) {
             Text(
                 text = state.errorMessage,
-                color = MaterialTheme.colors.error,
+                color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.body1,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {

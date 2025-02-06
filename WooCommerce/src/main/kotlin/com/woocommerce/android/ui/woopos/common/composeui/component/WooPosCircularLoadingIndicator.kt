@@ -36,7 +36,7 @@ fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
         label = "RotationAnimation"
     )
 
-    val backgroundColor = MaterialTheme.colors.primary
+    val backgroundColor = MaterialTheme.colorScheme.primary
     Canvas(
         modifier = modifier
             .graphicsLayer {
