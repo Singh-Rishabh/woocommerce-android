@@ -135,16 +135,11 @@ private object WooPosColors {
     val Black90 = Color(0xFF121212)
 }
 
-// Create Material3 color schemes by mapping your old palette values.
-// Note: Material3’s color system is more granular. You may wish to adjust these
-// mappings for a closer visual match.
 private val DarkColorScheme = darkColorScheme(
     primary = WooPosColors.WooPurple30,
     onPrimary = Color.Black,
-    // Map your Material2 “primaryVariant” to Material3’s primaryContainer.
     primaryContainer = WooPosColors.primaryVariant,
     secondary = WooPosColors.secondary,
-    // For simplicity, we set onSecondary to a contrasting color.
     onSecondary = Color.Black,
     background = WooPosColors.Black90,
     onBackground = Color.White,
@@ -168,7 +163,6 @@ private val LightColorScheme = lightColorScheme(
     onError = Color.White
 )
 
-// Provide your custom colors via a CompositionLocal.
 private val LocalCustomColors = staticCompositionLocalOf {
     LightCustomColors
 }
