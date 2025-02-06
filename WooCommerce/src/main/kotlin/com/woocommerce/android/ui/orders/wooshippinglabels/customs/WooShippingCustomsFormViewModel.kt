@@ -59,14 +59,22 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onOtherContentInputChanged(newValue: String) {
+        val input = when (newValue.isBlank()) {
+            true -> InputValue.Error(newValue, "Details must not be empty")
+            false -> InputValue.Data(newValue)
+        }
         _viewState.update {
-            it.copy(otherContentInput = InputValue.Data(newValue))
+            it.copy(otherContentInput = input)
         }
     }
 
     fun onRestrictionDetailsInputChanged(newValue: String) {
+        val input = when (newValue.isBlank()) {
+            true -> InputValue.Error(newValue, "Details must not be empty")
+            false -> InputValue.Data(newValue)
+        }
         _viewState.update {
-            it.copy(otherRestrictionInput = InputValue.Data(newValue))
+            it.copy(otherRestrictionInput = input)
         }
     }
 
