@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.payments.cardreader.payment
 
-import androidx.annotation.DimenRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.woocommerce.android.R

@@ -111,7 +111,8 @@ class CardReaderPaymentDialogFragment : PaymentsBaseDialogFragment(R.layout.card
                 viewState.illustration
             ).also {
                 if (binding.illustration.isVisible) {
-                    binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
+                    binding.illustration.visibility =
+                        getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
                 }
             }
             UiHelpers.setTextOrHide(binding.paymentStateLabel, viewState.paymentStateLabel)

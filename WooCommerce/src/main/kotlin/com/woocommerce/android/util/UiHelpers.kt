@@ -106,6 +106,7 @@ object UiHelpers {
         image?.let { imageView.setImageDrawable(image) }
     }
 
+    @Suppress("MagicNumber")
     fun getIllustrationVisibilityForFontScale(fontScale: Float): Int = if (fontScale > 1.5f) {
         View.GONE
     } else {

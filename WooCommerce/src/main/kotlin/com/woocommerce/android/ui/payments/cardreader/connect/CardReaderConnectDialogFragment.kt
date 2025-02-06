@@ -168,7 +168,8 @@ class CardReaderConnectDialogFragment : PaymentsBaseDialogFragment(R.layout.card
         UiHelpers.setImageOrHideInLandscapeOnCompactScreenHeightSizeClass(binding.illustration, viewState.illustration)
             .also {
                 if (binding.illustration.isVisible) {
-                    binding.illustration.visibility = getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
+                    binding.illustration.visibility =
+                        getIllustrationVisibilityForFontScale(resources.configuration.fontScale)
                 }
             }
         UiHelpers.setTextOrHide(binding.hintLabel, viewState.hintLabel)
