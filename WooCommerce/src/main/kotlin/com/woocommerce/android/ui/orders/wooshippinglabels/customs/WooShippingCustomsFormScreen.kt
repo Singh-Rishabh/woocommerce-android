@@ -104,7 +104,8 @@ fun WooShippingCustomsFormScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = modifier.fillMaxWidth(),
                     helperText = otherContentDetailsInput.errorMessageOrNull
-                        ?: stringResource(id = R.string.woo_shipping_labels_customs_content_details_description)
+                        ?.let { stringResource(it) }
+                        ?: stringResource(R.string.woo_shipping_labels_customs_content_details_description)
                 )
             }
 
@@ -125,9 +126,8 @@ fun WooShippingCustomsFormScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = modifier.fillMaxWidth(),
                     helperText = otherContentDetailsInput.errorMessageOrNull
-                        ?: stringResource(
-                            id = R.string.woo_shipping_labels_customs_restriction_details_description
-                        )
+                        ?.let { stringResource(it) }
+                        ?: stringResource(R.string.woo_shipping_labels_customs_restriction_details_description)
                 )
             }
 
@@ -140,6 +140,7 @@ fun WooShippingCustomsFormScreen(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                 modifier = modifier.fillMaxWidth(),
                 helperText = itnValue.errorMessageOrNull
+                    ?.let { stringResource(it) }
             )
 
             Row(
