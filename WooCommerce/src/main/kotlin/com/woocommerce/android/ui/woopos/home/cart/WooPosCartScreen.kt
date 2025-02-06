@@ -65,6 +65,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
@@ -362,7 +363,7 @@ private fun CartToolbar(
             Text(
                 text = it,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.secondaryVariant.copy(alpha = 0.6f),
+                color = WooPosColors.Gray60.copy(alpha = 0.6f),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 modifier = Modifier
@@ -478,7 +479,7 @@ private fun ProductItem(
                             style = MaterialTheme.typography.bodyLarge,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colorScheme.secondaryVariant,
+                            color = WooPosColors.Gray60,
                             modifier = Modifier.clearAndSetSemantics { }
                         )
                         Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
@@ -486,7 +487,7 @@ private fun ProductItem(
                     Text(
                         text = item.price,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.secondaryVariant,
+                        color = WooPosColors.Gray60,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
                 }

@@ -49,6 +49,7 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
@@ -253,7 +254,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
         text = item.price,
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colorScheme.secondaryVariant
+        color = WooPosColors.Gray60
     )
 }
 
@@ -263,7 +264,7 @@ private fun VariableProductDetails() {
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colorScheme.secondaryVariant
+        color = WooPosColors.Gray60
     )
 }
 
@@ -273,7 +274,7 @@ fun VariationProductDetails(item: Variation) {
         text = item.price,
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colorScheme.secondaryVariant
+        color = WooPosColors.Gray60
     )
 }
 
