@@ -150,7 +150,7 @@ class DashboardTopPerformersViewModel @AssistedInject constructor(
                 selectedDateRange.value?.customRange == null -> onEditCustomRangeTapped()
                 else -> {
                     parentViewModel.trackCardInteracted(DashboardWidget.Type.POPULAR_PRODUCTS.trackingIdentifier)
-                    appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
+                    appPrefsWrapper.setActiveTopPerformersTab(SelectionType.CUSTOM.name)
                 }
             }
         }
