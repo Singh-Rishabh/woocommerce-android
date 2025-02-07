@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.ripple
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +53,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringResLegacy
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
+import com.woocommerce.android.ui.compose.component.WCModalBottomSheet
 import com.woocommerce.android.ui.compose.component.WCTextButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import kotlinx.coroutines.launch
@@ -102,8 +102,7 @@ fun BlazeCampaignCreationIntroScreen(
         )
 
         if (showBottomSheet) {
-            ModalBottomSheet(
-                containerColor = MaterialTheme.colors.surface,
+            WCModalBottomSheet(
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = modalSheetState,
             ) {
