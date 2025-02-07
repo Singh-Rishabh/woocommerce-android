@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -53,15 +53,15 @@ fun WooPosExitConfirmationDialog(
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onSurface
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = modifier.height(16.dp.toAdaptivePadding()))
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onSurface
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = modifier.height(56.dp.toAdaptivePadding()))
                 WooPosButton(
@@ -90,7 +90,7 @@ fun WooPosExitConfirmationDialog(
                     ),
                     modifier = modifier
                         .size(40.dp),
-                    tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
             }
         }

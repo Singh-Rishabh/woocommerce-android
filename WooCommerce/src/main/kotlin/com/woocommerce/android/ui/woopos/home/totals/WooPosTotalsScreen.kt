@@ -21,10 +21,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -219,13 +219,13 @@ private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
-        style = MaterialTheme.typography.h5,
+        style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Medium
     )
     Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
-        style = MaterialTheme.typography.h4,
+        style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
     )
 }
@@ -242,13 +242,13 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
-        style = MaterialTheme.typography.h5,
+        style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Medium
     )
     Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
-        style = MaterialTheme.typography.h4,
+        style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
     )
 }
@@ -277,7 +277,7 @@ private fun ReaderDisconnected(
 
         Text(
             text = status.title,
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold
         )
 
@@ -285,7 +285,7 @@ private fun ReaderDisconnected(
 
         Text(
             text = status.subtitle,
-            style = MaterialTheme.typography.h6
+            style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
@@ -321,15 +321,15 @@ private fun TotalsGrid(totals: Totals.Visible) {
 
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
-        Divider(color = WooPosTheme.colors.border, thickness = 1.dp)
+        HorizontalDivider(color = WooPosTheme.colors.border, thickness = 1.dp)
 
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
         TotalsGridRow(
             textOne = stringResource(R.string.woopos_payment_total_label),
             textTwo = totals.orderTotalText,
-            styleOne = MaterialTheme.typography.h4,
-            styleTwo = MaterialTheme.typography.h4,
+            styleOne = MaterialTheme.typography.headlineMedium,
+            styleTwo = MaterialTheme.typography.headlineMedium,
             fontWeightOne = FontWeight.Medium,
             fontWeightTwo = FontWeight.Bold,
         )
@@ -340,8 +340,8 @@ private fun TotalsGrid(totals: Totals.Visible) {
 private fun TotalsGridRow(
     textOne: String,
     textTwo: String,
-    styleOne: TextStyle = MaterialTheme.typography.h5,
-    styleTwo: TextStyle = MaterialTheme.typography.h5,
+    styleOne: TextStyle = MaterialTheme.typography.headlineSmall,
+    styleTwo: TextStyle = MaterialTheme.typography.headlineSmall,
     fontWeightOne: FontWeight = FontWeight.Normal,
     fontWeightTwo: FontWeight = FontWeight.Normal,
 ) {

@@ -3,8 +3,8 @@ package com.woocommerce.android.ui.woopos.cashpayment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -104,7 +104,7 @@ private fun Collecting(
 
         Text(
             text = state.totalText,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .constrainAs(total) {
                     top.linkTo(parent.top, margin = 4.dp)
@@ -132,7 +132,7 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = MaterialTheme.typography.h4,
+            textStyle = MaterialTheme.typography.headlineMedium,
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
@@ -142,8 +142,8 @@ private fun Collecting(
         val smallMargin = 8.dp.toAdaptivePadding()
         Text(
             text = state.changeDueText,
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.secondary,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Normal,
             modifier = Modifier
                 .constrainAs(changeDue) {
@@ -156,8 +156,8 @@ private fun Collecting(
         if (state.errorMessage != null) {
             Text(
                 text = state.errorMessage,
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(changeDue.bottom, margin = smallMargin)

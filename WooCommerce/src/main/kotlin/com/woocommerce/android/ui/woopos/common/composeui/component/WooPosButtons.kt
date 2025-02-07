@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,8 +28,8 @@ fun WooPosButton(
     modifier: Modifier = Modifier,
     text: String,
     colors: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.onPrimary,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
     ),
     state: WooPosButtonState = WooPosButtonState.ENABLED,
     onClick: () -> Unit,
@@ -42,7 +42,7 @@ fun WooPosButton(
         modifier = modifier
             .fillMaxWidth()
             .height(72.dp),
-        elevation = ButtonDefaults.elevation(
+        elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
             disabledElevation = 0.dp,
@@ -55,12 +55,11 @@ fun WooPosButton(
             WooPosButtonState.DISABLED -> {
                 Text(
                     text = text,
-                    color = MaterialTheme.colors.onPrimary,
-                    style = MaterialTheme.typography.h5,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                 )
             }
-
             WooPosButtonState.LOADING -> {
                 WooPosCircularLoadingIndicator(
                     modifier = Modifier.size(32.dp),
@@ -79,7 +78,7 @@ fun WooPosButtonLarge(
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        elevation = ButtonDefaults.elevation(
+        elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
             focusedElevation = 0.dp,
@@ -92,8 +91,8 @@ fun WooPosButtonLarge(
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colors.onPrimary,
-            style = MaterialTheme.typography.h4,
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
         )
     }
@@ -111,8 +110,8 @@ fun WooPosOutlinedButtonSmall(
     content = {
         Text(
             text = text,
-            color = MaterialTheme.colors.primary,
-            style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.SemiBold,
         )
     },
@@ -129,13 +128,13 @@ fun WooPosOutlinedButton(
     Button(
         modifier = modifier,
         onClick = onClick,
-        border = BorderStroke(2.dp, MaterialTheme.colors.primary),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = MaterialTheme.colors.surface,
-            contentColor = MaterialTheme.colors.onBackground,
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onBackground,
         ),
         shape = shape,
-        elevation = ButtonDefaults.elevation(
+        elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
             disabledElevation = 0.dp,
@@ -157,13 +156,13 @@ fun WooPosOutlinedButton(
             .fillMaxWidth()
             .height(80.dp),
         onClick = onClick,
-        border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.onBackground),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Transparent,
-            contentColor = MaterialTheme.colors.onBackground,
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.onBackground,
         ),
-        elevation = ButtonDefaults.elevation(
+        elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
             disabledElevation = 0.dp,
@@ -173,8 +172,8 @@ fun WooPosOutlinedButton(
     ) {
         Text(
             text = text,
-            color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.h5,
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
         )
     }
@@ -229,7 +228,7 @@ fun WooPosButtonsPreview() {
             WooPosButton(
                 text = "Button Black And White",
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.onBackground
+                    containerColor = MaterialTheme.colorScheme.onBackground
                 ),
                 onClick = {},
             )

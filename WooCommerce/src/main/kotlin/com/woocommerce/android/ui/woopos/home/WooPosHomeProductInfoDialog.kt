@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,9 +64,9 @@ fun WooPosProductInfoDialog(
 
                 Text(
                     text = stringResource(id = state.header),
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                     modifier = Modifier
                         .padding(
                             top = 40.dp.toAdaptivePadding(),
@@ -90,15 +90,15 @@ fun WooPosProductInfoDialog(
                 ) {
                     Text(
                         text = stringResource(id = state.primaryMessage),
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
-                        style = MaterialTheme.typography.h5,
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
                     )
@@ -117,10 +117,10 @@ fun WooPosProductInfoDialog(
                         ) {
                             Text(
                                 text = stringResource(id = state.tertiaryMessage),
-                                style = MaterialTheme.typography.subtitle1,
+                                style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                             )
                         }
                     }
@@ -134,14 +134,14 @@ fun WooPosProductInfoDialog(
                             .semantics {
                                 contentDescription = primaryButtonContentDescription
                             },
-                        border = BorderStroke(2.dp, MaterialTheme.colors.primary),
+                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(8.dp),
                     ) {
                         Text(
                             modifier = Modifier
                                 .padding(vertical = 20.dp.toAdaptivePadding()),
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.h5,
+                            style = MaterialTheme.typography.headlineSmall,
                             text = stringResource(id = state.primaryButton.label)
                         )
                     }

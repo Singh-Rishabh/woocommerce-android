@@ -18,12 +18,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -201,7 +201,7 @@ private fun MenuButtonWithPopUpMenu(
     val menuContentDescription = stringResource(id = R.string.woopos_menu_toolbar_content_description)
     WooPosCard(
         modifier = modifier,
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = TOOLBAR_ELEVATION,
         shape = RoundedCornerShape(8.dp),
     ) {
@@ -210,10 +210,10 @@ private fun MenuButtonWithPopUpMenu(
             onClick = onClick,
             contentPadding = PaddingValues(0.dp),
             colors = ButtonDefaults.textButtonColors(
-                backgroundColor = if (menuCardDisabled) {
-                    MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
+                contentColor = if (menuCardDisabled) {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                 } else {
-                    MaterialTheme.colors.surface
+                    MaterialTheme.colorScheme.surface
                 }
             )
         ) {
@@ -222,7 +222,7 @@ private fun MenuButtonWithPopUpMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 repeat(3) {
-                    Circle(size = 4.dp, color = MaterialTheme.colors.onSurface)
+                    Circle(size = 4.dp, color = MaterialTheme.colorScheme.onSurface)
                     if (it < 2) {
                         Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
                     }
@@ -262,7 +262,7 @@ private fun PopUpMenuItem(
         Icon(
             imageVector = ImageVector.vectorResource(id = menuItem.icon),
             contentDescription = null,
-            tint = MaterialTheme.colors.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
@@ -271,8 +271,8 @@ private fun PopUpMenuItem(
                 .padding(vertical = 8.dp.toAdaptivePadding())
                 .weight(1f),
             text = stringResource(id = menuItem.title),
-            color = MaterialTheme.colors.onSurface,
-            style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -308,8 +308,8 @@ private fun CardReaderStatusButton(
         label = "TextColorTransition"
     ) { status ->
         when (status) {
-            WooPosCardReaderStatus.Connected -> MaterialTheme.colors.onSurface
-            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colors.primary
+            WooPosCardReaderStatus.Connected -> MaterialTheme.colorScheme.onSurface
+            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colorScheme.primary
         }
     }
 
@@ -326,20 +326,20 @@ private fun CardReaderStatusButton(
     ) { status ->
         when (status) {
             WooPosCardReaderStatus.Connected -> Color.Transparent
-            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colors.primary
+            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colorScheme.primary
         }
     }
 
     WooPosCard(
         modifier = modifier
             .height(56.dp),
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = TOOLBAR_ELEVATION,
         shape = RoundedCornerShape(8.dp),
     ) {
         Surface(
             color = if (menuCardDisabled) {
-                MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
             } else {
                 Color.Transparent
             },
@@ -379,7 +379,7 @@ private fun ReaderStatusText(
         modifier = modifier.padding(horizontal = 8.dp.toAdaptivePadding()),
         text = title,
         color = color,
-        style = MaterialTheme.typography.button
+        style = MaterialTheme.typography.labelLarge
     )
 }
 

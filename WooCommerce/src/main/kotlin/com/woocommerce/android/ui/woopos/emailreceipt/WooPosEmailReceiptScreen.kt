@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -97,7 +97,7 @@ private fun EmailState(
             onValueChange = onEmailAddressChanged,
             label = stringResource(R.string.woopos_email_receipt_email_label),
             contentAlignment = Alignment.Center,
-            textStyle = MaterialTheme.typography.h3,
+            textStyle = MaterialTheme.typography.displaySmall,
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email
@@ -112,8 +112,8 @@ private fun EmailState(
         if (state.errorMessage != null) {
             Text(
                 text = state.errorMessage,
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(email.bottom, margin = 8.dp)
