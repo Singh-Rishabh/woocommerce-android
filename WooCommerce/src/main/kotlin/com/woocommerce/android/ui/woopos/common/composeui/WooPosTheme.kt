@@ -21,17 +21,8 @@ data class CustomColors(
     val success: Color = WooPosColors.VividGreen,
     val onSuccess: Color = WooPosColors.White,
 
-    val error: Color = WooPosColors.WooRed50,
-    val onError: Color = WooPosColors.White,
-
     val alert: Color = WooPosColors.Amber,
     val onAlert: Color = WooPosColors.White,
-
-    val primaryContainer: Color = WooPosColors.WooPurple40,
-    val onPrimaryContainer: Color = WooPosColors.White,
-
-    val secondaryContainer: Color = WooPosColors.Black,
-    val onSecondaryContainer: Color = WooPosColors.White,
 
     val disabledContainer: Color,
     val onDisabledContainer: Color,
@@ -39,19 +30,8 @@ data class CustomColors(
     val outline: Color,
     val outlineVariable: Color,
 
-    val surface: Color,
-    val surfaceDim: Color,
-    val surfaceBright: Color,
-    val surfaceContainerLowest: Color,
-    val surfaceContainerLow: Color,
-    val surfaceContainerHigh: Color,
-
-    val onSurface: Color,
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
-
-    val inverseSurface: Color,
-    val onInverseSurface: Color,
 
     val fontPrimary: Color,
     val fontSecondary: Color,
@@ -68,20 +48,14 @@ data class CustomColors(
     val homeBackground: Color,
 )
 
-private object WooPosColors {
+object WooPosColors {
     // Woo POS specific colors:
 
     // Adding missing colors from the old code to match exactly
     val oldGrayLight = Color(0xFFF2EBFF)
     val oldGrayMedium = Color(0xFF8D8D8D)
 
-    val primaryVariant = Color(0xFF3700B3)
-    val secondary = Color(0xFF0A9400)
-    val surface = Color(0xFF2E2E2E)
-
     // LightColorPalette
-    val lightColorPaletteSecondary = Color(0xFF004B3E)
-    val lightColorPaletteSecondaryVariant = Color(0xFF50575E)
     val lightColorPaletteBackground = Color(0xFFFDFDFD)
 
     // DarkCustomColors
@@ -123,32 +97,58 @@ private object WooPosColors {
     val Black90 = Color(0xFF121212)
 }
 
-private val DarkColorScheme = darkColorScheme(
-    primary = WooPosColors.WooPurple40,
-    onPrimary = Color.White,
-    primaryContainer = WooPosColors.primaryVariant,
-    secondary = WooPosColors.secondary,
-    onSecondary = Color.Black,
-    background = WooPosColors.Black90,
-    onBackground = Color.White,
-    surface = WooPosColors.surface,
-    onSurface = Color.White,
-    error = WooPosColors.darkCustomColorsError,
-    onError = Color.White
-)
-
 private val LightColorScheme = lightColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
-    primaryContainer = WooPosColors.primaryVariant,
-    secondary = WooPosColors.lightColorPaletteSecondary,
-    onSecondary = Color.Black,
-    background = WooPosColors.lightColorPaletteBackground,
-    onBackground = Color.Black,
-    surface = Color.White,
-    onSurface = Color.Black,
-    error = WooPosColors.lightCustomColorsError,
-    onError = Color.White
+
+    primaryContainer  = WooPosColors.WooPurple40,
+    onPrimaryContainer = WooPosColors.White,
+
+    secondaryContainer = WooPosColors.Black,
+    onSecondaryContainer = WooPosColors.White,
+
+    surface = WooPosColors.Gray0,
+    surfaceDim = WooPosColors.Gray80,
+    surfaceBright = WooPosColors.Gray90,
+
+    surfaceContainerLowest = WooPosColors.White,
+    surfaceContainerLow = WooPosColors.White,
+    surfaceContainerHigh = WooPosColors.Gray30,
+
+    onSurface = WooPosColors.Gray100,
+
+    inverseSurface = WooPosColors.Gray100,
+    inverseOnSurface = WooPosColors.White,
+
+    error = WooPosColors.WooRed50,
+    onError = WooPosColors.White,
+)
+
+private val DarkColorScheme = darkColorScheme(
+    primary = WooPosColors.WooPurple40,
+    onPrimary = Color.White,
+
+    primaryContainer  = WooPosColors.WooPurple40,
+    onPrimaryContainer = WooPosColors.White,
+
+    secondaryContainer = WooPosColors.Black,
+    onSecondaryContainer = WooPosColors.White,
+
+    surface = WooPosColors.Gray100,
+    surfaceDim = WooPosColors.Gray0,
+    surfaceBright = WooPosColors.White,
+
+    surfaceContainerLowest = WooPosColors.Gray70,
+    surfaceContainerLow = WooPosColors.Gray80,
+    surfaceContainerHigh = WooPosColors.Gray100,
+
+    onSurface = WooPosColors.White,
+
+    inverseSurface = WooPosColors.White,
+    inverseOnSurface = WooPosColors.Gray100,
+
+    error = WooPosColors.WooRed50,
+    onError = WooPosColors.White,
 )
 
 private val LocalCustomColors = staticCompositionLocalOf {
@@ -173,19 +173,8 @@ private val LightCustomColors = CustomColors(
     outline = WooPosColors.Gray40,
     outlineVariable = WooPosColors.Gray5,
 
-    surface = WooPosColors.Gray0,
-    surfaceDim = WooPosColors.Gray0,
-    surfaceBright = WooPosColors.White,
-    surfaceContainerLowest = WooPosColors.White,
-    surfaceContainerLow = WooPosColors.White,
-    surfaceContainerHigh = WooPosColors.Gray30,
-
-    onSurface = WooPosColors.Gray100,
     onSurfaceVariantLow = WooPosColors.Gray30,
     onSurfaceVariantHigh = WooPosColors.Gray60,
-
-    inverseSurface = WooPosColors.Gray100,
-    onInverseSurface = WooPosColors.White,
 
     fontPrimary = WooPosColors.Black,
     fontSecondary = WooPosColors.Gray60,
@@ -210,19 +199,8 @@ private val DarkCustomColors = CustomColors(
     outline = WooPosColors.Gray30,
     outlineVariable = WooPosColors.Gray60,
 
-    surface = WooPosColors.Gray100,
-    surfaceDim = WooPosColors.Gray80,
-    surfaceBright = WooPosColors.Gray90,
-    surfaceContainerLowest = WooPosColors.Gray70,
-    surfaceContainerLow = WooPosColors.Gray80,
-    surfaceContainerHigh = WooPosColors.Gray100,
-
-    onSurface = WooPosColors.White,
     onSurfaceVariantLow = WooPosColors.Gray50,
     onSurfaceVariantHigh = WooPosColors.Gray20,
-
-    inverseSurface = WooPosColors.White,
-    onInverseSurface = WooPosColors.Gray100,
 
     fontPrimary = WooPosColors.White,
     fontSecondary = WooPosColors.Gray20,
