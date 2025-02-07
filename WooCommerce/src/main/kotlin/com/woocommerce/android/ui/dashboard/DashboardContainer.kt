@@ -149,15 +149,13 @@ private fun DashboardWidgets(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     columnWidgets.forEach { widget ->
-                        AnimatedVisibility(widget.isVisible) {
-                            DashboardWidgetCard(
-                                widget,
-                                mainActivityViewModel,
-                                dashboardViewModel,
-                                blazeCampaignCreationDispatcher,
-                                widgetModifier
-                            )
-                        }
+                        DashboardWidgetCard(
+                            widget,
+                            mainActivityViewModel,
+                            dashboardViewModel,
+                            blazeCampaignCreationDispatcher,
+                            widgetModifier
+                        )
                     }
                 }
             }
