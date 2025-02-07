@@ -95,7 +95,6 @@ import com.woocommerce.android.util.IsWindowClassLargeThanCompact
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.LaunchUrlInChromeTab
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowDialog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowUiStringSnackbar
@@ -557,9 +556,7 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     fun onLearnMoreClicked() {
-        triggerEvent(
-            LaunchUrlInChromeTab(AppUrls.AUTOMATTIC_AI_GUIDELINES)
-        )
+        triggerEvent(Event.LaunchUrlInChromeTab(AppUrls.AUTOMATTIC_AI_GUIDELINES))
     }
 
     fun onBlazeClicked() {
@@ -1222,7 +1219,11 @@ class ProductDetailViewModel @Inject constructor(
     fun onViewProductOnStoreLinkClicked() {
         tracker.track(AnalyticsEvent.PRODUCT_DETAIL_VIEW_EXTERNAL_TAPPED)
         viewState.productDraft?.permalink?.let { url ->
-            triggerEvent(LaunchUrlInChromeTab(url))
+            if (canAutoAuthenticateInWebView(url)) {
+                triggerEvent(Event.LaunchUrlInAuthenticatedWebView(url))
+            } else {
+                triggerEvent(Event.LaunchUrlInChromeTab(url))
+            }
         }
     }
 
