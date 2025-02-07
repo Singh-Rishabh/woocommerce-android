@@ -102,7 +102,7 @@ wiremock = '2.26.3'
 wordpress-aztec = 'v2.1.4'
 wordpress-libaddressinput = '0.0.2'
 wordpress-lint = "2.1.0"
-wordpress-mediapicker = 'trunk-a6366298f9c24516ec5da0c9948d45d07bdb7f06'
+wordpress-mediapicker = '0.3.3'
 wordpress-utils = '3.15.0'
 zendesk = '5.0.8'
 
