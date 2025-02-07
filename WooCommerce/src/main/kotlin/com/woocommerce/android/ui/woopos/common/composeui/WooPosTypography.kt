@@ -264,7 +264,7 @@ private fun TextReferenceTable() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                color = MaterialTheme.colorScheme.surfaceVariant
+                color = MaterialTheme.colorScheme.surface
             ) {
                 Column(modifier = Modifier.padding(8.dp)) {
                     Text(text = category, style = WooPosTypography.BodyXLargePrimary)
