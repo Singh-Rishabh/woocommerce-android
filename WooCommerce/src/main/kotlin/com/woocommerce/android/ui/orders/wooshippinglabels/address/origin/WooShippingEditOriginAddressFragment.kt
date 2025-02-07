@@ -23,6 +23,7 @@ import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.orders.details.editing.address.LocationCode
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel.ShowCountrySelector
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel.ShowStateSelector
 import com.woocommerce.android.ui.searchfilter.SearchFilterItem
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class WooShippingEditOriginAddressFragment : BaseFragment() {
     private companion object {
         const val SELECT_COUNTRY_REQUEST = "select_address_country_request"
+        const val SELECT_STATE_REQUEST = "select_address_state_request"
     }
 
     private val viewModel: WooShippingEditOriginViewModel by viewModels()
@@ -64,6 +66,7 @@ class WooShippingEditOriginAddressFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is ShowCountrySelector -> showCountrySearchScreen(event.countries)
+                is ShowStateSelector -> showStatesSearchScreen(event.states)
             }
         }
     }
@@ -71,6 +74,9 @@ class WooShippingEditOriginAddressFragment : BaseFragment() {
     private fun setupHandlingResults() {
         handleResult<LocationCode>(SELECT_COUNTRY_REQUEST) { countryCode ->
             viewModel.onCountryChanged(countryCode)
+        }
+        handleResult<LocationCode>(SELECT_STATE_REQUEST) { stateCode ->
+            viewModel.onStateChanged(stateCode)
         }
     }
 
@@ -85,6 +91,21 @@ class WooShippingEditOriginAddressFragment : BaseFragment() {
             hint = getString(R.string.shipping_label_edit_address_country_search_hint),
             requestKey = SELECT_COUNTRY_REQUEST,
             title = getString(R.string.shipping_label_edit_address_country)
+        )
+        findNavController().navigateSafely(action)
+    }
+
+    private fun showStatesSearchScreen(states: List<Location>) {
+        val action = WooShippingEditOriginAddressFragmentDirections.actionSearchFilterFragment(
+            items = states.map {
+                SearchFilterItem(
+                    name = it.name,
+                    value = it.code
+                )
+            }.toTypedArray(),
+            hint = getString(R.string.shipping_label_edit_address_state_search_hint),
+            requestKey = SELECT_STATE_REQUEST,
+            title = getString(R.string.shipping_label_edit_address_state)
         )
         findNavController().navigateSafely(action)
     }
