@@ -204,7 +204,6 @@ private val DarkCustomColors = CustomColors(
 
 @Composable
 fun WooPosTheme(content: @Composable () -> Unit) {
-    // Select the color scheme based on the system’s dark theme setting.
     val colorScheme = if (isSystemInDarkTheme()) {
         DarkColorScheme
     } else {
