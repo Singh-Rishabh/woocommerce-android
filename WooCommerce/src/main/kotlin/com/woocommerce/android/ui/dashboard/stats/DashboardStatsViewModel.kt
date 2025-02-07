@@ -129,7 +129,13 @@ class DashboardStatsViewModel @AssistedInject constructor(
             parentViewModel.trackCardInteracted(DashboardWidget.Type.STATS.trackingIdentifier)
             appPrefsWrapper.setActiveStatsTab(selectionType.name)
         } else {
-            onEditCustomRangeTapped()
+            when {
+                dateRangeState.value?.customRange == null -> onEditCustomRangeTapped()
+                else -> {
+                    parentViewModel.trackCardInteracted(DashboardWidget.Type.STATS.trackingIdentifier)
+                    appPrefsWrapper.setActiveStatsTab(SelectionType.CUSTOM.name)
+                }
+            }
         }
     }
 
