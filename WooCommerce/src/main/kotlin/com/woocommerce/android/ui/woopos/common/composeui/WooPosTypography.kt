@@ -1,157 +1,170 @@
 package com.woocommerce.android.ui.woopos.common.composeui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object WooPosTypography {
-    val Heading: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontSize = 36.sp,
-            lineHeight = 40.sp,
-            letterSpacing = 0.0.sp,
-            fontWeight = FontWeight.W700,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val HeadingPrimary: TextStyle
+        @Composable get() = baseHeading(WooPosTheme.colors.fontPrimary, FontWeight.W700, null)
+    val HeadingSecondary: TextStyle
+        @Composable get() = baseHeading(WooPosTheme.colors.fontSecondary, FontWeight.W700, null)
+    val HeadingTertiary: TextStyle
+        @Composable get() = baseHeading(WooPosTheme.colors.fontTertiary, FontWeight.W700, null)
 
-    val BodyXLarge: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontSize = 30.sp,
-            lineHeight = 32.sp,
-            fontWeight = FontWeight.W700,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyXLargePrimary: TextStyle
+        @Composable get() = baseBodyXLarge(WooPosTheme.colors.fontPrimary, FontWeight.W700, null)
+    val BodyXLargeSecondary: TextStyle
+        @Composable get() = baseBodyXLarge(WooPosTheme.colors.fontSecondary, FontWeight.W700, null)
+    val BodyXLargeTertiary: TextStyle
+        @Composable get() = baseBodyXLarge(WooPosTheme.colors.fontTertiary, FontWeight.W700, null)
 
-    val BodyLargeBold: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W700,
-            fontSize = 24.sp,
-            lineHeight = 32.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyLargeBoldPrimary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontPrimary, FontWeight.W700, null)
+    val BodyLargeBoldSecondary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontSecondary, FontWeight.W700, null)
+    val BodyLargeBoldTertiary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontTertiary, FontWeight.W700, null)
 
-    val BodyLargeRegular: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 24.sp,
-            lineHeight = 32.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyLargeRegularPrimary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontPrimary, FontWeight.W400, null)
+    val BodyLargeRegularSecondary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontSecondary, FontWeight.W400, null)
+    val BodyLargeRegularTertiary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontTertiary, FontWeight.W400, null)
 
-    val BodyLargeUnderline: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 24.sp,
-            lineHeight = 32.sp,
-            letterSpacing = 0.0.sp,
-            textDecoration = TextDecoration.Underline,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyLargeUnderlinePrimary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontPrimary, FontWeight.W400, TextDecoration.Underline)
+    val BodyLargeUnderlineSecondary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontSecondary, FontWeight.W400, TextDecoration.Underline)
+    val BodyLargeUnderlineTertiary: TextStyle
+        @Composable get() = baseBodyLarge(WooPosTheme.colors.fontTertiary, FontWeight.W400, TextDecoration.Underline)
 
-    val BodyMediumBold: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W700,
-            fontSize = 20.sp,
-            lineHeight = 32.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyMediumBoldPrimary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontPrimary, FontWeight.W700, null)
+    val BodyMediumBoldSecondary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontSecondary, FontWeight.W700, null)
+    val BodyMediumBoldTertiary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontTertiary, FontWeight.W700, null)
 
-    val BodyMediumRegular: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 20.sp,
-            lineHeight = 32.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyMediumRegularPrimary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontPrimary, FontWeight.W400, null)
+    val BodyMediumRegularSecondary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontSecondary, FontWeight.W400, null)
+    val BodyMediumRegularTertiary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontTertiary, FontWeight.W400, null)
 
-    val BodyMediumUnderline: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 20.sp,
-            lineHeight = 32.sp,
-            letterSpacing = 0.0.sp,
-            textDecoration = TextDecoration.Underline,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodyMediumUnderlinePrimary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontPrimary, FontWeight.W400, TextDecoration.Underline)
+    val BodyMediumUnderlineSecondary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontSecondary, FontWeight.W400, TextDecoration.Underline)
+    val BodyMediumUnderlineTertiary: TextStyle
+        @Composable get() = baseBodyMedium(WooPosTheme.colors.fontTertiary, FontWeight.W400, TextDecoration.Underline)
 
-    val BodySmallBold: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W700,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodySmallBoldPrimary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontPrimary, FontWeight.W700, null)
+    val BodySmallBoldSecondary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontSecondary, FontWeight.W700, null)
+    val BodySmallBoldTertiary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontTertiary, FontWeight.W700, null)
 
-    val BodySmallRegular: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodySmallRegularPrimary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontPrimary, FontWeight.W400, null)
+    val BodySmallRegularSecondary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontSecondary, FontWeight.W400, null)
+    val BodySmallRegularTertiary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontTertiary, FontWeight.W400, null)
 
-    val BodySmallUnderline: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 16.sp,
-            lineHeight = 24.sp,
-            letterSpacing = 0.0.sp,
-            textDecoration = TextDecoration.Underline,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val BodySmallUnderlinePrimary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontPrimary, FontWeight.W400, TextDecoration.Underline)
+    val BodySmallUnderlineSecondary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontSecondary, FontWeight.W400, TextDecoration.Underline)
+    val BodySmallUnderlineTertiary: TextStyle
+        @Composable get() = baseBodySmall(WooPosTheme.colors.fontTertiary, FontWeight.W400, TextDecoration.Underline)
 
-    val CaptionBold: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W700,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val CaptionBoldPrimary: TextStyle
+        @Composable get() = baseCaption(WooPosTheme.colors.fontPrimary, FontWeight.W700, null)
+    val CaptionBoldSecondary: TextStyle
+        @Composable get() = baseCaption(WooPosTheme.colors.fontSecondary, FontWeight.W700, null)
+    val CaptionBoldTertiary: TextStyle
+        @Composable get() = baseCaption(WooPosTheme.colors.fontTertiary, FontWeight.W700, null)
 
-    val CaptionRegular: TextStyle
-        @Composable
-        get() = TextStyle(
-            fontWeight = FontWeight.W400,
-            fontSize = 14.sp,
-            lineHeight = 20.sp,
-            letterSpacing = 0.0.sp,
-            color = WooPosTheme.colors.fontPrimary,
-        )
+    val CaptionRegularPrimary: TextStyle
+        @Composable get() = baseCaption(WooPosTheme.colors.fontPrimary, FontWeight.W400, null)
+    val CaptionRegularSecondary: TextStyle
+        @Composable get() = baseCaption(WooPosTheme.colors.fontSecondary, FontWeight.W400, null)
+    val CaptionRegularTertiary: TextStyle
+        @Composable get() = baseCaption(WooPosTheme.colors.fontTertiary, FontWeight.W400, null)
+
+    private fun baseHeading(color: Color, weight: FontWeight, textDecoration: TextDecoration?) = TextStyle(
+        fontSize = 36.sp,
+        lineHeight = 40.sp,
+        fontWeight = weight,
+        textDecoration = textDecoration,
+        color = color
+    )
+
+    private fun baseBodyXLarge(color: Color, weight: FontWeight, textDecoration: TextDecoration?) = TextStyle(
+        fontSize = 30.sp,
+        lineHeight = 32.sp,
+        fontWeight = weight,
+        textDecoration = textDecoration,
+        color = color
+    )
+
+    private fun baseBodyLarge(color: Color, weight: FontWeight, textDecoration: TextDecoration?) = TextStyle(
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        fontWeight = weight,
+        textDecoration = textDecoration,
+        color = color
+    )
+
+    private fun baseBodyMedium(color: Color, weight: FontWeight, textDecoration: TextDecoration?) = TextStyle(
+        fontSize = 20.sp,
+        lineHeight = 32.sp,
+        fontWeight = weight,
+        textDecoration = textDecoration,
+        color = color
+    )
+
+    private fun baseBodySmall(color: Color, weight: FontWeight, textDecoration: TextDecoration?) = TextStyle(
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        fontWeight = weight,
+        textDecoration = textDecoration,
+        color = color
+    )
+
+    private fun baseCaption(color: Color, weight: FontWeight, textDecoration: TextDecoration?) = TextStyle(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        fontWeight = weight,
+        textDecoration = textDecoration,
+        color = color
+    )
 }
 
 @Composable
-@WooPosPreview
+@Preview
 fun PreviewTextReferenceTable() {
     WooPosTheme {
         Surface {
@@ -163,26 +176,70 @@ fun PreviewTextReferenceTable() {
 @Composable
 private fun TextReferenceTable() {
     val tableData = listOf(
-        "Heading" to listOf("Bold" to WooPosTypography.Heading),
-        "Body X Large" to listOf("Bold" to WooPosTypography.BodyXLarge),
-        "Body Large" to listOf(
-            "Bold" to WooPosTypography.BodyLargeBold,
-            "Regular" to WooPosTypography.BodyLargeRegular,
-            "Regular Underline" to WooPosTypography.BodyLargeUnderline
+        "Heading" to listOf(
+            "Primary" to WooPosTypography.HeadingPrimary,
+            "Secondary" to WooPosTypography.HeadingSecondary,
+            "Tertiary" to WooPosTypography.HeadingTertiary
         ),
-        "Body Medium" to listOf(
-            "Bold" to WooPosTypography.BodyMediumBold,
-            "Regular" to WooPosTypography.BodyMediumRegular,
-            "Regular Underline" to WooPosTypography.BodyMediumUnderline
+        "Body X Large" to listOf(
+            "Primary" to WooPosTypography.BodyXLargePrimary,
+            "Secondary" to WooPosTypography.BodyXLargeSecondary,
+            "Tertiary" to WooPosTypography.BodyXLargeTertiary
         ),
-        "Body Small" to listOf(
-            "Bold" to WooPosTypography.BodySmallBold,
-            "Regular" to WooPosTypography.BodySmallRegular,
-            "Regular Underline" to WooPosTypography.BodySmallUnderline
+        "Body Large Bold" to listOf(
+            "Primary" to WooPosTypography.BodyLargeBoldPrimary,
+            "Secondary" to WooPosTypography.BodyLargeBoldSecondary,
+            "Tertiary" to WooPosTypography.BodyLargeBoldTertiary
         ),
-        "Caption" to listOf(
-            "Bold" to WooPosTypography.CaptionBold,
-            "Regular" to WooPosTypography.CaptionRegular
+        "Body Large Regular" to listOf(
+            "Primary" to WooPosTypography.BodyLargeRegularPrimary,
+            "Secondary" to WooPosTypography.BodyLargeRegularSecondary,
+            "Tertiary" to WooPosTypography.BodyLargeRegularTertiary
+        ),
+        "Body Large Underline" to listOf(
+            "Primary" to WooPosTypography.BodyLargeUnderlinePrimary,
+            "Secondary" to WooPosTypography.BodyLargeUnderlineSecondary,
+            "Tertiary" to WooPosTypography.BodyLargeUnderlineTertiary
+        ),
+        "Body Medium Bold" to listOf(
+            "Primary" to WooPosTypography.BodyMediumBoldPrimary,
+            "Secondary" to WooPosTypography.BodyMediumBoldSecondary,
+            "Tertiary" to WooPosTypography.BodyMediumBoldTertiary
+        ),
+        "Body Medium Regular" to listOf(
+            "Primary" to WooPosTypography.BodyMediumRegularPrimary,
+            "Secondary" to WooPosTypography.BodyMediumRegularSecondary,
+            "Tertiary" to WooPosTypography.BodyMediumRegularTertiary
+        ),
+        "Body Medium Underline" to listOf(
+            "Primary" to WooPosTypography.BodyMediumUnderlinePrimary,
+            "Secondary" to WooPosTypography.BodyMediumUnderlineSecondary,
+            "Tertiary" to WooPosTypography.BodyMediumUnderlineTertiary
+        ),
+        "Body Small Bold" to listOf(
+            "Primary" to WooPosTypography.BodySmallBoldPrimary,
+            "Secondary" to WooPosTypography.BodySmallBoldSecondary,
+            "Tertiary" to WooPosTypography.BodySmallBoldTertiary
+        ),
+        "Body Small Regular" to listOf(
+            "Primary" to WooPosTypography.BodySmallRegularPrimary,
+            "Secondary" to WooPosTypography.BodySmallRegularSecondary,
+            "Tertiary" to WooPosTypography.BodySmallRegularTertiary
+        ),
+        "Body Small Underline" to listOf(
+            "Primary" to WooPosTypography.BodySmallUnderlinePrimary,
+            "Secondary" to WooPosTypography.BodySmallUnderlineSecondary,
+            "Tertiary" to WooPosTypography.BodySmallUnderlineTertiary
+        ),
+        "Caption Bold" to listOf(
+            "Primary" to WooPosTypography.CaptionBoldPrimary,
+            "Secondary" to WooPosTypography.CaptionBoldSecondary,
+            "Tertiary" to WooPosTypography.CaptionBoldTertiary
+        ),
+        "Caption Regular" to listOf(
+            "Primary" to WooPosTypography.CaptionRegularPrimary,
+            "Secondary" to WooPosTypography.CaptionRegularSecondary,
+            "Tertiary" to WooPosTypography.CaptionRegularTertiary
         )
     )
 
@@ -190,63 +247,48 @@ private fun TextReferenceTable() {
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
+            .background(
+                MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "Text reference",
-            style = WooPosTypography.Heading,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-        Text(
-            text = "Examples composed text styles.",
-            style = WooPosTypography.BodyMediumRegular,
-            modifier = Modifier.padding(bottom = 16.dp)
+            text = "Text Styles Preview",
+            style = WooPosTypography.HeadingPrimary,
+            modifier = Modifier.padding(16.dp)
         )
 
-        Surface(
-            shape = RoundedCornerShape(8.dp),
-            shadowElevation = 4.dp
-        ) {
-            Column {
-                tableData.forEach { (category, styles) ->
-                    TableRow(category, styles)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun TableRow(category: String, styles: List<Pair<String, TextStyle>>) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.surface
-        ) {
-            Text(
-                text = category,
-                style = WooPosTypography.BodyMediumBold,
+        tableData.forEach { (category, styles) ->
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
-                textAlign = TextAlign.Start
-            )
-        }
-
-        styles.forEach { (label, textStyle) ->
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.background
+                    .padding(vertical = 4.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant
             ) {
-                Text(
-                    text = label,
-                    style = textStyle,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    textAlign = TextAlign.Start
-                )
+                Column(modifier = Modifier.padding(8.dp)) {
+                    Text(text = category, style = WooPosTypography.BodyXLargePrimary)
+
+                    styles.forEach { (label, textStyle) ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = label,
+                                style = WooPosTypography.BodyMediumBoldPrimary,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = "Sample Text",
+                                style = textStyle,
+                                modifier = Modifier.weight(2f)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
