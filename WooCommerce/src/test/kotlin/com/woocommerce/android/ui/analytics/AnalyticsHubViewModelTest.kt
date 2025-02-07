@@ -774,20 +774,24 @@ class AnalyticsHubViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when site is a wpcom and see report is pressed then open a wpcom webview`() = testBlocking {
-        whenever(selectedSite.getOrNull()).thenReturn(SiteModel().apply { setIsWpComStore(true) })
-        sut = givenAViewModel()
-        sut.onSeeReport("https://report-url", ReportCard.Revenue)
-        assertThat(sut.event.value).isInstanceOf(AnalyticsViewEvent.OpenAuthenticatedWebView::class.java)
-    }
+    fun `given we can auto-authenticate in WebView, when see report is pressed, then open an authenticated webview`() =
+        testBlocking {
+            whenever(selectedSite.getOrNull()).thenReturn(SiteModel())
+            whenever(canAutoAuthenticateInWebView.invoke(any())).thenReturn(true)
+            sut = givenAViewModel()
+            sut.onSeeReport("https://report-url", ReportCard.Revenue)
+            assertThat(sut.event.value).isInstanceOf(AnalyticsViewEvent.OpenAuthenticatedWebView::class.java)
+        }
 
     @Test
-    fun `when site is not a wpcom and see report is pressed then open the default webview`() = testBlocking {
-        whenever(selectedSite.getOrNull()).thenReturn(SiteModel().apply { setIsWpComStore(false) })
-        sut = givenAViewModel()
-        sut.onSeeReport("https://report-url", ReportCard.Revenue)
-        assertThat(sut.event.value).isInstanceOf(AnalyticsViewEvent.OpenUrl::class.java)
-    }
+    fun `given we can't auto-authenticate in WebView, when see report is pressed, then open the default webview`() =
+        testBlocking {
+            whenever(selectedSite.getOrNull()).thenReturn(SiteModel())
+            whenever(canAutoAuthenticateInWebView.invoke(any())).thenReturn(false)
+            sut = givenAViewModel()
+            sut.onSeeReport("https://report-url", ReportCard.Revenue)
+            assertThat(sut.event.value).isInstanceOf(AnalyticsViewEvent.OpenUrl::class.java)
+        }
 
     @Test
     fun `when see report is pressed then track see report event`() = testBlocking {
