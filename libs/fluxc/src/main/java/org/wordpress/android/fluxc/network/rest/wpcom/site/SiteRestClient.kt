@@ -2,6 +2,7 @@ package org.wordpress.android.fluxc.network.rest.wpcom.site
 
 import android.content.Context
 import android.text.TextUtils
+import androidx.annotation.VisibleForTesting
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.RequestQueue
 import com.android.volley.VolleyError
@@ -1284,7 +1285,8 @@ class SiteRestClient @Inject constructor(
 
     companion object {
         private const val NEW_SITE_TIMEOUT_MS = 90000
-        private const val SITE_FIELDS = "ID,URL,name,description,jetpack,jetpack_connection,visible,is_private," +
+        @VisibleForTesting
+        const val SITE_FIELDS = "ID,URL,name,description,jetpack,jetpack_connection,visible,is_private," +
                 "options,plan,capabilities,quota,icon,meta,zendesk_site_meta,organization_id," +
                 "was_ecommerce_trial,single_user_site,jetpack_modules"
         private const val FIELDS = "fields"
