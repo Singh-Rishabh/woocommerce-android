@@ -299,7 +299,7 @@ private fun CardReaderStatusButton(
     ) { status ->
         when (status) {
             WooPosCardReaderStatus.Connected -> WooPosTheme.colors.success
-            WooPosCardReaderStatus.NotConnected -> WooPosTheme.colors.error
+            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colorScheme.error
         }
     }
 
