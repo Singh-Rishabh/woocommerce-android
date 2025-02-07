@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -81,7 +80,7 @@ fun DashboardContainer(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.surface)
-                    .padding(vertical = dimensionResource(id = R.dimen.major_100)),
+                    .padding(16.dp),
                 numberOfColumns = when (windowSizeClass.windowWidthSizeClass) {
                     WindowWidthSizeClass.COMPACT -> 1
                     WindowWidthSizeClass.MEDIUM -> 2
@@ -109,9 +108,6 @@ private fun DashboardWidgets(
     modifier: Modifier = Modifier,
     numberOfColumns: Int = 1
 ) {
-    val widgetModifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 16.dp)
     val nestedScrollInterop = rememberNestedScrollInteropConnection()
 
     if (numberOfColumns == 1) {
@@ -128,7 +124,7 @@ private fun DashboardWidgets(
                         mainActivityViewModel,
                         dashboardViewModel,
                         blazeCampaignCreationDispatcher,
-                        widgetModifier
+                        Modifier.fillMaxWidth()
                     )
                 }
             }
@@ -141,12 +137,13 @@ private fun DashboardWidgets(
         Row(
             modifier = modifier
                 .nestedScroll(nestedScrollInterop)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             widgetColumns.forEach { columnWidgets ->
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     columnWidgets.forEach { widget ->
                         DashboardWidgetCard(
@@ -154,7 +151,7 @@ private fun DashboardWidgets(
                             mainActivityViewModel,
                             dashboardViewModel,
                             blazeCampaignCreationDispatcher,
-                            widgetModifier
+                            Modifier.fillMaxWidth()
                         )
                     }
                 }
