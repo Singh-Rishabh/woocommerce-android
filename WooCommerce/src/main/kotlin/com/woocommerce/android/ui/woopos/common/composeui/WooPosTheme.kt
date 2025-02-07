@@ -96,7 +96,7 @@ private val LightColorScheme = lightColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
 
-    primaryContainer  = WooPosColors.WooPurple40,
+    primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
 
     secondaryContainer = WooPosColors.Black,
@@ -123,7 +123,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
 
-    primaryContainer  = WooPosColors.WooPurple40,
+    primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
 
     secondaryContainer = WooPosColors.Black,
