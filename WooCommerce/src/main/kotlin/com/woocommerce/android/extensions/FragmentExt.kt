@@ -4,6 +4,8 @@ import android.view.View
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.datepicker.CalendarConstraints
@@ -235,4 +237,22 @@ fun Fragment.showDateRangePicker(
 
         onCustomRangeSelected(start, end)
     }
+}
+
+/**
+ * Finds the NavController associated with the NavHostFragment with the given ID,
+ * useful when trying to find a parent NavController from a child fragment used in two-pane layouts.
+ *
+ * @param navHostId The ID of the NavHostFragment
+ * @return The NavController
+ */
+fun Fragment.findNavController(@IdRes navHostId: Int): NavController {
+    var parentFragment = parentFragment
+    while (parentFragment != null) {
+        if (parentFragment is NavHostFragment && parentFragment.id == navHostId) {
+            return parentFragment.navController
+        }
+        parentFragment = parentFragment.parentFragment
+    }
+    throw IllegalStateException("No NavHostFragment found with id $navHostId")
 }
