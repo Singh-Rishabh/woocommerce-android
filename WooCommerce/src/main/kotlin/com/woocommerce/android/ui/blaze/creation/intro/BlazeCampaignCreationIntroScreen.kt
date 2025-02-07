@@ -103,6 +103,7 @@ fun BlazeCampaignCreationIntroScreen(
 
         if (showBottomSheet) {
             ModalBottomSheet(
+                containerColor = MaterialTheme.colors.surface,
                 onDismissRequest = { showBottomSheet = false },
                 sheetState = modalSheetState,
             ) {
