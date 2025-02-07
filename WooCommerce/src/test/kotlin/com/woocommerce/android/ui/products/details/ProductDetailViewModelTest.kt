@@ -1404,6 +1404,32 @@ class ProductDetailViewModelTest : BaseUnitTest() {
             Assertions.assertThat(menuButtonsState.viewProductOption).isFalse()
         }
 
+    @Test
+    fun `given we can authenticate the user in WebView, when tapping on view product, then show authenticated webview`() =
+        testBlocking {
+            given(canAutoAuthenticateInWebView.invoke(any())).willReturn(true)
+            given(productRepository.getProductAggregate(any())).willReturn(productAggregate)
+
+            viewModel.start()
+            viewModel.onViewProductOnStoreLinkClicked()
+
+            Assertions.assertThat(viewModel.event.value)
+                .isEqualTo(MultiLiveEvent.Event.LaunchUrlInAuthenticatedWebView(productAggregate.product.permalink))
+        }
+
+    @Test
+    fun `given we can't authenticate the user in WebView, when tapping on view product, then show Chrome Custom Tab`() =
+        testBlocking {
+            given(canAutoAuthenticateInWebView.invoke(any())).willReturn(false)
+            given(productRepository.getProductAggregate(any())).willReturn(productAggregate)
+
+            viewModel.start()
+            viewModel.onViewProductOnStoreLinkClicked()
+
+            Assertions.assertThat(viewModel.event.value)
+                .isEqualTo(MultiLiveEvent.Event.LaunchUrlInChromeTab(productAggregate.product.permalink))
+        }
+
     private val productsDraft
         get() = viewModel.productDetailViewStateData.liveData.value?.productDraft
 }
