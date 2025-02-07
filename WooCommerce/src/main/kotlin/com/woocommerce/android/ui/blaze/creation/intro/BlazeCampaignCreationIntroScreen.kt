@@ -19,21 +19,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ModalBottomSheetValue.HalfExpanded
-import androidx.compose.material.ModalBottomSheetValue.Hidden
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material.ripple
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -50,13 +52,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringResLegacy
-import com.woocommerce.android.ui.compose.component.BottomSheetHandle
 import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
-import com.woocommerce.android.ui.compose.component.WCModalBottomSheetLayout
 import com.woocommerce.android.ui.compose.component.WCTextButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -72,48 +71,51 @@ fun BlazeCampaignCreationIntroScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BlazeCampaignCreationIntroScreen(
     onContinueClick: () -> Unit,
     onDismissClick: () -> Unit,
     onLearnMoreClick: () -> Unit,
 ) {
+    val modalSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
-    val modalSheetState = rememberModalBottomSheetState(
-        initialValue = Hidden,
-        confirmValueChange = { it != HalfExpanded },
-        skipHalfExpanded = true
-    )
+    var showBottomSheet by remember { mutableStateOf(false) }
 
-    WCModalBottomSheetLayout(
-        sheetContent = {
-            BlazeCampaignBottomSheetContent(
-                onDismissClick = {
-                    coroutineScope.launch { modalSheetState.hide() }
-                }
+    Scaffold(
+        topBar = {
+            Toolbar(
+                onNavigationButtonClick = onDismissClick,
+                navigationIcon = Icons.Default.Clear
             )
         },
-        sheetState = modalSheetState,
-        modifier = Modifier.background(MaterialTheme.colors.surface)
-    ) {
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    onNavigationButtonClick = onDismissClick,
-                    navigationIcon = Icons.Default.Clear
-                )
+    ) { paddingValues ->
+        BlazeCampaignCreationIntroContent(
+            onContinueClick = onContinueClick,
+            onLearnMoreClick = {
+                showBottomSheet = true
+                onLearnMoreClick()
             },
-            modifier = Modifier.background(MaterialTheme.colors.surface)
-        ) { paddingValues ->
-            BlazeCampaignCreationIntroContent(
-                onContinueClick = onContinueClick,
-                onLearnMoreClick = {
-                    coroutineScope.launch { modalSheetState.show() }
-                    onLearnMoreClick()
-                },
-                modifier = Modifier.padding(paddingValues)
-            )
+            modifier = Modifier
+                .padding(paddingValues)
+                .background(MaterialTheme.colors.surface)
+        )
+
+        if (showBottomSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showBottomSheet = false },
+                sheetState = modalSheetState,
+            ) {
+                BlazeCampaignBottomSheetContent(
+                    onDismissClick = {
+                        coroutineScope.launch { modalSheetState.hide() }.invokeOnCompletion {
+                            if (!modalSheetState.isVisible) {
+                                showBottomSheet = false
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 }
@@ -255,11 +257,6 @@ private fun BlazeCampaignBottomSheetContent(
             .fillMaxWidth()
             .padding(dimensionResource(id = R.dimen.major_100))
     ) {
-        BottomSheetHandle(
-            modifier = Modifier
-                .padding(bottom = dimensionResource(id = R.dimen.major_100))
-        )
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
