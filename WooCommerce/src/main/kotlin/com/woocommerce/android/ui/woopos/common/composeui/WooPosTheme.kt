@@ -55,9 +55,6 @@ object WooPosColors {
     val oldGrayLight = Color(0xFFF2EBFF)
     val oldGrayMedium = Color(0xFF8D8D8D)
 
-    // LightColorPalette
-    val lightColorPaletteBackground = Color(0xFFFDFDFD)
-
     // DarkCustomColors
     val darkCustomLoadingSkeleton = Color(0xFF616161)
     val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
@@ -93,8 +90,6 @@ object WooPosColors {
     val Gray80 = Color(0xFF373A3E)
     val Gray90 = Color(0xFF292B2E)
     val Gray100 = Color(0xFF101517)
-
-    val Black90 = Color(0xFF121212)
 }
 
 private val LightColorScheme = lightColorScheme(
