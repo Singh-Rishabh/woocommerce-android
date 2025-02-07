@@ -167,7 +167,8 @@ fun <T> Fragment.handleDialogResult(
  * a particular key-result pair to 1.
  */
 fun Fragment.handleDialogNotice(
-    key: String, @IdRes entryId: Int,
+    key: String,
+    @IdRes entryId: Int,
     @IdRes navHostId: Int? = null,
     handler: () -> Unit
 ) {
@@ -293,5 +294,5 @@ fun Fragment.findNavController(@IdRes navHostId: Int): NavController {
         }
         parentFragment = parentFragment.parentFragment
     }
-    throw IllegalStateException("No NavHostFragment found with id $navHostId")
+    error("No NavHostFragment found with id $navHostId")
 }
