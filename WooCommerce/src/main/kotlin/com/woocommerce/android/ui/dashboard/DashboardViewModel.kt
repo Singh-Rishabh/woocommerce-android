@@ -100,7 +100,7 @@ class DashboardViewModel @Inject constructor(
             jetpackBenefitsBannerState(site.connectionType)
         }.asLiveData()
 
-    val dashboardWidgets = combine(
+    private val dashboardWidgets = combine(
         dashboardRepository.widgets,
         dashboardRepository.hasNewWidgets,
         feedbackPrefs.userFeedbackIsDueObservable
@@ -112,7 +112,6 @@ class DashboardViewModel @Inject constructor(
 
     private val refreshingOnBackground = MutableStateFlow(-1)
 
-    val isRefreshingOnBackground = refreshingOnBackground.map { it > -1 }.asLiveData()
     fun displayRefreshingIndicator() {
         refreshingOnBackground.value += 1
     }
