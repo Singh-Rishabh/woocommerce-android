@@ -83,7 +83,7 @@ private fun BlazeCampaignListScreen(
         modifier = modifier
     )
 
-    if (showBottomSheet) { //TODO this bottom sheet si likely legacy and can probably be removed GH issue #13507
+    if (showBottomSheet) { // TODO this bottom sheet si likely legacy and can probably be removed GH issue #13507
         WCModalBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             sheetState = modalSheetState,
@@ -98,7 +98,6 @@ private fun BlazeCampaignListScreen(
                     }
                 }
             )
-
         }
     }
 }
