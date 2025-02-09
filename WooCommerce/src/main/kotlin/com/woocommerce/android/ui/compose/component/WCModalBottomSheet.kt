@@ -1,12 +1,13 @@
 package com.woocommerce.android.ui.compose.component
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import com.woocommerce.android.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -17,7 +18,7 @@ fun WCModalBottomSheet(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
-        containerColor = MaterialTheme.colors.surface,
+        containerColor = colorResource(R.color.color_surface_elevated),
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         sheetState = sheetState,
