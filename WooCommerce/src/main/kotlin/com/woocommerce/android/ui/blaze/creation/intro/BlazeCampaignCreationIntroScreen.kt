@@ -55,8 +55,8 @@ import com.woocommerce.android.ui.compose.component.Toolbar
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.component.WCModalBottomSheet
 import com.woocommerce.android.ui.compose.component.WCTextButton
+import com.woocommerce.android.ui.compose.component.dismissWCModalBottomSheet
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
-import kotlinx.coroutines.launch
 
 @Composable
 fun BlazeCampaignCreationIntroScreen(
@@ -108,10 +108,8 @@ fun BlazeCampaignCreationIntroScreen(
             ) {
                 BlazeCampaignBottomSheetContent(
                     onDismissClick = {
-                        coroutineScope.launch { modalSheetState.hide() }.invokeOnCompletion {
-                            if (!modalSheetState.isVisible) {
-                                showBottomSheet = false
-                            }
+                        dismissWCModalBottomSheet(coroutineScope, modalSheetState) {
+                            showBottomSheet = false
                         }
                     }
                 )
