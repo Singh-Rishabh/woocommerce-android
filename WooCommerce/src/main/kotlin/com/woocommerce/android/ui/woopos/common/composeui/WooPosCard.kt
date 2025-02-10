@@ -200,7 +200,7 @@ private fun Preview(elevation: WooPosElevation) {
         ) {
             Text(
                 modifier = Modifier
-                    .padding(32.dp)
+                    .padding(WooPosSpacing.XLarge.value)
                     .fillMaxWidth(),
                 text = "WooPosCard",
                 style = MaterialTheme.typography.h5,

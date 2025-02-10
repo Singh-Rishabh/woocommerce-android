@@ -32,7 +32,7 @@ fun WooPosToolbar(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 40.dp.toAdaptivePadding())
+            .padding(top = WooPosSpacing.XLarge.value.toAdaptivePadding())
             .height(40.dp)
     ) {
         val (backButton, title) = createRefs()

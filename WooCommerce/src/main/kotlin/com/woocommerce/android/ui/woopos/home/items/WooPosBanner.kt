@@ -100,7 +100,7 @@ fun WooPosBanner(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(
-                            start = 32.dp.toAdaptivePadding(),
+                            start = WooPosSpacing.XLarge.value.toAdaptivePadding(),
                             bottom = WooPosSpacing.Small.value.toAdaptivePadding()
                         )
                         .constrainAs(header) {
@@ -159,7 +159,7 @@ fun WooPosBanner(
                     onClick = { onClose() }
                 ) {
                     Icon(
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(WooPosSpacing.XLarge.value),
                         imageVector = Icons.Default.Close,
                         tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
                         contentDescription = stringResource(
@@ -189,7 +189,7 @@ fun PreviewWooPosBannerScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp.toAdaptivePadding()),
+                .padding(WooPosSpacing.XLarge.value.toAdaptivePadding()),
             contentAlignment = Alignment.Center
         ) {
             WooPosBanner(

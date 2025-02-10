@@ -189,7 +189,7 @@ fun WooPosButtonsPreview() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .padding(WooPosSpacing.XLarge.value),
         ) {
             WooPosButtonLarge(
                 text = "Button Large",

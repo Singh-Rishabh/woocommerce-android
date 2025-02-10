@@ -52,7 +52,7 @@ fun WooPosPaymentFailedScreen(
             contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
             tint = Color.Unspecified,
         )
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         Text(
             text = state.title,
             style = MaterialTheme.typography.h4,
@@ -63,7 +63,7 @@ fun WooPosPaymentFailedScreen(
             text = state.subtitle,
             style = MaterialTheme.typography.h6
         )
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         WooPosButton(
             text = state.retryPaymentButtonLabel,
             modifier = Modifier

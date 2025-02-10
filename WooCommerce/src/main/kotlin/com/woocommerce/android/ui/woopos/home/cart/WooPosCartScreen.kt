@@ -101,7 +101,7 @@ private fun WooPosCartScreen(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp.toAdaptivePadding())
+                .height(WooPosSpacing.XLarge.value.toAdaptivePadding())
                 .constrainAs(topMargin) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -217,7 +217,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
             contentDescription = stringResource(R.string.woopos_cart_empty_content_description),
             modifier = Modifier.size(104.dp)
         )
-        Spacer(modifier = Modifier.height(32.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         Text(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
             style = MaterialTheme.typography.h6,
@@ -491,7 +491,7 @@ private fun ProductItem(
                     IconButton(
                         onClick = { onUIEvent(WooPosCartUIEvent.ItemRemovedFromCart(item)) },
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(WooPosSpacing.XLarge.value)
                             .semantics { contentDescription = removeButtonContentDescription }
                     ) {
                         Icon(

@@ -134,7 +134,7 @@ private fun MainItemsList(
             .padding(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 end = WooPosSpacing.Medium.value.toAdaptivePadding(),
-                top = 40.dp.toAdaptivePadding(),
+                top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
                 bottom = WooPosSpacing.None.value.toAdaptivePadding(),
             )
     ) {

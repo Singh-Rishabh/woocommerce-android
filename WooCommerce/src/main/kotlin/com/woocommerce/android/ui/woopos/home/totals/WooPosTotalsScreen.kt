@@ -192,7 +192,7 @@ private fun TotalsLoaded(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = 40.dp.toAdaptivePadding(),
+                                horizontal = WooPosSpacing.XLarge.value.toAdaptivePadding(),
                                 vertical = WooPosSpacing.Medium.value.toAdaptivePadding()
                             )
                             .weight(.9f),
@@ -262,7 +262,7 @@ private fun ReaderDisconnected(
     onUIEvent: (WooPosTotalsUIEvent) -> Unit,
 ) {
     Column(
-        modifier = modifier.padding(40.dp.toAdaptivePadding()),
+        modifier = modifier.padding(WooPosSpacing.XLarge.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
@@ -275,7 +275,7 @@ private fun ReaderDisconnected(
             tint = Color.Unspecified,
         )
 
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
         Text(
             text = status.title,
@@ -289,7 +289,7 @@ private fun ReaderDisconnected(
             text = status.subtitle,
             style = MaterialTheme.typography.h6
         )
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         WooPosButton(
             text = status.actionButtonLabel,
             onClick = { onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked) },

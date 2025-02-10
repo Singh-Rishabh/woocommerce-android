@@ -42,7 +42,7 @@ fun WooPosErrorScreen(
     Column(
         modifier = modifier.fillMaxSize()
             .clip(RoundedCornerShape(WooPosCornerRadius.Medium.value))
-            .padding(32.dp.toAdaptivePadding()),
+            .padding(WooPosSpacing.XLarge.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -58,7 +58,7 @@ fun WooPosErrorScreen(
                 tint = Color.Unspecified,
             )
 
-            Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
             Text(
                 text = message,
@@ -72,7 +72,7 @@ fun WooPosErrorScreen(
                 text = reason,
                 style = MaterialTheme.typography.h5
             )
-            Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -53,7 +53,7 @@ fun WooPosProductInfoDialog(
     ) {
         Box(
             modifier = Modifier
-                .padding(40.dp.toAdaptivePadding())
+                .padding(WooPosSpacing.XLarge.value.toAdaptivePadding())
                 .semantics(mergeDescendants = true) {
                     contentDescription = dialogContentDescription
                 },
@@ -71,7 +71,7 @@ fun WooPosProductInfoDialog(
                     color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
                     modifier = Modifier
                         .padding(
-                            top = 40.dp.toAdaptivePadding(),
+                            top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
                             bottom = WooPosSpacing.Medium.value.toAdaptivePadding()
                         )
                         .constrainAs(header) {
@@ -126,7 +126,7 @@ fun WooPosProductInfoDialog(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
                     OutlinedButton(
                         onClick = {
                             onDismissRequest()

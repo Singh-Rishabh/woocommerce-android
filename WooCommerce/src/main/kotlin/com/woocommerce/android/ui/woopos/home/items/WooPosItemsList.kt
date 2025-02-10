@@ -197,7 +197,7 @@ private fun ItemCard(
         ) {
             ProductImage(item)
 
-            Spacer(modifier = Modifier.width(32.dp))
+            Spacer(modifier = Modifier.width(WooPosSpacing.XLarge.value))
 
             ProductInfo(item)
         }
@@ -316,7 +316,7 @@ fun ItemsLoadingItem() {
                     .background(WooPosTheme.colors.loadingSkeleton)
             )
 
-            Spacer(modifier = Modifier.width(32.dp))
+            Spacer(modifier = Modifier.width(WooPosSpacing.XLarge.value))
 
             WooPosShimmerBox(
                 modifier = Modifier
@@ -361,7 +361,7 @@ fun ItemsEmptyList(
                 contentDescription = contentDescription,
             )
 
-            Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
             Text(
                 text = title,
