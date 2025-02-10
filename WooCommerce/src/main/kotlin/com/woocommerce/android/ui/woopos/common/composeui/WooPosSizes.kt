@@ -6,6 +6,30 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.woopos.util.ext.getLongestScreenSideDp
 
+object Radius {
+    val None = 0.dp
+    val XSmall = 2.dp
+    val Small = 4.dp
+    val Medium = 8.dp
+    val Large = 16.dp
+    val XLarge = 24.dp
+}
+
+object Spacing {
+    val None = 0.dp
+    val XSmall = 4.dp
+    val Small = 8.dp
+    val Medium = 16.dp
+    val Large = 24.dp
+    val XLarge = 32.dp
+}
+
+object Elevation {
+    val None = 0.dp
+    val Medium = 4.dp
+    val Large = 8.dp
+}
+
 @Composable
 fun Dp.toAdaptivePadding(): Dp {
     val longestSide = LocalContext.current.getLongestScreenSideDp()
