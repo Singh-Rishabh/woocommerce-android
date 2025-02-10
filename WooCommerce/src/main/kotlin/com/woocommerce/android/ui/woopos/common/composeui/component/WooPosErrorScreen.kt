@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
@@ -76,7 +77,11 @@ fun WooPosErrorScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = WooPosSpacing.Medium.value, end = WooPosSpacing.Medium.value, start = WooPosSpacing.Medium.value)
+                .padding(
+                    top = WooPosSpacing.Medium.value,
+                    end = WooPosSpacing.Medium.value,
+                    start = WooPosSpacing.Medium.value
+                )
         ) {
             primaryButton?.let {
                 WooPosButton(
@@ -88,7 +93,7 @@ fun WooPosErrorScreen(
                 )
             }
             secondaryButton?.let {
-                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 WooPosButton(
                     text = it.text,
                     onClick = it.click,
@@ -97,7 +102,7 @@ fun WooPosErrorScreen(
                         .height(80.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         }
     }
 }
