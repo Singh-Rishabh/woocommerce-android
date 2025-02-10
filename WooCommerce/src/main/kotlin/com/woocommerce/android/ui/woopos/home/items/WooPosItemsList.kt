@@ -49,6 +49,7 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
@@ -182,7 +183,7 @@ private fun ItemCard(
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 6.dp,
+        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(
@@ -298,7 +299,7 @@ fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 6.dp,
+        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(

@@ -65,6 +65,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
@@ -407,24 +408,11 @@ private fun ProductItem(
         hasAnimationStarted = true
     }
 
-    val cardElevation = 6.dp
-    val elevation by animateDpAsState(
-        targetValue = if (hasAnimationStarted) cardElevation else 0.dp,
-        animationSpec = tween(durationMillis = 150, delayMillis = 250),
-        label = "elevation"
-    )
-
     val itemContentDescription = stringResource(
         id = R.string.woopos_cart_item_content_description,
         item.name,
         item.price
     )
-
-    LaunchedEffect(elevation) {
-        if (elevation == cardElevation) {
-            onUIEvent(WooPosCartUIEvent.OnCartItemAppearanceAnimationPlayed(item))
-        }
-    }
 
     AnimatedVisibility(
         visible = hasAnimationStarted,
@@ -437,7 +425,7 @@ private fun ProductItem(
             modifier = modifier
                 .height(96.dp)
                 .semantics { contentDescription = itemContentDescription },
-            elevation = elevation,
+            elevation = WooPosElevation.Medium,
             shadowType = ShadowType.Soft,
             shape = RoundedCornerShape(8.dp),
         ) {

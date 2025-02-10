@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -69,7 +70,7 @@ private fun WooPosPaginationErrorIndicatorContent(
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 6.dp,
+        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(

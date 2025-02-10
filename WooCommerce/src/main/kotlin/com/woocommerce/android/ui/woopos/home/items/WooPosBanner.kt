@@ -30,6 +30,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -58,9 +60,9 @@ fun WooPosBanner(
             .focusable()
     ) {
         WooPosCard(
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
             backgroundColor = MaterialTheme.colors.surface,
-            elevation = 4.dp,
+            elevation = WooPosElevation.Medium,
             modifier = Modifier
                 .fillMaxWidth()
         ) {

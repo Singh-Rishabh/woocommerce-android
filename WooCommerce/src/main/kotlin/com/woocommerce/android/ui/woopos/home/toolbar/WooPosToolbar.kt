@@ -48,6 +48,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosBackgroundOverlay
@@ -55,7 +56,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarState.Menu
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarState.WooPosCardReaderStatus
 
-private val TOOLBAR_ELEVATION = 6.dp
+private val TOOLBAR_ELEVATION = WooPosElevation.Medium
 
 @Composable
 fun WooPosFloatingToolbar(modifier: Modifier = Modifier) {
