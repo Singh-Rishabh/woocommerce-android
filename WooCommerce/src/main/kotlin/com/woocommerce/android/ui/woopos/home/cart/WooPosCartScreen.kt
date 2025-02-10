@@ -65,6 +65,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
@@ -428,7 +429,7 @@ private fun ProductItem(
                 .semantics { contentDescription = itemContentDescription },
             elevation = WooPosElevation.Medium,
             shadowType = ShadowType.Soft,
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,

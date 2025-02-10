@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 
@@ -36,7 +37,7 @@ fun WooPosButton(
 ) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         enabled = state == WooPosButtonState.ENABLED,
         colors = colors,
         modifier = modifier
@@ -78,7 +79,7 @@ fun WooPosButtonLarge(
 ) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Large.value),
         elevation = ButtonDefaults.elevation(
             defaultElevation = 0.dp,
             pressedElevation = 0.dp,
@@ -103,7 +104,7 @@ fun WooPosButtonLarge(
 fun WooPosOutlinedButtonSmall(
     modifier: Modifier = Modifier,
     text: String,
-    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(WooPosCornerRadius.Small.value),
     onClick: () -> Unit,
 ) = WooPosOutlinedButton(
     modifier = modifier,
@@ -122,7 +123,7 @@ fun WooPosOutlinedButtonSmall(
 @Composable
 fun WooPosOutlinedButton(
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(WooPosCornerRadius.Small.value),
     content: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
 ) {
@@ -158,7 +159,7 @@ fun WooPosOutlinedButton(
             .height(80.dp),
         onClick = onClick,
         border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
             contentColor = MaterialTheme.colors.onBackground,

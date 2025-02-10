@@ -49,7 +49,9 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
@@ -181,7 +183,7 @@ private fun ItemCard(
     WooPosCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         backgroundColor = MaterialTheme.colors.surface,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
@@ -297,7 +299,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 @Composable
 fun ItemsLoadingItem() {
     WooPosCard(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         backgroundColor = MaterialTheme.colors.surface,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
@@ -320,7 +322,7 @@ fun ItemsLoadingItem() {
                 modifier = Modifier
                     .weight(1f)
                     .height(30.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
             Spacer(modifier = Modifier.width(184.dp))
@@ -329,7 +331,7 @@ fun ItemsLoadingItem() {
                 modifier = Modifier
                     .height(30.dp)
                     .width(76.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
             Spacer(modifier = Modifier.width(24.dp))

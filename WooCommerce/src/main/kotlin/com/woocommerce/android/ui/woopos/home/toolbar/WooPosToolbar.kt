@@ -48,6 +48,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
@@ -205,7 +206,7 @@ private fun MenuButtonWithPopUpMenu(
         modifier = modifier,
         backgroundColor = MaterialTheme.colors.surface,
         elevation = TOOLBAR_ELEVATION,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
     ) {
         TextButton(
             modifier = Modifier.semantics { contentDescription = menuContentDescription },
@@ -337,7 +338,7 @@ private fun CardReaderStatusButton(
             .height(56.dp),
         backgroundColor = MaterialTheme.colors.surface,
         elevation = TOOLBAR_ELEVATION,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
     ) {
         Surface(
             color = if (menuCardDisabled) {
@@ -353,7 +354,7 @@ private fun CardReaderStatusButton(
                     .border(
                         width = 2.dp,
                         color = borderColor,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(WooPosCornerRadius.Small.value),
                     )
                     .height(40.dp),
             ) {

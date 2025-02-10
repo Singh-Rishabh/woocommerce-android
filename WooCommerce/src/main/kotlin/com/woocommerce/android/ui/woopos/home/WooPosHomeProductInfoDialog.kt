@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosDialogWrapper
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -104,7 +106,7 @@ fun WooPosProductInfoDialog(
                     )
                     Box(
                         Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(WooPosCornerRadius.Medium.value))
                             .background(
                                 color = WooPosTheme.colors.dialogSubtitleHighlightBackground
                             )
@@ -135,7 +137,7 @@ fun WooPosProductInfoDialog(
                                 contentDescription = primaryButtonContentDescription
                             },
                         border = BorderStroke(2.dp, MaterialTheme.colors.primary),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
                     ) {
                         Text(
                             modifier = Modifier

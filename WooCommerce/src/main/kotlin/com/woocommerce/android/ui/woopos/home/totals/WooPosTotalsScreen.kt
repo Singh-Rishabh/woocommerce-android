@@ -44,7 +44,9 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
@@ -378,7 +380,7 @@ private fun TotalsLoading() {
                 modifier = Modifier
                     .height(24.dp)
                     .width(332.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
             Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
@@ -387,7 +389,7 @@ private fun TotalsLoading() {
                 modifier = Modifier
                     .height(24.dp)
                     .width(332.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
             Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
@@ -396,7 +398,7 @@ private fun TotalsLoading() {
                 modifier = Modifier
                     .height(40.dp)
                     .width(332.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
         }
     }
