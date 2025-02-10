@@ -67,6 +67,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
@@ -249,7 +250,7 @@ private fun CartBodyWithItems(
         verticalArrangement = Arrangement.spacedBy(8.dp.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(
-            top = 2.dp.toAdaptivePadding(),
+            top = WooPosSpacing.XSmall.value.toAdaptivePadding(),
             bottom = 8.dp.toAdaptivePadding()
         ),
         withBottomShadow = true,

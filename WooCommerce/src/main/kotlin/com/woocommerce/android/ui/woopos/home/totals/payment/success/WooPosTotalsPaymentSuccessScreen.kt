@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
@@ -173,7 +174,7 @@ private fun CheckMarkIcon(
         modifier = modifier
             .size(size)
             .shadow(
-                elevation = 4.dp,
+                elevation = WooPosElevation.Medium.value,
                 shape = CircleShape,
                 clip = false
             )

@@ -33,6 +33,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
@@ -50,8 +51,8 @@ fun WooPosBanner(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = 2.dp.toAdaptivePadding(),
-                end = 2.dp.toAdaptivePadding(),
+                start = WooPosSpacing.XSmall.value.toAdaptivePadding(),
+                end = WooPosSpacing.XSmall.value.toAdaptivePadding(),
                 bottom = 16.dp.toAdaptivePadding()
             )
             .semantics {
