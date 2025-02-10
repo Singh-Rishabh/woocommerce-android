@@ -218,7 +218,7 @@ private fun TotalsLoaded(
 @Composable
 private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
-    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
         style = MaterialTheme.typography.h5,
@@ -241,7 +241,7 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
         clipSpec = LottieClipSpec.Markers("reader_awaiting_start", "reader_awaiting_end"),
         iterations = LottieConstants.IterateForever,
     )
-    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
         style = MaterialTheme.typography.h5,

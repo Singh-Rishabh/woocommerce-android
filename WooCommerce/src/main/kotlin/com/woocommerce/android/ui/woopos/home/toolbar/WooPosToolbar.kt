@@ -211,7 +211,7 @@ private fun MenuButtonWithPopUpMenu(
         TextButton(
             modifier = Modifier.semantics { contentDescription = menuContentDescription },
             onClick = onClick,
-            contentPadding = PaddingValues(0.dp),
+            contentPadding = PaddingValues(WooPosSpacing.None.value),
             colors = ButtonDefaults.textButtonColors(
                 backgroundColor = if (menuCardDisabled) {
                     MaterialTheme.colors.onSurface.copy(alpha = 0.2f)

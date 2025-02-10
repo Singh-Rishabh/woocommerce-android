@@ -69,7 +69,7 @@ fun WooPosBanner(
         ) {
             ConstraintLayout(
                 modifier = Modifier
-                    .padding(24.dp.toAdaptivePadding())
+                    .padding(WooPosSpacing.Large.value.toAdaptivePadding())
                     .fillMaxWidth()
             ) {
                 val (icon, header, description, close) = createRefs()
@@ -129,7 +129,7 @@ fun WooPosBanner(
                         }
                         .padding(
                             start = WooPosSpacing.Large.value.toAdaptivePadding(),
-                            end = 18.dp.toAdaptivePadding()
+                            end = WooPosSpacing.Medium.value.toAdaptivePadding()
                         )
                 ) {
                     Text(
@@ -189,7 +189,7 @@ fun PreviewWooPosBannerScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(WooPosSpacing.XLarge.value.toAdaptivePadding()),
+                .padding(32.dp.toAdaptivePadding()),
             contentAlignment = Alignment.Center
         ) {
             WooPosBanner(
