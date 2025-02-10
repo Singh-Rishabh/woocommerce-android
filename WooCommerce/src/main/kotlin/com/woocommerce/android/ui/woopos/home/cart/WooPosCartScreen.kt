@@ -251,7 +251,7 @@ private fun CartBodyWithItems(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(
             top = WooPosSpacing.XSmall.value.toAdaptivePadding(),
-            bottom = 8.dp.toAdaptivePadding()
+            bottom = WooPosSpacing.Small.value.toAdaptivePadding()
         ),
         withBottomShadow = true,
     ) {
@@ -322,7 +322,7 @@ private fun CartToolbar(
                         start.linkTo(parent.start)
                         centerVerticallyTo(parent)
                     }
-                    .padding(start = 8.dp.toAdaptivePadding())
+                    .padding(start = WooPosSpacing.Small.value.toAdaptivePadding())
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),

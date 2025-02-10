@@ -31,6 +31,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
@@ -97,7 +98,7 @@ private fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val textsMargin = 8.dp.toAdaptivePadding()
+            val textsMargin = WooPosSpacing.Small.value.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
                 style = MaterialTheme.typography.h4,

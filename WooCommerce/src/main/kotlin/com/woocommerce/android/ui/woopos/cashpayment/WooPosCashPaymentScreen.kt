@@ -26,6 +26,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
@@ -139,7 +140,7 @@ private fun Collecting(
             numberOfDecimals = state.numberOfDecimals,
         )
 
-        val smallMargin = 8.dp.toAdaptivePadding()
+        val smallMargin = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = state.changeDueText,
             style = MaterialTheme.typography.body1,

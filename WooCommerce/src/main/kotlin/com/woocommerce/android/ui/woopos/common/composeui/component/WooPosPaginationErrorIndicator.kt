@@ -31,6 +31,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
@@ -109,7 +110,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                         text = description,
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(top = 8.dp.toAdaptivePadding())
+                        modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding())
                     )
                 }
             }

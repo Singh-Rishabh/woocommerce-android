@@ -34,6 +34,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
@@ -240,8 +241,8 @@ private fun VariationsToolbar(
             ),
             color = MaterialTheme.colors.onSurface,
             modifier = Modifier.constrainAs(productName) {
-                start.linkTo(backButton.end, margin = 8.dp)
-                top.linkTo(parent.top, margin = 8.dp)
+                start.linkTo(backButton.end, margin = WooPosSpacing.Small.value)
+                top.linkTo(parent.top, margin = WooPosSpacing.Small.value)
             }
         )
     }

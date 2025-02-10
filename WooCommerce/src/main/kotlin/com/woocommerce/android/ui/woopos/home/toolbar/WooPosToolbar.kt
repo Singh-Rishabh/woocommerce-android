@@ -50,6 +50,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosBackgroundOverlay
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -123,7 +124,7 @@ private fun WooPosFloatingToolbar(
                         onUIEvent = onUIEvent
                     )
 
-                    val marginBetweenCards = 8.dp.toAdaptivePadding()
+                    val marginBetweenCards = WooPosSpacing.Small.value.toAdaptivePadding()
                     PopUpMenu(
                         modifier = Modifier
                             .constrainAs(popupMenu) {
@@ -155,7 +156,7 @@ private fun Toolbar(
 
     ConstraintLayout(modifier = modifier) {
         val (menuCard, cardReaderStatusCard) = createRefs()
-        val marginBetweenCards = 8.dp.toAdaptivePadding()
+        val marginBetweenCards = WooPosSpacing.Small.value.toAdaptivePadding()
 
         CardReaderStatusButton(
             modifier = Modifier
@@ -269,7 +270,7 @@ private fun PopUpMenuItem(
         Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
         Text(
             modifier = Modifier
-                .padding(vertical = 8.dp.toAdaptivePadding())
+                .padding(vertical = WooPosSpacing.Small.value.toAdaptivePadding())
                 .weight(1f),
             text = stringResource(id = menuItem.title),
             color = MaterialTheme.colors.onSurface,
@@ -377,7 +378,7 @@ private fun ReaderStatusText(
     color: Color
 ) {
     Text(
-        modifier = modifier.padding(horizontal = 8.dp.toAdaptivePadding()),
+        modifier = modifier.padding(horizontal = WooPosSpacing.Small.value.toAdaptivePadding()),
         text = title,
         color = color,
         style = MaterialTheme.typography.button

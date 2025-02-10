@@ -101,7 +101,7 @@ fun WooPosBanner(
                     modifier = Modifier
                         .padding(
                             start = 32.dp.toAdaptivePadding(),
-                            bottom = 8.dp.toAdaptivePadding()
+                            bottom = WooPosSpacing.Small.value.toAdaptivePadding()
                         )
                         .constrainAs(header) {
                             top.linkTo(parent.top)
@@ -138,9 +138,9 @@ fun WooPosBanner(
                                 onLearnMore()
                             }
                             .padding(
-                                start = 8.dp.toAdaptivePadding(),
-                                top = 8.dp.toAdaptivePadding(),
-                                bottom = 8.dp.toAdaptivePadding(),
+                                start = WooPosSpacing.Small.value.toAdaptivePadding(),
+                                top = WooPosSpacing.Small.value.toAdaptivePadding(),
+                                bottom = WooPosSpacing.Small.value.toAdaptivePadding(),
                             ),
                         text = annotatedText,
                         style = MaterialTheme.typography.body1,
