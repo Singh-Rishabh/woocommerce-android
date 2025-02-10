@@ -346,7 +346,7 @@ private fun CartToolbar(
                 }
                 .padding(
                     start = 16.dp.toAdaptivePadding(),
-                    end = 4.dp,
+                    end = WooPosSpacing.XSmall.value,
                 )
         )
 

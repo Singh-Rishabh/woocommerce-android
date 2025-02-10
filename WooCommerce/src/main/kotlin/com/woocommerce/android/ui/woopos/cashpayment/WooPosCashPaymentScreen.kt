@@ -107,7 +107,7 @@ private fun Collecting(
             style = MaterialTheme.typography.h6,
             modifier = Modifier
                 .constrainAs(total) {
-                    top.linkTo(parent.top, margin = 4.dp)
+                    top.linkTo(parent.top, margin = WooPosSpacing.XSmall.value)
                     start.linkTo(parent.start, margin = 64.dp)
                 }
         )
