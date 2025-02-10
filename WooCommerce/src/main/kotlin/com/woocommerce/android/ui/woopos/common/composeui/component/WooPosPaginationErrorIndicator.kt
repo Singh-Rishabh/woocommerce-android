@@ -84,7 +84,7 @@ private fun WooPosPaginationErrorIndicatorContent(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
                 modifier = Modifier.weight(1f)
             ) {
                 Box(

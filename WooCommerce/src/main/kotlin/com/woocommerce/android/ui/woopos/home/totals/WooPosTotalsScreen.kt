@@ -314,7 +314,7 @@ private fun TotalsGrid(totals: Totals.Visible) {
             textTwo = totals.orderSubtotalText,
         )
 
-        Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
         TotalsGridRow(
             textOne = stringResource(R.string.woopos_payment_tax_label),

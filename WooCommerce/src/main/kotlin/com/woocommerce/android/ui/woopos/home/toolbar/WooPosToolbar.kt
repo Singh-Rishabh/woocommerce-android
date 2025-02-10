@@ -246,11 +246,11 @@ private fun PopUpMenu(
         elevation = TOOLBAR_ELEVATION,
     ) {
         Column {
-            Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
             menuItems.forEach { menuItem ->
                 PopUpMenuItem(menuItem, onClick)
             }
-            Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         }
     }
 }
@@ -350,7 +350,7 @@ private fun CardReaderStatusButton(
             TextButton(
                 onClick = onClick,
                 modifier = Modifier
-                    .padding(8.dp.toAdaptivePadding())
+                    .padding(WooPosSpacing.Medium.value.toAdaptivePadding())
                     .border(
                         width = 2.dp,
                         color = borderColor,

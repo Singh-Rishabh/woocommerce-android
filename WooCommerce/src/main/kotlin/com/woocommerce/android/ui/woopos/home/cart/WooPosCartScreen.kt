@@ -248,7 +248,7 @@ private fun CartBodyWithItems(
         modifier = modifier
             .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(8.dp.toAdaptivePadding()),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(
             top = WooPosSpacing.XSmall.value.toAdaptivePadding(),
@@ -482,7 +482,7 @@ private fun ProductItem(
                 }
 
                 if (canRemoveItems) {
-                    Spacer(modifier = Modifier.width(8.dp.toAdaptivePadding()))
+                    Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
                     val removeButtonContentDescription = stringResource(
                         id = R.string.woopos_remove_item_button_from_cart_content_description,

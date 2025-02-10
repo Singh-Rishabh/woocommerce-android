@@ -28,7 +28,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 fun WooPosLazyColumn(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(WooPosSpacing.Medium.value),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     state: LazyListState = rememberLazyListState(),
     withBottomShadow: Boolean = false,

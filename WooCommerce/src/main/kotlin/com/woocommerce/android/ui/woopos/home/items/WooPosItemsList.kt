@@ -72,7 +72,7 @@ fun WooPosItemList(
     onErrorWhilePaginating: @Composable () -> Unit,
 ) {
     WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
         contentPadding = PaddingValues(2.dp),
         state = listState,
     ) {
@@ -219,7 +219,7 @@ private fun ProductInfo(item: WooPosItem) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
         when (item) {
             is SimpleProduct -> SimpleProductDetails(item = item)
             is VariableProduct -> VariableProductDetails()
@@ -283,7 +283,7 @@ fun VariationProductDetails(item: Variation) {
 @Composable
 fun ItemsLoadingIndicator(itemsCount: Int = 10) {
     WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
         contentPadding = PaddingValues(2.dp),
     ) {
         items(itemsCount) {
@@ -379,7 +379,7 @@ fun ItemsEmptyList(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         }
     }
 }
