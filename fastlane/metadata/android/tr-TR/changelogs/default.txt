@@ -1,2 +1,0 @@
-21.6:
-Geliştirilmiş tablet modunda ve yatay modda destek, markamıza uygun yepyeni bir görünüm ve daha hızlı görsel yükleme özellikleriyle daha sorunsuz bir WooCommerce uygulamasını deneyimleyin. Birleşik Krallık'taki kullanıcılar artık POS erişiminin keyfini çıkarabilir, başarısız olan görsel yüklemelerini zahmetsizce yeniden deneyebilir ve ürün kapak fotoğraflarına kolaylıkla etiketleyebilir. Bu iyileştirmeler için hemen güncelleyin!
