@@ -24,13 +24,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
@@ -101,14 +101,12 @@ private fun WooPosPaginationErrorIndicatorContent(
                 Column {
                     Text(
                         text = message,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
+                        style = WooPosTypography.BodyLargeBoldPrimary,
                     )
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(top = 8.dp.toAdaptivePadding())
+                        style = WooPosTypography.BodyMediumRegularPrimary,
+                        modifier = Modifier.padding(top = 8.dp.toAdaptivePadding()),
                     )
                 }
             }

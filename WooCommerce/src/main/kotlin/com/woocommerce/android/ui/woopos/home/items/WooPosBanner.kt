@@ -23,7 +23,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -32,6 +31,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
@@ -92,9 +92,7 @@ fun WooPosBanner(
 
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
-                    fontWeight = FontWeight.SemiBold,
+                    style = WooPosTypography.BodyXLargePrimary,
                     modifier = Modifier
                         .padding(
                             start = 32.dp.toAdaptivePadding(),
@@ -140,9 +138,7 @@ fun WooPosBanner(
                                 bottom = 8.dp.toAdaptivePadding(),
                             ),
                         text = annotatedText,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f)
+                        style = WooPosTypography.BodyMediumRegularSecondary,
                     )
                 }
 

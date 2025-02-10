@@ -40,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -49,8 +48,8 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -212,8 +211,7 @@ private fun ProductInfo(item: WooPosItem) {
     ) {
         Text(
             text = item.name,
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Bold,
+            style = WooPosTypography.BodyLargeBoldPrimary,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -252,9 +250,7 @@ private fun ProductImage(item: WooPosItem) {
 private fun SimpleProductDetails(item: SimpleProduct) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Normal,
-        color = WooPosColors.Gray60
+        style = WooPosTypography.BodyLargeRegularTertiary,
     )
 }
 
@@ -262,9 +258,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Normal,
-        color = WooPosColors.Gray60
+        style = WooPosTypography.BodyLargeRegularTertiary,
     )
 }
 
@@ -272,9 +266,7 @@ private fun VariableProductDetails() {
 fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.titleLarge,
-        fontWeight = FontWeight.Normal,
-        color = WooPosColors.Gray60
+        style = WooPosTypography.BodyLargeRegularTertiary,
     )
 }
 
@@ -363,17 +355,14 @@ fun ItemsEmptyList(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                style = WooPosTypography.HeadingPrimary,
             )
 
             Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                style = WooPosTypography.BodyXLargeSecondary,
                 textAlign = TextAlign.Center
             )
 
