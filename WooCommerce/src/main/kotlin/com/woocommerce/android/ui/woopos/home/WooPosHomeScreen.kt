@@ -164,7 +164,7 @@ private fun WooPosHomeScreen(
 
         WooPosHomeScreenToolbar(
             modifier = Modifier
-                .padding(24.dp.toAdaptivePadding())
+                .padding(WooPosSpacing.Large.value.toAdaptivePadding())
                 .align(Alignment.BottomStart),
         )
 

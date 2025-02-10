@@ -128,7 +128,7 @@ fun WooPosBanner(
                             width = Dimension.fillToConstraints
                         }
                         .padding(
-                            start = 24.dp.toAdaptivePadding(),
+                            start = WooPosSpacing.Large.value.toAdaptivePadding(),
                             end = 18.dp.toAdaptivePadding()
                         )
                 ) {

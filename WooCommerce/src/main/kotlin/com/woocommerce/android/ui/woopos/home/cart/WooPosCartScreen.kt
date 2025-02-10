@@ -134,7 +134,7 @@ private fun WooPosCartScreen(
             }
 
             is WooPosCartState.Body.WithItems -> {
-                val productsTopMargin = 24.dp.toAdaptivePadding()
+                val productsTopMargin = WooPosSpacing.Large.value.toAdaptivePadding()
                 CartBodyWithItems(
                     modifier = Modifier.constrainAs(body) {
                         top.linkTo(toolbar.bottom, margin = productsTopMargin)

@@ -266,7 +266,7 @@ private fun PopUpMenuItem(
             imageVector = ImageVector.vectorResource(id = menuItem.icon),
             contentDescription = null,
             tint = MaterialTheme.colors.onSurface,
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(WooPosSpacing.Large.value)
         )
         Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
         Text(
@@ -507,7 +507,7 @@ private fun Preview(state: MutableState<WooPosToolbarState>) {
         ) {
             WooPosFloatingToolbar(
                 modifier = Modifier
-                    .padding(24.dp.toAdaptivePadding())
+                    .padding(WooPosSpacing.Large.value.toAdaptivePadding())
                     .align(Alignment.BottomStart),
                 state
             ) {}

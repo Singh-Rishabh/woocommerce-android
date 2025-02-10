@@ -334,7 +334,7 @@ fun ItemsLoadingItem() {
                     .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.width(WooPosSpacing.Large.value))
         }
     }
 }

@@ -304,7 +304,7 @@ private fun ReaderDisconnected(
 private fun TotalsGrid(totals: Totals.Visible) {
     Column(
         modifier = Modifier
-            .padding(24.dp.toAdaptivePadding())
+            .padding(WooPosSpacing.Large.value.toAdaptivePadding())
             .width(382.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -378,21 +378,21 @@ private fun TotalsLoading() {
         ) {
             WooPosShimmerBox(
                 modifier = Modifier
-                    .height(24.dp)
+                    .height(WooPosSpacing.Large.value)
                     .width(332.dp)
                     .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
-            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
 
             WooPosShimmerBox(
                 modifier = Modifier
-                    .height(24.dp)
+                    .height(WooPosSpacing.Large.value)
                     .width(332.dp)
                     .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
-            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
 
             WooPosShimmerBox(
                 modifier = Modifier

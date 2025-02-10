@@ -150,7 +150,7 @@ private fun MainItemsList(
             }
             ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value))
 
             when (val itemsState = state.value) {
                 is WooPosItemsViewState.Content -> {

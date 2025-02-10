@@ -71,7 +71,7 @@ fun WooPosPaymentFailedScreen(
                 .width(604.dp)
         ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
         if (state.isReturnToCheckoutButtonVisible) {
-            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
             WooPosOutlinedButton(
                 modifier = Modifier
                     .height(80.dp)
