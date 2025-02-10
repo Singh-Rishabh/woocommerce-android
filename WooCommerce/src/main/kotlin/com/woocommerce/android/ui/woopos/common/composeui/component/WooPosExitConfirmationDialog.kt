@@ -18,11 +18,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -53,15 +53,12 @@ fun WooPosExitConfirmationDialog(
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = WooPosTypography.HeadingPrimary,
                 )
                 Spacer(modifier = modifier.height(16.dp.toAdaptivePadding()))
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = WooPosTypography.BodyLargeRegularPrimary,
                 )
                 Spacer(modifier = modifier.height(56.dp.toAdaptivePadding()))
                 WooPosButton(

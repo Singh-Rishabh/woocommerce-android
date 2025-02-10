@@ -20,7 +20,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -66,7 +65,6 @@ fun WooPosProductInfoDialog(
                 Text(
                     text = stringResource(id = state.header),
                     style = WooPosTypography.HeadingPrimary,
-                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(
                             top = 40.dp.toAdaptivePadding(),
