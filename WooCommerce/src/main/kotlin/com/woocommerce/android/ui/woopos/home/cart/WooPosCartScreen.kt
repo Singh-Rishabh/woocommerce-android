@@ -245,7 +245,7 @@ private fun CartBodyWithItems(
 
     WooPosLazyColumn(
         modifier = modifier
-            .padding(horizontal = 16.dp.toAdaptivePadding()),
+            .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
         state = listState,
         verticalArrangement = Arrangement.spacedBy(8.dp.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -296,7 +296,7 @@ private fun CartToolbar(
     onBackClicked: () -> Unit
 ) {
     val iconSize = 28.dp
-    val iconTitlePadding = 16.dp.toAdaptivePadding()
+    val iconTitlePadding = WooPosSpacing.Medium.value.toAdaptivePadding()
     val titleOffset by animateDpAsState(
         targetValue = if (toolbar.backIconVisible) iconSize + iconTitlePadding else 0.dp,
         animationSpec = tween(durationMillis = 300),
@@ -345,7 +345,7 @@ private fun CartToolbar(
                     centerVerticallyTo(parent)
                 }
                 .padding(
-                    start = 16.dp.toAdaptivePadding(),
+                    start = WooPosSpacing.Medium.value.toAdaptivePadding(),
                     end = WooPosSpacing.XSmall.value,
                 )
         )
@@ -360,7 +360,7 @@ private fun CartToolbar(
         )
 
         toolbar.itemsCount?.let {
-            val itemsEndMargin = 16.dp.toAdaptivePadding()
+            val itemsEndMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
             Text(
                 text = it,
                 style = MaterialTheme.typography.body2,
@@ -390,7 +390,7 @@ private fun CartToolbar(
                         end.linkTo(parent.end)
                         centerVerticallyTo(parent)
                     }
-                    .padding(end = 16.dp.toAdaptivePadding()),
+                    .padding(end = WooPosSpacing.Medium.value.toAdaptivePadding()),
                 text = stringResource(R.string.woopos_clear_cart_button)
             )
         }

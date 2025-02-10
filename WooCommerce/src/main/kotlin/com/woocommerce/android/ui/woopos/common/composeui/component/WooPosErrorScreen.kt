@@ -76,7 +76,7 @@ fun WooPosErrorScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, end = 16.dp, start = 16.dp)
+                .padding(top = WooPosSpacing.Medium.value, end = WooPosSpacing.Medium.value, start = WooPosSpacing.Medium.value)
         ) {
             primaryButton?.let {
                 WooPosButton(

@@ -207,7 +207,7 @@ private fun ProductInfo(item: WooPosItem) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(vertical = 16.dp),
+            .padding(vertical = WooPosSpacing.Medium.value),
         verticalArrangement = Arrangement.Center
     ) {
         Text(

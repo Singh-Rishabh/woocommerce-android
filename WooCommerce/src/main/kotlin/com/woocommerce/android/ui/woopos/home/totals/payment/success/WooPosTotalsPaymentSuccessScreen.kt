@@ -126,7 +126,7 @@ private fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val marginBetweenButtons = 16.dp.toAdaptivePadding()
+            val marginBetweenButtons = WooPosSpacing.Medium.value.toAdaptivePadding()
             WooPosButton(
                 modifier = Modifier
                     .constrainAs(buttonNewOrder) {

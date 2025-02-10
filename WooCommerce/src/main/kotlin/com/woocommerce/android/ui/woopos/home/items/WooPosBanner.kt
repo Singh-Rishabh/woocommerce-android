@@ -53,7 +53,7 @@ fun WooPosBanner(
             .padding(
                 start = WooPosSpacing.XSmall.value.toAdaptivePadding(),
                 end = WooPosSpacing.XSmall.value.toAdaptivePadding(),
-                bottom = 16.dp.toAdaptivePadding()
+                bottom = WooPosSpacing.Medium.value.toAdaptivePadding()
             )
             .semantics {
                 contentDescription = bannerContentDescription

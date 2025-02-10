@@ -191,7 +191,7 @@ private fun TotalsLoaded(
                             .fillMaxWidth()
                             .padding(
                                 horizontal = 40.dp.toAdaptivePadding(),
-                                vertical = 16.dp.toAdaptivePadding()
+                                vertical = WooPosSpacing.Medium.value.toAdaptivePadding()
                             )
                             .weight(.9f),
                         horizontalAlignment = Alignment.CenterHorizontally,

@@ -119,7 +119,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                 text = primaryButton.text,
                 onClick = primaryButton.click,
                 modifier = Modifier
-                    .padding(end = 16.dp.toAdaptivePadding())
+                    .padding(end = WooPosSpacing.Medium.value.toAdaptivePadding())
                     .weight(0.25f),
             )
         }

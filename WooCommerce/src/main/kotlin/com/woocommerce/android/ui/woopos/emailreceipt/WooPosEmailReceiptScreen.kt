@@ -90,7 +90,7 @@ private fun EmailState(
             keyboardController?.show()
         }
 
-        val standardMargin = 16.dp.toAdaptivePadding()
+        val standardMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
         val topMargin = 72.dp.toAdaptivePadding()
         val textFieldButtonMargin = 80.dp.toAdaptivePadding()
         WooPosInputField(

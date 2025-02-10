@@ -116,7 +116,7 @@ private fun Collecting(
         var inputText by remember { mutableStateOf(state.enteredAmount) }
 
         val marginBetweenTotalAndInput = 48.dp.toAdaptivePadding()
-        val standardMargin = 16.dp.toAdaptivePadding()
+        val standardMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
         WooPosMoneyInputField(
             modifier = Modifier
                 .focusRequester(focusRequester)

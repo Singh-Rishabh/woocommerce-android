@@ -113,8 +113,8 @@ private fun WooPosVariationsScreens(
             .fillMaxSize()
             .pullRefresh(pullToRefreshState)
             .padding(
-                start = 16.dp.toAdaptivePadding(),
-                end = 16.dp.toAdaptivePadding(),
+                start = WooPosSpacing.Medium.value.toAdaptivePadding(),
+                end = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 top = 32.dp.toAdaptivePadding(),
                 bottom = 0.dp.toAdaptivePadding(),
             )

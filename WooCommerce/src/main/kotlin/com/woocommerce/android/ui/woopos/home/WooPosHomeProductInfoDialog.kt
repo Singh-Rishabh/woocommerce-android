@@ -70,7 +70,7 @@ fun WooPosProductInfoDialog(
                     modifier = Modifier
                         .padding(
                             top = 40.dp.toAdaptivePadding(),
-                            bottom = 16.dp.toAdaptivePadding()
+                            bottom = WooPosSpacing.Medium.value.toAdaptivePadding()
                         )
                         .constrainAs(header) {
                             top.linkTo(closeIcon.bottom)
@@ -93,14 +93,14 @@ fun WooPosProductInfoDialog(
                         style = MaterialTheme.typography.h5,
                         color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
+                        modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
                         style = MaterialTheme.typography.h5,
                         color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
+                        modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
                     Box(
                         Modifier
