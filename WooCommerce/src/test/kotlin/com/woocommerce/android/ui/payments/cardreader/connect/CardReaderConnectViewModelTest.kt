@@ -20,10 +20,10 @@ import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectE
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckBluetoothPermissionsGiven
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckLocationEnabled
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckLocationPermissions
+import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenAuthenticatedWebView
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenGenericWebView
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenLocationSettings
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenPermissionsSettings
-import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenWPComWebView
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestBluetoothRuntimePermissions
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestEnableBluetooth
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestLocationPermissions
@@ -735,10 +735,10 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
                 .onPrimaryActionClicked.invoke()
 
             assertThat(viewModel.event.value).isInstanceOf(
-                OpenWPComWebView::class.java
+                OpenAuthenticatedWebView::class.java
             )
             assertThat(
-                (viewModel.event.value as OpenWPComWebView).url
+                (viewModel.event.value as OpenAuthenticatedWebView).url
             ).isEqualTo(url)
         }
 
@@ -757,10 +757,10 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
                 .onPrimaryActionClicked.invoke()
 
             assertThat(viewModel.event.value).isInstanceOf(
-                OpenWPComWebView::class.java
+                OpenAuthenticatedWebView::class.java
             )
             assertThat(
-                (viewModel.event.value as OpenWPComWebView).url
+                (viewModel.event.value as OpenAuthenticatedWebView).url
             ).isEqualTo(url)
         }
 

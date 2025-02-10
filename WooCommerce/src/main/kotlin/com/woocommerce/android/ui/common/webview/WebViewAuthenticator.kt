@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.common.wpcomwebview
+package com.woocommerce.android.ui.common.webview
 
 import android.webkit.WebView
 import com.woocommerce.android.extensions.isNotNullOrEmpty
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 private const val WPCOM_LOGIN_URL = "https://wordpress.com/wp-login.php"
 
-class WPComWebViewAuthenticator @Inject constructor(
+class WebViewAuthenticator @Inject constructor(
     private val accountStore: AccountStore
 ) {
     fun authenticateAndLoadUrl(webView: WebView, url: String) {
