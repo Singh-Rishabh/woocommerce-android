@@ -33,10 +33,19 @@ import org.wordpress.android.fluxc.model.SiteModel
  * This is still missing tests for some scenarios, for now it covers only the connection step and its flows.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class JetpackActivationMainViewModelTest : BaseUnitTest() {
+class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRelatedExceptions = false) {
+    private val siteUrl = "example.com"
+    private val site = SiteModel().apply {
+        url = siteUrl
+        username = "username"
+        password = "password"
+    }
+
     private lateinit var viewModel: JetpackActivationMainViewModel
 
-    private val jetpackActivationRepository: JetpackActivationRepository = mock()
+    private val jetpackActivationRepository: JetpackActivationRepository = mock {
+        onBlocking { getSiteByUrl(siteUrl) } doReturn site
+    }
     private val analyticsTrackerWrapper: AnalyticsTrackerWrapper = mock()
     private val pluginRepository: PluginRepository = mock()
     private val accountRepository: AccountRepository = mock()
@@ -239,4 +248,42 @@ class JetpackActivationMainViewModelTest : BaseUnitTest() {
 
         assertThat(state).isEqualTo(ViewState.ErrorViewState(StepType.Connection, 404))
     }
+
+    @Test
+    fun `given site using application passwords, when starting, then allow empty username and password`() =
+        testBlocking {
+            setup(isJetpackInstalled = false) {
+                whenever(jetpackActivationRepository.getSiteByUrl(siteUrl)).thenReturn(
+                    site.apply {
+                        username = ""
+                        password = ""
+                    }
+                )
+                whenever(selectedSite.connectionType).thenReturn(SiteConnectionType.ApplicationPasswords)
+            }
+
+            val viewState = viewModel.viewState.getOrAwaitValue()
+
+            assertThat(viewState).isInstanceOf(ProgressViewState::class.java)
+        }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `given site not using application passwords, when starting, then require username and password`() =
+        testBlocking {
+            setup(isJetpackInstalled = false) {
+                whenever(jetpackActivationRepository.getSiteByUrl(siteUrl)).thenReturn(
+                    site.apply {
+                        username = ""
+                        password = ""
+                    }
+                )
+                whenever(selectedSite.connectionType).thenReturn(null)
+            }
+
+            try {
+                viewModel.viewState.getOrAwaitValue()
+            } catch (e: IllegalStateException) {
+                throw e
+            }
+        }
 }
