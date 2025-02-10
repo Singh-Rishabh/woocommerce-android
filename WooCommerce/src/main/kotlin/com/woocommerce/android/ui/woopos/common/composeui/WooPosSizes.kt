@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.woopos.util.ext.getLongestScreenSideDp
 
-object Radius {
+object CornerRadius {
     val None = 0.dp
     val XSmall = 2.dp
     val Small = 4.dp
