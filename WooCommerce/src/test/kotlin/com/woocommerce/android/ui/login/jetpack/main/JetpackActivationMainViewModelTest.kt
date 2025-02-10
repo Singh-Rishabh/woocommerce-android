@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.login.jetpack.main.JetpackActivationMainViewMo
 import com.woocommerce.android.ui.login.jetpack.main.JetpackActivationMainViewModel.ViewState
 import com.woocommerce.android.ui.login.jetpack.main.JetpackActivationMainViewModel.ViewState.ProgressViewState
 import com.woocommerce.android.util.captureValues
+import com.woocommerce.android.util.getOrAwaitValue
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +27,8 @@ import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
 
@@ -52,20 +55,11 @@ class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRe
     private val appPrefsWrapper: AppPrefsWrapper = mock()
     private val selectedSite: SelectedSite = mock()
 
-    private val siteUrl = "example.com"
-    private val site = SiteModel().apply {
-        url = siteUrl
-        username = "username"
-        password = "password"
-    }
-
     suspend fun setup(
         isJetpackInstalled: Boolean = false,
         prepareMocks: suspend () -> Unit = { }
     ) {
         prepareMocks()
-
-        whenever(jetpackActivationRepository.getSiteByUrl(siteUrl)).thenReturn(site)
 
         viewModel = JetpackActivationMainViewModel(
             savedStateHandle = JetpackActivationMainFragmentArgs(
@@ -204,7 +198,7 @@ class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRe
                 ).thenReturn(Result.success("https://example.com/connect"))
                 whenever(
                     jetpackActivationRepository.fetchJetpackConnectedEmail(site = site)
-                ).thenThrow(JetpackActivationRepository.JetpackMissingConnectionEmailException)
+                ).thenReturn(Result.failure(JetpackActivationRepository.JetpackMissingConnectionEmailException))
             }
 
             val state = viewModel.viewState.runAndCaptureValues {
@@ -212,6 +206,7 @@ class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRe
                 viewModel.onRetryClick()
             }.last()
 
+            verify(jetpackActivationRepository, times(2)).fetchJetpackConnectionUrl(site = site)
             assertThat((state as ProgressViewState).steps.single { it.state == StepState.Ongoing }.type)
                 .isEqualTo(StepType.Connection)
         }
