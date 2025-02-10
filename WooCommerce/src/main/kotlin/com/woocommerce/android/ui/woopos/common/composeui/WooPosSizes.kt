@@ -26,8 +26,8 @@ object Spacing {
 
 object Elevation {
     val None = 0.dp
-    val Medium = 4.dp
-    val Large = 8.dp
+    val Medium = 8.dp
+    val Large = 24.dp
 }
 
 @Composable
