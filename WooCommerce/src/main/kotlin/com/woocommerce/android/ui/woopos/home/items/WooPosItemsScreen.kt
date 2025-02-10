@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
@@ -134,7 +135,7 @@ private fun MainItemsList(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 end = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 top = 40.dp.toAdaptivePadding(),
-                bottom = 0.dp.toAdaptivePadding(),
+                bottom = WooPosSpacing.None.value.toAdaptivePadding(),
             )
     ) {
         Column(

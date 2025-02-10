@@ -291,7 +291,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
         }
 
         item {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
         }
     }
 }
@@ -370,7 +370,7 @@ fun ItemsEmptyList(
                 color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
             )
 
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = message,

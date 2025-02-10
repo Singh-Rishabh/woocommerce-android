@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
@@ -57,7 +58,7 @@ fun WooPosPaymentFailedScreen(
             style = MaterialTheme.typography.h4,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         Text(
             text = state.subtitle,
             style = MaterialTheme.typography.h6

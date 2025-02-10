@@ -81,7 +81,7 @@ private fun WooPosPaymentSuccessScreen(
         contentAlignment = Alignment.Center
     ) {
         val marginBetweenButtonAndText by animateDpAsState(
-            targetValue = if (animationStage >= AnimationStage.BUTTONS) 80.dp else 16.dp,
+            targetValue = if (animationStage >= AnimationStage.BUTTONS) 80.dp else WooPosSpacing.Medium.value,
             label = "Check mark size"
         )
         @Suppress("DestructuringDeclarationWithTooManyEntries")

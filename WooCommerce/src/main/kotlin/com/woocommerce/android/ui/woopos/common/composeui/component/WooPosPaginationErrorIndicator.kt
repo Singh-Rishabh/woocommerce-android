@@ -80,7 +80,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                 .height(112.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

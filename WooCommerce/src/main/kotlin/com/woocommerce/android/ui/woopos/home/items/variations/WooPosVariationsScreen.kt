@@ -116,7 +116,7 @@ private fun WooPosVariationsScreens(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 end = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 top = 32.dp.toAdaptivePadding(),
-                bottom = 0.dp.toAdaptivePadding(),
+                bottom = WooPosSpacing.None.value.toAdaptivePadding(),
             )
     ) {
         BackHandler(onBack = onBackClicked)
@@ -129,7 +129,7 @@ private fun WooPosVariationsScreens(
             )
             when (val itemsState = itemState.value) {
                 is WooPosVariationsViewState.Content -> {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
                     WooPosItemList(
                         state = itemsState,
                         listState = listState,
@@ -149,7 +149,7 @@ private fun WooPosVariationsScreens(
                 }
 
                 is WooPosVariationsViewState.Loading -> {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
                     ItemsLoadingIndicator()
                 }
 

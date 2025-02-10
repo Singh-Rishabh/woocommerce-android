@@ -222,7 +222,7 @@ fun WooPosInputField(
 @Composable
 fun WooPosMoneyInputFieldPreview() {
     WooPosTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(WooPosSpacing.Medium.value)) {
             WooPosMoneyInputField(
                 value = null,
                 onValueChange = {},
@@ -263,7 +263,7 @@ fun WooPosInputFieldPreview() {
     WooPosTheme {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(WooPosSpacing.Medium.value)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {

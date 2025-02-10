@@ -157,7 +157,7 @@ private fun WooPosCartScreen(
             exit = fadeOut(animationSpec = tween(300)),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp.toAdaptivePadding())
+                .padding(WooPosSpacing.Medium.value.toAdaptivePadding())
                 .constrainAs(checkoutButton) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
@@ -208,7 +208,7 @@ private fun CartOverlay(
 fun CartBodyEmpty(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .padding(16.dp.toAdaptivePadding()),
+            .padding(WooPosSpacing.Medium.value.toAdaptivePadding()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -448,7 +448,7 @@ private fun ProductItem(
                     modifier = Modifier.size(96.dp)
                 )
 
-                Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
                 Column(
                     modifier = Modifier.weight(1f)
@@ -501,7 +501,7 @@ private fun ProductItem(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
             }
         }
     }

@@ -193,7 +193,7 @@ fun WooPosCardPreviewLarge() {
 private fun Preview(elevation: WooPosElevation) {
     WooPosTheme {
         WooPosCard(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(WooPosSpacing.Medium.value),
             shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
             backgroundColor = MaterialTheme.colors.surface,
             elevation = elevation,

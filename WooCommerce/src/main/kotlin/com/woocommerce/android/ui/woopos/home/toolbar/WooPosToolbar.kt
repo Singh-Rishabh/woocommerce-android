@@ -227,7 +227,7 @@ private fun MenuButtonWithPopUpMenu(
                 repeat(3) {
                     Circle(size = 4.dp, color = MaterialTheme.colors.onSurface)
                     if (it < 2) {
-                        Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
+                        Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                     }
                 }
             }
@@ -268,7 +268,7 @@ private fun PopUpMenuItem(
             tint = MaterialTheme.colors.onSurface,
             modifier = Modifier.size(24.dp)
         )
-        Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
         Text(
             modifier = Modifier
                 .padding(vertical = WooPosSpacing.Small.value.toAdaptivePadding())
@@ -350,7 +350,7 @@ private fun CardReaderStatusButton(
             TextButton(
                 onClick = onClick,
                 modifier = Modifier
-                    .padding(WooPosSpacing.Medium.value.toAdaptivePadding())
+                    .padding(WooPosSpacing.Small.value.toAdaptivePadding())
                     .border(
                         width = 2.dp,
                         color = borderColor,
@@ -358,15 +358,15 @@ private fun CardReaderStatusButton(
                     )
                     .height(40.dp),
             ) {
-                Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 Circle(size = 12.dp, color = illustrationColor)
-                Spacer(modifier = Modifier.width(4.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 ReaderStatusText(
                     modifier = Modifier.animateContentSize(),
                     title = title,
                     color = textColor,
                 )
-                Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
             }
         }
     }

@@ -66,7 +66,7 @@ fun WooPosErrorScreen(
                 fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = reason,
