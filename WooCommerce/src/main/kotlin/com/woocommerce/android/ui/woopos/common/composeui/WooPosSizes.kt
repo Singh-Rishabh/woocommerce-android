@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.woopos.util.ext.getLongestScreenSideDp
 
-enum class CornerRadius(val value: Dp) {
+enum class WooPosCornerRadius(val value: Dp) {
     None(0.dp),
     XSmall(2.dp),
     Small(4.dp),
@@ -15,7 +15,7 @@ enum class CornerRadius(val value: Dp) {
     XLarge(24.dp)
 }
 
-enum class Spacing(val value: Dp) {
+enum class WooPosSpacing(val value: Dp) {
     None(0.dp),
     XSmall(4.dp),
     Small(8.dp),
@@ -24,7 +24,7 @@ enum class Spacing(val value: Dp) {
     XLarge(32.dp)
 }
 
-enum class Elevation(val value: Dp) {
+enum class WooPosElevation(val value: Dp) {
     None(0.dp),
     Medium(8.dp),
     Large(24.dp)

@@ -17,7 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 
 @Composable
@@ -54,8 +55,8 @@ fun WooPosDialogWrapper(
                 ),
             ) {
                 WooPosCard(
-                    shape = RoundedCornerShape(24.dp),
-                    elevation = 8.dp,
+                    shape = RoundedCornerShape(WooPosCornerRadius.Large),
+                    elevation = WooPosElevation.Medium,
                     modifier = modifier.width(dialogWidth)
                 ) {
                     content()
