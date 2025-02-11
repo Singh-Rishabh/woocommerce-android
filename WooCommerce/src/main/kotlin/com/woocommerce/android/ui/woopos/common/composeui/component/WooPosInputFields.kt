@@ -37,6 +37,7 @@ import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldVal
 import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T
 import org.wordpress.android.fluxc.model.WCSettingsModel
@@ -51,8 +52,7 @@ fun WooPosMoneyInputField(
     currencyPosition: WCSettingsModel.CurrencyPosition,
     decimalSeparator: String,
     numberOfDecimals: Int,
-    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    textStyle: TextStyle = WooPosTypography.BodyLargeRegularSecondary,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -94,6 +94,7 @@ fun WooPosMoneyInputField(
         modifier = modifier.background(Color.Transparent),
         contentAlignment = contentAlignment,
     ) {
+        val textColor = textStyle.color
         val showLabel = textFieldValue.text.isEmpty()
         if (showLabel) {
             Text(
@@ -172,8 +173,7 @@ fun WooPosInputField(
     onValueChange: (String) -> Unit,
     label: String = "",
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    textStyle: TextStyle = WooPosTypography.BodyLargeRegularSecondary,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     contentAlignment: Alignment = Alignment.CenterStart,
@@ -184,6 +184,7 @@ fun WooPosInputField(
         modifier = modifier.background(Color.Transparent),
         contentAlignment = contentAlignment,
     ) {
+        val textColor = textStyle.color
         if (value.isEmpty()) {
             Text(
                 text = label,
