@@ -189,6 +189,32 @@ internal class ProductSelectorViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun `given order creation flow from order list filter, when item is de-selected, then remove selected item`() {
+        val navArgs = ProductSelectorFragmentArgs(
+            selectedItems = emptyArray(),
+            productSelectorFlow = ProductSelectorViewModel.ProductSelectorFlow.OrderListFilter,
+        ).toSavedStateHandle()
+
+        val sut = createViewModel(navArgs)
+
+        sut.onProductClick(
+            item = ProductListItem(productId = 1, numVariations = 0, title = "", type = ProductType.SIMPLE),
+            productSourceForTracking = ProductSourceForTracking.ALPHABETICAL,
+        )
+        sut.viewState.observeForever { state ->
+            assertThat(state.selectedItemsCount).isEqualTo(1)
+        }
+        sut.onProductClick(
+            item = ProductListItem(productId = 1, numVariations = 0, title = "", type = ProductType.SIMPLE),
+            productSourceForTracking = ProductSourceForTracking.ALPHABETICAL,
+        )
+
+        sut.viewState.observeForever { state ->
+            assertThat(state.selectedItemsCount).isEqualTo(0)
+        }
+    }
+
+    @Test
     fun `given order creation flow, when item is selected, should track analytic event`() {
         val navArgs = ProductSelectorFragmentArgs(
             selectedItems = emptyArray(),
