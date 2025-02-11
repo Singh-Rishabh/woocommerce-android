@@ -50,6 +50,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosBackgroundOverlay
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.toolbar.WooPosToolbarState.Menu
@@ -271,8 +272,7 @@ private fun PopUpMenuItem(
                 .padding(vertical = 8.dp.toAdaptivePadding())
                 .weight(1f),
             text = stringResource(id = menuItem.title),
-            color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyLarge,
+            style = WooPosTypography.BodyMediumRegularPrimary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -379,7 +379,7 @@ private fun ReaderStatusText(
         modifier = modifier.padding(horizontal = 8.dp.toAdaptivePadding()),
         text = title,
         color = color,
-        style = MaterialTheme.typography.labelLarge
+        style = WooPosTypography.BodySmallBoldPrimary,
     )
 }
 
