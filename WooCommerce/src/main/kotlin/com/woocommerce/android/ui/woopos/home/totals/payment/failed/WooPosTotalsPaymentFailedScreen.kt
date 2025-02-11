@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
@@ -51,18 +52,18 @@ fun WooPosPaymentFailedScreen(
             contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
             tint = Color.Unspecified,
         )
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         Text(
             text = state.title,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold
         )
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         Text(
             text = state.subtitle,
             style = MaterialTheme.typography.titleLarge
         )
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         WooPosButton(
             text = state.retryPaymentButtonLabel,
             modifier = Modifier
@@ -70,7 +71,7 @@ fun WooPosPaymentFailedScreen(
                 .width(604.dp)
         ) { onUIEvent(WooPosTotalsUIEvent.RetryFailedTransactionClicked) }
         if (state.isReturnToCheckoutButtonVisible) {
-            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
             WooPosOutlinedButton(
                 modifier = Modifier
                     .height(80.dp)

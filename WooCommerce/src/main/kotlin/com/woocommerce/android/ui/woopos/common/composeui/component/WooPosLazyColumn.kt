@@ -20,15 +20,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
-import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
 fun WooPosLazyColumn(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(WooPosSpacing.Medium.value),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     state: LazyListState = rememberLazyListState(),
     withBottomShadow: Boolean = false,
@@ -86,7 +87,7 @@ private fun Shadow(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .height(1.dp),
-        elevation = 4.dp.toAdaptivePadding(),
+        elevation = WooPosElevation.Medium,
     ) {}
 }
 
@@ -98,7 +99,7 @@ fun WooPosLazyColumnPreview() {
             items(10) { i ->
                 WooPosCard(
                     modifier = Modifier.fillMaxWidth(),
-                    elevation = 4.dp,
+                    elevation = WooPosElevation.Medium,
                 ) {
                     Text(
                         "Item $i",
