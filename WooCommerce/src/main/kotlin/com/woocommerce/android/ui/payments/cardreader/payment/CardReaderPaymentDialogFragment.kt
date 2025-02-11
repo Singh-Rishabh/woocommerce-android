@@ -146,7 +146,7 @@ class CardReaderPaymentDialogFragment : PaymentsBaseDialogFragment(R.layout.card
 
     private fun openPurchaseCardReaderScreen(url: String) {
         findNavController().navigate(
-            NavGraphPaymentFlowDirections.actionGlobalWPComWebViewFragment(urlToLoad = url)
+            NavGraphPaymentFlowDirections.actionGlobalAuthenticatedWebViewFragment(urlToLoad = url)
         )
     }
 

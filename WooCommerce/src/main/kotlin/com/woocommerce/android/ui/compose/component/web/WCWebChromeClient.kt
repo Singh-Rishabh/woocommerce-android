@@ -8,7 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import com.woocommerce.android.extensions.findActivity
 
-open class ComposeWebChromeClient : WebChromeClient() {
+open class WCWebChromeClient : WebChromeClient() {
     var onProgressChanged: (Int) -> Unit = {}
 
     /**
