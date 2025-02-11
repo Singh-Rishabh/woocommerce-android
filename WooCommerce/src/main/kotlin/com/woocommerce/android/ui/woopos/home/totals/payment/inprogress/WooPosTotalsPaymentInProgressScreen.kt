@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -63,14 +63,14 @@ fun WooPosPaymentInProgressScreen(
                 Text(
                     text = state.title,
                     color = WooPosTheme.colors.paymentProcessingText,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Normal,
                 )
                 Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 Text(
                     text = state.subtitle,
                     color = WooPosTheme.colors.paymentProcessingText,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                 )
             }

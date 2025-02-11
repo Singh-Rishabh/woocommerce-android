@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,7 +62,7 @@ fun WooPosBanner(
     ) {
         WooPosCard(
             shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-            backgroundColor = MaterialTheme.colors.surface,
+            backgroundColor = MaterialTheme.colorScheme.surface,
             elevation = WooPosElevation.Medium,
             modifier = Modifier
                 .fillMaxWidth()
@@ -88,15 +88,15 @@ fun WooPosBanner(
                         contentDescription = stringResource(
                             id = R.string.woopos_banner_simple_products_info_content_description
                         ),
-                        tint = MaterialTheme.colors.primary,
+                        tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
 
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.h5,
-                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(
@@ -113,7 +113,7 @@ fun WooPosBanner(
 
                 val annotatedText = buildAnnotatedString {
                     append(message)
-                    withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                         append(" ")
                         append(stringResource(id = R.string.woopos_banner_simple_products_only_message_learn_more))
                     }
@@ -143,9 +143,9 @@ fun WooPosBanner(
                                 bottom = WooPosSpacing.Small.value.toAdaptivePadding(),
                             ),
                         text = annotatedText,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.87f)
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f)
                     )
                 }
 
@@ -161,7 +161,7 @@ fun WooPosBanner(
                     Icon(
                         modifier = Modifier.size(WooPosSpacing.XLarge.value),
                         imageVector = Icons.Default.Close,
-                        tint = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         contentDescription = stringResource(
                             id = R.string.woopos_banner_simple_products_close_content_description
                         ),

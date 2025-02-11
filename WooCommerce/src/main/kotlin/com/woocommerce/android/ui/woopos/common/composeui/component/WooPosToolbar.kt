@@ -6,10 +6,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -49,7 +49,7 @@ fun WooPosToolbar(
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
                 contentDescription = stringResource(R.string.woopos_toolbar_icon_content_description),
-                tint = MaterialTheme.colors.onBackground,
+                tint = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -57,8 +57,8 @@ fun WooPosToolbar(
         val iconTitlePadding = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = titleText,
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier

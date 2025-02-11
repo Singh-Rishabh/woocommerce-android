@@ -28,10 +28,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,6 +65,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
@@ -94,7 +95,7 @@ private fun WooPosCartScreen(
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.surface)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         val (topMargin, toolbar, body, checkoutButton, overlay) = createRefs()
 
@@ -199,7 +200,7 @@ private fun CartOverlay(
         modifier = modifier
             .fillMaxSize()
             .background(
-                color = MaterialTheme.colors.background.copy(alpha = cartOverlayIntensityAnimated),
+                color = MaterialTheme.colorScheme.background.copy(alpha = cartOverlayIntensityAnimated),
             )
     )
 }
@@ -220,9 +221,9 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         Text(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
     }
@@ -328,7 +329,7 @@ private fun CartToolbar(
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
                     contentDescription = stringResource(R.string.woopos_cart_back_content_description),
-                    tint = MaterialTheme.colors.onBackground,
+                    tint = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier.size(iconSize)
                 )
             }
@@ -336,8 +337,8 @@ private fun CartToolbar(
 
         Text(
             text = stringResource(R.string.woopos_cart_title),
-            style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier
@@ -364,8 +365,8 @@ private fun CartToolbar(
             val itemsEndMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
             Text(
                 text = it,
-                style = MaterialTheme.typography.body2,
-                color = MaterialTheme.colors.secondaryVariant.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = WooPosColors.Gray60.copy(alpha = 0.6f),
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 1,
                 modifier = Modifier
@@ -455,7 +456,7 @@ private fun ProductItem(
                 ) {
                     Text(
                         text = item.name,
-                        style = MaterialTheme.typography.body1,
+                        style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -465,18 +466,18 @@ private fun ProductItem(
                     if (item.description.isNotNullOrEmpty()) {
                         Text(
                             text = item.description!!,
-                            style = MaterialTheme.typography.body1,
+                            style = MaterialTheme.typography.bodyLarge,
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
-                            color = MaterialTheme.colors.secondaryVariant,
+                            color = WooPosColors.Gray60,
                             modifier = Modifier.clearAndSetSemantics { }
                         )
                         Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
                     }
                     Text(
                         text = item.price,
-                        style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.secondaryVariant,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = WooPosColors.Gray60,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
                 }
@@ -496,7 +497,7 @@ private fun ProductItem(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                            tint = MaterialTheme.colors.onBackground,
+                            tint = MaterialTheme.colorScheme.onBackground,
                             contentDescription = null,
                         )
                     }

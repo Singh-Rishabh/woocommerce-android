@@ -16,16 +16,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -144,9 +143,9 @@ private fun MainItemsList(
             val titleColor = when (state.value) {
                 is WooPosItemsViewState.Loading,
                 is WooPosItemsViewState.Empty,
-                is WooPosItemsViewState.Error -> MaterialTheme.colors.onSurface.copy(alpha = 0.6f)
+                is WooPosItemsViewState.Error -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
 
-                is WooPosItemsViewState.Content -> MaterialTheme.colors.onSurface
+                is WooPosItemsViewState.Content -> MaterialTheme.colorScheme.onSurface
             }
             ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
 
@@ -209,7 +208,7 @@ private fun ItemsToolbar(
     ) {
         Text(
             text = stringResource(id = R.string.woopos_products_screen_title),
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = titleColor,
         )
@@ -227,7 +226,7 @@ private fun ItemsToolbar(
                             contentDescription = stringResource(
                                 id = R.string.woopos_banner_simple_products_info_content_description
                             ),
-                            tint = MaterialTheme.colors.onSurface.copy(ContentAlpha.high),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
                         )
                     }
                 }

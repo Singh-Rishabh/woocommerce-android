@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -51,8 +51,8 @@ fun WooPosMoneyInputField(
     currencyPosition: WCSettingsModel.CurrencyPosition,
     decimalSeparator: String,
     numberOfDecimals: Int,
-    textStyle: TextStyle = MaterialTheme.typography.h6,
-    textColor: Color = MaterialTheme.colors.onBackground,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -160,7 +160,7 @@ fun WooPosMoneyInputField(
                     visualTransformation.filter(it)
                 }
             },
-            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             modifier = textFieldModifier,
         )
     }
@@ -172,8 +172,8 @@ fun WooPosInputField(
     onValueChange: (String) -> Unit,
     label: String = "",
     modifier: Modifier = Modifier,
-    textStyle: TextStyle = MaterialTheme.typography.h6,
-    textColor: Color = MaterialTheme.colors.onBackground,
+    textStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    textColor: Color = MaterialTheme.colorScheme.onBackground,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     contentAlignment: Alignment = Alignment.CenterStart,
@@ -212,7 +212,7 @@ fun WooPosInputField(
             keyboardActions = keyboardActions,
             keyboardOptions = keyboardOptions,
             modifier = textFieldModifier,
-            cursorBrush = SolidColor(MaterialTheme.colors.onBackground),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
         )
     }
 }
@@ -269,7 +269,7 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "longemail@gmail.com",
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.h3,
+                textStyle = MaterialTheme.typography.displaySmall,
                 contentAlignment = Alignment.Center
             )
 
@@ -278,7 +278,7 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "",
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.h3,
+                textStyle = MaterialTheme.typography.displaySmall,
                 label = "Label Label",
             )
         }

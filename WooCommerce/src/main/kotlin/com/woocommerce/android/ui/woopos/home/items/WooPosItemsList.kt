@@ -22,8 +22,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -49,6 +49,7 @@ import coil.request.ImageRequest
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
@@ -184,7 +185,7 @@ private fun ItemCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
@@ -214,7 +215,7 @@ private fun ProductInfo(item: WooPosItem) {
     ) {
         Text(
             text = item.name,
-            style = MaterialTheme.typography.h6,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
@@ -254,9 +255,9 @@ private fun ProductImage(item: WooPosItem) {
 private fun SimpleProductDetails(item: SimpleProduct) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colors.secondaryVariant
+        color = WooPosColors.Gray60
     )
 }
 
@@ -264,9 +265,9 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colors.secondaryVariant
+        color = WooPosColors.Gray60
     )
 }
 
@@ -274,9 +275,9 @@ private fun VariableProductDetails() {
 fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
-        style = MaterialTheme.typography.h6,
+        style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Normal,
-        color = MaterialTheme.colors.secondaryVariant
+        color = WooPosColors.Gray60
     )
 }
 
@@ -300,7 +301,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colors.surface,
+        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
@@ -365,17 +366,17 @@ fun ItemsEmptyList(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.h4,
+                style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = message,
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 textAlign = TextAlign.Center
             )
 
