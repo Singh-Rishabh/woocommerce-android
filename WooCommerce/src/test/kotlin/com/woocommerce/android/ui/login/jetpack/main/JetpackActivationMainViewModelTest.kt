@@ -36,7 +36,7 @@ import org.wordpress.android.fluxc.model.SiteModel
  * This is still missing tests for some scenarios, for now it covers only the connection step and its flows.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
-class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRelatedExceptions = false) {
+class JetpackActivationMainViewModelTest : BaseUnitTest() {
     private val siteUrl = "example.com"
     private val site = SiteModel().apply {
         url = siteUrl
@@ -262,9 +262,16 @@ class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRe
             assertThat(viewState).isInstanceOf(ProgressViewState::class.java)
         }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `given site not using application passwords, when starting, then require username and password`() =
         testBlocking {
+            val originalHandler = Thread.getDefaultUncaughtExceptionHandler()
+
+            // Given that we disable the catching of non-test related exceptions in BaseUnitTest, we need to use
+            // a custom handler to capture the exception thrown by the view model
+            var exception: Throwable? = null
+            Thread.setDefaultUncaughtExceptionHandler { _, e -> exception = e }
+
             setup(isJetpackInstalled = false) {
                 whenever(jetpackActivationRepository.getSiteByUrl(siteUrl)).thenReturn(
                     site.apply {
@@ -275,10 +282,9 @@ class JetpackActivationMainViewModelTest : BaseUnitTest(disableCatchingNonTestRe
                 whenever(selectedSite.connectionType).thenReturn(null)
             }
 
-            try {
-                viewModel.viewState.getOrAwaitValue()
-            } catch (e: IllegalStateException) {
-                throw e
-            }
+            assertThat(exception).isInstanceOf(IllegalArgumentException::class.java)
+
+            // Restore the original handler
+            Thread.setDefaultUncaughtExceptionHandler(originalHandler)
         }
 }
