@@ -149,7 +149,6 @@ class OrderFilterCategoriesViewModelTest : BaseUnitTest() {
             .allMatch { it.orderFilterOptions.none { it.isSelected } }
     }
 
-
     private fun allFilterOptionsAreUnselected() = currentCategoryList
         .map {
             it.orderFilterOptions.any { filterOption ->
