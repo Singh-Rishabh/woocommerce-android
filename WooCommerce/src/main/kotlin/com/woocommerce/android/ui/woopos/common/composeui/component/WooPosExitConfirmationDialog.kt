@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import kotlinx.coroutines.delay
@@ -47,7 +48,7 @@ fun WooPosExitConfirmationDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Box(
-            modifier = modifier.padding(40.dp.toAdaptivePadding())
+            modifier = modifier.padding(WooPosSpacing.XLarge.value.toAdaptivePadding())
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
@@ -57,7 +58,7 @@ fun WooPosExitConfirmationDialog(
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colors.onSurface
                 )
-                Spacer(modifier = modifier.height(16.dp.toAdaptivePadding()))
+                Spacer(modifier = modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.h5,

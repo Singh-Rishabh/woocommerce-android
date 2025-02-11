@@ -32,10 +32,10 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
 import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T
@@ -110,7 +110,7 @@ fun WooPosMoneyInputField(
         val density = LocalDensity.current
 
         val textFieldModifier = if (showLabel) {
-            Modifier.width(with(density) { labelWidth.toDp() + 4.dp })
+            Modifier.width(with(density) { labelWidth.toDp() + WooPosSpacing.XSmall.value })
         } else {
             Modifier.width(IntrinsicSize.Min)
         }
@@ -200,7 +200,7 @@ fun WooPosInputField(
 
         // that's workaround to keep cursor to the left from the label
         val textFieldModifier = if (value.isEmpty()) {
-            Modifier.width(with(density) { labelWidth.toDp() + 4.dp })
+            Modifier.width(with(density) { labelWidth.toDp() + WooPosSpacing.XSmall.value })
         } else {
             Modifier.width(IntrinsicSize.Min)
         }
@@ -221,7 +221,7 @@ fun WooPosInputField(
 @Composable
 fun WooPosMoneyInputFieldPreview() {
     WooPosTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(WooPosSpacing.Medium.value)) {
             WooPosMoneyInputField(
                 value = null,
                 onValueChange = {},
@@ -231,7 +231,7 @@ fun WooPosMoneyInputFieldPreview() {
                 numberOfDecimals = 2,
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(WooPosSpacing.Medium.value))
 
             WooPosMoneyInputField(
                 value = BigDecimal.ZERO,
@@ -242,7 +242,7 @@ fun WooPosMoneyInputFieldPreview() {
                 numberOfDecimals = 2,
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(WooPosSpacing.Medium.value))
 
             WooPosMoneyInputField(
                 value = BigDecimal.TEN,
@@ -262,7 +262,7 @@ fun WooPosInputFieldPreview() {
     WooPosTheme {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(WooPosSpacing.Medium.value)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -273,7 +273,7 @@ fun WooPosInputFieldPreview() {
                 contentAlignment = Alignment.Center
             )
 
-            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.size(WooPosSpacing.Medium.value))
 
             WooPosInputField(
                 value = "",

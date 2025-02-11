@@ -65,7 +65,10 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
@@ -98,7 +101,7 @@ private fun WooPosCartScreen(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp.toAdaptivePadding())
+                .height(WooPosSpacing.XLarge.value.toAdaptivePadding())
                 .constrainAs(topMargin) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
@@ -131,7 +134,7 @@ private fun WooPosCartScreen(
             }
 
             is WooPosCartState.Body.WithItems -> {
-                val productsTopMargin = 24.dp.toAdaptivePadding()
+                val productsTopMargin = WooPosSpacing.Large.value.toAdaptivePadding()
                 CartBodyWithItems(
                     modifier = Modifier.constrainAs(body) {
                         top.linkTo(toolbar.bottom, margin = productsTopMargin)
@@ -154,7 +157,7 @@ private fun WooPosCartScreen(
             exit = fadeOut(animationSpec = tween(300)),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp.toAdaptivePadding())
+                .padding(WooPosSpacing.Medium.value.toAdaptivePadding())
                 .constrainAs(checkoutButton) {
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
@@ -205,7 +208,7 @@ private fun CartOverlay(
 fun CartBodyEmpty(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .padding(16.dp.toAdaptivePadding()),
+            .padding(WooPosSpacing.Medium.value.toAdaptivePadding()),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -214,7 +217,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
             contentDescription = stringResource(R.string.woopos_cart_empty_content_description),
             modifier = Modifier.size(104.dp)
         )
-        Spacer(modifier = Modifier.height(32.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         Text(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
             style = MaterialTheme.typography.h6,
@@ -243,13 +246,13 @@ private fun CartBodyWithItems(
 
     WooPosLazyColumn(
         modifier = modifier
-            .padding(horizontal = 16.dp.toAdaptivePadding()),
+            .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(8.dp.toAdaptivePadding()),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(
-            top = 2.dp.toAdaptivePadding(),
-            bottom = 8.dp.toAdaptivePadding()
+            top = WooPosSpacing.XSmall.value.toAdaptivePadding(),
+            bottom = WooPosSpacing.Small.value.toAdaptivePadding()
         ),
         withBottomShadow = true,
     ) {
@@ -294,7 +297,7 @@ private fun CartToolbar(
     onBackClicked: () -> Unit
 ) {
     val iconSize = 28.dp
-    val iconTitlePadding = 16.dp.toAdaptivePadding()
+    val iconTitlePadding = WooPosSpacing.Medium.value.toAdaptivePadding()
     val titleOffset by animateDpAsState(
         targetValue = if (toolbar.backIconVisible) iconSize + iconTitlePadding else 0.dp,
         animationSpec = tween(durationMillis = 300),
@@ -320,7 +323,7 @@ private fun CartToolbar(
                         start.linkTo(parent.start)
                         centerVerticallyTo(parent)
                     }
-                    .padding(start = 8.dp.toAdaptivePadding())
+                    .padding(start = WooPosSpacing.Small.value.toAdaptivePadding())
             ) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
@@ -343,8 +346,8 @@ private fun CartToolbar(
                     centerVerticallyTo(parent)
                 }
                 .padding(
-                    start = 16.dp.toAdaptivePadding(),
-                    end = 4.dp,
+                    start = WooPosSpacing.Medium.value.toAdaptivePadding(),
+                    end = WooPosSpacing.XSmall.value,
                 )
         )
 
@@ -358,7 +361,7 @@ private fun CartToolbar(
         )
 
         toolbar.itemsCount?.let {
-            val itemsEndMargin = 16.dp.toAdaptivePadding()
+            val itemsEndMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
             Text(
                 text = it,
                 style = MaterialTheme.typography.body2,
@@ -388,7 +391,7 @@ private fun CartToolbar(
                         end.linkTo(parent.end)
                         centerVerticallyTo(parent)
                     }
-                    .padding(end = 16.dp.toAdaptivePadding()),
+                    .padding(end = WooPosSpacing.Medium.value.toAdaptivePadding()),
                 text = stringResource(R.string.woopos_clear_cart_button)
             )
         }
@@ -407,24 +410,11 @@ private fun ProductItem(
         hasAnimationStarted = true
     }
 
-    val cardElevation = 6.dp
-    val elevation by animateDpAsState(
-        targetValue = if (hasAnimationStarted) cardElevation else 0.dp,
-        animationSpec = tween(durationMillis = 150, delayMillis = 250),
-        label = "elevation"
-    )
-
     val itemContentDescription = stringResource(
         id = R.string.woopos_cart_item_content_description,
         item.name,
         item.price
     )
-
-    LaunchedEffect(elevation) {
-        if (elevation == cardElevation) {
-            onUIEvent(WooPosCartUIEvent.OnCartItemAppearanceAnimationPlayed(item))
-        }
-    }
 
     AnimatedVisibility(
         visible = hasAnimationStarted,
@@ -437,9 +427,9 @@ private fun ProductItem(
             modifier = modifier
                 .height(96.dp)
                 .semantics { contentDescription = itemContentDescription },
-            elevation = elevation,
+            elevation = WooPosElevation.Medium,
             shadowType = ShadowType.Soft,
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -458,7 +448,7 @@ private fun ProductItem(
                     modifier = Modifier.size(96.dp)
                 )
 
-                Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
                 Column(
                     modifier = Modifier.weight(1f)
@@ -492,7 +482,7 @@ private fun ProductItem(
                 }
 
                 if (canRemoveItems) {
-                    Spacer(modifier = Modifier.width(8.dp.toAdaptivePadding()))
+                    Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
                     val removeButtonContentDescription = stringResource(
                         id = R.string.woopos_remove_item_button_from_cart_content_description,
@@ -501,7 +491,7 @@ private fun ProductItem(
                     IconButton(
                         onClick = { onUIEvent(WooPosCartUIEvent.ItemRemovedFromCart(item)) },
                         modifier = Modifier
-                            .size(32.dp)
+                            .size(WooPosSpacing.XLarge.value)
                             .semantics { contentDescription = removeButtonContentDescription }
                     ) {
                         Icon(
@@ -511,7 +501,7 @@ private fun ProductItem(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
             }
         }
     }

@@ -29,7 +29,10 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
@@ -67,9 +70,9 @@ private fun WooPosPaginationErrorIndicatorContent(
     WooPosCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         backgroundColor = MaterialTheme.colors.surface,
-        elevation = 6.dp,
+        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(
@@ -77,11 +80,11 @@ private fun WooPosPaginationErrorIndicatorContent(
                 .height(112.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
                 modifier = Modifier.weight(1f)
             ) {
                 Box(
@@ -108,7 +111,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                         text = description,
                         style = MaterialTheme.typography.h5,
                         fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(top = 8.dp.toAdaptivePadding())
+                        modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding())
                     )
                 }
             }
@@ -117,7 +120,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                 text = primaryButton.text,
                 onClick = primaryButton.click,
                 modifier = Modifier
-                    .padding(end = 16.dp.toAdaptivePadding())
+                    .padding(end = WooPosSpacing.Medium.value.toAdaptivePadding())
                     .weight(0.25f),
             )
         }

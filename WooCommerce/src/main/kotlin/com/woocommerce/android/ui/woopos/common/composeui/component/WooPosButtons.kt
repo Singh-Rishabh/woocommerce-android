@@ -20,7 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 
 @Composable
@@ -36,18 +38,18 @@ fun WooPosButton(
 ) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         enabled = state == WooPosButtonState.ENABLED,
         colors = colors,
         modifier = modifier
             .fillMaxWidth()
             .height(72.dp),
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
+            defaultElevation = WooPosSpacing.None.value,
+            pressedElevation = WooPosSpacing.None.value,
+            disabledElevation = WooPosSpacing.None.value,
+            hoveredElevation = WooPosSpacing.None.value,
+            focusedElevation = WooPosSpacing.None.value
         )
     ) {
         when (state) {
@@ -78,13 +80,13 @@ fun WooPosButtonLarge(
 ) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Large.value),
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            focusedElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            disabledElevation = 0.dp
+            defaultElevation = WooPosSpacing.None.value,
+            pressedElevation = WooPosSpacing.None.value,
+            focusedElevation = WooPosSpacing.None.value,
+            hoveredElevation = WooPosSpacing.None.value,
+            disabledElevation = WooPosSpacing.None.value
         ),
         modifier = modifier
             .fillMaxWidth()
@@ -103,7 +105,7 @@ fun WooPosButtonLarge(
 fun WooPosOutlinedButtonSmall(
     modifier: Modifier = Modifier,
     text: String,
-    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(WooPosCornerRadius.Small.value),
     onClick: () -> Unit,
 ) = WooPosOutlinedButton(
     modifier = modifier,
@@ -122,7 +124,7 @@ fun WooPosOutlinedButtonSmall(
 @Composable
 fun WooPosOutlinedButton(
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(WooPosCornerRadius.Small.value),
     content: @Composable RowScope.() -> Unit,
     onClick: () -> Unit,
 ) {
@@ -136,11 +138,11 @@ fun WooPosOutlinedButton(
         ),
         shape = shape,
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
+            defaultElevation = WooPosSpacing.None.value,
+            pressedElevation = WooPosSpacing.None.value,
+            disabledElevation = WooPosSpacing.None.value,
+            hoveredElevation = WooPosSpacing.None.value,
+            focusedElevation = WooPosSpacing.None.value
         ),
         content = content
     )
@@ -158,17 +160,17 @@ fun WooPosOutlinedButton(
             .height(80.dp),
         onClick = onClick,
         border = BorderStroke(2.dp, MaterialTheme.colors.onBackground),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = Color.Transparent,
             contentColor = MaterialTheme.colors.onBackground,
         ),
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp
+            defaultElevation = WooPosSpacing.None.value,
+            pressedElevation = WooPosSpacing.None.value,
+            disabledElevation = WooPosSpacing.None.value,
+            hoveredElevation = WooPosSpacing.None.value,
+            focusedElevation = WooPosSpacing.None.value
         )
     ) {
         Text(
@@ -187,28 +189,28 @@ fun WooPosButtonsPreview() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(32.dp),
+                .padding(WooPosSpacing.XLarge.value),
         ) {
             WooPosButtonLarge(
                 text = "Button Large",
                 onClick = {},
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosOutlinedButton(
                 text = "Button Outlined Small",
                 onClick = {},
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosButton(
                 text = "Button",
                 onClick = {},
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosButton(
                 text = "Button Disabled",
@@ -216,7 +218,7 @@ fun WooPosButtonsPreview() {
                 state = WooPosButtonState.DISABLED,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosButton(
                 text = "Button Loading",
@@ -224,7 +226,7 @@ fun WooPosButtonsPreview() {
                 state = WooPosButtonState.LOADING,
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosButton(
                 text = "Button Black And White",
@@ -234,7 +236,7 @@ fun WooPosButtonsPreview() {
                 onClick = {},
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosOutlinedButton(
                 text = "Button Outlined",

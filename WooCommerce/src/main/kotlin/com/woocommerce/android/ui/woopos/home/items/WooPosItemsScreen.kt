@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
@@ -131,10 +132,10 @@ private fun MainItemsList(
             .fillMaxSize()
             .pullRefresh(pullToRefreshState)
             .padding(
-                start = 16.dp.toAdaptivePadding(),
-                end = 16.dp.toAdaptivePadding(),
-                top = 40.dp.toAdaptivePadding(),
-                bottom = 0.dp.toAdaptivePadding(),
+                start = WooPosSpacing.Medium.value.toAdaptivePadding(),
+                end = WooPosSpacing.Medium.value.toAdaptivePadding(),
+                top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
+                bottom = WooPosSpacing.None.value.toAdaptivePadding(),
             )
     ) {
         Column(
@@ -149,7 +150,7 @@ private fun MainItemsList(
             }
             ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value))
 
             when (val itemsState = state.value) {
                 is WooPosItemsViewState.Content -> {
