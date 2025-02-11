@@ -4,6 +4,7 @@
 21.8
 -----
 - [**] Improved accessibility support (handling of increased text size) in in-person payment flows [https://github.com/woocommerce/woocommerce-android/pull/13414]
+- [**] Added support for deselecting a product in the product selection screen when accessed from the order filter list.[https://github.com/woocommerce/woocommerce-android/pull/13517]
 
 
 21.7
