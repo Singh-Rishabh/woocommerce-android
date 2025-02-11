@@ -27,7 +27,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -134,8 +133,6 @@ class OrderCreateEditFormFragment :
     private var createOrderMenuItem: MenuItem? = null
     private var progressDialog: CustomProgressDialog? = null
     private var orderUpdateFailureSnackBar: Snackbar? = null
-
-    private val args: OrderCreateEditFormFragmentArgs by navArgs()
 
     override val activityAppBarStatus: AppBarStatus
         get() = AppBarStatus.Hidden

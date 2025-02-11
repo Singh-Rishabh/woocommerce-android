@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.common.wpcomwebview
+package com.woocommerce.android.ui.common.webview
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -20,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * This fragments allows loading specific pages from WordPress.com with the current user logged in.
  */
 @AndroidEntryPoint
-class WPComWebViewFragment : BaseFragment(R.layout.fragment_wpcom_webview) {
+class AuthenticatedWebViewFragment : BaseFragment(R.layout.fragment_wpcom_webview) {
     companion object {
         const val WEBVIEW_RESULT = "webview-result"
         const val WEBVIEW_DISMISSED = "webview-dismissed"
@@ -29,7 +29,7 @@ class WPComWebViewFragment : BaseFragment(R.layout.fragment_wpcom_webview) {
     override val activityAppBarStatus: AppBarStatus
         get() = AppBarStatus.Hidden
 
-    private val viewModel: WPComWebViewViewModel by viewModels()
+    private val viewModel: AuthenticatedWebViewViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return ComposeView(requireContext()).apply {
@@ -37,7 +37,7 @@ class WPComWebViewFragment : BaseFragment(R.layout.fragment_wpcom_webview) {
 
             setContent {
                 WooThemeWithBackground {
-                    WPComWebViewScreen(viewModel)
+                    AuthenticatedWebViewScreen(viewModel)
                 }
             }
         }

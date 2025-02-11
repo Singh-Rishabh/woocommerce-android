@@ -1,9 +1,15 @@
 *** PLEASE FOLLOW THIS FORMAT: [<priority indicator, more stars = higher priority>] <description> [<PR URL>]
 *** Use [*****] to indicate smoke tests of all critical flows should be run on the final APK before release (e.g. major library or targetSdk updates).
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
+21.8
+-----
+- [**] Improved accessibility support (handling of increased text size) in in-person payment flows [https://github.com/woocommerce/woocommerce-android/pull/13414]
+
+
 21.7
 -----
 - [*] Automatically select the first available order when filtering is active in the two-pane layout.[https://github.com/woocommerce/woocommerce-android/pull/13491]
+- [*] Fixed color scheme for the create botton on the order creation screen [https://github.com/woocommerce/woocommerce-android/pull/13428]
 
 21.6
 -----

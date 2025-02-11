@@ -1,9 +1,9 @@
-package com.woocommerce.android.ui.common.wpcomwebview
+package com.woocommerce.android.ui.common.webview
 
 import androidx.lifecycle.SavedStateHandle
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel.UrlComparisonMode.EQUALITY
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel.UrlComparisonMode.PARTIAL
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel.UrlComparisonMode.STARTS_WITH
+import com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel.UrlComparisonMode.EQUALITY
+import com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel.UrlComparisonMode.PARTIAL
+import com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel.UrlComparisonMode.STARTS_WITH
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ExitWithResult
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -13,12 +13,12 @@ import org.wordpress.android.fluxc.network.UserAgent
 import javax.inject.Inject
 
 @HiltViewModel
-class WPComWebViewViewModel @Inject constructor(
+class AuthenticatedWebViewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    val wpComWebViewAuthenticator: WPComWebViewAuthenticator,
+    val webViewAuthenticator: WebViewAuthenticator,
     val userAgent: UserAgent
 ) : ScopedViewModel(savedStateHandle) {
-    private val navArgs: WPComWebViewFragmentArgs by savedStateHandle.navArgs()
+    private val navArgs: AuthenticatedWebViewFragmentArgs by savedStateHandle.navArgs()
     private var isExiting = false
 
     val viewState = navArgs.let {

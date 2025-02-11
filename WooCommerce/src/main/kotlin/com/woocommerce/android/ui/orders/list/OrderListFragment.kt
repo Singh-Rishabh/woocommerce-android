@@ -596,7 +596,7 @@ class OrderListFragment :
                 is ShowOrderFilters -> showOrderFilters()
                 is OrderListViewModel.OrderListEvent.OpenPurchaseCardReaderLink -> {
                     findNavController().navigate(
-                        NavGraphMainDirections.actionGlobalWPComWebViewFragment(
+                        NavGraphMainDirections.actionGlobalAuthenticatedWebViewFragment(
                             urlToLoad = event.url,
                             title = resources.getString(event.titleRes)
                         )
