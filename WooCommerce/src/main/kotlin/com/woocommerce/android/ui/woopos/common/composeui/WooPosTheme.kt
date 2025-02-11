@@ -66,6 +66,7 @@ object WooPosColors {
     val lightCustomColorsBorder = Color(0xFFC6C6C8)
     val lightQuaternaryBackground = Color(0x14747480)
 
+    val WooPurple10 = Color(0xFFD1C1FF)
     val WooPurple40 = Color(0xFF873EFF)
     val WooPurple70 = Color(0xFF5007AA)
     val WooPurple90 = Color(0xFF2C045D)
@@ -88,13 +89,16 @@ object WooPosColors {
     val Gray60 = Color(0xFF50575E)
     val Gray70 = Color(0xFF3C434A)
     val Gray80 = Color(0xFF373A3E)
-    val Gray90 = Color(0xFF292B2E)
+    val Gray90 = Color(0xFF1D2327)
     val Gray100 = Color(0xFF101517)
 }
 
 private val LightColorScheme = lightColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
+
+    secondary = WooPosColors.WooPurple10,
+    onSecondary = WooPosColors.Gray100,
 
     primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
@@ -122,6 +126,9 @@ private val LightColorScheme = lightColorScheme(
 private val DarkColorScheme = darkColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
+
+    secondary = WooPosColors.WooPurple10,
+    onSecondary = WooPosColors.Gray100,
 
     primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
