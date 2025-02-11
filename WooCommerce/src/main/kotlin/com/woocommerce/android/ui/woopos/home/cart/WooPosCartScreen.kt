@@ -52,7 +52,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -65,9 +64,9 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButtonSmall
@@ -218,9 +217,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(32.dp.toAdaptivePadding()))
         Text(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.onSurface,
+            style = WooPosTypography.BodyLargeRegularSecondary,
             textAlign = TextAlign.Center
         )
     }
@@ -334,9 +331,7 @@ private fun CartToolbar(
 
         Text(
             text = stringResource(R.string.woopos_cart_title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = FontWeight.Bold,
+            style = WooPosTypography.HeadingPrimary,
             maxLines = 1,
             modifier = Modifier
                 .constrainAs(title) {
@@ -362,9 +357,7 @@ private fun CartToolbar(
             val itemsEndMargin = 16.dp.toAdaptivePadding()
             Text(
                 text = it,
-                style = MaterialTheme.typography.bodyMedium,
-                color = WooPosColors.Gray60.copy(alpha = 0.6f),
-                fontWeight = FontWeight.SemiBold,
+                style = WooPosTypography.BodySmallRegularTertiary,
                 maxLines = 1,
                 modifier = Modifier
                     .constrainAs(itemsCount) {
@@ -466,9 +459,8 @@ private fun ProductItem(
                 ) {
                     Text(
                         text = item.name,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold,
                         maxLines = 1,
+                        style = WooPosTypography.BodyLargeBoldPrimary,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
@@ -476,18 +468,16 @@ private fun ProductItem(
                     if (item.description.isNotNullOrEmpty()) {
                         Text(
                             text = item.description!!,
-                            style = MaterialTheme.typography.bodyLarge,
-                            maxLines = 2,
+                            style = WooPosTypography.BodySmallRegularSecondary,
+                            maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = WooPosColors.Gray60,
                             modifier = Modifier.clearAndSetSemantics { }
                         )
                         Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
                     }
                     Text(
                         text = item.price,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = WooPosColors.Gray60,
+                        style = WooPosTypography.BodySmallRegularTertiary,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
                 }

@@ -48,7 +48,7 @@ data class CustomColors(
     val homeBackground: Color,
 )
 
-object WooPosColors {
+private object WooPosColors {
     // Woo POS specific colors:
 
     // Adding missing colors from the old code to match exactly
