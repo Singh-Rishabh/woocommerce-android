@@ -1,1 +1,2 @@
-Experience a smoother WooCommerce app with enhanced tablet and landscape support, a fresh new look aligned with our branding, and faster image loading. UK users can now enjoy POS access, retry failed image uploads effortlessly, and tag product cover photos with ease. Update now for these improvements!
+We've improved WooCommerce app! This time we've fixed several bugs and focused on improving user interface. Keep your feedback falling in; it helps us figure how to improve Woo for you. Happy selling!
+
