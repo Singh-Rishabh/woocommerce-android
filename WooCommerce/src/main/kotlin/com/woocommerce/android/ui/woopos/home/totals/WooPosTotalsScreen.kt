@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.compose.LottieAnimation
@@ -46,6 +44,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCircularLoadingIndicator
@@ -219,14 +218,12 @@ private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Medium
+        style = WooPosTypography.BodyLargeRegularPrimary,
     )
     Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
-        style = MaterialTheme.typography.headlineMedium,
-        fontWeight = FontWeight.Bold
+        style = WooPosTypography.HeadingPrimary,
     )
 }
 
@@ -242,14 +239,12 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
     Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Medium
+        style = WooPosTypography.BodyLargeRegularPrimary,
     )
     Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
-        style = MaterialTheme.typography.headlineMedium,
-        fontWeight = FontWeight.Bold
+        style = WooPosTypography.HeadingPrimary,
     )
 }
 
@@ -277,15 +272,14 @@ private fun ReaderDisconnected(
 
         Text(
             text = status.title,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold
+            style = WooPosTypography.BodyXLargePrimary,
         )
 
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
 
         Text(
             text = status.subtitle,
-            style = MaterialTheme.typography.titleLarge
+            style = WooPosTypography.BodyLargeRegularPrimary,
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
@@ -328,10 +322,8 @@ private fun TotalsGrid(totals: Totals.Visible) {
         TotalsGridRow(
             textOne = stringResource(R.string.woopos_payment_total_label),
             textTwo = totals.orderTotalText,
-            styleOne = MaterialTheme.typography.headlineMedium,
-            styleTwo = MaterialTheme.typography.headlineMedium,
-            fontWeightOne = FontWeight.Medium,
-            fontWeightTwo = FontWeight.Bold,
+            styleOne = WooPosTypography.HeadingPrimary,
+            styleTwo = WooPosTypography.HeadingPrimary,
         )
     }
 }
@@ -340,10 +332,8 @@ private fun TotalsGrid(totals: Totals.Visible) {
 private fun TotalsGridRow(
     textOne: String,
     textTwo: String,
-    styleOne: TextStyle = MaterialTheme.typography.headlineSmall,
-    styleTwo: TextStyle = MaterialTheme.typography.headlineSmall,
-    fontWeightOne: FontWeight = FontWeight.Normal,
-    fontWeightTwo: FontWeight = FontWeight.Normal,
+    styleOne: TextStyle = WooPosTypography.BodyLargeRegularPrimary,
+    styleTwo: TextStyle = WooPosTypography.BodyLargeRegularPrimary,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -352,12 +342,10 @@ private fun TotalsGridRow(
         Text(
             text = textOne,
             style = styleOne,
-            fontWeight = fontWeightOne,
         )
         Text(
             text = textTwo,
             style = styleTwo,
-            fontWeight = fontWeightTwo,
         )
     }
 }
