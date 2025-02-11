@@ -6,7 +6,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.OptIn
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
@@ -138,8 +137,7 @@ class DashboardFragment :
                     DashboardContainer(
                         mainActivityViewModel = mainActivityViewModel,
                         dashboardViewModel = dashboardViewModel,
-                        blazeCampaignCreationDispatcher = blazeCampaignCreationDispatcher,
-                        windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+                        blazeCampaignCreationDispatcher = blazeCampaignCreationDispatcher
                     )
                 }
             }

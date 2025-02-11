@@ -5,7 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,14 +34,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.window.core.layout.WindowSizeClass
-import androidx.window.core.layout.WindowWidthSizeClass
 import com.woocommerce.android.R
 import com.woocommerce.android.model.DashboardWidget
 import com.woocommerce.android.ui.blaze.creation.BlazeCampaignCreationDispatcher
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedButton
+import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardCardsState
 import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardEvent.OpenRangePicker
 import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel
 import com.woocommerce.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.ConfigurableWidget
@@ -66,12 +66,12 @@ fun DashboardContainer(
     mainActivityViewModel: MainActivityViewModel,
     dashboardViewModel: DashboardViewModel,
     blazeCampaignCreationDispatcher: BlazeCampaignCreationDispatcher,
-    windowSizeClass: WindowSizeClass,
 ) {
     dashboardViewModel.dashboardCardsState.observeAsState().value?.let { state ->
 
         val pullRefreshState = rememberPullRefreshState(state.isRefreshing, dashboardViewModel::onPullToRefresh)
-        Box(Modifier.pullRefresh(pullRefreshState)) {
+        BoxWithConstraints(Modifier.pullRefresh(pullRefreshState)) {
+            val boxWithConstraintsScope = this
             DashboardWidgets(
                 widgetUiModels = state.widgets,
                 mainActivityViewModel = mainActivityViewModel,
@@ -81,14 +81,7 @@ fun DashboardContainer(
                     .fillMaxSize()
                     .background(MaterialTheme.colors.surface)
                     .padding(16.dp),
-                numberOfColumns = when (windowSizeClass.windowWidthSizeClass) {
-                    WindowWidthSizeClass.COMPACT -> 1
-                    WindowWidthSizeClass.MEDIUM -> 2
-                    WindowWidthSizeClass.EXPANDED -> 3
-                    else -> 1
-                }.coerceAtMost(
-                    maximumValue = state.widgets.filter { it.isVisible }.size
-                )
+                numberOfColumns = calculateColumnNumber(boxWithConstraintsScope.maxWidth, state)
             )
             PullRefreshIndicator(
                 refreshing = state.isRefreshing,
@@ -160,6 +153,18 @@ private fun DashboardWidgets(
         }
     }
 }
+
+@Suppress("MagicNumber")
+private fun calculateColumnNumber(
+    availableWidthInDp: Dp,
+    state: DashboardCardsState
+) = when {
+    availableWidthInDp < 600.dp -> 1 // 600dp covers 99.96% of phones in portrait
+    availableWidthInDp < 1000.dp -> 2 // 1000dp should be enough to avoid 3 columns on big phones in landscape
+    else -> 3 // 3 columns should only display on tablets in landscape
+}.coerceAtMost(
+    maximumValue = state.widgets.filter { it.isVisible }.size
+)
 
 private fun splitWidgetsIntoColumns(
     numberOfColumns: Int,
