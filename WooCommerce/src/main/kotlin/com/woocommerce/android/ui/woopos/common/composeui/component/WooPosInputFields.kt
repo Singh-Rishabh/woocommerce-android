@@ -270,7 +270,6 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "longemail@gmail.com",
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.displaySmall,
                 contentAlignment = Alignment.Center
             )
 
@@ -279,7 +278,6 @@ fun WooPosInputFieldPreview() {
             WooPosInputField(
                 value = "",
                 onValueChange = {},
-                textStyle = MaterialTheme.typography.displaySmall,
                 label = "Label Label",
             )
         }
