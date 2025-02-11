@@ -130,6 +130,9 @@ private val DarkColorScheme = darkColorScheme(
     primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
 
+    secondary = WooPosColors.WooPurple10,
+    onSecondary = WooPosColors.Gray100,
+
     secondaryContainer = WooPosColors.Black,
     onSecondaryContainer = WooPosColors.White,
 
