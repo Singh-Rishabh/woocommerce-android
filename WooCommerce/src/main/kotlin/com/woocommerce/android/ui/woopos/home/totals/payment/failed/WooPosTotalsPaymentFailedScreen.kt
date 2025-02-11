@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -54,13 +53,12 @@ fun WooPosPaymentFailedScreen(
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         Text(
             text = state.title,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold
+            style = WooPosTypography.BodyXLargePrimary,
         )
         Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
         Text(
             text = state.subtitle,
-            style = MaterialTheme.typography.titleLarge
+            style = WooPosTypography.BodyLargeRegularPrimary,
         )
         Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
         WooPosButton(
@@ -77,9 +75,7 @@ fun WooPosPaymentFailedScreen(
                     .width(604.dp),
                 content = {
                     Text(
-                        color = MaterialTheme.colorScheme.primary,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
+                        style = WooPosTypography.BodyLargeBoldPrimary,
                         text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout)
                     )
                 }
