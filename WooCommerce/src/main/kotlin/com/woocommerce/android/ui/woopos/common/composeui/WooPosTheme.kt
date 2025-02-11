@@ -89,7 +89,7 @@ object WooPosColors {
     val Gray60 = Color(0xFF50575E)
     val Gray70 = Color(0xFF3C434A)
     val Gray80 = Color(0xFF373A3E)
-    val Gray90 = Color(0xFF292B2E)
+    val Gray90 = Color(0xFF1D2327)
     val Gray100 = Color(0xFF101517)
 }
 
