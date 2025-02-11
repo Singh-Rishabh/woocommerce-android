@@ -16,6 +16,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosInputField
@@ -97,7 +99,8 @@ private fun EmailState(
             onValueChange = onEmailAddressChanged,
             label = stringResource(R.string.woopos_email_receipt_email_label),
             contentAlignment = Alignment.Center,
-            textStyle = MaterialTheme.typography.displaySmall,
+            textStyle = WooPosTypography.HeadingPrimary
+                .copy(fontWeight = FontWeight.Normal),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email
@@ -113,7 +116,7 @@ private fun EmailState(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.titleLarge,
+                style = WooPosTypography.BodyLargeRegularPrimary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(email.bottom, margin = 8.dp)
