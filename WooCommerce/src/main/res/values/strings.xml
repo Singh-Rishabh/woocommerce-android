@@ -1082,7 +1082,6 @@
     <string name="order_detail_attribution_session_page_views">Session page views</string>
     <string name="order_detail_move_to_trash">Move to trash</string>
     <string name="order_detail_trash_order_dialog_message">Do you want to move this order to the trash?</string>
-    <string name="order_detail_edit_store_currency_mismatch">Sorry, you can only edit this order on the web, as it uses %1$s, and your site\'s currency is %2$s</string>
 
     <!--
         Shipping label Refunds
@@ -4295,6 +4294,7 @@
 
     <string name="woopos_exit_confirmation_title">Exit POS</string>
     <string name="woopos_get_support_title">Get Support</string>
+    <string name="woopos_documentation_title">View Documentation</string>
     <string name="woopos_exit_dialog_confirmation_close_content_description">Close</string>
     <string name="woopos_exit_dialog_confirmation_title">Exit Point of Sale mode?</string>
     <string name="woopos_exit_dialog_confirmation_message">Any orders in progress will be lost.</string>
@@ -4499,6 +4499,14 @@
     <string name="woo_shipping_field_required_error">This field is required.</string>
     <string name="woo_shipping_fetching_countries_and_states_failed">We were unable to retrieve country and state information. Please try again.</string>
     <string name="woo_shipping_fetching_countries_and_states">Fetching countries and states.</string>
+    <string name="woo_shipping_address_verified">Address verified</string>
+    <string name="woo_shipping_address_unverified">Unverified address</string>
+    <string name="woo_shipping_address_missing_info">Missing information</string>
+
+    <string name="woo_shipping_address_validate_and_save">Validate &amp; Save</string>
+    <string name="woo_shipping_address_missing_info_hint">Add missing information</string>
+
+
     <string name="error_user_username_instead_of_email">Please log in using your WordPress.com username instead of your email address.</string>
     <string name="about_automattic_x_item_title">X</string>
 </resources>

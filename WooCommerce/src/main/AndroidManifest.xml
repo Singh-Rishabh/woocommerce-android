@@ -214,7 +214,8 @@
         <service
             android:name=".media.ProductImagesJobService"
             android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            tools:ignore="NewApi" />
 
         <!-- Provider for exposing file URIs on Android 7+ (required for camera) -->
         <provider
