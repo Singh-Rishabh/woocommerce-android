@@ -417,3 +417,45 @@ private fun InfiniteListHandler(
             }
     }
 }
+
+@WooPosPreview
+@Composable
+fun ItemListPreview() {
+    WooPosTheme {
+        WooPosItemList(WooPosItemsViewState.Content(
+            listOf(
+                SimpleProduct(id = 1, name = "Simple Product", price = "$10.00", imageUrl = ""),
+                VariableProduct(id = 2, name = "Variable Product", price = "$10.00", "", 1, listOf()),
+                Variation(3, "Variation", 0, "$10", ""),
+
+                ),
+            BannerState(
+                false,
+                R.string.woopos_banner_simple_products_only_title,
+                R.string.woopos_banner_simple_products_only_message,
+                R.drawable.info
+            ),
+        ),
+            listState = LazyListState(),
+            onItemClicked = {},
+            onEndOfProductsListReached = {},
+            onErrorWhilePaginating = {}
+        )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun EmptyListPreview() {
+    WooPosTheme {
+        ItemsEmptyList("Empty List", "This list is empty", "")
+    }
+}
+
+@WooPosPreview
+@Composable
+fun LoadingListPreview() {
+    WooPosTheme{
+        ItemsLoadingIndicator(10)
+    }
+}
