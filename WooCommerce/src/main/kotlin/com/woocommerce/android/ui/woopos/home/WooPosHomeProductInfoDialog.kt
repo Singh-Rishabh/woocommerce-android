@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -51,6 +51,7 @@ fun WooPosProductInfoDialog(
     ) {
         Box(
             modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceBright)
                 .padding(40.dp.toAdaptivePadding())
                 .semantics(mergeDescendants = true) {
                     contentDescription = dialogContentDescription
@@ -106,7 +107,7 @@ fun WooPosProductInfoDialog(
                         Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .background(
-                                color = WooPosTheme.colors.dialogSubtitleHighlightBackground
+                                color = MaterialTheme.colorScheme.surfaceDim
                             )
                             .padding(24.dp.toAdaptivePadding()),
                         contentAlignment = Alignment.Center,
@@ -125,7 +126,7 @@ fun WooPosProductInfoDialog(
                         }
                     }
                     Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
-                    OutlinedButton(
+                    Button(
                         onClick = {
                             onDismissRequest()
                         },
