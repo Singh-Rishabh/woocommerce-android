@@ -84,7 +84,7 @@ class WooPosToolbarViewModelTest {
                     listOf(
                         WooPosToolbarState.Menu.MenuItem(
                             title = R.string.woopos_documentation_title,
-                            icon = R.drawable.ic_woo_pos_info,
+                            icon = R.drawable.woo_pos_info_ic,
                         ),
                         WooPosToolbarState.Menu.MenuItem(
                             title = R.string.woopos_get_support_title,

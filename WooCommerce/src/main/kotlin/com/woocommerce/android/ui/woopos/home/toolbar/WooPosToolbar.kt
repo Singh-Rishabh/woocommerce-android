@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -249,7 +250,7 @@ private fun PopUpMenu(
     onClick: (Menu.MenuItem) -> Unit
 ) {
     WooPosCard(
-        modifier = modifier.width(254.dp),
+        modifier = modifier.width(IntrinsicSize.Max),
         elevation = TOOLBAR_ELEVATION,
     ) {
         Column {
@@ -491,7 +492,7 @@ fun PreviewWooPosFloatingToolbarStatusConnectedWithMenu() {
                     listOf(
                         Menu.MenuItem(
                             title = R.string.woopos_documentation_title,
-                            icon = R.drawable.ic_woo_pos_info
+                            icon = R.drawable.woo_pos_info_ic
                         ),
                         Menu.MenuItem(
                             title = R.string.woopos_exit_confirmation_title,
