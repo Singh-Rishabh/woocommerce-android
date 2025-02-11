@@ -94,7 +94,7 @@ private fun WooPosCartScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-        val (topMargin, toolbar, body, checkoutButton, overlay) = createRefs()
+        val (topMargin, toolbar, body, checkoutButton) = createRefs()
 
         Spacer(
             modifier = Modifier
@@ -167,39 +167,7 @@ private fun WooPosCartScreen(
                 onClick = { onUIEvent(WooPosCartUIEvent.CheckoutClicked) }
             )
         }
-
-        CartOverlay(
-            modifier = Modifier.constrainAs(overlay) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                height = Dimension.fillToConstraints
-            },
-            state = state,
-        )
     }
-}
-
-@Composable
-private fun CartOverlay(
-    modifier: Modifier = Modifier,
-    state: WooPosCartState,
-) {
-    val cartOverlayIntensityAnimated by animateFloatAsState(
-        when (state.body) {
-            WooPosCartState.Body.Empty -> .6f
-            is WooPosCartState.Body.WithItems -> 0f
-        },
-        label = "cartOverlayAnimated"
-    )
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                color = MaterialTheme.colorScheme.background.copy(alpha = cartOverlayIntensityAnimated),
-            )
-    )
 }
 
 @Composable
