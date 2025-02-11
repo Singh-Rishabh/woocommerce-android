@@ -19,9 +19,6 @@
         <ignore path="**/sentry*.jar"/>
     </issue>
 
-    <issue id="IconDuplicates" severity="error">
-        <ignore path="**/login_notification_icon.webp" />
-    </issue>
     <!-- Ignore the IconLocation for the Tile preview images -->
     <issue id="IconLocation">
         <ignore path="res/drawable/tile_preview.png" />
