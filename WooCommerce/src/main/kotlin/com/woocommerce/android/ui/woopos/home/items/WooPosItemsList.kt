@@ -51,6 +51,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
@@ -58,6 +59,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Variation
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState.Content.BannerState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
@@ -307,7 +309,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = MaterialTheme.colorScheme.surfaceBright,
         elevation = 6.dp,
         shadowType = ShadowType.Soft,
     ) {
@@ -317,31 +319,16 @@ fun ItemsLoadingItem() {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(112.dp)
-                    .background(WooPosTheme.colors.onSurfaceVariantLow)
-            )
-
-            Spacer(modifier = Modifier.width(32.dp))
-
-            WooPosShimmerBox(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(30.dp)
-                    .clip(RoundedCornerShape(4.dp))
-            )
-
-            Spacer(modifier = Modifier.width(184.dp))
+            Spacer(modifier = Modifier.weight(0.17f))
 
             WooPosShimmerBox(
                 modifier = Modifier
                     .height(30.dp)
-                    .width(76.dp)
+                    .weight(0.66f)
                     .clip(RoundedCornerShape(4.dp))
             )
 
-            Spacer(modifier = Modifier.width(24.dp))
+            Spacer(modifier = Modifier.weight(0.17f))
         }
     }
 }
