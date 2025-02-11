@@ -86,9 +86,10 @@ fun DashboardContainer(
                     WindowWidthSizeClass.MEDIUM -> 2
                     WindowWidthSizeClass.EXPANDED -> 3
                     else -> 1
-                }
+                }.coerceAtMost(
+                    maximumValue = state.widgets.filter { it.isVisible }.size
+                )
             )
-
             PullRefreshIndicator(
                 refreshing = state.isRefreshing,
                 state = pullRefreshState,
