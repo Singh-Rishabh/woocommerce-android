@@ -24,13 +24,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -99,10 +99,8 @@ private fun WooPosPaymentSuccessScreen(
             val textsMargin = 8.dp.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
+                style = WooPosTypography.HeadingPrimary,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(title) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -113,10 +111,8 @@ private fun WooPosPaymentSuccessScreen(
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
             Text(
                 text = state.orderTotalText,
-                style = MaterialTheme.typography.titleLarge,
+                style = WooPosTypography.BodyLargeRegularPrimary,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Normal,
-                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
