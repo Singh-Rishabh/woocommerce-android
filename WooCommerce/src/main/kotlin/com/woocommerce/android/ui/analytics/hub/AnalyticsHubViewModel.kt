@@ -201,7 +201,7 @@ class AnalyticsHubViewModel @Inject constructor(
         trackSeeReportInteraction(card)
         selectedSite.getOrNull()?.let { site ->
             val event = if (site.isWpComStore) {
-                AnalyticsViewEvent.OpenWPComWebView(url)
+                AnalyticsViewEvent.OpenAuthenticatedWebView(url)
             } else {
                 AnalyticsViewEvent.OpenUrl(url)
             }
