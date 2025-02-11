@@ -320,7 +320,7 @@ fun ItemsLoadingItem() {
             Box(
                 modifier = Modifier
                     .size(112.dp)
-                    .background(WooPosTheme.colors.loadingSkeleton)
+                    .background(WooPosTheme.colors.onSurfaceVariantLow)
             )
 
             Spacer(modifier = Modifier.width(32.dp))
