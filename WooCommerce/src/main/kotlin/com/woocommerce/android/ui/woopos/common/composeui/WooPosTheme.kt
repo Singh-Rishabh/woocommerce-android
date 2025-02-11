@@ -108,7 +108,7 @@ private val LightColorScheme = lightColorScheme(
 
     surface = WooPosColors.Gray0,
     surfaceDim = WooPosColors.Gray80,
-    surfaceBright = WooPosColors.Gray90,
+    surfaceBright = WooPosColors.White,
 
     surfaceContainerLowest = WooPosColors.White,
     surfaceContainerLow = WooPosColors.White,
@@ -138,7 +138,7 @@ private val DarkColorScheme = darkColorScheme(
 
     surface = WooPosColors.Gray100,
     surfaceDim = WooPosColors.Gray0,
-    surfaceBright = WooPosColors.White,
+    surfaceBright = WooPosColors.Gray90,
 
     surfaceContainerLowest = WooPosColors.Gray70,
     surfaceContainerLow = WooPosColors.Gray80,
