@@ -59,7 +59,7 @@ fun WooPosBanner(
     ) {
         WooPosCard(
             shape = RoundedCornerShape(8.dp),
-            backgroundColor = MaterialTheme.colorScheme.surface,
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             elevation = 4.dp,
             modifier = Modifier
                 .fillMaxWidth()

@@ -92,7 +92,7 @@ private fun WooPosCartScreen(
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceBright)
     ) {
         val (topMargin, toolbar, body, checkoutButton) = createRefs()
 
@@ -406,6 +406,7 @@ private fun ProductItem(
             modifier = modifier
                 .height(96.dp)
                 .semantics { contentDescription = itemContentDescription },
+            backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
             elevation = elevation,
             shadowType = ShadowType.Soft,
             shape = RoundedCornerShape(8.dp),
