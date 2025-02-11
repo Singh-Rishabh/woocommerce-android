@@ -234,19 +234,27 @@ private fun ProductImage(item: WooPosItem) {
         is VariableProduct -> item.imageUrl
         is Variation -> item.imageUrl
     }
-
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .crossfade(true)
-            .build(),
-        fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-        error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-        placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.size(112.dp)
-    )
+    Box(
+        modifier = Modifier
+            .size(112.dp)
+            .background(MaterialTheme.colorScheme.surfaceDim),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_box),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+            modifier = Modifier.size(38.dp, 32.dp)
+        )
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+    }
 }
 
 @Composable

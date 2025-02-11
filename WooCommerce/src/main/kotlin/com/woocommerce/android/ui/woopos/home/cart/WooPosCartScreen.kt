@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.cart
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
@@ -42,7 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -415,18 +414,27 @@ private fun ProductItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(item.imageUrl)
-                        .crossfade(true)
-                        .build(),
-                    fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                    error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                    placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(96.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surfaceDim),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_box),
+                        contentDescription = null,
+                        colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+                        modifier = Modifier.size(38.dp, 32.dp)
+                    )
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(item.imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(96.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(16.dp.toAdaptivePadding()))
 
@@ -476,7 +484,7 @@ private fun ProductItem(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                            tint = MaterialTheme.colorScheme.onBackground,
+                            tint = WooPosTheme.colors.onSurfaceVariantHigh,
                             contentDescription = null,
                         )
                     }
