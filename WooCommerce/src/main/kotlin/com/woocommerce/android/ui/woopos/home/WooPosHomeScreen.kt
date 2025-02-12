@@ -141,7 +141,6 @@ private fun WooPosHomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
