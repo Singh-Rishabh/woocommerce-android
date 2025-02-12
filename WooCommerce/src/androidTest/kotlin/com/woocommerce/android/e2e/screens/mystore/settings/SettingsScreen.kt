@@ -45,16 +45,7 @@ class SettingsScreen : Screen {
 
     fun logOut() {
         if (!isElementCompletelyDisplayed(R.id.btn_option_logout)) {
-            // We'd like to do this:
-            //
-            // scrollTo(LOG_OUT_BUTTON)
-            //
-            // But since the merge of the dark mode UI changes, it doesn't work anymore. Reading through the test
-            // failure, it looks like it's failing because it can't find the LOG_OUT_BUTTON element. This is consistent
-            // with the behavior that required the workaround to use SELECTED_STORE.
-            //
-            // Immediately attempting a scroll solves the issue.
-            Espresso.onView(ViewMatchers.withId(R.id.btn_option_logout)).perform(NestedScrollViewExtension())
+            scrollTo(R.id.btn_option_logout)
         }
 
         waitForElementToBeDisplayed(R.id.btn_option_logout)
