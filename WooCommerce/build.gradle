@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.protobuf)
     alias(libs.plugins.fladle)
+    alias(libs.plugins.dependency.analysis)
 }
 
 fladle {
@@ -21,7 +22,7 @@ fladle {
             "notPackage com.woocommerce.android.e2e.tests.screenshot"
     ]
     devices = [
-            [ "model": "Pixel2.arm", "version": "30" ]
+            ["model": "Pixel2.arm", "version": "30"]
     ]
     localResultsDir = "$rootDir/build/instrumented-tests"
 
@@ -338,7 +339,7 @@ dependencies {
         exclude group: "com.google.protobuf", module: "protobuf-lite"
     }
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
-    kspAndroidTest(libs.google.dagger.hilt.android.compiler)
+    kspAndroidTest(libs.google.dagger.hilt.compiler)
     androidTestImplementation(libs.androidx.test.uiautomator)
 
     // Dependencies for screenshots

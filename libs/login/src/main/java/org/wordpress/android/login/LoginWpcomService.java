@@ -129,7 +129,7 @@ public class LoginWpcomService extends AutoForeground<LoginState> {
                     progress,
                     R.string.notification_login_title_in_progress,
                     R.string.notification_logging_in,
-                    R.drawable.login_notification_icon,
+                    R.drawable.ic_woo_w_notification,
                     R.color.login_notification_accent_color);
         }
 
@@ -138,7 +138,7 @@ public class LoginWpcomService extends AutoForeground<LoginState> {
                     context.getString(R.string.login_notification_channel_id),
                     R.string.notification_login_title_success,
                     R.string.notification_logged_in,
-                    R.drawable.login_notification_icon,
+                    R.drawable.ic_woo_w_notification,
                     R.color.login_notification_accent_color);
         }
 
@@ -147,13 +147,14 @@ public class LoginWpcomService extends AutoForeground<LoginState> {
                     context.getString(R.string.login_notification_channel_id),
                     R.string.notification_login_title_stopped,
                     content,
-                    R.drawable.login_notification_icon,
+                    R.drawable.ic_woo_w_notification,
                     R.color.login_notification_accent_color);
         }
     }
 
     static class OnCredentialsOK {
-        OnCredentialsOK() {}
+        OnCredentialsOK() {
+        }
     }
 
     static class TwoFactorRequested {
@@ -176,9 +177,11 @@ public class LoginWpcomService extends AutoForeground<LoginState> {
         }
     }
 
-    @Inject Dispatcher mDispatcher;
+    @Inject
+    Dispatcher mDispatcher;
 
-    @Inject LoginAnalyticsListener mAnalyticsListener;
+    @Inject
+    LoginAnalyticsListener mAnalyticsListener;
 
     private String mIdToken;
     private String mService;
