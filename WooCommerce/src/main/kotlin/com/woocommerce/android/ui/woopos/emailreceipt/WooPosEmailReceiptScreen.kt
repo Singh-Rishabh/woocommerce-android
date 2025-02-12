@@ -24,6 +24,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
@@ -89,7 +90,7 @@ private fun EmailState(
             keyboardController?.show()
         }
 
-        val standardMargin = 16.dp.toAdaptivePadding()
+        val standardMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
         val topMargin = 72.dp.toAdaptivePadding()
         val textFieldButtonMargin = 80.dp.toAdaptivePadding()
         WooPosInputField(
@@ -116,7 +117,7 @@ private fun EmailState(
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
-                    top.linkTo(email.bottom, margin = 8.dp)
+                    top.linkTo(email.bottom, margin = WooPosSpacing.Small.value)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }

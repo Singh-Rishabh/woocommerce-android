@@ -51,6 +51,9 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
@@ -73,7 +76,7 @@ fun WooPosItemList(
     onErrorWhilePaginating: @Composable () -> Unit,
 ) {
     WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
         contentPadding = PaddingValues(2.dp),
         state = listState,
     ) {
@@ -184,9 +187,8 @@ private fun ItemCard(
     WooPosCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-        elevation = 6.dp,
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(
@@ -198,7 +200,7 @@ private fun ItemCard(
         ) {
             ProductImage(item)
 
-            Spacer(modifier = Modifier.width(32.dp))
+            Spacer(modifier = Modifier.width(WooPosSpacing.XLarge.value))
 
             ProductInfo(item)
         }
@@ -210,7 +212,7 @@ private fun ProductInfo(item: WooPosItem) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(vertical = 16.dp),
+            .padding(vertical = WooPosSpacing.Medium.value),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
@@ -220,7 +222,7 @@ private fun ProductInfo(item: WooPosItem) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
         when (item) {
             is SimpleProduct -> SimpleProductDetails(item = item)
             is VariableProduct -> VariableProductDetails()
@@ -292,7 +294,7 @@ fun VariationProductDetails(item: Variation) {
 @Composable
 fun ItemsLoadingIndicator(itemsCount: Int = 10) {
     WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
         contentPadding = PaddingValues(2.dp),
     ) {
         items(itemsCount) {
@@ -300,7 +302,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
         }
 
         item {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
         }
     }
 }
@@ -308,9 +310,9 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 @Composable
 fun ItemsLoadingItem() {
     WooPosCard(
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         backgroundColor = MaterialTheme.colorScheme.surfaceBright,
-        elevation = 6.dp,
+        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(
@@ -320,12 +322,11 @@ fun ItemsLoadingItem() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.weight(0.17f))
-
             WooPosShimmerBox(
                 modifier = Modifier
-                    .height(30.dp)
                     .weight(0.66f)
-                    .clip(RoundedCornerShape(4.dp))
+                    .height(30.dp)
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
             Spacer(modifier = Modifier.weight(0.17f))
@@ -355,7 +356,7 @@ fun ItemsEmptyList(
                 contentDescription = contentDescription,
             )
 
-            Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
             Text(
                 text = title,
@@ -364,7 +365,7 @@ fun ItemsEmptyList(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             )
 
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = message,
@@ -373,7 +374,7 @@ fun ItemsEmptyList(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         }
     }
 }

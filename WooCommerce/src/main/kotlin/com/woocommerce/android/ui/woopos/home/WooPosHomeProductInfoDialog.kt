@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosDialogWrapper
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -52,7 +54,7 @@ fun WooPosProductInfoDialog(
         Box(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surfaceBright)
-                .padding(40.dp.toAdaptivePadding())
+                .padding(WooPosSpacing.XLarge.value.toAdaptivePadding())
                 .semantics(mergeDescendants = true) {
                     contentDescription = dialogContentDescription
                 },
@@ -70,8 +72,8 @@ fun WooPosProductInfoDialog(
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                     modifier = Modifier
                         .padding(
-                            top = 40.dp.toAdaptivePadding(),
-                            bottom = 16.dp.toAdaptivePadding()
+                            top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
+                            bottom = WooPosSpacing.Medium.value.toAdaptivePadding()
                         )
                         .constrainAs(header) {
                             top.linkTo(closeIcon.bottom)
@@ -94,18 +96,18 @@ fun WooPosProductInfoDialog(
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
+                        modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 16.dp.toAdaptivePadding())
+                        modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
                     Box(
                         Modifier
-                            .clip(RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(WooPosCornerRadius.Medium.value))
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceDim
                             )
@@ -125,7 +127,7 @@ fun WooPosProductInfoDialog(
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
                     Button(
                         onClick = {
                             onDismissRequest()
@@ -136,7 +138,7 @@ fun WooPosProductInfoDialog(
                                 contentDescription = primaryButtonContentDescription
                             },
                         border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
                     ) {
                         Text(
                             modifier = Modifier
