@@ -43,8 +43,10 @@ class SettingsScreen : Screen {
     }
 
     fun logOut() {
-        if (!isElementCompletelyDisplayed(R.id.btn_option_logout)) {
+        var attempts = 0
+        while (!isElementCompletelyDisplayed(R.id.btn_option_logout) && attempts < 2) {
             scrollTo(R.id.btn_option_logout)
+            attempts++
         }
 
         waitForElementToBeDisplayed(R.id.btn_option_logout)
