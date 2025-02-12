@@ -299,18 +299,15 @@ private fun ThemeDemoPagesBottomSheet(
     Column(modifier = modifier) {
         Text(
             modifier = Modifier
-                .padding(
-                    start = dimensionResource(id = dimen.major_100),
-                    top = dimensionResource(id = dimen.major_100)
-                ),
+                .padding(start = dimensionResource(id = dimen.major_100)),
             text = stringResource(id = string.theme_preview_bottom_sheet_pages_title),
             style = MaterialTheme.typography.h6,
         )
         Text(
             modifier = Modifier
                 .padding(
-                    start = dimensionResource(id = dimen.major_100),
-                    bottom = dimensionResource(id = dimen.minor_100)
+                    horizontal = dimensionResource(id = dimen.major_100),
+                    vertical = dimensionResource(id = dimen.minor_100)
                 ),
             text = stringResource(id = string.theme_preview_bottom_sheet_pages_subtitle),
             style = MaterialTheme.typography.subtitle2,
