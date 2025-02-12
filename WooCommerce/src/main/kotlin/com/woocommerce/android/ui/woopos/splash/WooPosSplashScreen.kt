@@ -39,8 +39,7 @@ fun WooPosSplashScreen(onNavigationEvent: (WooPosNavigationEvent) -> Unit) {
 @Composable
 private fun Loading() {
     Box(
-        modifier = Modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         WooPosCircularLoadingIndicator(modifier = Modifier.size(160.dp))
