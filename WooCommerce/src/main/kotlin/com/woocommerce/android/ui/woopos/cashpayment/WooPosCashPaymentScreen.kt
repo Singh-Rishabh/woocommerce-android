@@ -26,6 +26,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
@@ -107,7 +108,7 @@ private fun Collecting(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .constrainAs(total) {
-                    top.linkTo(parent.top, margin = 4.dp)
+                    top.linkTo(parent.top, margin = WooPosSpacing.XSmall.value)
                     start.linkTo(parent.start, margin = 64.dp)
                 }
         )
@@ -115,7 +116,7 @@ private fun Collecting(
         var inputText by remember { mutableStateOf(state.enteredAmount) }
 
         val marginBetweenTotalAndInput = 48.dp.toAdaptivePadding()
-        val standardMargin = 16.dp.toAdaptivePadding()
+        val standardMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
         WooPosMoneyInputField(
             modifier = Modifier
                 .focusRequester(focusRequester)
@@ -139,7 +140,7 @@ private fun Collecting(
             numberOfDecimals = state.numberOfDecimals,
         )
 
-        val smallMargin = 8.dp.toAdaptivePadding()
+        val smallMargin = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = state.changeDueText,
             style = MaterialTheme.typography.bodyLarge,

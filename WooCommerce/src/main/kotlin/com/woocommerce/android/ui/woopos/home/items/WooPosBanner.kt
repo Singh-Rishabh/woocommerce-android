@@ -30,7 +30,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
@@ -48,9 +51,9 @@ fun WooPosBanner(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
-                start = 2.dp.toAdaptivePadding(),
-                end = 2.dp.toAdaptivePadding(),
-                bottom = 16.dp.toAdaptivePadding()
+                start = WooPosSpacing.XSmall.value.toAdaptivePadding(),
+                end = WooPosSpacing.XSmall.value.toAdaptivePadding(),
+                bottom = WooPosSpacing.Medium.value.toAdaptivePadding()
             )
             .semantics {
                 contentDescription = bannerContentDescription
@@ -58,15 +61,15 @@ fun WooPosBanner(
             .focusable()
     ) {
         WooPosCard(
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
             backgroundColor = MaterialTheme.colorScheme.surface,
-            elevation = 4.dp,
+            elevation = WooPosElevation.Medium,
             modifier = Modifier
                 .fillMaxWidth()
         ) {
             ConstraintLayout(
                 modifier = Modifier
-                    .padding(24.dp.toAdaptivePadding())
+                    .padding(WooPosSpacing.Large.value.toAdaptivePadding())
                     .fillMaxWidth()
             ) {
                 val (icon, header, description, close) = createRefs()
@@ -97,8 +100,8 @@ fun WooPosBanner(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier
                         .padding(
-                            start = 32.dp.toAdaptivePadding(),
-                            bottom = 8.dp.toAdaptivePadding()
+                            start = WooPosSpacing.XLarge.value.toAdaptivePadding(),
+                            bottom = WooPosSpacing.Small.value.toAdaptivePadding()
                         )
                         .constrainAs(header) {
                             top.linkTo(parent.top)
@@ -125,8 +128,8 @@ fun WooPosBanner(
                             width = Dimension.fillToConstraints
                         }
                         .padding(
-                            start = 24.dp.toAdaptivePadding(),
-                            end = 18.dp.toAdaptivePadding()
+                            start = WooPosSpacing.Large.value.toAdaptivePadding(),
+                            end = WooPosSpacing.Medium.value.toAdaptivePadding()
                         )
                 ) {
                     Text(
@@ -135,9 +138,9 @@ fun WooPosBanner(
                                 onLearnMore()
                             }
                             .padding(
-                                start = 8.dp.toAdaptivePadding(),
-                                top = 8.dp.toAdaptivePadding(),
-                                bottom = 8.dp.toAdaptivePadding(),
+                                start = WooPosSpacing.Small.value.toAdaptivePadding(),
+                                top = WooPosSpacing.Small.value.toAdaptivePadding(),
+                                bottom = WooPosSpacing.Small.value.toAdaptivePadding(),
                             ),
                         text = annotatedText,
                         style = MaterialTheme.typography.bodyLarge,
@@ -156,7 +159,7 @@ fun WooPosBanner(
                     onClick = { onClose() }
                 ) {
                     Icon(
-                        modifier = Modifier.size(32.dp),
+                        modifier = Modifier.size(WooPosSpacing.XLarge.value),
                         imageVector = Icons.Default.Close,
                         tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         contentDescription = stringResource(
