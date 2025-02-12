@@ -5,7 +5,6 @@ import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers
 import com.woocommerce.android.R
-import com.woocommerce.android.e2e.helpers.util.NestedScrollViewExtension
 import com.woocommerce.android.e2e.helpers.util.Screen
 import com.woocommerce.android.e2e.screens.moremenu.MoreMenuScreen
 
