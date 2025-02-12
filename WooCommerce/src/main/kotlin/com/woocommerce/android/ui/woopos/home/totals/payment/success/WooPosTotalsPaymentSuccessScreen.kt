@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -101,8 +102,10 @@ private fun WooPosPaymentSuccessScreen(
             val textsMargin = WooPosSpacing.Small.value.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
-                style = WooPosTypography.HeadingPrimary,
+                style = WooPosTypography.Heading,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.constrainAs(title) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -113,7 +116,8 @@ private fun WooPosPaymentSuccessScreen(
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
             Text(
                 text = state.orderTotalText,
-                style = WooPosTypography.BodyLargeRegularPrimary,
+                style = WooPosTypography.BodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)

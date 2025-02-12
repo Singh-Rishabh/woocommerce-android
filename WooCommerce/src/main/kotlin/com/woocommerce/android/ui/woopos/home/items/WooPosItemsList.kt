@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -214,7 +215,8 @@ private fun ProductInfo(item: WooPosItem) {
     ) {
         Text(
             text = item.name,
-            style = WooPosTypography.BodyLargeBoldPrimary,
+            style = WooPosTypography.BodyLarge,
+            fontWeight = FontWeight.Bold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -253,7 +255,9 @@ private fun ProductImage(item: WooPosItem) {
 private fun SimpleProductDetails(item: SimpleProduct) {
     Text(
         text = item.price,
-        style = WooPosTypography.BodyLargeRegularTertiary,
+        style = WooPosTypography.BodyLarge,
+        fontWeight = FontWeight.Normal,
+        color = WooPosTheme.colors.onSurfaceVariantLow,
     )
 }
 
@@ -261,7 +265,8 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
-        style = WooPosTypography.BodyLargeRegularTertiary,
+        style = WooPosTypography.BodyLarge,
+        color = WooPosTheme.colors.onSurfaceVariantLow,
     )
 }
 
@@ -269,7 +274,8 @@ private fun VariableProductDetails() {
 fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
-        style = WooPosTypography.BodyLargeRegularTertiary,
+        style = WooPosTypography.BodyLarge,
+        color = WooPosTheme.colors.onSurfaceVariantLow,
     )
 }
 
@@ -358,14 +364,16 @@ fun ItemsEmptyList(
 
             Text(
                 text = title,
-                style = WooPosTypography.HeadingPrimary,
+                style = WooPosTypography.Heading,
+                fontWeight = FontWeight.Bold,
             )
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = message,
-                style = WooPosTypography.BodyXLargeSecondary,
+                style = WooPosTypography.BodyXLarge,
+                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
 

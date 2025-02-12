@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
@@ -57,7 +58,9 @@ fun WooPosToolbar(
         val iconTitlePadding = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = titleText,
-            style = WooPosTypography.HeadingPrimary,
+            style = WooPosTypography.Heading,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier
                 .constrainAs(title) {

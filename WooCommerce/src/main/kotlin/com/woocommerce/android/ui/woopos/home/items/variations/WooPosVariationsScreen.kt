@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -236,7 +237,9 @@ private fun VariationsToolbar(
 
         Text(
             text = variableProductData.name,
-            style = WooPosTypography.HeadingPrimary,
+            style = WooPosTypography.Heading,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.constrainAs(productName) {
                 start.linkTo(backButton.end, margin = WooPosSpacing.Small.value)
                 top.linkTo(parent.top, margin = WooPosSpacing.Small.value)

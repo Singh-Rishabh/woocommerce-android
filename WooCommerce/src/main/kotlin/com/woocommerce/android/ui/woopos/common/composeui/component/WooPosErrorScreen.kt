@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
@@ -61,14 +62,15 @@ fun WooPosErrorScreen(
 
             Text(
                 text = message,
-                style = WooPosTypography.HeadingPrimary
+                style = WooPosTypography.Heading,
+                fontWeight = FontWeight.Bold,
             )
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = reason,
-                style = WooPosTypography.BodyLargeRegularPrimary,
+                style = WooPosTypography.BodyLarge,
             )
             Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         }

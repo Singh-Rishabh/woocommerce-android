@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -95,7 +96,9 @@ fun WooPosBanner(
 
                 Text(
                     text = title,
-                    style = WooPosTypography.BodyXLargePrimary,
+                    style = WooPosTypography.BodyXLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(
                             start = WooPosSpacing.XLarge.value.toAdaptivePadding(),
@@ -141,7 +144,8 @@ fun WooPosBanner(
                                 bottom = WooPosSpacing.Small.value.toAdaptivePadding(),
                             ),
                         text = annotatedText,
-                        style = WooPosTypography.BodyMediumRegularSecondary,
+                        style = WooPosTypography.BodyMedium,
+                        color = WooPosTheme.colors.onSurfaceVariantLow,
                     )
                 }
 

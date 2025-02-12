@@ -17,7 +17,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -106,7 +105,7 @@ private fun Collecting(
 
         Text(
             text = state.totalText,
-            style = WooPosTypography.BodyLargeRegularPrimary,
+            style = WooPosTypography.BodyLarge,
             modifier = Modifier
                 .constrainAs(total) {
                     top.linkTo(parent.top, margin = WooPosSpacing.XSmall.value)
@@ -134,8 +133,9 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = WooPosTypography.BodyXLargePrimary
-                .copy(fontWeight = FontWeight.Normal),
+            textStyle = WooPosTypography.BodyXLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
@@ -145,7 +145,8 @@ private fun Collecting(
         val smallMargin = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = state.changeDueText,
-            style = WooPosTypography.BodySmallRegularSecondary,
+            style = WooPosTypography.BodySmall,
+            color = WooPosTheme.colors.onSurfaceVariantHigh,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     top.linkTo(input.bottom, margin = smallMargin)
@@ -158,7 +159,7 @@ private fun Collecting(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = WooPosTypography.BodySmallRegularSecondary,
+                style = WooPosTypography.BodySmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(changeDue.bottom, margin = smallMargin)

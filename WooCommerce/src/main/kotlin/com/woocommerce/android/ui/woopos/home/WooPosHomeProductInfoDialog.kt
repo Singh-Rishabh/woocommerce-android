@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -66,7 +67,9 @@ fun WooPosProductInfoDialog(
 
                 Text(
                     text = stringResource(id = state.header),
-                    style = WooPosTypography.HeadingPrimary,
+                    style = WooPosTypography.Heading,
+                    fontWeight = FontWeight.Bold,
+
                     modifier = Modifier
                         .padding(
                             top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
@@ -90,13 +93,13 @@ fun WooPosProductInfoDialog(
                 ) {
                     Text(
                         text = stringResource(id = state.primaryMessage),
-                        style = WooPosTypography.BodyLargeRegularPrimary,
+                        style = WooPosTypography.BodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
-                        style = WooPosTypography.BodyLargeRegularPrimary,
+                        style = WooPosTypography.BodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
@@ -115,7 +118,7 @@ fun WooPosProductInfoDialog(
                         ) {
                             Text(
                                 text = stringResource(id = state.tertiaryMessage),
-                                style = WooPosTypography.BodySmallRegularPrimary,
+                                style = WooPosTypography.BodySmall,
                                 textAlign = TextAlign.Center,
                             )
                         }
@@ -136,7 +139,8 @@ fun WooPosProductInfoDialog(
                         Text(
                             modifier = Modifier
                                 .padding(vertical = 20.dp.toAdaptivePadding()),
-                            style = WooPosTypography.BodyLargeBoldPrimary,
+                            style = WooPosTypography.BodyLarge,
+                            fontWeight = FontWeight.Bold,
                             text = stringResource(id = state.primaryButton.label)
                         )
                     }

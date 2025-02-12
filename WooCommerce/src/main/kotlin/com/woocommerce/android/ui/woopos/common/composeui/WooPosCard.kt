@@ -181,7 +181,7 @@ private fun Preview(elevation: WooPosElevation) {
                     .padding(WooPosSpacing.XLarge.value)
                     .fillMaxWidth(),
                 text = "WooPosCard",
-                style = WooPosTypography.BodyLargeRegularSecondary,
+                style = WooPosTypography.BodyLarge,
                 textAlign = TextAlign.Center,
             )
         }

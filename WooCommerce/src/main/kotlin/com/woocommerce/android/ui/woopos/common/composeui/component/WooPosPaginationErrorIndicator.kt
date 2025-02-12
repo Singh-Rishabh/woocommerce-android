@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
@@ -100,15 +101,16 @@ private fun WooPosPaginationErrorIndicatorContent(
                         tint = Color.Unspecified,
                     )
                 }
-                Spacer(modifier = Modifier.width(18.dp))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))
                 Column {
                     Text(
                         text = message,
-                        style = WooPosTypography.BodyLargeBoldPrimary,
+                        style = WooPosTypography.BodyLarge,
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = description,
-                        style = WooPosTypography.BodyMediumRegularPrimary,
+                        style = WooPosTypography.BodyMedium,
                         modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding()),
                     )
                 }

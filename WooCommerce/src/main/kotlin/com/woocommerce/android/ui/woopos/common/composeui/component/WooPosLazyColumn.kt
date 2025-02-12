@@ -107,7 +107,8 @@ fun WooPosLazyColumnPreview() {
                         modifier = Modifier
                             .height(64.dp)
                             .fillMaxWidth(),
-                        style = WooPosTypography.BodyLargeRegularSecondary,
+                        style = WooPosTypography.BodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
