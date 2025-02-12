@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -31,7 +32,7 @@ fun WooPosToolbar(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 40.dp.toAdaptivePadding())
+            .padding(top = WooPosSpacing.XLarge.value.toAdaptivePadding())
             .height(40.dp)
     ) {
         val (backButton, title) = createRefs()
@@ -43,7 +44,7 @@ fun WooPosToolbar(
                     top.linkTo(parent.top)
                     centerVerticallyTo(parent)
                 }
-                .padding(start = 8.dp.toAdaptivePadding())
+                .padding(start = WooPosSpacing.Small.value.toAdaptivePadding())
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
@@ -53,7 +54,7 @@ fun WooPosToolbar(
             )
         }
 
-        val iconTitlePadding = 8.dp.toAdaptivePadding()
+        val iconTitlePadding = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = titleText,
             style = WooPosTypography.HeadingPrimary,

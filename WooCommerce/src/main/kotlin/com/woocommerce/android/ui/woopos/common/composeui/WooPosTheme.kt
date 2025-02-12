@@ -19,7 +19,7 @@ data class CustomColors(
     val shadow: Color = WooPosColors.Black,
 
     val success: Color = WooPosColors.VividGreen,
-    val onSuccess: Color = WooPosColors.White,
+    val onSuccess: Color = WooPosColors.Gray100,
 
     val alert: Color = WooPosColors.Amber,
     val onAlert: Color = WooPosColors.White,
@@ -32,10 +32,6 @@ data class CustomColors(
 
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
-
-    val fontPrimary: Color,
-    val fontSecondary: Color,
-    val fontTertiary: Color,
 
     val totalsBackground: Color,
     val totalsErrorBackground: Color,
@@ -66,6 +62,7 @@ private object WooPosColors {
     val lightCustomColorsBorder = Color(0xFFC6C6C8)
     val lightQuaternaryBackground = Color(0x14747480)
 
+    val WooPurple10 = Color(0xFFD1C1FF)
     val WooPurple40 = Color(0xFF873EFF)
     val WooPurple70 = Color(0xFF5007AA)
     val WooPurple90 = Color(0xFF2C045D)
@@ -88,13 +85,16 @@ private object WooPosColors {
     val Gray60 = Color(0xFF50575E)
     val Gray70 = Color(0xFF3C434A)
     val Gray80 = Color(0xFF373A3E)
-    val Gray90 = Color(0xFF292B2E)
+    val Gray90 = Color(0xFF1D2327)
     val Gray100 = Color(0xFF101517)
 }
 
 private val LightColorScheme = lightColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
+
+    secondary = WooPosColors.WooPurple10,
+    onSecondary = WooPosColors.Gray100,
 
     primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
@@ -103,8 +103,8 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = WooPosColors.White,
 
     surface = WooPosColors.Gray0,
-    surfaceDim = WooPosColors.Gray80,
-    surfaceBright = WooPosColors.Gray90,
+    surfaceDim = WooPosColors.Gray0,
+    surfaceBright = WooPosColors.White,
 
     surfaceContainerLowest = WooPosColors.White,
     surfaceContainerLow = WooPosColors.White,
@@ -123,6 +123,9 @@ private val DarkColorScheme = darkColorScheme(
     primary = WooPosColors.WooPurple40,
     onPrimary = Color.White,
 
+    secondary = WooPosColors.WooPurple10,
+    onSecondary = WooPosColors.Gray100,
+
     primaryContainer = WooPosColors.WooPurple40,
     onPrimaryContainer = WooPosColors.White,
 
@@ -130,8 +133,8 @@ private val DarkColorScheme = darkColorScheme(
     onSecondaryContainer = WooPosColors.White,
 
     surface = WooPosColors.Gray100,
-    surfaceDim = WooPosColors.Gray0,
-    surfaceBright = WooPosColors.White,
+    surfaceDim = WooPosColors.Gray80,
+    surfaceBright = WooPosColors.Gray90,
 
     surfaceContainerLowest = WooPosColors.Gray70,
     surfaceContainerLow = WooPosColors.Gray80,
@@ -170,10 +173,6 @@ private val LightCustomColors = CustomColors(
 
     onSurfaceVariantLow = WooPosColors.Gray30,
     onSurfaceVariantHigh = WooPosColors.Gray60,
-
-    fontPrimary = WooPosColors.Black,
-    fontSecondary = WooPosColors.Gray60,
-    fontTertiary = WooPosColors.Gray20,
 )
 
 private val DarkCustomColors = CustomColors(
@@ -196,10 +195,6 @@ private val DarkCustomColors = CustomColors(
 
     onSurfaceVariantLow = WooPosColors.Gray50,
     onSurfaceVariantHigh = WooPosColors.Gray20,
-
-    fontPrimary = WooPosColors.White,
-    fontSecondary = WooPosColors.Gray20,
-    fontTertiary = WooPosColors.Gray60,
 )
 
 @Composable

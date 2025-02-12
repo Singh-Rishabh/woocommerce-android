@@ -44,7 +44,7 @@ fun WooPosCard(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(backgroundColor),
     border: BorderStroke? = null,
-    elevation: Dp = 1.dp,
+    elevation: WooPosElevation = WooPosElevation.Medium,
     shadowType: ShadowType = ShadowType.Normal,
     content: @Composable () -> Unit
 ) {
@@ -57,7 +57,7 @@ fun WooPosCard(
                     shape = shape,
                     backgroundColor = backgroundColor,
                     border = border,
-                    elevation = elevation,
+                    elevation = elevation.value,
                     shadowType = shadowType
                 )
                 .semantics(mergeDescendants = false) {
@@ -157,34 +157,28 @@ private fun Modifier.drawShadow(
 
 @WooPosPreview
 @Composable
-fun WooPosCardPreview8() {
-    Preview(elevation = 8.dp)
+fun WooPosCardPreviewSmall() {
+    Preview(elevation = WooPosElevation.Medium)
 }
 
 @WooPosPreview
 @Composable
-fun WooPosCardPreview2() {
-    Preview(elevation = 2.dp)
-}
-
-@WooPosPreview
-@Composable
-fun WooPosCardPreview4() {
-    Preview(elevation = 4.dp)
+fun WooPosCardPreviewLarge() {
+    Preview(elevation = WooPosElevation.Large)
 }
 
 @Composable
-private fun Preview(elevation: Dp) {
+private fun Preview(elevation: WooPosElevation) {
     WooPosTheme {
         WooPosCard(
-            modifier = Modifier.padding(16.dp),
-            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier.padding(WooPosSpacing.Medium.value),
+            shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
             backgroundColor = MaterialTheme.colorScheme.surface,
             elevation = elevation,
         ) {
             Text(
                 modifier = Modifier
-                    .padding(32.dp)
+                    .padding(WooPosSpacing.XLarge.value)
                     .fillMaxWidth(),
                 text = "WooPosCard",
                 style = WooPosTypography.BodyLargeRegularSecondary,

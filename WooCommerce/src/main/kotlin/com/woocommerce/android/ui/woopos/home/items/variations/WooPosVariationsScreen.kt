@@ -33,6 +33,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
@@ -112,10 +113,10 @@ private fun WooPosVariationsScreens(
             .fillMaxSize()
             .pullRefresh(pullToRefreshState)
             .padding(
-                start = 16.dp.toAdaptivePadding(),
-                end = 16.dp.toAdaptivePadding(),
-                top = 32.dp.toAdaptivePadding(),
-                bottom = 0.dp.toAdaptivePadding(),
+                start = WooPosSpacing.Medium.value.toAdaptivePadding(),
+                end = WooPosSpacing.Medium.value.toAdaptivePadding(),
+                top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
+                bottom = WooPosSpacing.None.value.toAdaptivePadding(),
             )
     ) {
         BackHandler(onBack = onBackClicked)
@@ -128,7 +129,7 @@ private fun WooPosVariationsScreens(
             )
             when (val itemsState = itemState.value) {
                 is WooPosVariationsViewState.Content -> {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
                     WooPosItemList(
                         state = itemsState,
                         listState = listState,
@@ -148,7 +149,7 @@ private fun WooPosVariationsScreens(
                 }
 
                 is WooPosVariationsViewState.Loading -> {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
                     ItemsLoadingIndicator()
                 }
 
@@ -237,8 +238,8 @@ private fun VariationsToolbar(
             text = variableProductData.name,
             style = WooPosTypography.HeadingPrimary,
             modifier = Modifier.constrainAs(productName) {
-                start.linkTo(backButton.end, margin = 8.dp)
-                top.linkTo(parent.top, margin = 8.dp)
+                start.linkTo(backButton.end, margin = WooPosSpacing.Small.value)
+                top.linkTo(parent.top, margin = WooPosSpacing.Small.value)
             }
         )
     }

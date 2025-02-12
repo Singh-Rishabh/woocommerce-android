@@ -28,7 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
@@ -79,7 +81,7 @@ private fun WooPosPaymentSuccessScreen(
         contentAlignment = Alignment.Center
     ) {
         val marginBetweenButtonAndText by animateDpAsState(
-            targetValue = if (animationStage >= AnimationStage.BUTTONS) 80.dp else 16.dp,
+            targetValue = if (animationStage >= AnimationStage.BUTTONS) 80.dp else WooPosSpacing.Medium.value,
             label = "Check mark size"
         )
         @Suppress("DestructuringDeclarationWithTooManyEntries")
@@ -96,7 +98,7 @@ private fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val textsMargin = 8.dp.toAdaptivePadding()
+            val textsMargin = WooPosSpacing.Small.value.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
                 style = WooPosTypography.HeadingPrimary,
@@ -120,7 +122,7 @@ private fun WooPosPaymentSuccessScreen(
                 }
             )
 
-            val marginBetweenButtons = 16.dp.toAdaptivePadding()
+            val marginBetweenButtons = WooPosSpacing.Medium.value.toAdaptivePadding()
             WooPosButton(
                 modifier = Modifier
                     .constrainAs(buttonNewOrder) {
@@ -169,7 +171,7 @@ private fun CheckMarkIcon(
         modifier = modifier
             .size(size)
             .shadow(
-                elevation = 4.dp,
+                elevation = WooPosElevation.Medium.value,
                 shape = CircleShape,
                 clip = false
             )

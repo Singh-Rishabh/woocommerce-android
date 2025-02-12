@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -47,7 +48,7 @@ fun WooPosExitConfirmationDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Box(
-            modifier = modifier.padding(40.dp.toAdaptivePadding())
+            modifier = modifier.padding(WooPosSpacing.XLarge.value.toAdaptivePadding())
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
@@ -55,7 +56,7 @@ fun WooPosExitConfirmationDialog(
                     text = title,
                     style = WooPosTypography.HeadingPrimary,
                 )
-                Spacer(modifier = modifier.height(16.dp.toAdaptivePadding()))
+                Spacer(modifier = modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 Text(
                     text = message,
                     style = WooPosTypography.BodyLargeRegularPrimary,

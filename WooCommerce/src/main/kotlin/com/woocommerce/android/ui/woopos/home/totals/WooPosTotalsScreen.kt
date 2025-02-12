@@ -42,7 +42,9 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
@@ -189,8 +191,8 @@ private fun TotalsLoaded(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                horizontal = 40.dp.toAdaptivePadding(),
-                                vertical = 16.dp.toAdaptivePadding()
+                                horizontal = WooPosSpacing.XLarge.value.toAdaptivePadding(),
+                                vertical = WooPosSpacing.Medium.value.toAdaptivePadding()
                             )
                             .weight(.9f),
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -198,12 +200,12 @@ private fun TotalsLoaded(
                     ) {
                         TotalsGrid(totals = state)
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                             WooPosOutlinedButton(
                                 text = stringResource(R.string.woopos_payment_take_cash_payment_label),
                                 onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
                             )
-                            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                         }
                     }
                 }
@@ -215,12 +217,12 @@ private fun TotalsLoaded(
 @Composable
 private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
     WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
-    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
         style = WooPosTypography.BodyLargeRegularPrimary,
     )
-    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
         style = WooPosTypography.HeadingPrimary,
@@ -236,12 +238,12 @@ private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStat
         clipSpec = LottieClipSpec.Markers("reader_awaiting_start", "reader_awaiting_end"),
         iterations = LottieConstants.IterateForever,
     )
-    Spacer(modifier = Modifier.height(20.dp.toAdaptivePadding()))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
     Text(
         text = readerStatus.title,
         style = WooPosTypography.BodyLargeRegularPrimary,
     )
-    Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
     Text(
         text = readerStatus.subtitle,
         style = WooPosTypography.HeadingPrimary,
@@ -255,7 +257,7 @@ private fun ReaderDisconnected(
     onUIEvent: (WooPosTotalsUIEvent) -> Unit,
 ) {
     Column(
-        modifier = modifier.padding(40.dp.toAdaptivePadding()),
+        modifier = modifier.padding(WooPosSpacing.XLarge.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
@@ -268,20 +270,20 @@ private fun ReaderDisconnected(
             tint = Color.Unspecified,
         )
 
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
         Text(
             text = status.title,
             style = WooPosTypography.BodyXLargePrimary,
         )
 
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
         Text(
             text = status.subtitle,
             style = WooPosTypography.BodyLargeRegularPrimary,
         )
-        Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         WooPosButton(
             text = status.actionButtonLabel,
             onClick = { onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked) },
@@ -296,7 +298,7 @@ private fun ReaderDisconnected(
 private fun TotalsGrid(totals: Totals.Visible) {
     Column(
         modifier = Modifier
-            .padding(24.dp.toAdaptivePadding())
+            .padding(WooPosSpacing.Large.value.toAdaptivePadding())
             .width(382.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -306,18 +308,18 @@ private fun TotalsGrid(totals: Totals.Visible) {
             textTwo = totals.orderSubtotalText,
         )
 
-        Spacer(modifier = Modifier.height(8.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
         TotalsGridRow(
             textOne = stringResource(R.string.woopos_payment_tax_label),
             textTwo = totals.orderTaxText,
         )
 
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
         HorizontalDivider(color = WooPosTheme.colors.border, thickness = 1.dp)
 
-        Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
         TotalsGridRow(
             textOne = stringResource(R.string.woopos_payment_total_label),
@@ -364,27 +366,27 @@ private fun TotalsLoading() {
         ) {
             WooPosShimmerBox(
                 modifier = Modifier
-                    .height(24.dp)
+                    .height(WooPosSpacing.Large.value)
                     .width(332.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
-            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
 
             WooPosShimmerBox(
                 modifier = Modifier
-                    .height(24.dp)
+                    .height(WooPosSpacing.Large.value)
                     .width(332.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
-            Spacer(modifier = Modifier.height(24.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
 
             WooPosShimmerBox(
                 modifier = Modifier
                     .height(40.dp)
                     .width(332.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
         }
     }
