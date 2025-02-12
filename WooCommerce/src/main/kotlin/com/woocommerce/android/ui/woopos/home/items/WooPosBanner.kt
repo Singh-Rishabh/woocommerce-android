@@ -96,7 +96,7 @@ fun WooPosBanner(
 
                 Text(
                     text = title,
-                    style = WooPosTypography.BodyXLarge,
+                    style = WooPosTypography.BodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
