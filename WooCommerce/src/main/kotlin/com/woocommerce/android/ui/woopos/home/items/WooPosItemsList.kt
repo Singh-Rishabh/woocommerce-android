@@ -257,7 +257,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
         text = item.price,
         style = WooPosTypography.BodyLarge,
         fontWeight = FontWeight.Normal,
-        color = WooPosTheme.colors.onSurfaceVariantLow,
+        color = WooPosTheme.colors.onSurfaceVariantHigh,
     )
 }
 
@@ -266,7 +266,7 @@ private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = WooPosTypography.BodyLarge,
-        color = WooPosTheme.colors.onSurfaceVariantLow,
+        color = WooPosTheme.colors.onSurfaceVariantHigh,
     )
 }
 
@@ -275,7 +275,7 @@ fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
         style = WooPosTypography.BodyLarge,
-        color = WooPosTheme.colors.onSurfaceVariantLow,
+        color = WooPosTheme.colors.onSurfaceVariantHigh,
     )
 }
 
