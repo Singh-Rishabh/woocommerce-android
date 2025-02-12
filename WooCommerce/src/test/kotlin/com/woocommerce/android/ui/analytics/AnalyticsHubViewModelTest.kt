@@ -776,7 +776,7 @@ class AnalyticsHubViewModelTest : BaseUnitTest() {
         whenever(selectedSite.getOrNull()).thenReturn(SiteModel().apply { setIsWpComStore(true) })
         sut = givenAViewModel()
         sut.onSeeReport("https://report-url", ReportCard.Revenue)
-        assertThat(sut.event.value).isInstanceOf(AnalyticsViewEvent.OpenWPComWebView::class.java)
+        assertThat(sut.event.value).isInstanceOf(AnalyticsViewEvent.OpenAuthenticatedWebView::class.java)
     }
 
     @Test
