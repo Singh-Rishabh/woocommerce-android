@@ -1,6 +1,8 @@
 package com.woocommerce.android.ui.compose.component
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -20,6 +22,7 @@ fun WCModalBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
     shape: Shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -28,6 +31,7 @@ fun WCModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         sheetState = sheetState,
+        contentWindowInsets = contentWindowInsets,
         shape = shape,
         content = content
     )
