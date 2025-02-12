@@ -23,7 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
@@ -39,8 +41,8 @@ fun WooPosErrorScreen(
 ) {
     Column(
         modifier = modifier.fillMaxSize()
-            .clip(RoundedCornerShape(16.dp))
-            .padding(32.dp.toAdaptivePadding()),
+            .clip(RoundedCornerShape(WooPosCornerRadius.Medium.value))
+            .padding(WooPosSpacing.XLarge.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
@@ -56,7 +58,7 @@ fun WooPosErrorScreen(
                 tint = Color.Unspecified,
             )
 
-            Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
             Text(
                 text = message,
@@ -64,19 +66,23 @@ fun WooPosErrorScreen(
                 fontWeight = FontWeight.SemiBold
             )
 
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
             Text(
                 text = reason,
                 style = MaterialTheme.typography.headlineSmall
             )
-            Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp, end = 16.dp, start = 16.dp)
+                .padding(
+                    top = WooPosSpacing.Medium.value,
+                    end = WooPosSpacing.Medium.value,
+                    start = WooPosSpacing.Medium.value
+                )
         ) {
             primaryButton?.let {
                 WooPosButton(
@@ -88,7 +94,7 @@ fun WooPosErrorScreen(
                 )
             }
             secondaryButton?.let {
-                Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 WooPosButton(
                     text = it.text,
                     onClick = it.click,
@@ -97,7 +103,7 @@ fun WooPosErrorScreen(
                         .height(80.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(16.dp.toAdaptivePadding()))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
         }
     }
 }

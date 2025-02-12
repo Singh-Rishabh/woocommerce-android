@@ -19,7 +19,7 @@ data class CustomColors(
     val shadow: Color = WooPosColors.Black,
 
     val success: Color = WooPosColors.VividGreen,
-    val onSuccess: Color = WooPosColors.White,
+    val onSuccess: Color = WooPosColors.Gray100,
 
     val alert: Color = WooPosColors.Amber,
     val onAlert: Color = WooPosColors.White,
@@ -233,7 +233,7 @@ fun WooPosTheme(content: @Composable () -> Unit) {
 
 @Composable
 private fun SurfacedContent(content: @Composable () -> Unit) {
-    Surface(color = MaterialTheme.colorScheme.background) {
+    Surface(color = MaterialTheme.colorScheme.surface) {
         content()
     }
 }
