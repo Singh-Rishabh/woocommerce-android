@@ -28,7 +28,7 @@ data class CustomColors(
     val onDisabledContainer: Color,
 
     val outline: Color,
-    val outlineVariable: Color,
+    val outlineVariant: Color,
 
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
@@ -173,7 +173,7 @@ private val LightCustomColors = CustomColors(
     onDisabledContainer = WooPosColors.Gray20,
 
     outline = WooPosColors.Gray40,
-    outlineVariable = WooPosColors.Gray5,
+    outlineVariant = WooPosColors.Gray5,
 
     onSurfaceVariantLow = WooPosColors.Gray30,
     onSurfaceVariantHigh = WooPosColors.Gray60,
@@ -199,7 +199,7 @@ private val DarkCustomColors = CustomColors(
     onDisabledContainer = WooPosColors.Gray40,
 
     outline = WooPosColors.Gray30,
-    outlineVariable = WooPosColors.Gray60,
+    outlineVariant = WooPosColors.Gray60,
 
     onSurfaceVariantLow = WooPosColors.Gray50,
     onSurfaceVariantHigh = WooPosColors.Gray20,
