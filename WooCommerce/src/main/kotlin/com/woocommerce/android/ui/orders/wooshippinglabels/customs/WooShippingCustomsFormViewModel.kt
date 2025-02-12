@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
@@ -98,14 +99,16 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val restrictionType: RestrictionType = RestrictionType.NONE,
         val otherRestrictionInput: InputValue = InputValue.EMPTY,
         val itnValue: InputValue = InputValue.EMPTY,
-        val returnToSenderChecked: Boolean = false,
-        val isAddCustomsButtonEnabled: Boolean = false
+        val returnToSenderChecked: Boolean = false
     ) : Parcelable {
         val shouldDisplayContentTypeInput: Boolean
             get() = contentType == ContentType.OTHER
 
         val shouldDisplayRestrictionTypeInput: Boolean
             get() = restrictionType == RestrictionType.OTHER
+
+        val isAddCustomsButtonEnabled: Boolean
+            get() = itnValue is InputValue.Data
     }
 
     @Parcelize
