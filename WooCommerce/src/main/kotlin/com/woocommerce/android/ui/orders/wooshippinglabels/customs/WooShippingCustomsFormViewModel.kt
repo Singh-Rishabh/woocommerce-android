@@ -108,7 +108,9 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             get() = restrictionType == RestrictionType.OTHER
 
         val isAddCustomsButtonEnabled: Boolean
-            get() = itnValue is InputValue.Data
+            get() = itnValue is InputValue.Data &&
+                (contentType != ContentType.OTHER || otherContentInput is InputValue.Data) &&
+                (restrictionType != RestrictionType.OTHER || otherRestrictionInput is InputValue.Data)
     }
 
     @Parcelize
