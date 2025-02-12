@@ -43,7 +43,7 @@ private fun Loading() {
             .background(MaterialTheme.colorScheme.surface),
         contentAlignment = Alignment.Center
     ) {
-        WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
+        WooPosCircularLoadingIndicator(modifier = Modifier.size(160.dp))
     }
 }
 
