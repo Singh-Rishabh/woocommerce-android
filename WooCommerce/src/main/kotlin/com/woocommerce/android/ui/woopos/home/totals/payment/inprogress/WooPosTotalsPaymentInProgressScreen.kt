@@ -40,7 +40,7 @@ fun WooPosPaymentInProgressScreen(
     }
     Box(
         modifier = Modifier
-            .background(color = WooPosTheme.colors.paymentProcessingBackground)
+            .background(color = MaterialTheme.colorScheme.primary)
             .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {

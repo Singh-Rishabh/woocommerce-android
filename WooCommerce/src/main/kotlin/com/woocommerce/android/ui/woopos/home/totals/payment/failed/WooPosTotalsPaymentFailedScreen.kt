@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals.payment.failed
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,7 +39,6 @@ fun WooPosPaymentFailedScreen(
     }
     Column(
         modifier = Modifier
-            .background(color = WooPosTheme.colors.homeBackground)
             .fillMaxSize()
             .padding(vertical = 96.dp.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
