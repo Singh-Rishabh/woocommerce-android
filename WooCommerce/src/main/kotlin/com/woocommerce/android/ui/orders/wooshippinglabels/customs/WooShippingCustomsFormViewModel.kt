@@ -35,18 +35,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         triggerEvent(ShowRestrictionTypeDialog(currentSelection))
     }
 
-    fun onITNChanged(newItnValue: String) {
-        val input = when {
-            itnRegex.matches(newItnValue).not() ->
-                InputValue.Error(
-                    input = newItnValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_itn_error_message
-                )
-            else -> InputValue.Data(newItnValue)
-        }
-        _viewState.update { it.copy(itnValue = input) }
-    }
-
     fun onReturnToSenderChanged(isChecked: Boolean) {
         _viewState.update {
             it.copy(returnToSenderChecked = isChecked)
@@ -89,6 +77,18 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         _viewState.update {
             it.copy(otherRestrictionInput = input)
         }
+    }
+
+    fun onITNChanged(newItnValue: String) {
+        val input = when {
+            itnRegex.matches(newItnValue).not() ->
+                InputValue.Error(
+                    input = newItnValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_itn_error_message
+                )
+            else -> InputValue.Data(newItnValue)
+        }
+        _viewState.update { it.copy(itnValue = input) }
     }
 
     @Parcelize
