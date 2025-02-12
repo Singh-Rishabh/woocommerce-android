@@ -53,8 +53,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
@@ -188,7 +188,8 @@ private fun ItemCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,        elevation = WooPosElevation.Medium,
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
         Row(
@@ -410,20 +411,20 @@ private fun InfiniteListHandler(
 @Composable
 fun ItemListPreview() {
     WooPosTheme {
-        WooPosItemList(WooPosItemsViewState.Content(
-            listOf(
-                SimpleProduct(id = 1, name = "Simple Product", price = "$10.00", imageUrl = ""),
-                VariableProduct(id = 2, name = "Variable Product", price = "$10.00", "", 1, listOf()),
-                Variation(3, "Variation", 0, "$10", ""),
-
+        WooPosItemList(
+            WooPosItemsViewState.Content(
+                listOf(
+                    SimpleProduct(id = 1, name = "Simple Product", price = "$10.00", imageUrl = ""),
+                    VariableProduct(id = 2, name = "Variable Product", price = "$10.00", "", 1, listOf()),
+                    Variation(3, "Variation", 0, "$10", ""),
                 ),
-            BannerState(
-                false,
-                R.string.woopos_banner_simple_products_only_title,
-                R.string.woopos_banner_simple_products_only_message,
-                R.drawable.info
+                BannerState(
+                    false,
+                    R.string.woopos_banner_simple_products_only_title,
+                    R.string.woopos_banner_simple_products_only_message,
+                    R.drawable.info
+                ),
             ),
-        ),
             listState = LazyListState(),
             onItemClicked = {},
             onEndOfProductsListReached = {},
@@ -443,7 +444,7 @@ fun EmptyListPreview() {
 @WooPosPreview
 @Composable
 fun LoadingListPreview() {
-    WooPosTheme{
+    WooPosTheme {
         ItemsLoadingIndicator(10)
     }
 }
