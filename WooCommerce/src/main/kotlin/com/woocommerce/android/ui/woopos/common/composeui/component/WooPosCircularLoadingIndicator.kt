@@ -36,7 +36,9 @@ fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
         label = "RotationAnimation"
     )
 
-    val backgroundColor = MaterialTheme.colorScheme.primary
+    val spinnerPrimaryColor = MaterialTheme.colorScheme.primary
+    val spinnerSecondaryColor = MaterialTheme.colorScheme.secondary
+
     Canvas(
         modifier = modifier
             .graphicsLayer {
@@ -46,13 +48,13 @@ fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
         val radius = size.width / 2
 
         drawCircle(
-            color = backgroundColor.copy(alpha = 0.5f),
+            color = spinnerSecondaryColor,
             radius = radius,
         )
 
         rotate(animatedRotation) {
             drawArc(
-                color = backgroundColor,
+                color = spinnerPrimaryColor,
                 startAngle = 0f,
                 sweepAngle = 110f,
                 useCenter = true,
