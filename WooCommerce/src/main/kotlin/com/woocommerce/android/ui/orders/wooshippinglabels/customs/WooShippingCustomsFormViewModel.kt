@@ -37,7 +37,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onITNChanged(newItnValue: String) {
         val input = when {
-            newItnValue.isEmpty() || itnRegex.matches(newItnValue).not() ->
+            itnRegex.matches(newItnValue).not() ->
                 InputValue.Error(
                     input = newItnValue,
                     errorMessageId = R.string.woo_shipping_labels_customs_itn_error_message
