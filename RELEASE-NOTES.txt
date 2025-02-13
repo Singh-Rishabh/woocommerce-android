@@ -4,6 +4,9 @@
 21.8
 -----
 
+21.6.1
+-----
+- [***] Fixed a crash on the splash screen that occurred on Android 12 devices [https://github.com/woocommerce/woocommerce-android/pull/13538]
 
 21.7
 -----
