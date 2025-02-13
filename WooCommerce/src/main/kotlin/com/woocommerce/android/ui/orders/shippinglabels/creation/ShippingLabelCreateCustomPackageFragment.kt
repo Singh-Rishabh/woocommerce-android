@@ -14,6 +14,7 @@ import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreateCustomPackageViewModel.InputName
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreateCustomPackageViewModel.PackageSuccessfullyMadeEvent
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.OnDoneButtonClickedEvent
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.PackageType.CUSTOM
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.widgets.CustomProgressDialog
 import dagger.hilt.android.AndroidEntryPoint
@@ -138,8 +139,8 @@ class ShippingLabelCreateCustomPackageFragment :
         }
 
         parentViewModel.event.observe(viewLifecycleOwner) { event ->
-            when (event) {
-                is OnDoneButtonClickedEvent -> {
+            when {
+                event is OnDoneButtonClickedEvent && event.selectedTab == CUSTOM -> {
                     ActivityUtils.hideKeyboard(activity)
                     viewModel.onCustomFormDoneMenuClicked()
                 }
