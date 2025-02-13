@@ -1,12 +1,9 @@
 package com.woocommerce.android.ui.orders.shippinglabels.creation
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,8 +24,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShippingLabelCreateServicePackageFragment :
-    BaseFragment(R.layout.fragment_shipping_label_create_service_package),
-    MenuProvider {
+    BaseFragment(R.layout.fragment_shipping_label_create_service_package) {
     @Inject lateinit var uiMessageResolver: UIMessageResolver
     private val skeletonView: SkeletonView = SkeletonView()
     private var progressDialog: CustomProgressDialog? = null
@@ -37,17 +33,8 @@ class ShippingLabelCreateServicePackageFragment :
     private val parentViewModel: ShippingLabelCreatePackageViewModel by viewModels({ requireParentFragment() })
     val viewModel: ShippingLabelCreateServicePackageViewModel by viewModels()
 
-    override fun onCreateMenu(menu: Menu, inflater: MenuInflater) {
-        menu.clear()
-        inflater.inflate(R.menu.menu_done, menu)
-        doneMenuItem = menu.findItem(R.id.menu_done)
-        doneMenuItem.isVisible = viewModel.viewStateData.liveData.value?.canSave ?: false
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        requireActivity().addMenuProvider(this, viewLifecycleOwner)
 
         val binding = FragmentShippingLabelCreateServicePackageBinding.bind(view)
         val packagesAdapter = ShippingLabelServicePackageAdapter(
@@ -122,17 +109,6 @@ class ShippingLabelCreateServicePackageFragment :
                     viewModel.onCustomFormDoneMenuClicked()
                 }
             }
-        }
-    }
-
-    override fun onMenuItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_done -> {
-                ActivityUtils.hideKeyboard(activity)
-                viewModel.onCustomFormDoneMenuClicked()
-                true
-            }
-            else -> false
         }
     }
 
