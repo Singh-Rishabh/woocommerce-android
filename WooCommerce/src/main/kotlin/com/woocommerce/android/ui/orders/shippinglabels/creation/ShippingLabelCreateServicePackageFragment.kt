@@ -6,9 +6,11 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.woocommerce.android.R
 import com.woocommerce.android.databinding.FragmentShippingLabelCreateServicePackageBinding
@@ -59,7 +61,23 @@ class ShippingLabelCreateServicePackageFragment :
             adapter = packagesAdapter
         }
 
+        setupToolbar(binding)
         setupObservers(binding, packagesAdapter)
+    }
+
+    private fun setupToolbar(binding: FragmentShippingLabelCreateServicePackageBinding) {
+        binding.toolbar.title = getString(R.string.shipping_label_package_selector_title)
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            onMenuItemSelected(menuItem)
+        }
+        binding.toolbar.navigationIcon = AppCompatResources.getDrawable(
+            requireActivity(),
+            R.drawable.ic_back_24dp
+        )
+        binding.toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+        binding.toolbar.inflateMenu(R.menu.menu_done)
     }
 
     private fun setupObservers(
