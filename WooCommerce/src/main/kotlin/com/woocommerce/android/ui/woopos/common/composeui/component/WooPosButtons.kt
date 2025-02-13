@@ -89,7 +89,7 @@ fun WooPosOutlinedButton(
     state: WooPosButtonState = WooPosButtonState.ENABLED,
     onClick: () -> Unit,
 ) {
-    val borderColor = if (state == WooPosButtonState.ENABLED) {
+    val borderColor = if (state == WooPosButtonState.ENABLED || state == WooPosButtonState.LOADING) {
         MaterialTheme.colorScheme.inverseSurface
     } else {
         WooPosTheme.colors.disabledContainer
@@ -154,10 +154,15 @@ fun Button(
     state: WooPosButtonState = WooPosButtonState.ENABLED,
     onClick: () -> Unit,
 ) {
+    val onClickLocal = if (state == WooPosButtonState.ENABLED) {
+        onClick
+    } else {
+        {}
+    }
     Button(
-        onClick = onClick,
+        onClick = onClickLocal,
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        enabled = state == WooPosButtonState.ENABLED,
+        enabled = state == WooPosButtonState.ENABLED || state == WooPosButtonState.LOADING,
         border = border,
         colors = colors,
         modifier = modifier
