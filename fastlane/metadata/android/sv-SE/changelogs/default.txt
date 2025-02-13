@@ -1,2 +1,0 @@
-21.6:
-Upplev en smidigare WooCommerce-app med förbättrat stöd för surfplattor och liggande läge, ett fräscht nytt utseende anpassat till vårt varumärke och snabbare inläsning av bilder. Användare i Storbritannien kan nu ta del av POS-åtkomst, göra om misslyckade bilduppladdningar utan ansträngning och med lätthet sätta etiketter på produktomslagsfoton. Uppdatera nu för dessa förbättringar.
