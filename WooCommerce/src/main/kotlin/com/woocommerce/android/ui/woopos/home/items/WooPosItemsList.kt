@@ -32,10 +32,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.contentDescription
@@ -52,6 +53,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
@@ -60,6 +62,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Variation
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState.Content.BannerState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 
@@ -185,7 +188,7 @@ private fun ItemCard(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
@@ -236,19 +239,27 @@ private fun ProductImage(item: WooPosItem) {
         is VariableProduct -> item.imageUrl
         is Variation -> item.imageUrl
     }
-
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(imageUrl)
-            .crossfade(true)
-            .build(),
-        fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-        error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-        placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier.size(112.dp)
-    )
+    Box(
+        modifier = Modifier
+            .size(112.dp)
+            .background(MaterialTheme.colorScheme.surfaceDim),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_box),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+            modifier = Modifier.size(38.dp, 32.dp)
+        )
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(imageUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
+            contentScale = ContentScale.Crop
+        )
+    }
 }
 
 @Composable
@@ -301,7 +312,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = MaterialTheme.colorScheme.surfaceBright,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
@@ -311,31 +322,15 @@ fun ItemsLoadingItem() {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(112.dp)
-                    .background(WooPosTheme.colors.loadingSkeleton)
-            )
-
-            Spacer(modifier = Modifier.width(WooPosSpacing.XLarge.value))
-
+            Spacer(modifier = Modifier.weight(0.17f))
             WooPosShimmerBox(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.66f)
                     .height(30.dp)
                     .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
             )
 
-            Spacer(modifier = Modifier.width(184.dp))
-
-            WooPosShimmerBox(
-                modifier = Modifier
-                    .height(30.dp)
-                    .width(76.dp)
-                    .clip(RoundedCornerShape(WooPosCornerRadius.Small.value))
-            )
-
-            Spacer(modifier = Modifier.width(WooPosSpacing.Large.value))
+            Spacer(modifier = Modifier.weight(0.17f))
         }
     }
 }
@@ -409,5 +404,47 @@ private fun InfiniteListHandler(
             .collect {
                 onEndOfProductsListReached()
             }
+    }
+}
+
+@WooPosPreview
+@Composable
+fun ItemListPreview() {
+    WooPosTheme {
+        WooPosItemList(
+            WooPosItemsViewState.Content(
+                listOf(
+                    SimpleProduct(id = 1, name = "Simple Product", price = "$10.00", imageUrl = ""),
+                    VariableProduct(id = 2, name = "Variable Product", price = "$10.00", "", 1, listOf()),
+                    Variation(3, "Variation", 0, "$10", ""),
+                ),
+                BannerState(
+                    false,
+                    R.string.woopos_banner_simple_products_only_title,
+                    R.string.woopos_banner_simple_products_only_message,
+                    R.drawable.info
+                ),
+            ),
+            listState = LazyListState(),
+            onItemClicked = {},
+            onEndOfProductsListReached = {},
+            onErrorWhilePaginating = {}
+        )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun EmptyListPreview() {
+    WooPosTheme {
+        ItemsEmptyList("Empty List", "This list is empty", "")
+    }
+}
+
+@WooPosPreview
+@Composable
+fun LoadingListPreview() {
+    WooPosTheme {
+        ItemsLoadingIndicator(10)
     }
 }

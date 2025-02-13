@@ -141,7 +141,7 @@ private fun WooPosHomeScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(WooPosTheme.colors.homeBackground)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -154,7 +154,7 @@ private fun WooPosHomeScreen(
             )
             WooPosHomeScreenCart(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MaterialTheme.colorScheme.surfaceBright)
                     .width(cartWidthDp)
             )
             WooPosHomeScreenTotals(
