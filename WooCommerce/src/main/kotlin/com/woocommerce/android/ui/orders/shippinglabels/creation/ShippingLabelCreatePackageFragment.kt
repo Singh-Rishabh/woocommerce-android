@@ -52,10 +52,16 @@ class ShippingLabelCreatePackageFragment : BaseFragment(R.layout.fragment_shippi
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
-        binding.toolbar.setOnMenuItemClickListener {
-            viewModel.onDoneButtonClicked()
-            true
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.menu_done -> {
+                    viewModel.onDoneButtonClicked()
+                    true
+                }
+                else -> false
+            }
         }
+        binding.toolbar.inflateMenu(R.menu.menu_done)
     }
 
     private fun initializeTabs(tabLayout: TabLayout, viewPager: ViewPager2) {
