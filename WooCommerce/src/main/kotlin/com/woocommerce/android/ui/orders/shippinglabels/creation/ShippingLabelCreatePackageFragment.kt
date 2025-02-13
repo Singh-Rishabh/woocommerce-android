@@ -40,6 +40,7 @@ class ShippingLabelCreatePackageFragment : BaseFragment(R.layout.fragment_shippi
         viewPager.adapter = adapter
 
         initializeTabs(tabLayout, viewPager)
+        initializePageChangeCallback(viewPager)
         setupObservers(viewModel)
     }
 
@@ -69,6 +70,14 @@ class ShippingLabelCreatePackageFragment : BaseFragment(R.layout.fragment_shippi
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = tabArray[position]
         }.attach()
+    }
+
+    private fun initializePageChangeCallback(viewPager: ViewPager2) {
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+
+            }
+        })
     }
 
     private fun setupObservers(viewModel: ShippingLabelCreatePackageViewModel) {
