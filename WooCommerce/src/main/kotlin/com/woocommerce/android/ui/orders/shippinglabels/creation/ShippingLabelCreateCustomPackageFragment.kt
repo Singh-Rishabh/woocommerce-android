@@ -1,12 +1,9 @@
 package com.woocommerce.android.ui.orders.shippinglabels.creation
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.databinding.FragmentShippingLabelCreateCustomPackageBinding
 import com.woocommerce.android.extensions.takeIfNotEqualTo
@@ -162,16 +159,5 @@ class ShippingLabelCreateCustomPackageFragment :
     private fun hideProgressDialog() {
         progressDialog?.dismiss()
         progressDialog = null
-    }
-
-    private fun onMenuItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_done -> {
-                ActivityUtils.hideKeyboard(activity)
-                viewModel.onCustomFormDoneMenuClicked()
-                true
-            }
-            else -> false
-        }
     }
 }

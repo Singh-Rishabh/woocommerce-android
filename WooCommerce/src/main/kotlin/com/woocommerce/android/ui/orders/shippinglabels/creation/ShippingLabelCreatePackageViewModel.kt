@@ -68,5 +68,5 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
         SERVICE
     }
 
-    object OnDoneButtonClickedEvent: MultiLiveEvent.Event()
+    object OnDoneButtonClickedEvent : MultiLiveEvent.Event()
 }
