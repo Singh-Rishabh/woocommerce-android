@@ -200,8 +200,8 @@ fun Button(
 private fun ButtonsLoadingIndicator(size: Dp) {
     WooPosCircularLoadingIndicator(
         modifier = Modifier.size(size),
-        spinnerPrimaryColor = MaterialTheme.colorScheme.secondary,
-        spinnerSecondaryColor = MaterialTheme.colorScheme.primaryContainer,
+        spinnerPrimaryColor = Color(0xFFF2EDFF),
+        spinnerSecondaryColor = Color(0xFFA77EFF),
     )
 }
 
