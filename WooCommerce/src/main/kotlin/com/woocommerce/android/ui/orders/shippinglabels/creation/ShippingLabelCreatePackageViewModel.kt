@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.shippinglabels.creation
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
@@ -9,15 +10,21 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ExitWithResult
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.ScopedViewModel
+import com.woocommerce.android.viewmodel.getStateFlow
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class ShippingLabelCreatePackageViewModel @Inject constructor(
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private val arguments: ShippingLabelCreatePackageFragmentArgs by savedState.navArgs()
+    private val selectedTabType = savedState.getStateFlow(
+        scope = viewModelScope,
+        initialValue = PackageType.CUSTOM
+    )
 
     fun onPackageCreated(madePackage: ShippingPackage) {
         val type = if (madePackage.category == ShippingPackage.CUSTOM_PACKAGE_CATEGORY) "custom" else "predefined"
@@ -41,6 +48,10 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
                 )
             )
         )
+    }
+
+    fun onSelectedPageChanged(selectedTab: PackageType) {
+        selectedTabType.update { selectedTab }
     }
 
     fun onDoneButtonClicked() {
