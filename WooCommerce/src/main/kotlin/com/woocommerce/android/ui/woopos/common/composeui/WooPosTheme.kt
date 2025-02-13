@@ -33,10 +33,6 @@ data class CustomColors(
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
 
-    val fontPrimary: Color,
-    val fontSecondary: Color,
-    val fontTertiary: Color,
-
     val totalsBackground: Color,
     val totalsErrorBackground: Color,
     val paymentSuccessBackground: Color,
@@ -177,10 +173,6 @@ private val LightCustomColors = CustomColors(
 
     onSurfaceVariantLow = WooPosColors.Gray30,
     onSurfaceVariantHigh = WooPosColors.Gray60,
-
-    fontPrimary = WooPosColors.Black,
-    fontSecondary = WooPosColors.Gray60,
-    fontTertiary = WooPosColors.Gray20,
 )
 
 private val DarkCustomColors = CustomColors(
@@ -203,15 +195,10 @@ private val DarkCustomColors = CustomColors(
 
     onSurfaceVariantLow = WooPosColors.Gray50,
     onSurfaceVariantHigh = WooPosColors.Gray20,
-
-    fontPrimary = WooPosColors.White,
-    fontSecondary = WooPosColors.Gray20,
-    fontTertiary = WooPosColors.Gray60,
 )
 
 @Composable
 fun WooPosTheme(content: @Composable () -> Unit) {
-    // Select the color scheme based on the system’s dark theme setting.
     val colorScheme = if (isSystemInDarkTheme()) {
         DarkColorScheme
     } else {
