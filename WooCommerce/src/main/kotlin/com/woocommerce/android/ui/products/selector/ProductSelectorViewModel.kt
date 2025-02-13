@@ -540,7 +540,7 @@ class ProductSelectorViewModel @Inject constructor(
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
             loadingState.value = APPENDING
-            listHandler.loadMore(navArgs.orderCurrency)
+            listHandler.loadMore(orderCurrency = navArgs.orderCurrency)
             loadingState.value = IDLE
         }
     }
