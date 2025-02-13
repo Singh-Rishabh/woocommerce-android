@@ -12,7 +12,7 @@ import com.woocommerce.android.databinding.FragmentShippingLabelCreateServicePac
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
-import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.OnDoneButtonClickedEvent
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.OnDoneButtonClicked
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.PackageType.SERVICE
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreateServicePackageViewModel.PackageSuccessfullyMadeEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
@@ -105,7 +105,7 @@ class ShippingLabelCreateServicePackageFragment :
 
         parentViewModel.event.observe(viewLifecycleOwner) { event ->
             when {
-                event is OnDoneButtonClickedEvent && event.selectedTab == SERVICE -> {
+                event is OnDoneButtonClicked && event.selectedTab == SERVICE -> {
                     ActivityUtils.hideKeyboard(activity)
                     viewModel.onCustomFormDoneMenuClicked()
                 }

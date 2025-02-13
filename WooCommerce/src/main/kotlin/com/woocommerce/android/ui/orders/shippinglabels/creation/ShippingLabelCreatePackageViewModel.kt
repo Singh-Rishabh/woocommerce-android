@@ -55,7 +55,7 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
     }
 
     fun onDoneButtonClicked() {
-        triggerEvent(OnDoneButtonClickedEvent(selectedTab = selectedTabType.value))
+        triggerEvent(OnDoneButtonClicked(selectedTab = selectedTabType.value))
     }
 
     enum class PackageType {
@@ -63,7 +63,7 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
         SERVICE
     }
 
-    data class OnDoneButtonClickedEvent(
+    data class OnDoneButtonClicked(
         val selectedTab: PackageType
     ) : MultiLiveEvent.Event()
 }
