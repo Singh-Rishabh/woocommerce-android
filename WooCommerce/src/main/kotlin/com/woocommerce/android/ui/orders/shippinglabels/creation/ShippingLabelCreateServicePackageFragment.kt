@@ -17,6 +17,7 @@ import com.woocommerce.android.databinding.FragmentShippingLabelCreateServicePac
 import com.woocommerce.android.extensions.takeIfNotEqualTo
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.OnDoneButtonClickedEvent
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreateServicePackageViewModel.PackageSuccessfullyMadeEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.widgets.CustomProgressDialog
@@ -61,23 +62,7 @@ class ShippingLabelCreateServicePackageFragment :
             adapter = packagesAdapter
         }
 
-        setupToolbar(binding)
         setupObservers(binding, packagesAdapter)
-    }
-
-    private fun setupToolbar(binding: FragmentShippingLabelCreateServicePackageBinding) {
-        binding.toolbar.title = getString(R.string.shipping_label_package_selector_title)
-        binding.toolbar.setOnMenuItemClickListener { menuItem ->
-            onMenuItemSelected(menuItem)
-        }
-        binding.toolbar.navigationIcon = AppCompatResources.getDrawable(
-            requireActivity(),
-            R.drawable.ic_back_24dp
-        )
-        binding.toolbar.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
-        binding.toolbar.inflateMenu(R.menu.menu_done)
     }
 
     private fun setupObservers(
@@ -129,6 +114,15 @@ class ShippingLabelCreateServicePackageFragment :
                     stringArgs = event.args
                 ).show()
                 else -> event.isHandled = false
+            }
+        }
+
+        parentViewModel.event.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                is OnDoneButtonClickedEvent -> {
+                    ActivityUtils.hideKeyboard(activity)
+                    viewModel.onCustomFormDoneMenuClicked()
+                }
             }
         }
     }
