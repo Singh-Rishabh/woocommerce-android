@@ -216,7 +216,7 @@ private fun TotalsLoaded(
 
 @Composable
 private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
-    WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
+    WooPosCircularLoadingIndicator(modifier = Modifier.size(160.dp))
     Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
     Text(
         text = readerStatus.title,

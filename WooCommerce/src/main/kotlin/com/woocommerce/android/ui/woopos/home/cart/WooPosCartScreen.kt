@@ -457,7 +457,7 @@ private fun ProductItem(
                     ) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                            tint = WooPosTheme.colors.onSurfaceVariantHigh,
+                            tint = WooPosTheme.colors.onSurfaceVariantLow,
                             contentDescription = null,
                         )
                     }
