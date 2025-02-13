@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -200,8 +201,9 @@ fun Button(
 private fun ButtonsLoadingIndicator(size: Dp) {
     WooPosCircularLoadingIndicator(
         modifier = Modifier.size(size),
-        spinnerPrimaryColor = Color(0xFFF2EDFF),
-        spinnerSecondaryColor = Color(0xFFA77EFF),
+        spinnerPrimaryColor = MaterialTheme.colorScheme.secondary,
+        spinnerSecondaryColor = Color.Black.copy(alpha = 0.1f)
+            .compositeOver(MaterialTheme.colorScheme.primaryContainer),
     )
 }
 
