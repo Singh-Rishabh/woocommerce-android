@@ -1,19 +1,16 @@
 package com.woocommerce.android.ui.orders.shippinglabels.creation
 
-import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.model.ShippingPackage
-import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ExitWithResult
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,19 +46,6 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
     fun onDoneButtonClicked() {
         triggerEvent(OnDoneButtonClickedEvent)
     }
-
-    /**
-     * Saving more data than necessary into the SavedState has associated risks which were not known at the time this
-     * field was implemented - after we ensure we don't save unnecessary data, we can replace @Suppress("OPT_IN_USAGE")
-     * with @OptIn(LiveDelegateSavedStateAPI::class).
-     */
-    @Suppress("OPT_IN_USAGE")
-    val viewStateData = LiveDataDelegate(savedState, ShippingLabelCreatePackageViewState())
-
-    @Parcelize
-    data class ShippingLabelCreatePackageViewState(
-        val selectedTab: PackageType = PackageType.CUSTOM
-    ) : Parcelable
 
     enum class PackageType {
         CUSTOM,
