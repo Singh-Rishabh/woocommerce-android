@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.woopos.home.cart
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
@@ -38,7 +37,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -91,9 +90,9 @@ private fun WooPosCartScreen(
     ConstraintLayout(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
+            .background(MaterialTheme.colorScheme.surfaceBright)
     ) {
-        val (topMargin, toolbar, body, checkoutButton, overlay) = createRefs()
+        val (topMargin, toolbar, body, checkoutButton) = createRefs()
 
         Spacer(
             modifier = Modifier
@@ -166,39 +165,7 @@ private fun WooPosCartScreen(
                 onClick = { onUIEvent(WooPosCartUIEvent.CheckoutClicked) }
             )
         }
-
-        CartOverlay(
-            modifier = Modifier.constrainAs(overlay) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                height = Dimension.fillToConstraints
-            },
-            state = state,
-        )
     }
-}
-
-@Composable
-private fun CartOverlay(
-    modifier: Modifier = Modifier,
-    state: WooPosCartState,
-) {
-    val cartOverlayIntensityAnimated by animateFloatAsState(
-        when (state.body) {
-            WooPosCartState.Body.Empty -> .6f
-            is WooPosCartState.Body.WithItems -> 0f
-        },
-        label = "cartOverlayAnimated"
-    )
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                color = MaterialTheme.colorScheme.background.copy(alpha = cartOverlayIntensityAnimated),
-            )
-    )
 }
 
 @Composable
@@ -409,6 +376,7 @@ private fun ProductItem(
         modifier = modifier
             .height(96.dp)
             .semantics { contentDescription = itemContentDescription },
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
@@ -417,18 +385,27 @@ private fun ProductItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(item.imageUrl)
-                    .crossfade(true)
-                    .build(),
-                fallback = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                error = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                placeholder = ColorPainter(WooPosTheme.colors.loadingSkeleton),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.size(96.dp)
-            )
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surfaceDim),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_box),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+                    modifier = Modifier.size(38.dp, 32.dp)
+                )
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(item.imageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(96.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
@@ -478,7 +455,7 @@ private fun ProductItem(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                        tint = MaterialTheme.colorScheme.onBackground,
+                        tint = WooPosTheme.colors.onSurfaceVariantLow,
                         contentDescription = null,
                     )
                 }

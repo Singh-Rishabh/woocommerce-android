@@ -40,7 +40,7 @@ private fun Loading() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        WooPosCircularLoadingIndicator(modifier = Modifier.size(156.dp))
+        WooPosCircularLoadingIndicator(modifier = Modifier.size(160.dp))
     }
 }
 

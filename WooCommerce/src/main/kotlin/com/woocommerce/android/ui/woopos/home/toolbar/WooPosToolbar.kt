@@ -221,7 +221,8 @@ private fun MenuButtonWithPopUpMenu(
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
     ) {
         TextButton(
-            modifier = Modifier.semantics { contentDescription = menuContentDescription },
+            modifier = Modifier.semantics { contentDescription = menuContentDescription }
+                .size(80.dp),
             onClick = onClick,
             contentPadding = PaddingValues(WooPosSpacing.None.value),
             colors = ButtonDefaults.textButtonColors(
@@ -237,7 +238,7 @@ private fun MenuButtonWithPopUpMenu(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 repeat(3) {
-                    Circle(size = 4.dp, color = MaterialTheme.colorScheme.onSurface)
+                    Circle(size = 6.dp, color = MaterialTheme.colorScheme.onSurface)
                     if (it < 2) {
                         Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                     }
@@ -314,17 +315,7 @@ private fun CardReaderStatusButton(
     ) { status ->
         when (status) {
             WooPosCardReaderStatus.Connected -> WooPosTheme.colors.success
-            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colorScheme.error
-        }
-    }
-
-    val textColor by transition.animateColor(
-        transitionSpec = { tween(durationMillis = animationDuration) },
-        label = "TextColorTransition"
-    ) { status ->
-        when (status) {
-            WooPosCardReaderStatus.Connected -> MaterialTheme.colorScheme.onSurface
-            WooPosCardReaderStatus.NotConnected -> MaterialTheme.colorScheme.primary
+            WooPosCardReaderStatus.NotConnected -> WooPosTheme.colors.alert
         }
     }
 
@@ -347,14 +338,14 @@ private fun CardReaderStatusButton(
 
     WooPosCard(
         modifier = modifier
-            .height(56.dp),
+            .height(80.dp),
         backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = TOOLBAR_ELEVATION,
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
     ) {
         Surface(
             color = if (menuCardDisabled) {
-                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                MaterialTheme.colorScheme.surfaceContainerLow
             } else {
                 Color.Transparent
             },
@@ -371,12 +362,11 @@ private fun CardReaderStatusButton(
                     .height(40.dp),
             ) {
                 Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
-                Circle(size = 12.dp, color = illustrationColor)
+                Circle(size = 14.dp, color = illustrationColor)
                 Spacer(modifier = Modifier.width(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 ReaderStatusText(
                     modifier = Modifier.animateContentSize(),
                     title = title,
-                    color = textColor,
                 )
                 Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
             }
@@ -388,13 +378,12 @@ private fun CardReaderStatusButton(
 private fun ReaderStatusText(
     modifier: Modifier,
     title: String,
-    color: Color
 ) {
     Text(
         modifier = modifier.padding(horizontal = WooPosSpacing.Small.value.toAdaptivePadding()),
         text = title,
-        color = color,
-        style = WooPosTypography.BodySmall,
+        style = WooPosTypography.BodyMedium,
+        color = MaterialTheme.colorScheme.onSurface,
     )
 }
 
