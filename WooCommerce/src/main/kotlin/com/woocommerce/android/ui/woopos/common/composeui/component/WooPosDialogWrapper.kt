@@ -15,8 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosElevation
 
 @Composable
 fun WooPosDialogWrapper(

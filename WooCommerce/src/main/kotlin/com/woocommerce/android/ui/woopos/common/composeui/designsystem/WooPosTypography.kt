@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.common.composeui
+package com.woocommerce.android.ui.woopos.common.composeui.designsystem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
