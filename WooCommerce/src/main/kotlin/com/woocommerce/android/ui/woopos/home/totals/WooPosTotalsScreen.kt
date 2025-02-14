@@ -204,6 +204,8 @@ private fun TotalsLoaded(
                             WooPosOutlinedButton(
                                 text = stringResource(R.string.woopos_payment_take_cash_payment_label),
                                 onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                         }
