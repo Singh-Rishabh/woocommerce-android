@@ -26,6 +26,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosInputField
@@ -98,7 +99,8 @@ private fun EmailState(
             onValueChange = onEmailAddressChanged,
             label = stringResource(R.string.woopos_email_receipt_email_label),
             contentAlignment = Alignment.Center,
-            textStyle = MaterialTheme.typography.displaySmall,
+            textStyle = WooPosTypography.Heading
+                .copy(color = MaterialTheme.colorScheme.onSurface),
             keyboardOptions = KeyboardOptions(
                 autoCorrectEnabled = false,
                 keyboardType = KeyboardType.Email
@@ -114,7 +116,7 @@ private fun EmailState(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.titleLarge,
+                style = WooPosTypography.BodyLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(email.bottom, margin = WooPosSpacing.Small.value)

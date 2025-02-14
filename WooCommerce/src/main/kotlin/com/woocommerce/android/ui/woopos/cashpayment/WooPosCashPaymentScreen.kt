@@ -105,7 +105,7 @@ private fun Collecting(
 
         Text(
             text = state.totalText,
-            style = MaterialTheme.typography.titleLarge,
+            style = WooPosTypography.BodyLarge,
             modifier = Modifier
                 .constrainAs(total) {
                     top.linkTo(parent.top, margin = WooPosSpacing.XSmall.value)
@@ -158,7 +158,7 @@ private fun Collecting(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyLarge,
+                style = WooPosTypography.BodySmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(changeDue.bottom, margin = smallMargin)

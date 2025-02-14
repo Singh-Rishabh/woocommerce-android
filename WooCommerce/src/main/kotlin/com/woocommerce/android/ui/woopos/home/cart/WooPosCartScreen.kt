@@ -60,12 +60,12 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosColors
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButtonSmall
@@ -184,8 +184,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
         Text(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
-            style = MaterialTheme.typography.titleLarge,
-            fontWeight = FontWeight.Normal,
+            style = WooPosTypography.BodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
@@ -300,8 +299,7 @@ private fun CartToolbar(
 
         Text(
             text = stringResource(R.string.woopos_cart_title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
+            style = WooPosTypography.Heading,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             modifier = Modifier
@@ -328,9 +326,8 @@ private fun CartToolbar(
             val itemsEndMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
             Text(
                 text = it,
-                style = MaterialTheme.typography.bodyMedium,
-                color = WooPosColors.Gray60.copy(alpha = 0.6f),
-                fontWeight = FontWeight.SemiBold,
+                style = WooPosTypography.BodySmall,
+                color = WooPosTheme.colors.onSurfaceVariantLow,
                 maxLines = 1,
                 modifier = Modifier
                     .constrainAs(itemsCount) {
@@ -417,9 +414,9 @@ private fun ProductItem(
             ) {
                 Text(
                     text = item.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
                     maxLines = 1,
+                    style = WooPosTypography.BodyLarge,
+                    fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.clearAndSetSemantics { }
                 )
@@ -427,43 +424,43 @@ private fun ProductItem(
                 if (item.description.isNotNullOrEmpty()) {
                     Text(
                         text = item.description!!,
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 2,
+                        style = WooPosTypography.BodySmall,
+                        color = WooPosTheme.colors.onSurfaceVariantHigh,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = WooPosColors.Gray60,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
                     Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
                 }
                 Text(
                     text = item.price,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = WooPosColors.Gray60,
+                    style = WooPosTypography.BodySmall,
+                    color = WooPosTheme.colors.onSurfaceVariantLow,
                     modifier = Modifier.clearAndSetSemantics { }
                 )
-
-                if (canRemoveItems) {
-                    Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
-
-                    val removeButtonContentDescription = stringResource(
-                        id = R.string.woopos_remove_item_button_from_cart_content_description,
-                        item.name
-                    )
-                    IconButton(
-                        onClick = { onUIEvent(WooPosCartUIEvent.ItemRemovedFromCart(item)) },
-                        modifier = Modifier
-                            .size(WooPosSpacing.XLarge.value)
-                            .semantics { contentDescription = removeButtonContentDescription }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                            tint = WooPosTheme.colors.onSurfaceVariantLow,
-                            contentDescription = null,
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
             }
+
+            if (canRemoveItems) {
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
+
+                val removeButtonContentDescription = stringResource(
+                    id = R.string.woopos_remove_item_button_from_cart_content_description,
+                    item.name
+                )
+                IconButton(
+                    onClick = { onUIEvent(WooPosCartUIEvent.ItemRemovedFromCart(item)) },
+                    modifier = Modifier
+                        .size(32.dp)
+                        .semantics { contentDescription = removeButtonContentDescription }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
+                        tint = WooPosTheme.colors.onSurfaceVariantLow,
+                        contentDescription = null,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
         }
     }
 }

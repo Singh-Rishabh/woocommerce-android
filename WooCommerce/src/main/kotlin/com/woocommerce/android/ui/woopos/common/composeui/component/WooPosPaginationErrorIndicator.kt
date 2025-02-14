@@ -34,6 +34,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
@@ -100,18 +101,17 @@ private fun WooPosPaginationErrorIndicatorContent(
                         tint = Color.Unspecified,
                     )
                 }
-                Spacer(modifier = Modifier.width(18.dp))
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))
                 Column {
                     Text(
                         text = message,
-                        style = MaterialTheme.typography.headlineSmall,
+                        style = WooPosTypography.BodyLarge,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Normal,
-                        modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding())
+                        style = WooPosTypography.BodyMedium,
+                        modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding()),
                     )
                 }
             }

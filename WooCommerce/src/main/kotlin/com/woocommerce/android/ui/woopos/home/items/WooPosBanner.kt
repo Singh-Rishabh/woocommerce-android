@@ -35,6 +35,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
@@ -95,9 +96,9 @@ fun WooPosBanner(
 
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
-                    fontWeight = FontWeight.SemiBold,
+                    style = WooPosTypography.BodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .padding(
                             start = WooPosSpacing.XLarge.value.toAdaptivePadding(),
@@ -143,9 +144,8 @@ fun WooPosBanner(
                                 bottom = WooPosSpacing.Small.value.toAdaptivePadding(),
                             ),
                         text = annotatedText,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f)
+                        style = WooPosTypography.BodyMedium,
+                        color = WooPosTheme.colors.onSurfaceVariantLow,
                     )
                 }
 

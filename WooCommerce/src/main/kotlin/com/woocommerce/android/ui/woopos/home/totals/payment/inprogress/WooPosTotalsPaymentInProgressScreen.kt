@@ -26,6 +26,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsUIEvent
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState
@@ -62,15 +63,14 @@ fun WooPosPaymentInProgressScreen(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = state.title,
-                    color = WooPosTheme.colors.paymentProcessingText,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = WooPosTypography.BodyLarge,
                 )
                 Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 Text(
                     text = state.subtitle,
-                    color = WooPosTheme.colors.paymentProcessingText,
-                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = WooPosTypography.BodyXLarge,
                     fontWeight = FontWeight.Bold,
                 )
             }

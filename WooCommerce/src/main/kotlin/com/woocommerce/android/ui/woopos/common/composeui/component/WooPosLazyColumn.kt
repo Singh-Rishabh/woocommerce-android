@@ -24,6 +24,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 
 @Composable
 fun WooPosLazyColumn(
@@ -106,7 +107,7 @@ fun WooPosLazyColumnPreview() {
                         modifier = Modifier
                             .height(64.dp)
                             .fillMaxWidth(),
-                        style = MaterialTheme.typography.titleLarge,
+                        style = WooPosTypography.BodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                 }

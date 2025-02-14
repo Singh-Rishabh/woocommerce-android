@@ -39,12 +39,11 @@ data class CustomColors(
     val paymentProcessingBackground: Color,
     val paymentSuccessText: Color,
     val paymentSuccessIcon: Color,
-    val paymentProcessingText: Color,
     val dialogSubtitleHighlightBackground: Color = WooPosColors.lightQuaternaryBackground,
     val homeBackground: Color,
 )
 
-object WooPosColors {
+private object WooPosColors {
     // Woo POS specific colors:
 
     // Adding missing colors from the old code to match exactly
@@ -160,7 +159,6 @@ private val LightCustomColors = CustomColors(
     totalsBackground = WooPosColors.Gray0,
     paymentSuccessBackground = WooPosColors.White,
     paymentSuccessText = WooPosColors.WooPurple90,
-    paymentProcessingText = WooPosColors.White,
     paymentSuccessIcon = Color.White,
     homeBackground = WooPosColors.Gray0,
     paymentProcessingBackground = WooPosColors.WooPurple70,
@@ -183,7 +181,6 @@ private val DarkCustomColors = CustomColors(
     paymentSuccessBackground = WooPosColors.darkCustomColorsHomeBackground,
     paymentSuccessText = WooPosColors.oldGrayLight,
     paymentSuccessIcon = WooPosColors.darkCustomColorsHomeBackground,
-    paymentProcessingText = WooPosColors.White,
     homeBackground = WooPosColors.darkCustomColorsHomeBackground,
     paymentProcessingBackground = WooPosColors.WooPurple70,
 

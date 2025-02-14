@@ -33,6 +33,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
@@ -101,7 +102,7 @@ private fun WooPosPaymentSuccessScreen(
             val textsMargin = WooPosSpacing.Small.value.toAdaptivePadding()
             Text(
                 text = stringResource(R.string.woopos_payment_successful_label),
-                style = MaterialTheme.typography.headlineMedium,
+                style = WooPosTypography.Heading,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -115,10 +116,9 @@ private fun WooPosPaymentSuccessScreen(
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
             Text(
                 text = state.orderTotalText,
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Normal,
+                style = WooPosTypography.BodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(message) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
