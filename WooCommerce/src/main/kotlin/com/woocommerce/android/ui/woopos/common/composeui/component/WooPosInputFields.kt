@@ -187,7 +187,7 @@ fun WooPosInputField(
         if (value.isEmpty()) {
             Text(
                 text = label,
-                style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
+                style = textStyle.copy(color = WooPosTheme.colors.onDisabledContainer),
                 maxLines = 1,
                 softWrap = false,
                 modifier = Modifier.onGloballyPositioned { coordinates ->
