@@ -7,3 +7,8 @@ dependencies {
     implementation("io.gitlab.arturbosch.detekt:detekt-api:${libs.versions.detekt.get()}")
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+}
