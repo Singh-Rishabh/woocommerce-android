@@ -133,7 +133,9 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = MaterialTheme.typography.headlineMedium,
+            textStyle = WooPosTypography.Heading.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
