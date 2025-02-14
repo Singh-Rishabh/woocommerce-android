@@ -52,7 +52,7 @@ fun WooPosErrorScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             Icon(
-                modifier = Modifier.size(64.dp),
+                modifier = Modifier.size(80.dp),
                 painter = icon,
                 contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
                 tint = Color.Unspecified,
