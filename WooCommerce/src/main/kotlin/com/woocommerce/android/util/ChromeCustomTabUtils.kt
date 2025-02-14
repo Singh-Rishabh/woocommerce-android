@@ -104,14 +104,14 @@ object ChromeCustomTabUtils {
         context: Context,
         url: String,
         height: Height = Full,
-        fromPOS: Boolean = false,
+        enableSlideAnimation: Boolean = false,
     ) {
         try {
             if (canUseCustomTabs(context)) {
                 if (session == null && height is Partial && activityResultLauncher != null) {
                     activityResultLauncher?.launch(PartialTabParams(url, height))
                 } else {
-                    createIntent(context, height, session, fromPOS).launchUrl(context, Uri.parse(url))
+                    createIntent(context, height, session, enableSlideAnimation).launchUrl(context, Uri.parse(url))
                 }
             } else {
                 ActivityUtils.openUrlExternal(context, url)
@@ -126,7 +126,7 @@ object ChromeCustomTabUtils {
         context: Context,
         height: Height,
         tabSession: CustomTabsSession? = null,
-        fromPOS: Boolean = false,
+        enableSlideAnimation: Boolean = false,
     ): CustomTabsIntent {
         val defaultColorSchemeParams = CustomTabColorSchemeParams.Builder()
             .setToolbarColor(ContextCompat.getColor(context, R.color.color_toolbar))
@@ -136,7 +136,7 @@ object ChromeCustomTabUtils {
             .setShareState(CustomTabsIntent.SHARE_STATE_ON)
             .setShowTitle(true)
             .setTabHeight(height, context)
-        if (fromPOS) {
+        if (enableSlideAnimation) {
             builder.setStartAnimations(context, R.anim.woopos_slide_in_right, R.anim.woopos_slide_out_left)
                 .setExitAnimations(context, R.anim.woopos_slide_in_left, R.anim.woopos_slide_out_right)
         }

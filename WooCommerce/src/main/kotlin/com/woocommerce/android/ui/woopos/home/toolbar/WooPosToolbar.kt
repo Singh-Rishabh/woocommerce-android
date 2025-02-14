@@ -68,7 +68,7 @@ fun WooPosFloatingToolbar(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.openUrlEvent.collectLatest { url ->
-            ChromeCustomTabUtils.launchUrl(context, url, fromPOS = true)
+            ChromeCustomTabUtils.launchUrl(context, url, enableSlideAnimation = true)
         }
     }
     WooPosFloatingToolbar(
