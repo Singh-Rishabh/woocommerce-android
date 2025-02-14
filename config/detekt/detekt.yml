@@ -44,3 +44,7 @@ potential-bugs:
 naming:
   FunctionNaming:
     ignoreAnnotated: [ 'Composable' ]
+
+custom-rules:
+  WooPosEnforceDesignSystemUsage:
+    active: true

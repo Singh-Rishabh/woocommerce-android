@@ -1,0 +1,9 @@
+plugins {
+    id("org.jetbrains.kotlin.jvm")
+    id("io.gitlab.arturbosch.detekt")
+}
+
+dependencies {
+    implementation("io.gitlab.arturbosch.detekt:detekt-api:${libs.versions.detekt.get()}")
+}
+
