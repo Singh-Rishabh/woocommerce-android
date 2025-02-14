@@ -1,5 +1,6 @@
 package com.woocommerce.android.util
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
@@ -19,6 +20,7 @@ import androidx.browser.customtabs.CustomTabsSession
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.woocommerce.android.R
+import com.woocommerce.android.extensions.adjustActivityTransition
 import com.woocommerce.android.extensions.intentActivities
 import com.woocommerce.android.extensions.physicalScreenHeightInPx
 import com.woocommerce.android.extensions.service
@@ -100,7 +102,20 @@ object ChromeCustomTabUtils {
             }) {}
     }
 
-    fun launchUrl(context: Context, url: String, height: Height = Full) {
+    fun launchUrl(
+        context: Context,
+        url: String,
+        height: Height = Full,
+        fromPOS: Boolean = false,
+    ) {
+        if (fromPOS) {
+            val activity = context as? Activity ?: return
+            activity.adjustActivityTransition(
+                overrideTransitionOpen = true,
+                enterAnim = R.anim.woopos_slide_in_right,
+                exitAnim = R.anim.woopos_slide_out_left,
+            )
+        }
         try {
             if (canUseCustomTabs(context)) {
                 if (session == null && height is Partial && activityResultLauncher != null) {
@@ -110,6 +125,14 @@ object ChromeCustomTabUtils {
                 }
             } else {
                 ActivityUtils.openUrlExternal(context, url)
+            }
+            if (fromPOS) {
+                val activity = context as? Activity ?: return
+                activity.adjustActivityTransition(
+                    overrideTransitionOpen = false,
+                    R.anim.woopos_slide_in_left,
+                    R.anim.woopos_slide_out_right
+                )
             }
         } catch (e: ActivityNotFoundException) {
             ToastUtils.showToast(context, context.getString(R.string.error_cant_open_url), ToastUtils.Duration.LONG)
