@@ -60,7 +60,11 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
 
     enum class PackageType {
         CUSTOM,
-        SERVICE
+        SERVICE;
+
+        companion object {
+            fun fromOrdinal(ordinal: Int) = entries.first { it.ordinal == ordinal }
+        }
     }
 
     data class OnDoneButtonClicked(

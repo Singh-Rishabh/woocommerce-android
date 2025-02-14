@@ -14,6 +14,7 @@ import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
 import com.woocommerce.android.ui.main.AppBarStatus
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageViewModel.PackageType
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingPackageSelectorFragment.Companion.SELECTED_PACKAGE_RESULT
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ExitWithResult
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
@@ -75,7 +76,7 @@ class ShippingLabelCreatePackageFragment : BaseFragment(R.layout.fragment_shippi
     private fun initializePageChangeCallback(viewPager: ViewPager2) {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-
+                viewModel.onSelectedPageChanged(PackageType.fromOrdinal(position))
             }
         })
     }
