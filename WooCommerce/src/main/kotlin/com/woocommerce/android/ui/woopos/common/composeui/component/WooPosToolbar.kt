@@ -22,6 +22,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
 @Composable
@@ -57,7 +58,7 @@ fun WooPosToolbar(
         val iconTitlePadding = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = titleText,
-            style = MaterialTheme.typography.headlineMedium,
+            style = WooPosTypography.Heading,
             color = MaterialTheme.colorScheme.onBackground,
             fontWeight = FontWeight.Bold,
             maxLines = 1,

@@ -287,8 +287,8 @@ private fun PopUpMenuItem(
                 .padding(vertical = WooPosSpacing.Small.value.toAdaptivePadding())
                 .weight(1f),
             text = stringResource(id = menuItem.title),
+            style = WooPosTypography.BodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyLarge,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

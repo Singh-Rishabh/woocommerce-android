@@ -30,6 +30,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosDialogWrapper
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 
@@ -67,9 +68,9 @@ fun WooPosProductInfoDialog(
 
                 Text(
                     text = stringResource(id = state.header),
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = WooPosTypography.Heading,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
+
                     modifier = Modifier
                         .padding(
                             top = WooPosSpacing.XLarge.value.toAdaptivePadding(),
@@ -93,15 +94,13 @@ fun WooPosProductInfoDialog(
                 ) {
                     Text(
                         text = stringResource(id = state.primaryMessage),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
+                        style = WooPosTypography.BodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
                     Text(
                         text = stringResource(id = state.secondaryMessage),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
+                        style = WooPosTypography.BodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
@@ -120,10 +119,8 @@ fun WooPosProductInfoDialog(
                         ) {
                             Text(
                                 text = stringResource(id = state.tertiaryMessage),
-                                style = MaterialTheme.typography.titleMedium,
+                                style = WooPosTypography.BodySmall,
                                 textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.Normal,
-                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.87f),
                             )
                         }
                     }
@@ -143,8 +140,8 @@ fun WooPosProductInfoDialog(
                         Text(
                             modifier = Modifier
                                 .padding(vertical = 20.dp.toAdaptivePadding()),
+                            style = WooPosTypography.BodyLarge,
                             fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.headlineSmall,
                             text = stringResource(id = state.primaryButton.label)
                         )
                     }

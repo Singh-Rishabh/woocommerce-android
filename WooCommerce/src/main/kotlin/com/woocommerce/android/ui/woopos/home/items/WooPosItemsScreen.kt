@@ -40,6 +40,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
@@ -208,7 +209,7 @@ private fun ItemsToolbar(
     ) {
         Text(
             text = stringResource(id = R.string.woopos_products_screen_title),
-            style = MaterialTheme.typography.headlineMedium,
+            style = WooPosTypography.Heading,
             fontWeight = FontWeight.Bold,
             color = titleColor,
         )

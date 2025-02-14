@@ -17,7 +17,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosMoneyInputField
@@ -105,7 +105,7 @@ private fun Collecting(
 
         Text(
             text = state.totalText,
-            style = MaterialTheme.typography.titleLarge,
+            style = WooPosTypography.BodyLarge,
             modifier = Modifier
                 .constrainAs(total) {
                     top.linkTo(parent.top, margin = WooPosSpacing.XSmall.value)
@@ -133,7 +133,9 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = MaterialTheme.typography.headlineMedium,
+            textStyle = WooPosTypography.BodyXLarge.copy(
+                color = MaterialTheme.colorScheme.onSurface
+            ),
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
@@ -143,9 +145,8 @@ private fun Collecting(
         val smallMargin = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = state.changeDueText,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
-            fontWeight = FontWeight.Normal,
+            style = WooPosTypography.BodySmall,
+            color = WooPosTheme.colors.onSurfaceVariantHigh,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     top.linkTo(input.bottom, margin = smallMargin)
@@ -158,7 +159,7 @@ private fun Collecting(
             Text(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyLarge,
+                style = WooPosTypography.BodySmall,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.constrainAs(error) {
                     top.linkTo(changeDue.bottom, margin = smallMargin)

@@ -24,6 +24,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -54,15 +55,15 @@ fun WooPosExitConfirmationDialog(
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
                 Text(
                     text = title,
-                    style = MaterialTheme.typography.headlineMedium,
+                    style = WooPosTypography.Heading,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                 Text(
                     text = message,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface
+                    style = WooPosTypography.BodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = modifier.height(56.dp.toAdaptivePadding()))
                 WooPosButton(
