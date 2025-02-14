@@ -46,5 +46,5 @@ naming:
     ignoreAnnotated: [ 'Composable' ]
 
 custom-rules:
-  WooPosEnforceDesignSystemUsage:
+  WooPosDesignSystemUsage:
     active: true
