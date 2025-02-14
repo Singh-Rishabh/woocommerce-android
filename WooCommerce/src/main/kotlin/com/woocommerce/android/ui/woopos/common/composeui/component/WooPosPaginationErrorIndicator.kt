@@ -27,8 +27,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview

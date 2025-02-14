@@ -48,14 +48,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.woocommerce.android.R
-import com.woocommerce.android.ui.woopos.common.composeui.ShadowType
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
+import com.woocommerce.android.ui.woopos.common.composeui.component.ShadowType
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
