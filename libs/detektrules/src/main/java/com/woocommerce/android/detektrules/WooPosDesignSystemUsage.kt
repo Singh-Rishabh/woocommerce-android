@@ -16,12 +16,17 @@ class WooPosDesignSystemUsage(config: Config) : Rule(config) {
     override val issue = Issue(
         javaClass.simpleName,
         Severity.Style,
-        "Design system elements (colors, elevations, margins, text styles) should be used from the declared design system.",
+        "Design system elements " +
+            "(colors, elevations, margins, text styles) should be used from the declared design system.",
         Debt.TWENTY_MINS
     )
 
     private val allowedColors = setOf(
-        "WooPosColors", "LightColorScheme", "DarkColorScheme", "LightCustomColors", "DarkCustomColors"
+        "WooPosColors",
+        "LightColorScheme",
+        "DarkColorScheme",
+        "LightCustomColors",
+        "DarkCustomColors"
     )
     private val allowedElevations = setOf("WooPosElevation")
     private val allowedSpacing = setOf("WooPosSpacing")
@@ -41,7 +46,10 @@ class WooPosDesignSystemUsage(config: Config) : Rule(config) {
         val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression
         val callName = calleeExpression?.getReferencedName()
 
-        if (callName == "Color" && expression.valueArguments.any { it.getArgumentExpression()?.text !in allowedColors }) {
+        if (callName == "Color" && expression.valueArguments.any {
+                it.getArgumentExpression()?.text !in allowedColors
+            }
+        ) {
             report(
                 CodeSmell(
                     issue,
@@ -51,7 +59,10 @@ class WooPosDesignSystemUsage(config: Config) : Rule(config) {
             )
         }
 
-        if (callName == "elevation" && expression.valueArguments.any { it.getArgumentExpression()?.text !in allowedElevations }) {
+        if (callName == "elevation" && expression.valueArguments.any {
+                it.getArgumentExpression()?.text !in allowedElevations
+            }
+        ) {
             report(
                 CodeSmell(
                     issue,
@@ -61,7 +72,10 @@ class WooPosDesignSystemUsage(config: Config) : Rule(config) {
             )
         }
 
-        if (callName in setOf("padding") && expression.valueArguments.any { it.getArgumentExpression()?.text !in allowedSpacing }) {
+        if (callName in setOf("padding") && expression.valueArguments.any {
+                it.getArgumentExpression()?.text !in allowedSpacing
+            }
+        ) {
             report(
                 CodeSmell(
                     issue,
@@ -71,7 +85,10 @@ class WooPosDesignSystemUsage(config: Config) : Rule(config) {
             )
         }
 
-        if (callName == "Text" && expression.valueArguments.any { it.getArgumentExpression()?.text !in allowedTypography }) {
+        if (callName == "Text" && expression.valueArguments.any {
+                it.getArgumentExpression()?.text !in allowedTypography
+            }
+        ) {
             report(
                 CodeSmell(
                     issue,
