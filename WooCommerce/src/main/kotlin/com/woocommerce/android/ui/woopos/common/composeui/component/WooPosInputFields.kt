@@ -98,7 +98,7 @@ fun WooPosMoneyInputField(
         if (showLabel) {
             Text(
                 text = visualTransformation.filter(AnnotatedString("0.00")).text.toString(),
-                style = textStyle.copy(color = textColor.copy(alpha = 0.2f)),
+                style = textStyle.copy(color = WooPosTheme.colors.onDisabledContainer),
                 maxLines = 1,
                 softWrap = false,
                 modifier = Modifier.onGloballyPositioned { coordinates ->

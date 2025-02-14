@@ -133,9 +133,8 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = WooPosTypography.Heading.copy(
-                color = MaterialTheme.colorScheme.onSurface
-            ),
+            textStyle = WooPosTypography.Heading
+                .copy(color = MaterialTheme.colorScheme.onSurface),
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
@@ -145,9 +144,8 @@ private fun Collecting(
         val smallMargin = WooPosSpacing.Small.value.toAdaptivePadding()
         Text(
             text = state.changeDueText,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
-            fontWeight = FontWeight.Normal,
+            style = WooPosTypography.BodySmall,
+            color = WooPosTheme.colors.onSurfaceVariantLow,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     top.linkTo(input.bottom, margin = smallMargin)
