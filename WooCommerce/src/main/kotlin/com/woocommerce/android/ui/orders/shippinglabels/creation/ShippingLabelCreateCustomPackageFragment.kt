@@ -18,11 +18,11 @@ import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCr
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.widgets.CustomProgressDialog
 import dagger.hilt.android.AndroidEntryPoint
-import org.wordpress.android.util.ActivityUtils
-import javax.inject.Inject
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import org.wordpress.android.util.ActivityUtils
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ShippingLabelCreateCustomPackageFragment :
