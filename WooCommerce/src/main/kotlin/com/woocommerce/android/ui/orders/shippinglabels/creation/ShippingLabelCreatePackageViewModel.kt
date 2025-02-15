@@ -15,6 +15,8 @@ import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @HiltViewModel
 class ShippingLabelCreatePackageViewModel @Inject constructor(
@@ -25,6 +27,9 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
         scope = viewModelScope,
         initialValue = PackageType.CUSTOM
     )
+
+    private val _sharedDoneClickedFlow = MutableStateFlow<OnDoneButtonClicked?>(null)
+    val sharedDoneClickedFlow: StateFlow<OnDoneButtonClicked?> = _sharedDoneClickedFlow
 
     fun onPackageCreated(madePackage: ShippingPackage) {
         val type = if (madePackage.category == ShippingPackage.CUSTOM_PACKAGE_CATEGORY) "custom" else "predefined"
@@ -55,7 +60,7 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
     }
 
     fun onDoneButtonClicked() {
-        triggerEvent(OnDoneButtonClicked(selectedTab = selectedTabType.value))
+        _sharedDoneClickedFlow.update { OnDoneButtonClicked(selectedTab = selectedTabType.value) }
     }
 
     enum class PackageType {
