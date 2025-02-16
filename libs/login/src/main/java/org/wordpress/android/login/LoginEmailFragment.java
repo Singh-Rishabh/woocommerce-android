@@ -1,13 +1,6 @@
 package org.wordpress.android.login;
 
-import static android.app.Activity.RESULT_OK;
-
-import android.app.PendingIntent;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentSender;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -18,7 +11,6 @@ import android.util.Patterns;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.autofill.AutofillManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -31,7 +23,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
