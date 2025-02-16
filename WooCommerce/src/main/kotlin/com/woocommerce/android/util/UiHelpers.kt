@@ -2,6 +2,9 @@ package com.woocommerce.android.util
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ClickableSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -9,14 +12,15 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.text.HtmlCompat
 import com.woocommerce.android.extensions.WindowSizeClass
+import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 import com.woocommerce.android.extensions.windowHeightSizeClass
-import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.UiDimen
 import com.woocommerce.android.model.UiDimen.UiDimenDPInt
 import com.woocommerce.android.model.UiDimen.UiDimenRes
 import com.woocommerce.android.model.UiString
 import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.model.UiString.UiStringText
+import com.woocommerce.android.widgets.WooClickableSpan
 import org.wordpress.android.util.DisplayUtils
 import javax.inject.Inject
 
@@ -53,12 +57,21 @@ object UiHelpers {
         val message = uiString?.let {
             val pureText = getTextOfUiString(view.context, it)
             if (it.containsHtml) {
-                HtmlCompat.fromHtml(pureText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                val spannedText = HtmlCompat.fromHtml(pureText, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                removeUnderlineFromLinks(spannedText)
             } else {
                 pureText
             }
         }
         setTextOrHide(view, message)
+    }
+
+    private fun removeUnderlineFromLinks(spannedText: Spanned) = SpannableStringBuilder(spannedText).apply {
+        val clickableSpans = getSpans(0, spannedText.length, ClickableSpan::class.java)
+        clickableSpans.forEach { span ->
+            // Using WooClickableSpan to remove the underline and change the link's color.
+            setSpan(WooClickableSpan {}, getSpanStart(span), getSpanEnd(span), getSpanFlags(span))
+        }
     }
 
     fun setTextOrHide(view: TextView, @StringRes resId: Int?) {
@@ -92,12 +105,15 @@ object UiHelpers {
         updateVisibility(imageView, image != null)
         image?.let { imageView.setImageDrawable(image) }
     }
+
+    @Suppress("MagicNumber")
+    fun getIllustrationVisibilityForFontScale(fontScale: Float): Int = if (fontScale > 1.5f) {
+        View.GONE
+    } else {
+        View.VISIBLE
+    }
 }
 
 class IsWindowClassLargeThanCompact @Inject constructor(val context: Context) {
-    operator fun invoke() = context.windowSizeClass != WindowSizeClass.Compact
-}
-
-class IsWindowClassExpandedAndBigger @Inject constructor(val context: Context) {
-    operator fun invoke() = context.windowSizeClass >= WindowSizeClass.ExpandedAndBigger
+    operator fun invoke() = context.isTwoPanesShouldBeUsed
 }

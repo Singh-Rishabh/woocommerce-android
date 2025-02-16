@@ -59,16 +59,11 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowUndoSnackbar
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceTimeBy
-import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.UseConstructor
@@ -483,14 +478,11 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
             doReturn(true).whenever(orderDetailRepository).hasVirtualProductsOnly(listOf(3, 4))
             doReturn(virtualOrder).whenever(orderDetailRepository).getOrderById(any())
-            doReturn(virtualOrder).whenever(orderDetailRepository).fetchOrderById(any())
 
             doReturn(testOrderRefunds).whenever(orderDetailRepository).getOrderRefunds(any())
 
-            doReturn(true).whenever(orderDetailRepository).fetchOrderNotes(any())
             doReturn(testOrderNotes).whenever(orderDetailRepository).getOrderNotes(any())
             doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).getOrderShippingLabels(any())
-            doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).fetchOrderShippingLabels(any())
 
             viewModel.start()
 
@@ -2415,24 +2407,6 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given order and store currency mismatch, when edit clicked, then trigger snackbar event`() = testBlocking {
-        // Given
-        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
-        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
-        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
-        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
-        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
-            CurrencyMatchResult(isMatch = false, storeCurrency = "USD")
-        )
-        viewModel.start()
-
-        // When
-        viewModel.onEditClicked()
-
-        assertThat(viewModel.event.value).isInstanceOf(ShowSnackbar::class.java)
-    }
-
-    @Test
     fun `given order and store currency mismatch, when edit clicked, then track proper event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
@@ -2451,7 +2425,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given order and store currency are same, when edit clicked, then trigger EditOrder event`() = testBlocking {
+    fun `when edit clicked, then trigger EditOrder event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
         whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
@@ -2467,6 +2441,26 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
         assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
         assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
+    }
+
+    @Test
+    fun `when edit clicked, then trigger EditOrder event with order currency passed as parameter`() = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = true, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
+        assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
+        assertThat((viewModel.event.value as EditOrder).orderCurrency).isEqualTo(viewModel.awaitOrder().currency)
     }
 
     @Test
@@ -2487,27 +2481,5 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         // THEN
         assertThat(observedViewState!!.orderInfo!!.order).isEqualTo(newOrder)
         assertThat(observedViewState!!.orderInfo!!.isPaymentCollectableWithCardReader).isFalse()
-    }
-
-    @OptIn(InternalCoroutinesApi::class)
-    @Test
-    fun `given more than 3 second no order, when vm created, then TimeoutCancellationException is thrown`() = runTest {
-        // GIVEN
-        val delay = 3_001L
-
-        // WHEN
-        createViewModel()
-
-        // THEN
-        val job = launch {
-            viewModel.awaitOrder()
-        }
-
-        advanceTimeBy(delay)
-
-        job.join()
-
-        val cause = job.getCancellationException().cause
-        assertTrue(cause is TimeoutCancellationException)
     }
 }

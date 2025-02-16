@@ -22,6 +22,8 @@ import com.woocommerce.android.cardreader.connection.ReaderType.ExternalReader.C
 import com.woocommerce.android.cardreader.connection.ReaderType.ExternalReader.StripeM2
 import com.woocommerce.android.cardreader.connection.ReaderType.ExternalReader.WisePade3
 import com.woocommerce.android.cardreader.connection.event.SoftwareUpdateInProgress
+import com.woocommerce.android.di.PointOfSaleMode
+import com.woocommerce.android.di.StoreManagementMode
 import com.woocommerce.android.model.UiString
 import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.tools.SelectedSite
@@ -31,10 +33,10 @@ import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectE
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckBluetoothPermissionsGiven
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckLocationEnabled
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.CheckLocationPermissions
+import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenAuthenticatedWebView
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenGenericWebView
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenLocationSettings
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenPermissionsSettings
-import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.OpenWPComWebView
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestBluetoothRuntimePermissions
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestEnableBluetooth
 import com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectEvent.RequestLocationPermissions
@@ -83,8 +85,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CardReaderConnectViewModel @Inject constructor(
     savedState: SavedStateHandle,
+    @StoreManagementMode storeManagementPaymentsFlowTracker: PaymentsFlowTracker,
+    @PointOfSaleMode pointOfSalePaymentsFlowTracker: PaymentsFlowTracker,
     private val dispatchers: CoroutineDispatchers,
-    private val tracker: PaymentsFlowTracker,
     private val appPrefs: AppPrefsWrapper,
     private val developerOptionsRepository: DeveloperOptionsRepository,
     private val locationRepository: CardReaderLocationRepository,
@@ -95,6 +98,12 @@ class CardReaderConnectViewModel @Inject constructor(
     private val learnMoreUrlProvider: LearnMoreUrlProvider,
 ) : ScopedViewModel(savedState) {
     private val arguments: CardReaderConnectDialogFragmentArgs by savedState.navArgs()
+    private val tracker: PaymentsFlowTracker = when (arguments.cardReaderFlowParam) {
+        is CardReaderFlowParam.WooPosConnection -> pointOfSalePaymentsFlowTracker
+        is CardReaderFlowParam.CardReadersHub -> storeManagementPaymentsFlowTracker
+        is CardReaderFlowParam.PaymentOrRefund.Payment -> storeManagementPaymentsFlowTracker
+        is CardReaderFlowParam.PaymentOrRefund.Refund -> storeManagementPaymentsFlowTracker
+    }
 
     /**
      * This is a workaround for a bug in MultiLiveEvent, which can't be fixed without vital changes.
@@ -482,7 +491,7 @@ class CardReaderConnectViewModel @Inject constructor(
         result: CardReaderLocationRepository.LocationIdFetchingResult.Error.MissingAddress
     ) {
         if (selectedSite.getIfExists()?.isWPCom == true || selectedSite.getIfExists()?.isWPComAtomic == true) {
-            triggerEvent(OpenWPComWebView(result.url))
+            triggerEvent(OpenAuthenticatedWebView(result.url))
         } else {
             triggerEvent(OpenGenericWebView(result.url))
             exitFlow(connected = false)

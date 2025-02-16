@@ -156,6 +156,14 @@
         <action
             android:id="@+id/action_orderListFragment_to_orderConnectivityToolFragment"
             app:destination="@id/orderConnectivityToolFragment" />
+        <action
+            android:id="@+id/action_orderListFragment_to_ordersListStatusSelectorDialog"
+            app:destination="@id/ordersListStatusSelectorDialog"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@null"
+            app:popEnterAnim="@null"
+            app:popExitAnim="@anim/activity_fade_out" />
+
     </fragment>
     <fragment
         android:id="@+id/barcodeScanningFragment"
@@ -389,6 +397,11 @@
             android:defaultValue="@null"
             app:argType="java.math.BigDecimal"
             app:nullable="true" />
+        <argument
+            android:name="orderCurrency"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
 
     </action>
 
@@ -494,9 +507,9 @@
         android:label="fragment_user_eligibility_error"
         tools:layout="@layout/fragment_user_eligibility_error" />
     <fragment
-        android:id="@+id/WPComWebViewFragment"
-        android:name="com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewFragment"
-        android:label="WPComWebViewFragment"
+        android:id="@+id/AuthenticatedWebViewFragment"
+        android:name="com.woocommerce.android.ui.common.webview.AuthenticatedWebViewFragment"
+        android:label="AuthenticatedWebViewFragment"
         tools:layout="@layout/fragment_wpcom_webview">
         <argument
             android:name="urlToLoad"
@@ -518,19 +531,19 @@
         <argument
             android:name="displayMode"
             android:defaultValue="REGULAR"
-            app:argType="com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel$DisplayMode" />
+            app:argType="com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel$DisplayMode" />
         <argument
             android:name="urlComparisonMode"
             android:defaultValue="PARTIAL"
-            app:argType="com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewViewModel$UrlComparisonMode" />
+            app:argType="com.woocommerce.android.ui.common.webview.AuthenticatedWebViewViewModel$UrlComparisonMode" />
         <argument
             android:name="clearCache"
             android:defaultValue="false"
             app:argType="boolean" />
     </fragment>
     <action
-        android:id="@+id/action_global_WPComWebViewFragment"
-        app:destination="@id/WPComWebViewFragment" />
+        android:id="@+id/action_global_AuthenticatedWebViewFragment"
+        app:destination="@id/AuthenticatedWebViewFragment" />
     <fragment
         android:id="@+id/GoogleAdsWebViewFragment"
         android:name="com.woocommerce.android.ui.google.webview.GoogleAdsWebViewFragment"
@@ -873,4 +886,18 @@
     <action
         android:id="@+id/action_global_blazeCampaignDetailWebViewFragment"
         app:destination="@id/blazeCampaignDetailWebViewFragment" />
+    <dialog
+        android:id="@+id/ordersListStatusSelectorDialog"
+        android:name="com.woocommerce.android.ui.orders.details.OrderStatusSelectorDialog">
+        <argument
+            android:name="currentStatus"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="orderStatusList"
+            app:argType="com.woocommerce.android.model.Order$OrderStatus[]" />
+        <argument
+            android:name="positiveButtonLabel"
+            app:argType="integer" />
+    </dialog>
 </navigation>

@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.compose.component
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetDefaults
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetState
@@ -17,7 +16,6 @@ import com.woocommerce.android.R
 /**
  * A wrapper around [ModalBottomSheetLayout] that provides default values for the sheet shape and scrim color.
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WCModalBottomSheetLayout(
     sheetState: ModalBottomSheetState,
@@ -33,15 +31,17 @@ fun WCModalBottomSheetLayout(
         sheetContent = sheetContent,
         sheetShape = sheetShape,
         sheetState = sheetState,
+        scrimColor = scrimColor(),
         modifier = modifier,
-        scrimColor =
-        // Overriding scrim color for dark theme because of the following bug affecting ModalBottomSheetLayout:
-        // https://issuetracker.google.com/issues/183697056
-        if (isSystemInDarkTheme()) {
-            colorResource(id = R.color.color_scrim_background)
-        } else {
-            ModalBottomSheetDefaults.scrimColor
-        },
-        content = content,
+        content = content
     )
+}
+
+// Overriding scrim color for dark theme because of the following bug affecting ModalBottomSheetLayout:
+// https://issuetracker.google.com/issues/183697056
+@Composable
+private fun scrimColor() = if (isSystemInDarkTheme()) {
+    colorResource(id = R.color.color_scrim_background)
+} else {
+    ModalBottomSheetDefaults.scrimColor
 }

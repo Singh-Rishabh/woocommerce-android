@@ -12,9 +12,12 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
@@ -52,7 +55,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val observeOriginAddresses: ObserveOriginAddresses,
     private val getShippingRates: GetShippingRates,
     private val purchaseShippingLabel: PurchaseShippingLabel,
-    private val observeStoreOptions: ObserveStoreOptions
+    private val observeStoreOptions: ObserveStoreOptions,
+    private val shouldRequireCustoms: ShouldRequireCustomsForm
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -66,8 +70,15 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageSelected = MutableStateFlow<PackageData?>(null)
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
+    private val customsState = MutableStateFlow<CustomsState>(NotRequired)
 
-    private val markOrderComplete = MutableStateFlow(false)
+    private val uiState = MutableStateFlow(
+        UIControlsState(
+            markOrderComplete = false,
+            isShipmentDetailsExpanded = false,
+            isAddressSelectionExpanded = false
+        )
+    )
 
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
@@ -98,6 +109,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch { observePackageChanges() }
         launch { observeShippingRates() }
         launch { observeShippingRatesState() }
+        launch { observeCustomsDataChanges() }
     }
 
     private suspend fun getOrderInformation() {
@@ -204,6 +216,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    // This logic will be updated later once the Customs data state is available
+    private suspend fun observeCustomsDataChanges() {
+        combine(
+            shippingAddresses,
+            customsState
+        ) { addresses, _ ->
+            when {
+                addresses != null && shouldRequireCustoms(addresses) -> Unavailable
+                else -> NotRequired
+            }
+        }.collectLatest { customsState.value = it }
+    }
+
     private suspend fun getShippingAddresses() {
         order.combine(observeOriginAddresses()) { order, originAddresses ->
             if (order != null && !originAddresses.isNullOrEmpty()) {
@@ -252,9 +277,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             shippingAddresses.drop(1),
             shippingRatesState,
             packageSelection,
-            markOrderComplete,
-            purchaseState
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, markOrderComplete, purchaseState ->
+            uiState,
+            purchaseState,
+            customsState
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState ->
             if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -278,8 +304,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 shippingAddresses = addresses,
                 shippingRates = shippingRates,
                 packageSelection = packageSelection,
-                markOrderComplete = markOrderComplete,
-                purchaseState = purchaseState
+                uiState = uiState,
+                purchaseState = purchaseState,
+                customsState = customsState
             )
         }.collectLatest {
             viewState.value = it
@@ -298,6 +325,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    fun onEditOriginAddress(address: OriginShippingAddress) {
+        triggerEvent(StartOriginAddressEdit(address))
+    }
+
     fun onShippingToAddressChange(address: Address) {
         shippingAddresses.value?.let {
             shippingAddresses.value = it.copy(shipTo = address)
@@ -309,7 +340,21 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onMarkOrderCompleteChange(value: Boolean) {
-        markOrderComplete.value = value
+        uiState.update { it.copy(markOrderComplete = value) }
+    }
+
+    fun onShipmentDetailsExpandedChange(value: Boolean): Boolean {
+        return if (uiState.value.isAddressSelectionExpanded.not()) {
+            uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+            true
+        } else {
+            false
+        }
+    }
+
+    fun onSelectAddressExpandedChange(value: Boolean): Boolean {
+        uiState.update { it.copy(isAddressSelectionExpanded = value) }
+        return true
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
@@ -348,7 +393,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         if (selectedPackage == null || addresses == null || shippingRate == null || weight == null) return
 
         val orderId = navArgs.orderId
-        val lastOrderComplete = markOrderComplete.value
+        val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
 
         purchaseState.value = PurchaseState.InProgress
@@ -425,12 +470,35 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         customWeight = input
     }
 
+    fun onEditCustomsClick() {
+        triggerEvent(StartCustomsFormEdit)
+    }
+
+    fun allowBackNavigation(): Boolean {
+        val state = uiState.value
+        return when {
+            state.isAddressSelectionExpanded -> {
+                uiState.update { it.copy(isAddressSelectionExpanded = false) }
+                false
+            }
+
+            state.isShipmentDetailsExpanded -> {
+                uiState.update { it.copy(isShipmentDetailsExpanded = false) }
+                false
+            }
+
+            else -> true
+        }
+    }
+
     fun onNavigateBack() {
-        triggerEvent(Event.Exit)
+        if (allowBackNavigation()) triggerEvent(Event.Exit)
     }
 
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
+    data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
+    data object StartCustomsFormEdit : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
@@ -441,8 +509,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
             val packageSelection: PackageSelectionState,
-            val markOrderComplete: Boolean,
-            val purchaseState: PurchaseState
+            val uiState: UIControlsState,
+            val purchaseState: PurchaseState,
+            val customsState: CustomsState
         ) : WooShippingViewState()
     }
 
@@ -488,6 +557,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             get() = customWeight ?: defaultWeight
     }
 
+    data class UIControlsState(
+        val markOrderComplete: Boolean,
+        val isShipmentDetailsExpanded: Boolean,
+        val isAddressSelectionExpanded: Boolean
+    )
+
     data class ShippingRatesInfo(
         val orderId: Long,
         val packageSelected: PackageData,
@@ -496,6 +571,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val weight: Float,
         val currencyCode: String?
     )
+
+    // This will be extended later introducing the state with data coming from the Customs form
+    sealed class CustomsState {
+        data object NotRequired : CustomsState()
+        data object Unavailable : CustomsState()
+    }
 
     companion object {
         private const val TYPING_DELAY = 800L

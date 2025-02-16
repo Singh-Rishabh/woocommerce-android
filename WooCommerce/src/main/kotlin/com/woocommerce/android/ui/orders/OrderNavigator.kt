@@ -46,7 +46,8 @@ class OrderNavigator @Inject constructor() {
                 val action = OrderDetailFragmentDirections
                     .actionOrderDetailFragmentToOrderStatusSelectorDialog(
                         currentStatus = target.currentStatus,
-                        orderStatusList = target.orderStatusList
+                        orderStatusList = target.orderStatusList,
+                        positiveButtonLabel = R.string.apply
                     )
                 fragment.findNavController().navigateSafely(action)
             }
@@ -194,7 +195,8 @@ class OrderNavigator @Inject constructor() {
                 (fragment.activity as? MainActivity)?.showOrderCreation(
                     OrderCreateEditViewModel.Mode.Edit(target.orderId),
                     target.giftCard,
-                    target.appliedDiscount
+                    target.appliedDiscount,
+                    target.orderCurrency
                 )
             }
             is OrderNavigationTarget.ShowOrder -> {

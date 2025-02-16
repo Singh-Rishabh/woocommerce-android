@@ -39,6 +39,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.toAdaptivePadding
+import com.woocommerce.android.ui.woopos.home.items.ItemsEmptyList
 import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
@@ -157,7 +158,15 @@ private fun WooPosVariationsScreens(
                     }
                 }
 
-                else -> {}
+                is WooPosVariationsViewState.Empty -> {
+                    ItemsEmptyList(
+                        title = stringResource(id = R.string.woopos_variations_empty_list_title),
+                        message = stringResource(id = R.string.woopos_variations_empty_list_message),
+                        contentDescription = stringResource(
+                            id = R.string.woopos_variations_empty_list_image_description
+                        )
+                    )
+                }
             }
         }
         PullRefreshIndicator(
@@ -233,19 +242,6 @@ private fun VariationsToolbar(
             modifier = Modifier.constrainAs(productName) {
                 start.linkTo(backButton.end, margin = 8.dp)
                 top.linkTo(parent.top, margin = 8.dp)
-            }
-        )
-
-        Text(
-            text = stringResource(
-                id = R.string.woopos_items_list_variable_product_variations,
-                variableProductData.numOfVariations
-            ),
-            style = MaterialTheme.typography.h6,
-            color = MaterialTheme.colors.onSurface.copy(alpha = 0.6f),
-            modifier = Modifier.constrainAs(variationsCount) {
-                start.linkTo(productName.start)
-                top.linkTo(productName.bottom, margin = 4.dp)
             }
         )
     }

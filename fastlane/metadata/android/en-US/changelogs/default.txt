@@ -1,3 +1,2 @@
-In this update, we've improved the WooCommerce app with several fixes and enhancements. The "One-time shipping" label now correctly matches its availability in Product Subscriptions, and issues with product conversion have been resolved. We've also streamlined the card reader payment flow for faster transactions, fixed a barcode scanner crash, and improved login error handling. Plus, if your site has no products, the Blaze Campaign screen now offers an easy way to create one.
+We've improved WooCommerce app! This time we've fixed several bugs and focused on improving user interface. Keep your feedback falling in; it helps us figure how to improve Woo for you. Happy selling!
 
------

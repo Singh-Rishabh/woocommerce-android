@@ -15,7 +15,7 @@ import com.woocommerce.android.R.string
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker.Companion.KEY_SHIPPING_LINES_COUNT
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
-import com.woocommerce.android.analytics.IsScreenLargerThanCompactValue
+import com.woocommerce.android.analytics.IsScreenInTwoPaneLayout
 import com.woocommerce.android.analytics.deviceTypeToAnalyticsString
 import com.woocommerce.android.extensions.whenNotNullNorEmpty
 import com.woocommerce.android.model.GiftCardSummary
@@ -34,7 +34,6 @@ import com.woocommerce.android.tools.ProductImageMap
 import com.woocommerce.android.tools.ProductImageMap.OnProductFetchedListener
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.giftcard.GiftCardRepository
-import com.woocommerce.android.ui.orders.CurrencyMatchResult
 import com.woocommerce.android.ui.orders.IsStoreCurrencyMatch
 import com.woocommerce.android.ui.orders.OrderNavigationTarget
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.AddOrderNote
@@ -88,7 +87,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.withIndex
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.wordpress.android.fluxc.model.OrderAttributionInfo
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.OptimisticUpdateResult
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.RemoteUpdateResult
@@ -352,10 +350,9 @@ class OrderDetailViewModel @Inject constructor(
         launch {
             val isCurrencyMatch = isStoreCurrencyMatch(awaitOrder().currency)
             if (!isCurrencyMatch.isMatch) {
-                handleEditClickWhenCurrencyMismatch(isCurrencyMatch)
-            } else {
-                handleEditClick()
+                tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
             }
+            handleEditClick()
         }
     }
 
@@ -367,19 +364,8 @@ class OrderDetailViewModel @Inject constructor(
                 EditOrder(
                     orderId = awaitOrder().id,
                     giftCard = firstGiftCard?.code,
-                    appliedDiscount = firstGiftCard?.used
-                )
-            )
-        }
-    }
-
-    private fun handleEditClickWhenCurrencyMismatch(isCurrencyMatch: CurrencyMatchResult) {
-        launch {
-            tracker.trackOrderAndStoreCurrencyMismatchWhenEditButtonTapped()
-            triggerEvent(
-                ShowSnackbar(
-                    message = string.order_detail_edit_store_currency_mismatch,
-                    args = arrayOf(awaitOrder().currency, isCurrencyMatch.storeCurrency.orEmpty())
+                    appliedDiscount = firstGiftCard?.used,
+                    orderCurrency = awaitOrder().currency
                 )
             )
         }
@@ -419,7 +405,7 @@ class OrderDetailViewModel @Inject constructor(
 
     fun onCollectPaymentClicked(isTablet: Boolean = false) {
         paymentsFlowTracker.trackCollectPaymentTapped(
-            IsScreenLargerThanCompactValue(isTablet).deviceTypeToAnalyticsString
+            IsScreenInTwoPaneLayout(isTablet).deviceTypeToAnalyticsString
         )
         triggerEvent(
             StartPaymentFlow(
@@ -992,12 +978,7 @@ class OrderDetailViewModel @Inject constructor(
         }
     }
 
-    suspend fun awaitOrder(): Order =
-        withTimeout(
-            TIME_TO_WAIT_ORDER_MS // time needed in order to crash in case of a deadlock
-        ) {
-            _order.filterNotNull().first()
-        }
+    suspend fun awaitOrder(): Order = _order.filterNotNull().first()
 
     fun onWcShippingBannerDismissed() {
         shippingLabelOnboardingRepository.markWcShippingBannerAsDismissed()
