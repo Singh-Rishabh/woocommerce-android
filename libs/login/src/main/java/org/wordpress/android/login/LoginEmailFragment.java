@@ -30,9 +30,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.credentials.Credential;
-import com.google.android.gms.auth.api.credentials.CredentialPickerConfig;
-import com.google.android.gms.auth.api.credentials.HintRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -217,14 +214,12 @@ public class LoginEmailFragment extends LoginBaseFormFragment<LoginListener> imp
         mEmailInput.getEditText().setOnFocusChangeListener((view, hasFocus) -> {
             if (hasFocus && !mIsDisplayingEmailHints && !mHasDismissedEmailHints) {
                 mAnalyticsListener.trackSelectEmailField();
-                showHintPickerDialogIfNeeded();
             }
         });
         mEmailInput.getEditText().setOnClickListener(view -> {
             mAnalyticsListener.trackSelectEmailField();
             if (!mIsDisplayingEmailHints && !mHasDismissedEmailHints) {
                 mAnalyticsListener.trackSelectEmailField();
-                showHintPickerDialogIfNeeded();
             }
         });
     }
@@ -353,7 +348,7 @@ public class LoginEmailFragment extends LoginBaseFormFragment<LoginListener> imp
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(LoginEmailFragment.this)
                 .enableAutoManage(getActivity(), GOOGLE_API_CLIENT_ID, LoginEmailFragment.this)
-                .addApi(Auth.CREDENTIALS_API)
+                .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build();
         showEmailError();
     }
@@ -605,47 +600,6 @@ public class LoginEmailFragment extends LoginBaseFormFragment<LoginListener> imp
     @Override
     public void onConnectionSuspended(int i) {
         AppLog.d(T.NUX, LOG_TAG + ": Google API client connection suspended");
-    }
-
-    private void showHintPickerDialogIfNeeded() {
-        // If autofill is available and enabled, we favor the active autofill service over the hint picker dialog.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            final AutofillManager autofillManager = requireContext().getSystemService(AutofillManager.class);
-            if (autofillManager != null && autofillManager.isEnabled()) {
-                AppLog.d(T.NUX, LOG_TAG + ": Autofill framework is enabled. Disabling hint picker dialog.");
-                return;
-            }
-        }
-
-        AppLog.d(T.NUX, LOG_TAG + ": Autofill framework is unavailable or disabled. Showing hint picker dialog.");
-
-        showHintPickerDialog();
-    }
-
-    private void showHintPickerDialog() {
-        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        if (getContext() == null
-            || googleApiAvailability.isGooglePlayServicesAvailable(getContext()) != ConnectionResult.SUCCESS) {
-            AppLog.w(T.NUX, LOG_TAG + ": Couldn't start hint picker - Play Services unavailable");
-            return;
-        }
-        HintRequest hintRequest = new HintRequest.Builder()
-                .setHintPickerConfig(new CredentialPickerConfig.Builder()
-                        .setShowCancelButton(true)
-                        .build())
-                .setEmailAddressIdentifierSupported(true)
-                .build();
-
-        PendingIntent intent = Auth.CredentialsApi.getHintPickerIntent(mGoogleApiClient, hintRequest);
-
-        try {
-            startIntentSenderForResult(intent.getIntentSender(), EMAIL_CREDENTIALS_REQUEST_CODE, null, 0, 0, 0, null);
-            mIsDisplayingEmailHints = true;
-        } catch (IntentSender.SendIntentException exception) {
-            AppLog.d(T.NUX, LOG_TAG + "Could not start email hint picker" + exception);
-        } catch (ActivityNotFoundException exception) {
-            AppLog.d(T.NUX, LOG_TAG + "Could not find any activity to handle email hint picker" + exception);
-        }
     }
 
     @Override
