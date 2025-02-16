@@ -1,12 +1,15 @@
 package com.woocommerce.android.ui.compose.component
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -17,6 +20,7 @@ fun WCModalBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
     content: @Composable ColumnScope.() -> Unit,
 ) {
     ModalBottomSheet(
@@ -24,6 +28,7 @@ fun WCModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         sheetState = sheetState,
+        shape = shape,
         content = content
     )
 }
