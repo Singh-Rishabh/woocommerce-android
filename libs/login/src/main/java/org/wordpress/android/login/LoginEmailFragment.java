@@ -70,7 +70,6 @@ public class LoginEmailFragment extends LoginBaseFormFragment<LoginListener> imp
     private static final String KEY_EMAIL_ERROR_RES = "KEY_EMAIL_ERROR_RES";
     private static final String LOG_TAG = LoginEmailFragment.class.getSimpleName();
     private static final int GOOGLE_API_CLIENT_ID = 1002;
-    private static final int EMAIL_CREDENTIALS_REQUEST_CODE = 25100;
 
     private static final String ARG_LOGIN_SITE_URL = "ARG_LOGIN_SITE_URL";
     private static final String ARG_SIGNUP_FROM_LOGIN_ENABLED = "ARG_SIGNUP_FROM_LOGIN_ENABLED";
@@ -600,32 +599,5 @@ public class LoginEmailFragment extends LoginBaseFormFragment<LoginListener> imp
     @Override
     public void onConnectionSuspended(int i) {
         AppLog.d(T.NUX, LOG_TAG + ": Google API client connection suspended");
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == EMAIL_CREDENTIALS_REQUEST_CODE) {
-            if (mEmailInput == null) {
-                // Activity result received before the fragments onCreateView(), disregard result.
-                return;
-            }
-
-            if (resultCode == RESULT_OK) {
-                Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
-                mEmailInput.getEditText().setText(credential.getId());
-                next(getCleanedEmail());
-            } else {
-                mHasDismissedEmailHints = true;
-                mEmailInput.getEditText().postDelayed(() -> {
-                    if (isAdded()) {
-                        ActivityUtils.showKeyboard(mEmailInput.getEditText());
-                    }
-                }, getResources().getInteger(android.R.integer.config_mediumAnimTime));
-            }
-
-            mIsDisplayingEmailHints = false;
-        }
     }
 }
