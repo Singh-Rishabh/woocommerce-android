@@ -40,8 +40,8 @@ class WooPosDesignSystemButtonUsageRule(config: Config) : Rule(config) {
         val callee = expression.calleeExpression
         val calleeName = when (callee) {
             is KtNameReferenceExpression -> callee.getReferencedName()
-            is KtDotQualifiedExpression -> (
-                callee.selectorExpression as? KtNameReferenceExpression)?.getReferencedName()
+            is KtDotQualifiedExpression -> (callee.selectorExpression as? KtNameReferenceExpression)
+                ?.getReferencedName()
 
             else -> null
         }
@@ -57,8 +57,7 @@ class WooPosDesignSystemButtonUsageRule(config: Config) : Rule(config) {
             val ktFile = expression.containingKtFile
             val isStandardButtonImported = ktFile.importDirectives.any { directive ->
                 val importPath = directive.importPath?.pathStr
-                importPath == "androidx.compose.material3.$calleeName" ||
-                    importPath == "androidx.compose.material3.*"
+                importPath == "androidx.compose.material3.$calleeName" || importPath == "androidx.compose.material3.*"
             }
             if (isStandardButtonImported) {
                 reportStandardButtonUsage(expression, calleeName)
