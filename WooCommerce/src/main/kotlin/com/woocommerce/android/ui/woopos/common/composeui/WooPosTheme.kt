@@ -13,8 +13,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 data class CustomColors(
-    val shadow: Color = WooPosColors.Black,
-
     val success: Color = WooPosColors.VividGreen,
     val onSuccess: Color = WooPosColors.Gray100,
 
