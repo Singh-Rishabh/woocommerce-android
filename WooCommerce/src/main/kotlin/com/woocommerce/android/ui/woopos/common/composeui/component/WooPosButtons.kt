@@ -103,9 +103,9 @@ fun WooPosOutlinedButton(
         text = text,
         border = BorderStroke(2.dp, borderColor),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
+            containerColor = WooPosTheme.colors.transparent,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContainerColor = Color.Transparent,
+            disabledContainerColor = WooPosTheme.colors.transparent,
             disabledContentColor = WooPosTheme.colors.onDisabledContainer,
         ),
         state = state,
@@ -133,9 +133,9 @@ fun WooPosOutlinedButtonSmall(
         text = text,
         border = BorderStroke(2.dp, borderColor),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
+            containerColor = WooPosTheme.colors.transparent,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContainerColor = Color.Transparent,
+            disabledContainerColor = WooPosTheme.colors.transparent,
             disabledContentColor = WooPosTheme.colors.onDisabledContainer,
         ),
         state = state,
