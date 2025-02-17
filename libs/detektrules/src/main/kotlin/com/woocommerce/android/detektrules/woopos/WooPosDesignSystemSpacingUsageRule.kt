@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class WooPosDesignSystemSpacingUsageRule(config: Config) : Rule(config) {
     private val targetPackagePrefix = "com.woocommerce.android.ui.woopos"
+    private val dpRegex = Regex("\\d+\\.dp")
+    private val dpWordRegex = Regex("\\b\\d+\\.dp\\b")
 
     override val issue = Issue(
         javaClass.simpleName,
@@ -22,50 +24,47 @@ class WooPosDesignSystemSpacingUsageRule(config: Config) : Rule(config) {
     )
 
     override fun visitKtFile(file: KtFile) {
-        if (file.packageFqName.asString().startsWith(targetPackagePrefix)) {
-            super.visitKtFile(file)
-        }
+        if (!file.packageFqName.asString().startsWith(targetPackagePrefix)) return
+        super.visitKtFile(file)
     }
 
     override fun visitCallExpression(expression: KtCallExpression) {
         super.visitCallExpression(expression)
+        val callName = (expression.calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return
 
-        val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression
-        val callName = calleeExpression?.getReferencedName()
+        when (callName) {
+            "padding" -> checkPaddingArguments(expression)
+            "Spacer" -> checkSpacerArguments(expression)
+        }
+    }
 
-        if (callName == "padding") {
-            expression.valueArguments.forEach { argument ->
-                val argumentExpression = argument.getArgumentExpression()
-                val argumentText = argumentExpression?.text ?: return@forEach
+    private fun checkPaddingArguments(expression: KtCallExpression) {
+        expression.valueArguments.forEach { argument ->
+            val argText = argument.getArgumentExpression()?.text ?: return@forEach
+            if (!argText.startsWith("WooPosSpacing") && argText.matches(dpRegex)) {
+                report(
+                    CodeSmell(
+                        issue,
+                        Entity.from(expression),
+                        "Use WooPosSpacing for padding/margins instead of hardcoded values. Found: $argText"
+                    )
+                )
+            }
+        }
+    }
 
-                if (!argumentText.startsWith("WooPosSpacing") && argumentText.matches(Regex("\\d+\\.dp"))) {
+    private fun checkSpacerArguments(expression: KtCallExpression) {
+        expression.valueArguments.forEach { argument ->
+            val argText = argument.getArgumentExpression()?.text ?: return@forEach
+            dpWordRegex.findAll(argText).forEach { match ->
+                if (!argText.contains("WooPosSpacing")) {
                     report(
                         CodeSmell(
                             issue,
                             Entity.from(expression),
-                            "Use WooPosSpacing for padding/margins instead of hardcoded values. Found: $argumentText"
+                            "Use WooPosSpacing for Spacer dimensions instead of hardcoded values. Found: ${match.value}"
                         )
                     )
-                }
-            }
-        } else if (callName == "Spacer") {
-            expression.valueArguments.forEach { argument ->
-                val argumentExpression = argument.getArgumentExpression()
-                val argumentText = argumentExpression?.text ?: return@forEach
-
-                val hardcodedDpRegex = Regex("\\b\\d+\\.dp\\b")
-                val matches = hardcodedDpRegex.findAll(argumentText)
-                for (match in matches) {
-                    if (!argumentText.contains("WooPosSpacing")) {
-                        report(
-                            CodeSmell(
-                                issue,
-                                Entity.from(expression),
-                                "Use WooPosSpacing for Spacer dimensions instead of hardcoded values. " +
-                                        "Found: ${match.value}"
-                            )
-                        )
-                    }
                 }
             }
         }
