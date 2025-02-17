@@ -7,15 +7,26 @@ import io.gitlab.arturbosch.detekt.api.Entity
 import io.gitlab.arturbosch.detekt.api.Issue
 import io.gitlab.arturbosch.detekt.api.Rule
 import io.gitlab.arturbosch.detekt.api.Severity
+import org.jetbrains.kotlin.com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtValueArgument
 
 class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     private val targetPackagePrefix = "com.woocommerce.android.ui.woopos"
-    private val allowedColorSources = setOf("MaterialTheme.colorScheme", "WooPosTheme.colors")
+    private val allowedColorSources = listOf("MaterialTheme.colorScheme", "WooPosTheme.colors")
+    private val colorArguments = setOf(
+        "background",
+        "containerColor",
+        "contentColor",
+        "borderColor",
+        "tint",
+        "shadowColor",
+        "disabledContainerColor",
+        "contentColor",
+        "disabledContentColor",
+    )
 
     override val issue = Issue(
         javaClass.simpleName,
@@ -33,59 +44,43 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     override fun visitCallExpression(expression: KtCallExpression) {
         super.visitCallExpression(expression)
 
-        val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression
-        val callName = calleeExpression?.getReferencedName()
-
-        val colorArguments = setOf(
-            "background",
-            "containerColor",
-            "contentColor",
-            "borderColor",
-            "tint",
-            "indicatorColor"
-        )
-
-        if (callName in colorArguments) {
+        val calleeName = (expression.calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return
+        if (calleeName in colorArguments) {
             expression.valueArguments.forEach { argument ->
-                checkColorArgument(argument)
+                val argText = argument.getArgumentExpression()?.text ?: return@forEach
+                checkColorUsage(argText, argument)
             }
         }
 
         if (expression.parent is KtBinaryExpression) {
-            checkColorAssignment(expression)
+            val binaryExpr = expression.parent as? KtBinaryExpression ?: return
+            val leftName = (binaryExpr.left as? KtNameReferenceExpression)?.getReferencedName()
+            if (leftName in colorArguments) {
+                checkColorUsage(expression.text, expression)
+            }
         }
     }
 
-    private fun checkColorArgument(argument: KtValueArgument) {
-        val argumentExpression = argument.getArgumentExpression()
-        val argumentText = argumentExpression?.text ?: return
+    private fun checkColorUsage(colorText: String, element: PsiElement) {
+        val recognizedPrefixes = listOf(
+            "Color(",
+            "Color.",
+            "MaterialTheme.colorScheme.",
+            "WooPosTheme.colors."
+        )
 
-        if (!isAllowedColor(argumentText)) {
+        if (recognizedPrefixes.none { colorText.startsWith(it) }) {
+            return
+        }
+
+        if (allowedColorSources.none { colorText.startsWith(it) }) {
             report(
                 CodeSmell(
                     issue,
-                    Entity.from(argument),
-                    "Colors should be used from WooPosTheme.colors or MaterialTheme.colorScheme. Found: $argumentText"
+                    Entity.from(element),
+                    "Colors should be used from WooPosTheme.colors or MaterialTheme.colorScheme. Found: $colorText"
                 )
             )
         }
-    }
-
-    private fun checkColorAssignment(expression: KtCallExpression) {
-        val argumentText = expression.text
-
-        if (!isAllowedColor(argumentText)) {
-            report(
-                CodeSmell(
-                    issue,
-                    Entity.from(expression),
-                    "Color assignments should use WooPosTheme.colors or MaterialTheme.colorScheme. Found: $argumentText"
-                )
-            )
-        }
-    }
-
-    private fun isAllowedColor(colorText: String): Boolean {
-        return allowedColorSources.any { colorText.startsWith(it) }
     }
 }
