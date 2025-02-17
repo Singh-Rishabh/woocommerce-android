@@ -9,7 +9,11 @@ import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
@@ -62,26 +66,28 @@ class ShippingLabelCreatePackageViewModelTest : BaseUnitTest() {
     fun `when onDoneButtonClicked is called, then creationDoneFlow emits the correct event`() = testBlocking {
         // Given
         val expectedEvent = OnDoneButtonClicked(PackageType.CUSTOM)
+        var receivedEvent: OnDoneButtonClicked? = null
+        viewModel.creationDoneFlow.onEach { receivedEvent = it }.launchIn(this.backgroundScope)
 
         // When
         viewModel.onDoneButtonClicked()
 
         // Then
-        val actualEvent = viewModel.creationDoneFlow.first()
-        assertThat(actualEvent).isEqualTo(expectedEvent)
+        assertThat(receivedEvent).isEqualTo(expectedEvent)
     }
 
     @Test
     fun `when onSelectedPageChanged is called, then selectedTabType is updated`() = testBlocking {
         // Given
         val expectedEvent = OnDoneButtonClicked(PackageType.SERVICE)
+        var receivedEvent: OnDoneButtonClicked? = null
+        viewModel.creationDoneFlow.onEach { receivedEvent = it }.launchIn(this.backgroundScope)
 
         // When
         viewModel.onSelectedPageChanged(PackageType.SERVICE)
         viewModel.onDoneButtonClicked()
 
         // Then
-        val actualEvent = viewModel.creationDoneFlow.first()
-        assertThat(actualEvent).isEqualTo(expectedEvent)
+        assertThat(receivedEvent).isEqualTo(expectedEvent)
     }
 }
