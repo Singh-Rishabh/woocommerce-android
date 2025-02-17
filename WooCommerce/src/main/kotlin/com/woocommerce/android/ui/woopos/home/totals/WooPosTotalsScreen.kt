@@ -272,6 +272,7 @@ private fun ReaderDisconnected(
             modifier = Modifier.size(64.dp),
             painter = painterResource(id = R.drawable.ic_woo_pos_error),
             contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
+            
             tint = Color.Unspecified,
         )
 

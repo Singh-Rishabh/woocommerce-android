@@ -41,6 +41,8 @@ data class CustomColors(
     val paymentSuccessIcon: Color,
     val dialogSubtitleHighlightBackground: Color = WooPosColors.lightQuaternaryBackground,
     val homeBackground: Color,
+
+    val transparent: Color = Color.Transparent,
 )
 
 private object WooPosColors {

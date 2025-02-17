@@ -8,10 +8,8 @@ import io.gitlab.arturbosch.detekt.api.Issue
 import io.gitlab.arturbosch.detekt.api.Rule
 import io.gitlab.arturbosch.detekt.api.Severity
 import org.jetbrains.kotlin.com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     private val targetPackagePrefix = "com.woocommerce.android.ui.woopos"
@@ -24,8 +22,7 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
         "tint",
         "shadowColor",
         "disabledContainerColor",
-        "contentColor",
-        "disabledContentColor",
+        "disabledContentColor"
     )
 
     override val issue = Issue(
@@ -36,6 +33,7 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     )
 
     override fun visitKtFile(file: KtFile) {
+        // Only run this rule for files in the target package.
         if (file.packageFqName.asString().startsWith(targetPackagePrefix)) {
             super.visitKtFile(file)
         }
@@ -43,20 +41,11 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
 
     override fun visitCallExpression(expression: KtCallExpression) {
         super.visitCallExpression(expression)
-
-        val calleeName = (expression.calleeExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return
-        if (calleeName in colorArguments) {
-            expression.valueArguments.forEach { argument ->
-                val argText = argument.getArgumentExpression()?.text ?: return@forEach
-                checkColorUsage(argText, argument)
-            }
-        }
-
-        if (expression.parent is KtBinaryExpression) {
-            val binaryExpr = expression.parent as? KtBinaryExpression ?: return
-            val leftName = (binaryExpr.left as? KtNameReferenceExpression)?.getReferencedName()
-            if (leftName in colorArguments) {
-                checkColorUsage(expression.text, expression)
+        expression.valueArguments.forEach { argument ->
+            val argName = argument.argumentName?.asName?.asString()
+            if (argName != null && argName in colorArguments) {
+                val argExprText = argument.getArgumentExpression()?.text ?: return@forEach
+                checkColorUsage(argExprText, argument)
             }
         }
     }
@@ -65,6 +54,7 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
         val recognizedPrefixes = listOf(
             "Color(",
             "Color.",
+            "WooPosColors.",
             "MaterialTheme.colorScheme.",
             "WooPosTheme.colors."
         )

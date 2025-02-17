@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -91,7 +90,7 @@ fun WooPosMoneyInputField(
     var labelWidth by remember { mutableIntStateOf(0) }
 
     Box(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier.background(WooPosTheme.colors.transparent),
         contentAlignment = contentAlignment,
     ) {
         val textColor = textStyle.color
@@ -182,7 +181,7 @@ fun WooPosInputField(
     var labelWidth by remember { mutableIntStateOf(0) }
 
     Box(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier.background(WooPosTheme.colors.transparent),
         contentAlignment = contentAlignment,
     ) {
         val textColor = textStyle.color
