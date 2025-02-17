@@ -97,6 +97,7 @@ fun WooPosMoneyInputField(
         val textColor = textStyle.color
         val showLabel = textFieldValue.text.isEmpty()
         if (showLabel) {
+            @Suppress("WooPosTypographyUsageRule")
             Text(
                 text = visualTransformation.filter(AnnotatedString("0.00")).text.toString(),
                 style = textStyle.copy(color = WooPosTheme.colors.onDisabledContainer),
@@ -186,6 +187,7 @@ fun WooPosInputField(
     ) {
         val textColor = textStyle.color
         if (value.isEmpty()) {
+            @Suppress("WooPosTypographyUsageRule")
             Text(
                 text = label,
                 style = textStyle.copy(color = WooPosTheme.colors.onDisabledContainer),
