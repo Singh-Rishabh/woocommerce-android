@@ -9,6 +9,6 @@ class CustomRuleSetProvider : RuleSetProvider {
 
     override fun instance(config: Config) = RuleSet(
         ruleSetId,
-        listOf(WooPosDesignSystemUsage(config))
+        listOf(WooPosDesignSystemUsageSpacing(config))
     )
 }
