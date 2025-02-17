@@ -28,7 +28,6 @@ data class CustomColors(
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
 
-    val totalsBackground: Color,
     val totalsErrorBackground: Color,
     val paymentSuccessBackground: Color,
     val paymentProcessingBackground: Color,
@@ -47,7 +46,6 @@ private object WooPosColors {
     // DarkCustomColors
     val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
     val darkQuaternaryBackground = Color(0xFF111111)
-    val darkTotalsBackground = Color(0xFF1C1C1E)
 
     // LightCustomColors
     val lightQuaternaryBackground = Color(0x14747480)
@@ -145,7 +143,6 @@ private val LocalCustomColors = staticCompositionLocalOf {
 
 private val LightCustomColors = CustomColors(
     totalsErrorBackground = WooPosColors.lightQuaternaryBackground,
-    totalsBackground = WooPosColors.Gray0,
     paymentSuccessBackground = WooPosColors.White,
     paymentSuccessText = WooPosColors.WooPurple90,
     paymentSuccessIcon = Color.White,
@@ -164,7 +161,6 @@ private val LightCustomColors = CustomColors(
 
 private val DarkCustomColors = CustomColors(
     totalsErrorBackground = WooPosColors.darkQuaternaryBackground,
-    totalsBackground = WooPosColors.darkTotalsBackground,
     paymentSuccessBackground = WooPosColors.darkCustomColorsHomeBackground,
     paymentSuccessText = WooPosColors.oldGrayLight,
     paymentSuccessIcon = WooPosColors.darkCustomColorsHomeBackground,
