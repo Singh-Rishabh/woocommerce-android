@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
-@OptIn(InternalCoroutinesApi::class)
 @HiltViewModel
 class ShippingLabelCreatePackageViewModel @Inject constructor(
     savedState: SavedStateHandle
@@ -63,7 +62,9 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
     }
 
     fun onDoneButtonClicked() {
-        launch { creationDoneEventChannel.send(OnDoneButtonClicked(selectedTab = selectedTabType.value)) }
+        launch {
+            creationDoneEventChannel.send(OnDoneButtonClicked(selectedTab = selectedTabType.value))
+        }.invokeOnCompletion { creationDoneEventChannel.close() }
     }
 
     enum class PackageType {
