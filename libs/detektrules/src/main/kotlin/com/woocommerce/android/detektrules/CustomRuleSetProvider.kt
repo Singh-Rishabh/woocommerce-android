@@ -5,7 +5,7 @@ import io.gitlab.arturbosch.detekt.api.RuleSet
 import io.gitlab.arturbosch.detekt.api.RuleSetProvider
 
 class CustomRuleSetProvider : RuleSetProvider {
-    override val ruleSetId: String = "woo-pos-custom-rules"
+    override val ruleSetId: String = "custom-rules"
 
     override fun instance(config: Config) = RuleSet(
         ruleSetId,
