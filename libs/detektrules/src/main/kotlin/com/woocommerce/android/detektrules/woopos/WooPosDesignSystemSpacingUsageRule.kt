@@ -36,7 +36,7 @@ class WooPosDesignSystemSpacingUsageRule(config: Config) : Rule(config) {
         if (callName == "padding") {
             expression.valueArguments.forEach { argument ->
                 val argumentExpression = argument.getArgumentExpression()
-                val argumentText = argumentExpression?.text ?: return
+                val argumentText = argumentExpression?.text ?: return@forEach
 
                 if (!argumentText.startsWith("WooPosSpacing") && argumentText.matches(Regex("\\d+\\.dp"))) {
                     report(
@@ -46,6 +46,26 @@ class WooPosDesignSystemSpacingUsageRule(config: Config) : Rule(config) {
                             "Use WooPosSpacing for padding/margins instead of hardcoded values. Found: $argumentText"
                         )
                     )
+                }
+            }
+        } else if (callName == "Spacer") {
+            expression.valueArguments.forEach { argument ->
+                val argumentExpression = argument.getArgumentExpression()
+                val argumentText = argumentExpression?.text ?: return@forEach
+
+                val hardcodedDpRegex = Regex("\\b\\d+\\.dp\\b")
+                val matches = hardcodedDpRegex.findAll(argumentText)
+                for (match in matches) {
+                    if (!argumentText.contains("WooPosSpacing")) {
+                        report(
+                            CodeSmell(
+                                issue,
+                                Entity.from(expression),
+                                "Use WooPosSpacing for Spacer dimensions instead of hardcoded values. " +
+                                        "Found: ${match.value}"
+                            )
+                        )
+                    }
                 }
             }
         }
