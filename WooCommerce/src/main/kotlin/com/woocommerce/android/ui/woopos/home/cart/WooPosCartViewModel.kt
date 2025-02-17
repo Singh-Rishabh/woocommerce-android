@@ -21,6 +21,7 @@ import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ItemRemovedFromCart
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
@@ -74,6 +75,9 @@ class WooPosCartViewModel @Inject constructor(
                         body = (currentState.body as WooPosCartState.Body.WithItems)
                             .copy(itemsInCart = currentState.body.itemsInCart - event.item)
                     )
+                }
+                viewModelScope.launch {
+                    analyticsTracker.track(ItemRemovedFromCart)
                 }
             }
 

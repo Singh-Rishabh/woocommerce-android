@@ -182,6 +182,51 @@ class WooPosCartViewModelTest {
     }
 
     @Test
+    fun `given items in cart, when item remove button clicked in cart, then should track envent`() = runTest {
+        // GIVEN
+        val product = ProductTestUtils.generateProduct(
+            productId = 23L,
+            productName = "title",
+            amount = "10.0"
+        ).copy(firstImageUrl = "url")
+
+        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
+        val sut = createSut()
+        val states = sut.state.captureValues()
+
+        parentToChildrenEventsMutableFlow.emit(
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    id = product.remoteId
+                )
+            )
+        )
+
+        // WHEN
+        sut.onUIEvent(
+            WooPosCartUIEvent.ItemRemovedFromCart(
+                WooPosCartState.Body.WithItems.Item(
+                    id = WooPosCartState.Body.WithItems.Item.Id(
+                        productId = product.remoteId,
+                        variationId = 0,
+                        itemNumber = 1
+                    ),
+                    name = product.name,
+                    price = "10.0$",
+                    imageUrl = product.firstImageUrl,
+                    productType = ProductType.Simple,
+                    description = null,
+                )
+            )
+        )
+
+        // THEN
+        verify(analyticsTracker).track(WooPosAnalyticsEvent.Event.ItemRemovedFromCart)
+    }
+
+    @Test
     fun `given empty cart in_progress, when vm created, then toolbar state should contain shopping cart empty itemsCart and no clear all button`() =
         runTest {
             // WHEN
