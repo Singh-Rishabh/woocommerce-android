@@ -42,6 +42,7 @@ fun WooPosPaymentFailedScreen(
             .padding(vertical = 96.dp.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        @Suppress("WooPosDesignSystemSpacingUsageRule")
         Spacer(modifier = Modifier.height(96.dp.toAdaptivePadding()))
         Icon(
             modifier = Modifier.size(84.dp),
@@ -75,6 +76,7 @@ fun WooPosPaymentFailedScreen(
                 text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout),
             ) { onUIEvent(WooPosTotalsUIEvent.GoBackToCheckoutAfterFailedPayment) }
         }
+        @Suppress("WooPosDesignSystemSpacingUsageRule")
         Spacer(modifier = Modifier.height(80.dp.toAdaptivePadding()))
     }
 }

@@ -240,7 +240,7 @@ fun WooPosButtonsPreview() {
                 onClick = {}
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosOutlinedButton(
                 text = "Button Outlined",
@@ -261,9 +261,9 @@ fun WooPosButtonsPreview() {
                 onClick = {}
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value)) {
                 WooPosButtonSmall(
                     text = "Button Small",
                     state = WooPosButtonState.ENABLED,
@@ -283,7 +283,7 @@ fun WooPosButtonsPreview() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 WooPosOutlinedButtonSmall(

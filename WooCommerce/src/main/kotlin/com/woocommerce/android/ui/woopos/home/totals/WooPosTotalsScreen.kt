@@ -265,6 +265,7 @@ private fun ReaderDisconnected(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
+        @Suppress("WooPosDesignSystemSpacingUsageRule")
         Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
 
         Icon(

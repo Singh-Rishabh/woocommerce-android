@@ -420,7 +420,7 @@ private fun ProductItem(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.clearAndSetSemantics { }
                 )
-                Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
+                Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 if (item.description.isNotNullOrEmpty()) {
                     Text(
                         text = item.description!!,
@@ -430,7 +430,7 @@ private fun ProductItem(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clearAndSetSemantics { }
                     )
-                    Spacer(modifier = Modifier.height(4.dp.toAdaptivePadding()))
+                    Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 }
                 Text(
                     text = item.price,

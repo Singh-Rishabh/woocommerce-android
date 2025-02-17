@@ -127,6 +127,7 @@ fun WooPosItemList(
         }
 
         item {
+            @Suppress("WooPosDesignSystemSpacingUsageRule")
             Spacer(modifier = Modifier.height(104.dp))
         }
     }

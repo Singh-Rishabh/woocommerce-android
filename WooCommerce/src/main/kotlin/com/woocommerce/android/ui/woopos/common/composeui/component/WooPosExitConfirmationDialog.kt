@@ -52,6 +52,7 @@ fun WooPosExitConfirmationDialog(
             modifier = modifier.padding(WooPosSpacing.XLarge.value.toAdaptivePadding())
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                @Suppress("WooPosDesignSystemSpacingUsageRule")
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
                 Text(
                     text = title,
@@ -65,6 +66,7 @@ fun WooPosExitConfirmationDialog(
                     style = WooPosTypography.BodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
+                @Suppress("WooPosDesignSystemSpacingUsageRule")
                 Spacer(modifier = modifier.height(56.dp.toAdaptivePadding()))
                 WooPosButton(
                     modifier = modifier
