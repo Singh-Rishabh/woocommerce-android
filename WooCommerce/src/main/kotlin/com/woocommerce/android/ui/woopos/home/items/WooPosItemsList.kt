@@ -76,7 +76,7 @@ fun WooPosItemList(
     onErrorWhilePaginating: @Composable () -> Unit,
 ) {
     WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value),
         contentPadding = PaddingValues(2.dp),
         state = listState,
     ) {
@@ -201,7 +201,7 @@ private fun ItemCard(
         ) {
             ProductImage(item)
 
-            Spacer(modifier = Modifier.width(WooPosSpacing.XLarge.value))
+            Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))
 
             ProductInfo(item)
         }
@@ -293,7 +293,7 @@ fun VariationProductDetails(item: Variation) {
 @Composable
 fun ItemsLoadingIndicator(itemsCount: Int = 10) {
     WooPosLazyColumn(
-        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value),
         contentPadding = PaddingValues(2.dp),
     ) {
         items(itemsCount) {
