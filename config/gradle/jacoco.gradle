@@ -16,7 +16,6 @@ rootProject.afterEvaluate {
                 ':libs:fluxc-plugin:testDebugUnitTest',
                 ':libs:fluxc-tests:testDebugUnitTest',
                 ':libs:login:testDebugUnitTest',
-                ':libs:detektrules:testDebugUnitTest',
         )
 
         group = "Reporting"
@@ -95,6 +94,8 @@ rootProject.afterEvaluate {
         sourceDirectories.setFrom(files([sources]))
         classDirectories.from = files([kotlinClasses])
 
-        executionData fileTree(project.rootDir.absolutePath).include("**/build/**/*.exec")
+        executionData fileTree(project.rootDir.absolutePath)
+                .include("**/build/**/*.exec")
+                .exclude("**/detektrules/**")
     }
 }
