@@ -1,4 +1,4 @@
-package com.woocommerce.android.detektrules
+package com.woocommerce.android.detektrules.woopos
 
 import io.gitlab.arturbosch.detekt.api.CodeSmell
 import io.gitlab.arturbosch.detekt.api.Config
@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-class WooPosTypographyUsageRule(config: Config) : Rule(config) {
+class WooPosDesignSystemUsageSpacing(config: Config) : Rule(config) {
     private val targetPackagePrefix = "com.woocommerce.android.ui.woopos"
-    private val typographyFile = "WooPosTypography"
 
     override val issue = Issue(
         javaClass.simpleName,
         Severity.Style,
-        "Use text styles from $typographyFile instead of hardcoded styles.",
+        "Use spacing from the WooPosSpacing design system.",
         Debt.FIVE_MINS
     )
 
@@ -34,22 +33,20 @@ class WooPosTypographyUsageRule(config: Config) : Rule(config) {
         val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression
         val callName = calleeExpression?.getReferencedName()
 
-        if (callName == "Text") {
-            val hasValidStyle = expression.valueArguments.any { argument ->
+        if (callName == "padding") {
+            expression.valueArguments.forEach { argument ->
                 val argumentExpression = argument.getArgumentExpression()
-                val argumentText = argumentExpression?.text ?: return@any false
+                val argumentText = argumentExpression?.text ?: return
 
-                argumentText.startsWith(typographyFile)
-            }
-
-            if (!hasValidStyle) {
-                report(
-                    CodeSmell(
-                        issue,
-                        Entity.from(expression),
-                        "Text should use styles from WooPosTypography instead of hardcoded values or defaults."
+                if (!argumentText.startsWith("WooPosSpacing") && argumentText.matches(Regex("\\d+\\.dp"))) {
+                    report(
+                        CodeSmell(
+                            issue,
+                            Entity.from(expression),
+                            "Use WooPosSpacing for padding/margins instead of hardcoded values. Found: $argumentText"
+                        )
                     )
-                )
+                }
             }
         }
     }

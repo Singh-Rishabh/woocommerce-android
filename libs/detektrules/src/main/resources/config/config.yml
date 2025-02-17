@@ -1,5 +1,7 @@
-custom-rules:
+WooPosRules:
   WooPosDesignSystemUsageSpacing:
     active: true
   WooPosTypographyUsageRule:
+    active: true
+  WooPosCornerRadiusUsageRule:
     active: true
