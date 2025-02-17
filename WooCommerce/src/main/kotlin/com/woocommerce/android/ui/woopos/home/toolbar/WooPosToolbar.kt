@@ -274,7 +274,7 @@ private fun PopUpMenuItem(
     onClick: (Menu.MenuItem) -> Unit
 ) {
     TextButton(onClick = { onClick(menuItem) }) {
-        Spacer(modifier = Modifier.width(20.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
         Icon(
             imageVector = ImageVector.vectorResource(id = menuItem.icon),
             contentDescription = null,
@@ -292,7 +292,7 @@ private fun PopUpMenuItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Spacer(modifier = Modifier.width(20.dp.toAdaptivePadding()))
+        Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
     }
 }
 
