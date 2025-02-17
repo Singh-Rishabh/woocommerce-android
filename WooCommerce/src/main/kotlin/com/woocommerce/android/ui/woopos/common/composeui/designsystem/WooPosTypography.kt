@@ -111,7 +111,6 @@ private fun TextReferenceTable() {
                     style = WooPosTypography.BodyMedium,
                     modifier = Modifier.weight(1f)
                 )
-                @Suppress("WooPosDesignSystemTypographyUsageRule")
                 WooPosText(
                     text = "Sample Text",
                     style = style,

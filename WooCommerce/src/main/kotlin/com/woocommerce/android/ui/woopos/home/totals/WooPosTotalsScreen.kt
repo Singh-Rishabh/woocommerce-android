@@ -338,7 +338,6 @@ private fun TotalsGrid(totals: Totals.Visible) {
 }
 
 @Composable
-@Suppress("WooPosDesignSystemTypographyUsageRule")
 private fun TotalsGridRow(
     textOne: String,
     textTwo: String,
