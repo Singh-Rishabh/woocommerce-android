@@ -21,6 +21,7 @@ import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CheckoutTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ItemRemovedFromCart
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -112,6 +113,13 @@ class WooPosCartViewModel @Inject constructor(
         }
         sendEventToParent(ChildToParentEvent.CheckoutClicked(itemClickedDataList))
         _state.value = _state.value.copy(cartStatus = CHECKOUT)
+        trackCheckoutTapped(itemClickedDataList.size)
+    }
+
+    private fun trackCheckoutTapped(itemsInCart: Int) {
+        viewModelScope.launch {
+            analyticsTracker.track(CheckoutTapped.apply { addProperties(mapOf("items_in_cart" to "$itemsInCart")) })
+        }
     }
 
     private fun listenEventsFromParent() {

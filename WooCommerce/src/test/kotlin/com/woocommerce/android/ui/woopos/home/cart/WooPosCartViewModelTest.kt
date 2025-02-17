@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceive
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CheckoutTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
@@ -223,6 +224,42 @@ class WooPosCartViewModelTest {
 
         // THEN
         verify(analyticsTracker).track(WooPosAnalyticsEvent.Event.ItemRemovedFromCart)
+    }
+
+    @Test
+    fun `given items in cart, when checkout tapped, then should track envent`() = runTest {
+        // GIVEN
+        val product = ProductTestUtils.generateProduct(
+            productId = 23L,
+            productName = "title",
+            amount = "10.0"
+        ).copy(firstImageUrl = "url")
+
+        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
+        val sut = createSut()
+        val states = sut.state.captureValues()
+
+        parentToChildrenEventsMutableFlow.emit(
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    id = product.remoteId
+                )
+            )
+        )
+        assertThat(states.last().body).isInstanceOf(WooPosCartState.Body.WithItems::class.java)
+
+        // WHEN
+        val itemsInCartCount = states.last().body.amountOfItems
+        sut.onUIEvent(WooPosCartUIEvent.CheckoutClicked)
+
+        // THEN
+        verify(analyticsTracker).track(
+            argThat { event ->
+                event is CheckoutTapped && event.properties["items_in_cart"] == "$itemsInCartCount"
+            }
+        )
     }
 
     @Test
