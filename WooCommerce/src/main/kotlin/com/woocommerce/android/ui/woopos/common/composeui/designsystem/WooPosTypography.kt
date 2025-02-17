@@ -94,7 +94,7 @@ private fun TextReferenceTable() {
                     style = WooPosTypography.BodyMedium,
                     modifier = Modifier.weight(1f)
                 )
-                @Suppress("WooPosTypographyUsageRule")
+                @Suppress("WooPosDesignSystemTypographyUsageRule")
                 Text(
                     text = "Sample Text",
                     style = style,

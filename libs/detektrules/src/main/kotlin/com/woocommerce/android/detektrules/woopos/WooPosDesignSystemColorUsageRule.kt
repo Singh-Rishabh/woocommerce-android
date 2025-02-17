@@ -7,17 +7,20 @@ import io.gitlab.arturbosch.detekt.api.Entity
 import io.gitlab.arturbosch.detekt.api.Issue
 import io.gitlab.arturbosch.detekt.api.Rule
 import io.gitlab.arturbosch.detekt.api.Severity
+import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtValueArgument
 
 class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     private val targetPackagePrefix = "com.woocommerce.android.ui.woopos"
+    private val allowedColorSources = setOf("MaterialTheme.colorScheme", "WooPosTheme.colors")
 
     override val issue = Issue(
         javaClass.simpleName,
         Severity.Style,
-        "Use spacing from the WooPosSpacing design system.",
+        "Use colors from WooPosTheme.colors or MaterialTheme.colorScheme instead of hardcoded colors.",
         Debt.FIVE_MINS
     )
 
@@ -33,21 +36,56 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
         val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression
         val callName = calleeExpression?.getReferencedName()
 
-        if (callName == "padding") {
-            expression.valueArguments.forEach { argument ->
-                val argumentExpression = argument.getArgumentExpression()
-                val argumentText = argumentExpression?.text ?: return
+        val colorArguments = setOf(
+            "background",
+            "containerColor",
+            "contentColor",
+            "borderColor",
+            "tint",
+            "indicatorColor"
+        )
 
-                if (!argumentText.startsWith("WooPosSpacing") && argumentText.matches(Regex("\\d+\\.dp"))) {
-                    report(
-                        CodeSmell(
-                            issue,
-                            Entity.from(expression),
-                            "Use WooPosSpacing for padding/margins instead of hardcoded values. Found: $argumentText"
-                        )
-                    )
-                }
+        if (callName in colorArguments) {
+            expression.valueArguments.forEach { argument ->
+                checkColorArgument(argument)
             }
         }
+
+        if (expression.parent is KtBinaryExpression) {
+            checkColorAssignment(expression)
+        }
+    }
+
+    private fun checkColorArgument(argument: KtValueArgument) {
+        val argumentExpression = argument.getArgumentExpression()
+        val argumentText = argumentExpression?.text ?: return
+
+        if (!isAllowedColor(argumentText)) {
+            report(
+                CodeSmell(
+                    issue,
+                    Entity.from(argument),
+                    "Colors should be used from WooPosTheme.colors or MaterialTheme.colorScheme. Found: $argumentText"
+                )
+            )
+        }
+    }
+
+    private fun checkColorAssignment(expression: KtCallExpression) {
+        val argumentText = expression.text
+
+        if (!isAllowedColor(argumentText)) {
+            report(
+                CodeSmell(
+                    issue,
+                    Entity.from(expression),
+                    "Color assignments should use WooPosTheme.colors or MaterialTheme.colorScheme. Found: $argumentText"
+                )
+            )
+        }
+    }
+
+    private fun isAllowedColor(colorText: String): Boolean {
+        return allowedColorSources.any { colorText.startsWith(it) }
     }
 }

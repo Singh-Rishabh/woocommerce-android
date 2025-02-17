@@ -1,9 +1,9 @@
 WooPosRules:
-  WooPosDesignSystemUsageSpacing:
+  WooPosDesignSystemSpacingUsageRule:
     active: true
-  WooPosTypographyUsageRule:
+  WooPosDesignSystemTypographyUsageRule:
     active: true
-  WooPosCornerRadiusUsageRule:
+  WooPosDesignSystemCornerRadiusUsageRule:
     active: true
-  WooPosDesignSystemUsageColors:
+  WooPosDesignSystemColorUsageRule:
     active: true

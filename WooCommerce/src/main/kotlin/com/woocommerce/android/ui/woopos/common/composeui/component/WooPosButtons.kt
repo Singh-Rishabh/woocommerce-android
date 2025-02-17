@@ -178,7 +178,7 @@ fun Button(
     ) {
         Box(contentAlignment = Alignment.Center) {
             // Always include the text. When loading, hide it with alpha to keep the width
-            @Suppress("WooPosTypographyUsageRule")
+            @Suppress("WooPosDesignSystemTypographyUsageRule")
             Text(
                 text = text,
                 style = textStyle,

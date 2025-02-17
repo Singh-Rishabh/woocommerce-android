@@ -1,7 +1,7 @@
 package com.woocommerce.android.detektrules
 
-import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemCornerRadiusUsageRule
 import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemColorUsageRule
+import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemCornerRadiusUsageRule
 import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemSpacingUsageRule
 import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemTypographyUsageRule
 import io.gitlab.arturbosch.detekt.api.Config
