@@ -213,7 +213,7 @@ fun WooPosButtonsPreview() {
     WooPosTheme {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(WooPosSpacing.Medium.value)
                 .width(600.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp),

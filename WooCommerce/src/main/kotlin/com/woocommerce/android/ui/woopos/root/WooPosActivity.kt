@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.support.WooPosGetSupportFacade
 import com.woocommerce.android.ui.woopos.util.ext.isGestureNavigation
@@ -52,7 +52,7 @@ private fun Modifier.gesturesOrButtonsNavigationPadding(): Modifier {
     val isGestureNavigation = insets.isGestureNavigation(view.context)
 
     return if (isGestureNavigation) {
-        this.padding(bottom = 0.dp)
+        this.padding(bottom = WooPosSpacing.None.value)
     } else {
         this.navigationBarsPadding()
     }

@@ -70,7 +70,7 @@ private fun TextReferenceTable() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(WooPosSpacing.Medium.value)
             .background(
                 MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(8.dp)
@@ -80,14 +80,14 @@ private fun TextReferenceTable() {
         Text(
             text = "Text Styles Preview",
             style = WooPosTypography.Heading,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(WooPosSpacing.Medium.value)
         )
 
         tableData.forEach { (name, style) ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(vertical = WooPosSpacing.XSmall.value),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
