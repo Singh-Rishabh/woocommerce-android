@@ -1,6 +1,6 @@
 @file:Suppress("MagicNumber")
 
-package com.woocommerce.android.ui.woopos.common.composeui
+package com.woocommerce.android.ui.woopos.common.composeui.designsystem
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -27,6 +27,9 @@ data class CustomColors(
 
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
+
+    val transparent: Color = Color.Transparent,
+    val unspecified: Color = Color.Unspecified,
 )
 
 private object WooPosColors {

@@ -23,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -35,9 +34,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.woocommerce.android.ui.compose.component.NullableCurrencyTextFieldValueMapper
 import com.woocommerce.android.ui.payments.changeduecalculator.CurrencyVisualTransformation
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.util.WooLog.T
 import org.wordpress.android.fluxc.model.WCSettingsModel
@@ -91,12 +90,13 @@ fun WooPosMoneyInputField(
     var labelWidth by remember { mutableIntStateOf(0) }
 
     Box(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier.background(WooPosTheme.colors.transparent),
         contentAlignment = contentAlignment,
     ) {
         val textColor = textStyle.color
         val showLabel = textFieldValue.text.isEmpty()
         if (showLabel) {
+            @Suppress("WooPosDesignSystemTypographyUsageRule")
             Text(
                 text = visualTransformation.filter(AnnotatedString("0.00")).text.toString(),
                 style = textStyle.copy(color = WooPosTheme.colors.onDisabledContainer),
@@ -181,11 +181,12 @@ fun WooPosInputField(
     var labelWidth by remember { mutableIntStateOf(0) }
 
     Box(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier.background(WooPosTheme.colors.transparent),
         contentAlignment = contentAlignment,
     ) {
         val textColor = textStyle.color
         if (value.isEmpty()) {
+            @Suppress("WooPosDesignSystemTypographyUsageRule")
             Text(
                 text = label,
                 style = textStyle.copy(color = WooPosTheme.colors.onDisabledContainer),

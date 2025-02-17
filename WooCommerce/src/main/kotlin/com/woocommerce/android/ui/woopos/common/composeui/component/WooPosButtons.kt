@@ -29,11 +29,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosSpacing
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosTheme
-import com.woocommerce.android.ui.woopos.common.composeui.WooPosTypography
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 
 @Composable
 fun WooPosButton(
@@ -103,9 +103,9 @@ fun WooPosOutlinedButton(
         text = text,
         border = BorderStroke(2.dp, borderColor),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
+            containerColor = WooPosTheme.colors.transparent,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContainerColor = Color.Transparent,
+            disabledContainerColor = WooPosTheme.colors.transparent,
             disabledContentColor = WooPosTheme.colors.onDisabledContainer,
         ),
         state = state,
@@ -133,9 +133,9 @@ fun WooPosOutlinedButtonSmall(
         text = text,
         border = BorderStroke(2.dp, borderColor),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
+            containerColor = WooPosTheme.colors.transparent,
             contentColor = MaterialTheme.colorScheme.onSurface,
-            disabledContainerColor = Color.Transparent,
+            disabledContainerColor = WooPosTheme.colors.transparent,
             disabledContentColor = WooPosTheme.colors.onDisabledContainer,
         ),
         state = state,
@@ -178,6 +178,7 @@ fun Button(
     ) {
         Box(contentAlignment = Alignment.Center) {
             // Always include the text. When loading, hide it with alpha to keep the width
+            @Suppress("WooPosDesignSystemTypographyUsageRule")
             Text(
                 text = text,
                 style = textStyle,
@@ -213,7 +214,7 @@ fun WooPosButtonsPreview() {
     WooPosTheme {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(WooPosSpacing.Medium.value)
                 .width(600.dp)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -239,7 +240,7 @@ fun WooPosButtonsPreview() {
                 onClick = {}
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             WooPosOutlinedButton(
                 text = "Button Outlined",
@@ -260,9 +261,9 @@ fun WooPosButtonsPreview() {
                 onClick = {}
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value)) {
                 WooPosButtonSmall(
                     text = "Button Small",
                     state = WooPosButtonState.ENABLED,
@@ -282,7 +283,7 @@ fun WooPosButtonsPreview() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 WooPosOutlinedButtonSmall(

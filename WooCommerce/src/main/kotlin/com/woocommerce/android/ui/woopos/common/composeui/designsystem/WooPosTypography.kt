@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.woopos.common.composeui
+package com.woocommerce.android.ui.woopos.common.composeui.designsystem
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object WooPosTypography {
@@ -70,24 +69,24 @@ private fun TextReferenceTable() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(WooPosSpacing.Medium.value)
             .background(
                 MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(WooPosCornerRadius.Medium.value)
             )
             .verticalScroll(rememberScrollState())
     ) {
         Text(
             text = "Text Styles Preview",
             style = WooPosTypography.Heading,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(WooPosSpacing.Medium.value)
         )
 
         tableData.forEach { (name, style) ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(vertical = WooPosSpacing.XSmall.value),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -95,6 +94,7 @@ private fun TextReferenceTable() {
                     style = WooPosTypography.BodyMedium,
                     modifier = Modifier.weight(1f)
                 )
+                @Suppress("WooPosDesignSystemTypographyUsageRule")
                 Text(
                     text = "Sample Text",
                     style = style,
