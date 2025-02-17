@@ -1,3 +1,5 @@
 custom-rules:
   WooPosDesignSystemUsageSpacing:
     active: true
+  WooPosTypographyUsageRule:
+    active: true
