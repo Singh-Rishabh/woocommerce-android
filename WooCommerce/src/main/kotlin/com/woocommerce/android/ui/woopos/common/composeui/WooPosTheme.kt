@@ -27,33 +27,11 @@ data class CustomColors(
 
     val onSurfaceVariantLow: Color,
     val onSurfaceVariantHigh: Color,
-
-    val totalsErrorBackground: Color,
-    val paymentSuccessBackground: Color,
-    val paymentProcessingBackground: Color,
-    val paymentSuccessText: Color,
-    val paymentSuccessIcon: Color,
-    val dialogSubtitleHighlightBackground: Color = WooPosColors.lightQuaternaryBackground,
-    val homeBackground: Color,
 )
 
 private object WooPosColors {
-    // Woo POS specific colors:
-
-    // Adding missing colors from the old code to match exactly
-    val oldGrayLight = Color(0xFFF2EBFF)
-
-    // DarkCustomColors
-    val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
-    val darkQuaternaryBackground = Color(0xFF111111)
-
-    // LightCustomColors
-    val lightQuaternaryBackground = Color(0x14747480)
-
     val WooPurple10 = Color(0xFFD1C1FF)
     val WooPurple40 = Color(0xFF873EFF)
-    val WooPurple70 = Color(0xFF5007AA)
-    val WooPurple90 = Color(0xFF2C045D)
 
     val WooRed50 = Color(0xFFD63638)
 
@@ -142,13 +120,6 @@ private val LocalCustomColors = staticCompositionLocalOf {
 }
 
 private val LightCustomColors = CustomColors(
-    totalsErrorBackground = WooPosColors.lightQuaternaryBackground,
-    paymentSuccessBackground = WooPosColors.White,
-    paymentSuccessText = WooPosColors.WooPurple90,
-    paymentSuccessIcon = Color.White,
-    homeBackground = WooPosColors.Gray0,
-    paymentProcessingBackground = WooPosColors.WooPurple70,
-
     disabledContainer = WooPosColors.Gray5,
     onDisabledContainer = WooPosColors.Gray20,
 
@@ -160,13 +131,6 @@ private val LightCustomColors = CustomColors(
 )
 
 private val DarkCustomColors = CustomColors(
-    totalsErrorBackground = WooPosColors.darkQuaternaryBackground,
-    paymentSuccessBackground = WooPosColors.darkCustomColorsHomeBackground,
-    paymentSuccessText = WooPosColors.oldGrayLight,
-    paymentSuccessIcon = WooPosColors.darkCustomColorsHomeBackground,
-    homeBackground = WooPosColors.darkCustomColorsHomeBackground,
-    paymentProcessingBackground = WooPosColors.WooPurple70,
-
     disabledContainer = WooPosColors.Gray60,
     onDisabledContainer = WooPosColors.Gray40,
 
