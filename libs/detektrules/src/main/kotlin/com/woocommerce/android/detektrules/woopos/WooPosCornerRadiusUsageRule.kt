@@ -39,13 +39,13 @@ class WooPosCornerRadiusUsageRule(config: Config) : Rule(config) {
                 val argumentExpression = argument.getArgumentExpression()
                 val argumentText = argumentExpression?.text ?: return
 
-                // Allow only WooPosCornerRadius values
                 if (!argumentText.startsWith(cornerRadiusFile) && argumentText.matches(Regex("\\d+\\.dp"))) {
                     report(
                         CodeSmell(
                             issue,
                             Entity.from(expression),
-                            "Corner radius should use WooPosCornerRadius instead of hardcoded values. Found: $argumentText"
+                            "Corner radius should use WooPosCornerRadius instead of hardcoded values." +
+                                "Found: $argumentText"
                         )
                     )
                 }

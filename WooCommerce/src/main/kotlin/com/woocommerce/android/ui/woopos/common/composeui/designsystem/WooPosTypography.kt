@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 object WooPosTypography {
@@ -73,7 +72,7 @@ private fun TextReferenceTable() {
             .padding(WooPosSpacing.Medium.value)
             .background(
                 MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(WooPosCornerRadius.Medium.value)
             )
             .verticalScroll(rememberScrollState())
     ) {
