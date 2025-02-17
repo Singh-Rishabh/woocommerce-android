@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.woopos.home
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +25,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosDialogWrapper
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
@@ -125,26 +124,15 @@ fun WooPosProductInfoDialog(
                         }
                     }
                     Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
-                    Button(
-                        onClick = {
-                            onDismissRequest()
-                        },
+                    WooPosButton(
+                        onClick = { onDismissRequest() },
+                        text = stringResource(id = state.primaryButton.label),
                         modifier = Modifier
                             .fillMaxWidth()
                             .semantics {
                                 contentDescription = primaryButtonContentDescription
-                            },
-                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.primary),
-                        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(vertical = 20.dp.toAdaptivePadding()),
-                            style = WooPosTypography.BodyLarge,
-                            fontWeight = FontWeight.Bold,
-                            text = stringResource(id = state.primaryButton.label)
-                        )
-                    }
+                            }
+                    )
                 }
             }
         }

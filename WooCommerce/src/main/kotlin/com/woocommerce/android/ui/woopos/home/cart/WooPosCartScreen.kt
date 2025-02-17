@@ -211,7 +211,7 @@ private fun CartBodyWithItems(
         modifier = modifier
             .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Medium.value.toAdaptivePadding()),
+        verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(
             top = WooPosSpacing.XSmall.value.toAdaptivePadding(),

@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.totals.payment.failed
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,7 +39,6 @@ fun WooPosPaymentFailedScreen(
     }
     Column(
         modifier = Modifier
-            .background(color = WooPosTheme.colors.homeBackground)
             .fillMaxSize()
             .padding(vertical = 96.dp.toAdaptivePadding()),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,16 +72,8 @@ fun WooPosPaymentFailedScreen(
             Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
             WooPosOutlinedButton(
                 modifier = Modifier
-                    .height(80.dp)
                     .width(604.dp),
-                content = {
-                    Text(
-                        style = WooPosTypography.BodyLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout)
-                    )
-                }
+                text = stringResource(R.string.woo_pos_payment_failed_go_back_to_checkout),
             ) { onUIEvent(WooPosTotalsUIEvent.GoBackToCheckoutAfterFailedPayment) }
         }
         Spacer(modifier = Modifier.height(80.dp.toAdaptivePadding()))

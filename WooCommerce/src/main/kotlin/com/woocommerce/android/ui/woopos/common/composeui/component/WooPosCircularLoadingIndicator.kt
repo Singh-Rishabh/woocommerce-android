@@ -25,7 +25,11 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 
 @Composable
-fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
+fun WooPosCircularLoadingIndicator(
+    modifier: Modifier = Modifier,
+    spinnerPrimaryColor: Color = MaterialTheme.colorScheme.primary,
+    spinnerSecondaryColor: Color = MaterialTheme.colorScheme.secondary,
+) {
     val infiniteTransition = rememberInfiniteTransition(label = "RotationTransition")
     val animatedRotation by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -35,9 +39,6 @@ fun WooPosCircularLoadingIndicator(modifier: Modifier = Modifier) {
         ),
         label = "RotationAnimation"
     )
-
-    val spinnerPrimaryColor = MaterialTheme.colorScheme.primary
-    val spinnerSecondaryColor = MaterialTheme.colorScheme.secondary
 
     Canvas(
         modifier = modifier

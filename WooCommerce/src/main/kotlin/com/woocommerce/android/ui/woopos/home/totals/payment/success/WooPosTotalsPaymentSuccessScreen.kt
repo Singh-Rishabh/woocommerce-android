@@ -78,7 +78,7 @@ private fun WooPosPaymentSuccessScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(WooPosTheme.colors.paymentSuccessBackground),
+            .background(MaterialTheme.colorScheme.surfaceContainerLowest),
         contentAlignment = Alignment.Center
     ) {
         val marginBetweenButtonAndText by animateDpAsState(
@@ -162,7 +162,7 @@ private fun CheckMarkIcon(
     modifier: Modifier = Modifier,
 ) {
     val size by animateDpAsState(
-        targetValue = if (animationStage >= AnimationStage.CIRCLE) 164.dp else 0.dp,
+        targetValue = if (animationStage >= AnimationStage.CIRCLE) 166.dp else 0.dp,
         label = "Circle Size"
     )
     val iconSize by animateDpAsState(
@@ -183,7 +183,7 @@ private fun CheckMarkIcon(
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_woo_pos_check),
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = WooPosTheme.colors.onSuccess,
             contentDescription = stringResource(id = R.string.woopos_payment_successful_label),
             modifier = Modifier
                 .size(iconSize)

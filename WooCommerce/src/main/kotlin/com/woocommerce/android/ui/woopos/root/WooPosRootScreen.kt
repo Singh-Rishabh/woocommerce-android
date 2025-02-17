@@ -1,10 +1,7 @@
 package com.woocommerce.android.ui.woopos.root
 
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,15 +16,13 @@ fun WooPosRootScreen(modifier: Modifier = Modifier) {
     val rootController = rememberNavController()
     val activity = LocalContext.current as ComponentActivity
 
-    Box(modifier = modifier.background(MaterialTheme.colorScheme.background)) {
-        WooPosRootHost(
-            modifier = Modifier.fillMaxSize(),
-            rootController = rootController,
-            onNavigationEvent = { event ->
-                rootController.handleNavigationEvent(event, activity)
-            }
-        )
-    }
+    WooPosRootHost(
+        modifier = modifier.fillMaxSize(),
+        rootController = rootController,
+        onNavigationEvent = { event ->
+            rootController.handleNavigationEvent(event, activity)
+        }
+    )
 }
 
 @WooPosPreview

@@ -149,7 +149,7 @@ private fun TotalsLoaded(
 ) {
     Column(
         modifier = Modifier
-            .background(WooPosTheme.colors.totalsBackground)
+            .background(MaterialTheme.colorScheme.surface)
             .fillMaxSize()
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -159,8 +159,7 @@ private fun TotalsLoaded(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1.1f)
-                    .background(WooPosTheme.colors.totalsErrorBackground),
+                    .weight(1.1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
@@ -205,6 +204,8 @@ private fun TotalsLoaded(
                             WooPosOutlinedButton(
                                 text = stringResource(R.string.woopos_payment_take_cash_payment_label),
                                 onClick = { onUIEvent(WooPosTotalsUIEvent.OnCashPaymentClicked) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
                             )
                             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
                         }
@@ -321,7 +322,7 @@ private fun TotalsGrid(totals: Totals.Visible) {
 
         Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
-        HorizontalDivider(color = WooPosTheme.colors.border, thickness = 1.dp)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
 
         Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 

@@ -93,7 +93,7 @@ private fun EmailState(
 
         val standardMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
         val topMargin = 72.dp.toAdaptivePadding()
-        val textFieldButtonMargin = 80.dp.toAdaptivePadding()
+        val textFieldButtonMargin = 92.dp.toAdaptivePadding()
         WooPosInputField(
             value = state.email,
             onValueChange = onEmailAddressChanged,
