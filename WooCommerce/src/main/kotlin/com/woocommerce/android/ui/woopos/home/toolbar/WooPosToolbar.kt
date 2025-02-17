@@ -23,7 +23,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,6 +52,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosBackgroundOverlay
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
@@ -282,7 +282,7 @@ private fun PopUpMenuItem(
             modifier = Modifier.size(WooPosSpacing.Large.value)
         )
         Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
-        Text(
+        WooPosText(
             modifier = Modifier
                 .padding(vertical = WooPosSpacing.Small.value.toAdaptivePadding())
                 .weight(1f),
@@ -379,7 +379,7 @@ private fun ReaderStatusText(
     modifier: Modifier,
     title: String,
 ) {
-    Text(
+    WooPosText(
         modifier = modifier.padding(horizontal = WooPosSpacing.Small.value.toAdaptivePadding()),
         text = title,
         style = WooPosTypography.BodyMedium,

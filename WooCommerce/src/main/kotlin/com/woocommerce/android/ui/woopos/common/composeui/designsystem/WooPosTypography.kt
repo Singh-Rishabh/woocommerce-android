@@ -10,13 +10,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 
 sealed class WooPosTypography(val style: TextStyle) {
     object Heading : WooPosTypography(
@@ -93,7 +93,7 @@ private fun TextReferenceTable() {
             )
             .verticalScroll(rememberScrollState())
     ) {
-        Text(
+        WooPosText(
             text = "Text Styles Preview",
             style = WooPosTypography.Heading,
             modifier = Modifier.padding(WooPosSpacing.Medium.value)
@@ -106,13 +106,13 @@ private fun TextReferenceTable() {
                     .padding(vertical = WooPosSpacing.XSmall.value),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
+                WooPosText(
                     text = name,
                     style = WooPosTypography.BodyMedium,
                     modifier = Modifier.weight(1f)
                 )
                 @Suppress("WooPosDesignSystemTypographyUsageRule")
-                Text(
+                WooPosText(
                     text = "Sample Text",
                     style = style,
                     modifier = Modifier.weight(2f)

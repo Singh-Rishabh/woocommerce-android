@@ -100,12 +100,12 @@ private fun WooPosPaginationErrorIndicatorContent(
                 }
                 Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))
                 Column {
-                    Text(
+                    WooPosText(
                         text = message,
                         style = WooPosTypography.BodyLarge,
                         fontWeight = FontWeight.Bold,
                     )
-                    Text(
+                    WooPosText(
                         text = description,
                         style = WooPosTypography.BodyMedium,
                         modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding()),

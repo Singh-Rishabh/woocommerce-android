@@ -182,7 +182,7 @@ private fun Preview(elevation: WooPosElevation) {
             backgroundColor = MaterialTheme.colorScheme.surface,
             elevation = elevation,
         ) {
-            Text(
+            WooPosText(
                 modifier = Modifier
                     .padding(WooPosSpacing.XLarge.value)
                     .fillMaxWidth(),

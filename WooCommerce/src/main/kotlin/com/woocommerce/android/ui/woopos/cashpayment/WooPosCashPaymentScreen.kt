@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,6 +27,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButtonState
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosMoneyInputField
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosToolbar
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
@@ -103,7 +103,7 @@ private fun Collecting(
             keyboardController?.show()
         }
 
-        Text(
+        WooPosText(
             text = state.totalText,
             style = WooPosTypography.BodyLarge,
             modifier = Modifier
@@ -133,8 +133,8 @@ private fun Collecting(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Decimal
             ),
-            textStyle = WooPosTypography.Heading
-                .copy(color = MaterialTheme.colorScheme.onSurface),
+            textStyle = WooPosTypography.Heading,
+            textColor = MaterialTheme.colorScheme.onSurface,
             currencySymbol = state.currencySymbol,
             currencyPosition = state.currencyPosition,
             decimalSeparator = state.decimalSeparator,
@@ -142,7 +142,7 @@ private fun Collecting(
         )
 
         val smallMargin = WooPosSpacing.Small.value.toAdaptivePadding()
-        Text(
+        WooPosText(
             text = state.changeDueText,
             style = WooPosTypography.BodySmall,
             color = WooPosTheme.colors.onSurfaceVariantLow,
@@ -155,7 +155,7 @@ private fun Collecting(
         )
 
         if (state.errorMessage != null) {
-            Text(
+            WooPosText(
                 text = state.errorMessage,
                 color = MaterialTheme.colorScheme.error,
                 style = WooPosTypography.BodySmall,

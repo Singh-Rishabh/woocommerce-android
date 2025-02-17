@@ -101,7 +101,7 @@ fun WooPosLazyColumnPreview() {
                     modifier = Modifier.fillMaxWidth(),
                     elevation = WooPosElevation.Medium,
                 ) {
-                    Text(
+                    WooPosText(
                         "Item $i",
                         modifier = Modifier
                             .height(64.dp)

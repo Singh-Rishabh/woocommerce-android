@@ -18,14 +18,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -147,7 +145,7 @@ fun WooPosOutlinedButtonSmall(
 fun Button(
     modifier: Modifier = Modifier,
     height: Dp,
-    textStyle: TextStyle,
+    textStyle: WooPosTypography,
     text: String,
     loadingIndicatorSize: Dp,
     colors: ButtonColors,
@@ -179,7 +177,7 @@ fun Button(
         Box(contentAlignment = Alignment.Center) {
             // Always include the text. When loading, hide it with alpha to keep the width
             @Suppress("WooPosDesignSystemTypographyUsageRule")
-            Text(
+            WooPosText(
                 text = text,
                 style = textStyle,
                 fontWeight = FontWeight.Bold,

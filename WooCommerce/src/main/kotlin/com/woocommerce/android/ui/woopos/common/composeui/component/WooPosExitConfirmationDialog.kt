@@ -54,14 +54,14 @@ fun WooPosExitConfirmationDialog(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 @Suppress("WooPosDesignSystemSpacingUsageRule")
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
-                Text(
+                WooPosText(
                     text = title,
                     style = WooPosTypography.Heading,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
-                Text(
+                WooPosText(
                     text = message,
                     style = WooPosTypography.BodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,

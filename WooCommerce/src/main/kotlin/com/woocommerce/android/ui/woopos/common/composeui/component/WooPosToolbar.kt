@@ -56,7 +56,7 @@ fun WooPosToolbar(
         }
 
         val iconTitlePadding = WooPosSpacing.Small.value.toAdaptivePadding()
-        Text(
+        WooPosText(
             text = titleText,
             style = WooPosTypography.Heading,
             color = MaterialTheme.colorScheme.onBackground,
