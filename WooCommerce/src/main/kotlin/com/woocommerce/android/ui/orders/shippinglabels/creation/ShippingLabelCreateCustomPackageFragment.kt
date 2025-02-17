@@ -141,7 +141,7 @@ class ShippingLabelCreateCustomPackageFragment :
             }
         }
 
-        parentViewModel.sharedDoneClickedFlow
+        parentViewModel.creationDoneFlow
             .filter { it != null && it.selectedTab == CUSTOM }
             .onEach {
                 ActivityUtils.hideKeyboard(activity)

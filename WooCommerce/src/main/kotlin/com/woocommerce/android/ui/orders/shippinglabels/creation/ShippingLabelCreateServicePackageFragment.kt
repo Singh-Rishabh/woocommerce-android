@@ -106,7 +106,7 @@ class ShippingLabelCreateServicePackageFragment :
             }
         }
 
-        parentViewModel.sharedDoneClickedFlow
+        parentViewModel.creationDoneFlow
             .filter { it != null && it.selectedTab == SERVICE }
             .onEach {
                 ActivityUtils.hideKeyboard(activity)
