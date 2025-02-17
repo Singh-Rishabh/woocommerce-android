@@ -555,8 +555,7 @@ fun PreparingReaderPReview() {
     WooPosTheme {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(WooPosTheme.colors.totalsErrorBackground),
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
