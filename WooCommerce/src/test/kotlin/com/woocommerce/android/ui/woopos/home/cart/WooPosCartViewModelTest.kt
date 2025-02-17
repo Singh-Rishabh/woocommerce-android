@@ -194,7 +194,6 @@ class WooPosCartViewModelTest {
         whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
         whenever(getProductById(eq(product.remoteId))).thenReturn(product)
         val sut = createSut()
-        val states = sut.state.captureValues()
 
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
