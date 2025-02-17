@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceive
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.BackToCartTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CheckoutTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -229,25 +230,7 @@ class WooPosCartViewModelTest {
     @Test
     fun `given items in cart, when checkout tapped, then should track envent`() = runTest {
         // GIVEN
-        val product = ProductTestUtils.generateProduct(
-            productId = 23L,
-            productName = "title",
-            amount = "10.0"
-        ).copy(firstImageUrl = "url")
-
-        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
-        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
-        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
-        val sut = createSut()
-        val states = sut.state.captureValues()
-
-        parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
-                    id = product.remoteId
-                )
-            )
-        )
+        val (sut, states) = createSutWithItemsInCart()
         assertThat(states.last().body).isInstanceOf(WooPosCartState.Body.WithItems::class.java)
 
         // WHEN
@@ -260,6 +243,20 @@ class WooPosCartViewModelTest {
                 event is CheckoutTapped && event.properties["items_in_cart"] == "$itemsInCartCount"
             }
         )
+    }
+
+    @Test
+    fun `when back button tapped, then should track event`() = runTest {
+        // GIVEN
+        val (sut, states) = createSutWithItemsInCart()
+        sut.onUIEvent(WooPosCartUIEvent.CheckoutClicked)
+        assertThat(states.last().cartStatus).isEqualTo(WooPosCartStatus.CHECKOUT)
+
+        // WHEN
+        sut.onUIEvent(WooPosCartUIEvent.BackClicked)
+
+        // THEN
+        verify(analyticsTracker).track(BackToCartTapped)
     }
 
     @Test
@@ -313,27 +310,7 @@ class WooPosCartViewModelTest {
     fun `given non empty cart checkout, when vm created, then toolbar state should contain back icon itemsCart title and no clear all`() =
         runTest {
             // GIVEN
-            val product = ProductTestUtils.generateProduct(
-                productId = 23L,
-                productName = "title",
-                amount = "10.0"
-            ).copy(firstImageUrl = "url")
-
-            val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
-            whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
-            whenever(getProductById(eq(product.remoteId))).thenReturn(product)
-
-            // WHEN
-            val sut = createSut()
-            val states = sut.state.captureValues()
-
-            parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
-                        id = product.remoteId
-                    )
-                )
-            )
+            val (sut, states) = createSutWithItemsInCart()
 
             sut.onUIEvent(WooPosCartUIEvent.CheckoutClicked)
 
@@ -437,25 +414,7 @@ class WooPosCartViewModelTest {
     @Test
     fun `given non-empty cart, when all items removed, then state should be empty`() = runTest {
         // GIVEN
-        val product = ProductTestUtils.generateProduct(
-            productId = 23L,
-            productName = "title",
-            amount = "10.0"
-        ).copy(firstImageUrl = "url")
-
-        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
-        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
-        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
-        val sut = createSut()
-        val states = sut.state.captureValues()
-
-        parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
-                    id = product.remoteId
-                )
-            )
-        )
+        val (sut, states) = createSutWithItemsInCart()
 
         // WHEN
         sut.onUIEvent(WooPosCartUIEvent.ClearAllClicked)
@@ -519,25 +478,7 @@ class WooPosCartViewModelTest {
     fun `given non-empty cart, when vm initialized and all items removed, then toolbar state should reflect empty cart`() =
         runTest {
             // GIVEN
-            val product = ProductTestUtils.generateProduct(
-                productId = 23L,
-                productName = "title",
-                amount = "10.0"
-            ).copy(firstImageUrl = "url")
-
-            val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
-            whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
-            whenever(getProductById(eq(product.remoteId))).thenReturn(product)
-            val sut = createSut()
-            val states = sut.state.captureValues()
-
-            parentToChildrenEventsMutableFlow.emit(
-                ParentToChildrenEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
-                        id = product.remoteId
-                    )
-                )
-            )
+            val (sut, states) = createSutWithItemsInCart()
 
             // WHEN
             sut.onUIEvent(WooPosCartUIEvent.ClearAllClicked)
@@ -653,6 +594,28 @@ class WooPosCartViewModelTest {
                         ).properties[WooPosAnalyticsEventConstant.PRODUCT_TYPE] == "variation"
             }
         )
+    }
+
+    private suspend fun createSutWithItemsInCart(): Pair<WooPosCartViewModel, List<WooPosCartState>> {
+        val product = ProductTestUtils.generateProduct(
+            productId = 23L,
+            productName = "title",
+            amount = "10.0"
+        ).copy(firstImageUrl = "url")
+
+        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
+        val sut = createSut()
+        val states = sut.state.captureValues()
+        parentToChildrenEventsMutableFlow.emit(
+            ParentToChildrenEvent.ItemClickedInProductSelector(
+                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    id = product.remoteId
+                )
+            )
+        )
+        return Pair(sut, states)
     }
 
     private fun createSut(): WooPosCartViewModel {

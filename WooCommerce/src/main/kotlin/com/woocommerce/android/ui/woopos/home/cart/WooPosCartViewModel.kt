@@ -21,6 +21,7 @@ import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.BackToCartTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CheckoutTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ItemRemovedFromCart
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
@@ -90,6 +91,9 @@ class WooPosCartViewModel @Inject constructor(
                 _state.value = currentState.copy(cartStatus = EDITABLE)
 
                 sendEventToParent(ChildToParentEvent.BackFromCheckoutToCartClicked)
+                viewModelScope.launch {
+                    analyticsTracker.track(BackToCartTapped)
+                }
             }
 
             WooPosCartUIEvent.ClearAllClicked -> {
