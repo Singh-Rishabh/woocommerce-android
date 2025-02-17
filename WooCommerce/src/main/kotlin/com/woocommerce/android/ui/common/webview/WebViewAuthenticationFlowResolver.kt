@@ -24,8 +24,7 @@ class WebViewAuthenticationFlowResolver @Inject constructor(
 
         return if (isWPComAuthenticated) {
             when {
-                wpComAuthAcceptedDomains.any { it == urlDomain } ||
-                    (currentSite?.isWPComAtomic == true && url.isPartOf(currentSite)) -> {
+                wpComAuthAcceptedDomains.any { it == urlDomain } -> {
                     WebViewAuthenticationFlow.WPCom
                 }
 
