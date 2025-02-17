@@ -60,13 +60,27 @@ class ShippingLabelCreatePackageViewModelTest : BaseUnitTest() {
 
     @Test
     fun `when onDoneButtonClicked is called, then creationDoneFlow emits the correct event`() = testBlocking {
-        // Arrange
+        // Given
         val expectedEvent = OnDoneButtonClicked(PackageType.CUSTOM)
 
-        // Act
+        // When
         viewModel.onDoneButtonClicked()
 
-        // Assert
+        // Then
+        val actualEvent = viewModel.creationDoneFlow.first()
+        assertThat(actualEvent).isEqualTo(expectedEvent)
+    }
+
+    @Test
+    fun `when onSelectedPageChanged is called, then selectedTabType is updated`() = testBlocking {
+        // Given
+        val expectedEvent = OnDoneButtonClicked(PackageType.SERVICE)
+
+        // When
+        viewModel.onSelectedPageChanged(PackageType.SERVICE)
+        viewModel.onDoneButtonClicked()
+
+        // Then
         val actualEvent = viewModel.creationDoneFlow.first()
         assertThat(actualEvent).isEqualTo(expectedEvent)
     }
