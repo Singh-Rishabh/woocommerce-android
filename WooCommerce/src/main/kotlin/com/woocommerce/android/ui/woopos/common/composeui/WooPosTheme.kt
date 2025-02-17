@@ -13,8 +13,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 data class CustomColors(
-    val border: Color,
-
     val shadow: Color = WooPosColors.Black,
 
     val success: Color = WooPosColors.VividGreen,
@@ -47,7 +45,6 @@ private object WooPosColors {
 
     // Adding missing colors from the old code to match exactly
     val oldGrayLight = Color(0xFFF2EBFF)
-    val oldGrayMedium = Color(0xFF8D8D8D)
 
     // DarkCustomColors
     val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
@@ -55,7 +52,6 @@ private object WooPosColors {
     val darkTotalsBackground = Color(0xFF1C1C1E)
 
     // LightCustomColors
-    val lightCustomColorsBorder = Color(0xFFC6C6C8)
     val lightQuaternaryBackground = Color(0x14747480)
 
     val WooPurple10 = Color(0xFFD1C1FF)
@@ -150,7 +146,6 @@ private val LocalCustomColors = staticCompositionLocalOf {
 }
 
 private val LightCustomColors = CustomColors(
-    border = WooPosColors.lightCustomColorsBorder,
     totalsErrorBackground = WooPosColors.lightQuaternaryBackground,
     totalsBackground = WooPosColors.Gray0,
     paymentSuccessBackground = WooPosColors.White,
@@ -170,7 +165,6 @@ private val LightCustomColors = CustomColors(
 )
 
 private val DarkCustomColors = CustomColors(
-    border = WooPosColors.oldGrayMedium,
     totalsErrorBackground = WooPosColors.darkQuaternaryBackground,
     totalsBackground = WooPosColors.darkTotalsBackground,
     paymentSuccessBackground = WooPosColors.darkCustomColorsHomeBackground,
