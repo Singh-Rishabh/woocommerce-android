@@ -13,7 +13,6 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 data class CustomColors(
-    val loadingSkeleton: Color,
     val border: Color,
 
     val shadow: Color = WooPosColors.Black,
@@ -51,13 +50,11 @@ private object WooPosColors {
     val oldGrayMedium = Color(0xFF8D8D8D)
 
     // DarkCustomColors
-    val darkCustomLoadingSkeleton = Color(0xFF616161)
     val darkCustomColorsHomeBackground = Color(0xFF1E1E1E)
     val darkQuaternaryBackground = Color(0xFF111111)
     val darkTotalsBackground = Color(0xFF1C1C1E)
 
     // LightCustomColors
-    val lightCustomColorsLoadingSkeleton = Color(0xFFE1E1E1)
     val lightCustomColorsBorder = Color(0xFFC6C6C8)
     val lightQuaternaryBackground = Color(0x14747480)
 
@@ -153,7 +150,6 @@ private val LocalCustomColors = staticCompositionLocalOf {
 }
 
 private val LightCustomColors = CustomColors(
-    loadingSkeleton = WooPosColors.lightCustomColorsLoadingSkeleton,
     border = WooPosColors.lightCustomColorsBorder,
     totalsErrorBackground = WooPosColors.lightQuaternaryBackground,
     totalsBackground = WooPosColors.Gray0,
@@ -174,7 +170,6 @@ private val LightCustomColors = CustomColors(
 )
 
 private val DarkCustomColors = CustomColors(
-    loadingSkeleton = WooPosColors.darkCustomLoadingSkeleton,
     border = WooPosColors.oldGrayMedium,
     totalsErrorBackground = WooPosColors.darkQuaternaryBackground,
     totalsBackground = WooPosColors.darkTotalsBackground,
