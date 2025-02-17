@@ -55,7 +55,6 @@ LOCAL_LIBRARIES_STRINGS_PATHS = [
   { library: 'Login Library', strings_path: './libs/login/src/main/res/values/strings.xml', source_id: 'module:login' }
 ].freeze
 
-
 # URL of the GlotPress project containing the app's strings
 GLOTPRESS_APP_STRINGS_PROJECT_URL = 'https://translate.wordpress.com/projects/woocommerce/woocommerce-android/'
 # URL of the GlotPress project containing the Play Store metadata (title, keywords, release notes, …)
