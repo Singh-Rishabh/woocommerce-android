@@ -18,30 +18,47 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
-object WooPosTypography {
-    val Heading = TextStyle(
-        fontSize = 36.sp,
-        lineHeight = 40.sp
+sealed class WooPosTypography(val style: TextStyle) {
+    object Heading : WooPosTypography(
+        style = TextStyle(
+            fontSize = 36.sp,
+            lineHeight = 40.sp
+        )
     )
-    val BodyXLarge = TextStyle(
-        fontSize = 30.sp,
-        lineHeight = 32.sp
+
+    object BodyXLarge : WooPosTypography(
+        style = TextStyle(
+            fontSize = 30.sp,
+            lineHeight = 32.sp
+        )
     )
-    val BodyLarge = TextStyle(
-        fontSize = 24.sp,
-        lineHeight = 32.sp
+
+    object BodyLarge : WooPosTypography(
+        style = TextStyle(
+            fontSize = 24.sp,
+            lineHeight = 32.sp
+        )
     )
-    val BodyMedium = TextStyle(
-        fontSize = 20.sp,
-        lineHeight = 32.sp
+
+    object BodyMedium : WooPosTypography(
+        style = TextStyle(
+            fontSize = 20.sp,
+            lineHeight = 32.sp
+        )
     )
-    val BodySmall = TextStyle(
-        fontSize = 16.sp,
-        lineHeight = 24.sp
+
+    object BodySmall : WooPosTypography(
+        style = TextStyle(
+            fontSize = 16.sp,
+            lineHeight = 24.sp
+        )
     )
-    val Caption = TextStyle(
-        fontSize = 14.sp,
-        lineHeight = 20.sp
+
+    object Caption : WooPosTypography(
+        style = TextStyle(
+            fontSize = 14.sp,
+            lineHeight = 20.sp
+        )
     )
 }
 
