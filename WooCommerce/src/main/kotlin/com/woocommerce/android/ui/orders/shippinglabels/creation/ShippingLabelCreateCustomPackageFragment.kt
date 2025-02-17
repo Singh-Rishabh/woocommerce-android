@@ -142,7 +142,7 @@ class ShippingLabelCreateCustomPackageFragment :
         }
 
         parentViewModel.creationDoneFlow
-            .filter { it != null && it.selectedTab == CUSTOM }
+            .filter { it.selectedTab == CUSTOM }
             .onEach {
                 ActivityUtils.hideKeyboard(activity)
                 viewModel.onCustomFormDoneMenuClicked()

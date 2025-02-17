@@ -107,7 +107,7 @@ class ShippingLabelCreateServicePackageFragment :
         }
 
         parentViewModel.creationDoneFlow
-            .filter { it != null && it.selectedTab == SERVICE }
+            .filter { it.selectedTab == SERVICE }
             .onEach {
                 ActivityUtils.hideKeyboard(activity)
                 viewModel.onCustomFormDoneMenuClicked()
