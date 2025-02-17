@@ -55,7 +55,7 @@ fun WooPosErrorScreen(
                 modifier = Modifier.size(80.dp),
                 painter = icon,
                 contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
-                tint = Color.Unspecified,
+                tint = WooPosTheme.colors.unspecified,
             )
 
             Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))

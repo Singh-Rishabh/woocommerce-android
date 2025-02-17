@@ -96,7 +96,7 @@ private fun WooPosPaginationErrorIndicatorContent(
                             .align(Alignment.Center),
                         painter = icon,
                         contentDescription = stringResource(R.string.woopos_error_icon_content_description),
-                        tint = Color.Unspecified,
+                        tint = WooPosTheme.colors.unspecified,
                     )
                 }
                 Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))

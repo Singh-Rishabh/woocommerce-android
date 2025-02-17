@@ -33,7 +33,6 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     )
 
     override fun visitKtFile(file: KtFile) {
-        // Only run this rule for files in the target package.
         if (file.packageFqName.asString().startsWith(targetPackagePrefix)) {
             super.visitKtFile(file)
         }
@@ -42,7 +41,7 @@ class WooPosDesignSystemColorUsageRule(config: Config) : Rule(config) {
     override fun visitCallExpression(expression: KtCallExpression) {
         super.visitCallExpression(expression)
         expression.valueArguments.forEach { argument ->
-            val argName = argument.argumentName?.asName?.asString()
+            val argName = argument.getArgumentName()?.asName?.asString()
             if (argName != null && argName in colorArguments) {
                 val argExprText = argument.getArgumentExpression()?.text ?: return@forEach
                 checkColorUsage(argExprText, argument)

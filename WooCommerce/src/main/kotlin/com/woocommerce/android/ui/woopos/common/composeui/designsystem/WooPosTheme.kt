@@ -43,6 +43,7 @@ data class CustomColors(
     val homeBackground: Color,
 
     val transparent: Color = Color.Transparent,
+    val unspecified: Color = Color.Unspecified,
 )
 
 private object WooPosColors {

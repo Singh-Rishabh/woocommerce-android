@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -272,8 +271,7 @@ private fun ReaderDisconnected(
             modifier = Modifier.size(64.dp),
             painter = painterResource(id = R.drawable.ic_woo_pos_error),
             contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
-            
-            tint = Color.Unspecified,
+            tint = WooPosTheme.colors.unspecified,
         )
 
         Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
