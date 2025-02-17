@@ -29,11 +29,11 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
     }
 
     sealed class Event : WooPosAnalyticsEvent() {
-        data object ExitTapped : Event() {
-            override val name: String = "exit_menu_item_tapped"
-        }
         data object CheckoutTapped : Event() {
             override val name: String = "checkout_tapped"
+        }
+        data object ExitTapped : Event() {
+            override val name: String = "exit_menu_item_tapped"
         }
         data object ItemAddedToCart : Event() {
             override val name: String = "item_added_to_cart"
