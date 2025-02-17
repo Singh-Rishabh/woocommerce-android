@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ShippingLabelCreatePackageViewModel @Inject constructor(
@@ -60,7 +61,7 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
     }
 
     fun onDoneButtonClicked() {
-        _creationDoneFlow.tryEmit(OnDoneButtonClicked(selectedTab = selectedTabType.value))
+        launch { _creationDoneFlow.emit(OnDoneButtonClicked(selectedTab = selectedTabType.value)) }
     }
 
     enum class PackageType {
