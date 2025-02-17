@@ -35,19 +35,14 @@ object AppUrls {
 
     const val CROWDSIGNAL_MAIN_SURVEY = "https://automattic.survey.fm/woo-app-general-feedback-user-survey"
     const val CROWDSIGNAL_PRODUCT_SURVEY = "https://automattic.survey.fm/woo-app-feature-feedback-products"
-    const val CROWDSIGNAL_SHIPPING_LABELS_SURVEY =
-        "https://automattic.survey.fm/woo-app-feature-feedback-shipping-labels"
 
     const val CROWDSIGNAL_ANALYTICS_HUB_SURVEY = "https://automattic.survey.fm/woo-app-analytics-hub-production"
-
-    const val ORDER_CREATION_SURVEY = "https://automattic.survey.fm/woo-app-order-creation-production"
 
     const val ADDONS_SURVEY = "https://automattic.survey.fm/woo-app-addons-production"
 
     const val CROWDSIGNAL_STORE_SETUP_SURVEY =
         "https://automattic.survey.fm/woo-mobile-%E2%80%93-store-setup-survey-2022"
 
-    const val CROWDSIGNAL_TAP_TO_PAY_SURVEY = "https://automattic.survey.fm/woo-app-%E2%80%93-first-ttp-survey"
     val CROWDSIGNAL_PRODCUT_CREATION_WITH_AI_SURVEY =
         if (BuildConfig.DEBUG) {
             "https://automattic.survey.fm/testing-debug-product-creation-with-ai-dec-2023"
@@ -140,4 +135,8 @@ object AppUrls {
 
     const val BLAZE_CAMPAIGN_CREATION_SURVEY_URL_I1 =
         "https://wordpressdotcom.survey.fm/blaze-on-woo-mobile-survey-sept-2024-i1"
+
+    // POS
+    const val WOO_POS_DOCUMENTATION_URL =
+        "https://woocommerce.com/document/woo-mobile-app-point-of-sale-mode/"
 }

@@ -50,6 +50,11 @@
             <argument
                 android:name="productSelectorFlow"
                 app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
+            <argument
+                android:name="orderCurrency"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
         </action>
         <action
             android:id="@+id/action_orderCreationFragment_to_orderCreationCustomerFragment"
@@ -154,6 +159,11 @@
             android:defaultValue="@null"
             app:argType="java.math.BigDecimal"
             app:nullable="true" />
+        <argument
+            android:name="orderCurrency"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_orderCreationFragment_to_barcodeScanningFragment"
             app:destination="@id/barcodeScanningFragment" />
@@ -195,6 +205,9 @@
         <argument
             android:name="orderStatusList"
             app:argType="com.woocommerce.android.model.Order$OrderStatus[]" />
+        <argument
+            android:name="positiveButtonLabel"
+            app:argType="integer" />
     </dialog>
     <fragment
         android:id="@+id/customAmountsDialog"
@@ -408,6 +421,11 @@
         <argument
             android:name="currentShippingLine"
             app:argType="com.woocommerce.android.model.Order$ShippingLine"
+            app:nullable="true" />
+        <argument
+            android:name="orderCurrency"
+            android:defaultValue="@null"
+            app:argType="string"
             app:nullable="true" />
         <action
             android:id="@+id/action_orderShippingFragment_to_orderShippingMethodsFragment"

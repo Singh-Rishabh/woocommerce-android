@@ -346,7 +346,7 @@ class MainActivity :
 
         if (savedInstanceState == null) {
             viewModel.handleIncomingAppLink(intent?.data)
-            viewModel.handleShortcutAction(intent?.action?.toLowerCase(Locale.ROOT))
+            viewModel.handleShortcutAction(intent?.action?.lowercase(Locale.ROOT))
             handleIncomingImages()
         }
     }
@@ -937,7 +937,7 @@ class MainActivity :
 
     private fun navigateToWebView(event: ViewUrlInWebView) {
         navController.navigate(
-            NavGraphMainDirections.actionGlobalWPComWebViewFragment(
+            NavGraphMainDirections.actionGlobalAuthenticatedWebViewFragment(
                 urlToLoad = event.url
             )
         )
@@ -1164,12 +1164,14 @@ class MainActivity :
     fun showOrderCreation(
         mode: OrderCreateEditViewModel.Mode,
         giftCardCode: String?,
-        giftCardAmount: BigDecimal?
+        giftCardAmount: BigDecimal?,
+        orderCurrency: String? = null,
     ) {
         NavGraphMainDirections.actionGlobalToOrderCreationFragment(
             mode = mode,
             giftCardCode = giftCardCode,
             giftCardAmount = giftCardAmount,
+            orderCurrency = orderCurrency
         ).apply {
             navController.navigateSafely(this)
         }

@@ -1,32 +1,49 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels
 
+import android.os.Parcelable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.domain.GetShippingRates
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,70 +53,238 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val getShippableItems: GetShippableItems,
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
-    private val getShippingRates: GetShippingRates
+    private val getShippingRates: GetShippingRates,
+    private val purchaseShippingLabel: PurchaseShippingLabel,
+    private val observeStoreOptions: ObserveStoreOptions,
+    private val shouldRequireCustoms: ShouldRequireCustomsForm
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
-    private val mockStoreOptions = StoreOptionsModel(
-        currencySymbol = "$",
-        dimensionUnit = "cm",
-        weightUnit = "kg",
-        originCountry = "US"
-    )
+
+    private val emptyOrder = Order.getEmptyOrder(Date(), Date())
+    private val order = MutableStateFlow<Order?>(emptyOrder)
+    private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
+    private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
-    private val storeOptions = MutableStateFlow(mockStoreOptions)
+
+    private val packageSelected = MutableStateFlow<PackageData?>(null)
+    private val packageWeight = MutableStateFlow<PackageWeight?>(null)
+    private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
+    private val customsState = MutableStateFlow<CustomsState>(NotRequired)
+
+    private val uiState = MutableStateFlow(
+        UIControlsState(
+            markOrderComplete = false,
+            isShipmentDetailsExpanded = false,
+            isAddressSelectionExpanded = false
+        )
+    )
+
     private val selectedRatesSortOrder = MutableStateFlow(ShippingSortOption.FASTEST)
     private val refreshShippingRates = MutableSharedFlow<Unit>()
+    var customWeight by mutableStateOf("")
+        private set
 
-    private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
+    private val purchaseState = MutableStateFlow<PurchaseState>(PurchaseState.NoStarted)
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private val shippingRates =
-        combine(
-            packageSelection,
-            selectedRatesSortOrder,
-            refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, sortOrder, _ ->
-            when (selectedPackage) {
-                is NotSelected -> PackageData.EMPTY
-                is DataAvailable -> selectedPackage.selectedPackage
-            }.let { Pair(it, sortOrder) }
-        }.flatMapLatest {
-            val (selectedPackage, sortOrder) = it
-            refreshShippingRates(selectedPackage, sortOrder)
-        }
+    private val cheapestComparator = Comparator<ShippingRateUI> { r1, r2 ->
+        r1.defaultRate.rate.price.compareTo(r2.defaultRate.rate.price)
+    }
+    private val fastestComparator = Comparator<ShippingRateUI> { r1, r2 ->
+        r1.defaultRate.rate.deliveryDays.compareTo(r2.defaultRate.rate.deliveryDays)
+    }
+
+    private val selectedRate = MutableStateFlow<ShippingRateUI?>(null)
+    private val shippingRates = MutableStateFlow<Map<CarrierUI, List<ShippingRateUI>>>(emptyMap())
+    private val shippingRatesState = MutableStateFlow<ShippingRatesState>(ShippingRatesState.NoAvailable)
 
     val viewState: MutableStateFlow<WooShippingViewState> = MutableStateFlow(WooShippingViewState.Loading)
 
     init {
         launch { observeShippingLabelInformation() }
+        launch { getStoreOptions() }
+        launch { getShippingAddresses() }
+        launch { getOrderInformation() }
+        launch { observePackageWeight() }
+        launch { observePackageChanges() }
+        launch { observeShippingRates() }
+        launch { observeShippingRatesState() }
+        launch { observeCustomsDataChanges() }
     }
 
-    private fun refreshShippingRates(
-        selectedPackage: PackageData,
-        sortOrder: ShippingSortOption
-    ) = flow {
-        emit(ShippingRatesState.Loading(sortOrder))
-        val shippingRatesResult = getShippingRates(selectedPackage, sortOrder)
-        if (shippingRatesResult.isSuccess) {
-            emit(ShippingRatesState.DataState(sortOrder, shippingRatesResult.getOrThrow()))
-        } else {
-            emit(ShippingRatesState.Error)
+    private suspend fun getOrderInformation() {
+        orderDetailRepository.getOrderById(navArgs.orderId).let { order.value = it }
+    }
+
+    private fun getStoreOptions() {
+        launch {
+            observeStoreOptions().collectLatest { options ->
+                storeOptions.value = options
+            }
         }
     }
 
+    @Suppress("ComplexCondition")
+    @OptIn(FlowPreview::class)
+    private suspend fun observeShippingRates() {
+        combine(
+            packageSelected,
+            shippingAddresses,
+            packageWeight,
+            refreshShippingRates.onStart { emit(Unit) }
+        ) { selectedPackage, addresses, packageWeight, _ ->
+            if (
+                selectedPackage != null &&
+                addresses != null &&
+                packageWeight != null &&
+                addresses.shipTo != Address.EMPTY
+            ) {
+                ShippingRatesInfo(
+                    orderId = navArgs.orderId,
+                    packageSelected = selectedPackage,
+                    shipFrom = addresses.shipFrom,
+                    shipTo = addresses.shipTo,
+                    weight = packageWeight.totalWeight,
+                    currencyCode = order.value?.currency
+                )
+            } else {
+                null
+            }
+        }
+            .debounce(MULTIPLE_CALLS_DELAY)
+            .collectLatest {
+                updateShippingRates(it)
+            }
+    }
+
+    private suspend fun observeShippingRatesState() {
+        combine(
+            shippingRates,
+            selectedRate,
+            selectedRatesSortOrder
+        ) { shippingRates, selectedRate, selectedRatesSortOrder ->
+            if (shippingRates.isEmpty()) {
+                ShippingRatesState.NoAvailable
+            } else {
+                ShippingRatesState.DataState(
+                    selectedRatesSortOrder,
+                    sortShippingRates(selectedRatesSortOrder, shippingRates),
+                    selectedRate
+                )
+            }
+        }.collectLatest {
+            shippingRatesState.value = it
+        }
+    }
+
+    @OptIn(FlowPreview::class)
+    private suspend fun observePackageWeight() {
+        combine(
+            shippableItems,
+            packageSelected,
+            snapshotFlow { customWeight }.debounce(TYPING_DELAY)
+        ) { shippableItems, selectedPackage, customWeightString ->
+            val itemsWeight = shippableItems.sumByFloat { it.weight }
+            val packageWeight = selectedPackage?.weight?.toFloatOrNull()
+            PackageWeight(
+                itemsWeight = itemsWeight,
+                packageWeight = packageWeight,
+                customWeight = customWeightString.toFloatOrNull()
+            )
+        }.collectLatest {
+            packageWeight.value = it
+        }
+    }
+
+    private suspend fun observePackageChanges() {
+        combine(
+            packageSelected,
+            packageWeight,
+            storeOptions
+        ) { packageSelected, packageWeight, storeOptions ->
+            if (packageSelected == null || packageWeight == null) {
+                NotSelected
+            } else {
+                DataAvailable(
+                    selectedPackage = packageSelected,
+                    defaultWeight = packageWeight.defaultWeight.toString(),
+                    weightUnit = storeOptions?.weightUnit ?: ""
+                )
+            }
+        }.collectLatest {
+            packageSelection.value = it
+        }
+    }
+
+    // This logic will be updated later once the Customs data state is available
+    private suspend fun observeCustomsDataChanges() {
+        combine(
+            shippingAddresses,
+            customsState
+        ) { addresses, _ ->
+            when {
+                addresses != null && shouldRequireCustoms(addresses) -> Unavailable
+                else -> NotRequired
+            }
+        }.collectLatest { customsState.value = it }
+    }
+
+    private suspend fun getShippingAddresses() {
+        order.combine(observeOriginAddresses()) { order, originAddresses ->
+            if (order != null && !originAddresses.isNullOrEmpty()) {
+                val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
+                WooShippingAddresses(
+                    shipFrom = selectedOriginAddress,
+                    originAddresses = originAddresses,
+                    shipTo = order.shippingAddress
+                )
+            } else {
+                null
+            }
+        }.collect { shippingAddresses.value = it }
+    }
+
+    private suspend fun updateShippingRates(shippingRatesInfo: ShippingRatesInfo?) {
+        if (shippingRatesInfo != null) {
+            val sortOrder = selectedRatesSortOrder.value
+            shippingRatesState.value = ShippingRatesState.Loading(sortOrder)
+
+            val shippingRatesResult = getShippingRates(
+                shippingRatesInfo.orderId,
+                shippingRatesInfo.packageSelected,
+                shippingRatesInfo.shipTo,
+                shippingRatesInfo.shipFrom,
+                shippingRatesInfo.weight,
+                shippingRatesInfo.currencyCode
+            )
+
+            if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
+                shippingRates.value = shippingRatesResult.getOrThrow()
+            } else {
+                shippingRatesState.value = ShippingRatesState.Error
+            }
+            selectedRate.value = null
+        } else {
+            shippingRatesState.value = ShippingRatesState.NoAvailable
+        }
+    }
+
+    @Suppress("ComplexCondition")
     private suspend fun observeShippingLabelInformation() {
         combine(
-            storeOptions,
-            flowOf(orderDetailRepository.getOrderById(navArgs.orderId)),
-            observeOriginAddresses(),
-            shippingRates,
-            packageSelection
-        ) { storeOptions, order, originAddresses, shippingRates, packageSelection ->
-            val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
-            if (order == null || selectedOriginAddress == null) {
+            storeOptions.drop(1),
+            order.drop(1),
+            shippingAddresses.drop(1),
+            shippingRatesState,
+            packageSelection,
+            uiState,
+            purchaseState,
+            customsState
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState ->
+            if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
+
             val items = getShippableItems(order)
             shippableItems.value = items
 
@@ -116,49 +301,60 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     formattedTotalPrice = formattedTotalPrice
                 ),
                 shippingLines = shippingLineSummary,
-                shippingAddresses = WooShippingAddresses(
-                    shipFrom = selectedOriginAddress,
-                    originAddresses = originAddresses,
-                    shipTo = order.shippingAddress
-                ),
+                shippingAddresses = addresses,
                 shippingRates = shippingRates,
-                packageSelection = packageSelection
+                packageSelection = packageSelection,
+                uiState = uiState,
+                purchaseState = purchaseState,
+                customsState = customsState
             )
-        }.collect {
+        }.collectLatest {
             viewState.value = it
         }
     }
 
-    private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress? {
-        return (viewState as? WooShippingViewState.DataState)?.let {
-            it.shippingAddresses.shipFrom
-        } ?: originAddresses.firstOrNull { it.isDefault } ?: originAddresses.firstOrNull()
+    private fun getSelectedOriginAddress(originAddresses: List<OriginShippingAddress>): OriginShippingAddress {
+        return shippingAddresses.value?.shipFrom?.takeIf {
+            it != OriginShippingAddress.EMPTY
+        } ?: originAddresses.first()
     }
 
     fun onShippingFromAddressChange(address: OriginShippingAddress) {
-        (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
-            viewState.value = currentData.copy(
-                shippingAddresses = currentData.shippingAddresses.copy(
-                    shipFrom = address
-                )
-            )
+        shippingAddresses.value?.let {
+            shippingAddresses.value = it.copy(shipFrom = address)
         }
     }
 
+    fun onEditOriginAddress(address: OriginShippingAddress) {
+        triggerEvent(StartOriginAddressEdit(address))
+    }
+
     fun onShippingToAddressChange(address: Address) {
-        (viewState.value as? WooShippingViewState.DataState)?.let { currentData ->
-            viewState.value = currentData.copy(
-                shippingAddresses = currentData.shippingAddresses.copy(
-                    shipTo = address
-                )
-            )
+        shippingAddresses.value?.let {
+            shippingAddresses.value = it.copy(shipTo = address)
         }
     }
 
     fun onRefreshShippingRates() {
-        launch {
-            refreshShippingRates.emit(Unit)
+        launch { refreshShippingRates.emit(Unit) }
+    }
+
+    fun onMarkOrderCompleteChange(value: Boolean) {
+        uiState.update { it.copy(markOrderComplete = value) }
+    }
+
+    fun onShipmentDetailsExpandedChange(value: Boolean): Boolean {
+        return if (uiState.value.isAddressSelectionExpanded.not()) {
+            uiState.update { it.copy(isShipmentDetailsExpanded = value) }
+            true
+        } else {
+            false
         }
+    }
+
+    fun onSelectAddressExpandedChange(value: Boolean): Boolean {
+        uiState.update { it.copy(isAddressSelectionExpanded = value) }
+        return true
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
@@ -187,28 +383,122 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartPackageSelection)
     }
 
+    @Suppress("ComplexCondition")
     fun onPurchaseShippingLabel() {
-        triggerEvent(LabelPurchased)
+        val selectedPackage = packageSelected.value
+        val addresses = shippingAddresses.value
+        val shippingRate = selectedRate.value?.selectedOption?.rate
+        val weight = packageWeight.value?.totalWeight
+
+        if (selectedPackage == null || addresses == null || shippingRate == null || weight == null) return
+
+        val orderId = navArgs.orderId
+        val lastOrderComplete = uiState.value.markOrderComplete
+        val shippableItemsIdList = shippableItems.value.map { it.productId }
+
+        purchaseState.value = PurchaseState.InProgress
+
+        launch {
+            val result = purchaseShippingLabel(
+                orderId,
+                shippableItemsIdList,
+                selectedPackage,
+                addresses.shipTo,
+                addresses.shipFrom,
+                shippingRate,
+                weight,
+                lastOrderComplete
+            )
+            if (result.isSuccess) {
+                purchaseState.value = PurchaseState.Success
+                result.getOrNull()
+                    ?.labels
+                    ?.firstOrNull()
+                    ?.let { purchasedLabel ->
+                        val currentViewState = (viewState.value as? WooShippingViewState.DataState)
+                        val selectedRate = selectedRate.value
+                        if (currentViewState != null && selectedRate != null) {
+                            PurchasedShippingLabelData(
+                                labelId = purchasedLabel.labelId,
+                                orderId = navArgs.orderId,
+                                carrierId = purchasedLabel.carrierId,
+                                trackingNumber = purchasedLabel.tracking,
+                                addresses = currentViewState.shippingAddresses,
+                                items = currentViewState.shippableItems,
+                                rateSummary = selectedRate.summary,
+                                shippingLines = currentViewState.shippingLines
+                            )
+                        } else {
+                            null
+                        }
+                    }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
+            } else {
+                purchaseState.value = PurchaseState.Error
+            }
+        }
     }
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
         selectedRatesSortOrder.value = option
     }
 
-    fun onPackageSelected(packageData: PackageData) {
-        packageSelection.update { content ->
-            when (content) {
-                is NotSelected -> DataAvailable(
-                    selectedPackage = packageData,
-                    totalWeight = packageData.weight
-                )
-                is DataAvailable -> content.copy(selectedPackage = packageData)
+    fun onSelectedSippingRateChanged(rate: ShippingRateUI) {
+        selectedRate.update { rate }
+    }
+
+    private fun sortShippingRates(
+        option: ShippingSortOption,
+        shippingRates: Map<CarrierUI, List<ShippingRateUI>>
+    ): Map<CarrierUI, List<ShippingRateUI>> {
+        val comparator = when (option) {
+            ShippingSortOption.CHEAPEST -> {
+                cheapestComparator
             }
+
+            ShippingSortOption.FASTEST -> {
+                fastestComparator
+            }
+        }
+        return shippingRates.mapValues { it.value.sortedWith(comparator) }
+    }
+
+    fun onPackageSelected(packageData: PackageData) {
+        packageSelected.value = packageData
+    }
+
+    fun onCustomWeightChange(input: String) {
+        customWeight = input
+    }
+
+    fun onEditCustomsClick() {
+        triggerEvent(StartCustomsFormEdit)
+    }
+
+    fun allowBackNavigation(): Boolean {
+        val state = uiState.value
+        return when {
+            state.isAddressSelectionExpanded -> {
+                uiState.update { it.copy(isAddressSelectionExpanded = false) }
+                false
+            }
+
+            state.isShipmentDetailsExpanded -> {
+                uiState.update { it.copy(isShipmentDetailsExpanded = false) }
+                false
+            }
+
+            else -> true
         }
     }
 
+    fun onNavigateBack() {
+        if (allowBackNavigation()) triggerEvent(Event.Exit)
+    }
+
     data object StartPackageSelection : Event()
-    data object LabelPurchased : Event()
+    data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
+    data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
+    data object StartCustomsFormEdit : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
@@ -218,7 +508,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val shippingLines: List<ShippingLineSummaryUI>,
             val shippingAddresses: WooShippingAddresses,
             val shippingRates: ShippingRatesState,
-            val packageSelection: PackageSelectionState
+            val packageSelection: PackageSelectionState,
+            val uiState: UIControlsState,
+            val purchaseState: PurchaseState,
+            val customsState: CustomsState
         ) : WooShippingViewState()
     }
 
@@ -232,7 +525,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
         data class DataState(
             val selectedRatesSortOrder: ShippingSortOption,
-            val shippingRates: Map<Carrier, List<ShippingRateUI>>
+            val shippingRates: Map<CarrierUI, List<ShippingRateUI>>,
+            val selectedRate: ShippingRateUI? = null
         ) : ShippingRatesState()
     }
 
@@ -240,13 +534,67 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         data object NotSelected : PackageSelectionState()
         data class DataAvailable(
             val selectedPackage: PackageData,
-            val totalWeight: String
+            val defaultWeight: String,
+            val weightUnit: String
         ) : PackageSelectionState()
+    }
+
+    sealed class PurchaseState {
+        data object NoStarted : PurchaseState()
+        data object InProgress : PurchaseState()
+        data object Success : PurchaseState()
+        data object Error : PurchaseState()
+    }
+
+    data class PackageWeight(
+        val itemsWeight: Float,
+        val packageWeight: Float? = null,
+        val customWeight: Float? = null
+    ) {
+        val defaultWeight: Float
+            get() = itemsWeight + (packageWeight ?: 0f)
+        val totalWeight: Float
+            get() = customWeight ?: defaultWeight
+    }
+
+    data class UIControlsState(
+        val markOrderComplete: Boolean,
+        val isShipmentDetailsExpanded: Boolean,
+        val isAddressSelectionExpanded: Boolean
+    )
+
+    data class ShippingRatesInfo(
+        val orderId: Long,
+        val packageSelected: PackageData,
+        val shipFrom: OriginShippingAddress,
+        val shipTo: Address,
+        val weight: Float,
+        val currencyCode: String?
+    )
+
+    // This will be extended later introducing the state with data coming from the Customs form
+    sealed class CustomsState {
+        data object NotRequired : CustomsState()
+        data object Unavailable : CustomsState()
+    }
+
+    companion object {
+        private const val TYPING_DELAY = 800L
+        private const val MULTIPLE_CALLS_DELAY = 50L
     }
 }
 
+@Parcelize
 data class WooShippingAddresses(
     val shipFrom: OriginShippingAddress,
     val shipTo: Address,
     val originAddresses: List<OriginShippingAddress>
-)
+) : Parcelable {
+    companion object {
+        val EMPTY = WooShippingAddresses(
+            shipFrom = OriginShippingAddress.EMPTY,
+            shipTo = Address.EMPTY,
+            originAddresses = emptyList()
+        )
+    }
+}

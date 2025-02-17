@@ -3,9 +3,12 @@ package com.woocommerce.android.ui.woopos.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
+import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent.OrderSuccessfullyPaid.PaymentMethod
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ExitConfirmationDialog
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ProductsInfoDialog
 import com.woocommerce.android.ui.woopos.home.WooPosHomeState.ScreenPositionState
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,6 +21,7 @@ import javax.inject.Inject
 class WooPosHomeViewModel @Inject constructor(
     private val childrenToParentEventReceiver: WooPosChildrenToParentEventReceiver,
     private val parentToChildrenEventSender: WooPosParentToChildrenEventSender,
+    private val wooPosItemsNavigator: WooPosItemsNavigator,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _state = savedStateHandle.getStateFlow(
@@ -34,12 +38,15 @@ class WooPosHomeViewModel @Inject constructor(
     private val _toastEvent = MutableSharedFlow<String>()
     val toastEvent: SharedFlow<String> = _toastEvent
 
+    private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
+    val navigationEvent: SharedFlow<NavigationEvent> = _navigationEvent
+
     init {
         listenBottomEvents()
     }
 
     fun onUIEvent(event: WooPosHomeUIEvent) {
-        return when (event) {
+        when (event) {
             WooPosHomeUIEvent.SystemBackClicked -> {
                 when (_state.value.screenPositionState) {
                     ScreenPositionState.Checkout.CartWithTotals -> {
@@ -75,7 +82,14 @@ class WooPosHomeViewModel @Inject constructor(
                 )
             }
 
-            WooPosHomeUIEvent.OnPaymentCompletedViaCash -> onOrderSuccessfullyPaid()
+            WooPosHomeUIEvent.OnPaymentCompletedViaCash -> onOrderSuccessfullyPaid(
+                PaymentMethod.CASH
+            )
+            WooPosHomeUIEvent.ExitPosClicked -> {
+                viewModelScope.launch {
+                    _navigationEvent.emit(NavigationEvent.ExitPos)
+                }
+            }
         }
     }
 
@@ -110,7 +124,9 @@ class WooPosHomeViewModel @Inject constructor(
                         )
                     }
 
-                    is ChildToParentEvent.OrderSuccessfullyPaid -> onOrderSuccessfullyPaid()
+                    is ChildToParentEvent.OrderSuccessfullyPaidByCard -> onOrderSuccessfullyPaid(
+                        PaymentMethod.CARD
+                    )
 
                     is ChildToParentEvent.PaymentCollecting -> {
                         _state.value = _state.value.copy(
@@ -125,7 +141,7 @@ class WooPosHomeViewModel @Inject constructor(
                     }
 
                     is ChildToParentEvent.GoBackToCheckoutAfterFailedPayment,
-                    is ChildToParentEvent.RetryFailedPaymentClicked -> {
+                    is ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout -> {
                         _state.value = _state.value.copy(
                             screenPositionState = ScreenPositionState.Checkout.CartWithTotals
                         )
@@ -150,6 +166,8 @@ class WooPosHomeViewModel @Inject constructor(
                             _toastEvent.emit(event.message)
                         }
                     }
+
+                    is NavigationEvent -> viewModelScope.launch { _navigationEvent.emit(event) }
                 }
             }
         }
@@ -183,10 +201,15 @@ class WooPosHomeViewModel @Inject constructor(
         }
     }
 
-    private fun onOrderSuccessfullyPaid() {
+    private fun onOrderSuccessfullyPaid(paymentMethod: PaymentMethod) {
+        viewModelScope.launch {
+            wooPosItemsNavigator.sendNavigationEvent(
+                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+            )
+        }
         _state.value = _state.value.copy(
             screenPositionState = ScreenPositionState.Checkout.FullScreenTotals
         )
-        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid)
+        sendEventToChildren(ParentToChildrenEvent.OrderSuccessfullyPaid(paymentMethod))
     }
 }

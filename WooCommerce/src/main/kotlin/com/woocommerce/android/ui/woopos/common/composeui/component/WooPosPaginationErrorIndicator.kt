@@ -1,11 +1,15 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -14,7 +18,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -38,14 +41,16 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
 @Composable
 fun WooPosPaginationErrorIndicator(
     modifier: Modifier = Modifier,
-    icon: Painter = painterResource(id = R.drawable.woo_pos_ic_error),
+    icon: Painter = painterResource(id = R.drawable.ic_woo_pos_error),
     message: String,
+    description: String,
     primaryButton: Button,
 ) {
     WooPosPaginationErrorIndicatorContent(
         modifier = modifier,
         icon = icon,
         message = message,
+        description = description,
         primaryButton = primaryButton
     )
 }
@@ -55,6 +60,7 @@ private fun WooPosPaginationErrorIndicatorContent(
     modifier: Modifier,
     icon: Painter,
     message: String,
+    description: String,
     primaryButton: Button
 ) {
     val itemContentDescription = stringResource(id = R.string.woopos_items_pagination_error_content_description)
@@ -69,38 +75,50 @@ private fun WooPosPaginationErrorIndicatorContent(
         Row(
             modifier = Modifier
                 .height(112.dp)
-                .fillMaxWidth()
-                .padding(16.dp),
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = icon,
-                    contentDescription = stringResource(R.string.woopos_error_icon_content_description),
-                    tint = Color.Unspecified,
-                )
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.h5,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colors.error,
-                    modifier = Modifier.padding(start = 24.dp.toAdaptivePadding())
-                )
+                Box(
+                    modifier = Modifier
+                        .size(112.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .size(54.dp)
+                            .align(Alignment.Center),
+                        painter = icon,
+                        contentDescription = stringResource(R.string.woopos_error_icon_content_description),
+                        tint = Color.Unspecified,
+                    )
+                }
+                Spacer(modifier = Modifier.width(18.dp))
+                Column {
+                    Text(
+                        text = message,
+                        style = MaterialTheme.typography.h5,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = description,
+                        style = MaterialTheme.typography.h5,
+                        fontWeight = FontWeight.Normal,
+                        modifier = Modifier.padding(top = 8.dp.toAdaptivePadding())
+                    )
+                }
             }
 
-            WooPosButton(
+            WooPosOutlinedButton(
                 text = primaryButton.text,
                 onClick = primaryButton.click,
                 modifier = Modifier
-                    .weight(0.5f)
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .padding(end = 16.dp.toAdaptivePadding())
+                    .weight(0.25f),
             )
         }
     }
@@ -152,9 +170,10 @@ fun WooPosPaginationErrorScreenPreview() {
             onEndOfProductsListReached = {}
         ) {
             WooPosPaginationErrorIndicator(
-                message = stringResource(id = R.string.woopos_items_pagination_error),
+                message = stringResource(id = R.string.woopos_items_pagination_error_title),
+                description = stringResource(id = R.string.woopos_items_pagination_error_description),
                 primaryButton = Button(
-                    text = stringResource(id = R.string.woopos_items_pagination_load_more_label),
+                    text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
                     click = {}
                 )
             )

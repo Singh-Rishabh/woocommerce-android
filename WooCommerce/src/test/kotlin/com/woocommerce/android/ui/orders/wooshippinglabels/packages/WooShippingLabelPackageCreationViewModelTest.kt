@@ -14,6 +14,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.Carrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CarrierPackageGroup
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.CustomPackageCreationData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
+import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.StoreOptionsForPackages
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -88,7 +89,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         sut.onAddCustomPackageClick(savePackageAsTemplate = false)
 
         verify(packageRepository, times(0)).createCustomPackage(any(), any())
-        assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData.toPackageData()))
+        assertThat(lastEvent).isEqualTo(PackageSelected(customPackageData.toPackageData("cm")))
     }
 
     @Test
@@ -172,21 +173,24 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
     fun `onSavedPackageSelected selects only one package at a time`() = testBlocking {
         var lastViewState: ViewState? = null
         val package1 = PackageData(
+            id = "1",
             name = "Package 1",
             dimensions = "10 x 10 x 10",
             weight = "10",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package2 = PackageData(
+            id = "2",
             name = "Package 2",
             dimensions = "20 x 20 x 20",
             weight = "20",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         whenever(fetchPredefinedPackages()).thenReturn(
             PredefinedPackagesState.Data(
+                storeOptions = StoreOptionsForPackages.DEFAULT,
                 carrierPackages = emptyMap(),
                 savedPackages = listOf(package1, package2)
             )
@@ -213,18 +217,20 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         var lastViewState: ViewState? = null
         val carrier: Carrier = Carrier.DHL
         val package1 = PackageData(
+            id = "1",
             name = "Package 1",
             dimensions = "10 x 10 x 10",
             weight = "10",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package2 = PackageData(
+            id = "2",
             name = "Package 2",
             dimensions = "20 x 20 x 20",
             weight = "20",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         val carrierPackages = mapOf(
             carrier to listOf(
@@ -236,6 +242,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchPredefinedPackages()).thenReturn(
             PredefinedPackagesState.Data(
+                storeOptions = StoreOptionsForPackages.DEFAULT,
                 carrierPackages = carrierPackages,
                 savedPackages = emptyList()
             )
@@ -271,32 +278,36 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         val carrier1: Carrier = Carrier.DHL
         val carrier2: Carrier = Carrier.USPS
         val package1 = PackageData(
+            id = "1",
             name = "Package 1 - Carrier 1",
             dimensions = "10 x 10 x 10",
             weight = "10",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package2 = PackageData(
+            id = "2",
             name = "Package 2 - Carrier 1",
             dimensions = "20 x 20 x 20",
             weight = "20",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         val package3 = PackageData(
+            id = "3",
             name = "Package 1 - Carrier 2",
             dimensions = "30 x 30 x 30",
             weight = "30",
             isSelected = false,
-            isLetter = false
+            isLetter = false,
         )
         val package4 = PackageData(
+            id = "4",
             name = "Package 2 - Carrier 2",
             dimensions = "40 x 40 x 40",
             weight = "40",
             isSelected = false,
-            isLetter = true
+            isLetter = true,
         )
         val carrierPackages = mapOf(
             carrier1 to listOf(
@@ -314,6 +325,7 @@ class WooShippingLabelPackageCreationViewModelTest : BaseUnitTest() {
         )
         whenever(fetchPredefinedPackages()).thenReturn(
             PredefinedPackagesState.Data(
+                storeOptions = StoreOptionsForPackages.DEFAULT,
                 carrierPackages = carrierPackages,
                 savedPackages = emptyList()
             )

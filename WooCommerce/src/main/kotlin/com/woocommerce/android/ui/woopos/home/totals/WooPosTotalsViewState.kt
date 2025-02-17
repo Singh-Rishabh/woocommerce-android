@@ -7,19 +7,25 @@ import kotlinx.parcelize.Parcelize
 sealed class WooPosTotalsViewState : Parcelable {
     data object Loading : WooPosTotalsViewState()
 
-    data class Totals(
-        val orderSubtotalText: String,
-        val orderTaxText: String,
-        val orderTotalText: String,
+    data class Checkout(
+        val totals: Totals,
         val readerStatus: ReaderStatus,
-        val cashPaymentAvailability: CashPaymentAvailability,
-    ) : WooPosTotalsViewState() {
+        val isFreeOrder: Boolean,
+    ) : WooPosTotalsViewState()
+
+    sealed class Totals : Parcelable {
         @Parcelize
-        sealed class CashPaymentAvailability : Parcelable {
-            data class Available(val orderId: Long) : CashPaymentAvailability()
-            data object Unavailable : CashPaymentAvailability()
-        }
+        data object Hidden : Totals()
+
+        @Parcelize
+        data class Visible(
+            val orderSubtotalText: String,
+            val orderTaxText: String,
+            val orderTotalText: String,
+        ) : Totals()
     }
+
+    data class PaymentSuccess(val orderTotalText: String) : WooPosTotalsViewState()
 
     sealed class ReaderStatus(
         open val title: String,
@@ -56,8 +62,7 @@ sealed class WooPosTotalsViewState : Parcelable {
         data class Disconnected(
             override val title: String,
             override val subtitle: String,
-            val actionButonLabel: String,
-            val onAction: () -> Unit,
+            val actionButtonLabel: String,
         ) : ReaderStatus(
             title = title,
             subtitle = subtitle
@@ -74,15 +79,6 @@ sealed class WooPosTotalsViewState : Parcelable {
         val subtitle: String,
         val retryPaymentButtonLabel: String,
         val isReturnToCheckoutButtonVisible: Boolean = false,
-    ) : WooPosTotalsViewState()
-
-    data class PaymentSuccess(
-        val orderTotalText: String,
-        val isReceiptAvailable: Boolean,
-    ) : WooPosTotalsViewState()
-
-    data class ReceiptSending(
-        val email: String,
     ) : WooPosTotalsViewState()
 
     data class Error(val message: String) : WooPosTotalsViewState()

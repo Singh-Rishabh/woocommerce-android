@@ -5,4 +5,13 @@ data class StoreOptionsModel(
     val dimensionUnit: String,
     val weightUnit: String,
     val originCountry: String
-)
+) {
+    companion object {
+        val EMPTY = StoreOptionsModel(
+            currencySymbol = "",
+            dimensionUnit = "",
+            weightUnit = "",
+            originCountry = ""
+        )
+    }
+}

@@ -1,8 +1,10 @@
 #!/bin/bash -eu
 
+"$(dirname "${BASH_SOURCE[0]}")/restore-cache.sh"
+
 echo "--- 🧪 Testing"
 set +e
-./gradlew testJalapenoDebugUnitTest lib:cardreader:testDebugUnitTest lib:iap:testDebugUnitTest
+./gradlew testJalapenoDebugUnitTest testDebugUnitTest
 TESTS_EXIT_STATUS=$?
 set -e
 

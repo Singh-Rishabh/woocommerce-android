@@ -478,14 +478,11 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
             doReturn(true).whenever(orderDetailRepository).hasVirtualProductsOnly(listOf(3, 4))
             doReturn(virtualOrder).whenever(orderDetailRepository).getOrderById(any())
-            doReturn(virtualOrder).whenever(orderDetailRepository).fetchOrderById(any())
 
             doReturn(testOrderRefunds).whenever(orderDetailRepository).getOrderRefunds(any())
 
-            doReturn(true).whenever(orderDetailRepository).fetchOrderNotes(any())
             doReturn(testOrderNotes).whenever(orderDetailRepository).getOrderNotes(any())
             doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).getOrderShippingLabels(any())
-            doReturn(emptyList<ShippingLabel>()).whenever(orderDetailRepository).fetchOrderShippingLabels(any())
 
             viewModel.start()
 
@@ -795,7 +792,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         viewModel.start()
 
         verify(orderDetailRepository, times(1)).fetchOrderById(ORDER_ID)
-        verify(viewModel, never()).order
+        verify(viewModel, never()).awaitOrder()
 
         assertThat(snackbar).isEqualTo(ShowSnackbar(string.order_error_fetch_generic))
     }
@@ -927,30 +924,6 @@ class OrderDetailViewModelTest : BaseUnitTest() {
         )
 
         assertThat(newOrder?.status).isEqualTo(order.status)
-    }
-
-    @Test
-    fun `Do not update order status when not connected`() = testBlocking {
-        doReturn(order).whenever(orderDetailRepository).getOrderById(any())
-        doReturn(false).whenever(networkStatus).isConnected()
-
-        var snackbar: ShowSnackbar? = null
-        viewModel.event.observeForever {
-            if (it is ShowSnackbar) snackbar = it
-        }
-
-        viewModel.order = order
-        viewModel.start()
-        viewModel.onOrderStatusChanged(
-            OrderStatusUpdateSource.Dialog(
-                oldStatus = order.status.value,
-                newStatus = CoreOrderStatus.PROCESSING.value
-            )
-        )
-
-        verify(orderDetailRepository, never()).updateOrderStatus(any(), any())
-
-        assertThat(snackbar).isEqualTo(ShowSnackbar(string.offline_error))
     }
 
     @Test
@@ -1098,7 +1071,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
         viewModel.onCardReaderPaymentCompleted()
 
-        assertThat(viewModel.order).isEqualTo(orderAfterPayment)
+        assertThat(viewModel.awaitOrder()).isEqualTo(orderAfterPayment)
     }
 
     @Test
@@ -2434,24 +2407,6 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given order and store currency mismatch, when edit clicked, then trigger snackbar event`() = testBlocking {
-        // Given
-        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
-        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
-        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
-        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
-        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
-            CurrencyMatchResult(isMatch = false, storeCurrency = "USD")
-        )
-        viewModel.start()
-
-        // When
-        viewModel.onEditClicked()
-
-        assertThat(viewModel.event.value).isInstanceOf(ShowSnackbar::class.java)
-    }
-
-    @Test
     fun `given order and store currency mismatch, when edit clicked, then track proper event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
@@ -2470,7 +2425,7 @@ class OrderDetailViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `given order and store currency are same, when edit clicked, then trigger EditOrder event`() = testBlocking {
+    fun `when edit clicked, then trigger EditOrder event`() = testBlocking {
         // Given
         whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
         whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
@@ -2486,5 +2441,45 @@ class OrderDetailViewModelTest : BaseUnitTest() {
 
         assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
         assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
+    }
+
+    @Test
+    fun `when edit clicked, then trigger EditOrder event with order currency passed as parameter`() = testBlocking {
+        // Given
+        whenever(orderDetailRepository.getOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderById(any())).thenReturn(order)
+        whenever(orderDetailRepository.fetchOrderNotes(any())).thenReturn(false)
+        whenever(addonsRepository.containsAddonsFrom(any())).thenReturn(false)
+        whenever(isStoreCurrencyMatch.invoke(any())).thenReturn(
+            CurrencyMatchResult(isMatch = true, storeCurrency = "USD")
+        )
+        viewModel.start()
+
+        // When
+        viewModel.onEditClicked()
+
+        assertThat(viewModel.event.value).isNotInstanceOf(ShowSnackbar::class.java)
+        assertThat(viewModel.event.value).isInstanceOf(EditOrder::class.java)
+        assertThat((viewModel.event.value as EditOrder).orderCurrency).isEqualTo(viewModel.awaitOrder().currency)
+    }
+
+    @Test
+    fun `given order in db, when viewmodel start, then view state is updated with order`() = testBlocking {
+        // GIVEN
+        val newOrder = order.copy(
+            status = Order.Status.Processing,
+            number = "NewOrderNumber"
+        )
+        doReturn(newOrder).whenever(orderDetailRepository).getOrderById(any())
+
+        var observedViewState: OrderDetailViewState? = null
+        viewModel.viewStateData.observeForever { _, newState -> observedViewState = newState }
+
+        // WHEN
+        viewModel.start()
+
+        // THEN
+        assertThat(observedViewState!!.orderInfo!!.order).isEqualTo(newOrder)
+        assertThat(observedViewState!!.orderInfo!!.isPaymentCollectableWithCardReader).isFalse()
     }
 }

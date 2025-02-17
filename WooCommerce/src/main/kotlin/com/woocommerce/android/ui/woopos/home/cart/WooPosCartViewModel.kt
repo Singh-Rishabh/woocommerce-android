@@ -19,6 +19,7 @@ import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.CHECKOUT
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -90,18 +91,6 @@ class WooPosCartViewModel @Inject constructor(
                 val currentState = _state.value
                 _state.value = currentState.copy(
                     body = WooPosCartState.Body.Empty
-                )
-            }
-
-            is WooPosCartUIEvent.OnCartItemAppearanceAnimationPlayed -> {
-                val currentState = _state.value
-                val currentStateBody = currentState.body as? WooPosCartState.Body.WithItems ?: return
-                _state.value = currentState.copy(
-                    body = currentStateBody.copy(
-                        itemsInCart = currentState.body.itemsInCart.map {
-                            if (it.id == event.item.id) it.copy(isAppearanceAnimationPlayed = true) else it
-                        }
-                    )
                 )
             }
         }
@@ -264,9 +253,9 @@ class WooPosCartViewModel @Inject constructor(
                 itemNumber = itemNumber
             ),
             name = name,
+            description = null,
             price = formatPrice(price),
             imageUrl = firstImageUrl,
-            isAppearanceAnimationPlayed = false,
             productType = ProductType.Simple,
         )
 
@@ -280,10 +269,10 @@ class WooPosCartViewModel @Inject constructor(
                 variationId = remoteVariationId,
                 itemNumber = itemNumber
             ),
-            name = getName(product),
+            name = product.name,
+            description = getNameForPOS(product, resourceProvider),
             price = formatPrice(price),
             imageUrl = image?.source,
-            isAppearanceAnimationPlayed = false,
             productType = ProductType.Variation,
         )
 }

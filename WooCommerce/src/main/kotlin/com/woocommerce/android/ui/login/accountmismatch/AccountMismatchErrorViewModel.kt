@@ -14,7 +14,7 @@ import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.support.help.HelpOrigin.LOGIN_SITE_ADDRESS
-import com.woocommerce.android.ui.common.wpcomwebview.WPComWebViewAuthenticator
+import com.woocommerce.android.ui.common.webview.WebViewAuthenticator
 import com.woocommerce.android.ui.login.AccountRepository
 import com.woocommerce.android.ui.login.UnifiedLoginTracker
 import com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorViewModel.AccountMismatchErrorType.WPCOM_ACCOUNT_MISMATCH
@@ -60,7 +60,7 @@ class AccountMismatchErrorViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val analyticsTrackerWrapper: AnalyticsTrackerWrapper,
     private val unifiedLoginTracker: UnifiedLoginTracker,
-    val wpComWebViewAuthenticator: WPComWebViewAuthenticator,
+    val webViewAuthenticator: WebViewAuthenticator,
     val userAgent: UserAgent
 ) : ScopedViewModel(savedStateHandle) {
     companion object {
@@ -263,6 +263,10 @@ class AccountMismatchErrorViewModel @Inject constructor(
                 val site = site.await() ?: error("The site is not cached")
                 accountMismatchRepository.fetchJetpackConnectedEmail(site).fold(
                     onSuccess = { email ->
+                        // Remove the WPAPI site from DB before continuing
+                        // This ensure we don't have a duplicate site with a wrong origin
+                        accountMismatchRepository.removeSiteFromDB(site)
+
                         val isUserAuthenticated = accountRepository.isUserLoggedIn() &&
                             accountRepository.getUserAccount()?.email == email
                         triggerEvent(OnJetpackConnectedEvent(email, isAuthenticated = isUserAuthenticated))

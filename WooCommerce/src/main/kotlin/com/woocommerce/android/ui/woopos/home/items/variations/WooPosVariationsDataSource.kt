@@ -10,15 +10,15 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
+import org.wordpress.android.fluxc.store.WCProductStore
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WooPosVariationsDataSource @Inject constructor(
-    private val handler: VariationListHandler
+    private val handler: VariationListHandler,
+    private val variationCache: VariationsLRUCache<Long, List<ProductVariation>>
 ) {
-    private val variationCache = VariationsLRUCache<Long, List<ProductVariation>>(maxSize = 50)
-
     private suspend fun getCachedVariations(productId: Long): List<ProductVariation> {
         return variationCache.get(productId) ?: emptyList()
     }
@@ -38,7 +38,7 @@ class WooPosVariationsDataSource @Inject constructor(
     fun fetchFirstPage(
         productId: Long,
         forceRefresh: Boolean = true
-    ): Flow<FetchResult<List<ProductVariation>>> = flow {
+    ): Flow<FetchResult> = flow {
         if (forceRefresh) {
             updateCache(productId, emptyList())
         }
@@ -48,9 +48,16 @@ class WooPosVariationsDataSource @Inject constructor(
             emit(FetchResult.Cached(cachedVariations))
         }
 
-        val result = handler.fetchVariations(productId, forceRefresh = true)
+        val result = handler.fetchVariations(
+            productId,
+            forceRefresh = true,
+            filterOptions = mapOf(
+                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH,
+                WCProductStore.VariationFilterOption.DOWNLOADABLE to VARIATION_DOWNLOADABLE_FALSE
+            )
+        )
         if (result.isSuccess) {
-            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull() ?: emptyList()
+            val remoteVariations = handler.getVariationsFlow(productId).firstOrNull()?.applyFilter() ?: emptyList()
             updateCache(productId, remoteVariations)
             emit(FetchResult.Remote(Result.success(remoteVariations)))
         } else {
@@ -65,9 +72,15 @@ class WooPosVariationsDataSource @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     suspend fun loadMore(productId: Long): Result<List<ProductVariation>> = withContext(Dispatchers.IO) {
-        val result = handler.loadMore(productId)
+        val result = handler.loadMore(
+            productId,
+            filterOptions = mapOf(
+                WCProductStore.VariationFilterOption.STATUS to VARIATION_STATUS_PUBLISH,
+                WCProductStore.VariationFilterOption.DOWNLOADABLE to VARIATION_DOWNLOADABLE_FALSE
+            )
+        )
         if (result.isSuccess) {
-            val fetchedVariations = handler.getVariationsFlow(productId).first()
+            val fetchedVariations = handler.getVariationsFlow(productId).first().applyFilter()
             Result.success(fetchedVariations)
         } else {
             result.logFailure()
@@ -75,6 +88,11 @@ class WooPosVariationsDataSource @Inject constructor(
                 result.exceptionOrNull() ?: Exception("Unknown error while loading more variations")
             )
         }
+    }
+
+    companion object {
+        private const val VARIATION_STATUS_PUBLISH = "publish"
+        private const val VARIATION_DOWNLOADABLE_FALSE = "false"
     }
 }
 
@@ -84,7 +102,12 @@ private fun Result<Unit>.logFailure() {
     WooLog.e(WooLog.T.POS, "Loading variations failed - $errorMessage", error)
 }
 
-sealed class FetchResult<out T> {
-    data class Cached<out T>(val data: T) : FetchResult<T>()
-    data class Remote<out T>(val result: Result<T>) : FetchResult<T>()
+sealed class FetchResult {
+    data class Cached(val data: List<ProductVariation>) : FetchResult()
+    data class Remote(val result: Result<List<ProductVariation>>) : FetchResult()
+}
+
+private fun List<ProductVariation>.applyFilter(): List<ProductVariation> {
+    return filter { !it.isDownloadable } // Keeping this filter for now, but it should be removed in the future after
+    // WC 9.7.0 is released. https://a8c.slack.com/archives/C070SJRA8DP/p1736795937571479
 }
