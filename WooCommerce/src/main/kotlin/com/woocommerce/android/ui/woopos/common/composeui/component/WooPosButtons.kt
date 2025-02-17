@@ -142,7 +142,7 @@ fun WooPosOutlinedButtonSmall(
 }
 
 @Composable
-fun Button(
+private fun Button(
     modifier: Modifier = Modifier,
     height: Dp,
     textStyle: WooPosTypography,
