@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-class WooPosDesignSystemUsageSpacing(config: Config) : Rule(config) {
+class WooPosDesignSystemCornerRadiusUsageRule(config: Config) : Rule(config) {
     private val targetPackagePrefix = "com.woocommerce.android.ui.woopos"
+    private val cornerRadiusFile = "WooPosCornerRadius"
 
     override val issue = Issue(
         javaClass.simpleName,
         Severity.Style,
-        "Use spacing from the WooPosSpacing design system.",
+        "Use corner radius values from $cornerRadiusFile instead of hardcoded values.",
         Debt.FIVE_MINS
     )
 
@@ -33,17 +34,18 @@ class WooPosDesignSystemUsageSpacing(config: Config) : Rule(config) {
         val calleeExpression = expression.calleeExpression as? KtNameReferenceExpression
         val callName = calleeExpression?.getReferencedName()
 
-        if (callName == "padding") {
+        if (callName == "RoundedCornerShape") {
             expression.valueArguments.forEach { argument ->
                 val argumentExpression = argument.getArgumentExpression()
                 val argumentText = argumentExpression?.text ?: return
 
-                if (!argumentText.startsWith("WooPosSpacing") && argumentText.matches(Regex("\\d+\\.dp"))) {
+                if (!argumentText.startsWith(cornerRadiusFile) && argumentText.matches(Regex("\\d+\\.dp"))) {
                     report(
                         CodeSmell(
                             issue,
                             Entity.from(expression),
-                            "Use WooPosSpacing for padding/margins instead of hardcoded values. Found: $argumentText"
+                            "Corner radius should use WooPosCornerRadius instead of hardcoded values." +
+                                "Found: $argumentText"
                         )
                     )
                 }

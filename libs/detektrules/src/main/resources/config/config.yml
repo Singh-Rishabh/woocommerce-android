@@ -5,3 +5,5 @@ WooPosRules:
     active: true
   WooPosCornerRadiusUsageRule:
     active: true
+  WooPosDesignSystemUsageColors:
+    active: true

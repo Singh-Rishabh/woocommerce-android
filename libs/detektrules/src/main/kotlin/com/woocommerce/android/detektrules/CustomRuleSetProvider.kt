@@ -1,8 +1,9 @@
 package com.woocommerce.android.detektrules
 
-import com.woocommerce.android.detektrules.woopos.WooPosCornerRadiusUsageRule
-import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemUsageSpacing
-import com.woocommerce.android.detektrules.woopos.WooPosTypographyUsageRule
+import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemCornerRadiusUsageRule
+import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemColorUsageRule
+import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemSpacingUsageRule
+import com.woocommerce.android.detektrules.woopos.WooPosDesignSystemTypographyUsageRule
 import io.gitlab.arturbosch.detekt.api.Config
 import io.gitlab.arturbosch.detekt.api.RuleSet
 import io.gitlab.arturbosch.detekt.api.RuleSetProvider
@@ -13,9 +14,10 @@ class CustomRuleSetProvider : RuleSetProvider {
     override fun instance(config: Config) = RuleSet(
         ruleSetId,
         listOf(
-            WooPosDesignSystemUsageSpacing(config),
-            WooPosTypographyUsageRule(config),
-            WooPosCornerRadiusUsageRule(config),
+            WooPosDesignSystemSpacingUsageRule(config),
+            WooPosDesignSystemTypographyUsageRule(config),
+            WooPosDesignSystemCornerRadiusUsageRule(config),
+            WooPosDesignSystemColorUsageRule(config)
         )
     )
 }
