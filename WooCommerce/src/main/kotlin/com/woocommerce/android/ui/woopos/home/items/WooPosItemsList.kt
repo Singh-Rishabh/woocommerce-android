@@ -117,11 +117,13 @@ fun WooPosItemList(
                     onErrorWhilePaginating()
                 }
             }
+
             PaginationState.Loading -> {
                 item {
                     ItemsLoadingItem()
                 }
             }
+
             PaginationState.None -> {
             }
         }
@@ -214,17 +216,21 @@ private fun ProductInfo(item: WooPosItem) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(vertical = WooPosSpacing.Medium.value),
+            .padding(
+                top = WooPosSpacing.Medium.value,
+                bottom = WooPosSpacing.Medium.value,
+                end = WooPosSpacing.Medium.value
+            ),
         verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = item.name,
             style = WooPosTypography.BodyLarge,
             fontWeight = FontWeight.Bold,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value))
         when (item) {
             is SimpleProduct -> SimpleProductDetails(item = item)
             is VariableProduct -> VariableProductDetails()
@@ -412,7 +418,13 @@ fun ItemListPreview() {
         WooPosItemList(
             WooPosItemsViewState.Content(
                 listOf(
-                    SimpleProduct(id = 1, name = "Simple Product", price = "$10.00", imageUrl = ""),
+                    SimpleProduct(
+                        id = 1,
+                        name = "Simple Product Simple Product Simple" +
+                            " Product Simple Product Simple Product Simple Product Simple Product",
+                        price = "$10.00",
+                        imageUrl = ""
+                    ),
                     VariableProduct(id = 2, name = "Variable Product", price = "$10.00", "", 1, listOf()),
                     Variation(3, "Variation", 0, "$10", ""),
                 ),
