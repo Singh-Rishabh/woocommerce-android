@@ -28,7 +28,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,6 +63,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButtonSmall
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
@@ -182,7 +182,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
             modifier = Modifier.size(104.dp)
         )
         Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
-        Text(
+        WooPosText(
             text = stringResource(R.string.woopos_cart_empty_subtitle),
             style = WooPosTypography.BodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
@@ -297,7 +297,7 @@ private fun CartToolbar(
             }
         }
 
-        Text(
+        WooPosText(
             text = stringResource(R.string.woopos_cart_title),
             style = WooPosTypography.Heading,
             fontWeight = FontWeight.Bold,
@@ -324,7 +324,7 @@ private fun CartToolbar(
 
         toolbar.itemsCount?.let {
             val itemsEndMargin = WooPosSpacing.Medium.value.toAdaptivePadding()
-            Text(
+            WooPosText(
                 text = it,
                 style = WooPosTypography.BodySmall,
                 color = WooPosTheme.colors.onSurfaceVariantLow,
@@ -412,7 +412,7 @@ private fun ProductItem(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                Text(
+                WooPosText(
                     text = item.name,
                     maxLines = 1,
                     style = WooPosTypography.BodyLarge,
@@ -422,7 +422,7 @@ private fun ProductItem(
                 )
                 Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 if (item.description.isNotNullOrEmpty()) {
-                    Text(
+                    WooPosText(
                         text = item.description!!,
                         style = WooPosTypography.BodySmall,
                         color = WooPosTheme.colors.onSurfaceVariantHigh,
@@ -432,7 +432,7 @@ private fun ProductItem(
                     )
                     Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 }
-                Text(
+                WooPosText(
                     text = item.price,
                     style = WooPosTypography.BodySmall,
                     color = WooPosTheme.colors.onSurfaceVariantLow,

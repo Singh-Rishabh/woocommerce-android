@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +31,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
@@ -100,7 +100,7 @@ private fun WooPosPaymentSuccessScreen(
             )
 
             val textsMargin = WooPosSpacing.Small.value.toAdaptivePadding()
-            Text(
+            WooPosText(
                 text = stringResource(R.string.woopos_payment_successful_label),
                 style = WooPosTypography.Heading,
                 fontWeight = FontWeight.Bold,
@@ -114,7 +114,7 @@ private fun WooPosPaymentSuccessScreen(
             )
 
             val marginBetweenButtonAndTextAdaptive = marginBetweenButtonAndText.toAdaptivePadding()
-            Text(
+            WooPosText(
                 text = state.orderTotalText,
                 style = WooPosTypography.BodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,

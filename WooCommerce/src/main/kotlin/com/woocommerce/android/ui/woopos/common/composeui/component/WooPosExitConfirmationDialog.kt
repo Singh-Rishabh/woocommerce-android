@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -54,14 +53,14 @@ fun WooPosExitConfirmationDialog(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 @Suppress("WooPosDesignSystemSpacingUsageRule")
                 Spacer(modifier = modifier.height(48.dp.toAdaptivePadding()))
-                Text(
+                WooPosText(
                     text = title,
                     style = WooPosTypography.Heading,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
-                Text(
+                WooPosText(
                     text = message,
                     style = WooPosTypography.BodyLarge,
                     color = MaterialTheme.colorScheme.onSurface,

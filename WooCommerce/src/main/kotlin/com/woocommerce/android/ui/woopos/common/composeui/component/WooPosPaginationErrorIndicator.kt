@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -100,12 +99,12 @@ private fun WooPosPaginationErrorIndicatorContent(
                 }
                 Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))
                 Column {
-                    Text(
+                    WooPosText(
                         text = message,
                         style = WooPosTypography.BodyLarge,
                         fontWeight = FontWeight.Bold,
                     )
-                    Text(
+                    WooPosText(
                         text = description,
                         style = WooPosTypography.BodyMedium,
                         modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding()),

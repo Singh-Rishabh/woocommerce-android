@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosDialogWrapper
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
@@ -65,7 +65,7 @@ fun WooPosProductInfoDialog(
             ) {
                 val (header, closeIcon, content) = createRefs()
 
-                Text(
+                WooPosText(
                     text = stringResource(id = state.header),
                     style = WooPosTypography.Heading,
                     fontWeight = FontWeight.Bold,
@@ -91,13 +91,13 @@ fun WooPosProductInfoDialog(
                         end.linkTo(parent.end)
                     }
                 ) {
-                    Text(
+                    WooPosText(
                         text = stringResource(id = state.primaryMessage),
                         style = WooPosTypography.BodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
-                    Text(
+                    WooPosText(
                         text = stringResource(id = state.secondaryMessage),
                         style = WooPosTypography.BodyLarge,
                         textAlign = TextAlign.Center,
@@ -116,7 +116,7 @@ fun WooPosProductInfoDialog(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
+                            WooPosText(
                                 text = stringResource(id = state.tertiaryMessage),
                                 style = WooPosTypography.BodySmall,
                                 textAlign = TextAlign.Center,
