@@ -435,7 +435,7 @@ private fun ProductItem(
                 Text(
                     text = item.price,
                     style = WooPosTypography.BodySmall,
-                    color = WooPosTheme.colors.onSurfaceVariantLow,
+                    color = WooPosTheme.colors.onSurfaceVariantHigh,
                     modifier = Modifier.clearAndSetSemantics { }
                 )
             }
