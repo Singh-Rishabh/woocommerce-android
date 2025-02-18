@@ -9,6 +9,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.core.view.MenuProvider
+import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
@@ -23,7 +24,8 @@ import javax.inject.Inject
  */
 @AndroidEntryPoint
 abstract class VariationsBulkUpdateBaseFragment(@LayoutRes layoutId: Int) : BaseFragment(layoutId) {
-    @Inject lateinit var uiMessageResolver: UIMessageResolver
+    @Inject
+    lateinit var uiMessageResolver: UIMessageResolver
 
     private var doneMenuItem: MenuItem? = null
     private var progressDialog: CustomProgressDialog? = null
@@ -70,11 +72,7 @@ abstract class VariationsBulkUpdateBaseFragment(@LayoutRes layoutId: Int) : Base
                     uiMessageResolver.showSnack(event.message)
                 }
 
-                is MultiLiveEvent.Event.Exit -> {
-                    // Ensure subsequent Exit events are ignored to avoid IllegalStateException
-                    viewModel.event.removeObservers(viewLifecycleOwner)
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                }
+                is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
             }
         }
     }
