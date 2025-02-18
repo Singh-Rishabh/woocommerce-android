@@ -320,12 +320,7 @@ class VariationDetailFragment :
                 is ShowDialog -> event.showDialog()
                 is ShowDialogFragment -> event.showIn(parentFragmentManager, this)
                 is VariationDetailViewModel.ShowUpdateVariationError -> showUpdateVariationError(event.message)
-                is Exit -> {
-                    // Ensure subsequent Exit events are ignored to avoid IllegalStateException
-                    viewModel.event.removeObservers(viewLifecycleOwner)
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
-                }
-
+                is Exit -> findNavController().navigateUp()
                 else -> event.isHandled = false
             }
         }
