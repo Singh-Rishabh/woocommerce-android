@@ -113,9 +113,7 @@ class VariationDetailFragment :
             onMenuItemSelected = ::onMenuItemSelected,
             onCreateMenu = { toolbar ->
                 toolbar.setNavigationOnClickListener {
-                    if (onRequestAllowBackPress()) {
-                        findNavController().navigateUp()
-                    }
+                    viewModel.onExit()
                 }
                 onCreateMenu(toolbar)
             }
@@ -432,11 +430,7 @@ class VariationDetailFragment :
     }
 
     override fun onRequestAllowBackPress(): Boolean {
-        return if (viewModel.event.value == Exit) {
-            true
-        } else {
-            viewModel.onExit()
-            false
-        }
+        viewModel.onExit()
+        return false
     }
 }
