@@ -268,9 +268,9 @@ private fun ReaderDisconnected(
         Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
 
         Icon(
-            modifier = Modifier.size(64.dp),
-            painter = painterResource(id = R.drawable.ic_woo_pos_error),
-            contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
+            modifier = Modifier.size(122.dp),
+            painter = painterResource(id = R.drawable.img_card_reader_not_connected_v2),
+            contentDescription = stringResource(id = R.string.woopos_reader_not_connected_description),
             tint = WooPosTheme.colors.unspecified,
         )
 
