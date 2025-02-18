@@ -59,6 +59,9 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object ItemRemovedFromCart : Event() {
             override val name: String = "item_removed_from_cart"
         }
+        data object Loaded : Event() {
+            override val name: String = "loaded"
+        }
         data object OrderCreationSuccess : Event() {
             override val name: String = "order_creation_success"
         }
