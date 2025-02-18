@@ -293,7 +293,7 @@ private fun ReaderDisconnected(
             text = status.actionButtonLabel,
             onClick = { onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked) },
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.5f)
                 .height(80.dp)
         )
     }
