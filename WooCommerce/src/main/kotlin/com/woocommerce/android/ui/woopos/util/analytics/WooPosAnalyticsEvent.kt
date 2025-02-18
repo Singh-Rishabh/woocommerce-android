@@ -50,6 +50,9 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object ExitTapped : Event() {
             override val name: String = "exit_menu_item_tapped"
         }
+        data object GetSupportTapped : Event() {
+            override val name: String = "get_support_tapped"
+        }
         data object ItemAddedToCart : Event() {
             override val name: String = "item_added_to_cart"
         }
@@ -58,9 +61,6 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         }
         data object OrderCreationSuccess : Event() {
             override val name: String = "order_creation_success"
-        }
-        data object GetSupportTapped : Event() {
-            override val name: String = "get_support_tapped"
         }
         data object ViewDocsTapped : Event() {
             override val name: String = "view_docs_tapped"
