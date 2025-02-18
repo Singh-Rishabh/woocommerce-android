@@ -304,7 +304,7 @@ private fun TotalsGrid(totals: Totals.Visible) {
     Column(
         modifier = Modifier
             .padding(WooPosSpacing.Large.value.toAdaptivePadding())
-            .width(382.dp),
+            .fillMaxWidth(0.5f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
