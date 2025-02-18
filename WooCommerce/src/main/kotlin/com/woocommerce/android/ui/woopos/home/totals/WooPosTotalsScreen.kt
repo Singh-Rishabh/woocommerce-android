@@ -264,9 +264,6 @@ private fun ReaderDisconnected(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        @Suppress("WooPosDesignSystemSpacingUsageRule")
-        Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
-
         Icon(
             modifier = Modifier.size(122.dp),
             painter = painterResource(id = R.drawable.img_card_reader_not_connected_v2),
