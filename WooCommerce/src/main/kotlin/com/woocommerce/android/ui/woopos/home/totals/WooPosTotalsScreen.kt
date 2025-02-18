@@ -278,7 +278,7 @@ private fun ReaderDisconnected(
 
         WooPosText(
             text = status.title,
-            style = WooPosTypography.BodyXLarge,
+            style = WooPosTypography.Heading,
             fontWeight = FontWeight.Bold,
         )
 
