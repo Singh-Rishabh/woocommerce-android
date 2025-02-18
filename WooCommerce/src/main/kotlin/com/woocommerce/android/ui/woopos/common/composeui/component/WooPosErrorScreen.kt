@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +58,7 @@ fun WooPosErrorScreen(
 
             Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
-            Text(
+            WooPosText(
                 text = message,
                 style = WooPosTypography.Heading,
                 fontWeight = FontWeight.Bold,
@@ -67,7 +66,7 @@ fun WooPosErrorScreen(
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
-            Text(
+            WooPosText(
                 text = reason,
                 style = WooPosTypography.BodyLarge,
             )

@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +30,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCard
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
@@ -94,7 +94,7 @@ fun WooPosBanner(
                     )
                 }
 
-                Text(
+                WooPosText(
                     text = title,
                     style = WooPosTypography.BodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -133,7 +133,7 @@ fun WooPosBanner(
                             end = WooPosSpacing.Medium.value.toAdaptivePadding()
                         )
                 ) {
-                    Text(
+                    WooPosText(
                         modifier = Modifier
                             .clickable {
                                 onLearnMore()

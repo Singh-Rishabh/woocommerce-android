@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -24,6 +23,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
@@ -61,13 +61,13 @@ fun WooPosPaymentInProgressScreen(
             )
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
+                WooPosText(
                     text = state.title,
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = WooPosTypography.BodyLarge,
                 )
                 Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
-                Text(
+                WooPosText(
                     text = state.subtitle,
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = WooPosTypography.BodyXLarge,

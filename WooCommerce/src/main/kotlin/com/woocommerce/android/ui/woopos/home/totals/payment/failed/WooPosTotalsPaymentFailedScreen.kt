@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +20,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
@@ -51,13 +51,13 @@ fun WooPosPaymentFailedScreen(
             tint = WooPosTheme.colors.unspecified,
         )
         Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
-        Text(
+        WooPosText(
             text = state.title,
             style = WooPosTypography.BodyXLarge,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
-        Text(
+        WooPosText(
             text = state.subtitle,
             style = WooPosTypography.BodyLarge,
         )

@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -181,7 +180,7 @@ private fun Preview(elevation: WooPosElevation) {
             shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
             elevation = elevation,
         ) {
-            Text(
+            WooPosText(
                 modifier = Modifier
                     .padding(WooPosSpacing.XLarge.value)
                     .fillMaxWidth(),

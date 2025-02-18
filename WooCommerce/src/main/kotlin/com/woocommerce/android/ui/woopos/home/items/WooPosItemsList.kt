@@ -23,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -53,6 +52,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.ShadowType
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosCard
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosLazyColumn
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosShimmerBox
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosElevation
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
@@ -223,7 +223,7 @@ private fun ProductInfo(item: WooPosItem) {
             ),
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
+        WooPosText(
             text = item.name,
             style = WooPosTypography.BodyLarge,
             fontWeight = FontWeight.Bold,
@@ -271,7 +271,7 @@ private fun ProductImage(item: WooPosItem) {
 
 @Composable
 private fun SimpleProductDetails(item: SimpleProduct) {
-    Text(
+    WooPosText(
         text = item.price,
         style = WooPosTypography.BodyLarge,
         fontWeight = FontWeight.Normal,
@@ -281,7 +281,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
 
 @Composable
 private fun VariableProductDetails() {
-    Text(
+    WooPosText(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = WooPosTypography.BodyLarge,
         color = WooPosTheme.colors.onSurfaceVariantHighest,
@@ -290,7 +290,7 @@ private fun VariableProductDetails() {
 
 @Composable
 fun VariationProductDetails(item: Variation) {
-    Text(
+    WooPosText(
         text = item.price,
         style = WooPosTypography.BodyLarge,
         color = WooPosTheme.colors.onSurfaceVariantHighest,
@@ -364,7 +364,7 @@ fun ItemsEmptyList(
 
             Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
 
-            Text(
+            WooPosText(
                 text = title,
                 style = WooPosTypography.Heading,
                 fontWeight = FontWeight.Bold,
@@ -372,7 +372,7 @@ fun ItemsEmptyList(
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
-            Text(
+            WooPosText(
                 text = message,
                 style = WooPosTypography.BodyXLarge,
                 fontWeight = FontWeight.Bold,
