@@ -25,7 +25,14 @@ fun NavHostController.handleNavigationEvent(
 
         is WooPosNavigationEvent.OpenHomeFromSplash -> navigateToHomeScreen()
         is WooPosNavigationEvent.OpenCashPayment -> navigateToCashPaymentScreen(event.orderId)
-        is WooPosNavigationEvent.GoBack -> popBackStack()
+        is WooPosNavigationEvent.GoBack -> {
+            if (currentDestination?.route == CASH_ROUTE) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    tracker.track(BackToCheckoutFromCash)
+                }
+            }
+            popBackStack()
+        }
         is WooPosNavigationEvent.OpenHomeFromCashPaymentAfterSuccessfulPayment ->
             navigateToHomeScreenAfterSuccessfulCashPayment()
 
