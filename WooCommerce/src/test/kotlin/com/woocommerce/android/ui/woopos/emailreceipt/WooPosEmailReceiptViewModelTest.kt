@@ -4,6 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -15,6 +17,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -27,6 +30,7 @@ class WooPosEmailReceiptViewModelTest {
 
     private val repository: WooPosEmailReceiptRepository = mock()
     private val resourceProvider: ResourceProvider = mock()
+    private val tracker: WooPosAnalyticsTracker = mock()
 
     private lateinit var viewModel: WooPosEmailReceiptViewModel
 
@@ -46,7 +50,8 @@ class WooPosEmailReceiptViewModelTest {
         viewModel = WooPosEmailReceiptViewModel(
             repository = repository,
             resourceProvider = resourceProvider,
-            savedState = savedStateHandle
+            savedState = savedStateHandle,
+            analyticsTracker = tracker,
         )
     }
 
@@ -111,6 +116,22 @@ class WooPosEmailReceiptViewModelTest {
         // THEN
         val state = viewModel.state.value
         assertThat(state).isInstanceOf(WooPosEmailReceiptState.Sent::class.java)
+    }
+
+    @Test
+    fun `when SendEmailClicked called, then should track event`() = runTest {
+        // GIVEN
+        whenever(repository.isEmailValid("valid@example.com")).thenReturn(true)
+        viewModel.onUIEvent(WooPosEmailReceiptUIEvent.EmailChanged("valid@example.com"))
+        whenever(repository.sendReceiptByEmail(orderId = 123L, "valid@example.com"))
+            .thenReturn(Result.success(Unit))
+
+        // WHEN
+        viewModel.onUIEvent(WooPosEmailReceiptUIEvent.SendEmailClicked)
+        advanceUntilIdle()
+
+        // THEN
+        verify(tracker).track(EmailReceiptSendTapped)
     }
 
     @Test

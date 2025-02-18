@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +18,7 @@ import javax.inject.Inject
 class WooPosEmailReceiptViewModel @Inject constructor(
     private val repository: WooPosEmailReceiptRepository,
     private val resourceProvider: ResourceProvider,
+    private val analyticsTracker: WooPosAnalyticsTracker,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val orderId = savedState.get<Long>(EMAIL_RECEIPT_ROUTE_ORDER_ID_KEY)!!
@@ -65,6 +68,7 @@ class WooPosEmailReceiptViewModel @Inject constructor(
                     )
                 )
             }
+            analyticsTracker.track(EmailReceiptSendTapped)
         }
     }
 
