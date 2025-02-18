@@ -18,7 +18,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosThe
 @Composable
 fun WooPosShimmerBox(
     modifier: Modifier = Modifier,
-    color: Color = WooPosTheme.colors.onSurfaceVariantLow.copy(alpha = 0.2f),
+    color: Color = WooPosTheme.colors.onSurfaceVariantLowest.copy(alpha = 0.2f),
 ) {
     val shimmerColors = listOf(
         color.copy(),

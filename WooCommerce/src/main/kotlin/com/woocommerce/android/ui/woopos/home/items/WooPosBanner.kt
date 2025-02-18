@@ -145,7 +145,7 @@ fun WooPosBanner(
                             ),
                         text = annotatedText,
                         style = WooPosTypography.BodyMedium,
-                        color = WooPosTheme.colors.onSurfaceVariantHigh,
+                        color = WooPosTheme.colors.onSurfaceVariantHighest,
                     )
                 }
 

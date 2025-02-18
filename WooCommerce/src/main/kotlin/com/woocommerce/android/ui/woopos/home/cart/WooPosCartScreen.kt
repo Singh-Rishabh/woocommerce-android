@@ -327,7 +327,7 @@ private fun CartToolbar(
             Text(
                 text = it,
                 style = WooPosTypography.BodySmall,
-                color = WooPosTheme.colors.onSurfaceVariantLow,
+                color = WooPosTheme.colors.onSurfaceVariantLowest,
                 maxLines = 1,
                 modifier = Modifier
                     .constrainAs(itemsCount) {
@@ -393,7 +393,7 @@ private fun ProductItem(
                 Image(
                     painter = painterResource(R.drawable.ic_box),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+                    colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLowest),
                     modifier = Modifier.size(38.dp, 32.dp)
                 )
                 AsyncImage(
@@ -425,7 +425,7 @@ private fun ProductItem(
                     Text(
                         text = item.description!!,
                         style = WooPosTypography.BodySmall,
-                        color = WooPosTheme.colors.onSurfaceVariantHigh,
+                        color = WooPosTheme.colors.onSurfaceVariantHighest,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clearAndSetSemantics { }
@@ -435,7 +435,7 @@ private fun ProductItem(
                 Text(
                     text = item.price,
                     style = WooPosTypography.BodySmall,
-                    color = WooPosTheme.colors.onSurfaceVariantHigh,
+                    color = WooPosTheme.colors.onSurfaceVariantHighest,
                     modifier = Modifier.clearAndSetSemantics { }
                 )
             }
@@ -455,7 +455,7 @@ private fun ProductItem(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
-                        tint = WooPosTheme.colors.onSurfaceVariantLow,
+                        tint = WooPosTheme.colors.onSurfaceVariantLowest,
                         contentDescription = null,
                     )
                 }

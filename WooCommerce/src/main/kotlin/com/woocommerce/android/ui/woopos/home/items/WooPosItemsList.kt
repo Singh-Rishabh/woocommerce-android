@@ -249,7 +249,7 @@ private fun ProductImage(item: WooPosItem) {
         Image(
             painter = painterResource(R.drawable.ic_box),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+            colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLowest),
             modifier = Modifier.size(38.dp, 32.dp)
         )
         AsyncImage(
@@ -269,7 +269,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
         text = item.price,
         style = WooPosTypography.BodyLarge,
         fontWeight = FontWeight.Normal,
-        color = WooPosTheme.colors.onSurfaceVariantHigh,
+        color = WooPosTheme.colors.onSurfaceVariantHighest,
     )
 }
 
@@ -278,7 +278,7 @@ private fun VariableProductDetails() {
     Text(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = WooPosTypography.BodyLarge,
-        color = WooPosTheme.colors.onSurfaceVariantHigh,
+        color = WooPosTheme.colors.onSurfaceVariantHighest,
     )
 }
 
@@ -287,7 +287,7 @@ fun VariationProductDetails(item: Variation) {
     Text(
         text = item.price,
         style = WooPosTypography.BodyLarge,
-        color = WooPosTheme.colors.onSurfaceVariantHigh,
+        color = WooPosTheme.colors.onSurfaceVariantHighest,
     )
 }
 
