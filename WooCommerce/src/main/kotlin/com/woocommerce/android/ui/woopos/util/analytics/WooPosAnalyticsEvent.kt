@@ -62,6 +62,9 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object OrderCreationSuccess : Event() {
             override val name: String = "order_creation_success"
         }
+        data object ProductsPullToRefreshTriggered : Event() {
+            override val name: String = "products_pull_to_refresh"
+        }
         data object ViewDocsTapped : Event() {
             override val name: String = "view_docs_tapped"
         }
