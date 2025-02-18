@@ -4,16 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +65,6 @@ private fun WooPosPaginationErrorIndicatorContent(
         modifier = modifier
             .semantics { contentDescription = itemContentDescription },
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colorScheme.surface,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
@@ -97,17 +93,18 @@ private fun WooPosPaginationErrorIndicatorContent(
                         tint = WooPosTheme.colors.unspecified,
                     )
                 }
-                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value))
                 Column {
                     WooPosText(
                         text = message,
                         style = WooPosTypography.BodyLarge,
                         fontWeight = FontWeight.Bold,
+                        maxLines = 1,
                     )
                     WooPosText(
                         text = description,
                         style = WooPosTypography.BodyMedium,
                         modifier = Modifier.padding(top = WooPosSpacing.Small.value.toAdaptivePadding()),
+                        maxLines = 1,
                     )
                 }
             }
@@ -117,7 +114,6 @@ private fun WooPosPaginationErrorIndicatorContent(
                 onClick = primaryButton.click,
                 modifier = Modifier
                     .padding(end = WooPosSpacing.Medium.value.toAdaptivePadding())
-                    .weight(0.25f),
             )
         }
     }

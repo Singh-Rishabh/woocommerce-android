@@ -46,7 +46,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTyp
 fun WooPosCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerLowest,
     contentColor: Color = contentColorFor(backgroundColor),
     border: BorderStroke? = null,
     elevation: WooPosElevation = WooPosElevation.Medium,
@@ -178,7 +178,6 @@ private fun Preview(elevation: WooPosElevation) {
         WooPosCard(
             modifier = Modifier.padding(WooPosSpacing.Medium.value),
             shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-            backgroundColor = MaterialTheme.colorScheme.surface,
             elevation = elevation,
         ) {
             WooPosText(

@@ -216,7 +216,7 @@ private fun MenuButtonWithPopUpMenu(
     val menuContentDescription = stringResource(id = R.string.woopos_menu_toolbar_content_description)
     WooPosCard(
         modifier = modifier,
-        backgroundColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
         elevation = TOOLBAR_ELEVATION,
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
     ) {
@@ -257,6 +257,7 @@ private fun PopUpMenu(
     WooPosCard(
         modifier = modifier.width(IntrinsicSize.Max),
         elevation = TOOLBAR_ELEVATION,
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
     ) {
         Column {
             Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
@@ -339,7 +340,7 @@ private fun CardReaderStatusButton(
     WooPosCard(
         modifier = modifier
             .height(80.dp),
-        backgroundColor = MaterialTheme.colorScheme.surface,
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLow,
         elevation = TOOLBAR_ELEVATION,
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
     ) {

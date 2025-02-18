@@ -145,7 +145,7 @@ private fun Collecting(
         WooPosText(
             text = state.changeDueText,
             style = WooPosTypography.BodySmall,
-            color = WooPosTheme.colors.onSurfaceVariantLow,
+            color = WooPosTheme.colors.onSurfaceVariantLowest,
             modifier = Modifier
                 .constrainAs(changeDue) {
                     top.linkTo(input.bottom, margin = smallMargin)

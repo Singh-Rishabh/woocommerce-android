@@ -25,8 +25,8 @@ data class CustomColors(
     val outline: Color,
     val outlineVariant: Color,
 
-    val onSurfaceVariantLow: Color,
-    val onSurfaceVariantHigh: Color,
+    val onSurfaceVariantLowest: Color,
+    val onSurfaceVariantHighest: Color,
 
     val transparent: Color = Color.Transparent,
     val unspecified: Color = Color.Unspecified,
@@ -50,7 +50,6 @@ private object WooPosColors {
     val Gray20 = Color(0xFFA7AAAD)
     val Gray30 = Color(0xFF8C8F94)
     val Gray40 = Color(0xFF787C82)
-    val Gray50 = Color(0xFF646970)
     val Gray60 = Color(0xFF50575E)
     val Gray70 = Color(0xFF3C434A)
     val Gray80 = Color(0xFF373A3E)
@@ -77,7 +76,7 @@ private val LightColorScheme = lightColorScheme(
 
     surfaceContainerLowest = WooPosColors.White,
     surfaceContainerLow = WooPosColors.White,
-    surfaceContainerHigh = WooPosColors.Gray30,
+    surfaceContainerHighest = WooPosColors.Gray30,
 
     onSurface = WooPosColors.Gray100,
 
@@ -107,7 +106,7 @@ private val DarkColorScheme = darkColorScheme(
 
     surfaceContainerLowest = WooPosColors.Gray70,
     surfaceContainerLow = WooPosColors.Gray80,
-    surfaceContainerHigh = WooPosColors.Gray100,
+    surfaceContainerHighest = WooPosColors.Gray100,
 
     onSurface = WooPosColors.White,
 
@@ -129,8 +128,8 @@ private val LightCustomColors = CustomColors(
     outline = WooPosColors.Gray40,
     outlineVariant = WooPosColors.Gray5,
 
-    onSurfaceVariantLow = WooPosColors.Gray30,
-    onSurfaceVariantHigh = WooPosColors.Gray60,
+    onSurfaceVariantLowest = WooPosColors.Gray5,
+    onSurfaceVariantHighest = WooPosColors.Gray60,
 )
 
 private val DarkCustomColors = CustomColors(
@@ -140,8 +139,8 @@ private val DarkCustomColors = CustomColors(
     outline = WooPosColors.Gray30,
     outlineVariant = WooPosColors.Gray60,
 
-    onSurfaceVariantLow = WooPosColors.Gray50,
-    onSurfaceVariantHigh = WooPosColors.Gray20,
+    onSurfaceVariantLowest = WooPosColors.Gray60,
+    onSurfaceVariantHighest = WooPosColors.Gray20,
 )
 
 @Composable

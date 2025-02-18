@@ -117,11 +117,13 @@ fun WooPosItemList(
                     onErrorWhilePaginating()
                 }
             }
+
             PaginationState.Loading -> {
                 item {
                     ItemsLoadingItem()
                 }
             }
+
             PaginationState.None -> {
             }
         }
@@ -214,17 +216,21 @@ private fun ProductInfo(item: WooPosItem) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
-            .padding(vertical = WooPosSpacing.Medium.value),
+            .padding(
+                top = WooPosSpacing.Medium.value,
+                bottom = WooPosSpacing.Medium.value,
+                end = WooPosSpacing.Medium.value
+            ),
         verticalArrangement = Arrangement.Center
     ) {
         WooPosText(
             text = item.name,
             style = WooPosTypography.BodyLarge,
             fontWeight = FontWeight.Bold,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
+        Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value))
         when (item) {
             is SimpleProduct -> SimpleProductDetails(item = item)
             is VariableProduct -> VariableProductDetails()
@@ -249,7 +255,7 @@ private fun ProductImage(item: WooPosItem) {
         Image(
             painter = painterResource(R.drawable.ic_box),
             contentDescription = null,
-            colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLow),
+            colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLowest),
             modifier = Modifier.size(38.dp, 32.dp)
         )
         AsyncImage(
@@ -269,7 +275,7 @@ private fun SimpleProductDetails(item: SimpleProduct) {
         text = item.price,
         style = WooPosTypography.BodyLarge,
         fontWeight = FontWeight.Normal,
-        color = WooPosTheme.colors.onSurfaceVariantHigh,
+        color = WooPosTheme.colors.onSurfaceVariantHighest,
     )
 }
 
@@ -278,7 +284,7 @@ private fun VariableProductDetails() {
     WooPosText(
         text = stringResource(id = R.string.woopos_variations_options_available_text),
         style = WooPosTypography.BodyLarge,
-        color = WooPosTheme.colors.onSurfaceVariantHigh,
+        color = WooPosTheme.colors.onSurfaceVariantHighest,
     )
 }
 
@@ -287,7 +293,7 @@ fun VariationProductDetails(item: Variation) {
     WooPosText(
         text = item.price,
         style = WooPosTypography.BodyLarge,
-        color = WooPosTheme.colors.onSurfaceVariantHigh,
+        color = WooPosTheme.colors.onSurfaceVariantHighest,
     )
 }
 
@@ -311,7 +317,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
-        backgroundColor = MaterialTheme.colorScheme.surfaceBright,
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
         elevation = WooPosElevation.Medium,
         shadowType = ShadowType.Soft,
     ) {
@@ -412,7 +418,13 @@ fun ItemListPreview() {
         WooPosItemList(
             WooPosItemsViewState.Content(
                 listOf(
-                    SimpleProduct(id = 1, name = "Simple Product", price = "$10.00", imageUrl = ""),
+                    SimpleProduct(
+                        id = 1,
+                        name = "Simple Product Simple Product Simple" +
+                            " Product Simple Product Simple Product Simple Product Simple Product",
+                        price = "$10.00",
+                        imageUrl = ""
+                    ),
                     VariableProduct(id = 2, name = "Variable Product", price = "$10.00", "", 1, listOf()),
                     Variation(3, "Variation", 0, "$10", ""),
                 ),
