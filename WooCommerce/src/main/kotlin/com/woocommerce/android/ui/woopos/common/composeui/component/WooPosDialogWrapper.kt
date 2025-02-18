@@ -10,6 +10,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ fun WooPosDialogWrapper(
         ) {
             WooPosCard(
                 shape = RoundedCornerShape(WooPosCornerRadius.Large.value),
+                backgroundColor = MaterialTheme.colorScheme.surfaceBright,
                 elevation = WooPosElevation.Medium,
                 modifier = modifier.fillMaxWidth(0.75f),
             ) {
