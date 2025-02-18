@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
@@ -113,7 +114,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getOrderInformation() {
-        orderDetailRepository.getOrderById(navArgs.orderId).let { order.value = it }
+        orderDetailRepository.getOrderById(navArgs.orderId)?.let {
+            order.value = it
+        } ?: run {
+            triggerEvent(Event.ShowSnackbar(R.string.woo_shipping_labels_loading_order_error))
+            postTriggerEvent(Event.Exit)
+        }
     }
 
     private fun getStoreOptions() {
