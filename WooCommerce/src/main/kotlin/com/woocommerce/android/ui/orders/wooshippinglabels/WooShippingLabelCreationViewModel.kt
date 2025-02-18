@@ -61,7 +61,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
-    private val order = MutableStateFlow<Order?>(emptyOrder)
+    private val order = MutableStateFlow<Order>(emptyOrder)
     private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
@@ -145,7 +145,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo,
                     weight = packageWeight.totalWeight,
-                    currencyCode = order.value?.currency
+                    currencyCode = order.value.currency
                 )
             } else {
                 null
@@ -231,7 +231,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     private suspend fun getShippingAddresses() {
         order.combine(observeOriginAddresses()) { order, originAddresses ->
-            if (order != null && !originAddresses.isNullOrEmpty()) {
+            if (!originAddresses.isNullOrEmpty()) {
                 val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 WooShippingAddresses(
                     shipFrom = selectedOriginAddress,
@@ -281,7 +281,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             purchaseState,
             customsState
         ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState ->
-            if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
+            if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
 
