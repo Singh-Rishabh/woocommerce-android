@@ -69,7 +69,7 @@ class ShippingLabelCreatePackageViewModel @Inject constructor(
         SERVICE;
 
         companion object {
-            fun fromOrdinal(ordinal: Int) = entries.first { it.ordinal == ordinal }
+            fun fromOrdinal(ordinal: Int) = entries[ordinal]
         }
     }
 
