@@ -50,7 +50,6 @@ private object WooPosColors {
     val Gray20 = Color(0xFFA7AAAD)
     val Gray30 = Color(0xFF8C8F94)
     val Gray40 = Color(0xFF787C82)
-    val Gray50 = Color(0xFF646970)
     val Gray60 = Color(0xFF50575E)
     val Gray70 = Color(0xFF3C434A)
     val Gray80 = Color(0xFF373A3E)
@@ -129,7 +128,7 @@ private val LightCustomColors = CustomColors(
     outline = WooPosColors.Gray40,
     outlineVariant = WooPosColors.Gray5,
 
-    onSurfaceVariantLow = WooPosColors.Gray30,
+    onSurfaceVariantLow = WooPosColors.Gray5,
     onSurfaceVariantHigh = WooPosColors.Gray60,
 )
 
@@ -140,7 +139,7 @@ private val DarkCustomColors = CustomColors(
     outline = WooPosColors.Gray30,
     outlineVariant = WooPosColors.Gray60,
 
-    onSurfaceVariantLow = WooPosColors.Gray50,
+    onSurfaceVariantLow = WooPosColors.Gray60,
     onSurfaceVariantHigh = WooPosColors.Gray20,
 )
 
