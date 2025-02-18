@@ -42,6 +42,7 @@ import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.CurrencyFormatter
@@ -1095,6 +1096,28 @@ class WooPosTotalsViewModelTest {
                     message = "Please update WooCommerce"
                 )
             )
+        }
+
+    @Test
+    fun `when OnStartReceiptFlowClicked is triggered, then should track event`() =
+        runTest {
+            // GIVEN
+            whenever(isReceiptSendingSupported.invoke()).thenReturn(true)
+
+            val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+                on { events }.thenReturn(mock())
+            }
+            val savedState = createMockSavedStateHandle()
+            val viewModel = createViewModel(
+                savedState = savedState,
+                parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+            )
+
+            // WHEN
+            viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
+
+            // THEN
+            verify(analyticsTracker).track(EmailReceiptTapped)
         }
 
     @Test

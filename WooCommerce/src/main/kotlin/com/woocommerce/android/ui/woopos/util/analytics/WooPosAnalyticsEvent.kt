@@ -41,6 +41,9 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object CreateNewOrderTapped : Event() {
             override val name: String = "create_new_order_tapped"
         }
+        data object EmailReceiptTapped : Event() {
+            override val name: String = "email_receipt_tapped"
+        }
         data object ExitTapped : Event() {
             override val name: String = "exit_menu_item_tapped"
         }
