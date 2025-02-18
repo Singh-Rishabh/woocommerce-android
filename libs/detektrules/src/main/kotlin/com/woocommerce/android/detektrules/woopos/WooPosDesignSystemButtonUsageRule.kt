@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 class WooPosDesignSystemButtonUsageRule(config: Config) : Rule(config) {
     private val allowedPackagePrefix = "com.woocommerce.android.ui.woopos.common.composeui.component"
 
-    private val disallowedButtonNames = setOf(
-        "Button",
-        "OutlinedButton",
-    )
+    private val disallowedButtonNames = setOf("Button")
 
     override val issue = Issue(
         javaClass.simpleName,
