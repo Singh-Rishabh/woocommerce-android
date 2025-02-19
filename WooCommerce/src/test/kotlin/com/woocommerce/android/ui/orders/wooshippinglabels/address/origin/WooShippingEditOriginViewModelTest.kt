@@ -26,6 +26,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
     private val getStatesByCountryCode: GetStatesByCountryCode = mock()
     private val resourceProvider: ResourceProvider = mock()
     private val normalizeAddress: NormalizeAddress = mock()
+    private val updateOriginAddress: UpdateOriginAddress = mock()
 
     private val countries = listOf(
         Location("US", "United States"),
@@ -48,7 +49,8 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
             getAcceptedOriginCountries = getAcceptedOriginCountries,
             getStatesByCountryCode = getStatesByCountryCode,
             normalizeAddress = normalizeAddress,
-            resourceProvider = resourceProvider
+            resourceProvider = resourceProvider,
+            updateOriginAddress = updateOriginAddress
         )
     }
 
@@ -546,7 +548,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when received address is not verified and displayed address has no changes, display unverified`() = testBlocking {
+    fun `when only no address related fields has changes, display save changes`() = testBlocking {
         val address = OriginShippingAddress(
             id = "1",
             address1 = "Address",
@@ -560,7 +562,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
             firstName = "Name",
             lastName = "",
             company = "",
-            isVerified = false,
+            isVerified = true,
             isDefault = true
         )
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
@@ -568,6 +570,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
         Snapshot.withMutableSnapshot {
             createViewModel(address)
+            sut.onEmailChange("email@test.com")
         }
 
         advanceUntilIdle()
@@ -576,8 +579,43 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
 
-        assertThat(result.addressStatus).isEqualTo(AddressStatus.UNVERIFIED)
+        assertThat(result.addressStatus).isEqualTo(AddressStatus.SAVE_CHANGES)
     }
+
+    @Test
+    fun `when received address is not verified and displayed address has no changes, display unverified`() =
+        testBlocking {
+            val address = OriginShippingAddress(
+                id = "1",
+                address1 = "Address",
+                address2 = "",
+                city = "Miami",
+                postcode = "",
+                email = "",
+                phone = "",
+                state = "FL",
+                country = "US",
+                firstName = "Name",
+                lastName = "",
+                company = "",
+                isVerified = false,
+                isDefault = true
+            )
+            whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+            whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+            whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+            Snapshot.withMutableSnapshot {
+                createViewModel(address)
+            }
+
+            advanceUntilIdle()
+
+            val result = sut.viewState.value
+
+            assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
+
+            assertThat(result.addressStatus).isEqualTo(AddressStatus.UNVERIFIED)
+        }
 
     @Test
     fun `when there are errors, display missing info`() = testBlocking {
@@ -652,7 +690,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
 
-        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.Failure)
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.VerificationFailed)
     }
 
     @Test
@@ -788,5 +826,112 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
         result = sut.viewState.value
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
         assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
+    }
+
+    @Test
+    fun `when update address succeed then restart address state`() = testBlocking {
+        val initialAddress = OriginShippingAddress.EMPTY
+        val editableAddress = EditableAddress()
+
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.success(initialAddress))
+        Snapshot.withMutableSnapshot {
+            createViewModel(initialAddress)
+        }
+
+        advanceUntilIdle()
+
+        sut.onUpdateOriginAddress(editableAddress)
+
+        val result = sut.viewState.value
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
+    }
+
+    @Test
+    fun `when update address fails then address state is failure`() = testBlocking {
+        val initialAddress = OriginShippingAddress.EMPTY
+        val editableAddress = EditableAddress()
+
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
+        Snapshot.withMutableSnapshot {
+            createViewModel(initialAddress)
+        }
+
+        advanceUntilIdle()
+
+        sut.onUpdateOriginAddress(editableAddress)
+
+        val result = sut.viewState.value
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.AddressUpdateFailed)
+    }
+
+    @Test
+    fun `when update normalized address succeed then restart address state`() = testBlocking {
+        val initialAddress = OriginShippingAddress.EMPTY
+        val enteredAddress = EditableAddress(postalCode = InputValue("12345")).toAddress()
+        val suggestedAddress = enteredAddress.copy(postcode = "12345-1000")
+        val normalizeAddressResponse = AddressNormalizationModel(
+            address = enteredAddress,
+            normalizedAddress = suggestedAddress,
+            isTrivial = false
+        )
+
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.success(initialAddress))
+        Snapshot.withMutableSnapshot {
+            createViewModel(initialAddress)
+        }
+
+        advanceUntilIdle()
+
+        sut.onUpdateNormalizedOriginAddress(
+            AddressValidationState.AddressSelection(
+                addressNormalization = normalizeAddressResponse,
+                selectedAddress = suggestedAddress
+            )
+        )
+
+        val result = sut.viewState.value
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
+    }
+
+    @Test
+    fun `when update normalized address fails then address state is failure`() = testBlocking {
+        val initialAddress = OriginShippingAddress.EMPTY
+        val enteredAddress = EditableAddress(postalCode = InputValue("12345")).toAddress()
+        val suggestedAddress = enteredAddress.copy(postcode = "12345-1000")
+        val normalizeAddressResponse = AddressNormalizationModel(
+            address = enteredAddress,
+            normalizedAddress = suggestedAddress,
+            isTrivial = false
+        )
+
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
+        Snapshot.withMutableSnapshot {
+            createViewModel(initialAddress)
+        }
+
+        advanceUntilIdle()
+
+        sut.onUpdateNormalizedOriginAddress(
+            AddressValidationState.AddressSelection(
+                addressNormalization = normalizeAddressResponse,
+                selectedAddress = suggestedAddress
+            )
+        )
+
+        val result = sut.viewState.value
+        assertThat(result.addressValidationState)
+            .isInstanceOf(AddressValidationState.NormalizedAddressUpdateFailed::class.java)
     }
 }
