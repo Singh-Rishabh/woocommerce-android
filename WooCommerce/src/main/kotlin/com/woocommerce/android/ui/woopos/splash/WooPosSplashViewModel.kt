@@ -38,8 +38,9 @@ class WooPosSplashViewModel @Inject constructor(
 
     private suspend fun trackPosLoaded() {
         val event = Loaded.apply {
-            val waitingTime = (System.currentTimeMillis() - splashScreenStartTime) / 1000f
-            addProperties(mapOf("waiting_time" to waitingTime.toString()))
+            @Suppress("MagicNumber")
+            val waitingTimeSeconds = (System.currentTimeMillis() - splashScreenStartTime) / 1000f
+            addProperties(mapOf("waiting_time" to waitingTimeSeconds.toString()))
         }
         analyticsTracker.track(event)
     }
