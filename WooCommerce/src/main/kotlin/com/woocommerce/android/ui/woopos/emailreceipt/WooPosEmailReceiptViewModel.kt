@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendFailed
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendSuccess
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -47,6 +49,7 @@ class WooPosEmailReceiptViewModel @Inject constructor(
 
     private fun handleSendEmailClicked() {
         viewModelScope.launch {
+            analyticsTracker.track(EmailReceiptSendTapped)
             val currentState = _state.value as WooPosEmailReceiptState.Email
             _state.value = currentState.copy(
                 errorMessage = null,
@@ -58,8 +61,10 @@ class WooPosEmailReceiptViewModel @Inject constructor(
             val result = repository.sendReceiptByEmail(orderId, currentState.email)
 
             _state.value = if (result.isSuccess) {
+                analyticsTracker.track(EmailReceiptSendSuccess)
                 WooPosEmailReceiptState.Sent
             } else {
+                analyticsTracker.track(EmailReceiptSendFailed)
                 val currentState = _state.value as? WooPosEmailReceiptState.Email ?: return@launch
                 currentState.copy(
                     errorMessage = resourceProvider.getString(R.string.woopos_email_receipt_send_error),
@@ -68,7 +73,6 @@ class WooPosEmailReceiptViewModel @Inject constructor(
                     )
                 )
             }
-            analyticsTracker.track(EmailReceiptSendTapped)
         }
     }
 
