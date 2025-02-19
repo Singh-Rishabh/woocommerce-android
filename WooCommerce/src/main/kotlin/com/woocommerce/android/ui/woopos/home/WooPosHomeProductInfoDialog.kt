@@ -26,6 +26,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosDialogWrapper
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosOutlinedButton
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
@@ -124,7 +125,7 @@ fun WooPosProductInfoDialog(
                         }
                     }
                     Spacer(modifier = Modifier.height(WooPosSpacing.XLarge.value.toAdaptivePadding()))
-                    WooPosButton(
+                    WooPosOutlinedButton(
                         onClick = { onDismissRequest() },
                         text = stringResource(id = state.primaryButton.label),
                         modifier = Modifier
