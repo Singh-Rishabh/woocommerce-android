@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendFailed
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptSendTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -152,5 +153,21 @@ class WooPosEmailReceiptViewModelTest {
         val emailState = state as WooPosEmailReceiptState.Email
         assertThat(emailState.errorMessage).isEqualTo("Error sending email")
         assertThat(emailState.button.status).isEqualTo(WooPosEmailReceiptState.Email.Button.Status.ENABLED)
+    }
+
+    @Test
+    fun `when SendEmailClicked fails, then track event`() = runTest {
+        // GIVEN
+        whenever(repository.isEmailValid("valid@example.com")).thenReturn(true)
+        viewModel.onUIEvent(WooPosEmailReceiptUIEvent.EmailChanged("valid@example.com"))
+        whenever(repository.sendReceiptByEmail(orderId = 123L, "valid@example.com"))
+            .thenReturn(Result.failure(RuntimeException("Failed")))
+
+        // WHEN
+        viewModel.onUIEvent(WooPosEmailReceiptUIEvent.SendEmailClicked)
+        advanceUntilIdle()
+
+        // THEN
+        verify(tracker).track(EmailReceiptSendFailed)
     }
 }
