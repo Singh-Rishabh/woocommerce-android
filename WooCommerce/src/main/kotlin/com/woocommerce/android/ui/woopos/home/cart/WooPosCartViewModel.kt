@@ -23,6 +23,7 @@ import com.woocommerce.android.ui.woopos.home.items.variations.getNameForPOS
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.BackToCartTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CheckoutTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.InteractionWithCustomerStarted
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ItemRemovedFromCart
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -166,6 +167,9 @@ class WooPosCartViewModel @Inject constructor(
                         productVariation.toCartListItem(itemNumber, product)
                     }
                 }
+            }
+            if (_state.value.body == WooPosCartState.Body.Empty) {
+                analyticsTracker.track(InteractionWithCustomerStarted)
             }
             _state.value = updateStateWithNewItem(itemClicked.await())
             WooPosAnalyticsEvent.Event.ItemAddedToCart.addProperties(

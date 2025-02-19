@@ -53,6 +53,9 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object GetSupportTapped : Event() {
             override val name: String = "get_support_tapped"
         }
+        data object InteractionWithCustomerStarted : Event() {
+            override val name: String = "interaction_with_customer_started"
+        }
         data object ItemAddedToCart : Event() {
             override val name: String = "item_added_to_cart"
         }
