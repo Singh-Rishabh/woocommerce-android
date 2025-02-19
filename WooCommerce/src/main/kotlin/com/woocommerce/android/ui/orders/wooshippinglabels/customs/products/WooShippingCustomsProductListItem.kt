@@ -26,6 +26,18 @@ fun WooShippingCustomsProductListItem(
     itemData: WooShippingCustomsProductUIModel,
     modifier: Modifier = Modifier
 ) {
+    if (itemData.isExpanded) {
+        WooShippingCustomsProductExpandedListItem()
+    } else {
+        WooShippingCustomsProductCollapsedListItem(itemData, modifier)
+    }
+}
+
+@Composable
+fun WooShippingCustomsProductCollapsedListItem(
+    itemData: WooShippingCustomsProductUIModel,
+    modifier: Modifier
+) {
     Column(modifier = modifier
         .fillMaxWidth()
         .background(
@@ -77,6 +89,11 @@ fun WooShippingCustomsProductListItem(
             )
         }
     }
+}
+
+@Composable
+fun WooShippingCustomsProductExpandedListItem() {
+
 }
 
 @Preview
