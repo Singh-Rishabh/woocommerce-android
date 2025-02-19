@@ -747,10 +747,10 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     PRODUCT_DETAIL_DUPLICATE_BUTTON_TAPPED,
 
     // -- Help & Support
-    SUPPORT_HELP_CENTER_VIEWED(siteless = true),
-    SUPPORT_IDENTITY_SET(siteless = true),
-    SUPPORT_IDENTITY_FORM_VIEWED(siteless = true),
-    SUPPORT_APPLICATION_LOG_VIEWED(siteless = true),
+    SUPPORT_HELP_CENTER_VIEWED,
+    SUPPORT_IDENTITY_SET,
+    SUPPORT_IDENTITY_FORM_VIEWED,
+    SUPPORT_APPLICATION_LOG_VIEWED,
     SUPPORT_SSR_COPY_BUTTON_TAPPED,
 
     // -- Support Request Form
@@ -1105,7 +1105,7 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     GOOGLEADS_FLOW_ERROR,
 
     // Background Updates
-    BACKGROUND_UPDATES_DISABLED(siteless = true),
+    BACKGROUND_UPDATES_DISABLED,
     BACKGROUND_DATA_SYNCED,
     BACKGROUND_DATA_SYNC_ERROR,
     PUSH_NOTIFICATION_ORDER_BACKGROUND_SYNCED,
