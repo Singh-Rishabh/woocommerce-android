@@ -100,3 +100,8 @@ data class NormalizationResponseDTO(
     val address: AddressDTO,
     val isTrivialNormalization: Boolean
 )
+
+data class UpdateAddressResponseDTO(
+    val address: AddressDTO,
+    val isVerified: Boolean
+)
