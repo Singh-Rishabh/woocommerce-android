@@ -1,9 +1,11 @@
 package com.woocommerce.android.ui.woopos.home.totals
 
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connected
 import com.woocommerce.android.cardreader.connection.CardReaderStatus.Connecting
@@ -35,6 +37,7 @@ import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ReaderReadyForCardPayment
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.UiStringParser
@@ -50,6 +53,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
@@ -347,6 +351,18 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+//        viewModelScope.launch {
+//            cardReaderPaymentController?.paymentState?.distinctUntilChanged { old, new -> old::class == new::class }
+//                ?.collect { paymentState ->
+//                    Log.d("WooPosTotalsViewModel", "Payment state: $paymentState")
+//                    when (paymentState) {
+//                        is CardReaderPaymentState.CollectingPayment -> {
+//                            analyticsTracker.track(ReaderReadyForCardPayment)
+//                        }
+//                        else -> Unit
+//                    }
+//                }
+//        }
     }
 
     private suspend fun handleCollectingPaymentState(paymentState: CardReaderPaymentState.CollectingPayment) {
@@ -366,6 +382,7 @@ class WooPosTotalsViewModel @Inject constructor(
             uiState.value = buildWooPosTotalsViewState(order)
             childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
+        analyticsTracker.track(ReaderReadyForCardPayment)
     }
 
     private suspend fun handleReaderLoadingPaymentState() {
