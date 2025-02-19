@@ -501,6 +501,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         if (allowBackNavigation()) triggerEvent(Event.Exit)
     }
 
+    fun onRetry() {
+        // Retry loading data that may have previously resulted in errors.
+        launch { getOrderInformation() }
+    }
+
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
