@@ -4330,6 +4330,7 @@
     <string name="woopos_products_loading_error_title">Error loading products</string>
     <string name="woopos_products_loading_error_message">Give it another go?</string>
     <string name="woopos_error_icon_content_description">Error indication icon</string>
+    <string name="woopos_reader_not_connected_description">Please make sure a card reader is connected.</string>
     <string name="woopos_products_loading_error_retry_button">Retry</string>
     <string name="woopos_totals_order_creation_error">Couldn\'t create order</string>
     <string name="woopos_totals_success_payment_cash">A cash payment of %1$s was successfully made</string>
@@ -4505,6 +4506,18 @@
 
     <string name="woo_shipping_address_validate_and_save">Validate &amp; Save</string>
     <string name="woo_shipping_address_missing_info_hint">Add missing information</string>
+    <string name="woo_shipping_labels_loading_order_error">Unable to load the order</string>
+
+    <string name="woo_shipping_address_validate_title">Validating</string>
+    <string name="woo_shipping_address_validate_message">Validating entered address</string>
+
+    <string name="woo_shipping_confirm_address_title">Confirm address</string>
+    <string name="woo_shipping_confirm_address_description">We have slightly modified the entered address.\nIf correct, please use the suggested address to ensure accurate delivery.</string>
+    <string name="woo_shipping_confirm_address_entered">What you entered</string>
+    <string name="woo_shipping_confirm_address_suggested">Suggested</string>
+
+    <string name="woo_shipping_confirm_submit_address_suggested">Confirm Suggested Address</string>
+    <string name="woo_shipping_confirm_submit_address_entered">Confirm Entered Address</string>
 
 
     <string name="error_user_username_instead_of_email">Please log in using your WordPress.com username instead of your email address.</string>
