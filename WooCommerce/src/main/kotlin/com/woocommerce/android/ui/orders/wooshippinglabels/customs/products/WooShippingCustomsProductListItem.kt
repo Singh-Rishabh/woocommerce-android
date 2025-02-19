@@ -4,12 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun WooShippingCustomsProductItem() {
+fun WooShippingCustomsProductListItem() {
 
 }
 
 @Preview
 @Composable
-fun WooShippingCustomsProductItemPreview() {
-    WooShippingCustomsProductItem()
+fun WooShippingCustomsProductListItemPreview() {
+    WooShippingCustomsProductListItem()
 }
