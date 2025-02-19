@@ -14,6 +14,7 @@ import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.BackToCartTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CheckoutTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ClearCartTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.InteractionWithCustomerStarted
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -452,6 +453,18 @@ class WooPosCartViewModelTest {
         val finalState = states.last()
         assertThat(finalState.body).isInstanceOf(WooPosCartState.Body.Empty::class.java)
         assertThat(finalState.cartStatus).isEqualTo(WooPosCartStatus.EMPTY)
+    }
+
+    @Test
+    fun `given non-empty cart, when all items removed, then should track event`() = runTest {
+        // GIVEN
+        val (sut, states) = createSutWithItemsInCart()
+
+        // WHEN
+        sut.onUIEvent(WooPosCartUIEvent.ClearAllClicked)
+
+        // THEN
+        verify(analyticsTracker).track(ClearCartTapped)
     }
 
     @Test
