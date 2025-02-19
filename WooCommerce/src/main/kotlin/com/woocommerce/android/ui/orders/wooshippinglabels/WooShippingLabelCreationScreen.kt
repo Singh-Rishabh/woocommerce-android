@@ -315,19 +315,7 @@ private fun LabelCreationScreenWithBottomSheet(
         sheetPeekHeight = bottomSheetPeekHeight,
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(id = R.string.shipping_label_create_title)) },
-                navigationIcon = {
-                    IconButton(onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.back)
-                        )
-                    }
-                },
-                backgroundColor = colorResource(id = R.color.color_toolbar),
-                elevation = 0.dp,
-            )
+            TopBar(onNavigateBack)
         },
     ) { innerPadding ->
         Surface(
@@ -374,6 +362,21 @@ private fun LabelCreationScreenWithBottomSheet(
         }
     }
 }
+
+@Composable
+private fun TopBar(onNavigateBack: () -> Unit) = TopAppBar(
+    title = { Text(stringResource(id = R.string.shipping_label_create_title)) },
+    navigationIcon = {
+        IconButton(onNavigateBack) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = stringResource(id = R.string.back)
+            )
+        }
+    },
+    backgroundColor = colorResource(id = R.color.color_toolbar),
+    elevation = 0.dp,
+)
 
 @Composable
 internal fun HazmatCard(
