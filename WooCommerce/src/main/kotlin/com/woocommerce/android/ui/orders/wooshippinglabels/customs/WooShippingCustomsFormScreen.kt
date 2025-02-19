@@ -38,9 +38,9 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
     WooShippingCustomsFormScreen(
         contentType = viewState?.contentType ?: ContentType.MERCHANDISE,
         restrictionType = viewState?.restrictionType ?: RestrictionType.NONE,
-        itnValue = viewState?.itnValue ?: InputValue.EMPTY,
-        otherContentDetailsInput = viewState?.otherContentInput ?: InputValue.EMPTY,
-        otherRestrictionDetailsInput = viewState?.otherRestrictionInput ?: InputValue.EMPTY,
+        itnValue = viewState?.itnValue ?: InputValue.Empty,
+        otherContentDetailsInput = viewState?.otherContentInput ?: InputValue.Empty,
+        otherRestrictionDetailsInput = viewState?.otherRestrictionInput ?: InputValue.Empty,
         returnToSenderChecked = viewState?.returnToSenderChecked ?: false,
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
         shouldDisplayContentTypeInput = viewState?.shouldDisplayContentTypeInput ?: false,
