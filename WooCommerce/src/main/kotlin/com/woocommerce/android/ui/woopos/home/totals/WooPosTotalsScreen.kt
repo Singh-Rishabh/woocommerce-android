@@ -264,13 +264,10 @@ private fun ReaderDisconnected(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
-        @Suppress("WooPosDesignSystemSpacingUsageRule")
-        Spacer(modifier = Modifier.height(56.dp.toAdaptivePadding()))
-
         Icon(
-            modifier = Modifier.size(64.dp),
-            painter = painterResource(id = R.drawable.ic_woo_pos_error),
-            contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
+            modifier = Modifier.size(122.dp),
+            painter = painterResource(id = R.drawable.img_card_reader_not_connected_v2),
+            contentDescription = stringResource(id = R.string.woopos_reader_not_connected_description),
             tint = WooPosTheme.colors.unspecified,
         )
 
@@ -278,7 +275,7 @@ private fun ReaderDisconnected(
 
         WooPosText(
             text = status.title,
-            style = WooPosTypography.BodyXLarge,
+            style = WooPosTypography.Heading,
             fontWeight = FontWeight.Bold,
         )
 
@@ -293,7 +290,7 @@ private fun ReaderDisconnected(
             text = status.actionButtonLabel,
             onClick = { onUIEvent(WooPosTotalsUIEvent.ConnectReaderClicked) },
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(0.5f)
                 .height(80.dp)
         )
     }
@@ -304,7 +301,7 @@ private fun TotalsGrid(totals: Totals.Visible) {
     Column(
         modifier = Modifier
             .padding(WooPosSpacing.Large.value.toAdaptivePadding())
-            .width(382.dp),
+            .fillMaxWidth(0.5f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
