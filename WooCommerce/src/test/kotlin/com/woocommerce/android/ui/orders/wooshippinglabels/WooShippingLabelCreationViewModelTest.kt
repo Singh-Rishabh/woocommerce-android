@@ -33,6 +33,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSort
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -49,6 +50,7 @@ import java.math.BigDecimal
 import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
@@ -280,7 +282,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when the order is not found, then show an error`() = testBlocking {
+    fun `when the order is not found, then exit`() = testBlocking {
         val order: Order? = null
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
@@ -288,10 +290,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         createViewModel()
 
-        advanceUntilIdle()
+        var exit: Exit? = null
+        sut.event.observeForever { if (it is Exit) exit = it }
 
-        val currentViewState = sut.viewState.value
-        assert(currentViewState is WooShippingViewState.Error)
+        assertNotNull(exit)
     }
 
     @Test
