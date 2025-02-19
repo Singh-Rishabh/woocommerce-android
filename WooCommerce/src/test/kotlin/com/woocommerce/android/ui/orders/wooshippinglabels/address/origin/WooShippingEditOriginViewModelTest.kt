@@ -629,7 +629,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
 
-        assertThat(result.normalizedAddressStatus).isEqualTo(NormalizedAddressStatus.Closed)
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
     }
 
     @Test
@@ -652,7 +652,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
 
-        assertThat(result.normalizedAddressStatus).isEqualTo(NormalizedAddressStatus.Failure)
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.Failure)
     }
 
     @Test
@@ -681,7 +681,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
 
-        assertThat(result.normalizedAddressStatus).isInstanceOf(NormalizedAddressStatus.AddressSelection::class.java)
+        assertThat(result.addressValidationState).isInstanceOf(AddressValidationState.AddressSelection::class.java)
     }
 
     @Test
@@ -711,7 +711,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         val result = sut.viewState.value
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
-        val addressSelection = result.normalizedAddressStatus as NormalizedAddressStatus.AddressSelection
+        val addressSelection = result.addressValidationState as AddressValidationState.AddressSelection
         assertThat(addressSelection.selectedAddress).isEqualTo(suggestedAddress)
     }
 
@@ -742,14 +742,14 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         var result = sut.viewState.value
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
-        var addressSelection = result.normalizedAddressStatus as NormalizedAddressStatus.AddressSelection
+        var addressSelection = result.addressValidationState as AddressValidationState.AddressSelection
         assertThat(addressSelection.selectedAddress).isEqualTo(suggestedAddress)
 
         sut.onAddressSelectionChange(addressSelection.copy(selectedAddress = enteredAddress))
 
         result = sut.viewState.value
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
-        addressSelection = result.normalizedAddressStatus as NormalizedAddressStatus.AddressSelection
+        addressSelection = result.addressValidationState as AddressValidationState.AddressSelection
         assertThat(addressSelection.selectedAddress).isEqualTo(enteredAddress)
     }
 
@@ -780,13 +780,13 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         var result = sut.viewState.value
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
-        val addressSelection = result.normalizedAddressStatus as NormalizedAddressStatus.AddressSelection
+        val addressSelection = result.addressValidationState as AddressValidationState.AddressSelection
         assertThat(addressSelection.selectedAddress).isEqualTo(suggestedAddress)
 
         sut.onCloseAddressSelection()
 
         result = sut.viewState.value
         assertThat(result).isInstanceOf(WooShippingEditOriginViewModel.ViewState::class.java)
-        assertThat(result.normalizedAddressStatus).isEqualTo(NormalizedAddressStatus.Closed)
+        assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
     }
 }
