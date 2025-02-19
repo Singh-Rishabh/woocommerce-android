@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.woocommerce.android.R
@@ -102,10 +103,10 @@ fun WooPosProductInfoDialog(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
+                    Spacer(Modifier.height(40.dp.toAdaptivePadding()))
                     Box(
                         Modifier
                             .clip(RoundedCornerShape(WooPosCornerRadius.Medium.value))
-                            .padding(vertical = WooPosSpacing.XLarge.value.toAdaptivePadding())
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceDim
                             )
