@@ -247,8 +247,9 @@ class WooShippingNetworkingMapper @Inject constructor(
         }
     }
 
-    fun toAddressDTO(address: Address): AddressDTO {
+    fun toAddressDTO(address: Address, id: String? = null): AddressDTO {
         return AddressDTO(
+            id = id,
             address = address.address1,
             address2 = address.address2,
             city = address.city,
