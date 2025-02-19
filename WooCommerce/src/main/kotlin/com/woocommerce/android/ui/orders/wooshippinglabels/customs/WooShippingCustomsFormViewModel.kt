@@ -81,6 +81,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onITNChanged(newItnValue: String) {
         val input = when {
+            newItnValue.isBlank() -> InputValue.Empty
             itnRegex.matches(newItnValue).not() ->
                 InputValue.Error(
                     input = newItnValue,
@@ -94,10 +95,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,
-        val otherContentInput: InputValue = InputValue.EMPTY,
+        val otherContentInput: InputValue = InputValue.Empty,
         val restrictionType: RestrictionType = RestrictionType.NONE,
-        val otherRestrictionInput: InputValue = InputValue.EMPTY,
-        val itnValue: InputValue = InputValue.EMPTY,
+        val otherRestrictionInput: InputValue = InputValue.Empty,
+        val itnValue: InputValue = InputValue.Empty,
         val returnToSenderChecked: Boolean = false
     ) : Parcelable {
         val shouldDisplayContentTypeInput: Boolean
@@ -119,15 +120,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             val input: String,
             val errorMessageId: Int
         ) : InputValue()
-
-        companion object {
-            val EMPTY = Data("")
-        }
+        data object Empty : InputValue()
 
         val currentInput
             get() = when (this) {
                 is Data -> input
                 is Error -> input
+                is Empty -> ""
             }
 
         val errorMessageOrNull: Int?
