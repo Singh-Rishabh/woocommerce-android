@@ -103,6 +103,7 @@ fun WooPosProductInfoDialog(
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(bottom = WooPosSpacing.Medium.value.toAdaptivePadding())
                     )
+                    @Suppress("WooPosDesignSystemSpacingUsageRule")
                     Spacer(Modifier.height(40.dp.toAdaptivePadding()))
                     Box(
                         Modifier

@@ -68,6 +68,7 @@ fun WooPosErrorScreen(
                 text = reason,
                 style = WooPosTypography.BodyLarge,
             )
+            @Suppress("WooPosDesignSystemSpacingUsageRule")
             Spacer(modifier = Modifier.height(40.dp.toAdaptivePadding()))
             primaryButton?.let {
                 WooPosButton(
