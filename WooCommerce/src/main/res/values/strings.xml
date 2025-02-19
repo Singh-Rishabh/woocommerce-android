@@ -4506,6 +4506,7 @@
 
     <string name="woo_shipping_address_validate_and_save">Validate &amp; Save</string>
     <string name="woo_shipping_address_missing_info_hint">Add missing information</string>
+    <string name="woo_shipping_labels_loading_order_error">Unable to load the order</string>
 
     <string name="woo_shipping_address_validate_title">Validating</string>
     <string name="woo_shipping_address_validate_message">Validating entered address</string>
