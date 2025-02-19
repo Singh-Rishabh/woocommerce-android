@@ -374,8 +374,8 @@ fun ItemsEmptyList(
 
             WooPosText(
                 text = message,
-                style = WooPosTypography.BodyXLarge,
-                fontWeight = FontWeight.Bold,
+                style = WooPosTypography.BodyLarge,
+                fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center
             )
 
