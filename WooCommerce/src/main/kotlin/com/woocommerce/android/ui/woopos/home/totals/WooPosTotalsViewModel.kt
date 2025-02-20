@@ -229,7 +229,10 @@ class WooPosTotalsViewModel @Inject constructor(
                 is PaymentFailed, is PaymentInProgress -> {
                     val paymentState = cardReaderPaymentController?.paymentState?.value
                     if (paymentState is CardReaderPaymentState.ProcessingPayment ||
-                        paymentState is CardReaderPaymentState.PaymentCapturing) return@launch
+                        paymentState is CardReaderPaymentState.PaymentCapturing
+                    ) {
+                        return@launch
+                    }
 
                     childrenToParentEventSender.sendToParent(ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout)
                     retryPaymentCollectionFromScratch()
