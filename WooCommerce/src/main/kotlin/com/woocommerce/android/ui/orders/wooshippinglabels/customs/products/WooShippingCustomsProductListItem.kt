@@ -39,6 +39,8 @@ fun WooShippingCustomsProductListItem(
             itemData = itemData,
             onDescriptionChanged = { },
             onTariffChanged = { },
+            onValuePerUnitChanged = { },
+            onWeightPerUnitChanged = { },
             modifier = modifier
         )
     } else {
@@ -109,7 +111,9 @@ fun WooShippingCustomsProductExpandedListItem(
     modifier: Modifier,
     itemData: WooShippingCustomsProductUIModel,
     onDescriptionChanged: (String) -> Unit,
-    onTariffChanged: (String) -> Unit
+    onTariffChanged: (String) -> Unit,
+    onValuePerUnitChanged: (String) -> Unit,
+    onWeightPerUnitChanged: (String) -> Unit
 ) {
     Column(modifier = modifier
         .fillMaxWidth()
@@ -162,6 +166,32 @@ fun WooShippingCustomsProductExpandedListItem(
                 helperText = itemData.tariffNumber.errorMessageOrNull
                     ?.let { stringResource(it) }
             )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                WCOutlinedTextField(
+                    value = itemData.valuePerUnit.currentInput,
+                    onValueChange = onValuePerUnitChanged,
+                    label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_value_per_unit),
+                    singleLine = true,
+                    isError = itemData.valuePerUnit is InputValue.Error,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.weight(1f),
+                    helperText = itemData.valuePerUnit.errorMessageOrNull
+                        ?.let { stringResource(it) }
+                )
+
+                WCOutlinedTextField(
+                    value = itemData.weightPerUnit.currentInput,
+                    onValueChange = onWeightPerUnitChanged,
+                    label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_weight_per_unit),
+                    singleLine = true,
+                    isError = itemData.weightPerUnit is InputValue.Error,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    modifier = modifier.weight(1f),
+                    helperText = itemData.weightPerUnit.errorMessageOrNull
+                        ?.let { stringResource(it) }
+                )
+            }
         }
     }
 }
