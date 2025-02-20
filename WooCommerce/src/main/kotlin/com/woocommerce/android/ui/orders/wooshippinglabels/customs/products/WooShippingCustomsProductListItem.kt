@@ -153,17 +153,19 @@ fun WooShippingCustomsProductExpandedListItem(
 @Composable
 fun WooShippingCustomsProductListCollapsedItemPreview() {
     WooThemeWithBackground {
-        WooShippingCustomsProductListItem(
-            itemData = WooShippingCustomsProductUIModel(
-                name = "Little Nap Brazil 250g",
-                description = InputValue.Data("Coffee Beans"),
-                tariffNumber = InputValue.Data("HS 14-1"),
-                valuePerUnit = InputValue.Data("$20.00"),
-                weightPerUnit = InputValue.Data("0.3kg"),
-                originCountry = "Japan",
-                isExpanded = false
+        Box(Modifier.padding(16.dp)) {
+            WooShippingCustomsProductListItem(
+                itemData = WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Data("Coffee Beans"),
+                    tariffNumber = InputValue.Data("HS 14-1"),
+                    valuePerUnit = InputValue.Data("$20.00"),
+                    weightPerUnit = InputValue.Data("0.3kg"),
+                    originCountry = "Japan",
+                    isExpanded = false
+                )
             )
-        )
+        }
     }
 }
 
@@ -171,16 +173,18 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
 @Composable
 fun WooShippingCustomsProductListExpandedItemPreview() {
     WooThemeWithBackground {
-        WooShippingCustomsProductListItem(
-            itemData = WooShippingCustomsProductUIModel(
-                name = "Little Nap Brazil 250g",
-                description = InputValue.Data("Coffee Beans"),
-                tariffNumber = InputValue.Data("HS 14-1"),
-                valuePerUnit = InputValue.Data("$20.00"),
-                weightPerUnit = InputValue.Data("0.3kg"),
-                originCountry = "Japan",
-                isExpanded = true
+        Box(Modifier.padding(16.dp)) {
+            WooShippingCustomsProductListItem(
+                itemData = WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Data("Coffee Beans"),
+                    tariffNumber = InputValue.Data("HS 14-1"),
+                    valuePerUnit = InputValue.Data("$20.00"),
+                    weightPerUnit = InputValue.Data("0.3kg"),
+                    originCountry = "Japan",
+                    isExpanded = true
+                )
             )
-        )
+        }
     }
 }
