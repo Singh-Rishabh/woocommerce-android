@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -137,29 +138,31 @@ fun WooShippingCustomsProductExpandedListItem(
         }
         Divider(modifier.padding(vertical = 8.dp))
 
-        WCOutlinedTextField(
-            value = itemData.description.currentInput,
-            onValueChange = onDescriptionChanged,
-            label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_description),
-            singleLine = true,
-            isError = itemData.description is InputValue.Error,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            modifier = modifier.fillMaxWidth(),
-            helperText = itemData.description.errorMessageOrNull
-                ?.let { stringResource(it) }
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            WCOutlinedTextField(
+                value = itemData.description.currentInput,
+                onValueChange = onDescriptionChanged,
+                label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_description),
+                singleLine = true,
+                isError = itemData.description is InputValue.Error,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = modifier.fillMaxWidth(),
+                helperText = itemData.description.errorMessageOrNull
+                    ?.let { stringResource(it) }
+            )
 
-        WCOutlinedTextField(
-            value = itemData.tariffNumber.currentInput,
-            onValueChange = onTariffChanged,
-            label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_tariff),
-            singleLine = true,
-            isError = itemData.tariffNumber is InputValue.Error,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            modifier = modifier.fillMaxWidth(),
-            helperText = itemData.tariffNumber.errorMessageOrNull
-                ?.let { stringResource(it) }
-        )
+            WCOutlinedTextField(
+                value = itemData.tariffNumber.currentInput,
+                onValueChange = onTariffChanged,
+                label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_tariff),
+                singleLine = true,
+                isError = itemData.tariffNumber is InputValue.Error,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                modifier = modifier.fillMaxWidth(),
+                helperText = itemData.tariffNumber.errorMessageOrNull
+                    ?.let { stringResource(it) }
+            )
+        }
     }
 }
 
