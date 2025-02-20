@@ -16,6 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
@@ -54,38 +58,39 @@ fun WooShippingCustomsProductCollapsedListItem(
         Row {
             Text(
                 text = itemData.name,
-                style = MaterialTheme.typography.body1,
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.Bold,
                 modifier = modifier.weight(1f)
             )
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                painter = painterResource(id = R.drawable.ic_arrow_down),
                 contentDescription = null
             )
         }
         Row {
             Text(
                 text = itemData.description,
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.caption,
                 modifier = modifier.weight(1f)
             )
             Text(
                 text = itemData.tariffNumber,
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.caption
             )
         }
         Row {
             Text(
                 text = itemData.originCountry,
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.caption,
                 modifier = modifier.weight(1f)
             )
             Text(
                 text = itemData.valuePerUnit,
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.caption,
             )
             Text(
                 text = itemData.weightPerUnit,
-                style = MaterialTheme.typography.body2
+                style = MaterialTheme.typography.caption
             )
         }
     }
