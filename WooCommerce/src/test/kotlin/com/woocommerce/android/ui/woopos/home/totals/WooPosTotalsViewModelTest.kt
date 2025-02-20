@@ -1234,7 +1234,6 @@ class WooPosTotalsViewModelTest {
             assertFalse(checkout.isFreeOrder)
         }
 
-
     @Test
     fun `given payment processing state, when OnBackClicked, then should ignore OnBackClicked`() = runTest {
         // GIVEN
