@@ -10,15 +10,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,7 +27,7 @@ fun WooShippingCustomsProductListItem(
     modifier: Modifier = Modifier
 ) {
     if (itemData.isExpanded) {
-        WooShippingCustomsProductExpandedListItem()
+        WooShippingCustomsProductExpandedListItem(itemData, modifier)
     } else {
         WooShippingCustomsProductCollapsedListItem(itemData, modifier)
     }
@@ -93,13 +89,41 @@ fun WooShippingCustomsProductCollapsedListItem(
 }
 
 @Composable
-fun WooShippingCustomsProductExpandedListItem() {
-
+fun WooShippingCustomsProductExpandedListItem(
+    itemData: WooShippingCustomsProductUIModel,
+    modifier: Modifier
+) {
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .background(
+            color = MaterialTheme.colors.surface,
+            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+        )
+        .border(
+            width = dimensionResource(R.dimen.minor_10),
+            color = colorResource(R.color.divider_color),
+            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+        )
+        .padding(16.dp)
+    ) {
+        Row {
+            Text(
+                text = itemData.name,
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.Bold,
+                modifier = modifier.weight(1f)
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_up),
+                contentDescription = null
+            )
+        }
+    }
 }
 
 @Preview
 @Composable
-fun WooShippingCustomsProductListItemPreview() {
+fun WooShippingCustomsProductListCollapsedItemPreview() {
     WooThemeWithBackground {
         WooShippingCustomsProductListItem(
             itemData = WooShippingCustomsProductUIModel(
@@ -110,6 +134,24 @@ fun WooShippingCustomsProductListItemPreview() {
                 weightPerUnit = "0.3kg",
                 originCountry = "Japan",
                 isExpanded = false
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun WooShippingCustomsProductListExpandedItemPreview() {
+    WooThemeWithBackground {
+        WooShippingCustomsProductListItem(
+            itemData = WooShippingCustomsProductUIModel(
+                name = "Little Nap Brazil 250g",
+                description = "Coffee Beans",
+                tariffNumber = "HS 14-1",
+                valuePerUnit = "$20.00",
+                weightPerUnit = "0.3kg",
+                originCountry = "Japan",
+                isExpanded = true
             )
         )
     }
