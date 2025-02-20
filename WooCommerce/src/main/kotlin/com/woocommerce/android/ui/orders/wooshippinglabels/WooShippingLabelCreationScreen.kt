@@ -86,9 +86,7 @@ import kotlinx.parcelize.Parcelize
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
     when (val viewState = viewModel.viewState.collectAsState().value) {
         WooShippingLabelCreationViewModel.WooShippingViewState.Loading -> {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
+            LoadingScreen(onNavigateBack = viewModel::onNavigateBack)
         }
 
         is WooShippingLabelCreationViewModel.WooShippingViewState.DataState -> {
@@ -679,6 +677,23 @@ private fun PackageSelectionAvailableCard(
                     color = colorResource(id = R.color.color_on_surface_disabled)
                 )
             }
+        }
+    }
+}
+
+@Composable
+internal fun LoadingScreen(
+    modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {},
+) {
+    Scaffold(topBar = { TopBar(onNavigateBack) }) { padding ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(padding),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }
