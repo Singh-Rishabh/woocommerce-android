@@ -85,12 +85,8 @@ fun WooShippingCustomsProductCollapsedListItem(
                 modifier = modifier.weight(1f)
             )
             Text(
-                text = itemData.valuePerUnit,
+                text = itemData.valueAndWeightForDisplay,
                 style = MaterialTheme.typography.caption,
-            )
-            Text(
-                text = itemData.weightPerUnit,
-                style = MaterialTheme.typography.caption
             )
         }
     }

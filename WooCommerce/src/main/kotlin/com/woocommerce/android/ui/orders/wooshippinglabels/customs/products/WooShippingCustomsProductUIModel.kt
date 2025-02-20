@@ -8,4 +8,7 @@ data class WooShippingCustomsProductUIModel(
     val weightPerUnit: String,
     val originCountry: String,
     val isExpanded: Boolean
-)
+) {
+    val valueAndWeightForDisplay: String
+        get() = "$valuePerUnit • $weightPerUnit"
+}
