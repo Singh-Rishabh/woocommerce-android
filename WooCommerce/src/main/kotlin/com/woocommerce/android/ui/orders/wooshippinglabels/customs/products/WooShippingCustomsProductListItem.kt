@@ -2,11 +2,13 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -16,10 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 
@@ -29,16 +34,23 @@ fun WooShippingCustomsProductListItem(
     modifier: Modifier = Modifier
 ) {
     if (itemData.isExpanded) {
-        WooShippingCustomsProductExpandedListItem(itemData, modifier)
+        WooShippingCustomsProductExpandedListItem(
+            itemData = itemData,
+            onDescriptionChanged = { },
+            modifier = modifier
+        )
     } else {
-        WooShippingCustomsProductCollapsedListItem(itemData, modifier)
+        WooShippingCustomsProductCollapsedListItem(
+            itemData = itemData,
+            modifier = modifier
+        )
     }
 }
 
 @Composable
 fun WooShippingCustomsProductCollapsedListItem(
-    itemData: WooShippingCustomsProductUIModel,
-    modifier: Modifier
+    modifier: Modifier,
+    itemData: WooShippingCustomsProductUIModel
 ) {
     Column(modifier = modifier
         .fillMaxWidth()
@@ -92,8 +104,9 @@ fun WooShippingCustomsProductCollapsedListItem(
 
 @Composable
 fun WooShippingCustomsProductExpandedListItem(
+    modifier: Modifier,
     itemData: WooShippingCustomsProductUIModel,
-    modifier: Modifier
+    onDescriptionChanged: (String) -> Unit
 ) {
     Column(modifier = modifier
         .fillMaxWidth()
@@ -103,7 +116,7 @@ fun WooShippingCustomsProductExpandedListItem(
         )
         .border(
             width = dimensionResource(R.dimen.minor_10),
-            color = colorResource(R.color.divider_color),
+            color = colorResource(R.color.woo_black),
             shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
         )
         .padding(16.dp)
@@ -120,7 +133,19 @@ fun WooShippingCustomsProductExpandedListItem(
                 contentDescription = null
             )
         }
-        Divider(modifier.padding(top = 8.dp))
+        Divider(modifier.padding(vertical = 8.dp))
+
+        WCOutlinedTextField(
+            value = itemData.description.currentInput,
+            onValueChange = onDescriptionChanged,
+            label = stringResource(id = R.string.woo_shipping_labels_customs_itn_label),
+            singleLine = true,
+            isError = itemData.description is InputValue.Error,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            modifier = modifier.fillMaxWidth(),
+            helperText = itemData.description.errorMessageOrNull
+                ?.let { stringResource(it) }
+        )
     }
 }
 
