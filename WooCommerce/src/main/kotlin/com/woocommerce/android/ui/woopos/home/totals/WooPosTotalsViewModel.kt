@@ -178,6 +178,9 @@ class WooPosTotalsViewModel @Inject constructor(
 
     private fun handleEmailReceiptClicked() {
         viewModelScope.launch {
+            analyticsTracker.track(EmailReceiptTapped)
+        }
+        viewModelScope.launch {
             if (isReceiptSendingSupportedValue.await()) {
                 childrenToParentEventSender.sendToParent(
                     ToEmailReceipt(dataState.value.orderId)
@@ -192,7 +195,6 @@ class WooPosTotalsViewModel @Inject constructor(
                     )
                 )
             }
-            analyticsTracker.track(EmailReceiptTapped)
         }
     }
 
