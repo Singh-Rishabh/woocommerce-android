@@ -37,6 +37,7 @@ fun WooShippingCustomsProductListItem(
         WooShippingCustomsProductExpandedListItem(
             itemData = itemData,
             onDescriptionChanged = { },
+            onTariffChanged = { },
             modifier = modifier
         )
     } else {
@@ -106,7 +107,8 @@ fun WooShippingCustomsProductCollapsedListItem(
 fun WooShippingCustomsProductExpandedListItem(
     modifier: Modifier,
     itemData: WooShippingCustomsProductUIModel,
-    onDescriptionChanged: (String) -> Unit
+    onDescriptionChanged: (String) -> Unit,
+    onTariffChanged: (String) -> Unit
 ) {
     Column(modifier = modifier
         .fillMaxWidth()
@@ -138,12 +140,24 @@ fun WooShippingCustomsProductExpandedListItem(
         WCOutlinedTextField(
             value = itemData.description.currentInput,
             onValueChange = onDescriptionChanged,
-            label = stringResource(id = R.string.woo_shipping_labels_customs_itn_label),
+            label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_description),
             singleLine = true,
             isError = itemData.description is InputValue.Error,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
             modifier = modifier.fillMaxWidth(),
             helperText = itemData.description.errorMessageOrNull
+                ?.let { stringResource(it) }
+        )
+
+        WCOutlinedTextField(
+            value = itemData.tariffNumber.currentInput,
+            onValueChange = onTariffChanged,
+            label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_tariff),
+            singleLine = true,
+            isError = itemData.tariffNumber is InputValue.Error,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            modifier = modifier.fillMaxWidth(),
+            helperText = itemData.tariffNumber.errorMessageOrNull
                 ?.let { stringResource(it) }
         )
     }
