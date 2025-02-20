@@ -1089,6 +1089,7 @@ class WooPosTotalsViewModelTest {
 
             // WHEN
             viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
+            advanceUntilIdle()
 
             // THEN
             verify(childrenToParentEventSender).sendToParent(
