@@ -873,16 +873,7 @@ class WooPosTotalsViewModelTest {
     fun `given payment failed with retry action, when retry clicked, then should retry previous payment action`() =
         runTest {
             // GIVEN
-            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
-                .thenReturn("Processing payment")
-            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle))
-                .thenReturn("Please wait…")
-            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
-                .thenReturn("Payment failed")
-            whenever(uiStringParser.asString(any())).thenReturn("Unfortunately, this payment has been declined.")
-            whenever(resourceProvider.getString(R.string.woo_pos_payment_failed_try_again))
-                .thenReturn("Try payment again")
-
+            mockPaymentFailedTexts()
             givenCardReaderConnectedAndNetworkAvailable()
             val mockCardReaderPaymentController: CardReaderPaymentController = mock()
             val factory: WooPosCardReaderPaymentControllerFactory = mock()
@@ -1318,6 +1309,46 @@ class WooPosTotalsViewModelTest {
         // THEN
         verify(mockCardReaderPaymentController, never()).onBackPressed()
         verify(childrenToParentEventSender).sendToParent(BackFromCheckoutToCartClicked)
+    }
+
+    @Test
+    fun `given payment failed state, when OnBackClicked, then should not ignore OnBackClicked`() = runTest {
+        // GIVEN
+        mockPaymentFailedTexts()
+        givenCardReaderConnectedAndNetworkAvailable()
+        val mockCardReaderPaymentController: CardReaderPaymentController = mock()
+        val factory: WooPosCardReaderPaymentControllerFactory = mock()
+        whenever(factory.create(any(), any(), any())).thenReturn(mockCardReaderPaymentController)
+        val paymentState =
+            MutableStateFlow<CardReaderPaymentOrRefundState>(
+                CardReaderPaymentState.CollectingPayment.ExternalReaderCollectPaymentState("") {}
+            )
+        whenever(mockCardReaderPaymentController.paymentState).thenReturn(paymentState)
+
+        // WHEN
+        val vm = createViewModelAndSetupForSuccessfulOrderCreation(controllerFactory = factory)
+        paymentState.value = CardReaderPaymentState.ProcessingPayment.ExternalReaderProcessingPayment("") {}
+        paymentState.value = CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable(
+            errorType = PaymentFlowError.NoNetwork, {}
+        )
+        advanceUntilIdle()
+
+        vm.onUIEvent(OnBackClicked)
+
+        // THEN
+        verify(childrenToParentEventSender).sendToParent(ReturnedFromCardReaderPaymentToCheckout)
+    }
+
+    private fun mockPaymentFailedTexts() {
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_title))
+            .thenReturn("Processing payment")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_processing_subtitle))
+            .thenReturn("Please wait…")
+        whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+            .thenReturn("Payment failed")
+        whenever(uiStringParser.asString(any())).thenReturn("Unfortunately, this payment has been declined.")
+        whenever(resourceProvider.getString(R.string.woo_pos_payment_failed_try_again))
+            .thenReturn("Try payment again")
     }
 
     private fun givenCardReaderConnectedAndNetworkAvailable() {
