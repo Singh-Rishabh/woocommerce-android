@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -20,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 
 @Composable
 fun WooShippingCustomsProductListItem(
@@ -65,12 +67,12 @@ fun WooShippingCustomsProductCollapsedListItem(
         }
         Row {
             Text(
-                text = itemData.description,
+                text = itemData.description.currentInput,
                 style = MaterialTheme.typography.caption,
                 modifier = modifier.weight(1f)
             )
             Text(
-                text = itemData.tariffNumber,
+                text = itemData.tariffNumber.currentInput,
                 style = MaterialTheme.typography.caption
             )
         }
@@ -118,6 +120,7 @@ fun WooShippingCustomsProductExpandedListItem(
                 contentDescription = null
             )
         }
+        Divider(modifier.padding(top = 8.dp))
     }
 }
 
@@ -128,10 +131,10 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
         WooShippingCustomsProductListItem(
             itemData = WooShippingCustomsProductUIModel(
                 name = "Little Nap Brazil 250g",
-                description = "Coffee Beans",
-                tariffNumber = "HS 14-1",
-                valuePerUnit = "$20.00",
-                weightPerUnit = "0.3kg",
+                description = InputValue.Data("Coffee Beans"),
+                tariffNumber = InputValue.Data("HS 14-1"),
+                valuePerUnit = InputValue.Data("$20.00"),
+                weightPerUnit = InputValue.Data("0.3kg"),
                 originCountry = "Japan",
                 isExpanded = false
             )
@@ -146,10 +149,10 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
         WooShippingCustomsProductListItem(
             itemData = WooShippingCustomsProductUIModel(
                 name = "Little Nap Brazil 250g",
-                description = "Coffee Beans",
-                tariffNumber = "HS 14-1",
-                valuePerUnit = "$20.00",
-                weightPerUnit = "0.3kg",
+                description = InputValue.Data("Coffee Beans"),
+                tariffNumber = InputValue.Data("HS 14-1"),
+                valuePerUnit = InputValue.Data("$20.00"),
+                weightPerUnit = InputValue.Data("0.3kg"),
                 originCountry = "Japan",
                 isExpanded = true
             )
