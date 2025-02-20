@@ -348,18 +348,6 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
-//        viewModelScope.launch {
-//            cardReaderPaymentController?.paymentState?.distinctUntilChanged { old, new -> old::class == new::class }
-//                ?.collect { paymentState ->
-//                    Log.d("WooPosTotalsViewModel", "Payment state: $paymentState")
-//                    when (paymentState) {
-//                        is CardReaderPaymentState.CollectingPayment -> {
-//                            analyticsTracker.track(ReaderReadyForCardPayment)
-//                        }
-//                        else -> Unit
-//                    }
-//                }
-//        }
     }
 
     private suspend fun handleCollectingPaymentState(paymentState: CardReaderPaymentState.CollectingPayment) {
