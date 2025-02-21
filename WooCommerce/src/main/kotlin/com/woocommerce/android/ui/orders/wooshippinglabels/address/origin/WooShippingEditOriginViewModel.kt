@@ -463,16 +463,16 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onNormalizeAddress(editableAddress: EditableAddress) {
+        addressValidationState.value = AddressValidationState.VerifyingAddress
         launch {
             val address = editableAddress.toAddress()
-            addressValidationState.value = AddressValidationState.VerifyingAddress
             normalizeAddress(address).fold(
                 onSuccess = {
                     addressValidationState.value =
                         AddressValidationState.AddressSelection(it, it.normalizedAddress)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.VerificationFailed
+                    addressValidationState.value = AddressValidationState.VerificationFailed(editableAddress)
                 }
             )
         }
@@ -487,8 +487,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onUpdateNormalizedOriginAddress(selection: AddressValidationState.AddressSelection) {
+        addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
-            addressValidationState.value = AddressValidationState.UpdatingAddress
             updateOriginAddress(selection.selectedAddress, currentAddress.value.id).fold(
                 onSuccess = {
                     fillAddressForm(it)
@@ -503,9 +503,9 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onUpdateOriginAddress(editableAddress: EditableAddress) {
+        addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
             val address = editableAddress.toAddress()
-            addressValidationState.value = AddressValidationState.UpdatingAddress
             updateOriginAddress(address, currentAddress.value.id).fold(
                 onSuccess = {
                     fillAddressForm(it)
@@ -513,7 +513,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
                     currentAddress.value = it
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.AddressUpdateFailed
+                    addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
                 }
             )
         }
