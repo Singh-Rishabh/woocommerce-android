@@ -125,7 +125,7 @@ fun WooShippingCustomsFormScreen(
                     isError = otherRestrictionDetailsInput is InputValue.Error,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     modifier = modifier.fillMaxWidth(),
-                    helperText = otherContentDetailsInput.errorMessageOrNull
+                    helperText = otherRestrictionDetailsInput.errorMessageOrNull
                         ?.let { stringResource(it) }
                         ?: stringResource(R.string.woo_shipping_labels_customs_restriction_details_description)
                 )
