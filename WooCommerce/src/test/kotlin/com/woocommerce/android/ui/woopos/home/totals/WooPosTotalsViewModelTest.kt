@@ -1065,7 +1065,6 @@ class WooPosTotalsViewModelTest {
             verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.GoBackToCheckoutAfterFailedPayment)
         }
 
-//    TODO: This test passes locally but fails on CI. Commenting it out temporarily to unblock the build.
 //    @Test
 //    fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then toast message should be shown`() =
 //        runTest {
