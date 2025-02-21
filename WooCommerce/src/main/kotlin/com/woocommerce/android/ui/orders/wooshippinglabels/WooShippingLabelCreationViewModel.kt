@@ -510,9 +510,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onRetry() {
-        // Retry loading data that may have previously resulted in errors.
         viewState.value = WooShippingViewState.Loading
+
+        // Get order from db
         launch { getOrderInformation() }
+
+        // Fetch account settings and update `storeOptions`
         launch {
             val result = fetchAccountSettings().getOrNull()
             storeOptions.value = StoreOptionsModel.EMPTY
