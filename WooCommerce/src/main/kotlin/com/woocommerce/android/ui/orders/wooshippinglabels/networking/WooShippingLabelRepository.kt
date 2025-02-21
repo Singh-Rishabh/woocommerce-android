@@ -117,4 +117,24 @@ class WooShippingLabelRepository @Inject constructor(
             address = mapper.toAddressDTO(address)
         ).asWooResult { mapper(it) }
     }
+
+    suspend fun updateOriginAddress(
+        site: SiteModel,
+        address: Address,
+        addressId: String?
+    ): WooResult<OriginShippingAddress> {
+        return restClient.updateOriginAddress(
+            site = site,
+            address = mapper.toAddressDTO(address, addressId)
+        ).asWooResult {
+            mapper.toOriginAddress(it.address)
+        }
+            .also { response ->
+                response.model
+                    ?.takeIf { response.isError.not() }
+                    ?.let {
+                        addressDataStore.updateOriginAddress(it)
+                    }
+            }
+    }
 }
