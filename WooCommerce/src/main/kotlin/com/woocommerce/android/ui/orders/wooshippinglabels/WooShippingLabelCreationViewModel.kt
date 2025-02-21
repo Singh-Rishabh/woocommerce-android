@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -54,6 +55,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val getShippableItems: GetShippableItems,
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
+    private val fetchOriginAddresses: FetchOriginAddresses,
     private val getShippingRates: GetShippingRates,
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
@@ -65,6 +67,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order>(emptyOrder)
     private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
+    private val forceFetchedShippingAddresses = MutableSharedFlow<Unit>()
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
@@ -237,7 +240,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getShippingAddresses() {
-        order.combine(observeOriginAddresses()) { order, originAddresses ->
+        combine(
+            order,
+            observeOriginAddresses(),
+            forceFetchedShippingAddresses.onStart { emit(Unit) }
+        ) { order, originAddresses, _ ->
             if (!originAddresses.isNullOrEmpty()) {
                 val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 WooShippingAddresses(
@@ -510,6 +517,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val result = fetchAccountSettings().getOrNull()
             storeOptions.value = StoreOptionsModel.EMPTY
             storeOptions.value = result
+        }
+
+        // Fetch origin address and inform `getShippingAddresses()` via `forceFetchedShippingAddresses`
+        launch {
+            fetchOriginAddresses()
+            forceFetchedShippingAddresses.emit(Unit)
         }
     }
 
