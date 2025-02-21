@@ -10,6 +10,9 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelS
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.network.BaseRequest.GenericErrorType
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
+import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 import javax.inject.Inject
 
@@ -112,10 +115,23 @@ class WooShippingLabelRepository @Inject constructor(
         site: SiteModel,
         address: Address
     ): WooResult<AddressNormalizationModel> {
-        return restClient.normalizeAddress(
+
+        val normalizedAddress = restClient.normalizeAddress(
             site = site,
             address = mapper.toAddressDTO(address)
-        ).asWooResult { mapper(it) }
+        )
+
+        return if (normalizedAddress.result?.success == true) {
+            normalizedAddress.asWooResult { mapper(it) }
+        } else {
+            WooResult(
+                WooError(
+                    type = WooErrorType.INVALID_RESPONSE,
+                    original = GenericErrorType.INVALID_RESPONSE,
+                    message = "Address normalization failed"
+                )
+            )
+        }
     }
 
     suspend fun updateOriginAddress(
@@ -123,18 +139,28 @@ class WooShippingLabelRepository @Inject constructor(
         address: Address,
         addressId: String?
     ): WooResult<OriginShippingAddress> {
-        return restClient.updateOriginAddress(
+        val updatedAddress = restClient.updateOriginAddress(
             site = site,
             address = mapper.toAddressDTO(address, addressId)
-        ).asWooResult {
-            mapper.toOriginAddress(it.address)
+        )
+
+        return if (updatedAddress.result?.success == true) {
+            updatedAddress.asWooResult { mapper.toOriginAddress(it.address) }
+                .also { response ->
+                    response.model
+                        ?.takeIf { response.isError.not() }
+                        ?.let {
+                            addressDataStore.updateOriginAddress(it)
+                        }
+                }
+        } else {
+            WooResult(
+                WooError(
+                    type = WooErrorType.INVALID_RESPONSE,
+                    original = GenericErrorType.INVALID_RESPONSE,
+                    message = "Address update failed"
+                )
+            )
         }
-            .also { response ->
-                response.model
-                    ?.takeIf { response.isError.not() }
-                    ?.let {
-                        addressDataStore.updateOriginAddress(it)
-                    }
-            }
     }
 }
