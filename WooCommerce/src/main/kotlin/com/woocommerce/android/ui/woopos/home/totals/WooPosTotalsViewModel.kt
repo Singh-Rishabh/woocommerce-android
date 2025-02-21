@@ -33,6 +33,9 @@ import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Payme
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ReaderReadyForCardPayment
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.UiStringParser
@@ -152,6 +155,7 @@ class WooPosTotalsViewModel @Inject constructor(
         when (event) {
             is WooPosTotalsUIEvent.OnNewTransactionClicked -> viewModelScope.launch {
                 childrenToParentEventSender.sendToParent(NewTransactionClicked)
+                analyticsTracker.track(CreateNewOrderTapped)
             }
 
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
@@ -174,6 +178,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
     private fun handleEmailReceiptClicked() {
         viewModelScope.launch {
+            analyticsTracker.track(EmailReceiptTapped)
             if (isReceiptSendingSupportedValue.await()) {
                 childrenToParentEventSender.sendToParent(
                     ToEmailReceipt(dataState.value.orderId)
@@ -369,6 +374,7 @@ class WooPosTotalsViewModel @Inject constructor(
             uiState.value = buildWooPosTotalsViewState(order)
             childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
+        analyticsTracker.track(ReaderReadyForCardPayment)
     }
 
     private suspend fun handleReaderLoadingPaymentState() {

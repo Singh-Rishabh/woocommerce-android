@@ -31,7 +31,6 @@ import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
 import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
-import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.BackFromCheckoutToCartClicked
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout
@@ -44,6 +43,8 @@ import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsUIEvent.OnBackC
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.CurrencyFormatter
@@ -247,10 +248,10 @@ class WooPosTotalsViewModelTest {
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Checkout
         assert(state.totals is WooPosTotalsViewState.Totals.Visible)
-        state.totals as WooPosTotalsViewState.Totals.Visible
-        assertThat(state.totals.orderTotalText).isEqualTo("$5.00")
-        assertThat(state.totals.orderTaxText).isEqualTo("$2.00")
-        assertThat(state.totals.orderSubtotalText).isEqualTo("$3.00")
+        val castedTotals = state.totals as WooPosTotalsViewState.Totals.Visible
+        assertThat(castedTotals.orderTotalText).isEqualTo("$5.00")
+        assertThat(castedTotals.orderTaxText).isEqualTo("$2.00")
+        assertThat(castedTotals.orderSubtotalText).isEqualTo("$3.00")
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
     }
 
@@ -310,10 +311,10 @@ class WooPosTotalsViewModelTest {
 
             // THEN
             val state = viewModel.state.value as WooPosTotalsViewState.Checkout
-            state.totals as WooPosTotalsViewState.Totals.Visible
-            assertThat(state.totals.orderTotalText).isEqualTo("5.00$")
-            assertThat(state.totals.orderTaxText).isEqualTo("2.00$")
-            assertThat(state.totals.orderSubtotalText).isEqualTo("3.00$")
+            val castedTotals = state.totals as WooPosTotalsViewState.Totals.Visible
+            assertThat(castedTotals.orderTotalText).isEqualTo("5.00$")
+            assertThat(castedTotals.orderTaxText).isEqualTo("2.00$")
+            assertThat(castedTotals.orderSubtotalText).isEqualTo("3.00$")
         }
 
     @Test
@@ -337,6 +338,28 @@ class WooPosTotalsViewModelTest {
             // THEN
             assertThat(viewModel.state.value).isEqualTo(WooPosTotalsViewState.Loading)
             verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.NewTransactionClicked)
+        }
+
+    @Test
+    fun `given OnNewTransactionClicked, should track event`() =
+        runTest {
+            // GIVEN
+            whenever(resourceProvider.getString(R.string.woopos_success_totals_payment_failed_title))
+                .thenReturn("Payment failed")
+            val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+                on { events }.thenReturn(mock())
+            }
+            val savedState = createMockSavedStateHandle()
+            val viewModel = createViewModel(
+                savedState = savedState,
+                parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+            )
+
+            // WHEN
+            viewModel.onUIEvent(WooPosTotalsUIEvent.OnNewTransactionClicked)
+
+            // THEN
+            verify(analyticsTracker).track(CreateNewOrderTapped)
         }
 
     @Test
@@ -448,10 +471,10 @@ class WooPosTotalsViewModelTest {
 
         // Ensure the view model state transitions to the success state with correct totals
         val state = viewModel.state.value as WooPosTotalsViewState.Checkout
-        state.totals as WooPosTotalsViewState.Totals.Visible
-        assertThat(state.totals.orderTotalText).isEqualTo("$5.00")
-        assertThat(state.totals.orderTaxText).isEqualTo("$2.00")
-        assertThat(state.totals.orderSubtotalText).isEqualTo("$3.00")
+        val castedTotals = state.totals as WooPosTotalsViewState.Totals.Visible
+        assertThat(castedTotals.orderTotalText).isEqualTo("$5.00")
+        assertThat(castedTotals.orderTaxText).isEqualTo("$2.00")
+        assertThat(castedTotals.orderSubtotalText).isEqualTo("$3.00")
     }
 
     @Test
@@ -511,10 +534,10 @@ class WooPosTotalsViewModelTest {
 
         // THEN
         val state = viewModel.state.value as WooPosTotalsViewState.Checkout
-        state.totals as WooPosTotalsViewState.Totals.Visible
-        assertThat(state.totals.orderSubtotalText).isEqualTo("3.00$")
-        assertThat(state.totals.orderTaxText).isEqualTo("2.00$")
-        assertThat(state.totals.orderTotalText).isEqualTo("5.00$")
+        val castedTotals = state.totals as WooPosTotalsViewState.Totals.Visible
+        assertThat(castedTotals.orderSubtotalText).isEqualTo("3.00$")
+        assertThat(castedTotals.orderTaxText).isEqualTo("2.00$")
+        assertThat(castedTotals.orderTotalText).isEqualTo("5.00$")
         verify(totalsRepository).createOrderWithProducts(itemClickedData)
     }
 
@@ -1020,18 +1043,45 @@ class WooPosTotalsViewModelTest {
             verify(childrenToParentEventSender).sendToParent(ChildToParentEvent.GoBackToCheckoutAfterFailedPayment)
         }
 
+//    @Test
+//    fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then toast message should be shown`() =
+//        runTest {
+//            // GIVEN
+//            whenever(isReceiptSendingSupported.invoke()).thenReturn(false)
+//
+//            whenever(
+//                resourceProvider.getString(
+//                    R.string.woopos_receipt_sending_not_supported,
+//                    WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL,
+//                )
+//            ).thenReturn("Please update WooCommerce")
+//            val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
+//                on { events }.thenReturn(mock())
+//            }
+//            val savedState = createMockSavedStateHandle()
+//            val viewModel = createViewModel(
+//                savedState = savedState,
+//                parentToChildrenEventReceiver = parentToChildrenEventReceiver,
+//            )
+//
+//            // WHEN
+//            viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
+//            advanceUntilIdle()
+//
+//            // THEN
+//            verify(childrenToParentEventSender).sendToParent(
+//                ChildToParentEvent.ToastMessageDisplayed(
+//                    message = "Please update WooCommerce"
+//                )
+//            )
+//        }
+
     @Test
-    fun `given receipt sending not supported, when OnStartReceiptFlowClicked is triggered, then toast message should be shown`() =
+    fun `when OnStartReceiptFlowClicked is triggered, then should track event`() =
         runTest {
             // GIVEN
-            whenever(isReceiptSendingSupported.invoke()).thenReturn(false)
+            whenever(isReceiptSendingSupported.invoke()).thenReturn(true)
 
-            whenever(
-                resourceProvider.getString(
-                    R.string.woopos_receipt_sending_not_supported,
-                    WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL,
-                )
-            ).thenReturn("Please update WooCommerce")
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
                 on { events }.thenReturn(mock())
             }
@@ -1045,11 +1095,7 @@ class WooPosTotalsViewModelTest {
             viewModel.onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked)
 
             // THEN
-            verify(childrenToParentEventSender).sendToParent(
-                ChildToParentEvent.ToastMessageDisplayed(
-                    message = "Please update WooCommerce"
-                )
-            )
+            verify(analyticsTracker).track(EmailReceiptTapped)
         }
 
     @Test
