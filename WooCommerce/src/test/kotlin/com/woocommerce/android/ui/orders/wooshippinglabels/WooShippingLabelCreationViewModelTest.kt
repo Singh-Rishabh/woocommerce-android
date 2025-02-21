@@ -225,6 +225,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             getShippableItems = getShippableItems,
             currencyFormatter = currencyFormatter,
             observeOriginAddresses = observeOriginAddresses,
+            fetchOriginAddresses = mock(),
             getShippingRates = getShippingRates,
             purchaseShippingLabel = purchaseShippingLabel,
             observeStoreOptions = observeStoreOptions,
