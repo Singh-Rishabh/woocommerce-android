@@ -465,7 +465,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
         val isCompanyExpanded: Boolean,
         val editableAddress: EditableAddress,
         val loading: LoadingState,
-        val shouldDisplayLoadingCountriesError: Boolean,
+        val error: EditAddressError?,
         val shouldUseStatesInput: Boolean,
         val addressStatus: AddressStatus,
         val addressValidationState: AddressValidationState
@@ -478,6 +478,11 @@ class WooShippingEditOriginViewModel @Inject constructor(
             val message: String
         ) : LoadingState()
     }
+
+    data class EditAddressError(
+        val message: String,
+        val onRetry: () -> Unit
+    )
 
     sealed class LocationState {
         data object Loading : LocationState()
