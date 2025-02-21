@@ -14,8 +14,6 @@ import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardRea
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState
 import com.woocommerce.android.ui.payments.cardreader.payment.controller.CardReaderPaymentOrRefundState.CardReaderPaymentState
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
-import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported
-import com.woocommerce.android.ui.woopos.emailreceipt.WooPosEmailReceiptIsSendingSupported.Companion.WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.NavigationEvent.ToCashPayment
@@ -44,9 +42,6 @@ import com.woocommerce.android.util.WooLog.T
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -66,7 +61,6 @@ class WooPosTotalsViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
-    private val isReceiptSendingSupported: WooPosEmailReceiptIsSendingSupported,
     private val cardReaderPaymentControllerFactory: WooPosCardReaderPaymentControllerFactory,
     private val uiStringParser: UiStringParser,
     savedState: SavedStateHandle,
@@ -76,10 +70,6 @@ class WooPosTotalsViewModel @Inject constructor(
         private const val EMPTY_ORDER_ID = -1L
         private const val KEY_STATE = "woo_pos_totals_data_state"
         private val InitialState = WooPosTotalsViewState.Loading
-    }
-
-    private val isReceiptSendingSupportedValue: Deferred<Boolean> by lazy {
-        viewModelScope.async((Dispatchers.IO)) { isReceiptSendingSupported() }
     }
 
     private val uiState: MutableStateFlow<WooPosTotalsViewState> =
@@ -112,7 +102,6 @@ class WooPosTotalsViewModel @Inject constructor(
     init {
         listenUpEvents()
         observeCardReaderStatus()
-        initIsReceiptSendingSupportedValue()
     }
 
     private fun observeCardReaderStatus() {
@@ -179,20 +168,9 @@ class WooPosTotalsViewModel @Inject constructor(
     private fun handleEmailReceiptClicked() {
         viewModelScope.launch {
             analyticsTracker.track(EmailReceiptTapped)
-            if (isReceiptSendingSupportedValue.await()) {
-                childrenToParentEventSender.sendToParent(
-                    ToEmailReceipt(dataState.value.orderId)
-                )
-            } else {
-                childrenToParentEventSender.sendToParent(
-                    ToastMessageDisplayed(
-                        message = resourceProvider.getString(
-                            R.string.woopos_receipt_sending_not_supported,
-                            WC_VERSION_SUPPORTS_SENDING_RECEIPTS_BY_EMAIL,
-                        )
-                    )
-                )
-            }
+            childrenToParentEventSender.sendToParent(
+                ToEmailReceipt(dataState.value.orderId)
+            )
         }
     }
 
@@ -497,12 +475,6 @@ class WooPosTotalsViewModel @Inject constructor(
                 R.string.woopos_success_totals_error_reader_not_connected_cta_button_label
             ),
         )
-
-    private fun initIsReceiptSendingSupportedValue() {
-        viewModelScope.launch {
-            isReceiptSendingSupportedValue.await()
-        }
-    }
 
     @Parcelize
     private data class TotalsDataState(
