@@ -603,13 +603,19 @@ fun EditableAddress.toAddress(): Address {
 sealed class AddressValidationState {
     data object NotStarted : AddressValidationState()
     data object VerifyingAddress : AddressValidationState()
-    data object VerificationFailed : AddressValidationState()
+    data class VerificationFailed(
+        val editableAddress: EditableAddress
+    ) : AddressValidationState()
+
     data class AddressSelection(
         val addressNormalization: AddressNormalizationModel,
         val selectedAddress: Address
     ) : AddressValidationState()
     data object UpdatingAddress : AddressValidationState()
-    data object AddressUpdateFailed : AddressValidationState()
+    data class AddressUpdateFailed(
+        val editableAddress: EditableAddress
+    ) : AddressValidationState()
+
     data class NormalizedAddressUpdateFailed(
         val selection: AddressSelection,
     ) : AddressValidationState()
