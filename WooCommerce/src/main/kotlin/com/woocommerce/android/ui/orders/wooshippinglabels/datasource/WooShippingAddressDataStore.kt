@@ -36,4 +36,6 @@ class WooShippingAddressDataStore @Inject constructor(
             preferences[stringPreferencesKey(getOriginAddressesKey())] = gson.toJson(addresses)
         }
     }
+
+    suspend fun clearOriginAddresses() = dataStore.edit { it.remove(stringPreferencesKey(getOriginAddressesKey())) }
 }
