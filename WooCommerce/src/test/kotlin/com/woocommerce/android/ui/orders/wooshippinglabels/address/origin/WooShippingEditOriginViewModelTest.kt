@@ -997,4 +997,95 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         assertThat(result.error).isNotNull()
     }
+
+    @Test
+    fun `when the address selection is expanded then prevent back navigation`() = testBlocking {
+        val initialAddress = OriginShippingAddress.EMPTY
+        val updatedAddress = EditableAddress(postalCode = InputValue("12345"))
+        val enteredAddress = EditableAddress(postalCode = InputValue("12345")).toAddress()
+        val suggestedAddress = enteredAddress.copy(postcode = "12345-1000")
+
+        val normalizeAddressResponse = AddressNormalizationModel(
+            address = enteredAddress,
+            normalizedAddress = suggestedAddress,
+            isTrivial = false
+        )
+
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        whenever(normalizeAddress.invoke(any())).doReturn(Result.success(normalizeAddressResponse))
+        whenever(resourceProvider.getString(any())).doReturn("error")
+        Snapshot.withMutableSnapshot {
+            createViewModel(initialAddress)
+        }
+
+        advanceUntilIdle()
+
+        sut.onNormalizeAddress(updatedAddress)
+
+        var result = sut.viewState.value
+        assertThat(result.addressValidationState).isInstanceOf(AddressValidationState.AddressSelection::class.java)
+
+        val shouldNavigateBack = sut.allowBackNavigation()
+        assertThat(shouldNavigateBack).isFalse()
+    }
+
+    @Test
+    fun `when the address selection is expanded with an error then prevent back navigation`() = testBlocking {
+        val initialAddress = OriginShippingAddress.EMPTY
+        val enteredAddress = EditableAddress(postalCode = InputValue("12345")).toAddress()
+        val suggestedAddress = enteredAddress.copy(postcode = "12345-1000")
+        val normalizeAddressResponse = AddressNormalizationModel(
+            address = enteredAddress,
+            normalizedAddress = suggestedAddress,
+            isTrivial = false
+        )
+
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
+        whenever(resourceProvider.getString(any())).doReturn("error")
+        Snapshot.withMutableSnapshot {
+            createViewModel(initialAddress)
+        }
+
+        advanceUntilIdle()
+
+        sut.onUpdateNormalizedOriginAddress(
+            AddressValidationState.AddressSelection(
+                addressNormalization = normalizeAddressResponse,
+                selectedAddress = suggestedAddress
+            )
+        )
+
+        val result = sut.viewState.value
+        assertThat(result.addressValidationState)
+            .isInstanceOf(AddressValidationState.NormalizedAddressUpdateFailed::class.java)
+
+        assertThat(result.error).isNotNull()
+
+        val shouldNavigateBack = sut.allowBackNavigation()
+        assertThat(shouldNavigateBack).isFalse()
+    }
+
+    @Test
+    fun `when the address selection is NOT expanded then allow back navigation`() = testBlocking {
+        whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
+        whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
+        whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
+        Snapshot.withMutableSnapshot {
+            createViewModel(OriginShippingAddress.EMPTY)
+        }
+
+        advanceUntilIdle()
+
+        val result = sut.viewState.value
+
+        assertThat(result.addressValidationState).isInstanceOf(AddressValidationState.NotStarted::class.java)
+
+        val shouldNavigateBack = sut.allowBackNavigation()
+        assertThat(shouldNavigateBack).isTrue()
+    }
 }
