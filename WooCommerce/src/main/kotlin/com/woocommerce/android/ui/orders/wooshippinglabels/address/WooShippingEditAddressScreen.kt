@@ -125,6 +125,7 @@ fun WooShippingEditAddressScreen(
         onNormalizeAddress = viewModel::onNormalizeAddress,
         onUpdateOriginAddress = viewModel::onUpdateOriginAddress,
         onUpdateNormalizedOriginAddress = viewModel::onUpdateNormalizedOriginAddress,
+        onNavigateBack = viewModel::onNavigateBack,
         modifier = modifier
     )
 }
@@ -155,6 +156,7 @@ fun WooShippingEditAddressScreen(
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -170,7 +172,7 @@ fun WooShippingEditAddressScreen(
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.woo_shipping_edit_origin_address_title),
-                onNavigationButtonClick = {},
+                onNavigationButtonClick = onNavigateBack,
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack
             )
         },
