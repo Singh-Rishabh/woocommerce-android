@@ -115,7 +115,6 @@ class WooShippingLabelRepository @Inject constructor(
         site: SiteModel,
         address: Address
     ): WooResult<AddressNormalizationModel> {
-
         val normalizedAddress = restClient.normalizeAddress(
             site = site,
             address = mapper.toAddressDTO(address)
