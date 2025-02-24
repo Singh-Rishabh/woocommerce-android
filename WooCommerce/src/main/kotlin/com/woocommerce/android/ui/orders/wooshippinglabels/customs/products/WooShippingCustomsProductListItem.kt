@@ -41,28 +41,7 @@ fun WooShippingCustomsProductListItem(
         .let { if (it) 180f else 0f }
         .let { animateFloatAsState(targetValue = it, label = "rotationAnimation") }
 
-    if (itemData.isExpanded) {
-        WooShippingCustomsProductExpandedListItem(
-            itemData = itemData,
-            onDescriptionChanged = { },
-            onTariffChanged = { },
-            onValuePerUnitChanged = { },
-            onWeightPerUnitChanged = { },
-            modifier = modifier
-        )
-    } else {
-        WooShippingCustomsProductCollapsedListItem(
-            itemData = itemData,
-            modifier = modifier
-        )
-    }
-}
 
-@Composable
-fun WooShippingCustomsProductCollapsedListItem(
-    modifier: Modifier,
-    itemData: WooShippingCustomsProductUIModel
-) {
     Column(modifier = modifier
         .fillMaxWidth()
         .background(
@@ -89,6 +68,31 @@ fun WooShippingCustomsProductCollapsedListItem(
             )
         }
 
+        if (itemData.isExpanded) {
+            WooShippingCustomsProductExpandedListItem(
+                itemData = itemData,
+                onDescriptionChanged = { },
+                onTariffChanged = { },
+                onValuePerUnitChanged = { },
+                onWeightPerUnitChanged = { },
+                modifier = modifier
+            )
+        } else {
+            WooShippingCustomsProductCollapsedListItem(
+                itemData = itemData,
+                modifier = modifier
+            )
+        }
+    }
+}
+
+@Composable
+fun WooShippingCustomsProductCollapsedListItem(
+    modifier: Modifier,
+    itemData: WooShippingCustomsProductUIModel
+) {
+    Column(modifier = modifier.fillMaxWidth()
+    ) {
         Spacer(modifier.padding(vertical = 4.dp))
 
         Row {
@@ -125,31 +129,7 @@ fun WooShippingCustomsProductExpandedListItem(
     onValuePerUnitChanged: (String) -> Unit,
     onWeightPerUnitChanged: (String) -> Unit
 ) {
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .background(
-            color = MaterialTheme.colors.surface,
-            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-        )
-        .border(
-            width = dimensionResource(R.dimen.minor_10),
-            color = colorResource(R.color.woo_black),
-            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-        )
-        .padding(16.dp)
-    ) {
-        Row {
-            Text(
-                text = itemData.name,
-                style = MaterialTheme.typography.subtitle1,
-                fontWeight = FontWeight.Bold,
-                modifier = modifier.weight(1f)
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_up),
-                contentDescription = null
-            )
-        }
+    Column(modifier = modifier.fillMaxWidth()) {
         Divider(modifier.padding(vertical = 8.dp))
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
