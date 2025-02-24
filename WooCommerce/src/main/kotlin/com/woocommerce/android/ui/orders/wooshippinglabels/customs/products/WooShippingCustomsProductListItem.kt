@@ -68,7 +68,7 @@ fun WooShippingCustomsProductListItem(
         Row {
             Text(
                 text = itemData.name,
-                style = MaterialTheme.typography.titleSmall,
+                style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = modifier.weight(1f)
             )
@@ -113,23 +113,23 @@ fun WooShippingCustomsProductCollapsedListItem(
         Row {
             Text(
                 text = itemData.description.currentInput,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = modifier.weight(1f)
             )
             Text(
                 text = itemData.tariffNumber.currentInput,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.bodySmall
             )
         }
         Row {
             Text(
                 text = itemData.originCountry,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodySmall,
                 modifier = modifier.weight(1f)
             )
             Text(
                 text = itemData.valueAndWeightForDisplay,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
