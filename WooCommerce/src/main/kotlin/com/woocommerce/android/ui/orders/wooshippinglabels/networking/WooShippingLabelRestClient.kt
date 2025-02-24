@@ -134,4 +134,23 @@ class WooShippingLabelRestClient @Inject constructor(
 
         return result.toWooPayload()
     }
+
+    suspend fun updateOriginAddress(
+        site: SiteModel,
+        address: AddressDTO,
+    ): WooPayload<UpdateAddressResponseDTO> {
+        val url = "/wcshipping/v1/address/update_origin/"
+
+        val result = wooNetwork.executePostGsonRequest(
+            site = site,
+            path = url,
+            body = mapOf(
+                "address" to address.copy(isVerified = true),
+                "isVerified" to true // We always verify the address before saving it
+            ),
+            clazz = UpdateAddressResponseDTO::class.java,
+        )
+
+        return result.toWooPayload()
+    }
 }

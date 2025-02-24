@@ -141,6 +141,25 @@ class WooShippingNetworkingMapper @Inject constructor(
         )
     }
 
+    fun toOriginAddress(addressDTO: AddressDTO): OriginShippingAddress {
+        return OriginShippingAddress(
+            id = addressDTO.id.orEmpty(),
+            address1 = addressDTO.address.orEmpty(),
+            address2 = addressDTO.address2.orEmpty(),
+            city = addressDTO.city.orEmpty(),
+            state = addressDTO.state.orEmpty(),
+            postcode = addressDTO.postcode.orEmpty(),
+            country = addressDTO.country.orEmpty(),
+            firstName = addressDTO.firstName.orEmpty(),
+            lastName = addressDTO.lastName.orEmpty(),
+            company = addressDTO.company.orEmpty(),
+            phone = addressDTO.phone.orEmpty(),
+            email = addressDTO.email.orEmpty(),
+            isDefault = addressDTO.defaultAddress,
+            isVerified = addressDTO.isVerified,
+        )
+    }
+
     operator fun invoke(normalizationResponseDTO: NormalizationResponseDTO): AddressNormalizationModel {
         return AddressNormalizationModel(
             address = invoke(normalizationResponseDTO.address),
@@ -228,8 +247,9 @@ class WooShippingNetworkingMapper @Inject constructor(
         }
     }
 
-    fun toAddressDTO(address: Address): AddressDTO {
+    fun toAddressDTO(address: Address, id: String? = null): AddressDTO {
         return AddressDTO(
+            id = id,
             address = address.address1,
             address2 = address.address2,
             city = address.city,
