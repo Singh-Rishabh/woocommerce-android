@@ -59,7 +59,7 @@ fun RoundedBorderDropDownWithLabel(
 private fun RoundedBorderDropDownWithLabelPreview() {
     Column(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(MaterialTheme.colorScheme.onPrimary)
             .padding(16.dp)
     ) {
         RoundedBorderDropDownWithLabel(

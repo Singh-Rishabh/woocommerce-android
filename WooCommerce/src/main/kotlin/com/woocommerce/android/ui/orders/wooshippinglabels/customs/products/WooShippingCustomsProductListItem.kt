@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -55,8 +56,9 @@ fun WooShippingCustomsProductListItem(
 
     Column(modifier = modifier
         .fillMaxWidth()
+        .animateContentSize()
         .background(
-            color = MaterialTheme.colorScheme.surface,
+            color = MaterialTheme.colorScheme.onPrimary,
             shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
         )
         .border(
