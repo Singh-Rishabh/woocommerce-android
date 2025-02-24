@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
@@ -99,7 +100,8 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val restrictionType: RestrictionType = RestrictionType.NONE,
         val otherRestrictionInput: InputValue = InputValue.Empty,
         val itnValue: InputValue = InputValue.Empty,
-        val returnToSenderChecked: Boolean = false
+        val returnToSenderChecked: Boolean = false,
+        val shippingProducts: List<WooShippingCustomsProductUIModel> = emptyList()
     ) : Parcelable {
         val shouldDisplayContentTypeInput: Boolean
             get() = contentType == ContentType.OTHER
