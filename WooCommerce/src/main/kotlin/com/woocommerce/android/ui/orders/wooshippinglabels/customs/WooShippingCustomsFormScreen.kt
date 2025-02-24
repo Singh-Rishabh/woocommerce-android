@@ -54,10 +54,9 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onOtherContentDetailsInputChanged = viewModel::onOtherContentInputChanged,
         onOtherRestrictionDetailsInputChanged = viewModel::onRestrictionDetailsInputChanged,
         onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
-        onProductExpanded = viewModel::onProductExpanded
-    ) {
-
-    }
+        onProductExpanded = viewModel::onProductExpanded,
+        onAddCustomsDataClick = viewModel::onAddCustomsDataClick
+    )
 }
 
 @Composable

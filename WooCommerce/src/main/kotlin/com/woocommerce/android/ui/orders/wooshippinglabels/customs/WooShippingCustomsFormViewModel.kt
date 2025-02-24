@@ -105,6 +105,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         }
     }
 
+    fun onAddCustomsDataClick() {
+        triggerEvent(FinishCustomsForm)
+    }
+
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,
@@ -165,6 +169,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     data class ShowContentTypeDialog(val currentSelection: ContentType) : MultiLiveEvent.Event()
     data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType) : MultiLiveEvent.Event()
+    object FinishCustomsForm : MultiLiveEvent.Event()
 
     companion object {
         /**
