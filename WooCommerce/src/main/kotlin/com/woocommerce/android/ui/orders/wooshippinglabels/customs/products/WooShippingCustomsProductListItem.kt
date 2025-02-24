@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +55,7 @@ fun WooShippingCustomsProductListItem(
     Column(modifier = modifier
         .fillMaxWidth()
         .background(
-            color = MaterialTheme.colors.surface,
+            color = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
         )
         .border(
@@ -67,13 +68,13 @@ fun WooShippingCustomsProductListItem(
         Row {
             Text(
                 text = itemData.name,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = modifier.weight(1f)
             )
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
-                tint = MaterialTheme.colors.primary,
+                tint = MaterialTheme.colorScheme.primary,
                 contentDescription = stringResource(id = R.string.shipping_label_package_details_items_expand_content_description),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
@@ -112,23 +113,23 @@ fun WooShippingCustomsProductCollapsedListItem(
         Row {
             Text(
                 text = itemData.description.currentInput,
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = modifier.weight(1f)
             )
             Text(
                 text = itemData.tariffNumber.currentInput,
-                style = MaterialTheme.typography.caption
+                style = MaterialTheme.typography.labelMedium
             )
         }
         Row {
             Text(
                 text = itemData.originCountry,
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.labelMedium,
                 modifier = modifier.weight(1f)
             )
             Text(
                 text = itemData.valueAndWeightForDisplay,
-                style = MaterialTheme.typography.caption,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }
@@ -144,7 +145,7 @@ fun WooShippingCustomsProductExpandedListItem(
     onWeightPerUnitChanged: (String) -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Divider(modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier.padding(vertical = 8.dp))
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             WCOutlinedTextField(
