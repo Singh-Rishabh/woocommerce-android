@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +37,10 @@ fun WooShippingCustomsProductListItem(
     itemData: WooShippingCustomsProductUIModel,
     modifier: Modifier = Modifier
 ) {
+    val rotationAnimation = itemData.isExpanded
+        .let { if (it) 180f else 0f }
+        .let { animateFloatAsState(targetValue = it, label = "rotationAnimation") }
+
     if (itemData.isExpanded) {
         WooShippingCustomsProductExpandedListItem(
             itemData = itemData,
