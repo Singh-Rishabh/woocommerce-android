@@ -31,6 +31,8 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductListItem
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 
 @Composable
 fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
@@ -45,6 +47,7 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
         shouldDisplayContentTypeInput = viewState?.shouldDisplayContentTypeInput ?: false,
         shouldDisplayRestrictionTypeInput = viewState?.shouldDisplayRestrictionTypeInput ?: false,
+        shippingProducts = viewState?.shippingProducts ?: emptyList(),
         onContentTypeClick = viewModel::onContentTypeClick,
         onRestrictionTypeClick = viewModel::onRestrictionTypeClick,
         onItnChanged = viewModel::onITNChanged,
@@ -67,6 +70,7 @@ fun WooShippingCustomsFormScreen(
     isAddCustomsButtonEnabled: Boolean,
     shouldDisplayContentTypeInput: Boolean,
     shouldDisplayRestrictionTypeInput: Boolean,
+    shippingProducts: List<WooShippingCustomsProductUIModel>,
     onContentTypeClick: () -> Unit,
     onRestrictionTypeClick: () -> Unit,
     onItnChanged: (String) -> Unit,
@@ -162,6 +166,13 @@ fun WooShippingCustomsFormScreen(
                     )
                 )
             }
+
+            shippingProducts.forEach { product ->
+                WooShippingCustomsProductListItem(
+                    modifier = modifier.fillMaxWidth(),
+                    itemData = product
+                )
+            }
         }
         Button(
             modifier = modifier.fillMaxWidth(),
@@ -187,6 +198,26 @@ fun PreviewWooShippingCustomsFormScreen() {
             isAddCustomsButtonEnabled = true,
             shouldDisplayContentTypeInput = true,
             shouldDisplayRestrictionTypeInput = false,
+            shippingProducts = listOf(
+                WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Data("Product Description"),
+                    tariffNumber = InputValue.Data("123456"),
+                    valuePerUnit = InputValue.Data("10.00"),
+                    weightPerUnit = InputValue.Data("1.00"),
+                    originCountry = "US",
+                    isExpanded = false
+                ),
+                WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Data("Product Description"),
+                    tariffNumber = InputValue.Data("123456"),
+                    valuePerUnit = InputValue.Data("10.00"),
+                    weightPerUnit = InputValue.Data("1.00"),
+                    originCountry = "US",
+                    isExpanded = true
+                )
+            ),
             onContentTypeClick = {},
             onRestrictionTypeClick = {},
             onItnChanged = {},

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.components.RoundedBorderDropDownWithLabel
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 
 @Composable
@@ -196,6 +197,13 @@ fun WooShippingCustomsProductExpandedListItem(
                         ?.let { stringResource(it) }
                 )
             }
+
+            RoundedBorderDropDownWithLabel(
+                label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_origin_country),
+                text = itemData.originCountry,
+                onClick = { },
+                modifier = modifier.fillMaxWidth()
+            )
         }
     }
 }
