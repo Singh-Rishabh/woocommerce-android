@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,6 +39,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCu
 @Composable
 fun WooShippingCustomsProductListItem(
     itemData: WooShippingCustomsProductUIModel,
+    onExpand: (isExtended: Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val rotationAnimation = itemData.isExpanded
@@ -63,6 +64,7 @@ fun WooShippingCustomsProductListItem(
             color = borderColor,
             shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
         )
+        .clickable { onExpand(itemData.isExpanded.not()) }
         .padding(16.dp)
     ) {
         Row {
@@ -222,7 +224,8 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
                     weightPerUnit = InputValue.Data("0.3kg"),
                     originCountry = "Japan",
                     isExpanded = false
-                )
+                ),
+                onExpand = { }
             )
         }
     }
@@ -242,7 +245,8 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
                     weightPerUnit = InputValue.Data("0.3kg"),
                     originCountry = "Japan",
                     isExpanded = true
-                )
+                ),
+                onExpand = { }
             )
         }
     }

@@ -54,7 +54,9 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onOtherContentDetailsInputChanged = viewModel::onOtherContentInputChanged,
         onOtherRestrictionDetailsInputChanged = viewModel::onRestrictionDetailsInputChanged,
         onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
+        onProductExpanded = viewModel::onProductExpanded
     ) {
+
     }
 }
 
@@ -77,6 +79,7 @@ fun WooShippingCustomsFormScreen(
     onReturnToSenderChanged: (Boolean) -> Unit,
     onOtherContentDetailsInputChanged: (String) -> Unit,
     onOtherRestrictionDetailsInputChanged: (String) -> Unit,
+    onProductExpanded: (WooShippingCustomsProductUIModel, Boolean) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -170,7 +173,8 @@ fun WooShippingCustomsFormScreen(
             shippingProducts.forEach { product ->
                 WooShippingCustomsProductListItem(
                     modifier = modifier.fillMaxWidth(),
-                    itemData = product
+                    itemData = product,
+                    onExpand = { onProductExpanded(product, it) }
                 )
             }
         }
@@ -224,6 +228,7 @@ fun PreviewWooShippingCustomsFormScreen() {
             onReturnToSenderChanged = {},
             onOtherContentDetailsInputChanged = {},
             onOtherRestrictionDetailsInputChanged = {},
+            onProductExpanded = { _, _ -> },
             onAddCustomsDataClick = {}
         )
     }

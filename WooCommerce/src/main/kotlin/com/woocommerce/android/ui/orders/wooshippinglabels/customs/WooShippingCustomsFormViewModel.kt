@@ -93,6 +93,18 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         _viewState.update { it.copy(itnValue = input) }
     }
 
+    fun onProductExpanded(itemData: WooShippingCustomsProductUIModel, isExpanded: Boolean) {
+        _viewState.update { state ->
+            state.shippingProducts.map { product ->
+                if (product == itemData) {
+                    product.copy(isExpanded = isExpanded)
+                } else {
+                    product
+                }
+            }.let { state.copy(shippingProducts = it) }
+        }
+    }
+
     @Parcelize
     data class ViewState(
         val contentType: ContentType = ContentType.MERCHANDISE,
