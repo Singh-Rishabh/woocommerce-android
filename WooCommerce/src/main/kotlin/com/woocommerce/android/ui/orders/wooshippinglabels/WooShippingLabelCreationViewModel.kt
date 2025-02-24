@@ -30,10 +30,12 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +45,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
@@ -67,7 +70,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order>(emptyOrder)
     private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
-    private val forceFetchedShippingAddresses = MutableSharedFlow<Unit>()
+    private val loadTrigger = MutableSharedFlow<Unit>()
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
@@ -240,11 +243,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getShippingAddresses() {
-        combine(
-            order,
-            observeOriginAddresses(),
-            forceFetchedShippingAddresses.onStart { emit(Unit) }
-        ) { order, originAddresses, _ ->
+        combine(order, observeOriginAddresses()) { order, originAddresses ->
             if (!originAddresses.isNullOrEmpty()) {
                 val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 WooShippingAddresses(
@@ -293,8 +292,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelection,
             uiState,
             purchaseState,
-            customsState
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState ->
+            customsState,
+            loadTrigger.onStart { emit(Unit) }
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, _ ->
             if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -512,20 +512,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onRetry() {
         viewState.value = WooShippingViewState.Loading
 
-        // Get order from db
-        launch { getOrderInformation() }
-
-        // Fetch account settings and update `storeOptions`
+        // Retry loading data that may have previously resulted in errors.
         launch {
-            val result = fetchAccountSettings().getOrNull()
-            storeOptions.value = StoreOptionsModel.EMPTY
-            storeOptions.value = result
-        }
-
-        // Fetch origin address and inform `getShippingAddresses()` via `forceFetchedShippingAddresses`
-        launch {
-            fetchOriginAddresses()
-            forceFetchedShippingAddresses.emit(Unit)
+            try {
+                joinAll(
+                    launch { getOrderInformation() },
+                    launch { fetchAccountSettings() },
+                    launch { fetchOriginAddresses() }
+                )
+            } catch (e: CancellationException) {
+                WooLog.d(WooLog.T.ORDERS, "CancellationException while retrying: $e")
+            } finally {
+                loadTrigger.emit(Unit)
+            }
         }
     }
 

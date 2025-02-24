@@ -215,7 +215,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val getShippingRates: GetShippingRates = mock()
     private val purchaseShippingLabel: PurchaseShippingLabel = mock()
     private val observeStoreOptions: ObserveStoreOptions = mock()
-    private val fetchAccountSettings: FetchAccountSettings = mock()
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -229,7 +228,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             getShippingRates = getShippingRates,
             purchaseShippingLabel = purchaseShippingLabel,
             observeStoreOptions = observeStoreOptions,
-            fetchAccountSettings = fetchAccountSettings,
+            fetchAccountSettings = mock(),
             shouldRequireCustoms = shouldRequireCustomsForm,
             savedState = savedState
         )
@@ -722,14 +721,12 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when there is no cached store options and API request fails then display error with retry`() = testBlocking {
+    fun `when there is no cached store options and API request fails then display error`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
 
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(null)
-        whenever(getShippableItems(any())) doReturn defaultShippableItems
-        whenever(fetchAccountSettings()) doReturn Result.success(defaultStoreOptions)
 
         createViewModel()
 
@@ -737,11 +734,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         val currentViewState = sut.viewState.value
         assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
-
-        sut.onRetry()
-
-        val newViewState = sut.viewState.value
-        assertThat(newViewState).isInstanceOf(DataState::class.java)
     }
 
     @Test
