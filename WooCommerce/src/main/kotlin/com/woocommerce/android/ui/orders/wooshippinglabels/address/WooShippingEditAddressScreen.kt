@@ -366,6 +366,7 @@ fun WooShippingEditAddressScreen(
                     addressStatus = addressStatus,
                     onNormalizeAddress = onNormalizeAddress,
                     onUpdateOriginAddress = onUpdateOriginAddress,
+                    onClose = onNavigateBack,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -449,6 +450,7 @@ internal fun AddressStatusSection(
     addressStatus: AddressStatus,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -481,7 +483,7 @@ internal fun AddressStatusSection(
 
         val buttonAction: () -> Unit = when (addressStatus) {
             AddressStatus.VERIFIED -> {
-                {}
+                { onClose() }
             }
             AddressStatus.UNVERIFIED -> {
                 { onNormalizeAddress(editableAddress) }
