@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
@@ -17,7 +18,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -41,6 +44,12 @@ fun WooShippingCustomsProductListItem(
         .let { if (it) 180f else 0f }
         .let { animateFloatAsState(targetValue = it, label = "rotationAnimation") }
 
+    val borderColor = if (itemData.isExpanded) {
+        colorResource(R.color.woo_black)
+    } else {
+        colorResource(R.color.divider_color)
+    }
+
 
     Column(modifier = modifier
         .fillMaxWidth()
@@ -50,7 +59,7 @@ fun WooShippingCustomsProductListItem(
         )
         .border(
             width = dimensionResource(R.dimen.minor_10),
-            color = colorResource(R.color.divider_color),
+            color = borderColor,
             shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
         )
         .padding(16.dp)
@@ -63,8 +72,13 @@ fun WooShippingCustomsProductListItem(
                 modifier = modifier.weight(1f)
             )
             Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_down),
-                contentDescription = null
+                painter = painterResource(R.drawable.ic_arrow_down),
+                tint = MaterialTheme.colors.primary,
+                contentDescription = stringResource(id = R.string.shipping_label_package_details_items_expand_content_description),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .size(dimensionResource(R.dimen.image_minor_60))
+                    .rotate(rotationAnimation.value)
             )
         }
 
