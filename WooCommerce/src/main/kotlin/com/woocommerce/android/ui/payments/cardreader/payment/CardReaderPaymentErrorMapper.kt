@@ -6,13 +6,13 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.Unknown
 import com.woocommerce.android.model.UiString.UiStringText
-import com.woocommerce.android.util.SiteIndependentCurrencyFormatter
+import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.ResourceProvider
 import javax.inject.Inject
 
 class CardReaderPaymentErrorMapper @Inject constructor(
     private val resources: ResourceProvider,
-    private val currencyFormatter: SiteIndependentCurrencyFormatter,
+    private val currencyFormatter: CurrencyFormatter,
 ) {
     fun mapPaymentErrorToUiError(
         errorType: CardPaymentStatus.CardPaymentStatusErrorType,
@@ -22,16 +22,21 @@ class CardReaderPaymentErrorMapper @Inject constructor(
             CardPaymentStatus.CardPaymentStatusErrorType.NoNetwork -> PaymentFlowError.NoNetwork
             is CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError ->
                 mapPaymentDeclinedErrorType(errorType, isTapToPayPayment)
+
             CardPaymentStatus.CardPaymentStatusErrorType.CardReadTimeOut,
             CardPaymentStatus.CardPaymentStatusErrorType.Generic -> PaymentFlowError.Generic
+
             is CardPaymentStatus.CardPaymentStatusErrorType.Server -> PaymentFlowError.Server
             CardPaymentStatus.CardPaymentStatusErrorType.Canceled -> PaymentFlowError.Canceled
             CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.NfcDisabled ->
                 PaymentFlowError.BuiltInReader.NfcDisabled
+
             CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.DeviceIsNotSupported ->
                 PaymentFlowError.BuiltInReader.DeviceIsNotSupported
+
             CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.InvalidAppSetup ->
                 PaymentFlowError.BuiltInReader.InvalidAppSetup
+
             else -> PaymentFlowError.Generic
         }
 
@@ -61,6 +66,7 @@ class CardReaderPaymentErrorMapper @Inject constructor(
                 PaymentFlowError.Declined.PinRequired
             }
         }
+
         CardDeclined.IncorrectPin -> PaymentFlowError.Declined.IncorrectPin
         CardDeclined.Temporary -> PaymentFlowError.Declined.Temporary
         CardDeclined.TestCard -> PaymentFlowError.Declined.TestCard
@@ -69,13 +75,12 @@ class CardReaderPaymentErrorMapper @Inject constructor(
     }
 
     private fun generateAmountToSmallErrorFor(data: AmountTooSmall): PaymentFlowError.AmountTooSmall {
-        val minChargeAmountString = currencyFormatter.formatAmountWithCurrency(
-            data.minAmountInMicroUnits.toDouble(),
+        val minChargeAmountString = currencyFormatter.formatCurrencyGivenInTheSmallestCurrencyUnit(
+            data.minAmountInMicroUnits,
             data.currency,
         )
-        val message =
-            resources.getString(R.string.card_reader_payment_failed_amount_too_small)
-                .format(minChargeAmountString)
+        val message = resources.getString(R.string.card_reader_payment_failed_amount_too_small)
+            .format(minChargeAmountString)
 
         return PaymentFlowError.AmountTooSmall(UiStringText(message))
     }
