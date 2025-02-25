@@ -230,7 +230,7 @@ class WooPosCartViewModelTest {
     }
 
     @Test
-    fun `given items in cart, when checkout tapped, then should track envent`() = runTest {
+    fun `given items in cart, when checkout tapped, then should track event`() = runTest {
         // GIVEN
         val (sut, states) = createSutWithItemsInCart()
         assertThat(states.last().body).isInstanceOf(WooPosCartState.Body.WithItems::class.java)
