@@ -70,8 +70,9 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
 
                 is StartCustomsFormEdit -> {
                     WooShippingLabelCreationFragmentDirections
-                        .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment()
-                        .let { findNavController().navigateSafely(it) }
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment(
+                            shippableItems = event.shippableItems.toTypedArray()
+                        ).let { findNavController().navigateSafely(it) }
                 }
 
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
