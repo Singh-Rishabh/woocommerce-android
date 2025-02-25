@@ -19,6 +19,7 @@ import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -65,12 +66,13 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         loadData()
     }
 
-    private fun loadData() = launch {
-        fetchPredefinedPackages().let { response ->
-            _viewState.update { viewState -> viewState.copy(predefinedPackagesState = response) }
+    private fun loadData(): Job {
+        return launch {
+            fetchPredefinedPackages().let { response ->
+                _viewState.update { viewState -> viewState.copy(predefinedPackagesState = response) }
+            }
         }
     }
-
 
     fun onCarrierPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->

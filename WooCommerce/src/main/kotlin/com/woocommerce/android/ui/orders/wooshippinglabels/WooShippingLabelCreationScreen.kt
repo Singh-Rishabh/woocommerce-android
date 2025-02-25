@@ -705,7 +705,6 @@ internal fun ErrorScreen(
     ErrorMessageWithButton(modifier = modifier.padding(padding), onRetryClick = onRetryClick)
 }
 
-
 @Parcelize
 data class ShippableItemUI(
     val itemId: Long,
