@@ -7,7 +7,7 @@ import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.ui.payments.cardreader.payment.CardReaderPaymentErrorMapper
 import com.woocommerce.android.ui.payments.cardreader.payment.PaymentFlowError
-import com.woocommerce.android.util.SiteIndependentCurrencyFormatter
+import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.ResourceProvider
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -19,7 +19,7 @@ class CardReaderPaymentErrorMapperTest {
         on { getString(R.string.card_reader_payment_failed_amount_too_small) }
             .thenReturn("Amount must be at least %1\$s")
     }
-    private val currencyFormatter: SiteIndependentCurrencyFormatter = mock()
+    private val currencyFormatter: CurrencyFormatter = mock()
     private val mapper = CardReaderPaymentErrorMapper(resources, currencyFormatter)
 
     @Test
