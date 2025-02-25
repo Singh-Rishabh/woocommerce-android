@@ -116,20 +116,26 @@ fun WooShippingCustomsProductCollapsedListItem(
 
         Row {
             Text(
-                text = itemData.description.currentInput,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = modifier.weight(1f)
+                modifier = modifier.weight(1f),
+                text = itemData.description.currentInput
+                    .takeIf { it.isNotBlank() }
+                    ?: stringResource(id = R.string.woo_shipping_labels_customs_product_details_description_missing)
             )
             Text(
-                text = itemData.tariffNumber.currentInput,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                text = itemData.tariffNumber.currentInput
+                    .takeIf { it.isNotBlank() }
+                    ?: stringResource(id = R.string.woo_shipping_labels_customs_product_details_tariff_missing)
             )
         }
         Row {
             Text(
-                text = itemData.originCountry,
                 style = MaterialTheme.typography.bodySmall,
-                modifier = modifier.weight(1f)
+                modifier = modifier.weight(1f),
+                text = itemData.originCountry
+                    .takeIf { it.isNotBlank() }
+                    ?: stringResource(id = R.string.woo_shipping_labels_customs_product_details_origin_country_missing)
             )
             Text(
                 text = itemData.valueAndWeightForDisplay,
