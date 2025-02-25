@@ -87,8 +87,8 @@ class CardReaderPaymentErrorMapperTest {
             "GPB"
         )
         whenever(
-            currencyFormatter.formatAmountWithCurrency(
-                0.30,
+            currencyFormatter.formatCurrencyGivenInTheSmallestCurrencyUnit(
+                30L,
                 "GPB"
             )
         ).thenReturn("£0.30")
@@ -112,8 +112,8 @@ class CardReaderPaymentErrorMapperTest {
             "USD"
         )
         whenever(
-            currencyFormatter.formatAmountWithCurrency(
-                0.50,
+            currencyFormatter.formatCurrencyGivenInTheSmallestCurrencyUnit(
+                50L,
                 "USD"
             )
         ).thenReturn("US$0.50")
@@ -138,8 +138,8 @@ class CardReaderPaymentErrorMapperTest {
             "CAD"
         )
         whenever(
-            currencyFormatter.formatAmountWithCurrency(
-                0.50,
+            currencyFormatter.formatCurrencyGivenInTheSmallestCurrencyUnit(
+                50L,
                 "CAD"
             )
         ).thenReturn("CA$0.50")
