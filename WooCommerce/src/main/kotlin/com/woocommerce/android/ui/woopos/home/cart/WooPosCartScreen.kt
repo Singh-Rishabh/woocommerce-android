@@ -182,7 +182,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
             contentDescription = stringResource(R.string.woopos_cart_empty_content_description),
             modifier = Modifier.size(88.dp),
             colorFilter = ColorFilter.tint(
-                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.7F),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.4F),
                 blendMode = BlendMode.SrcAtop,
             )
         )
