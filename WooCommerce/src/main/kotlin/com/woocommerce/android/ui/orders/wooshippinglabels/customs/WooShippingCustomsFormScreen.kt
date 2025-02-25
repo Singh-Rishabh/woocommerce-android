@@ -169,6 +169,11 @@ fun WooShippingCustomsFormScreen(
                 )
             }
 
+            Text(
+                text = stringResource(R.string.woo_shipping_labels_customs_product_details_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
             shippingProducts.forEach { product ->
                 WooShippingCustomsProductListItem(
                     modifier = modifier.fillMaxWidth(),
