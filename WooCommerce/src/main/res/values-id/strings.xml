@@ -1,11 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2025-01-14 09:54:08+0000
+Translation-Revision-Date: 2025-02-11 09:54:04+0000
 Plural-Forms: nplurals=2; plural=n > 1;
 Generator: GlotPress/2.4.0-alpha
 Language: id
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_customs_restriction_other">Lainnya</string>
+    <string name="woo_shipping_labels_customs_restriction_sanitary">Pemeriksaan Sanitasi/Fitosanitasi</string>
+    <string name="woo_shipping_labels_customs_restriction_quarantine">Karantina</string>
+    <string name="woo_shipping_labels_customs_restriction_none">Tidak ada</string>
+    <string name="woo_shipping_labels_customs_restriction_details_description">Mohon jelaskan jenis batasan untuk paket ini</string>
+    <string name="woo_shipping_labels_customs_restriction_details_label">Detail Batasan</string>
+    <string name="woo_shipping_labels_customs_content_other">Lainnya</string>
+    <string name="woo_shipping_labels_customs_content_documents">Dokumen</string>
+    <string name="woo_shipping_labels_customs_content_sample">Sampel</string>
+    <string name="woo_shipping_labels_customs_content_returned_goods">Barang yang Dikembalikan</string>
+    <string name="woo_shipping_labels_customs_content_gift">Hadiah</string>
+    <string name="woo_shipping_labels_customs_content_merchandise">Barang dagangan</string>
+    <string name="woo_shipping_labels_customs_content_details_description">Mohon jelaskan jenis barang yang dimuat paket ini</string>
+    <string name="woo_shipping_labels_customs_content_details_label">Detail Isi</string>
+    <string name="woo_shipping_labels_customs_return_to_sender_label">Kembalikan ke pengirim jika paket tidak berhasil diantar</string>
+    <string name="woo_shipping_labels_customs_itn_label">Nomor Transaksi Internasional (ITN)</string>
+    <string name="woo_shipping_labels_customs_restriction_type_label">Jenis Batasan</string>
+    <string name="woo_shipping_labels_customs_content_type_label">Jenis Isi</string>
+    <string name="woo_shipping_labels_customs_add_missing_information">Tambahkan Informasi yang Kurang</string>
+    <string name="product_open_upload_screen">Lihat kegagalan pengunggahan terbaru</string>
+    <string name="shipping_labels_customs_completed_badge">Selesai</string>
+    <string name="shipping_labels_customs_missing_info_badge">Informasi tidak ditemukan</string>
+    <string name="shipping_labels_customs_title">Bea cukai</string>
+    <string name="about_automattic_x_item_title">X</string>
+    <string name="woo_shipping_fetching_countries_and_states">Mengambil informasi negara dan negara bagian.</string>
+    <string name="woo_shipping_fetching_countries_and_states_failed">Kami tidak dapat mengambil informasi negara dan negara bagian. Silakan coba lagi.</string>
+    <string name="woo_shipping_field_required_error">Kolom ini wajib diisi.</string>
+    <string name="product_upload_error_retry_button_content_description">Coba unggah ulang gambar produk</string>
+    <string name="product_upload_error_title">Error pengunggahan gambar</string>
+    <string name="app_name">Woo</string>
+    <string name="woopos_products_empty_list_message">POS saat ini hanya mendukung produk sederhana, bervariasi, dan virtual – \nbuat POS untuk memulai.</string>
+    <string name="woo_shipping_label_phone">Telepon</string>
+    <string name="woo_shipping_label_email">Email</string>
+    <string name="woo_shipping_label_post_code">Kode Pos</string>
+    <string name="woo_shipping_label_state">Negara bagian</string>
+    <string name="woo_shipping_label_city">Kota</string>
+    <string name="woo_shipping_label_address">Alamat</string>
+    <string name="woo_shipping_label_country">Negara</string>
+    <string name="woo_shipping_label_company">Perusahaan</string>
+    <string name="woo_shipping_label_name">Nama</string>
+    <string name="woo_shipping_edit_origin_address_title">Edit Alamat Asal</string>
+    <string name="woopos_variations_any_variation">Semua %s</string>
+    <string name="woopos_variations_empty_list_image_description">Tidak ada variasi</string>
+    <string name="woopos_variations_empty_list_title">Tidak ada variasi yang didukung</string>
+    <string name="login_use_wpcom_username_instead">Gunakan nama pengguna dan kata sandi</string>
+    <string name="product_cover_photo_tag">Sampul</string>
+    <string name="orderlist_bulk_update_result_partial_success">%d pesanan diperbarui, dan %d pesanan gagal diperbarui. Silakan coba lagi.</string>
+    <string name="orderlist_bulk_update_result_all_failed">Gagal memperbarui pesanan. Silakan coba lagi.</string>
+    <string name="product_images_drag_and_drop_to_reorder">Tarik dan lepas untuk mengurutkan ulang foto. Foto pertama akan menjadi sampul.</string>
+    <string name="orderlist_bulk_update_result_no_orders_updated">Tidak ada pesanan yang diperbarui. Silakan coba lagi.</string>
+    <string name="add">Tambahkan %s</string>
     <string name="woo_shipping_labels_package_creation_error_cancel">Batal</string>
     <string name="woo_shipping_labels_package_creation_error_proceed">Lanjutkan</string>
     <string name="woo_shipping_labels_package_creation_error_message">Ingin melanjutkan tanpa menyimpannya?</string>
@@ -44,7 +95,6 @@ Language: id
     <string name="woopos_complete_cash_order_button">Pembayaran ditandai sebagai selesai</string>
     <string name="woopos_items_pagination_error_title">\"Gagal memuat item lain\"</string>
     <string name="woopos_items_pagination_try_again_label">Coba lagi</string>
-    <string name="woo_pos_payment_remove_card">Ambil kartu</string>
     <string name="woo_pos_payment_failed_go_back_to_checkout">Kembali ke checkout</string>
     <string name="woo_pos_payment_failed_try_again">Coba lagi pembayaran</string>
     <string name="woo_pos_payment_failed_try_another_payment_method">Coba metode pembayaran lainnya</string>
@@ -243,7 +293,7 @@ Language: id
     <string name="woopos_products_loading_error_title">Terjadi error saat memuat produk</string>
     <string name="woopos_products_empty_list_message_two">POS saat ini hanya mendukung produk sederhana</string>
     <string name="woopos_products_loading_error_retry_button">Coba lagi</string>
-    <string name="woopos_products_empty_list_message">POS saat ini hanya mendukung produk sederhana dan variabel – \nbuat untuk memulai.</string>
+    <string name="woopos_variations_empty_list_message">POS saat ini hanya mendukung produk sederhana, bervariasi, dan virtual – \nbuat POS untuk memulai.</string>
     <string name="woopos_products_empty_list_title">Produk yang didukung tidak ditemukan</string>
     <string name="woopos_products_empty_list_image_description">Tidak ada produk</string>
     <string name="woopos_get_support_title">Dapatkan Dukungan</string>
@@ -627,13 +677,13 @@ Language: id
     <string name="blaze_campaign_budget_impressions_title">Tayangan</string>
     <string name="blaze_campaign_budget_update_button">Perbarui</string>
     <string name="blaze_campaign_budget_edit_duration_button">Edit</string>
-    <string name="blaze_campaign_budget_impressions_info">Tayangan menunjukkan frekuensi iklan ditampilkan kepada calon pembeli.\n\n\n        Meskipun jumlah persisnya tidak dapat dijamin karena fluktuasi lalu lintas online dan perilaku pengguna, kami berupaya agar tayangan aktual iklan Anda sedekat mungkin dengan jumlah yang Anda targetkan.\n\n\n        Jangan lupa, tayangan berhubungan dengan visibilitas, bukan tindakan yang dilakukan pembaca.</string>
     <string name="blaze_campaign_budget_reach_forecast">Estimasi orang yang dijangkau per hari</string>
     <string name="blaze_campaign_budget_daily_spend">%1$s harian</string>
     <string name="blaze_campaign_budget_days_duration">selama %1$s hari</string>
     <string name="blaze_campaign_budget_toolbar_title">Tentukan anggaran</string>
     <string name="blaze_campaign_preview_target_default_value">Semua</string>
     <string name="blaze_campaign_preview_days_duration">%1$s hari sejak %2$s</string>
+    <string name="blaze_campaign_budget_impressions_info">Tayangan menunjukkan frekuensi iklan ditampilkan kepada calon pembeli.\n\n\n        Meskipun jumlah persisnya tidak dapat dijamin karena fluktuasi lalu lintas online dan perilaku pengguna, kami berupaya agar tayangan aktual iklan Anda sedekat mungkin dengan jumlah yang Anda targetkan.\n\n\n        Jangan lupa, tayangan berhubungan dengan visibilitas, bukan tindakan yang dilakukan pembaca.</string>
     <string name="blaze_campaign_budget_duration_bottom_sheet_start_date">Tanggal mulai</string>
     <string name="product_creation_survey_button_dont_show_again">Jangan Tampilkan Lagi</string>
     <string name="product_creation_survey_button_remind_me_later">Ingatkan Saya Nanti</string>
@@ -976,8 +1026,8 @@ Language: id
     <string name="store_onboarding_task_name_store_title">Beri nama untuk toko Anda</string>
     <string name="card_reader_payment_failed_nfc_disabled_enable_nfc">Aktifkan NFC</string>
     <string name="shipping_label_hazmat_option_small_quantity_provision">Paket Pengadaan Kuantitas Kecil (wajib ditandai)</string>
-    <string name="shipping_label_hazmat_option_lighters">Paket Pemantik Api - Pemantik Api Resmi</string>
     <string name="shipping_label_hazmat_option_limited_quantity">Paket Jalur Darat Kuantitas Terbatas - Aerosol, disinfektan semprot, cat semprot, hair spray, propana, butana, produk-produk kebersihan, dll. - Parfum, cat kuku, pembersih cat kuku, pelarut, penyanitasi tangan, alkohol medis, produk-produk berbahan dasar etanol, dll. - Bahan-bahan jalur darat kuantitas terbatas lainnya (kosmetik, produk-produk kebersihan, cat, dll.)</string>
+    <string name="shipping_label_hazmat_option_lighters">Paket Pemantik Api - Pemantik Api Resmi</string>
     <string name="shipping_label_hazmat_option_id8000">Paket Barang Konsumen ID8000 - Barang Konsumen ID8000 yang Memenuhi Syarat Jalur Udara (Aerosol yang tidak mudah terbakar, Cairan yang mudah terbakar, Zat Beracun, Aneka bahan berbahaya)</string>
     <string name="shipping_label_hazmat_option_ground_only">Bahan-Bahan Berbahaya Khusus Jalur Darat (Untuk item yang tidak masuk dalam daftar, tetapi terbatas hanya untuk jalur darat)</string>
     <string name="shipping_label_hazmat_option_excepted_quantity_provision">Paket Pengadaan Kuantitas Pengecualian (mis. cairan mudah terbakar, bahan-bahan berbahaya bagi lingkungan, beracun, atau korosif dalam volume kecil - wajib ditandai)</string>
@@ -1390,11 +1440,11 @@ Language: id
     <string name="domain_contact_information_description">Demi kenyamanan Anda, kami telah mengisi informasi kontak WordPress.com Anda\n terlebih dahulu. Harap tinjau kembali untuk memastikan informasi yang ingin Anda gunakan untuk domain ini sudah benar.</string>
     <string name="domain_contact_information_organization_hint">Organisasi (opsional)</string>
     <string name="domain_registration_privacy_protection_description">Pemilik domain harus berbagi informasi kontak di database publik semua domain.\n Dengan Perlindungan Privasi, kami memublikasikan informasi kami sendiri, bukan informasi Anda, dan meneruskan segala komunikasi kepada Anda secara pribadi.</string>
-    <string name="domain_registration_privacy_protection_tos">Dengan mendaftarkan domain ini, Anda menyetujui %1$ssyarat dan ketentuan%2$s kami</string>
     <string name="domain_registration_contact_form_input_error">Masukkan %s yang valid</string>
     <string name="domain_privacy_option_on_title">Daftarkan secara pribadi dengan Perlindungan Privasi</string>
     <string name="domain_privacy_option_off_title">Daftarkan secara publik</string>
     <string name="domain_contact_information_title">Informasi kontak domain</string>
+    <string name="domain_registration_privacy_protection_tos">Dengan mendaftarkan domain ini, Anda menyetujui &lt;a href=\'\'&gt;syarat dan ketentuan&lt;/a&gt; kami</string>
     <string name="domain_registration_privacy_protection_title">Perlindungan Privasi</string>
     <string name="domains_access_error_title">Pengaturan domain hanya bisa diakses oleh administrator toko</string>
     <string name="login_jetpack_installation_continue_magic_link">Atau lanjut dengan Tautan Ajaib</string>
@@ -1912,7 +1962,6 @@ Language: id
     <string name="coupon_details_heading">Ringkasan Kupon</string>
     <string name="coupon_list_item_label_included_and_excluded">%1$s excl. %2$s</string>
     <string name="coupon_list_item_label_products_and_categories">%1$s dan %2$s</string>
-    <string name="orderlist_simple_payments_wip_message_enabled">Kini Anda dapat membuat pesanan dengan perangkat Anda! Anda dapat mencoba fitur ini dengan mengetuk tombol \"+\"</string>
     <string name="empty_inbox_description">Kembali lagi nanti untuk mendapatkan lebih banyak tips dan wawasan tentang cara mengembangkan toko Anda</string>
     <string name="empty_inbox_title">Selamat, Anda telah membaca semuanya!</string>
     <string name="orderstatus_contentDesc_withStatus">Status pesanan: %s</string>
@@ -1995,7 +2044,6 @@ Language: id
     <string name="about_automattic_terms_of_service_item_title">Ketentuan Layanan</string>
     <string name="about_automattic_family_item_title">Keluarga Automattic</string>
     <string name="about_automattic_legal_and_more_item_title">Informasi Hukum dan Lainnya</string>
-    <string name="about_automattic_twitter_item_title">Twitter</string>
     <string name="about_automattic_instagram_item_title">Instagram</string>
     <string name="about_automattic_rate_us_item_title">Beri Rating</string>
     <string name="about_automattic_share_with_friends_item_title">Bagikan dengan Teman</string>
@@ -2106,7 +2154,6 @@ Language: id
     <string name="simple_payments_dialog_title">Terima pembayaran</string>
     <string name="orderlist_simple_payments_menu">Simple payment</string>
     <string name="analytics">Analytics</string>
-    <string name="orderlist_simple_payments_wip_title">Buat pesanan dari perangkat Anda!</string>
     <string name="jetpack_install_progress_step_three_message">Menyambungkan ke toko Anda</string>
     <string name="jetpack_install_progress_step_two_message">Mengaktifkan</string>
     <string name="jetpack_install_progress_step_one_message">Menginstal Jetpack</string>
@@ -2624,8 +2671,6 @@ Language: id
     <string name="shipping_label_more_information_title">Pengiriman WooCommerce</string>
     <string name="order_mark_complete">Tandai pesanan selesai</string>
     <string name="orderdetail_shipping_label_create_shipping_label">Buat label pengiriman</string>
-    <string name="orderdetail_shipping_label_m2_wip_title">Buat label pengiriman dari perangkat Anda!</string>
-    <string name="orderdetail_shipping_label_m3_wip_message">Sekarang Anda dapat membuat label pengiriman untuk semua pesanan fisik langsung dari perangkat Anda dengan plugin WooCommerce Shipping gratis. Ketuk \"Buat label pengiriman\" untuk mencoba fitur beta kami!</string>
     <string name="shipping_label_more_information_message">Tak perlu antre saat di kantor pos dengan mencetak label pengiriman di rumah dari perangkat seluler dengan harga diskon!</string>
     <string name="orderdetail_shipping_label_notice">Pelajari selengkapnya tentang membuat label menggunakan perangkat seluler</string>
     <string name="edit">Sunting</string>
@@ -2634,7 +2679,6 @@ Language: id
     <string name="orderdetail_payment_paid_by_customer">Berbayar</string>
     <string name="login_jetpack_view_instructions_alt">Pelajari selengkapnya tentang cara menghubungkan Jetpack</string>
     <string name="product_images_validate_drag_and_drop">Validasi</string>
-    <string name="product_images_drag_and_drop_description">Tarik dan lepas untuk mengurutkan foto</string>
     <string name="delete">Hapus</string>
     <string name="product_downloadable_files_download_settings">Pengaturan Unduh</string>
     <string name="product_downloadable_files_name_invalid">Harap masukkan nama yang valid</string>
@@ -3752,7 +3796,6 @@ Language: id
     <string name="orders">Pesanan</string>
     <string name="my_store">Toko saya</string>
     <string name="all">Semua</string>
-    <string name="app_name">WooCommerce</string>
     <string name="settings_footer">Dibuat dengan penuh cinta oleh Automattic. %1$s</string>
     <string name="enter_site_address" content_override="true">Masukkan alamat toko WooCommerce yang ingin dihubungkan.</string>
     <string name="orderdetail_note_private">Pribadi</string>

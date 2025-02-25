@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.woocommerce.android.R
 import com.woocommerce.android.databinding.FragmentOrderFilterListBinding
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.handleResult
+import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 import com.woocommerce.android.extensions.navigateBackWithNotice
 import com.woocommerce.android.extensions.navigateSafely
-import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.creation.customerlist.OrderCustomerListFragment.Companion.KEY_CUSTOMER_RESULT
@@ -92,7 +91,11 @@ class OrderFilterCategoriesFragment :
         }
 
         handleResult<Collection<SelectedItem>>(ProductSelectorFragment.PRODUCT_SELECTOR_RESULT) {
-            viewModel.onProductSelected(it.first().id)
+            it.firstOrNull()?.let {
+                viewModel.onProductSelected(it.id)
+            } ?: run {
+                viewModel.onClearProductFilter()
+            }
         }
 
         handleResult<Order.Customer>(KEY_CUSTOMER_RESULT) {
@@ -123,7 +126,7 @@ class OrderFilterCategoriesFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
+        if (requireContext().isTwoPanesShouldBeUsed) {
             setStyle(STYLE_NO_TITLE, R.style.Theme_Woo_Dialog_RoundedCorners_NoMinWidth)
         } else {
             /* This draws the dialog as full screen */
@@ -133,7 +136,7 @@ class OrderFilterCategoriesFragment :
 
     override fun onStart() {
         super.onStart()
-        if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
+        if (requireContext().isTwoPanesShouldBeUsed) {
             dialog?.window?.setLayout(
                 (DisplayUtils.getWindowPixelWidth(requireContext()) * TABLET_LANDSCAPE_WIDTH_RATIO).toInt(),
                 (DisplayUtils.getWindowPixelHeight(requireContext()) * TABLET_LANDSCAPE_HEIGHT_RATIO).toInt()

@@ -1,5 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.toolbar
 
+import app.cash.turbine.test
+import com.woocommerce.android.AppUrls.WOO_POS_DOCUMENTATION_URL
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.connection.CardReaderStatus
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
@@ -8,11 +10,16 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.support.WooPosGetSupportFacade
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ExitTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.GetSupportTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ViewDocsTapped
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -32,6 +39,7 @@ class WooPosToolbarViewModelTest {
     private val childrenToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val networkStatus: WooPosNetworkStatus = mock()
     private val resourceProvider: ResourceProvider = mock()
+    private val analyticsTracker: WooPosAnalyticsTracker = mock()
 
     @Test
     fun `given card reader status is NotConnected, when initialized, then state should be NotConnected`() = runTest {
@@ -79,6 +87,10 @@ class WooPosToolbarViewModelTest {
             .isEqualTo(
                 WooPosToolbarState.Menu.Visible(
                     listOf(
+                        WooPosToolbarState.Menu.MenuItem(
+                            title = R.string.woopos_documentation_title,
+                            icon = R.drawable.woo_pos_info_ic,
+                        ),
                         WooPosToolbarState.Menu.MenuItem(
                             title = R.string.woopos_get_support_title,
                             icon = R.drawable.woopos_ic_get_support,
@@ -206,6 +218,7 @@ class WooPosToolbarViewModelTest {
         // GIVEN
         whenever(networkStatus.isConnected()).thenReturn(false)
         whenever(cardReaderFacade.readerStatus).thenReturn(MutableStateFlow(CardReaderStatus.NotConnected()))
+        whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
 
         // WHEN
         val viewModel = createViewModel()
@@ -215,11 +228,69 @@ class WooPosToolbarViewModelTest {
         verify(cardReaderFacade, never()).connectToReader()
     }
 
+    @Test
+    fun `when Documentation MenuItemClicked, then openUrlEvent should be emitted with proper url`() = runTest {
+        // GIVEN
+        val viewModel = createViewModel()
+        val menuItem = WooPosToolbarState.Menu.MenuItem(
+            title = R.string.woopos_documentation_title,
+            icon = R.drawable.ic_help_24dp
+        )
+
+        viewModel.openUrlEvent.test {
+            // WHEN
+            viewModel.onUiEvent(WooPosToolbarUIEvent.MenuItemClicked(menuItem))
+
+            // THEN
+            assertEquals(WOO_POS_DOCUMENTATION_URL, awaitItem())
+            assertEquals(WooPosToolbarState.Menu.Hidden, viewModel.state.value.menu)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `when get Support is clicked, then should track analytics event`() = runTest {
+        val viewModel = createViewModel()
+        val menuItem = WooPosToolbarState.Menu.MenuItem(
+            title = R.string.woopos_get_support_title,
+            icon = R.drawable.ic_help_24dp
+        )
+        viewModel.onUiEvent(WooPosToolbarUIEvent.MenuItemClicked(menuItem))
+
+        verify(analyticsTracker).track(GetSupportTapped)
+    }
+
+    @Test
+    fun `when View Documentation is clicked, then should track analytics event`() = runTest {
+        val viewModel = createViewModel()
+        val menuItem = WooPosToolbarState.Menu.MenuItem(
+            title = R.string.woopos_documentation_title,
+            icon = R.drawable.ic_info_outline_20dp
+        )
+        viewModel.onUiEvent(WooPosToolbarUIEvent.MenuItemClicked(menuItem))
+
+        verify(analyticsTracker).track(ViewDocsTapped)
+    }
+
+    @Test
+    fun `when Exit menu item is clicked, then should track analytics event`() = runTest {
+        val viewModel = createViewModel()
+        val menuItem = WooPosToolbarState.Menu.MenuItem(
+            title = R.string.woopos_exit_confirmation_title,
+            icon = R.drawable.ic_woo_pos_exit
+        )
+        viewModel.onUiEvent(WooPosToolbarUIEvent.MenuItemClicked(menuItem))
+
+        verify(analyticsTracker).track(ExitTapped)
+    }
+
     private fun createViewModel() = WooPosToolbarViewModel(
         cardReaderFacade,
         childrenToParentEventSender,
         getSupportFacade,
         networkStatus,
         resourceProvider,
+        analyticsTracker,
     )
 }

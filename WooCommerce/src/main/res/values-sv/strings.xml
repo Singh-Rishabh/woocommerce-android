@@ -1,11 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2025-01-15 09:54:04+0000
+Translation-Revision-Date: 2025-02-11 13:54:04+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: sv_SE
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_customs_restriction_other">Annat</string>
+    <string name="woo_shipping_labels_customs_restriction_quarantine">Karantän</string>
+    <string name="woo_shipping_labels_customs_restriction_none">Ingen</string>
+    <string name="woo_shipping_labels_customs_restriction_details_description">Beskriv vilken typ av begränsningar detta paket måste ha</string>
+    <string name="woo_shipping_labels_customs_restriction_details_label">Begränsningsdetaljer</string>
+    <string name="woo_shipping_labels_customs_restriction_sanitary">Sanitär/fytosanitär inspektion</string>
+    <string name="woo_shipping_labels_customs_content_other">Annat</string>
+    <string name="woo_shipping_labels_customs_content_documents">Dokument</string>
+    <string name="woo_shipping_labels_customs_content_sample">Prov</string>
+    <string name="woo_shipping_labels_customs_content_returned_goods">Returnerade varor</string>
+    <string name="woo_shipping_labels_customs_content_gift">Gåva</string>
+    <string name="woo_shipping_labels_customs_content_details_label">Innehållsdetaljer</string>
+    <string name="shipping_labels_customs_missing_info_badge">Saknar information</string>
+    <string name="woo_shipping_labels_customs_content_type_label">Innehållstyp</string>
+    <string name="woo_shipping_labels_customs_add_missing_information">Lägg till saknad information</string>
+    <string name="woo_shipping_labels_customs_content_merchandise">Handelsvaror</string>
+    <string name="woo_shipping_labels_customs_content_details_description">Beskriv vilken typ av gods detta paket innehåller</string>
+    <string name="woo_shipping_labels_customs_return_to_sender_label">Returnera till avsändaren om paketet inte kan levereras</string>
+    <string name="woo_shipping_labels_customs_itn_label">Internationellt transaktionsnummer</string>
+    <string name="woo_shipping_labels_customs_restriction_type_label">Begränsningstyp</string>
+    <string name="product_open_upload_screen">Visa senaste misslyckade uppladdningar</string>
+    <string name="shipping_labels_customs_completed_badge">Slutförd</string>
+    <string name="shipping_labels_customs_title">Tull</string>
+    <string name="about_automattic_x_item_title">X</string>
+    <string name="woo_shipping_fetching_countries_and_states">Hämtar länder och delstater.</string>
+    <string name="woo_shipping_field_required_error">Detta fält är obligatoriskt.</string>
+    <string name="woo_shipping_fetching_countries_and_states_failed">Vi kunde inte hämta information om land och delstat. Försök igen.</string>
+    <string name="product_upload_error_retry_button_content_description">Försök ladda upp produktbild igen</string>
+    <string name="product_upload_error_title">Fel vid bilduppladdning</string>
+    <string name="app_name">Woo</string>
+    <string name="woopos_products_empty_list_message">POS stöder för närvarande bara enkla, variabla och virtuella produkter – \nskapa en för att komma igång.</string>
+    <string name="woo_shipping_label_phone">Telefon</string>
+    <string name="woo_shipping_label_email">E-post</string>
+    <string name="woo_shipping_label_post_code">Postnummer</string>
+    <string name="woo_shipping_label_state">Delstat</string>
+    <string name="woo_shipping_label_city">Ort</string>
+    <string name="woo_shipping_label_address">Adress</string>
+    <string name="woo_shipping_label_country">Land</string>
+    <string name="woo_shipping_label_company">Företag</string>
+    <string name="woo_shipping_label_name">Namn</string>
+    <string name="woopos_variations_empty_list_image_description">Inga varianter</string>
+    <string name="woo_shipping_edit_origin_address_title">Redigera original</string>
+    <string name="woopos_variations_any_variation">Valfri %s</string>
+    <string name="woopos_variations_empty_list_title">Inga varianter som stöds hittades</string>
+    <string name="login_use_wpcom_username_instead">Använd användarnamn och lösenord istället</string>
+    <string name="product_cover_photo_tag">Omslag</string>
+    <string name="orderlist_bulk_update_result_all_failed">Misslyckades att uppdatera beställningar. Försök igen.</string>
+    <string name="product_images_drag_and_drop_to_reorder">Dra och släpp för att ändra ordning på foton. Det första fotot kommer att utgöra omslaget.</string>
+    <string name="orderlist_bulk_update_result_partial_success">%d beställning(ar) uppdaterades och %d beställning(ar) gick inte att uppdatera. Försök igen.</string>
+    <string name="add">Lägg till %s</string>
+    <string name="orderlist_bulk_update_result_no_orders_updated">Inga beställningar uppdaterade. Försök igen.</string>
     <string name="woo_shipping_labels_package_creation_error_message">Vill du fortsätta utan att spara det?</string>
     <string name="woo_shipping_labels_package_creation_error_title">Vi kunde inte spara paketet som mall</string>
     <string name="woopos_variations_options_available_text">Alternativ tillgängliga</string>
@@ -43,7 +94,6 @@ Language: sv_SE
     <string name="woopos_items_pagination_error_content_description">\"Det gick inte att ladda in fler objekt. Dubbelklicka för att försöka igen.\"</string>
     <string name="woopos_items_pagination_error_description">\"Ett fel uppstod vid hämtning av produkter.\"</string>
     <string name="woopos_items_pagination_try_again_label">Försök igen</string>
-    <string name="woo_pos_payment_remove_card">Ta bort kort</string>
     <string name="woo_pos_payment_failed_go_back_to_checkout">Gå tillbaka till kassa</string>
     <string name="woopos_success_totals_error_reader_not_connected_cta_button_label">Anslut till läsare</string>
     <string name="woopos_success_totals_payment_processing_subtitle">Vänta …</string>
@@ -243,7 +293,7 @@ Language: sv_SE
     <string name="woopos_error_icon_content_description">Ikon som indikerar fel</string>
     <string name="woopos_products_loading_error_message">Vill du försöka igen?</string>
     <string name="woopos_products_empty_list_message_two">POS stöder för närvarande bara enkla produkter</string>
-    <string name="woopos_products_empty_list_message">POS stöder för närvarande bara enkla och variabla produkter – \nskapa en för att komma igång.</string>
+    <string name="woopos_variations_empty_list_message">POS stöder för närvarande endast enkla, variabla och virtuella produkter – skapa en för att kom igång.</string>
     <string name="woopos_products_empty_list_image_description">Inga produkter</string>
     <string name="woopos_products_empty_list_title">Inga produkter som stöds hittades</string>
     <string name="woopos_get_support_title">Skaffa support</string>
@@ -631,9 +681,9 @@ Language: sv_SE
     <string name="blaze_campaign_edit_ad_characters_remaining">%d tecken återstår</string>
     <string name="blaze_campaign_budget_daily_spend">%1$s dagligen</string>
     <string name="blaze_campaign_edit_ad_suggested_by_ai">Föreslaget av AI</string>
-    <string name="blaze_campaign_budget_impressions_info">Visningar återspeglar hur ofta din annons visas för potentiella kunder.\n\n\n        Exakta siffror kan inte garanteras på grund av fluktuerande onlinetrafik och användarbeteende, men vi strävar efter att annonsens faktiska antal visningar ska ligga så nära ditt målantal som möjligt.\n\n\n        Kom ihåg att visningar handlar om synlighet, inte om åtgärder som vidtas av tittarna.</string>
     <string name="blaze_campaign_budget_impressions_title">Visningar</string>
     <string name="blaze_campaign_budget_reach_forecast">Uppskattat antal personer som nås per dag</string>
+    <string name="blaze_campaign_budget_impressions_info">Visningar återspeglar hur ofta din annons visas för potentiella kunder.\n\n\n        Exakta siffror kan inte garanteras på grund av fluktuerande onlinetrafik och användarbeteende, men vi strävar efter att annonsens faktiska antal visningar ska ligga så nära ditt målantal som möjligt.\n\n\n        Kom ihåg att visningar handlar om synlighet, inte om åtgärder som vidtas av tittarna.</string>
     <string name="blaze_campaign_budget_duration_bottom_sheet_start_date">Startdatum</string>
     <string name="product_creation_survey_button_dont_show_again">Visa det inte igen</string>
     <string name="product_creation_survey_button_remind_me_later">Påminn mig senare</string>
@@ -976,8 +1026,8 @@ Language: sv_SE
     <string name="store_onboarding_task_name_store_title">Namnge din butik</string>
     <string name="card_reader_payment_failed_nfc_disabled_enable_nfc">Aktivera NFC</string>
     <string name="shipping_label_hazmat_option_small_quantity_provision">Leveranspaket för små kvantiteter (märkningar krävs)</string>
-    <string name="shipping_label_hazmat_option_lighters">Tändarpaket – Auktoriserade tändare</string>
     <string name="shipping_label_hazmat_option_limited_quantity">LTD QTY-markpaket – Aerosoler, spraydesinfektionsmedel, sprayfärg, hårspray, propan, butan, rengöringsprodukter, osv. - Parfymer, nagellack, nagellackborttagningsmedel, lösningsmedel, handsprit, tvättsprit, etanolbaserade produkter, osv. - Andra ytmaterial i begränsad mängd (kosmetika, rengöringsprodukter, färger, osv.)</string>
+    <string name="shipping_label_hazmat_option_lighters">Tändarpaket – Auktoriserade tändare</string>
     <string name="shipping_label_hazmat_option_id8000">ID8000-konsumentvarupaket – Luftkvalificerade ID8000-konsumentvaror (icke brandfarliga aerosoler, brandfarliga brännbara vätskor, giftiga ämnen, diverse farliga material)</string>
     <string name="shipping_label_hazmat_option_ground_only">Farliga material endast för markleverans (för föremål som inte är listade, men som är begränsade till endast yta)</string>
     <string name="shipping_label_hazmat_option_excepted_quantity_provision">Undantagna kvantitetsförsörjningspaket (t.ex. små volymer av brandfarliga vätskor och frätande, giftiga eller miljöfarliga material – märkning krävs) </string>
@@ -1390,11 +1440,11 @@ Language: sv_SE
     <string name="domain_contact_information_description">För din bekvämlighet har vi förfyllt din WordPress.com\n        kontaktinformation. Granska det för att vara säker på att det är rätt information du vill använda för denna domän.</string>
     <string name="domain_contact_information_organization_hint">Organisation (valfritt)</string>
     <string name="domain_registration_privacy_protection_description">Domänägare måste uppge kontaktinformation i en publik databas som omfattar alla domäner. Med integritetsskydd publicerar vi våra uppgifter istället för dina, och vidarebefordrar sedan privat eventuella meddelanden till dig.</string>
-    <string name="domain_registration_privacy_protection_tos">I och med att du registrerar denna domän accepterar du våra %1$savtalsvillkor%2$s</string>
     <string name="domain_registration_contact_form_input_error">Ange en giltig %s</string>
     <string name="domain_privacy_option_on_title">Registrera privat med integritetsskydd</string>
     <string name="domain_privacy_option_off_title">Registrera publikt</string>
     <string name="domain_contact_information_title">Kontaktinformation för domän</string>
+    <string name="domain_registration_privacy_protection_tos">I och med att du registrerar denna domän godkänner du våra &lt;a href=\'\'&gt;användarvillkor&lt;/a&gt;</string>
     <string name="domain_registration_privacy_protection_title">Integritetsskydd</string>
     <string name="domains_access_error_title">Endast butiksadministratörer kan komma åt domäninställningar</string>
     <string name="login_jetpack_installation_enter_wpcom_email">Logga in på ditt WordPress.com-konto för att installera Jetpack</string>
@@ -1912,7 +1962,6 @@ Language: sv_SE
     <string name="coupon_details_heading">Rabattkodssammanfattning</string>
     <string name="coupon_list_item_label_products_and_categories">%1$s och %2$s</string>
     <string name="coupon_list_item_label_included_and_excluded">%1$s exkl. %2$s</string>
-    <string name="orderlist_simple_payments_wip_message_enabled">Vi har jobbat på att göra det möjligt att skapa beställningar från din enhet. Du kan prova den här funktionen genom att trycka på \"+\"-knappen</string>
     <string name="empty_inbox_description">Kom tillbaka snart för fler tips och insikter om hur du får din butik att växa</string>
     <string name="empty_inbox_title">Grattis, du har läst allt!</string>
     <string name="orderstatus_contentDesc_withStatus">Beställningsstatus: %s</string>
@@ -1995,7 +2044,6 @@ Language: sv_SE
     <string name="about_automattic_work_with_us_item_title">Jobba med oss</string>
     <string name="about_automattic_family_item_title">Automattic-familjen</string>
     <string name="about_automattic_legal_and_more_item_title">Juridisk information med mera</string>
-    <string name="about_automattic_twitter_item_title">Twitter</string>
     <string name="about_automattic_instagram_item_title">Instagram</string>
     <string name="about_automattic_rate_us_item_title">Betygsätt oss</string>
     <string name="about_automattic_share_with_friends_item_title">Dela med vänner</string>
@@ -2106,7 +2154,6 @@ Language: sv_SE
     <string name="simple_payments_dialog_title">Ta emot betalning</string>
     <string name="orderlist_simple_payments_menu">Enkel betalning</string>
     <string name="analytics">Analys</string>
-    <string name="orderlist_simple_payments_wip_title">Skapa beställningar från din enhet!</string>
     <string name="jetpack_install_progress_step_three_message">Ansluter din butik</string>
     <string name="jetpack_install_progress_step_two_message">Aktiverar</string>
     <string name="jetpack_install_progress_step_one_message">Installerar Jetpack</string>
@@ -2624,8 +2671,6 @@ Language: sv_SE
     <string name="shipping_label_more_information_title">WooCommerce Shipping</string>
     <string name="order_mark_complete">Markera ordern som slutförd</string>
     <string name="orderdetail_shipping_label_create_shipping_label">Skapa fraktetikett</string>
-    <string name="orderdetail_shipping_label_m2_wip_title">Skapa fraktetiketter från din enhet!</string>
-    <string name="orderdetail_shipping_label_m3_wip_message">Du kan nu skapa fraktetiketter för alla fysiska beställningar direkt från din enhet med hjälp av gratistillägget WooCommerce Shipping. Tryck på \"Skapa fraktetikett\" för att prova vår betafunktion!</string>
     <string name="orderdetail_shipping_label_notice">Lär dig mer om att skapa etiketter med din mobila enhet</string>
     <string name="shipping_label_more_information_message">Skippa kön på postkontoret genom att skriva ut fraktetiketter till rabatterade priser hemma med din mobila enhet!</string>
     <string name="edit">Redigera</string>
@@ -2634,7 +2679,6 @@ Language: sv_SE
     <string name="orderdetail_payment_paid_by_customer">Betald</string>
     <string name="login_jetpack_view_instructions_alt">Läs mer om att ansluta Jetpack</string>
     <string name="product_images_validate_drag_and_drop">Validera</string>
-    <string name="product_images_drag_and_drop_description">Dra och släpp för att ändra ordning på foton</string>
     <string name="delete">Radera</string>
     <string name="product_downloadable_files_url">Fil-URL</string>
     <string name="product_downloadable_files_add">Lägg till fil</string>
@@ -3665,7 +3709,6 @@ Language: sv_SE
     <string name="payment">Betalning</string>
     <string name="currency_total_negative">-%1$s%2$s</string>
     <string name="currency_total">%1$s%2$s</string>
-    <string name="app_name">WooCommerce</string>
     <string name="error_no_sms_app">Ingen SMS-app hittades</string>
     <string name="dashboard_stats_visitors">Besökare</string>
     <string name="dashboard_stats_granularity_years">År</string>

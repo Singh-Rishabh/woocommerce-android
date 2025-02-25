@@ -1,11 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2025-01-14 15:54:07+0000
+Translation-Revision-Date: 2025-02-10 13:54:03+0000
 Plural-Forms: nplurals=2; plural=n != 1;
 Generator: GlotPress/2.4.0-alpha
 Language: es
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_customs_restriction_other">Otros</string>
+    <string name="woo_shipping_labels_customs_restriction_sanitary">Inspección sanitaria/fitosanitaria</string>
+    <string name="woo_shipping_labels_customs_restriction_quarantine">Cuarentena</string>
+    <string name="woo_shipping_labels_customs_restriction_none">Ninguno</string>
+    <string name="woo_shipping_labels_customs_restriction_details_description">Describe qué tipo de restricciones debe tener este paquete</string>
+    <string name="woo_shipping_labels_customs_restriction_details_label">Detalles de la restricción</string>
+    <string name="woo_shipping_labels_customs_content_other">Otros</string>
+    <string name="woo_shipping_labels_customs_content_documents">Documentos</string>
+    <string name="woo_shipping_labels_customs_content_sample">Muestra</string>
+    <string name="woo_shipping_labels_customs_content_returned_goods">Mercancías devueltas</string>
+    <string name="woo_shipping_labels_customs_content_gift">Regalo</string>
+    <string name="woo_shipping_labels_customs_content_merchandise">Promociones comerciales</string>
+    <string name="woo_shipping_labels_customs_content_details_description">Describe qué tipo de bienes contiene este paquete</string>
+    <string name="woo_shipping_labels_customs_content_details_label">Detalles del contenido</string>
+    <string name="woo_shipping_labels_customs_return_to_sender_label">Devolver el paquete al remitente si no se puede entregar</string>
+    <string name="woo_shipping_labels_customs_itn_label">Número de transacción internacional</string>
+    <string name="woo_shipping_labels_customs_restriction_type_label">Tipo de restricción</string>
+    <string name="woo_shipping_labels_customs_content_type_label">Tipo de contenido</string>
+    <string name="woo_shipping_labels_customs_add_missing_information">Añadir la información que falta</string>
+    <string name="product_open_upload_screen">Ver los errores de subida recientes</string>
+    <string name="shipping_labels_customs_completed_badge">Completado</string>
+    <string name="shipping_labels_customs_missing_info_badge">Falta información</string>
+    <string name="shipping_labels_customs_title">Aduanas</string>
+    <string name="about_automattic_x_item_title">X</string>
+    <string name="woo_shipping_fetching_countries_and_states">Obteniendo países y estados.</string>
+    <string name="woo_shipping_fetching_countries_and_states_failed">No hemos podido obtener la información del país y el estado. Inténtalo de nuevo.</string>
+    <string name="woo_shipping_field_required_error">Este campo es obligatorio.</string>
+    <string name="product_upload_error_retry_button_content_description">Vuelve a subir la imagen del producto</string>
+    <string name="product_upload_error_title">Errores al subir la imagen</string>
+    <string name="app_name">Woo</string>
+    <string name="woopos_products_empty_list_message">El TPV solo admite productos simples, variables y virtuales: \ncrea uno para empezar.</string>
+    <string name="woo_shipping_label_phone">Teléfono</string>
+    <string name="woo_shipping_label_email">Correo electrónico</string>
+    <string name="woo_shipping_label_post_code">Código postal</string>
+    <string name="woo_shipping_label_state">Provincia</string>
+    <string name="woo_shipping_label_city">Ciudad</string>
+    <string name="woo_shipping_label_address">Dirección</string>
+    <string name="woo_shipping_label_country">País</string>
+    <string name="woo_shipping_label_company">Empresa</string>
+    <string name="woo_shipping_label_name">Nombre</string>
+    <string name="woo_shipping_edit_origin_address_title">Editar el original</string>
+    <string name="woopos_variations_any_variation">Cualquier %s</string>
+    <string name="woopos_variations_empty_list_image_description">No hay ninguna variación</string>
+    <string name="woopos_variations_empty_list_title">No se han encontrado variaciones compatibles</string>
+    <string name="login_use_wpcom_username_instead">Utiliza el nombre de usuario y la contraseña</string>
+    <string name="product_images_drag_and_drop_to_reorder">Arrastra y suelta para reordenar las fotos. La primera foto se establecerá como la portada.</string>
+    <string name="product_cover_photo_tag">Portada</string>
+    <string name="orderlist_bulk_update_result_partial_success">Se ha(n) actualizado %d pedido(s) y no se ha(n) podido actualizar %d pedido(s). Inténtalo de nuevo.</string>
+    <string name="orderlist_bulk_update_result_all_failed">No se han podido actualizar los pedidos. Inténtalo de nuevo.</string>
+    <string name="orderlist_bulk_update_result_no_orders_updated">No se han actualizado los pedidos. Inténtalo de nuevo.</string>
+    <string name="add">Añadir %s</string>
     <string name="woo_shipping_labels_package_creation_error_cancel">Cancelar</string>
     <string name="woo_shipping_labels_package_creation_error_proceed">Continuar</string>
     <string name="woo_shipping_labels_package_creation_error_message">¿Quieres continuar sin guardarlo?</string>
@@ -44,7 +95,6 @@ Language: es
     <string name="woopos_items_pagination_error_description">\"Se ha producido un error al cargar los productos.\"</string>
     <string name="woopos_items_pagination_error_title">\"No se han podido cargar más elementos\"</string>
     <string name="woopos_items_pagination_try_again_label">Volver a intentarlo</string>
-    <string name="woo_pos_payment_remove_card">Retirar tarjeta</string>
     <string name="woo_pos_payment_failed_go_back_to_checkout">Volver a la página de pago</string>
     <string name="woo_pos_payment_failed_try_again">Intentar efectuar el pago de nuevo</string>
     <string name="woo_pos_payment_failed_try_another_payment_method">Probar otro método de pago</string>
@@ -243,7 +293,7 @@ Language: es
     <string name="woopos_products_loading_error_message">¿Intentarlo de nuevo?</string>
     <string name="woopos_products_loading_error_title">Se ha producido un error al cargar los productos</string>
     <string name="woopos_products_empty_list_message_two">Las órdenes de compra actualmente solo admiten productos simples</string>
-    <string name="woopos_products_empty_list_message">EL PDV solo admite productos simples y variables:\ncrea uno para empezar.</string>
+    <string name="woopos_variations_empty_list_message">EL TPV solo admite productos simples, variables y virtuales: \ncrea uno para empezar.</string>
     <string name="woopos_products_empty_list_title">No se han encontrado productos compatibles</string>
     <string name="woopos_products_empty_list_image_description">Sin productos</string>
     <string name="woopos_get_support_title">Conseguir ayuda</string>
@@ -1393,7 +1443,7 @@ Language: es
     <string name="domain_privacy_option_off_title">Registrar públicamente</string>
     <string name="domain_privacy_option_on_title">Registrar privadamente con protección de privacidad</string>
     <string name="domain_registration_contact_form_input_error">Por favor, introduce un %s válido</string>
-    <string name="domain_registration_privacy_protection_tos">Al registrar este dominio aceptas nuestros %1$stérminos y condiciones%2$s</string>
+    <string name="domain_registration_privacy_protection_tos">Al registrar este dominio, aceptas nuestros &lt;a href=\'\'&gt;términos y condiciones&lt;/a&gt;</string>
     <string name="domain_registration_privacy_protection_description">Los propietarios de dominios tienen que compartir información en una base de datos pública de todos los dominios.\n   Con la protección de privacidad publicamos nuestra propia información en vez de la tuya, y te redirigiremos de forma privada cualquier comunicación dirigida a ti. </string>
     <string name="domain_registration_privacy_protection_title">Protección de privacidad</string>
     <string name="domains_access_error_title">Solo los administradores de la tienda pueden acceder a la configuración del dominio</string>
@@ -1912,7 +1962,6 @@ Language: es
     <string name="product_ratings_count_one">\u2022  una reseña aprobada</string>
     <string name="product_ratings_count">\u2022  %d reseñas aprobadas</string>
     <string name="tax_name_with_tax_percent">%1$s (%2$s%%)</string>
-    <string name="orderlist_simple_payments_wip_message_enabled">Hemos estado trabajando para que puedas crear pedidos desde tu dispositivo. Puedes probar esta función tocando el botón \"+\"</string>
     <string name="empty_inbox_description">Pronto encontrarás más consejos e información para que tu tienda siga creciendo. ¡Te esperamos!</string>
     <string name="empty_inbox_title">¡Enhorabuena, has leído todo!</string>
     <string name="orderstatus_contentDesc_withStatus">Estado del pedido: %s</string>
@@ -1995,7 +2044,6 @@ Language: es
     <string name="about_automattic_work_with_us_item_title">Trabaja con nosotros</string>
     <string name="about_automattic_family_item_title">La familia Automattic</string>
     <string name="about_automattic_legal_and_more_item_title">Legal y otros</string>
-    <string name="about_automattic_twitter_item_title">Twitter</string>
     <string name="about_automattic_instagram_item_title">Instagram</string>
     <string name="about_automattic_rate_us_item_title">Valóranos</string>
     <string name="about_automattic_share_with_friends_item_title">Compartir con amigos</string>
@@ -2105,7 +2153,6 @@ Language: es
     <string name="simple_payments_enter_amount">Introducir importe</string>
     <string name="simple_payments_dialog_title">Aceptar pago</string>
     <string name="orderlist_simple_payments_menu">Pago simple</string>
-    <string name="orderlist_simple_payments_wip_title">¡Crea pedidos desde tu dispositivo!</string>
     <string name="analytics">Análisis</string>
     <string name="jetpack_install_progress_step_four_message">Todo listo</string>
     <string name="jetpack_install_progress_step_three_message">Conectando tu tienda</string>
@@ -2626,15 +2673,12 @@ Language: es
     <string name="order_mark_complete">Marcar el pedido como completado</string>
     <string name="orderdetail_shipping_label_notice">Obtén más información sobre la creación de etiquetas con tu dispositivo móvil</string>
     <string name="orderdetail_shipping_label_create_shipping_label">Crear etiqueta de envío</string>
-    <string name="orderdetail_shipping_label_m3_wip_message">Ahora, puedes crear etiquetas de envío para todos los pedidos físicos directamente desde tu dispositivo con el plugin gratuito de WooCommerce Shipping. Toca en \"Crear etiqueta de envío\" para probar nuestra función beta.</string>
-    <string name="orderdetail_shipping_label_m2_wip_title">¡Crea etiquetas de envío desde tu dispositivo!</string>
     <string name="orderdetail_payment_fees">Tasas</string>
     <string name="orderdetail_net">Pago neto</string>
     <string name="orderdetail_payment_paid_by_customer">Pagado</string>
     <string name="login_jetpack_view_instructions_alt">Más información sobre la conexión con Jetpack</string>
     <string name="edit">Editar</string>
     <string name="product_images_validate_drag_and_drop">Validar</string>
-    <string name="product_images_drag_and_drop_description">Arrastrar y soltar para reordenar fotos</string>
     <string name="product_downloadable_files_download_settings">Ajustes de descarga</string>
     <string name="product_downloadable_files_name_invalid">Introduce un nombre válido</string>
     <string name="product_downloadable_files_add_manually">Introduce la URL del archivo</string>
@@ -3761,7 +3805,6 @@ Language: es
     <string name="logging_in">Accediendo</string>
     <string name="all">Todo</string>
     <string name="notification_channel_general_title">General</string>
-    <string name="app_name">WooCommerce</string>
     <string-array name="analytics_date_range_selectors">
         <item>@string/date_timeframe_custom</item>
         <item>@string/date_timeframe_today</item>

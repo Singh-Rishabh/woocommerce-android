@@ -1,11 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Translation-Revision-Date: 2025-01-13 18:54:04+0000
+Translation-Revision-Date: 2025-02-10 17:54:05+0000
 Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;
 Generator: GlotPress/2.4.0-alpha
 Language: ar
 -->
 <resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="woo_shipping_labels_customs_restriction_other">أخرى</string>
+    <string name="woo_shipping_labels_customs_restriction_sanitary">التفتيش الصحي/تفتيش الصحة النباتية</string>
+    <string name="woo_shipping_labels_customs_restriction_quarantine">الحجر الصحي</string>
+    <string name="woo_shipping_labels_customs_restriction_none">لا شيء</string>
+    <string name="woo_shipping_labels_customs_restriction_details_description">يرجى وصف نوع القيود التي يجب أن تمتلكها هذه الحزمة</string>
+    <string name="woo_shipping_labels_customs_restriction_details_label">تفاصيل القيود</string>
+    <string name="woo_shipping_labels_customs_content_other">أخرى</string>
+    <string name="woo_shipping_labels_customs_content_documents">الوثائق</string>
+    <string name="woo_shipping_labels_customs_content_sample">نموذج</string>
+    <string name="woo_shipping_labels_customs_content_returned_goods">البضائع المرتجعة</string>
+    <string name="woo_shipping_labels_customs_content_gift">هدية</string>
+    <string name="woo_shipping_labels_customs_content_merchandise">البضائع</string>
+    <string name="woo_shipping_labels_customs_content_details_description">يرجى وصف نوع البضائع التي تحتوي على</string>
+    <string name="woo_shipping_labels_customs_content_details_label">تفاصيل المحتوى</string>
+    <string name="woo_shipping_labels_customs_return_to_sender_label">الرجوع إلى المرسِل إذا تعذر تسليم الطرد</string>
+    <string name="woo_shipping_labels_customs_itn_label">رقم المعاملة الدولي</string>
+    <string name="woo_shipping_labels_customs_restriction_type_label">نوع القيود</string>
+    <string name="woo_shipping_labels_customs_content_type_label">نوع المحتوى</string>
+    <string name="woo_shipping_labels_customs_add_missing_information">إضافة معلومات مفقودة</string>
+    <string name="product_open_upload_screen">عرض مرات فشل الرفع الأخيرة</string>
+    <string name="shipping_labels_customs_completed_badge">مكتمل</string>
+    <string name="shipping_labels_customs_missing_info_badge">معلومات مفقودة</string>
+    <string name="shipping_labels_customs_title">الجمارك</string>
+    <string name="about_automattic_x_item_title">X</string>
+    <string name="woo_shipping_fetching_countries_and_states">إحضار البلدان والولايات.</string>
+    <string name="woo_shipping_fetching_countries_and_states_failed">تعذر علينا استرداد معلومات البلد والولاية. يرجى المحاولة مجددًا.</string>
+    <string name="woo_shipping_field_required_error">هذا الحقل مطلوب.</string>
+    <string name="product_upload_error_retry_button_content_description">إعادة محاولة رفع صورة المنتج</string>
+    <string name="product_upload_error_title">أخطاء رفع الصور</string>
+    <string name="app_name">Woo</string>
+    <string name="woopos_products_empty_list_message">لا تدعم نقطة البيع حاليًا سوى المنتجات البسيطة والمتغيرة والافتراضية - \nأنشئ واحدة للبدء.</string>
+    <string name="woo_shipping_label_phone">الهاتف</string>
+    <string name="woo_shipping_label_email">البريد الإلكتروني</string>
+    <string name="woo_shipping_label_post_code">الرمز البريدي</string>
+    <string name="woo_shipping_label_state">الولاية</string>
+    <string name="woo_shipping_label_city">المدينة</string>
+    <string name="woo_shipping_label_address">العنوان</string>
+    <string name="woo_shipping_label_country">البلد</string>
+    <string name="woo_shipping_label_company">الشركة</string>
+    <string name="woo_shipping_label_name">الاسم</string>
+    <string name="woo_shipping_edit_origin_address_title">تحرير الأصل</string>
+    <string name="woopos_variations_any_variation">أي %s</string>
+    <string name="woopos_variations_empty_list_image_description">لا توجد أشكال</string>
+    <string name="woopos_variations_empty_list_title">لم يتم العثور على أشكال مدعومة</string>
+    <string name="login_use_wpcom_username_instead">استخدام اسم المستخدم وكلمة المرور بدلاً من ذلك</string>
+    <string name="product_images_drag_and_drop_to_reorder">السحب والإفلات لإعادة ترتيب الصور. سيتم تعيين الصورة الأولى كالغلاف.</string>
+    <string name="product_cover_photo_tag">غلاف</string>
+    <string name="orderlist_bulk_update_result_partial_success">تم تحديث %d من الطلبات، وفشل تحديث %d من الطلبات. يرجى المحاولة مجددًا.</string>
+    <string name="orderlist_bulk_update_result_all_failed">فشل تحديث الطلبات. يرجى المحاولة مجددًا.</string>
+    <string name="orderlist_bulk_update_result_no_orders_updated">لم يتم تحديث الطلبات. يرجى المحاولة مجددًا.</string>
+    <string name="add">إضافة %s</string>
     <string name="woo_shipping_labels_package_creation_error_cancel">إلغاء</string>
     <string name="woo_shipping_labels_package_creation_error_proceed">المتابعة</string>
     <string name="woo_shipping_labels_package_creation_error_message">هل تريد المتابعة من دون حفظه؟</string>
@@ -44,7 +95,6 @@ Language: ar
     <string name="woopos_items_pagination_error_description">\"حدث خطأ في أثناء تحميل المنتجات\".</string>
     <string name="woopos_items_pagination_error_title">\"فشل تحميل مزيد من العناصر\"</string>
     <string name="woopos_items_pagination_try_again_label">المحاولة مجددًا</string>
-    <string name="woo_pos_payment_remove_card">إزالة البطاقة</string>
     <string name="woo_pos_payment_failed_go_back_to_checkout">الرجوع إلى إجراءات السداد</string>
     <string name="woo_pos_payment_failed_try_again">محاولة الدفع مجددًا</string>
     <string name="woo_pos_payment_failed_try_another_payment_method">تجربة طريقة دفع أخرى</string>
@@ -243,7 +293,7 @@ Language: ar
     <string name="woopos_products_loading_error_message">هل تريد محاولة أخرى؟</string>
     <string name="woopos_products_loading_error_title">خطأ في أثناء تحميل المنتجات</string>
     <string name="woopos_products_empty_list_message_two">لا يدعم POS حاليًا سوى المنتجات البسيطة</string>
-    <string name="woopos_products_empty_list_message">لا تدعم نقطة البيع حاليًا سوى المنتجات البسيطة والمتغيرة - \nأنشئ واحدة للبدء.</string>
+    <string name="woopos_variations_empty_list_message">لا تدعم نقطة البيع حاليًا سوى المنتجات البسيطة والمتغيرة والافتراضية - \nأنشئ واحدة للبدء.</string>
     <string name="woopos_products_empty_list_title">لم يتم العثور على منتجات مدعومة</string>
     <string name="woopos_products_empty_list_image_description">لا توجد منتجات</string>
     <string name="woopos_get_support_title">الحصول على الدعم</string>
@@ -1393,7 +1443,7 @@ Language: ar
     <string name="domain_privacy_option_off_title">التسجيل بشكل علني</string>
     <string name="domain_privacy_option_on_title">التسجيل بشكل خاص مع ميزة الحماية من الخصوصية</string>
     <string name="domain_registration_contact_form_input_error">الرجاء إدخال عنوان %s صالح</string>
-    <string name="domain_registration_privacy_protection_tos">من خلال تسجيل هذا النطاق فإنك توافق على%1$sالشروط والأحكام%2$s</string>
+    <string name="domain_registration_privacy_protection_tos">يعني تسجيل هذا النطاق أنك توافق على &lt;a href=\'\'&gt;شروط الخدمة التي نُقرها&lt;/a&gt;</string>
     <string name="domain_registration_privacy_protection_description">يتعين على مالكي النطاق مشاركة معلومات الاتصال في قاعدة بيانات عامة لجميع النطاقات.\n        مع ميزة حماية الخصوصية، ننشر معلوماتنا الخاصة بدلاً من معلوماتك، وإعادة توجيه أي اتصال إليك بشكل سري.</string>
     <string name="domain_registration_privacy_protection_title">حماية الخصوصية</string>
     <string name="domains_access_error_title">لا يمكن لمسؤولي المتجر سوى الوصول إلى إعدادات النطاق</string>
@@ -1912,7 +1962,6 @@ Language: ar
     <string name="product_ratings_count_one">\u2022  مراجعة واحدة تمت الموافقة عليها</string>
     <string name="product_ratings_count">\u2022  %d من المراجعات التي تمت الموافقة عليها</string>
     <string name="tax_name_with_tax_percent">%1$s (%2$s%%)</string>
-    <string name="orderlist_simple_payments_wip_message_enabled">نعمل على إتاحة إمكانية إنشاء الطلبات من جهازك! يمكنك تجربة هذه الميزة عن طريق الضغط على زر \"+\"</string>
     <string name="empty_inbox_description">عد قريبًا للحصول على مزيد من النصائح والرؤى بشأن تكبير متجرك</string>
     <string name="empty_inbox_title">تهانينا، لقد قرأت كل شيء!</string>
     <string name="orderstatus_contentDesc_withStatus">حالة الطلب: %s</string>
@@ -1995,7 +2044,6 @@ Language: ar
     <string name="about_automattic_work_with_us_item_title">العمل معنا</string>
     <string name="about_automattic_family_item_title">عائلة Automattic</string>
     <string name="about_automattic_legal_and_more_item_title">الشؤون القانونية والمزيد</string>
-    <string name="about_automattic_twitter_item_title">تويتر</string>
     <string name="about_automattic_instagram_item_title">إنستغرام</string>
     <string name="about_automattic_rate_us_item_title">قيّمنا</string>
     <string name="about_automattic_share_with_friends_item_title">مشاركة مع الأصدقاء</string>
@@ -2105,7 +2153,6 @@ Language: ar
     <string name="simple_payments_enter_amount">إدخال المبلغ</string>
     <string name="simple_payments_dialog_title">تحصيل الدفع</string>
     <string name="orderlist_simple_payments_menu">عملية دفع بسيطة</string>
-    <string name="orderlist_simple_payments_wip_title">إنشاء الطلبات من جهازك!</string>
     <string name="analytics">التحليلات</string>
     <string name="jetpack_install_progress_step_four_message">كل شيء جاهز</string>
     <string name="jetpack_install_progress_step_three_message">الاتصال بمتجرك</string>
@@ -2626,15 +2673,12 @@ Language: ar
     <string name="order_mark_complete">وسم الطلب بأنه مكتمل</string>
     <string name="orderdetail_shipping_label_notice">معرفة المزيد حول إنشاء ملصقات باستخدام جهازك المحمول</string>
     <string name="orderdetail_shipping_label_create_shipping_label">إنشاء ملصق الشحن</string>
-    <string name="orderdetail_shipping_label_m3_wip_message">يمكنك الآن إنشاء ملصقات شحن لجميع الطلبات المادية مباشرةً من جهازك باستخدام إضافة الشحن المجانية عبر WooCommerce. اضغط على \"إنشاء ملصق شحن\" لتجربة ميزة بيتا الخاصة بنا!</string>
-    <string name="orderdetail_shipping_label_m2_wip_title">قم بإنشاء ملصقات الشحن من جهازك!!</string>
     <string name="orderdetail_payment_fees">الرسوم</string>
     <string name="orderdetail_net">الدفع الصافي</string>
     <string name="orderdetail_payment_paid_by_customer">مدفوع</string>
     <string name="login_jetpack_view_instructions_alt">معرفة المزيد حول ربط Jetpack</string>
     <string name="edit">تحرير</string>
     <string name="product_images_validate_drag_and_drop">تحقق</string>
-    <string name="product_images_drag_and_drop_description">السحب والإفلات لإعادة ترتيب الصور</string>
     <string name="product_downloadable_files_download_settings">تنزيل الإعدادات</string>
     <string name="product_downloadable_files_name_invalid">يرجى إدخال اسم صالح</string>
     <string name="product_downloadable_files_add_manually">إدخال عنوان URL للملف</string>
@@ -3761,7 +3805,6 @@ Language: ar
     <string name="logging_in">تسجيل الدخول</string>
     <string name="all">الكل</string>
     <string name="notification_channel_general_title">عام</string>
-    <string name="app_name">WooCommerce</string>
     <string-array name="analytics_date_range_selectors">
         <item>@string/date_timeframe_custom</item>
         <item>@string/date_timeframe_today</item>

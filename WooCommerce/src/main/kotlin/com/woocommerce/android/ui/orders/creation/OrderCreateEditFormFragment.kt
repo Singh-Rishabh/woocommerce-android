@@ -37,16 +37,15 @@ import com.woocommerce.android.R
 import com.woocommerce.android.databinding.FragmentOrderCreateEditFormBinding
 import com.woocommerce.android.databinding.LayoutOrderCreationCustomerInfoBinding
 import com.woocommerce.android.databinding.OrderCreationAdditionalInfoCollectionSectionBinding
-import com.woocommerce.android.extensions.WindowSizeClass
 import com.woocommerce.android.extensions.handleDialogNotice
 import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.hide
 import com.woocommerce.android.extensions.isNotNullOrEmpty
+import com.woocommerce.android.extensions.isTwoPanesShouldBeUsed
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.extensions.show
 import com.woocommerce.android.extensions.takeIfNotEqualTo
-import com.woocommerce.android.extensions.windowSizeClass
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.barcodescanner.BarcodeScanningFragment
@@ -119,8 +118,8 @@ class OrderCreateEditFormFragment :
     BackPressListener {
     private companion object {
         private const val TABLET_PANES_WIDTH_RATIO = 0.5F
-        private const val XL_TABLET_PANES_WIDTH_RATIO = 0.6F
     }
+
     private val viewModel by fixedHiltNavGraphViewModels<OrderCreateEditViewModel>(R.id.nav_graph_order_creations)
     private val sharedViewModel: ProductSelectorSharedViewModel by activityViewModels()
 
@@ -155,6 +154,7 @@ class OrderCreateEditFormFragment :
             selectedItems = viewModel.selectedItems.value.toTypedArray(),
             productSelectorFlow = ProductSelectorViewModel.ProductSelectorFlow.OrderCreation,
             selectionMode = ProductSelectorViewModel.SelectionMode.LIVE,
+            orderCurrency = args.orderCurrency
         )
         navController?.setGraph(R.navigation.nav_graph_product_selector, args.toBundle())
     }
@@ -171,8 +171,8 @@ class OrderCreateEditFormFragment :
             viewModel.addCoupon(it)
         }
         handleTaxRateSelectionResult()
-        viewModel.onDeviceConfigurationChanged(requireContext().windowSizeClass)
-        if (requireContext().windowSizeClass != WindowSizeClass.Compact) syncSelectedItems()
+        viewModel.onDeviceConfigurationChanged(requireContext().isTwoPanesShouldBeUsed)
+        if (requireContext().isTwoPanesShouldBeUsed) syncSelectedItems()
     }
 
     private fun syncSelectedItems() {
@@ -229,13 +229,12 @@ class OrderCreateEditFormFragment :
     }
 
     private fun FragmentOrderCreateEditFormBinding.adjustUIForScreenSize() {
-        productSelectorNavContainer.isVisible = requireContext().windowSizeClass != WindowSizeClass.Compact
-        when (requireContext().windowSizeClass) {
-            WindowSizeClass.Compact -> twoPaneLayoutGuideline.setGuidelinePercent(0.0f)
-            WindowSizeClass.Medium -> twoPaneLayoutGuideline.setGuidelinePercent(TABLET_PANES_WIDTH_RATIO)
-            WindowSizeClass.ExpandedAndBigger -> twoPaneLayoutGuideline.setGuidelinePercent(XL_TABLET_PANES_WIDTH_RATIO)
+        productSelectorNavContainer.isVisible = requireContext().isTwoPanesShouldBeUsed
+        when (requireContext().isTwoPanesShouldBeUsed) {
+            false -> twoPaneLayoutGuideline.setGuidelinePercent(0.0f)
+            true -> twoPaneLayoutGuideline.setGuidelinePercent(TABLET_PANES_WIDTH_RATIO)
         }
-        setupToolbars(requireContext().windowSizeClass != WindowSizeClass.Compact)
+        setupToolbars(requireContext().isTwoPanesShouldBeUsed)
     }
 
     private fun FragmentOrderCreateEditFormBinding.setupToolbars(isTablet: Boolean) {
@@ -265,6 +264,7 @@ class OrderCreateEditFormFragment :
                     viewModel.onCreateOrderClicked(viewModel.currentDraft)
                     true
                 }
+
                 else -> false
             }
         }
@@ -419,6 +419,7 @@ class OrderCreateEditFormFragment :
 
         viewModel.event.observe(viewLifecycleOwner) { handleViewModelEvents(it, binding) }
     }
+
     private fun bindShippingLinesSection(binding: FragmentOrderCreateEditFormBinding) {
         binding.shippingLines.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
@@ -428,7 +429,9 @@ class OrderCreateEditFormFragment :
                         ShippingLineFormSection(
                             shippingLineDetails = shippingLineSection.shippingLines,
                             isEnabled = shippingLineSection.isEnabled,
-                            formatCurrency = { amount -> currencyFormatter.formatCurrency(amount) },
+                            formatCurrency = { amount ->
+                                currencyFormatter.formatCurrency(amount, viewModel.getCurrencySymbol())
+                            },
                             modifier = Modifier.padding(bottom = 1.dp),
                             onAddClicked = { viewModel.onAddOrEditShippingClicked() },
                             onEditClicked = { id -> viewModel.onAddOrEditShippingClicked(id) }
@@ -605,7 +608,7 @@ class OrderCreateEditFormFragment :
         binding.productsSection.hideAddProductsHeaderActions()
         binding.productsSection.hideHeader()
         binding.productsSection.content = null
-        if (requireContext().windowSizeClass == WindowSizeClass.Compact) {
+        if (!requireContext().isTwoPanesShouldBeUsed) {
             binding.productsSection.setProductSectionButtons(
                 addProductsButton = AddButton(
                     text = getString(R.string.order_creation_add_products),
@@ -631,7 +634,7 @@ class OrderCreateEditFormFragment :
     private fun productAddedCustomAmountUnset(binding: FragmentOrderCreateEditFormBinding) {
         val isEditable = viewModel.viewStateData.liveData.value?.isEditable == true
         if (isEditable) {
-            if (requireContext().windowSizeClass == WindowSizeClass.Compact) {
+            if (!requireContext().isTwoPanesShouldBeUsed) {
                 binding.productsSection.showAddProductsHeaderActions()
             } else {
                 binding.productsSection.hideAddProductsHeaderActions()
@@ -662,7 +665,7 @@ class OrderCreateEditFormFragment :
         binding.customAmountsSection.removeCustomSectionButtons()
         binding.customAmountsSection.showHeader()
         if (viewModel.viewStateData.liveData.value?.isEditable == true) {
-            if (requireContext().windowSizeClass == WindowSizeClass.Compact) {
+            if (!requireContext().isTwoPanesShouldBeUsed) {
                 binding.productsSection.showAddProductsHeaderActions()
             } else {
                 binding.productsSection.hideAddProductsHeaderActions()
@@ -684,7 +687,7 @@ class OrderCreateEditFormFragment :
     }
 
     private fun FragmentOrderCreateEditFormBinding.renderDefaultProductsSectionButtons() {
-        if (requireContext().windowSizeClass == WindowSizeClass.Compact) {
+        if (!requireContext().isTwoPanesShouldBeUsed) {
             productsSection.setProductSectionButtons(
                 addProductsButton = AddButton(
                     text = getString(R.string.order_creation_add_products),
@@ -729,7 +732,10 @@ class OrderCreateEditFormFragment :
             OrderCreateEditNavigator.navigate(
                 this,
                 OrderCreateEditNavigationTarget.CustomAmountDialog(
-                    customAmountUIModel.copy(type = FIXED_CUSTOM_AMOUNT),
+                    customAmountUIModel.copy(
+                        type = FIXED_CUSTOM_AMOUNT,
+                        currency = viewModel.getCurrencySymbol()
+                    ),
                     orderTotal
                 )
             )
@@ -1168,69 +1174,72 @@ class OrderCreateEditFormFragment :
     @Suppress("ComplexMethod")
     private fun handleViewModelEvents(event: Event, binding: FragmentOrderCreateEditFormBinding) {
         when (event) {
-            is OrderCreateEditNavigationTarget -> OrderCreateEditNavigator.navigate(this, event)
-            is ViewOrderStatusSelector ->
-                OrderCreateEditFormFragmentDirections
-                    .actionOrderCreationFragmentToOrderStatusSelectorDialog(
-                        currentStatus = event.currentStatus,
-                        orderStatusList = event.orderStatusList,
-                        positiveButtonLabel = R.string.apply
-                    ).let { findNavController().navigateSafely(it) }
-
+            is OrderCreateEditNavigationTarget -> handleNavigation(event)
+            is ViewOrderStatusSelector -> handleOrderStatusSelection(event)
             is ShowSnackbar -> uiMessageResolver.showSnack(event.message)
             is ShowDialog -> event.showDialog()
-            is OnAddingProductViaScanningFailed -> {
-                uiMessageResolver.getRetrySnack(
-                    message = event.message,
-                    isIndefinite = false,
-                    actionListener = event.retry
-                ).show()
-            }
-
-            is OpenBarcodeScanningFragment -> {
-                findNavController().navigateSafely(
-                    OrderCreateEditFormFragmentDirections.actionOrderCreationFragmentToBarcodeScanningFragment()
-                )
-            }
-
-            is VMKilledWhenScanningInProgress -> {
-                ToastUtils.showToast(
-                    context,
-                    event.message
-                )
-            }
-
-            is OnCouponRejectedByBackend -> {
-                uiMessageResolver.getSnack(
-                    stringResId = event.message
-                ).show()
-            }
-
-            is OnCustomAmountTypeSelected -> {
-                OrderCreateEditNavigator.navigate(
-                    this,
-                    OrderCreateEditNavigationTarget.CustomAmountDialog(
-                        customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
-                            type = event.type
-                        ) ?: CustomAmountUIModel.EMPTY.copy(type = event.type),
-                        orderTotal = viewModel.orderDraft.value?.total.toString(),
-                    )
-                )
-            }
-
-            is OnTotalsSectionHeightChanged -> {
-                binding.scrollView.setPadding(0, 0, 0, event.newHeight)
-            }
-
-            is OnSelectedProductsSyncRequested -> {
-                if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
-                    sharedViewModel.selectedItems.value.let { viewModel.onProductsSelected(it) }
-                }
-            }
-
+            is OnAddingProductViaScanningFailed -> handleScanningFailure(event)
+            is OpenBarcodeScanningFragment -> navigateToBarcodeScanning()
+            is VMKilledWhenScanningInProgress -> ToastUtils.showToast(context, event.message)
+            is OnCouponRejectedByBackend -> uiMessageResolver.getSnack(stringResId = event.message).show()
+            is OnCustomAmountTypeSelected -> handleCustomAmountSelection(event)
+            is OnTotalsSectionHeightChanged -> updateScrollViewPadding(binding, event.newHeight)
+            is OnSelectedProductsSyncRequested -> syncSelectedProducts()
             is Exit -> findNavController().navigateUp()
-
             is ShippingLinesFeedback -> sendShippingLinesFeedback()
+        }
+    }
+
+    private fun handleNavigation(event: OrderCreateEditNavigationTarget) {
+        OrderCreateEditNavigator.navigate(this, event)
+    }
+
+    private fun handleOrderStatusSelection(event: ViewOrderStatusSelector) {
+        OrderCreateEditFormFragmentDirections
+            .actionOrderCreationFragmentToOrderStatusSelectorDialog(
+                currentStatus = event.currentStatus,
+                orderStatusList = event.orderStatusList,
+                positiveButtonLabel = R.string.apply
+            ).let { findNavController().navigateSafely(it) }
+    }
+
+    private fun handleScanningFailure(event: OnAddingProductViaScanningFailed) {
+        uiMessageResolver.getRetrySnack(
+            message = event.message,
+            isIndefinite = false,
+            actionListener = event.retry
+        ).show()
+    }
+
+    private fun navigateToBarcodeScanning() {
+        findNavController().navigateSafely(
+            OrderCreateEditFormFragmentDirections.actionOrderCreationFragmentToBarcodeScanningFragment()
+        )
+    }
+
+    private fun handleCustomAmountSelection(event: OnCustomAmountTypeSelected) {
+        OrderCreateEditNavigator.navigate(
+            this,
+            OrderCreateEditNavigationTarget.CustomAmountDialog(
+                customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
+                    type = event.type,
+                    currency = viewModel.getCurrencySymbol()
+                ) ?: CustomAmountUIModel.EMPTY.copy(
+                    type = event.type,
+                    currency = viewModel.getCurrencySymbol()
+                ),
+                orderTotal = viewModel.orderDraft.value?.total.toString(),
+            )
+        )
+    }
+
+    private fun updateScrollViewPadding(binding: FragmentOrderCreateEditFormBinding, newHeight: Int) {
+        binding.scrollView.setPadding(0, 0, 0, newHeight)
+    }
+
+    private fun syncSelectedProducts() {
+        if (requireContext().isTwoPanesShouldBeUsed) {
+            sharedViewModel.selectedItems.value.let { viewModel.onProductsSelected(it) }
         }
     }
 
@@ -1310,7 +1319,7 @@ class OrderCreateEditFormFragment :
             isEachAddButtonEnabled = true
             content.customAmountAdapter?.isLocked = false
         }
-        if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
+        if (requireContext().isTwoPanesShouldBeUsed) {
             sharedViewModel.onProductSelectionStateChanged(true)
         }
     }
@@ -1340,7 +1349,7 @@ class OrderCreateEditFormFragment :
             isEachAddButtonEnabled = false
             content.customAmountAdapter?.isLocked = true
         }
-        if (requireContext().windowSizeClass != WindowSizeClass.Compact) {
+        if (requireContext().isTwoPanesShouldBeUsed) {
             sharedViewModel.onProductSelectionStateChanged(false)
         }
     }
