@@ -8,6 +8,7 @@ import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse.Successful.PaymentAlreadyCaptured
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse.Successful.Success
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentError
+import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.*
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.CAPTURE_ERROR
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.GENERIC_ERROR
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.MISSING_ORDER
@@ -23,30 +24,36 @@ class CapturePaymentResponseMapper @Inject constructor() {
         PAYMENT_ALREADY_CAPTURED -> PaymentAlreadyCaptured
         GENERIC_ERROR -> GenericError(response.error.messageOrDefault())
         MISSING_ORDER -> MissingOrder(response.error.messageOrDefault())
-        CAPTURE_ERROR -> mapCaptureError(response)
+        CAPTURE_ERROR -> CaptureError.Generic(response.error.messageOrDefault())
         SERVER_ERROR -> ServerError(response.error.messageOrDefault())
         NETWORK_ERROR -> NetworkError(response.error.messageOrDefault())
+        AMOUNT_TOO_SMALL -> mapAmountTooSmallError(response)
     }
 
-    private fun mapCaptureError(response: WCCapturePaymentResponsePayload): CaptureError {
+    private fun mapAmountTooSmallError(response: WCCapturePaymentResponsePayload): CaptureError {
         val extraData = response.error?.extraData ?: return CaptureError.Generic(response.error.messageOrDefault())
+        return if (extraData[MINIMUM_AMOUNT_KEY] == null || extraData[MINIMUM_AMOUNT_CURRENCY_KEY] == null) {
+            CaptureError.Generic(response.error.messageOrDefault())
+        } else {
+            val minAmount = when (val amount = extraData[MINIMUM_AMOUNT_KEY]) {
+                is Double -> amount.toLong()
+                is Long -> amount
+                is Int -> amount.toLong()
+                else -> (amount.toString().toDoubleOrNull() ?: 0.0).toLong()
+            }
 
-        return when (extraData[ERROR_TYPE_KEY]) {
-            AMOUNT_TOO_SMALL_TYPE -> CaptureError.AmountTooSmall(
-                message = response.error.messageOrDefault(),
-                minAmountInMicroUnits = extraData[MINIMUM_AMOUNT_KEY] as? Long ?: 0L,
-                currency = extraData[MINIMUM_AMOUNT_CURRENCY_KEY] as? String ?: "Unknown"
+            CaptureError.AmountTooSmall(
+                message = "Amount too small",
+                minAmountInMicroUnits = minAmount,
+                currency = extraData[MINIMUM_AMOUNT_CURRENCY_KEY] as String
             )
-            else -> CaptureError.Generic(response.error.messageOrDefault())
         }
     }
 
     private fun WCCapturePaymentError?.messageOrDefault() = this?.message ?: "No error message provided"
 
     companion object {
-        private const val ERROR_TYPE_KEY = "error_type"
         private const val MINIMUM_AMOUNT_CURRENCY_KEY = "minimum_amount_currency"
-        private const val AMOUNT_TOO_SMALL_TYPE = "amount_too_small"
         private const val MINIMUM_AMOUNT_KEY = "minimum_amount"
     }
 }
