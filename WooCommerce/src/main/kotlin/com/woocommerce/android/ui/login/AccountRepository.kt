@@ -58,9 +58,7 @@ class AccountRepository @Inject constructor(
     suspend fun logout(): Boolean {
         if (!isUserLoggedIn()) return true
         return if (accountStore.hasAccessToken()) {
-            unregisterDevice().onFailure {
-                return false
-            }
+            unregisterDevice()
 
             // WordPress.com account logout
             val event: OnAccountChanged = dispatcher.dispatchAndAwait(AccountActionBuilder.newSignOutAction())
@@ -133,18 +131,10 @@ class AccountRepository @Inject constructor(
         dispatcher.dispatch(SiteActionBuilder.newRemoveAllSitesAction())
     }
 
-    private suspend fun unregisterDevice(): Result<Unit> {
-        val event: OnDeviceUnregistered = dispatcher.dispatchAndAwait(
+    private suspend fun unregisterDevice() {
+        dispatcher.dispatchAndAwait<Void, OnDeviceUnregistered>(
             NotificationActionBuilder.newUnregisterDeviceAction()
         )
-
-        return when {
-            event.isError -> {
-                WooLog.e(LOGIN, "Error while trying to unregister device: ${event.error.message}")
-                Result.failure(OnChangedException(event.error))
-            }
-            else -> Result.success(Unit)
-        }
     }
 
     sealed class CloseAccountResult {
