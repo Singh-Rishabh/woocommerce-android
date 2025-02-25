@@ -25,7 +25,7 @@
         android:layout_marginTop="96dp"
         android:layout_marginBottom="@dimen/image_major_72"
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_woo_logo_white_99dp"
+        android:src="@drawable/ic_cataloghub_logo_99dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
