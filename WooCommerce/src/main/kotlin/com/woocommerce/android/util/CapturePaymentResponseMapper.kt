@@ -8,7 +8,7 @@ import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse.Successful.PaymentAlreadyCaptured
 import com.woocommerce.android.cardreader.CardReaderStore.CapturePaymentResponse.Successful.Success
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentError
-import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.*
+import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.AMOUNT_TOO_SMALL
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.CAPTURE_ERROR
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.GENERIC_ERROR
 import org.wordpress.android.fluxc.model.payments.inperson.WCCapturePaymentErrorType.MISSING_ORDER
