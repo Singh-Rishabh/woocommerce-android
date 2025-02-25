@@ -62,14 +62,15 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
         )
 
     init {
-        launch {
-            fetchPredefinedPackages().let { response ->
-                _viewState.update { viewState ->
-                    viewState.copy(predefinedPackagesState = response)
-                }
-            }
+        loadData()
+    }
+
+    private fun loadData() = launch {
+        fetchPredefinedPackages().let { response ->
+            _viewState.update { viewState -> viewState.copy(predefinedPackagesState = response) }
         }
     }
+
 
     fun onCarrierPackageSelected(selectedPackage: PackageData, isSelected: Boolean) {
         _viewState.update { viewState ->
@@ -91,6 +92,14 @@ class WooShippingLabelPackageCreationViewModel @Inject constructor(
                 ?.safelyUpdate(selectedPackage, selectedPackage.copy(isSelected = isSelected))
                 ?.let { viewState.copy(predefinedPackagesState = predefinedPackages.copy(savedPackages = it)) }
                 ?: _viewState.value
+        }
+    }
+
+    fun onRetryClick() {
+        triggerEvent(ShowLoadingDialog(true))
+        launch {
+            loadData().join()
+            triggerEvent(ShowLoadingDialog(false))
         }
     }
 
