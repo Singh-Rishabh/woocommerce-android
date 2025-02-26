@@ -4505,6 +4505,8 @@
     <string name="woo_shipping_address_unverified">Unverified address</string>
     <string name="woo_shipping_address_missing_info">Missing information</string>
     <string name="woo_shipping_address_unsaved_changes">Unsaved changes</string>
+    <string name="woo_shipping_verifying_address_failed">The address verification failed. Please try again.</string>
+    <string name="woo_shipping_updating_address_failed">We couldn\'t update your address. Please try again.</string>
 
 
     <string name="woo_shipping_address_validate_and_save">Validate &amp; Save</string>

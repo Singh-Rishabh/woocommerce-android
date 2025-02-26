@@ -96,12 +96,14 @@ data class AddressDTO(
 )
 
 data class NormalizationResponseDTO(
+    val success: Boolean,
     val normalizedAddress: AddressDTO,
     val address: AddressDTO,
     val isTrivialNormalization: Boolean
 )
 
 data class UpdateAddressResponseDTO(
+    val success: Boolean,
     val address: AddressDTO,
     val isVerified: Boolean
 )
