@@ -136,7 +136,12 @@ class WooPosCashPaymentViewModel @Inject constructor(
         val millisSinceCustomerInteractionStarted =
             System.currentTimeMillis() - interactionWithCustomerStartedTimestamp
         val event = CashCollectPaymentSuccess.apply {
-            addProperties(mapOf("milliseconds_since_customer_interaction_started" to "$millisSinceCustomerInteractionStarted"))
+            addProperties(
+                mapOf(
+                    "milliseconds_since_customer_interaction_started" to "$millisSinceCustomerInteractionStarted",
+                    "checkout_tap_count" to "${analyticsData.checkoutButtonTapsCount}"
+                )
+            )
         }
         analyticsTracker.track(event)
     }
