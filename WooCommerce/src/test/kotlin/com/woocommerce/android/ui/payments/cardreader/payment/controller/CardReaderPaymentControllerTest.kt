@@ -140,15 +140,6 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     private val paymentFailedWithEmptyDataForRetry = PaymentFailed(Generic, null, "dummy msg")
     private val paymentFailedWithValidDataForRetry = PaymentFailed(Generic, mock(), "dummy msg")
     private val paymentFailedWithServerError = PaymentFailed(Server(""), mock(), "dummy msg")
-    private val paymentFailedWithAmountTooSmall = PaymentFailed(
-        DeclinedByBackendError.AmountTooSmall(
-            "dummy msg",
-            30,
-            "USD"
-        ),
-        mock(),
-        "dummy msg"
-    )
 
     @OptIn(InternalCoroutinesApi::class)
     @Before
