@@ -13,7 +13,7 @@ data class WooShippingCustomsProductUIModel(
     val weightPerUnit: InputValue,
     val originCountry: String,
     val isExpanded: Boolean
-): Parcelable {
+) : Parcelable {
     val valueAndWeightForDisplay: String
         get() = "${valuePerUnit.currentInput} • ${weightPerUnit.currentInput}"
 }

@@ -53,21 +53,21 @@ fun WooShippingCustomsProductListItem(
         colorResource(R.color.divider_color)
     }
 
-
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .animateContentSize()
-        .background(
-            color = MaterialTheme.colorScheme.onPrimary,
-            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-        )
-        .border(
-            width = dimensionResource(R.dimen.minor_10),
-            color = borderColor,
-            shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-        )
-        .clickable { onExpand(itemData.isExpanded.not()) }
-        .padding(16.dp)
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .animateContentSize()
+            .background(
+                color = MaterialTheme.colorScheme.onPrimary,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+            )
+            .border(
+                width = dimensionResource(R.dimen.minor_10),
+                color = borderColor,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+            )
+            .clickable { onExpand(itemData.isExpanded.not()) }
+            .padding(16.dp)
     ) {
         Row {
             Text(
@@ -79,7 +79,9 @@ fun WooShippingCustomsProductListItem(
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
                 tint = MaterialTheme.colorScheme.primary,
-                contentDescription = stringResource(id = R.string.shipping_label_package_details_items_expand_content_description),
+                contentDescription = stringResource(
+                    id = R.string.shipping_label_package_details_items_expand_content_description
+                ),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .size(dimensionResource(R.dimen.image_minor_60))
@@ -110,7 +112,8 @@ fun WooShippingCustomsProductCollapsedListItem(
     modifier: Modifier,
     itemData: WooShippingCustomsProductUIModel
 ) {
-    Column(modifier = modifier.fillMaxWidth()
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
         Spacer(modifier.padding(vertical = 4.dp))
 
