@@ -41,6 +41,9 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object CashPaymentTapped : Event() {
             override val name: String = "cash_payment_tapped"
         }
+        data object CashPaymentFailed : Event() {
+            override val name: String = "cash_payment_failed"
+        }
         data object CheckoutTapped : Event() {
             override val name: String = "checkout_tapped"
         }
