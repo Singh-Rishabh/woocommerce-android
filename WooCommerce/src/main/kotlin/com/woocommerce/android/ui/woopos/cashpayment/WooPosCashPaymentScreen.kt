@@ -110,6 +110,7 @@ private fun Collecting(
             .imePadding(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        @Suppress("WooPosDesignSystemSpacingUsageRule")
         WooPosText(
             text = state.totalText,
             style = WooPosTypography.BodyLarge,
