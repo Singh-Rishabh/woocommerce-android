@@ -421,6 +421,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         )
                         uiState.value = buildWooPosTotalsViewState(order)
                         analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
+                        analyticsData.orderSyncSuccessTimestamp = System.currentTimeMillis()
                         collectPayment()
                     },
                     onFailure = { error ->
