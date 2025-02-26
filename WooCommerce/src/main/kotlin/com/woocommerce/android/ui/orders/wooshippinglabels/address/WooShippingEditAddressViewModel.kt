@@ -652,3 +652,9 @@ data class InputValue(
         val EMPTY = InputValue("")
     }
 }
+
+@Parcelize
+data class DestinationShippingAddress(
+    val address: Address,
+    val isVerified: Boolean
+) : Parcelable
