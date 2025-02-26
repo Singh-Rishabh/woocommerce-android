@@ -299,21 +299,12 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is CardReaderPaymentState.LoadingData -> handleReaderLoadingPaymentState()
 
-                    is CardReaderPaymentState.ProcessingPayment,
+                    is CardReaderPaymentState.ProcessingPayment -> {
+                        analyticsData.cardTappedTimestamp = System.currentTimeMillis()
+                        handleProcessingOrCapturingPaymentState()
+                    }
                     is CardReaderPaymentState.PaymentCapturing -> {
-                        val state = uiState.value
-                        if (state is WooPosTotalsViewState.Checkout) {
-                            uiState.value = state.copy(totals = Totals.Hidden)
-                            // allow the UI to show "shrinking" exit animation of totals grid before showing
-                            // the "payment in progress" state.
-                            @Suppress("MagicNumber")
-                            delay(384)
-                        }
-                        uiState.value = buildPaymentInProgressState()
-                        childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
-                        childrenToParentEventSender.sendToParent(
-                            NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted
-                        )
+                        handleProcessingOrCapturingPaymentState()
                     }
 
                     is CardReaderPaymentState.PaymentSuccessful -> {
@@ -336,6 +327,22 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun handleProcessingOrCapturingPaymentState() {
+        val state = uiState.value
+        if (state is WooPosTotalsViewState.Checkout) {
+            uiState.value = state.copy(totals = Totals.Hidden)
+            // allow the UI to show "shrinking" exit animation of totals grid before showing
+            // the "payment in progress" state.
+            @Suppress("MagicNumber")
+            delay(384)
+        }
+        uiState.value = buildPaymentInProgressState()
+        childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentInProgress)
+        childrenToParentEventSender.sendToParent(
+            NavigationEvent.ReturnHomeFromCashWhenCardPaymentStarted
+        )
     }
 
     private suspend fun handleCollectingPaymentState(paymentState: CardReaderPaymentState.CollectingPayment) {
