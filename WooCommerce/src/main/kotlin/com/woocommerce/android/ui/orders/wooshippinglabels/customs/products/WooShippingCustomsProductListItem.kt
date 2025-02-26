@@ -210,9 +210,11 @@ fun WooShippingCustomsProductExpandedListItem(
 
             RoundedBorderDropDownWithLabel(
                 label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_origin_country),
-                text = itemData.originCountry,
                 onClick = { },
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier.fillMaxWidth(),
+                text = itemData.originCountry
+                    .takeIf { it.isNotBlank() }
+                    ?: stringResource(R.string.woo_shipping_labels_customs_product_details_origin_country_selection)
             )
         }
     }
