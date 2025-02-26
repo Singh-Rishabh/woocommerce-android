@@ -976,18 +976,27 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     fun `given external reader, when payment fails because of AMOUNT_TOO_SMALL, then failed state is not retryable`() =
         testBlocking {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
+            val errorType = DeclinedByBackendError.AmountTooSmall(
+                "Amount must be at least US$0.50",
+                30,
+                "USD"
+            )
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
-                        "Amount must be at least US$0.50",
-                        30,
-                        "USD"
-                    ),
+                    errorType,
                     false
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow {
+                    emit(
+                        PaymentFailed(
+                            errorType,
+                            mock(),
+                            "dummy msg"
+                        )
+                    )
+                }
             }
 
             controller.start()
@@ -1084,18 +1093,27 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     fun `given external reader, when payment fails because of AMOUNT_TOO_SMALL, then clicking on ok button triggers exit event`() =
         testBlocking {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
+            val errorType = DeclinedByBackendError.AmountTooSmall(
+                "Amount must be at least US$0.50",
+                30,
+                "USD"
+            )
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
-                        "Amount must be at least US$0.50",
-                        30,
-                        "USD"
-                    ),
+                    errorType,
                     false
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow {
+                    emit(
+                        PaymentFailed(
+                            errorType,
+                            mock(),
+                            "dummy msg"
+                        )
+                    )
+                }
             }
             controller.start()
             val events = controller.event.runAndCaptureValues {
@@ -1109,18 +1127,27 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     fun `given built in reader, when payment fails because of AMOUNT_TOO_SMALL, then clicking on ok button triggers exit event`() =
         testBlocking {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
+            val errorType = DeclinedByBackendError.AmountTooSmall(
+                "Amount must be at least US$0.50",
+                30,
+                "USD"
+            )
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
-                        "Amount must be at least US$0.50",
-                        30,
-                        "USD"
-                    ),
+                    errorType,
                     true
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow {
+                    emit(
+                        PaymentFailed(
+                            errorType,
+                            mock(),
+                            "dummy msg"
+                        )
+                    )
+                }
             }
             createController(cardReaderType = BUILT_IN)
 
