@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
+import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
@@ -16,6 +17,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -28,10 +30,12 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.CarrierUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRateUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import com.woocommerce.android.util.CurrencyFormatter
+import com.woocommerce.android.util.WooLog
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +45,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
@@ -53,16 +58,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val getShippableItems: GetShippableItems,
     private val currencyFormatter: CurrencyFormatter,
     private val observeOriginAddresses: ObserveOriginAddresses,
+    private val fetchOriginAddresses: FetchOriginAddresses,
     private val getShippingRates: GetShippingRates,
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
+    private val fetchAccountSettings: FetchAccountSettings,
     private val shouldRequireCustoms: ShouldRequireCustomsForm
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
-    private val order = MutableStateFlow<Order?>(emptyOrder)
+    private val order = MutableStateFlow<Order>(emptyOrder)
     private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
+    private val loadTrigger = MutableSharedFlow<Unit>()
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
@@ -113,7 +121,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getOrderInformation() {
-        orderDetailRepository.getOrderById(navArgs.orderId).let { order.value = it }
+        orderDetailRepository.getOrderById(navArgs.orderId)?.let {
+            order.value = it
+        } ?: run {
+            triggerEvent(Event.ShowSnackbar(R.string.woo_shipping_labels_loading_order_error))
+            postTriggerEvent(Event.Exit)
+        }
     }
 
     private fun getStoreOptions() {
@@ -145,7 +158,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo,
                     weight = packageWeight.totalWeight,
-                    currencyCode = order.value?.currency
+                    currencyCode = order.value.currency
                 )
             } else {
                 null
@@ -230,8 +243,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getShippingAddresses() {
-        order.combine(observeOriginAddresses()) { order, originAddresses ->
-            if (order != null && !originAddresses.isNullOrEmpty()) {
+        combine(order, observeOriginAddresses()) { order, originAddresses ->
+            if (!originAddresses.isNullOrEmpty()) {
                 val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 WooShippingAddresses(
                     shipFrom = selectedOriginAddress,
@@ -279,9 +292,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelection,
             uiState,
             purchaseState,
-            customsState
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState ->
-            if (order == null || storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
+            customsState,
+            loadTrigger.onStart { emit(Unit) }
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, _ ->
+            if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
 
@@ -493,6 +507,25 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     fun onNavigateBack() {
         if (allowBackNavigation()) triggerEvent(Event.Exit)
+    }
+
+    fun onRetry() {
+        viewState.value = WooShippingViewState.Loading
+
+        // Retry loading data that may have previously resulted in errors.
+        launch {
+            try {
+                joinAll(
+                    launch { getOrderInformation() },
+                    launch { fetchAccountSettings() },
+                    launch { fetchOriginAddresses() }
+                )
+            } catch (e: CancellationException) {
+                WooLog.d(WooLog.T.ORDERS, "CancellationException while retrying: $e")
+            } finally {
+                loadTrigger.emit(Unit)
+            }
+        }
     }
 
     data object StartPackageSelection : Event()

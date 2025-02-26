@@ -75,8 +75,8 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetailsSectionTitle
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.AddressStatus
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.AddressValidationState
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.EditableAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.NormalizedAddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.components.RoundedBorderDropDownWithLabel
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
@@ -95,7 +95,7 @@ fun WooShippingEditAddressScreen(
         shouldDisplayLoadingCountriesError = viewState.shouldDisplayLoadingCountriesError,
         shouldUseStatesInput = viewState.shouldUseStatesInput,
         addressStatus = viewState.addressStatus,
-        addressSelection = viewState.normalizedAddressStatus,
+        addressValidationState = viewState.addressValidationState,
         onAddressSelectionChange = viewModel::onAddressSelectionChange,
         onCloseAddressSelection = viewModel::onCloseAddressSelection,
         onExpandCompany = viewModel::onExpandCompany,
@@ -111,6 +111,8 @@ fun WooShippingEditAddressScreen(
         onRawStateChange = viewModel::onRawStateChange,
         onStateChange = viewModel::onStateChange,
         onNormalizeAddress = viewModel::onNormalizeAddress,
+        onUpdateOriginAddress = viewModel::onUpdateOriginAddress,
+        onUpdateNormalizedOriginAddress = viewModel::onUpdateNormalizedOriginAddress,
         modifier = modifier
     )
 }
@@ -124,8 +126,8 @@ fun WooShippingEditAddressScreen(
     shouldUseStatesInput: Boolean,
     isCompanyExpanded: Boolean,
     addressStatus: AddressStatus,
-    addressSelection: NormalizedAddressStatus,
-    onAddressSelectionChange: (NormalizedAddressStatus.AddressSelection) -> Unit,
+    addressValidationState: AddressValidationState,
+    onAddressSelectionChange: (AddressValidationState.AddressSelection) -> Unit,
     onCloseAddressSelection: () -> Unit,
     onExpandCompany: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -140,6 +142,8 @@ fun WooShippingEditAddressScreen(
     onRawStateChange: (String) -> Unit,
     onStateChange: () -> Unit,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
+    onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
+    onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -361,6 +365,7 @@ fun WooShippingEditAddressScreen(
                     editableAddress = editableAddress,
                     addressStatus = addressStatus,
                     onNormalizeAddress = onNormalizeAddress,
+                    onUpdateOriginAddress = onUpdateOriginAddress,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -373,19 +378,21 @@ fun WooShippingEditAddressScreen(
         )
         val coroutineScope = rememberCoroutineScope()
 
-        LaunchedEffect(addressSelection) {
-            when (addressSelection) {
-                is NormalizedAddressStatus.AddressSelection -> {
-                    modalSheetState.show()
-                }
+        val addressSelection = when (addressValidationState) {
+            is AddressValidationState.AddressSelection -> addressValidationState
+            is AddressValidationState.NormalizedAddressUpdateFailed -> addressValidationState.selection
+            else -> null
+        }
 
-                else -> {
-                    modalSheetState.hide()
-                }
+        LaunchedEffect(addressSelection) {
+            if (addressSelection != null) {
+                modalSheetState.show()
+            } else {
+                modalSheetState.hide()
             }
         }
 
-        if (addressSelection is NormalizedAddressStatus.AddressSelection) {
+        if (addressSelection != null) {
             WCModalBottomSheet(
                 sheetState = modalSheetState,
                 onDismissRequest = { onCloseAddressSelection() },
@@ -394,6 +401,7 @@ fun WooShippingEditAddressScreen(
                 SelectAddress(
                     addressSelection = addressSelection,
                     onAddressSelectionChange = onAddressSelectionChange,
+                    onUpdateOriginAddress = onUpdateNormalizedOriginAddress,
                     onCloseAddressSelection = {
                         dismissWCModalBottomSheet(
                             coroutineScope = coroutineScope,
@@ -414,10 +422,12 @@ fun WooShippingEditAddressScreen(
 }
 
 @Composable
+@Suppress("CyclomaticComplexMethod")
 internal fun AddressStatusSection(
     editableAddress: EditableAddress,
     addressStatus: AddressStatus,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
+    onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -428,6 +438,7 @@ internal fun AddressStatusSection(
             AddressStatus.VERIFIED -> stringResource(id = R.string.woo_shipping_address_verified)
             AddressStatus.UNVERIFIED -> stringResource(id = R.string.woo_shipping_address_unverified)
             AddressStatus.MISSING_INFO -> stringResource(id = R.string.woo_shipping_address_missing_info)
+            AddressStatus.SAVE_CHANGES -> stringResource(id = R.string.woo_shipping_address_unsaved_changes)
         }
 
         val color = when (addressStatus) {
@@ -444,19 +455,21 @@ internal fun AddressStatusSection(
             AddressStatus.VERIFIED -> stringResource(id = R.string.close)
             AddressStatus.UNVERIFIED -> stringResource(id = R.string.woo_shipping_address_validate_and_save)
             AddressStatus.MISSING_INFO -> stringResource(id = R.string.woo_shipping_address_missing_info_hint)
+            AddressStatus.SAVE_CHANGES -> stringResource(id = R.string.woo_shipping_address_save_changes)
         }
 
         val buttonAction: () -> Unit = when (addressStatus) {
             AddressStatus.VERIFIED -> {
                 {}
             }
-
             AddressStatus.UNVERIFIED -> {
                 { onNormalizeAddress(editableAddress) }
             }
-
             AddressStatus.MISSING_INFO -> {
                 {}
+            }
+            AddressStatus.SAVE_CHANGES -> {
+                { onUpdateOriginAddress(editableAddress) }
             }
         }
 
@@ -622,8 +635,9 @@ private fun CollapsedField(
 
 @Composable
 private fun SelectAddress(
-    addressSelection: NormalizedAddressStatus.AddressSelection,
-    onAddressSelectionChange: (NormalizedAddressStatus.AddressSelection) -> Unit,
+    addressSelection: AddressValidationState.AddressSelection,
+    onAddressSelectionChange: (AddressValidationState.AddressSelection) -> Unit,
+    onUpdateOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     onCloseAddressSelection: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -703,7 +717,7 @@ private fun SelectAddress(
                     .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 WCColoredButton(
-                    onClick = {},
+                    onClick = { onUpdateOriginAddress(addressSelection) },
                     text = buttonText,
                     modifier = Modifier.fillMaxWidth()
                 )
