@@ -134,4 +134,27 @@ class BlazeCampaignPaymentMethodsListViewModelTests : BaseUnitTest() {
 
         assertThat(event).isEqualTo(MultiLiveEvent.Event.ExitWithResult(newPayment.id))
     }
+
+    @Test
+    fun `when payment success URL is detected and no new payment method is found, then keep old selected method`() = testBlocking {
+        setup {
+            whenever(blazeRepository.fetchPaymentMethods()).thenReturn(
+                Result.success(
+                    BlazeRepository.PaymentMethodsData(
+                        savedPaymentMethods = BlazePaymentSampleData.userPaymentMethods,
+                        addPaymentMethodUrls = BlazePaymentSampleData.paymentMethodsUrls
+                    )
+                )
+            )
+        }
+        val urls = BlazePaymentSampleData.paymentMethodsUrls
+
+        (viewModel.viewState.getOrAwaitValue() as BlazeCampaignPaymentMethodsListViewModel.ViewState.PaymentMethodsList)
+            .onAddPaymentMethodClicked()
+        (viewModel.viewState.getOrAwaitValue() as BlazeCampaignPaymentMethodsListViewModel.ViewState.AddPaymentMethodWebView)
+            .onUrlLoaded(urls.successUrl)
+        val viewState = viewModel.viewState.getOrAwaitValue() as BlazeCampaignPaymentMethodsListViewModel.ViewState.PaymentMethodsList
+
+        assertThat(viewState.selectedPaymentMethod).isEqualTo(BlazePaymentSampleData.userPaymentMethods.first())
+    }
 }
