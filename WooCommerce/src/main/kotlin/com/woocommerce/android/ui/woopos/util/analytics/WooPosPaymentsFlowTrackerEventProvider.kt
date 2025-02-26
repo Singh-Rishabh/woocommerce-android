@@ -98,16 +98,16 @@ class WooPosPaymentsFlowTrackerEventProvider(
         get() = PaymentFlowTrackerEvent.CardPresentCollectPaymentSuccess.apply {
             val props = mutableMapOf<String, String>()
             analyticsTrackingDataKeeper.interactionWithCustomerStartedTimestamp?.let {
-                props["milliseconds_since_customer_interaction_started"] = "$it"
+                props["milliseconds_since_customer_interaction_started"] = "${System.currentTimeMillis() - it}"
             }
             analyticsTrackingDataKeeper.orderSyncSuccessTimestamp?.let {
-                props["milliseconds_since_order_sync_success"] = "$it"
+                props["milliseconds_since_order_sync_success"] = "${System.currentTimeMillis() - it}"
             }
             analyticsTrackingDataKeeper.readerReadyForPaymentTimestamp?.let {
-                props["milliseconds_since_reader_ready_to_collect_payment"] = "$it"
+                props["milliseconds_since_reader_ready_to_collect_payment"] = "${System.currentTimeMillis() - it}"
             }
             analyticsTrackingDataKeeper.cardTappedTimestamp?.let {
-                props["milliseconds_since_card_tapped"] = "$it"
+                props["milliseconds_since_card_tapped"] = "${System.currentTimeMillis() - it}"
             }
             props["checkout_tap_count"] = "${analyticsTrackingDataKeeper.checkoutButtonTapsCount}"
             addProperties(props)
