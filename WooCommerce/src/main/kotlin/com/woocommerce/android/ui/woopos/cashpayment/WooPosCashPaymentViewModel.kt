@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashCollectPaymentSuccess
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashPaymentTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -100,6 +101,8 @@ class WooPosCashPaymentViewModel @Inject constructor(
 
     private fun handleOrderCompletion() {
         viewModelScope.launch {
+            analyticsTracker.track(CashPaymentTapped)
+
             val stateBeforeCompleting = _state.value as WooPosCashPaymentState.Collecting
             _state.value = stateBeforeCompleting.copy(
                 button = stateBeforeCompleting.button.copy(

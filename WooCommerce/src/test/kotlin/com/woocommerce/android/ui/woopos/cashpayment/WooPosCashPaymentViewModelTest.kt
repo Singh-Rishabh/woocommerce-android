@@ -6,6 +6,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashCollectPaymentSuccess
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashPaymentTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -160,6 +161,18 @@ class WooPosCashPaymentViewModelTest {
         assertThat(collectingState.errorMessage).isEqualTo(errorMessage)
         assertThat(collectingState.button.status).isEqualTo(WooPosCashPaymentState.Collecting.Button.Status.ENABLED)
         verify(repository).completeOrder(any())
+    }
+
+    @Test
+    fun `when Complete button tapped, then should track event`() = runTest {
+        // GIVEN
+        whenever(repository.completeOrder(any())).thenReturn(Result.success(Unit))
+
+        // WHEN
+        viewModel.onUIEvent(WooPosCashPaymentUIEvent.CompleteOrderClicked)
+
+        // THEN
+        verify(tracker).track(CashPaymentTapped)
     }
 
     @Test
