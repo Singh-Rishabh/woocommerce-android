@@ -3,11 +3,13 @@ package org.wordpress.android.fluxc.network.rest.wpapi.jetpack
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.Payload
 import org.wordpress.android.fluxc.generated.endpoint.JPAPI
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.jetpack.JetpackUser
+import org.wordpress.android.fluxc.network.BaseRequest
 import org.wordpress.android.fluxc.network.BaseRequest.BaseNetworkError
 import org.wordpress.android.fluxc.network.RawRequest
 import org.wordpress.android.fluxc.network.UserAgent
@@ -37,7 +39,7 @@ class JetpackWPAPIRestClient @Inject constructor(
         site: SiteModel,
         useApplicationPasswords: Boolean = false
     ): JetpackWPAPIPayload<String> {
-        val response = makeWPAPIRequest<String>(
+        val response = makeGetWPAPIRequest<String>(
             site = site,
             path = JPAPI.connection.url.pathV4,
             useApplicationPasswords = useApplicationPasswords
@@ -89,7 +91,7 @@ class JetpackWPAPIRestClient @Inject constructor(
         site: SiteModel,
         useApplicationPasswords: Boolean = false
     ): JetpackWPAPIPayload<JetpackUser> {
-        val response = makeWPAPIRequest<JetpackConnectionDataResponse>(
+        val response = makeGetWPAPIRequest<JetpackConnectionDataResponse>(
             site = site,
             path = JPAPI.connection.data.pathV4,
             useApplicationPasswords = useApplicationPasswords
@@ -104,7 +106,43 @@ class JetpackWPAPIRestClient @Inject constructor(
         }
     }
 
-    private suspend inline fun <reified T> makeWPAPIRequest(
+    /**
+     * Establishes a site-level connection between the site and WordPress.com using Jetpack.
+     *
+     * @return a [JetpackWPAPIPayload] with the blog_id of the site
+     */
+    suspend fun registerSite(site: SiteModel, useApplicationPasswords: Boolean): JetpackWPAPIPayload<Long> {
+        val response = makePostWPAPIRequest<JetpackConnectionRegisterResponse>(
+            site = site,
+            path = JPAPI.connection.register.pathV4,
+            body = mapOf(
+                "from" to "woocommerce_android",
+                "plugin_slug" to "jetpack"
+            ),
+            useApplicationPasswords = useApplicationPasswords
+        )
+
+        return when (response) {
+            is Success<JetpackConnectionRegisterResponse> -> {
+                val blogId = response.data?.authorizeUrl?.toHttpUrl()?.queryParameter("client_id")?.toLong()
+
+                if (blogId == null) {
+                    JetpackWPAPIPayload(
+                        BaseNetworkError(
+                            BaseRequest.GenericErrorType.INVALID_RESPONSE,
+                            "Invalid blog_id"
+                        )
+                    )
+                } else {
+                    JetpackWPAPIPayload(blogId)
+                }
+            }
+
+            is Error -> JetpackWPAPIPayload(response.error)
+        }
+    }
+
+    private suspend inline fun <reified T> makeGetWPAPIRequest(
         site: SiteModel,
         path: String,
         useApplicationPasswords: Boolean
@@ -122,6 +160,33 @@ class JetpackWPAPIRestClient @Inject constructor(
                     restClient = this,
                     url = url,
                     nonce = nonce.value,
+                    clazz = T::class.java
+                )
+            }
+        }
+    }
+
+    private suspend inline fun <reified T> makePostWPAPIRequest(
+        site: SiteModel,
+        path: String,
+        body: Map<String, String>,
+        useApplicationPasswords: Boolean
+    ): WPAPIResponse<T> {
+        return if (useApplicationPasswords) {
+            applicationPasswordsNetwork.executePostGsonRequest(
+                site = site,
+                path = path,
+                body = body,
+                clazz = T::class.java
+            )
+        } else {
+            val url = site.buildUrl(path)
+            cookieNonceAuthenticator.makeAuthenticatedWPAPIRequest(site) { nonce ->
+                wpApiGsonRequestBuilder.syncPostRequest(
+                    restClient = this,
+                    url = url,
+                    nonce = nonce.value,
+                    body = body,
                     clazz = T::class.java
                 )
             }

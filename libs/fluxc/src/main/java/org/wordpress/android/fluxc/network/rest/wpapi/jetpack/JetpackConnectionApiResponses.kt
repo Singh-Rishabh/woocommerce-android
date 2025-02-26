@@ -25,3 +25,7 @@ data class WpcomUser(
     @SerializedName("jetpack_connect") val jetpackConnect: String?,
     @SerializedName("avatar") val avatar: String?
 )
+
+data class JetpackConnectionRegisterResponse(
+    val authorizeUrl: String
+)
