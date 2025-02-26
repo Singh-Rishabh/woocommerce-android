@@ -362,7 +362,17 @@ class WooPosTotalsViewModel @Inject constructor(
             uiState.value = buildWooPosTotalsViewState(order)
             childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
-        analyticsTracker.track(ReaderReadyForCardPayment)
+        analyticsData.readerReadyForPaymentTimestamp = System.currentTimeMillis()
+        analyticsTracker.track(ReaderReadyForCardPayment.apply {
+            val props = mutableMapOf<String, String>()
+            val readerReadyForPaymentTimestamp = analyticsData.readerReadyForPaymentTimestamp
+            val orderSyncTimestamp = analyticsData.orderSyncSuccessTimestamp
+            if (readerReadyForPaymentTimestamp != null && orderSyncTimestamp != null) {
+                props["milliseconds_since_reader_ready_to_collect_payment"] =
+                    "${readerReadyForPaymentTimestamp - orderSyncTimestamp}"
+            }
+            addProperties(props)
+        })
     }
 
     private suspend fun handleReaderLoadingPaymentState() {
