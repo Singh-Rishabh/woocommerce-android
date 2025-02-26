@@ -8,12 +8,14 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashPaymentFailed
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashPaymentTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.wordpress.android.fluxc.network.utils.toMap
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -23,6 +25,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
     private val priceFormat: WooPosFormatPrice,
     private val resourceProvider: ResourceProvider,
     private val analyticsTracker: WooPosAnalyticsTracker,
+    private val analyticsData: WooPosAnalyticsTrackingDataKeeper,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val orderId = savedState.get<Long>(CASH_ROUTE_ORDER_ID_KEY)!!
@@ -113,7 +116,7 @@ class WooPosCashPaymentViewModel @Inject constructor(
 
             val result = repository.completeOrder(orderId)
             if (result.isSuccess) {
-                analyticsTracker.track(CashCollectPaymentSuccess)
+                trackPaymentSuccess()
                 _state.value = WooPosCashPaymentState.Complete
             } else {
                 val currentState = _state.value as? WooPosCashPaymentState.Collecting ?: return@launch
@@ -126,6 +129,16 @@ class WooPosCashPaymentViewModel @Inject constructor(
                 analyticsTracker.track(CashPaymentFailed)
             }
         }
+    }
+
+    private suspend fun trackPaymentSuccess() {
+        val interactionWithCustomerStartedTimestamp = analyticsData.interactionWithCustomerStartedTimestamp
+        val millisSinceCustomerInteractionStarted =
+            System.currentTimeMillis() - interactionWithCustomerStartedTimestamp
+        val event = CashCollectPaymentSuccess.apply {
+            addProperties(mapOf("milliseconds_since_customer_interaction_started" to "$millisSinceCustomerInteractionStarted"))
+        }
+        analyticsTracker.track(event)
     }
 
     private companion object {
