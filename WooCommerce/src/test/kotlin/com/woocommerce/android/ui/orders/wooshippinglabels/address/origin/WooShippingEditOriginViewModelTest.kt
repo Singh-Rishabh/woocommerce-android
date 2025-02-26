@@ -6,10 +6,12 @@ import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationState
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditAddressFlow
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditableAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetStatesByCountryCode
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.NormalizeAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragmentArgs
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.toAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
@@ -52,7 +54,8 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
     fun createViewModel(originAddress: OriginShippingAddress) {
         sut = WooShippingEditAddressViewModel(
             addressValidator = addressValidator,
-            savedState = WooShippingEditOriginAddressFragmentArgs(originAddress).toSavedStateHandle(),
+            savedState =
+            WooShippingEditAddressFragmentArgs(EditAddressFlow.EditOriginAddress(originAddress)).toSavedStateHandle(),
             getAcceptedOriginCountries = getAcceptedOriginCountries,
             getStatesByCountryCode = getStatesByCountryCode,
             normalizeAddress = normalizeAddress,
@@ -883,7 +886,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        sut.onUpdateOriginAddress(editableAddress)
+        sut.onUpdateAddress(editableAddress)
 
         val result = sut.viewState.value
         assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
@@ -930,7 +933,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        sut.onUpdateOriginAddress(editableAddress)
+        sut.onUpdateAddress(editableAddress)
 
         val result = sut.viewState.value
         assertThat(result.addressValidationState).isInstanceOf(AddressValidationState.AddressUpdateFailed::class.java)
