@@ -35,6 +35,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ReaderReadyForCardPayment
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.UiStringParser
 import com.woocommerce.android.util.WooLog
@@ -63,6 +64,7 @@ class WooPosTotalsViewModel @Inject constructor(
     private val networkStatus: WooPosNetworkStatus,
     private val cardReaderPaymentControllerFactory: WooPosCardReaderPaymentControllerFactory,
     private val uiStringParser: UiStringParser,
+    private val analyticsData: WooPosAnalyticsTrackingDataKeeper,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -267,6 +269,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     is ParentToChildrenEvent.CheckoutClicked -> {
                         dataState.value = dataState.value.copy(itemClickedDataList = event.itemClickedDataList)
                         createOrderDraft(dataState.value.itemClickedDataList)
+                        analyticsData.checkoutButtonTapsCount = analyticsData.checkoutButtonTapsCount + 1
                     }
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
