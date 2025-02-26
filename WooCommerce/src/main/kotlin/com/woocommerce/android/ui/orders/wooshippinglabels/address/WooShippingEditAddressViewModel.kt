@@ -616,6 +616,22 @@ fun EditableAddress.toAddress(): Address {
     )
 }
 
+fun OriginShippingAddress.toAddress(): Address {
+    return Address(
+        firstName = firstName.orEmpty(),
+        lastName = lastName.orEmpty(),
+        company = company.orEmpty(),
+        address1 = address1.orEmpty(),
+        address2 = address2.orEmpty(),
+        city = city.orEmpty(),
+        state = AmbiguousLocation.Raw(state.orEmpty()),
+        postcode = postcode,
+        country = AmbiguousLocation.Raw(country).asLocation(),
+        email = email.orEmpty(),
+        phone = phone.orEmpty()
+    )
+}
+
 sealed class AddressValidationState {
     data object NotStarted : AddressValidationState()
     data object VerifyingAddress : AddressValidationState()
