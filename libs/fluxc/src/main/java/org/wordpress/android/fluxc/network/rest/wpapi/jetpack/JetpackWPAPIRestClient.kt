@@ -99,7 +99,7 @@ class JetpackWPAPIRestClient @Inject constructor(
 
         return when (response) {
             is Success<JetpackConnectionDataResponse> -> JetpackWPAPIPayload(
-                    response.data?.toJetpackUser()
+                response.data?.toJetpackUser()
             )
 
             is Error -> JetpackWPAPIPayload(response.error)
@@ -111,7 +111,10 @@ class JetpackWPAPIRestClient @Inject constructor(
      *
      * @return a [JetpackWPAPIPayload] with the blog_id of the site
      */
-    suspend fun registerSite(site: SiteModel, useApplicationPasswords: Boolean): JetpackWPAPIPayload<Long> {
+    suspend fun registerSite(
+        site: SiteModel,
+        useApplicationPasswords: Boolean
+    ): JetpackWPAPIPayload<Long> {
         val response = makePostWPAPIRequest<JetpackConnectionRegisterResponse>(
             site = site,
             path = JPAPI.connection.register.pathV4,
@@ -124,7 +127,8 @@ class JetpackWPAPIRestClient @Inject constructor(
 
         return when (response) {
             is Success<JetpackConnectionRegisterResponse> -> {
-                val blogId = response.data?.authorizeUrl?.toHttpUrl()?.queryParameter("client_id")?.toLong()
+                val blogId =
+                    response.data?.authorizeUrl?.toHttpUrl()?.queryParameter("client_id")?.toLong()
 
                 if (blogId == null) {
                     JetpackWPAPIPayload(
@@ -136,6 +140,26 @@ class JetpackWPAPIRestClient @Inject constructor(
                 } else {
                     JetpackWPAPIPayload(blogId)
                 }
+            }
+
+            is Error -> JetpackWPAPIPayload(response.error)
+        }
+    }
+
+    suspend fun provisionConnection(
+        site: SiteModel,
+        useApplicationPasswords: Boolean
+    ): JetpackWPAPIPayload<JetpackConnectionProvisionResponse> {
+        val response = makePostWPAPIRequest<JetpackConnectionProvisionResponse>(
+            site = site,
+            path = JPAPI.remote_provision.pathV4,
+            body = emptyMap(),
+            useApplicationPasswords = useApplicationPasswords
+        )
+
+        return when (response) {
+            is Success<JetpackConnectionProvisionResponse> -> {
+                JetpackWPAPIPayload(response.data)
             }
 
             is Error -> JetpackWPAPIPayload(response.error)

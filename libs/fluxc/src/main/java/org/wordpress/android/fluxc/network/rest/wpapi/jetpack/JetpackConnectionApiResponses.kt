@@ -29,3 +29,8 @@ data class WpcomUser(
 data class JetpackConnectionRegisterResponse(
     val authorizeUrl: String
 )
+
+data class JetpackConnectionProvisionResponse(
+    val scope: String,
+    val secret: String,
+)
