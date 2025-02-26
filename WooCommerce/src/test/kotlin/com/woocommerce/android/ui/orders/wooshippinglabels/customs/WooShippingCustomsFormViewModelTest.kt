@@ -9,11 +9,11 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCu
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
-import java.math.BigDecimal
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import java.math.BigDecimal
 
 @ExperimentalCoroutinesApi
 class WooShippingCustomsFormViewModelTest : BaseUnitTest() {

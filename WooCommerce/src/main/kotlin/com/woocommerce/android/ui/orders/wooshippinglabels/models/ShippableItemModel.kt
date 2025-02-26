@@ -2,8 +2,8 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.models
 
 import android.os.Parcelable
 import com.woocommerce.android.model.IProduct
-import java.math.BigDecimal
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 
 @Parcelize
 data class ShippableItemModel(
