@@ -368,8 +368,8 @@ class WooPosTotalsViewModel @Inject constructor(
             val readerReadyForPaymentTimestamp = analyticsData.readerReadyForPaymentTimestamp
             val orderSyncTimestamp = analyticsData.orderSyncSuccessTimestamp
             if (readerReadyForPaymentTimestamp != null && orderSyncTimestamp != null) {
-                props["milliseconds_since_reader_ready_to_collect_payment"] =
-                    "${readerReadyForPaymentTimestamp - orderSyncTimestamp}"
+                val waitingTimeSeconds = (readerReadyForPaymentTimestamp - orderSyncTimestamp) / 1000
+                props["waiting_time"] = "$waitingTimeSeconds"
             }
             addProperties(props)
         })
