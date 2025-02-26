@@ -1,14 +1,15 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
-import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowContentTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowRestrictionTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ViewState
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
+import java.math.BigDecimal
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
@@ -21,7 +22,22 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     @Before
     fun setup() {
         viewModel = WooShippingCustomsFormViewModel(
-            savedState = SavedStateHandle()
+            savedState = WooShippingCustomsFormFragmentArgs(
+                shippableItems = arrayOf(
+                    ShippableItemModel(
+                        itemId = 1,
+                        productId = 1,
+                        title = "Test Product",
+                        price = BigDecimal.ONE,
+                        quantity = 1f,
+                        currency = "USD",
+                        length = 1f,
+                        width = 1f,
+                        height = 1f,
+                        weight = 1f
+                    )
+                )
+            ).toSavedStateHandle()
         )
     }
 
