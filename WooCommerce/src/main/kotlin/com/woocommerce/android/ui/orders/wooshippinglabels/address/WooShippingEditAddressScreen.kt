@@ -3,6 +3,10 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.address
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -27,16 +31,20 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
+import androidx.compose.material.SnackbarDefaults
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -45,11 +53,15 @@ import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -81,6 +93,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShi
 import com.woocommerce.android.ui.orders.wooshippinglabels.components.RoundedBorderDropDownWithLabel
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
+import kotlinx.coroutines.launch
 
 @Composable
 fun WooShippingEditAddressScreen(
@@ -92,7 +105,7 @@ fun WooShippingEditAddressScreen(
         editableAddress = viewState.editableAddress,
         isCompanyExpanded = viewState.isCompanyExpanded,
         loading = viewState.loading,
-        shouldDisplayLoadingCountriesError = viewState.shouldDisplayLoadingCountriesError,
+        error = viewState.error,
         shouldUseStatesInput = viewState.shouldUseStatesInput,
         addressStatus = viewState.addressStatus,
         addressValidationState = viewState.addressValidationState,
@@ -107,7 +120,6 @@ fun WooShippingEditAddressScreen(
         onEmailChange = viewModel::onEmailChange,
         onPhoneChange = viewModel::onPhoneChange,
         onCountryChange = viewModel::onCountryChange,
-        onRefreshCountries = viewModel::onRefreshCountries,
         onRawStateChange = viewModel::onRawStateChange,
         onStateChange = viewModel::onStateChange,
         onNormalizeAddress = viewModel::onNormalizeAddress,
@@ -122,7 +134,7 @@ fun WooShippingEditAddressScreen(
 fun WooShippingEditAddressScreen(
     editableAddress: EditableAddress,
     loading: WooShippingEditOriginViewModel.LoadingState,
-    shouldDisplayLoadingCountriesError: Boolean,
+    error: WooShippingEditOriginViewModel.EditAddressError?,
     shouldUseStatesInput: Boolean,
     isCompanyExpanded: Boolean,
     addressStatus: AddressStatus,
@@ -138,7 +150,6 @@ fun WooShippingEditAddressScreen(
     onEmailChange: (String) -> Unit,
     onPhoneChange: (String) -> Unit,
     onCountryChange: () -> Unit,
-    onRefreshCountries: () -> Unit,
     onRawStateChange: (String) -> Unit,
     onStateChange: () -> Unit,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
@@ -149,7 +160,12 @@ fun WooShippingEditAddressScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(hostState = snackbarHostState) {
+                Snackbar(
+                    snackbarData = it,
+                    modifier = Modifier.padding(bottom = 120.dp)
+                )
+            }
         },
         topBar = {
             Toolbar(
@@ -176,24 +192,6 @@ fun WooShippingEditAddressScreen(
                 val phoneFocusRequester = remember { FocusRequester() }
                 val stateFocusRequester = remember { FocusRequester() }
                 val keyboardController = LocalSoftwareKeyboardController.current
-
-                val errorMessage = stringResource(id = R.string.woo_shipping_fetching_countries_and_states_failed)
-                val retry = stringResource(id = R.string.retry)
-                LaunchedEffect(shouldDisplayLoadingCountriesError) {
-                    if (shouldDisplayLoadingCountriesError) {
-                        val result = snackbarHostState.showSnackbar(
-                            message = errorMessage,
-                            duration = SnackbarDuration.Indefinite,
-                            actionLabel = retry
-                        )
-                        when (result) {
-                            SnackbarResult.Dismissed -> {}
-                            SnackbarResult.ActionPerformed -> {
-                                onRefreshCountries()
-                            }
-                        }
-                    }
-                }
 
                 RoundedBorderTextFieldWithLabel(
                     label = "${stringResource(id = R.string.woo_shipping_label_name)} *",
@@ -384,32 +382,53 @@ fun WooShippingEditAddressScreen(
             else -> null
         }
 
+        var isBottomSheetSnackBarVisible by remember { mutableStateOf(false) }
+
         LaunchedEffect(addressSelection) {
             if (addressSelection != null) {
-                modalSheetState.show()
+                coroutineScope.launch { modalSheetState.show() }.invokeOnCompletion {
+                    if (modalSheetState.isVisible) {
+                        isBottomSheetSnackBarVisible = true
+                    }
+                }
             } else {
+                isBottomSheetSnackBarVisible = false
                 modalSheetState.hide()
             }
         }
 
+        val retry = stringResource(id = R.string.retry)
         if (addressSelection != null) {
             WCModalBottomSheet(
                 sheetState = modalSheetState,
                 onDismissRequest = { onCloseAddressSelection() },
                 contentWindowInsets = { WindowInsets.statusBars }
             ) {
-                SelectAddress(
+                SelectAddressWithCustomSnackBar(
                     addressSelection = addressSelection,
                     onAddressSelectionChange = onAddressSelectionChange,
-                    onUpdateOriginAddress = onUpdateNormalizedOriginAddress,
-                    onCloseAddressSelection = {
-                        dismissWCModalBottomSheet(
-                            coroutineScope = coroutineScope,
-                            modalSheetState = modalSheetState,
-                            invokeOnCompletion = onCloseAddressSelection
-                        )
-                    }
+                    onUpdateNormalizedOriginAddress = onUpdateNormalizedOriginAddress,
+                    onCloseAddressSelection = onCloseAddressSelection,
+                    error = error,
+                    isBottomSheetSnackBarVisible = isBottomSheetSnackBarVisible,
+                    modalSheetState = modalSheetState
                 )
+            }
+        } else {
+            LaunchedEffect(error) {
+                if (error != null) {
+                    val result = snackbarHostState.showSnackbar(
+                        message = error.message,
+                        duration = SnackbarDuration.Indefinite,
+                        actionLabel = retry
+                    )
+                    when (result) {
+                        SnackbarResult.Dismissed -> {}
+                        SnackbarResult.ActionPerformed -> {
+                            error.onRetry()
+                        }
+                    }
+                }
             }
         }
     }
@@ -628,6 +647,81 @@ private fun CollapsedField(
                     modifier = Modifier.padding(start = 8.dp),
                     fontWeight = FontWeight.Bold
                 )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SelectAddressWithCustomSnackBar(
+    addressSelection: AddressValidationState.AddressSelection,
+    onAddressSelectionChange: (AddressValidationState.AddressSelection) -> Unit,
+    onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
+    onCloseAddressSelection: () -> Unit,
+    error: WooShippingEditOriginViewModel.EditAddressError?,
+    isBottomSheetSnackBarVisible: Boolean,
+    modalSheetState: SheetState,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        val coroutineScope = rememberCoroutineScope()
+
+        SelectAddress(
+            addressSelection = addressSelection,
+            onAddressSelectionChange = onAddressSelectionChange,
+            onUpdateOriginAddress = onUpdateNormalizedOriginAddress,
+            onCloseAddressSelection = {
+                dismissWCModalBottomSheet(
+                    coroutineScope = coroutineScope,
+                    modalSheetState = modalSheetState,
+                    invokeOnCompletion = onCloseAddressSelection
+                )
+            }
+        )
+
+        if (error != null) {
+            androidx.compose.animation.AnimatedVisibility(
+                visible = isBottomSheetSnackBarVisible,
+                enter = fadeIn(
+                    animationSpec = androidx.compose.animation.core.tween(
+                        durationMillis = 180
+                    )
+                ) + scaleIn(
+                    animationSpec = androidx.compose.animation.core.tween(
+                        durationMillis = 180
+                    )
+                ),
+                exit = fadeOut(
+                    animationSpec = androidx.compose.animation.core.tween(
+                        durationMillis = 90
+                    )
+                ) + scaleOut(
+                    animationSpec = androidx.compose.animation.core.tween(
+                        durationMillis = 90
+                    )
+
+                )
+            ) {
+                Box(modifier = Modifier.padding(bottom = 120.dp)) {
+                    Snackbar(
+                        modifier = Modifier.padding(12.dp),
+                        content = { Text(error.message) },
+                        action = {
+                            TextButton(
+                                colors = ButtonDefaults
+                                    .textButtonColors(contentColor = SnackbarDefaults.primaryActionColor),
+                                onClick = { error.onRetry() },
+                                content = { Text(stringResource(id = R.string.retry)) }
+                            )
+                        },
+                        actionOnNewLine = false,
+                        shape = MaterialTheme.shapes.small,
+                        backgroundColor = SnackbarDefaults.backgroundColor,
+                        contentColor = MaterialTheme.colors.surface,
+                        elevation = 6.dp
+                    )
+                }
             }
         }
     }
