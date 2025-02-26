@@ -637,6 +637,12 @@ sealed class AddressValidationState {
     ) : AddressValidationState()
 }
 
+@Parcelize
+sealed class EditAddressFlow : Parcelable {
+    data class EditOriginAddress(val address: OriginShippingAddress) : EditAddressFlow()
+    data class EditDestinationAddress(val address: DestinationShippingAddress) : EditAddressFlow()
+}
+
 enum class AddressStatus {
     VERIFIED,
     UNVERIFIED,
