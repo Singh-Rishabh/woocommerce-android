@@ -13,6 +13,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.orders.details.editing.address.LocationCode
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.UpdateDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.UpdateOriginAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
@@ -44,6 +45,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
     private val normalizeAddress: NormalizeAddress,
     private val resourceProvider: ResourceProvider,
     private val updateOriginAddress: UpdateOriginAddress,
+    private val updateDestinationAddress: UpdateDestinationAddress,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private var name by mutableStateOf(InputValue(""))
@@ -536,7 +538,36 @@ class WooShippingEditAddressViewModel @Inject constructor(
         addressValidationState.value = AddressValidationState.NotStarted
     }
 
-    fun onUpdateNormalizedOriginAddress(selection: AddressValidationState.AddressSelection) {
+    fun onUpdateNormalizedAddress(selection: AddressValidationState.AddressSelection) {
+        when (val currentFlow = navArgs.flow) {
+            is EditAddressFlow.EditDestinationAddress ->
+                onUpdateNormalizedDestinationAddress(selection, currentFlow.orderId)
+            is EditAddressFlow.EditOriginAddress -> onUpdateNormalizedOriginAddress(selection)
+        }
+    }
+
+    private fun onUpdateNormalizedDestinationAddress(
+        selection: AddressValidationState.AddressSelection,
+        orderId: Long
+    ) {
+        addressValidationState.value = AddressValidationState.UpdatingAddress
+        launch {
+            updateDestinationAddress(selection.selectedAddress, orderId).fold(
+                onSuccess = {
+                    val address = it.address
+                    fillAddressForm(address)
+                    addressValidationState.value = AddressValidationState.NotStarted
+                    currentAddress.value = address
+                    isVerified.value = it.isVerified
+                },
+                onFailure = {
+                    addressValidationState.value = AddressValidationState.NormalizedAddressUpdateFailed(selection)
+                }
+            )
+        }
+    }
+
+    private fun onUpdateNormalizedOriginAddress(selection: AddressValidationState.AddressSelection) {
         addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
             updateOriginAddress(selection.selectedAddress, addressId).fold(
@@ -555,15 +586,31 @@ class WooShippingEditAddressViewModel @Inject constructor(
     }
 
     fun onUpdateAddress(editableAddress: EditableAddress) {
-        when (navArgs.flow) {
-            is EditAddressFlow.EditDestinationAddress -> onUpdateDestinationAddress(editableAddress)
+        when (val currentFlow = navArgs.flow) {
+            is EditAddressFlow.EditDestinationAddress ->
+                onUpdateDestinationAddress(editableAddress, currentFlow.orderId)
+
             is EditAddressFlow.EditOriginAddress -> onUpdateOriginAddress(editableAddress)
         }
     }
 
-    @Suppress("UnusedParameter")
-    private fun onUpdateDestinationAddress(editableAddress: EditableAddress) {
-        // To be created
+    private fun onUpdateDestinationAddress(editableAddress: EditableAddress, orderId: Long) {
+        addressValidationState.value = AddressValidationState.UpdatingAddress
+        launch {
+            val address = editableAddress.toAddress()
+            updateDestinationAddress(address, orderId).fold(
+                onSuccess = { result ->
+                    val updatedAddress = result.address
+                    fillAddressForm(updatedAddress)
+                    addressValidationState.value = AddressValidationState.NotStarted
+                    currentAddress.value = updatedAddress
+                    isVerified.value = result.isVerified
+                },
+                onFailure = {
+                    addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
+                }
+            )
+        }
     }
 
     private fun onUpdateOriginAddress(editableAddress: EditableAddress) {
@@ -572,10 +619,10 @@ class WooShippingEditAddressViewModel @Inject constructor(
             val address = editableAddress.toAddress()
             updateOriginAddress(address, addressId).fold(
                 onSuccess = {
-                    val address = it.toAddress()
-                    fillAddressForm(address)
+                    val updatedAddress = it.toAddress()
+                    fillAddressForm(updatedAddress)
                     addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = address
+                    currentAddress.value = updatedAddress
                     isVerified.value = it.isVerified
                 },
                 onFailure = {
@@ -693,6 +740,7 @@ sealed class AddressValidationState {
         val addressNormalization: AddressNormalizationModel,
         val selectedAddress: Address
     ) : AddressValidationState()
+
     data object UpdatingAddress : AddressValidationState()
     data class AddressUpdateFailed(
         val editableAddress: EditableAddress
@@ -732,4 +780,8 @@ data class InputValue(
 data class DestinationShippingAddress(
     val address: Address,
     val isVerified: Boolean
-) : Parcelable
+) : Parcelable {
+    companion object {
+        val EMPTY = DestinationShippingAddress(Address.EMPTY, false)
+    }
+}
