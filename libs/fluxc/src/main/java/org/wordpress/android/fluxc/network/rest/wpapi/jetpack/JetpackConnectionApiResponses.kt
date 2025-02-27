@@ -31,6 +31,7 @@ data class JetpackConnectionRegisterResponse(
 )
 
 data class JetpackConnectionProvisionResponse(
+    @SerializedName("user_id") val userId: Long,
     val scope: String,
     val secret: String,
 )

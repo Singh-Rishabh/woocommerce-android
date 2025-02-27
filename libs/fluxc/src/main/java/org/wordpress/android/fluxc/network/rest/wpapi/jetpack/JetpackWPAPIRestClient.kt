@@ -7,6 +7,7 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.Payload
 import org.wordpress.android.fluxc.generated.endpoint.JPAPI
+import org.wordpress.android.fluxc.generated.endpoint.WPCOMV2
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.jetpack.JetpackUser
 import org.wordpress.android.fluxc.network.BaseRequest
@@ -20,6 +21,8 @@ import org.wordpress.android.fluxc.network.rest.wpapi.WPAPIResponse
 import org.wordpress.android.fluxc.network.rest.wpapi.WPAPIResponse.Error
 import org.wordpress.android.fluxc.network.rest.wpapi.WPAPIResponse.Success
 import org.wordpress.android.fluxc.network.rest.wpapi.applicationpasswords.ApplicationPasswordsNetwork
+import org.wordpress.android.fluxc.network.rest.wpcom.WPComGsonRequestBuilder
+import org.wordpress.android.fluxc.network.rest.wpcom.WPComNetwork
 import javax.inject.Inject
 import javax.inject.Named
 import javax.inject.Singleton
@@ -30,6 +33,7 @@ class JetpackWPAPIRestClient @Inject constructor(
     private val wpApiGsonRequestBuilder: WPAPIGsonRequestBuilder,
     private val cookieNonceAuthenticator: CookieNonceAuthenticator,
     private val applicationPasswordsNetwork: ApplicationPasswordsNetwork,
+    private val wpComNetwork: WPComNetwork,
     dispatcher: Dispatcher,
     @Named("custom-ssl") requestQueue: RequestQueue,
     @Named("no-redirects") private val noRedirectsRequestQueue: RequestQueue,
@@ -163,6 +167,28 @@ class JetpackWPAPIRestClient @Inject constructor(
             }
 
             is Error -> JetpackWPAPIPayload(response.error)
+        }
+    }
+
+    suspend fun connectJetpackAccount(
+        site: SiteModel,
+        blogId: Long,
+        provisioningParams: JetpackConnectionProvisionResponse
+    ): JetpackWPAPIPayload<Unit> {
+        val response = wpComNetwork.executePostGsonRequest(
+            url = WPCOMV2.sites.site(blogId).jetpack_remote_connect_user.url,
+            body = mapOf(
+                "redirect_uri" to site.url,
+                "secret" to provisioningParams.secret,
+                "scope" to provisioningParams.scope,
+                "external_user_id" to provisioningParams.userId
+            ),
+            clazz = Unit::class.java
+        )
+
+        return when (response) {
+            is WPComGsonRequestBuilder.Response.Success<Unit> -> JetpackWPAPIPayload(Unit)
+            is WPComGsonRequestBuilder.Response.Error -> JetpackWPAPIPayload(response.error)
         }
     }
 
