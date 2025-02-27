@@ -487,9 +487,13 @@ class WooPosTotalsViewModel @Inject constructor(
         val subtotalAmount = order.productsTotal
         val taxAmount = order.totalTax
         val totalAmount = order.total
-        val readerStatus = when (cardReaderFacade.readerStatus.value) {
-            is Connected -> buildPreparingReaderStatusState()
-            else -> buildTotalsReaderNotConnectedError()
+        val readerStatus = if (totalAmount.compareTo(BigDecimal.ZERO) == 0) {
+            WooPosTotalsViewState.ReaderStatus.Unavailable
+        } else {
+            when (cardReaderFacade.readerStatus.value) {
+                is Connected -> buildPreparingReaderStatusState()
+                else -> buildTotalsReaderNotConnectedError()
+            }
         }
         return WooPosTotalsViewState.Checkout(
             totals = Totals.Visible(
@@ -498,7 +502,6 @@ class WooPosTotalsViewModel @Inject constructor(
                 orderTotalText = priceFormat(totalAmount),
             ),
             readerStatus = readerStatus,
-            isFreeOrder = totalAmount.compareTo(BigDecimal.ZERO) == 0
         )
     }
 

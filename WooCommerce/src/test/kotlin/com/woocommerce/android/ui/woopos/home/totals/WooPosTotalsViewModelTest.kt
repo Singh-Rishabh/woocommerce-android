@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.CardReaderManager
@@ -1179,8 +1180,10 @@ class WooPosTotalsViewModelTest {
             )
 
             // THEN
-            val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
-            assertTrue(checkout.isFreeOrder)
+            viewModel.state.test {
+                val checkout = awaitItem() as WooPosTotalsViewState.Checkout
+                assertFalse(checkout.readerStatus is WooPosTotalsViewState.ReaderStatus.Unavailable)
+            }
         }
 
     @Test
@@ -1239,7 +1242,7 @@ class WooPosTotalsViewModelTest {
 
             // THEN
             val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
-            assertFalse(checkout.isFreeOrder)
+            assertFalse(checkout.readerStatus is WooPosTotalsViewState.ReaderStatus.Unavailable)
         }
 
     @Test

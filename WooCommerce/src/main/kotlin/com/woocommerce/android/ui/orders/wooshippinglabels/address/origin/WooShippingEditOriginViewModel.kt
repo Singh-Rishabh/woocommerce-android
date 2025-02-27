@@ -155,7 +155,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
             isCompanyExpanded = false,
             editableAddress = EditableAddress(),
             loading = LoadingState.Hidden,
-            shouldDisplayLoadingCountriesError = false,
+            error = null,
             shouldUseStatesInput = false,
             addressStatus = AddressStatus.UNVERIFIED,
             addressValidationState = AddressValidationState.NotStarted
@@ -245,31 +245,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
             currentAddress
         ) { address, isExpanded, countriesState, statesState, addressSelection, currentAddress ->
 
-            val loading =
-                when {
-                    countriesState is LocationState.DisplayLoading || statesState is LocationState.DisplayLoading -> {
-                        LoadingState.DisplayLoading(
-                            resourceProvider.getString(R.string.loading),
-                            resourceProvider.getString(R.string.woo_shipping_fetching_countries_and_states)
-                        )
-                    }
-
-                    addressSelection is AddressValidationState.VerifyingAddress -> {
-                        LoadingState.DisplayLoading(
-                            resourceProvider.getString(R.string.woo_shipping_address_validate_title),
-                            resourceProvider.getString(R.string.woo_shipping_address_validate_message)
-                        )
-                    }
-
-                    addressSelection is AddressValidationState.UpdatingAddress -> {
-                        LoadingState.DisplayLoading(
-                            resourceProvider.getString(R.string.woo_shipping_address_update_title),
-                            resourceProvider.getString(R.string.woo_shipping_address_update_message)
-                        )
-                    }
-
-                    else -> LoadingState.Hidden
-                }
+            val loading = getLoadingState(countriesState, statesState, addressSelection)
+            val error = getErrorState(countriesState, addressSelection, address)
 
             val addressStatus = when {
                 hasIncorrectOrMissingData(address) -> AddressStatus.MISSING_INFO
@@ -282,7 +259,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
                 isCompanyExpanded = isExpanded,
                 editableAddress = address,
                 loading = loading,
-                shouldDisplayLoadingCountriesError = countriesState is LocationState.Error,
+                error = error,
                 shouldUseStatesInput = statesState is LocationState.Loaded && statesState.locations.isEmpty(),
                 addressStatus = addressStatus,
                 addressValidationState = addressSelection
@@ -291,6 +268,87 @@ class WooShippingEditOriginViewModel @Inject constructor(
             .collectLatest {
                 viewState.value = it
             }
+    }
+
+    private fun getErrorState(
+        countriesState: LocationState,
+        addressSelection: AddressValidationState,
+        editableAddress: EditableAddress
+    ): EditAddressError? {
+        return when {
+            countriesState is LocationState.Error -> {
+                EditAddressError(
+                    resourceProvider.getString(R.string.woo_shipping_fetching_countries_and_states_failed)
+                ) { onRefreshCountries() }
+            }
+
+            addressSelection is AddressValidationState.VerificationFailed -> {
+                if (editableAddress == addressSelection.editableAddress) {
+                    EditAddressError(
+                        resourceProvider.getString(R.string.woo_shipping_verifying_address_failed)
+                    ) {
+                        onNormalizeAddress(addressSelection.editableAddress)
+                    }
+                } else {
+                    addressValidationState.value = AddressValidationState.NotStarted
+                    null
+                }
+            }
+
+            addressSelection is AddressValidationState.AddressUpdateFailed -> {
+                if (editableAddress == addressSelection.editableAddress) {
+                    EditAddressError(
+                        resourceProvider.getString(R.string.woo_shipping_updating_address_failed)
+                    ) {
+                        onUpdateOriginAddress(addressSelection.editableAddress)
+                    }
+                } else {
+                    addressValidationState.value = AddressValidationState.NotStarted
+                    null
+                }
+            }
+
+            addressSelection is AddressValidationState.NormalizedAddressUpdateFailed -> {
+                EditAddressError(
+                    resourceProvider.getString(R.string.woo_shipping_updating_address_failed)
+                ) {
+                    onUpdateNormalizedOriginAddress(addressSelection.selection)
+                }
+            }
+
+            else -> null
+        }
+    }
+
+    private fun getLoadingState(
+        countriesState: LocationState,
+        statesState: LocationState,
+        addressSelection: AddressValidationState
+    ): LoadingState {
+        return when {
+            countriesState is LocationState.DisplayLoading || statesState is LocationState.DisplayLoading -> {
+                LoadingState.DisplayLoading(
+                    resourceProvider.getString(R.string.loading),
+                    resourceProvider.getString(R.string.woo_shipping_fetching_countries_and_states)
+                )
+            }
+
+            addressSelection is AddressValidationState.VerifyingAddress -> {
+                LoadingState.DisplayLoading(
+                    resourceProvider.getString(R.string.woo_shipping_address_validate_title),
+                    resourceProvider.getString(R.string.woo_shipping_address_validate_message)
+                )
+            }
+
+            addressSelection is AddressValidationState.UpdatingAddress -> {
+                LoadingState.DisplayLoading(
+                    resourceProvider.getString(R.string.woo_shipping_address_update_title),
+                    resourceProvider.getString(R.string.woo_shipping_address_update_message)
+                )
+            }
+
+            else -> LoadingState.Hidden
+        }
     }
 
     private fun isSameAddress(newAddress: EditableAddress, currentAddress: OriginShippingAddress): Boolean {
@@ -405,16 +463,16 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onNormalizeAddress(editableAddress: EditableAddress) {
+        addressValidationState.value = AddressValidationState.VerifyingAddress
         launch {
             val address = editableAddress.toAddress()
-            addressValidationState.value = AddressValidationState.VerifyingAddress
             normalizeAddress(address).fold(
                 onSuccess = {
                     addressValidationState.value =
                         AddressValidationState.AddressSelection(it, it.normalizedAddress)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.VerificationFailed
+                    addressValidationState.value = AddressValidationState.VerificationFailed(editableAddress)
                 }
             )
         }
@@ -429,8 +487,8 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onUpdateNormalizedOriginAddress(selection: AddressValidationState.AddressSelection) {
+        addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
-            addressValidationState.value = AddressValidationState.UpdatingAddress
             updateOriginAddress(selection.selectedAddress, currentAddress.value.id).fold(
                 onSuccess = {
                     fillAddressForm(it)
@@ -445,9 +503,9 @@ class WooShippingEditOriginViewModel @Inject constructor(
     }
 
     fun onUpdateOriginAddress(editableAddress: EditableAddress) {
+        addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
             val address = editableAddress.toAddress()
-            addressValidationState.value = AddressValidationState.UpdatingAddress
             updateOriginAddress(address, currentAddress.value.id).fold(
                 onSuccess = {
                     fillAddressForm(it)
@@ -455,7 +513,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
                     currentAddress.value = it
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.AddressUpdateFailed
+                    addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
                 }
             )
         }
@@ -465,7 +523,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
         val isCompanyExpanded: Boolean,
         val editableAddress: EditableAddress,
         val loading: LoadingState,
-        val shouldDisplayLoadingCountriesError: Boolean,
+        val error: EditAddressError?,
         val shouldUseStatesInput: Boolean,
         val addressStatus: AddressStatus,
         val addressValidationState: AddressValidationState
@@ -478,6 +536,11 @@ class WooShippingEditOriginViewModel @Inject constructor(
             val message: String
         ) : LoadingState()
     }
+
+    data class EditAddressError(
+        val message: String,
+        val onRetry: () -> Unit
+    )
 
     sealed class LocationState {
         data object Loading : LocationState()
@@ -540,13 +603,19 @@ fun EditableAddress.toAddress(): Address {
 sealed class AddressValidationState {
     data object NotStarted : AddressValidationState()
     data object VerifyingAddress : AddressValidationState()
-    data object VerificationFailed : AddressValidationState()
+    data class VerificationFailed(
+        val editableAddress: EditableAddress
+    ) : AddressValidationState()
+
     data class AddressSelection(
         val addressNormalization: AddressNormalizationModel,
         val selectedAddress: Address
     ) : AddressValidationState()
     data object UpdatingAddress : AddressValidationState()
-    data object AddressUpdateFailed : AddressValidationState()
+    data class AddressUpdateFailed(
+        val editableAddress: EditableAddress
+    ) : AddressValidationState()
+
     data class NormalizedAddressUpdateFailed(
         val selection: AddressSelection,
     ) : AddressValidationState()
