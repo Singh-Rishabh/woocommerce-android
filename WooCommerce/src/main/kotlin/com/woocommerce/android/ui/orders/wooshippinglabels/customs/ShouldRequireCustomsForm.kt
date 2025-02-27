@@ -13,15 +13,15 @@ class ShouldRequireCustomsForm @Inject constructor() {
         )
 
         val isShippingAddressMilitary = isAddressInMilitaryState(
-            addressData.shipTo.country.code,
-            addressData.shipTo.state.codeOrRaw
+            addressData.shipTo.address.country.code,
+            addressData.shipTo.address.state.codeOrRaw
         )
 
         return isOriginAddressMilitary || isShippingAddressMilitary
     }
 
     private val WooShippingAddresses.isDifferentCountryShipment
-        get() = shipFrom.country != shipTo.country.code
+        get() = shipFrom.country != shipTo.address.country.code
 
     private fun isAddressInMilitaryState(
         countryCode: String,

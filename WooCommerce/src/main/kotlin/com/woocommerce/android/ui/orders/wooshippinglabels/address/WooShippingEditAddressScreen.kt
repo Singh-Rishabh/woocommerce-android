@@ -98,6 +98,7 @@ fun WooShippingEditAddressScreen(
 ) {
     val viewState = viewModel.viewState.collectAsState().value
     WooShippingEditAddressScreen(
+        screenTitle = viewModel.screenTitle,
         editableAddress = viewState.editableAddress,
         isCompanyExpanded = viewState.isCompanyExpanded,
         loading = viewState.loading,
@@ -120,7 +121,7 @@ fun WooShippingEditAddressScreen(
         onStateChange = viewModel::onStateChange,
         onNormalizeAddress = viewModel::onNormalizeAddress,
         onUpdateAddress = viewModel::onUpdateAddress,
-        onUpdateNormalizedOriginAddress = viewModel::onUpdateNormalizedOriginAddress,
+        onUpdateNormalizedAddress = viewModel::onUpdateNormalizedAddress,
         onNavigateBack = viewModel::onNavigateBack,
         modifier = modifier
     )
@@ -129,6 +130,7 @@ fun WooShippingEditAddressScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WooShippingEditAddressScreen(
+    screenTitle: String,
     editableAddress: EditableAddress,
     loading: WooShippingEditAddressViewModel.LoadingState,
     error: WooShippingEditAddressViewModel.EditAddressError?,
@@ -151,7 +153,7 @@ fun WooShippingEditAddressScreen(
     onStateChange: () -> Unit,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateAddress: (editableAddress: EditableAddress) -> Unit,
-    onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
+    onUpdateNormalizedAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -167,7 +169,7 @@ fun WooShippingEditAddressScreen(
         },
         topBar = {
             Toolbar(
-                title = stringResource(id = R.string.woo_shipping_edit_origin_address_title),
+                title = screenTitle,
                 onNavigationButtonClick = onNavigateBack,
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack
             )
@@ -406,7 +408,7 @@ fun WooShippingEditAddressScreen(
                 SelectAddressWithCustomSnackBar(
                     addressSelection = addressSelection,
                     onAddressSelectionChange = onAddressSelectionChange,
-                    onUpdateNormalizedOriginAddress = onUpdateNormalizedOriginAddress,
+                    onUpdateNormalizedAddress = onUpdateNormalizedAddress,
                     onCloseAddressSelection = onCloseAddressSelection,
                     error = error,
                     isBottomSheetSnackBarVisible = isBottomSheetSnackBarVisible,
@@ -708,7 +710,7 @@ private fun CollapsedField(
 private fun SelectAddressWithCustomSnackBar(
     addressSelection: AddressValidationState.AddressSelection,
     onAddressSelectionChange: (AddressValidationState.AddressSelection) -> Unit,
-    onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
+    onUpdateNormalizedAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     onCloseAddressSelection: () -> Unit,
     error: WooShippingEditAddressViewModel.EditAddressError?,
     isBottomSheetSnackBarVisible: Boolean,
@@ -721,7 +723,7 @@ private fun SelectAddressWithCustomSnackBar(
         SelectAddress(
             addressSelection = addressSelection,
             onAddressSelectionChange = onAddressSelectionChange,
-            onUpdateOriginAddress = onUpdateNormalizedOriginAddress,
+            onUpdateNormalizedAddress = onUpdateNormalizedAddress,
             onCloseAddressSelection = {
                 dismissWCModalBottomSheet(
                     coroutineScope = coroutineScope,
@@ -782,7 +784,7 @@ private fun SelectAddressWithCustomSnackBar(
 private fun SelectAddress(
     addressSelection: AddressValidationState.AddressSelection,
     onAddressSelectionChange: (AddressValidationState.AddressSelection) -> Unit,
-    onUpdateOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
+    onUpdateNormalizedAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     onCloseAddressSelection: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -862,7 +864,7 @@ private fun SelectAddress(
                     .windowInsetsPadding(WindowInsets.navigationBars)
             ) {
                 WCColoredButton(
-                    onClick = { onUpdateOriginAddress(addressSelection) },
+                    onClick = { onUpdateNormalizedAddress(addressSelection) },
                     text = buttonText,
                     modifier = Modifier.fillMaxWidth()
                 )

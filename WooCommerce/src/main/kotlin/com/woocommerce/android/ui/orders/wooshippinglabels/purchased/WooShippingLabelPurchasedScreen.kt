@@ -125,7 +125,8 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
                             }
                         }
                         true
-                    }
+                    },
+                    onEditDestinationAddress = {}
                 )
             }
         },
