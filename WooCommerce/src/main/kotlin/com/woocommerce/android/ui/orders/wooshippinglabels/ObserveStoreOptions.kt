@@ -28,9 +28,7 @@ class ObserveStoreOptions @Inject constructor(
                 // If there is cached data, emit cached values and refresh the store options async
                 isFirstValue = false
                 emit(options)
-                if (fetchAccountSettings().isFailure) {
-                    emit(null)
-                }
+                fetchAccountSettings()
             }
 
             else -> emit(options)
