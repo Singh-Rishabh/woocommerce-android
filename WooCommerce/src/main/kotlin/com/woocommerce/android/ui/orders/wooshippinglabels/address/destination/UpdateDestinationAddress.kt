@@ -2,7 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.address.destination
 
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.DestinationShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
 import com.woocommerce.android.util.CoroutineDispatchers
 import kotlinx.coroutines.withContext

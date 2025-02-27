@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.U
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.UpdateOriginAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils.combineStrings
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
@@ -764,15 +765,5 @@ data class InputValue(
 ) {
     companion object {
         val EMPTY = InputValue("")
-    }
-}
-
-@Parcelize
-data class DestinationShippingAddress(
-    val address: Address,
-    val isVerified: Boolean
-) : Parcelable {
-    companion object {
-        val EMPTY = DestinationShippingAddress(Address.EMPTY, false)
     }
 }
