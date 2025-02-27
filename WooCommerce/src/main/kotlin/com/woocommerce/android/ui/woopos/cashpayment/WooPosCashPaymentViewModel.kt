@@ -15,7 +15,6 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.wordpress.android.fluxc.network.utils.toMap
 import java.math.BigDecimal
 import javax.inject.Inject
 

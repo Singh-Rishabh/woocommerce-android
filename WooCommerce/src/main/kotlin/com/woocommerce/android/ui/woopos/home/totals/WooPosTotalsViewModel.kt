@@ -367,16 +367,19 @@ class WooPosTotalsViewModel @Inject constructor(
     }
 
     private suspend fun trackReaderReadyForPayment() {
-        analyticsTracker.track(ReaderReadyForCardPayment.apply {
-            val props = mutableMapOf<String, String>()
-            val readerReadyForPaymentTimestamp = analyticsData.readerReadyForPaymentTimestamp
-            val orderSyncTimestamp = analyticsData.orderSyncSuccessTimestamp
-            if (readerReadyForPaymentTimestamp != null && orderSyncTimestamp != null) {
-                val waitingTimeSeconds = (readerReadyForPaymentTimestamp - orderSyncTimestamp) / 1000
-                props["waiting_time"] = "$waitingTimeSeconds"
+        analyticsTracker.track(
+            ReaderReadyForCardPayment.apply {
+                val props = mutableMapOf<String, String>()
+                val readerReadyForPaymentTimestamp = analyticsData.readerReadyForPaymentTimestamp
+                val orderSyncTimestamp = analyticsData.orderSyncSuccessTimestamp
+                if (readerReadyForPaymentTimestamp != null && orderSyncTimestamp != null) {
+                    @Suppress("MagicNumber")
+                    val waitingTimeSeconds = (readerReadyForPaymentTimestamp - orderSyncTimestamp) / 1000
+                    props["waiting_time"] = "$waitingTimeSeconds"
+                }
+                addProperties(props)
             }
-            addProperties(props)
-        })
+        )
     }
 
     private suspend fun handleReaderLoadingPaymentState() {

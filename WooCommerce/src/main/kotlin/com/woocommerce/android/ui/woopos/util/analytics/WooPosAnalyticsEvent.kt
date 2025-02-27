@@ -68,7 +68,7 @@ sealed class WooPosAnalyticsEvent : IAnalyticsEvent {
         data object ExitTapped : Event() {
             override val name: String = "exit_menu_item_tapped"
         }
-        data object ExitConfirmed: Event() {
+        data object ExitConfirmed : Event() {
             override val name: String = "exit_confirmed"
         }
         data object GetSupportTapped : Event() {

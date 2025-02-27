@@ -11,7 +11,6 @@ class WooPosAnalyticsTrackingDataKeeper @Inject constructor() {
     var cardTappedTimestamp: Long? = null
     var checkoutButtonTapsCount: Int = 0
 
-
     fun reset() {
         interactionWithCustomerStartedTimestamp = null
         orderSyncSuccessTimestamp = null
