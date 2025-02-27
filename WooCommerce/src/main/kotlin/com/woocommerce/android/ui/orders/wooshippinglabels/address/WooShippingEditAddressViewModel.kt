@@ -554,11 +554,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
         launch {
             updateDestinationAddress(selection.selectedAddress, orderId).fold(
                 onSuccess = {
-                    val address = it.address
-                    fillAddressForm(address)
-                    addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = address
-                    isVerified.value = it.isVerified
+                    onUpdateAddress(it.address, it.isVerified)
                 },
                 onFailure = {
                     addressValidationState.value = AddressValidationState.NormalizedAddressUpdateFailed(selection)
@@ -572,11 +568,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
         launch {
             updateOriginAddress(selection.selectedAddress, addressId).fold(
                 onSuccess = {
-                    val address = it.toAddress()
-                    fillAddressForm(address)
-                    addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = address
-                    isVerified.value = it.isVerified
+                    onUpdateAddress(it.toAddress(), it.isVerified)
                 },
                 onFailure = {
                     addressValidationState.value = AddressValidationState.NormalizedAddressUpdateFailed(selection)
@@ -600,11 +592,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
             val address = editableAddress.toAddress()
             updateDestinationAddress(address, orderId).fold(
                 onSuccess = { result ->
-                    val updatedAddress = result.address
-                    fillAddressForm(updatedAddress)
-                    addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = updatedAddress
-                    isVerified.value = result.isVerified
+                    onUpdateAddress(result.address, result.isVerified)
                 },
                 onFailure = {
                     addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
@@ -619,17 +607,20 @@ class WooShippingEditAddressViewModel @Inject constructor(
             val address = editableAddress.toAddress()
             updateOriginAddress(address, addressId).fold(
                 onSuccess = {
-                    val updatedAddress = it.toAddress()
-                    fillAddressForm(updatedAddress)
-                    addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = updatedAddress
-                    isVerified.value = it.isVerified
+                    onUpdateAddress(it.toAddress(), it.isVerified)
                 },
                 onFailure = {
                     addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
                 }
             )
         }
+    }
+
+    private fun onUpdateAddress(updatedAddress: Address, updatedIsVerified: Boolean) {
+        fillAddressForm(updatedAddress)
+        addressValidationState.value = AddressValidationState.NotStarted
+        currentAddress.value = updatedAddress
+        isVerified.value = updatedIsVerified
     }
 
     data class ViewState(
