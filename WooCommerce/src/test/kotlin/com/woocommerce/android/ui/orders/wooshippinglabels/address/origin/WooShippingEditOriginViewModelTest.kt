@@ -13,6 +13,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.NormalizeAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragmentArgs
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressViewModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.UpdateDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.toAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -36,6 +37,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
     private val resourceProvider: ResourceProvider = mock()
     private val normalizeAddress: NormalizeAddress = mock()
     private val updateOriginAddress: UpdateOriginAddress = mock()
+    private val updateDestinationAddress: UpdateDestinationAddress = mock()
 
     private val countries = listOf(
         Location("US", "United States"),
@@ -60,7 +62,8 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
             getStatesByCountryCode = getStatesByCountryCode,
             normalizeAddress = normalizeAddress,
             resourceProvider = resourceProvider,
-            updateOriginAddress = updateOriginAddress
+            updateOriginAddress = updateOriginAddress,
+            updateDestinationAddress = updateDestinationAddress
         )
     }
 
@@ -961,7 +964,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        sut.onUpdateNormalizedOriginAddress(
+        sut.onUpdateNormalizedAddress(
             AddressValidationState.AddressSelection(
                 addressNormalization = normalizeAddressResponse,
                 selectedAddress = suggestedAddress
@@ -994,7 +997,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        sut.onUpdateNormalizedOriginAddress(
+        sut.onUpdateNormalizedAddress(
             AddressValidationState.AddressSelection(
                 addressNormalization = normalizeAddressResponse,
                 selectedAddress = suggestedAddress
@@ -1063,7 +1066,7 @@ class WooShippingEditOriginViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        sut.onUpdateNormalizedOriginAddress(
+        sut.onUpdateNormalizedAddress(
             AddressValidationState.AddressSelection(
                 addressNormalization = normalizeAddressResponse,
                 selectedAddress = suggestedAddress
