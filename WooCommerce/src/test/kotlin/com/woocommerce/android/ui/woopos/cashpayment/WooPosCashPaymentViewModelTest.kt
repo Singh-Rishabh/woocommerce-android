@@ -9,6 +9,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashPaymentFailed
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CashPaymentTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -39,6 +40,7 @@ class WooPosCashPaymentViewModelTest {
     private val priceFormat: WooPosFormatPrice = mock()
     private val resourceProvider: ResourceProvider = mock()
     private val tracker: WooPosAnalyticsTracker = mock()
+    private val trackerData: WooPosAnalyticsTrackingDataKeeper = WooPosAnalyticsTrackingDataKeeper()
 
     private lateinit var viewModel: WooPosCashPaymentViewModel
 
@@ -70,7 +72,8 @@ class WooPosCashPaymentViewModelTest {
             priceFormat = priceFormat,
             resourceProvider = resourceProvider,
             analyticsTracker = tracker,
-            savedState = savedStateHandle
+            analyticsData = trackerData,
+            savedState = savedStateHandle,
         )
     }
 

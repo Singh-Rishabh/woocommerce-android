@@ -45,6 +45,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.UiStringParser
@@ -1486,5 +1487,6 @@ class WooPosTotalsViewModelTest {
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
         uiStringParser = uiStringParser,
         savedState = savedState,
+        analyticsData = WooPosAnalyticsTrackingDataKeeper()
     )
 }
