@@ -363,6 +363,10 @@ class WooPosTotalsViewModel @Inject constructor(
             childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
         analyticsData.readerReadyForPaymentTimestamp = System.currentTimeMillis()
+        trackReaderReadyForPayment()
+    }
+
+    private suspend fun trackReaderReadyForPayment() {
         analyticsTracker.track(ReaderReadyForCardPayment.apply {
             val props = mutableMapOf<String, String>()
             val readerReadyForPaymentTimestamp = analyticsData.readerReadyForPaymentTimestamp
