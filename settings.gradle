@@ -76,7 +76,7 @@ rootProject.name = 'WCAndroid'
 include ':libs:commons', ':libs:cardreader', ':libs:apifaker'
 include ':libs:fluxc', ':libs:fluxc-annotations', ':libs:fluxc-processor', ':libs:fluxc-plugin', ':libs:fluxc-tests'
 include ':libs:login'
-include ':WooCommerce', ':WooCommerce-Wear'
+include ':WooCommerce'
 include ':libs:detektrules'
 
 gradle.ext.fluxCBinaryPath = "org.wordpress:fluxc"

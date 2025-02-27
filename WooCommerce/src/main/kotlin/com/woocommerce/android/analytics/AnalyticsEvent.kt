@@ -1,7 +1,5 @@
 package com.woocommerce.android.analytics
 
-import com.woocommerce.commons.WearAnalyticsEvent
-
 interface IAnalyticsEvent {
     val siteless: Boolean
     val name: String
@@ -1129,26 +1127,4 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     BLACK_FLAGGED_WEBSITE_DETECTED;
 
     override val isPosEvent: Boolean = false
-}
-
-@Suppress("CyclomaticComplexMethod")
-fun WearAnalyticsEvent.toAnalyticsEvent(): AnalyticsEvent? {
-    return when (this) {
-        WearAnalyticsEvent.WATCH_STORE_DATA_REQUESTED -> AnalyticsEvent.WATCH_STORE_DATA_REQUESTED
-        WearAnalyticsEvent.WATCH_STORE_DATA_SUCCEEDED -> AnalyticsEvent.WATCH_STORE_DATA_SUCCEEDED
-        WearAnalyticsEvent.WATCH_STORE_DATA_FAILED -> AnalyticsEvent.WATCH_STORE_DATA_FAILED
-        WearAnalyticsEvent.WATCH_STATS_DATA_REQUESTED -> AnalyticsEvent.WATCH_STATS_DATA_REQUESTED
-        WearAnalyticsEvent.WATCH_STATS_DATA_SUCCEEDED -> AnalyticsEvent.WATCH_STATS_DATA_SUCCEEDED
-        WearAnalyticsEvent.WATCH_STATS_DATA_FAILED -> AnalyticsEvent.WATCH_STATS_DATA_FAILED
-        WearAnalyticsEvent.WATCH_ORDERS_LIST_DATA_REQUESTED -> AnalyticsEvent.WATCH_ORDERS_LIST_DATA_REQUESTED
-        WearAnalyticsEvent.WATCH_ORDERS_LIST_DATA_SUCCEEDED -> AnalyticsEvent.WATCH_ORDERS_LIST_DATA_SUCCEEDED
-        WearAnalyticsEvent.WATCH_ORDERS_LIST_DATA_FAILED -> AnalyticsEvent.WATCH_ORDERS_LIST_DATA_FAILED
-        WearAnalyticsEvent.WATCH_ORDER_DETAILS_DATA_REQUESTED -> AnalyticsEvent.WATCH_ORDER_DETAILS_DATA_REQUESTED
-        WearAnalyticsEvent.WATCH_ORDER_DETAILS_DATA_SUCCEEDED -> AnalyticsEvent.WATCH_ORDER_DETAILS_DATA_SUCCEEDED
-        WearAnalyticsEvent.WATCH_ORDER_DETAILS_DATA_FAILED -> AnalyticsEvent.WATCH_ORDER_DETAILS_DATA_FAILED
-        WearAnalyticsEvent.WATCH_APP_OPENED -> AnalyticsEvent.WATCH_APP_OPENED
-        WearAnalyticsEvent.WATCH_ORDERS_LIST_OPENED -> AnalyticsEvent.WATCH_ORDERS_LIST_OPENED
-        WearAnalyticsEvent.WATCH_ORDER_DETAILS_OPENED -> AnalyticsEvent.WATCH_ORDER_DETAILS_OPENED
-        else -> null
-    }
 }

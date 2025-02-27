@@ -303,7 +303,6 @@ dependencies {
     implementation(libs.google.mlkit.barcode.scanning)
 
     implementation(libs.google.zxing.core)
-    implementation(libs.google.play.services.wearable)
 
     // Debug dependencies
     debugImplementation project(":libs:apifaker")

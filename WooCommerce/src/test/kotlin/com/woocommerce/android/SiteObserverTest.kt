@@ -5,7 +5,6 @@ import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.environment.EnvironmentRepository
 import com.woocommerce.android.util.GetAppVersionName
 import com.woocommerce.android.viewmodel.BaseUnitTest
-import com.woocommerce.android.wear.WearableConnectionRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -28,7 +27,6 @@ class SiteObserverTest : BaseUnitTest() {
     private val environmentRepository: EnvironmentRepository = mock {
         onBlocking { fetchOrGetStoreID(any()) } doReturn Result.success("storeID")
     }
-    private val wearableConnectionRepository: WearableConnectionRepository = mock()
     private val featureFlagRepository: WPComRemoteFeatureFlagRepository = mock()
     private val siteStore: SiteStore = mock()
     private val appPrefs: AppPrefsWrapper = mock()
@@ -39,7 +37,6 @@ class SiteObserverTest : BaseUnitTest() {
         selectedSite = selectedSite,
         wooCommerceStore = wooCommerceStore,
         environmentRepository = environmentRepository,
-        wearableConnectionRepository = wearableConnectionRepository,
         featureFlagRepository = featureFlagRepository,
         siteStore = siteStore,
         appPrefs = appPrefs,
