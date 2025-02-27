@@ -86,6 +86,13 @@ class WooShippingEditAddressViewModel @Inject constructor(
 
     private val addressId = (navArgs.flow as? EditAddressFlow.EditOriginAddress)?.address?.id
 
+    val screenTitle = when (navArgs.flow) {
+        is EditAddressFlow.EditDestinationAddress ->
+            resourceProvider.getString(R.string.woo_shipping_edit_destination_address_title)
+        is EditAddressFlow.EditOriginAddress ->
+            resourceProvider.getString(R.string.woo_shipping_edit_origin_address_title)
+    }
+
     private val nameValidatedFlow = snapshotFlow { name }
         .combine(snapshotFlow { company }) { name, company ->
             Pair(name, company)
