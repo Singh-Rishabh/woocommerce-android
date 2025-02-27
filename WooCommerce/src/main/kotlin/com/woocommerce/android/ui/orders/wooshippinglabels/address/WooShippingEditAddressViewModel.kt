@@ -250,6 +250,11 @@ class WooShippingEditAddressViewModel @Inject constructor(
             }
     }
 
+    fun handleBackPress(): Boolean {
+        if (allowBackNavigation()) { onNavigateBack() }
+        return false
+    }
+
     fun allowBackNavigation(): Boolean {
         return when (viewState.value.addressValidationState) {
             is AddressValidationState.AddressSelection,
@@ -257,12 +262,21 @@ class WooShippingEditAddressViewModel @Inject constructor(
                 onCloseAddressSelection()
                 return false
             }
+
             else -> true
         }
     }
 
     fun onNavigateBack() {
-        if (allowBackNavigation()) triggerEvent(Event.Exit)
+        when (navArgs.flow) {
+            is EditAddressFlow.EditDestinationAddress -> triggerEvent(
+                Event.ExitWithResult(
+                    DestinationShippingAddress(currentAddress.value, isVerified.value)
+                )
+            )
+
+            is EditAddressFlow.EditOriginAddress -> triggerEvent(Event.Exit)
+        }
     }
 
     fun onExpandCompany() {
@@ -690,7 +704,10 @@ sealed class AddressValidationState {
 @Parcelize
 sealed class EditAddressFlow : Parcelable {
     data class EditOriginAddress(val address: OriginShippingAddress) : EditAddressFlow()
-    data class EditDestinationAddress(val address: DestinationShippingAddress) : EditAddressFlow()
+    data class EditDestinationAddress(
+        val address: DestinationShippingAddress,
+        val orderId: Long
+    ) : EditAddressFlow()
 }
 
 enum class AddressStatus {

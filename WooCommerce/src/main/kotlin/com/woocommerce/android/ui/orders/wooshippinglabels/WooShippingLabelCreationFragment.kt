@@ -18,7 +18,9 @@ import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartCustomsFormEdit
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartPackageSelection
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditAddressFlow
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragment.Companion.DESTINATION_ADDRESS_UPDATE_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment.Companion.PACKAGE_SELECTION_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -74,6 +76,15 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                             flow = EditAddressFlow.EditOriginAddress(event.originAddress)
                         ).let { findNavController().navigateSafely(it) }
 
+                is WooShippingLabelCreationViewModel.StartDestinationAddressEdit ->
+                    WooShippingLabelCreationFragmentDirections
+                        .actionWooShippingLabelCreationFragmentToWooShippingEditOriginAddressFragment(
+                            flow = EditAddressFlow.EditDestinationAddress(
+                                address = event.destinationAddress,
+                                orderId = event.orderId
+                            )
+                        ).let { findNavController().navigateSafely(it) }
+
                 is StartCustomsFormEdit -> {
                     WooShippingLabelCreationFragmentDirections
                         .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment()
@@ -88,6 +99,9 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
     private fun setupResultHandlers() {
         handleResult<PackageData>(PACKAGE_SELECTION_RESULT) {
             viewModel.onPackageSelected(it)
+        }
+        handleResult<DestinationShippingAddress>(DESTINATION_ADDRESS_UPDATE_RESULT) {
+            viewModel.onUpdateDestinationAddress(it)
         }
     }
 
