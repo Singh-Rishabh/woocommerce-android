@@ -424,7 +424,9 @@ class WooShippingEditAddressViewModel @Inject constructor(
         val isDifferentEmail = newAddress.email.value != currentAddress.email
         val isDifferentPhone = newAddress.phone.value != currentAddress.phone
         val isSameAddress = isSameAddress(newAddress, currentAddress)
-        return (isDifferentName || isDifferentCompany || isDifferentEmail || isDifferentPhone) && isSameAddress
+        val isVerified = isVerified.value
+        val hasNoAddressChanges = isDifferentName || isDifferentCompany || isDifferentEmail || isDifferentPhone
+        return hasNoAddressChanges && isSameAddress && isVerified
     }
 
     private fun hasIncorrectOrMissingData(editableAddress: EditableAddress): Boolean {
