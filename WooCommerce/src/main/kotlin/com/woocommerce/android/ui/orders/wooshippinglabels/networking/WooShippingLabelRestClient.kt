@@ -153,4 +153,24 @@ class WooShippingLabelRestClient @Inject constructor(
 
         return result.toWooPayload()
     }
+
+    suspend fun updateDestinationAddress(
+        site: SiteModel,
+        orderId: Long,
+        address: AddressDTO,
+    ): WooPayload<UpdateAddressResponseDTO> {
+        val url = "/wcshipping/v1/address/$orderId/update_destination/"
+
+        val result = wooNetwork.executePostGsonRequest(
+            site = site,
+            path = url,
+            body = mapOf(
+                "address" to address,
+                "isVerified" to true // We always verify the address before saving it
+            ),
+            clazz = UpdateAddressResponseDTO::class.java,
+        )
+
+        return result.toWooPayload()
+    }
 }

@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
 import com.woocommerce.android.model.Address
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingAddressDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingConfigurationDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
@@ -152,6 +153,35 @@ class WooShippingLabelRepository @Inject constructor(
                             addressDataStore.updateOriginAddress(it)
                         }
                 }
+        } else {
+            WooResult(
+                WooError(
+                    type = WooErrorType.INVALID_RESPONSE,
+                    original = GenericErrorType.INVALID_RESPONSE,
+                    message = "Address update failed"
+                )
+            )
+        }
+    }
+
+    suspend fun updateDestinationAddress(
+        site: SiteModel,
+        orderId: Long,
+        address: Address,
+    ): WooResult<DestinationShippingAddress> {
+        val updatedAddress = restClient.updateDestinationAddress(
+            site = site,
+            orderId = orderId,
+            address = mapper.toAddressDTO(address, null)
+        )
+
+        return if (updatedAddress.result?.success == true) {
+            updatedAddress.asWooResult {
+                DestinationShippingAddress(
+                    address = mapper(it.address),
+                    isVerified = it.isVerified
+                )
+            }
         } else {
             WooResult(
                 WooError(
