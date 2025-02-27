@@ -16,4 +16,10 @@ data class WooShippingCustomsProductUIModel(
 ) : Parcelable {
     val valueAndWeightForDisplay: String
         get() = "${valuePerUnit.currentInput} • ${weightPerUnit.currentInput}"
+
+    val isValid: Boolean
+        get() = description is InputValue.Data &&
+            tariffNumber is InputValue.Data &&
+            valuePerUnit is InputValue.Data &&
+            weightPerUnit is InputValue.Data
 }
