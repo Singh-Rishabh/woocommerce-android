@@ -49,13 +49,25 @@ class WooShippingEditAddressViewModel @Inject constructor(
     private val updateDestinationAddress: UpdateDestinationAddress,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
-    private var name by mutableStateOf(InputValue(""))
-    private var company by mutableStateOf(InputValue(""))
-    private var address by mutableStateOf(InputValue(""))
-    private var city by mutableStateOf(InputValue(""))
-    private var postalCode by mutableStateOf(InputValue(""))
-    private var email by mutableStateOf(InputValue(""))
-    private var phone by mutableStateOf(InputValue(""))
+    private val navArgs: WooShippingEditAddressFragmentArgs by savedState.navArgs()
+
+    private var name by mutableStateOf(InputValue(value = "", isRequired = true))
+    private var company by mutableStateOf(InputValue(value = "", isRequired = false))
+    private var address by mutableStateOf(InputValue(value = "", isRequired = true))
+    private var city by mutableStateOf(InputValue(value = "", isRequired = true))
+    private var postalCode by mutableStateOf(InputValue(value = "", isRequired = true))
+    private var email by mutableStateOf(
+        InputValue(
+            value = "",
+            isRequired = navArgs.flow is EditAddressFlow.EditOriginAddress
+        )
+    )
+    private var phone by mutableStateOf(
+        InputValue(
+            value = "",
+            isRequired = navArgs.flow is EditAddressFlow.EditOriginAddress
+        )
+    )
 
     private var country = MutableStateFlow(Location.EMPTY)
 
@@ -66,7 +78,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
         snapshotFlow { rawState },
         selectedState
     ) { rawState, selectedState ->
-        if (selectedState != Location.EMPTY) selectedState else AmbiguousLocation.Raw(rawState).asLocation()
+        if (selectedState != Location.EMPTY) selectedState else AmbiguousLocation.Raw(rawState)
+            .asLocation()
     }
 
     private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
@@ -74,8 +87,6 @@ class WooShippingEditAddressViewModel @Inject constructor(
 
     private val addressValidationState =
         MutableStateFlow<AddressValidationState>(AddressValidationState.NotStarted)
-
-    private val navArgs: WooShippingEditAddressFragmentArgs by savedState.navArgs()
 
     private val currentAddress = when (val currentFlow = navArgs.flow) {
         is EditAddressFlow.EditDestinationAddress -> currentFlow.address.address
@@ -92,6 +103,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
     val screenTitle = when (navArgs.flow) {
         is EditAddressFlow.EditDestinationAddress ->
             resourceProvider.getString(R.string.woo_shipping_edit_destination_address_title)
+
         is EditAddressFlow.EditOriginAddress ->
             resourceProvider.getString(R.string.woo_shipping_edit_origin_address_title)
     }
@@ -137,14 +149,22 @@ class WooShippingEditAddressViewModel @Inject constructor(
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
         ) { inputValue ->
-            inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
+            if (inputValue.isRequired) {
+                inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
+            } else {
+                inputValue
+            }
         }
 
     private val phoneValidatedFlow = snapshotFlow { phone }
         .transformLatestWithDelay(
             delayMillis = DELAY_TIME_MILLIS,
         ) { inputValue ->
-            inputValue.copy(error = addressValidator.validateUSCustomsPhone(inputValue.value))
+            if (inputValue.isRequired) {
+                inputValue.copy(error = addressValidator.validateFieldRequired(inputValue.value))
+            } else {
+                inputValue
+            }
         }
 
     private val isCompanyExpanded = MutableStateFlow(false)
@@ -202,15 +222,16 @@ class WooShippingEditAddressViewModel @Inject constructor(
             addressInformation.address1,
             addressInformation.address2
         )
-        name = InputValue(fullName)
-        company = InputValue(addressInformation.company)
+        name = name.copy(value = fullName, error = null)
+        company = company.copy(value = addressInformation.company, error = null)
         country.value = findLocationByCode(addressInformation.country.code, countriesState.value)
-        address = InputValue(fullAddress)
-        city = InputValue(addressInformation.city)
-        selectedState.value = findLocationByCode(addressInformation.state.codeOrRaw, statesState.value)
-        postalCode = InputValue(addressInformation.postcode)
-        email = InputValue(addressInformation.email)
-        phone = InputValue(addressInformation.phone)
+        address = address.copy(value = fullAddress, error = null)
+        city = city.copy(value = addressInformation.city, error = null)
+        selectedState.value =
+            findLocationByCode(addressInformation.state.codeOrRaw, statesState.value)
+        postalCode = postalCode.copy(value = addressInformation.postcode, error = null)
+        email = email.copy(value = addressInformation.email, error = null)
+        phone = phone.copy(value = addressInformation.phone, error = null)
         isCompanyExpanded.value = addressInformation.company.isNotNullOrEmpty()
     }
 
@@ -254,7 +275,9 @@ class WooShippingEditAddressViewModel @Inject constructor(
     }
 
     fun handleBackPress(): Boolean {
-        if (allowBackNavigation()) { onNavigateBack() }
+        if (allowBackNavigation()) {
+            onNavigateBack()
+        }
         return false
     }
 
@@ -417,7 +440,10 @@ class WooShippingEditAddressViewModel @Inject constructor(
         return isSameAddress && isSameCity && isSameState && isSameCountry && isSamePostalCode
     }
 
-    private fun hasOnlyNoAddressChanges(newAddress: EditableAddress, currentAddress: Address): Boolean {
+    private fun hasOnlyNoAddressChanges(
+        newAddress: EditableAddress,
+        currentAddress: Address
+    ): Boolean {
         val originalFullName = combineStrings(
             currentAddress.firstName,
             currentAddress.lastName
@@ -428,46 +454,59 @@ class WooShippingEditAddressViewModel @Inject constructor(
         val isDifferentPhone = newAddress.phone.value != currentAddress.phone
         val isSameAddress = isSameAddress(newAddress, currentAddress)
         val isVerified = isVerified.value
-        val hasNoAddressChanges = isDifferentName || isDifferentCompany || isDifferentEmail || isDifferentPhone
+        val hasNoAddressChanges =
+            isDifferentName || isDifferentCompany || isDifferentEmail || isDifferentPhone
         return hasNoAddressChanges && isSameAddress && isVerified
     }
 
     private fun hasIncorrectOrMissingData(editableAddress: EditableAddress): Boolean {
         return editableAddress.address.error.isNotNullOrEmpty() ||
-            editableAddress.city.error.isNotNullOrEmpty() ||
-            editableAddress.postalCode.error.isNotNullOrEmpty() ||
-            editableAddress.email.error.isNotNullOrEmpty() ||
-            editableAddress.phone.error.isNotNullOrEmpty() ||
-            editableAddress.name.error.isNotNullOrEmpty() ||
-            editableAddress.company.error.isNotNullOrEmpty()
+                editableAddress.city.error.isNotNullOrEmpty() ||
+                editableAddress.postalCode.error.isNotNullOrEmpty() ||
+                editableAddress.email.error.isNotNullOrEmpty() ||
+                editableAddress.phone.error.isNotNullOrEmpty() ||
+                editableAddress.name.error.isNotNullOrEmpty() ||
+                editableAddress.company.error.isNotNullOrEmpty()
     }
 
     fun onNameChange(value: String) {
-        name = InputValue(value)
+        val isCompanyRequired = value.isEmpty() && company.value.isNotNullOrEmpty()
+        name = InputValue(
+            value = value,
+            isRequired = isCompanyRequired.not(),
+            error = null
+        )
+        company = company.copy(isRequired = isCompanyRequired)
     }
 
     fun onCompanyChange(value: String) {
-        company = InputValue(value)
+        val isCompanyRequired = value.isEmpty() && name.value.isNotEmpty()
+        company = InputValue(
+            value = value,
+            isRequired = isCompanyRequired,
+            error = null
+        )
+        name = name.copy(isRequired = isCompanyRequired.not())
     }
 
     fun onAddressChange(value: String) {
-        address = InputValue(value)
+        address = address.copy(value = value, error = null)
     }
 
     fun onCityChange(value: String) {
-        city = InputValue(value)
+        city = city.copy(value = value, error = null)
     }
 
     fun onPostalCodeChange(value: String) {
-        postalCode = InputValue(value)
+        postalCode = postalCode.copy(value = value, error = null)
     }
 
     fun onEmailChange(value: String) {
-        email = InputValue(value)
+        email = email.copy(value = value, error = null)
     }
 
     fun onPhoneChange(value: String) {
-        phone = InputValue(value)
+        phone = phone.copy(value = value, error = null)
     }
 
     fun onRawStateChange(value: String) {
@@ -525,7 +564,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
                         AddressValidationState.AddressSelection(it, it.normalizedAddress)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.VerificationFailed(editableAddress)
+                    addressValidationState.value =
+                        AddressValidationState.VerificationFailed(editableAddress)
                 }
             )
         }
@@ -543,6 +583,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
         when (val currentFlow = navArgs.flow) {
             is EditAddressFlow.EditDestinationAddress ->
                 onUpdateNormalizedDestinationAddress(selection, currentFlow.orderId)
+
             is EditAddressFlow.EditOriginAddress -> onUpdateNormalizedOriginAddress(selection)
         }
     }
@@ -558,7 +599,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
                     onUpdateAddress(it.address, it.isVerified)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.NormalizedAddressUpdateFailed(selection)
+                    addressValidationState.value =
+                        AddressValidationState.NormalizedAddressUpdateFailed(selection)
                 }
             )
         }
@@ -572,7 +614,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
                     onUpdateAddress(it.toAddress(), it.isVerified)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.NormalizedAddressUpdateFailed(selection)
+                    addressValidationState.value =
+                        AddressValidationState.NormalizedAddressUpdateFailed(selection)
                 }
             )
         }
@@ -596,7 +639,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
                     onUpdateAddress(result.address, result.isVerified)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
+                    addressValidationState.value =
+                        AddressValidationState.AddressUpdateFailed(editableAddress)
                 }
             )
         }
@@ -611,7 +655,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
                     onUpdateAddress(it.toAddress(), it.isVerified)
                 },
                 onFailure = {
-                    addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
+                    addressValidationState.value =
+                        AddressValidationState.AddressUpdateFailed(editableAddress)
                 }
             )
         }
@@ -761,7 +806,8 @@ enum class AddressStatus {
 
 data class InputValue(
     val value: String,
-    val error: String? = null
+    val error: String? = null,
+    val isRequired: Boolean = false
 ) {
     companion object {
         val EMPTY = InputValue("")
