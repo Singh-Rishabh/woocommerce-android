@@ -37,9 +37,14 @@ class AccountMismatchRepository @Inject constructor(
                 Result.failure(OnChangedException(result.error, result.error.message))
             }
 
+            result.data.isNullOrEmpty() -> {
+                WooLog.w(WooLog.T.LOGIN, "Fetching Jetpack Connection URL failed, result empty")
+                Result.failure(IllegalStateException("Response Empty"))
+            }
+
             else -> {
                 WooLog.d(WooLog.T.LOGIN, "Jetpack connection URL fetched successfully")
-                Result.success(result.url)
+                Result.success(result.data!!)
             }
         }
     }
@@ -93,7 +98,7 @@ class AccountMismatchRepository @Inject constructor(
             if (it.isError) {
                 Result.failure(OnChangedException(it.error, it.error.message))
             } else {
-                Result.success(it.user)
+                Result.success(it.data)
             }
         }
     }

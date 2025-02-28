@@ -198,7 +198,7 @@ class JetpackActivationMainViewModelTest : BaseUnitTest() {
                 ).thenReturn(Result.success("https://example.com/connect"))
                 whenever(
                     jetpackActivationRepository.fetchJetpackConnectedEmail(site = site)
-                ).thenReturn(Result.failure(JetpackActivationRepository.JetpackMissingConnectionEmailException))
+                ).thenReturn(Result.failure(JetpackActivationRepository.JetpackMissingConnectionEmailException()))
             }
 
             val state = viewModel.viewState.runAndCaptureValues {

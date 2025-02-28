@@ -13,8 +13,6 @@ import org.wordpress.android.fluxc.Dispatcher
 import org.wordpress.android.fluxc.generated.SiteActionBuilder
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.JetpackStore
-import org.wordpress.android.fluxc.store.JetpackStore.JetpackConnectionUrlError
-import org.wordpress.android.fluxc.store.JetpackStore.JetpackUserError
 import org.wordpress.android.fluxc.store.SiteStore
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import org.wordpress.android.login.util.SiteUtils
@@ -54,9 +52,14 @@ class JetpackActivationRepository @Inject constructor(
                 Result.failure(OnChangedException(result.error, result.error.message))
             }
 
+            result.data.isNullOrEmpty() -> {
+                WooLog.w(WooLog.T.LOGIN, "Fetching Jetpack Connection URL failed, result empty")
+                Result.failure(IllegalStateException("Response Empty"))
+            }
+
             else -> {
                 WooLog.d(WooLog.T.LOGIN, "Jetpack connection URL fetched successfully")
-                Result.success(result.url)
+                Result.success(result.data!!)
             }
         }
     }
@@ -70,17 +73,17 @@ class JetpackActivationRepository @Inject constructor(
                 Result.failure(OnChangedException(result.error, result.error.message))
             }
 
-            result.user?.wpcomEmail.isNullOrEmpty() -> {
+            result.data?.wpcomEmail.isNullOrEmpty() -> {
                 analyticsTrackerWrapper.track(
                     stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_CANNOT_FIND_WPCOM_USER
                 )
                 WooLog.w(WooLog.T.LOGIN, "Cannot find Jetpack Email in response")
-                Result.failure(JetpackMissingConnectionEmailException)
+                Result.failure(JetpackMissingConnectionEmailException())
             }
 
             else -> {
                 WooLog.d(WooLog.T.LOGIN, "Jetpack User fetched successfully")
-                Result.success(result.user!!.wpcomEmail)
+                Result.success(result.data!!.wpcomEmail)
             }
         }
     }
@@ -150,11 +153,7 @@ class JetpackActivationRepository @Inject constructor(
                 },
                 onFailure = {
                     if (it is OnChangedException) {
-                        val errorCode = when (it.error) {
-                            is JetpackConnectionUrlError -> it.error.errorCode
-                            is JetpackUserError -> it.error.errorCode
-                            else -> null
-                        }
+                        val errorCode = (it.error as? JetpackStore.JetpackError)?.errorCode
                         // Skip retrying on 4xx errors
                         if (errorCode.is4xx()) return Result.failure(it)
                     }
@@ -169,5 +168,5 @@ class JetpackActivationRepository @Inject constructor(
         return Result.failure(lastError!!)
     }
 
-    object JetpackMissingConnectionEmailException : RuntimeException("Email missing from response")
+    class JetpackMissingConnectionEmailException : RuntimeException("Email missing from response")
 }

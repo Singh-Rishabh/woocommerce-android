@@ -54,8 +54,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import org.wordpress.android.fluxc.model.SiteModel
-import org.wordpress.android.fluxc.store.JetpackStore.JetpackConnectionUrlError
-import org.wordpress.android.fluxc.store.JetpackStore.JetpackUserError
+import org.wordpress.android.fluxc.store.JetpackStore
 import org.wordpress.android.util.UrlUtils
 import javax.inject.Inject
 
@@ -472,7 +471,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 }
             },
             onFailure = {
-                val error = (it as? OnChangedException)?.error as? JetpackConnectionUrlError
+                val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
 
                 if (isFromBanner) {
                     analyticsTrackerWrapper.track(
@@ -517,7 +516,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 }
             },
             onFailure = {
-                val error = (it as? OnChangedException)?.error as? JetpackUserError
+                val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
 
                 if (isFromBanner) {
                     analyticsTrackerWrapper.track(
