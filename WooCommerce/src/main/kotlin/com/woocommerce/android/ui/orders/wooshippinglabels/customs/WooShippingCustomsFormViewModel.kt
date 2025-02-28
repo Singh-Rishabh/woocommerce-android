@@ -97,12 +97,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                     input = newItnValue,
                     errorMessageId = R.string.woo_shipping_labels_customs_itn_error_message
                 )
+
             else -> InputValue.Data(newItnValue)
         }
         _viewState.update { it.copy(itnValue = input) }
     }
 
-    fun onProductExpanded(itemIndex: Int, isExpanded: Boolean) {
+    fun onShippableProductExpanded(itemIndex: Int, isExpanded: Boolean) {
         _viewState.update { state ->
             val updatedItem = state.shippingProducts[itemIndex]
                 .copy(isExpanded = isExpanded)
@@ -112,6 +113,62 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             }.let { state.copy(shippingProducts = it) }
         }
     }
+
+    fun onShippableProductDescriptionChanged(itemIndex: Int, newValue: String) {
+        _viewState.update { state ->
+            val updatedItem = state.shippingProducts[itemIndex]
+                .copy(description = InputValue.Data(newValue))
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
+            }.let { state.copy(shippingProducts = it) }
+        }
+    }
+
+    fun onShippableProductTariffNumberChanged(itemIndex: Int, newValue: String) {
+        _viewState.update { state ->
+            val updatedItem = state.shippingProducts[itemIndex]
+                .copy(tariffNumber = InputValue.Data(newValue))
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
+            }.let { state.copy(shippingProducts = it) }
+        }
+    }
+
+    fun onShippableProductValuePerUnitChanged(itemIndex: Int, newValue: String) {
+        _viewState.update { state ->
+            val updatedItem = state.shippingProducts[itemIndex]
+                .copy(valuePerUnit = InputValue.Data(newValue))
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
+            }.let { state.copy(shippingProducts = it) }
+        }
+    }
+
+    fun onShippableProductWeightPerUnitChanged(itemIndex: Int, newValue: String) {
+        _viewState.update { state ->
+            val updatedItem = state.shippingProducts[itemIndex]
+                .copy(weightPerUnit = InputValue.Data(newValue))
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
+            }.let { state.copy(shippingProducts = it) }
+        }
+    }
+
+    fun onShippableProductOriginCountryChanged(itemIndex: Int, newValue: String) {
+        _viewState.update { state ->
+            val updatedItem = state.shippingProducts[itemIndex]
+                .copy(originCountry = newValue)
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
+            }.let { state.copy(shippingProducts = it) }
+        }
+    }
+
 
     fun onAddCustomsDataClick() {
         triggerEvent(FinishCustomsForm)
@@ -156,6 +213,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             val input: String,
             val errorMessageId: Int
         ) : InputValue()
+
         data object Empty : InputValue()
 
         val currentInput
