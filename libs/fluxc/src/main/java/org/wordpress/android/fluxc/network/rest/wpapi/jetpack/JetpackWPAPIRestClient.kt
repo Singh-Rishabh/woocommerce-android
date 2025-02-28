@@ -49,7 +49,7 @@ class JetpackWPAPIRestClient @Inject constructor(
         }
     }
 
-    suspend fun registerJetpackSite(registrationUrl: String): Result<String> {
+    suspend fun registerJetpackSiteUsingCookies(registrationUrl: String): Result<String> {
         @Suppress("MagicNumber")
         fun Int.isRedirect(): Boolean = this in 300..399
         return suspendCancellableCoroutine { cont ->

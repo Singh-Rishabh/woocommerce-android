@@ -34,7 +34,7 @@ class JetpackStore @Inject constructor(
                 if (!autoRegisterSiteIfNeeded || connectionUri.host == JETPACK_DOMAIN || useApplicationPasswords) {
                     JetpackResult(url)
                 } else {
-                    registerJetpackSite(url).fold(
+                    jetpackWPAPIRestClient.registerJetpackSiteUsingCookies(url).fold(
                         onSuccess = {
                             JetpackResult(it)
                         },
@@ -52,9 +52,6 @@ class JetpackStore @Inject constructor(
             }
         }
     }
-
-    private suspend fun registerJetpackSite(registrationUrl: String): Result<String> =
-        jetpackWPAPIRestClient.registerJetpackSite(registrationUrl)
 
     suspend fun fetchJetpackUser(
         site: SiteModel,
