@@ -339,7 +339,6 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is CardReaderPaymentState.ProcessingPayment -> {
                         analyticsData.cardTappedTimestamp = System.currentTimeMillis()
-                        handleProcessingOrCapturingPaymentState()
                     }
 
                     is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.CollectingInteracRefund,
