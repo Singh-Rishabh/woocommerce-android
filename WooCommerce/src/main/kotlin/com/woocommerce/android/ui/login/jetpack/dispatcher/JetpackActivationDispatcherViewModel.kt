@@ -25,7 +25,7 @@ class JetpackActivationDispatcherViewModel @Inject constructor(
                     // Jetpack is already connected and we know the address email, handle the authentication
                     triggerEvent(
                         StartWPComAuthenticationForEmail(
-                            wpComEmail = jetpackStatus.wpComEmail,
+                            wpComEmail = jetpackStatus.wpComEmail!!,
                             jetpackStatus = jetpackStatus
                         )
                     )

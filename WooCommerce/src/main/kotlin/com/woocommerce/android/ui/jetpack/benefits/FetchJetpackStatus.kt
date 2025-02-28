@@ -1,9 +1,11 @@
 package com.woocommerce.android.ui.jetpack.benefits
 
 import com.woocommerce.android.OnChangedException
-import com.woocommerce.android.extensions.orNullIfEmpty
+import com.woocommerce.android.model.JetpackConnectionStatus
+import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.util.WooLog
 import org.wordpress.android.fluxc.store.JetpackStore
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import javax.inject.Inject
@@ -52,8 +54,10 @@ class FetchJetpackStatus @Inject constructor(
                         JetpackStatusFetchResponse.Success(
                             JetpackStatus(
                                 isJetpackInstalled = false,
-                                isJetpackConnected = false,
-                                wpComEmail = null
+                                jetpackConnectionStatus = JetpackConnectionStatus.AccountNotConnected(
+                                    siteRegistrationStatus = JetpackSiteRegistrationStatus.NOT_REGISTERED,
+                                    blogId = null
+                                )
                             )
                         )
                     )
@@ -64,24 +68,44 @@ class FetchJetpackStatus @Inject constructor(
                 }
 
                 else -> {
-                    val isJetpackInstalled = wooCommerceStore.fetchSitePlugins(selectedSite.get()).let { pluginResult ->
-                        when {
-                            pluginResult.isError -> {
-                                return Result.failure(OnChangedException(pluginResult.error))
-                            }
+                    val isJetpackInstalled = wooCommerceStore.fetchSitePlugins(selectedSite.get())
+                        .let { pluginResult ->
+                            when {
+                                pluginResult.isError -> {
+                                    return Result.failure(OnChangedException(pluginResult.error))
+                                }
 
-                            else -> {
-                                pluginResult.model!!.any { it.slug == JETPACK_SLUG && it.isActive }
+                                else -> {
+                                    pluginResult.model!!.any { it.slug == JETPACK_SLUG && it.isActive }
+                                }
                             }
                         }
+                    val jetpackConnectionData = userResult.data!!
+                    val connectionStatus = if (jetpackConnectionData.currentUser.isConnected) {
+                        JetpackConnectionStatus.AccountConnected(jetpackConnectionData.currentUser.wpcomEmail)
+                    } else {
+                        if (jetpackConnectionData.isSiteRegistered == true
+                            && jetpackConnectionData.blogId == null
+                        ) {
+                            WooLog.e(WooLog.T.LOGIN, "Jetpack connection data is invalid, $jetpackConnectionData")
+                            return Result.failure(IllegalStateException("Jetpack connection data is invalid"))
+                        }
+
+                        JetpackConnectionStatus.AccountNotConnected(
+                            siteRegistrationStatus = when (jetpackConnectionData.isSiteRegistered) {
+                                true -> JetpackSiteRegistrationStatus.REGISTERED
+                                false -> JetpackSiteRegistrationStatus.NOT_REGISTERED
+                                else -> JetpackSiteRegistrationStatus.UNKNOWN
+                            },
+                            blogId = jetpackConnectionData.blogId
+                        )
                     }
 
                     Result.success(
                         JetpackStatusFetchResponse.Success(
                             JetpackStatus(
                                 isJetpackInstalled = isJetpackInstalled,
-                                isJetpackConnected = userResult.data!!.currentUser.isConnected,
-                                wpComEmail = userResult.data!!.currentUser.wpcomEmail.orNullIfEmpty()
+                                jetpackConnectionStatus = connectionStatus
                             )
                         )
                     )
