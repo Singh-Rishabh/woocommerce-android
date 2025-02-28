@@ -273,9 +273,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
             (viewModel.event.value as CheckLocationPermissions).onLocationPermissionsCheckResult(true, false)
             (viewModel.event.value as CheckLocationEnabled).onLocationEnabledCheckResult(false)
 
-            (viewModel.viewStateData.value as? LocationDisabledError)?.let {
-                it.onPrimaryActionClicked.invoke()
-            }
+            (viewModel.viewStateData.value as? LocationDisabledError)?.onPrimaryActionClicked?.invoke()
 
             assertThat(viewModel.event.value).isInstanceOf(OpenLocationSettings::class.java)
         }
@@ -285,9 +283,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
         testBlocking {
             (viewModel.event.value as CheckLocationPermissions).onLocationPermissionsCheckResult(true, false)
             (viewModel.event.value as CheckLocationEnabled).onLocationEnabledCheckResult(false)
-            (viewModel.viewStateData.value as? LocationDisabledError)?.let {
-                it.onPrimaryActionClicked.invoke()
-            }
+            (viewModel.viewStateData.value as? LocationDisabledError)?.onPrimaryActionClicked?.invoke()
 
             (viewModel.event.value as OpenLocationSettings).onLocationSettingsClosed()
 
@@ -971,7 +967,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
 
             (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
             readerStatusFlow.emit(CardReaderStatus.Connecting)
-            readerStatusFlow.emit(CardReaderStatus.NotConnected(errorMessage))
+            readerStatusFlow.emit(CardReaderStatus.NotConnected(errorMessage = errorMessage))
 
             assertThat(viewModel.event.value).isEqualTo(ShowToastString(errorMessage))
         }
