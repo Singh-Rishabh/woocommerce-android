@@ -9,6 +9,7 @@ import org.wordpress.android.fluxc.Payload
 import org.wordpress.android.fluxc.generated.endpoint.JPAPI
 import org.wordpress.android.fluxc.generated.endpoint.WPCOMV2
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.model.jetpack.JetpackConnectionData
 import org.wordpress.android.fluxc.model.jetpack.JetpackUser
 import org.wordpress.android.fluxc.network.BaseRequest
 import org.wordpress.android.fluxc.network.BaseRequest.BaseNetworkError
@@ -91,10 +92,10 @@ class JetpackWPAPIRestClient @Inject constructor(
         }
     }
 
-    suspend fun fetchJetpackUser(
+    suspend fun fetchJetpackConnectionData(
         site: SiteModel,
         useApplicationPasswords: Boolean = false
-    ): JetpackWPAPIPayload<JetpackUser> {
+    ): JetpackWPAPIPayload<JetpackConnectionData> {
         val response = makeGetWPAPIRequest<JetpackConnectionDataResponse>(
             site = site,
             path = JPAPI.connection.data.pathV4,
@@ -103,7 +104,7 @@ class JetpackWPAPIRestClient @Inject constructor(
 
         return when (response) {
             is Success<JetpackConnectionDataResponse> -> JetpackWPAPIPayload(
-                response.data?.toJetpackUser()
+                    response.data?.toDomainModel()
             )
 
             is Error -> JetpackWPAPIPayload(response.error)
@@ -243,14 +244,18 @@ class JetpackWPAPIRestClient @Inject constructor(
         }
     }
 
-    private fun JetpackConnectionDataResponse.toJetpackUser(): JetpackUser {
-        return JetpackUser(
-            isConnected = currentUser.isConnected ?: false,
-            isMaster = currentUser.isMaster ?: false,
-            username = currentUser.username.orEmpty(),
-            wpcomEmail = currentUser.wpcomUser?.email.orEmpty(),
-            wpcomId = currentUser.wpcomUser?.id ?: 0L,
-            wpcomUsername = currentUser.wpcomUser?.login.orEmpty()
+    private fun JetpackConnectionDataResponse.toDomainModel(): JetpackConnectionData {
+        return JetpackConnectionData(
+            isSiteRegistered = isRegistered,
+            blogId = currentUser.blogId?.let { if (it.isNumber) it.asLong else null },
+            currentUser = JetpackUser(
+                isConnected = currentUser.isConnected ?: false,
+                isMaster = currentUser.isMaster ?: false,
+                username = currentUser.username.orEmpty(),
+                wpcomEmail = currentUser.wpcomUser?.email.orEmpty(),
+                wpcomId = currentUser.wpcomUser?.id ?: 0L,
+                wpcomUsername = currentUser.wpcomUser?.login.orEmpty()
+            )
         )
     }
 

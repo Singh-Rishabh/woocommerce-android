@@ -59,10 +59,10 @@ class JetpackStore @Inject constructor(
     ): JetpackResult<JetpackUser> {
         if (site.isUsingWpComRestApi) error("This function is not implemented yet for Jetpack tunnel")
         return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackUser") {
-            val result = jetpackWPAPIRestClient.fetchJetpackUser(site, useApplicationPasswords)
+            val result = jetpackWPAPIRestClient.fetchJetpackConnectionData(site, useApplicationPasswords)
 
             result.toJetpackResult { result ->
-                JetpackResult(result)
+                JetpackResult(result.currentUser)
             }
         }
     }
