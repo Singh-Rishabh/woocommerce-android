@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleDialogResult
+import com.woocommerce.android.extensions.handleResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.base.BaseFragment
@@ -93,6 +94,10 @@ class WooShippingCustomsFormFragment : BaseFragment() {
             RestrictionType.entries
                 .firstOrNull { it.toString() == result }
                 ?.let { viewModel.onRestrictionTypeSelected(it) }
+        }
+
+        handleResult<String>(SELECT_COUNTRY_REQUEST) { countryCode ->
+            viewModel.onShippableProductOriginCountryChanged(countryCode)
         }
     }
 
