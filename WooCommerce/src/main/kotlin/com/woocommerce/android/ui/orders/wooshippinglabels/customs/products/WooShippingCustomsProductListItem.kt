@@ -41,6 +41,10 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCu
 fun WooShippingCustomsProductListItem(
     itemData: WooShippingCustomsProductUIModel,
     onExpand: (isExtended: Boolean) -> Unit,
+    onDescriptionChanged: (String) -> Unit,
+    onTariffChanged: (String) -> Unit,
+    onValuePerUnitChanged: (String) -> Unit,
+    onWeightPerUnitChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val rotationAnimation = itemData.isExpanded
@@ -92,10 +96,10 @@ fun WooShippingCustomsProductListItem(
         if (itemData.isExpanded) {
             WooShippingCustomsProductExpandedListItem(
                 itemData = itemData,
-                onDescriptionChanged = { },
-                onTariffChanged = { },
-                onValuePerUnitChanged = { },
-                onWeightPerUnitChanged = { },
+                onDescriptionChanged = onDescriptionChanged,
+                onTariffChanged = onTariffChanged,
+                onValuePerUnitChanged = onValuePerUnitChanged,
+                onWeightPerUnitChanged = onWeightPerUnitChanged,
                 modifier = modifier
             )
         } else {
@@ -238,7 +242,11 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
                     originCountry = "Japan",
                     isExpanded = false
                 ),
-                onExpand = { }
+                onExpand = { },
+                onDescriptionChanged = { },
+                onTariffChanged = { },
+                onValuePerUnitChanged = { },
+                onWeightPerUnitChanged = { }
             )
         }
     }
@@ -259,7 +267,11 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
                     originCountry = "Japan",
                     isExpanded = true
                 ),
-                onExpand = { }
+                onExpand = { },
+                onDescriptionChanged = { },
+                onTariffChanged = { },
+                onValuePerUnitChanged = { },
+                onWeightPerUnitChanged = { }
             )
         }
     }
