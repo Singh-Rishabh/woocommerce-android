@@ -47,6 +47,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
@@ -299,11 +300,8 @@ class WooPosTotalsViewModel @Inject constructor(
 
                     is CardReaderPaymentState.LoadingData -> handleReaderLoadingPaymentState()
 
+                    is CardReaderPaymentState.PaymentCapturing,
                     is CardReaderPaymentState.ProcessingPayment -> {
-                        analyticsData.cardTappedTimestamp = System.currentTimeMillis()
-                        handleProcessingOrCapturingPaymentState()
-                    }
-                    is CardReaderPaymentState.PaymentCapturing -> {
                         handleProcessingOrCapturingPaymentState()
                     }
 
@@ -327,6 +325,45 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch { trackPaymentStates() }
+    }
+
+    private suspend fun trackPaymentStates() {
+        cardReaderPaymentController?.paymentState?.distinctUntilChanged { old, new -> old::class == new::class }
+            ?.collect {
+                when (it) {
+                    is CardReaderPaymentState.CollectingPayment -> {
+                        analyticsData.readerReadyForPaymentTimestamp = System.currentTimeMillis()
+                        trackReaderReadyForPayment()
+                    }
+
+                    is CardReaderPaymentState.ProcessingPayment -> {
+                        analyticsData.cardTappedTimestamp = System.currentTimeMillis()
+                        handleProcessingOrCapturingPaymentState()
+                    }
+
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.CollectingInteracRefund,
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.InteracRefundFailure.Cancelable,
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.InteracRefundFailure.NonCancelable,
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.InteracRefundSuccessful,
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.LoadingData,
+                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.ProcessingInteracRefund,
+                    is CardReaderPaymentState.LoadingData,
+                    is CardReaderPaymentState.PaymentCapturing.BuiltInReaderPaymentCapturing,
+                    is CardReaderPaymentState.PaymentCapturing.ExternalReaderPaymentCapturing,
+                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment.Cancelable,
+                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment.NonCancelable,
+                    is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.Cancelable,
+                    is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable,
+                    is CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful,
+                    is CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically,
+                    is CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful,
+                    is CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically,
+                    is CardReaderPaymentState.PrintingReceipt,
+                    CardReaderPaymentState.ReFetchingOrder,
+                    CardReaderPaymentState.SharingReceipt -> Unit
+                }
+            }
     }
 
     private suspend fun handleProcessingOrCapturingPaymentState() {
@@ -362,8 +399,6 @@ class WooPosTotalsViewModel @Inject constructor(
             uiState.value = buildWooPosTotalsViewState(order)
             childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
-        analyticsData.readerReadyForPaymentTimestamp = System.currentTimeMillis()
-        trackReaderReadyForPayment()
     }
 
     private suspend fun trackReaderReadyForPayment() {
