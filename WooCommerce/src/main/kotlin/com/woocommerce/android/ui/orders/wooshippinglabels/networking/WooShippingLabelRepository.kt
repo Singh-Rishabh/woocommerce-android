@@ -192,4 +192,12 @@ class WooShippingLabelRepository @Inject constructor(
             )
         }
     }
+
+    suspend fun verifyDestinationAddress(
+        site: SiteModel,
+        orderId: Long,
+    ) = restClient.verifyDestinationAddress(
+        site = site,
+        orderId = orderId,
+    ).asWooResult { it.isVerified }
 }

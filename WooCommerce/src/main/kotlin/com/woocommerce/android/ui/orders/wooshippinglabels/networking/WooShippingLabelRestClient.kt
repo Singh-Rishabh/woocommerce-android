@@ -173,4 +173,17 @@ class WooShippingLabelRestClient @Inject constructor(
 
         return result.toWooPayload()
     }
+
+    suspend fun verifyDestinationAddress(
+        site: SiteModel,
+        orderId: Long,
+    ): WooPayload<VerifyDestinationAddressResponseDTO> {
+        val url = "/wcshipping/v1/address/$orderId/verify_order/"
+
+        return wooNetwork.executeGetGsonRequest(
+            site = site,
+            path = url,
+            clazz = VerifyDestinationAddressResponseDTO::class.java,
+        ).toWooPayload()
+    }
 }
