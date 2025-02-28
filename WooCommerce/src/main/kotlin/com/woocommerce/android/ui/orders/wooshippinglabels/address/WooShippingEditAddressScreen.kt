@@ -48,7 +48,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.CheckCircleOutline
 import androidx.compose.material.icons.outlined.Info
@@ -91,6 +90,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.Addres
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.AddressValidationState
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.EditableAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.components.RoundedBorderDropDownWithLabel
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
 import kotlinx.coroutines.launch
@@ -619,57 +619,6 @@ private fun RoundedBorderTextFieldWithLabelPreview() {
             onTextChange = {},
             hint = "Hint",
             error = "This field is required"
-        )
-    }
-}
-
-@Composable
-private fun RoundedBorderDropDownWithLabel(
-    label: String,
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.body2,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        RoundedCornerBoxWithBorder(innerModifier = Modifier.clickable { onClick() }) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.weight(1f)
-                )
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.onSurface
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun RoundedBorderDropDownWithLabelPreview() {
-    Column(
-        modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .padding(16.dp)
-    ) {
-        RoundedBorderDropDownWithLabel(
-            label = "Label",
-            text = "Text",
-            onClick = {}
         )
     }
 }
