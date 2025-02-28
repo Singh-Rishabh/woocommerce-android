@@ -6,6 +6,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Location
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetStatesByCountryCode
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
     private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
+    private val getStatesByCountryCode: GetStatesByCountryCode,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private val itnRegex by lazy { ITN_REGEX_STRING.toRegex() }
@@ -167,6 +169,11 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         }
     }
 
+    fun onCountrySelectorClick(itemIndex: Int) {
+        val currentCountry = _viewState.value.shippingProducts[itemIndex].originCountry
+        triggerEvent(ShowCountrySelector(emptyList()))
+    }
+
     fun onShippableProductOriginCountryChanged(itemIndex: Int, newValue: String) {
         _viewState.update { state ->
             val updatedItem = state.shippingProducts[itemIndex]
@@ -268,6 +275,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     data class ShowContentTypeDialog(val currentSelection: ContentType) : MultiLiveEvent.Event()
     data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType) : MultiLiveEvent.Event()
+    data class ShowCountrySelector(val countries: List<Location>) : MultiLiveEvent.Event()
     object FinishCustomsForm : MultiLiveEvent.Event()
 
     companion object {
