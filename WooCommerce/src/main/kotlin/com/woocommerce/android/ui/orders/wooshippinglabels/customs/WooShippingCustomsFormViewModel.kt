@@ -126,25 +126,49 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onShippableProductDescriptionChanged(itemIndex: Int, newValue: String) {
         updateShippingProductsAt(itemIndex) { item ->
-            item.copy(description = InputValue.Data(newValue))
+            when (newValue.isBlank()) {
+                false -> InputValue.Data(newValue)
+                true -> InputValue.Error(
+                    input = newValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                )
+            }.let { item.copy(description = it) }
         }
     }
 
     fun onShippableProductTariffNumberChanged(itemIndex: Int, newValue: String) {
         updateShippingProductsAt(itemIndex) { item ->
-            item.copy(tariffNumber = InputValue.Data(newValue))
+            when (newValue.isBlank()) {
+                false -> InputValue.Data(newValue)
+                true -> InputValue.Error(
+                    input = newValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                )
+            }.let { item.copy(tariffNumber = it) }
         }
     }
 
     fun onShippableProductValuePerUnitChanged(itemIndex: Int, newValue: String) {
         updateShippingProductsAt(itemIndex) { item ->
-            item.copy(valuePerUnit = InputValue.Data(newValue))
+            when (newValue.isBlank()) {
+                false -> InputValue.Data(newValue)
+                true -> InputValue.Error(
+                    input = newValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                )
+            }.let { item.copy(valuePerUnit = it) }
         }
     }
 
     fun onShippableProductWeightPerUnitChanged(itemIndex: Int, newValue: String) {
         updateShippingProductsAt(itemIndex) { item ->
-            item.copy(weightPerUnit = InputValue.Data(newValue))
+            when (newValue.isBlank()) {
+                false -> InputValue.Data(newValue)
+                true -> InputValue.Error(
+                    input = newValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                )
+            }.let { item.copy(weightPerUnit = it) }
         }
     }
 
