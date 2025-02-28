@@ -29,9 +29,9 @@ class WooShippingEditDestinationViewModelTest : WooShippingEditAddressViewModelT
         address: Address,
         isVerified: Boolean
     ): SavedStateHandle {
-        val destination = DestinationShippingAddress(address,isVerified)
+        val destination = DestinationShippingAddress(address, isVerified)
         return WooShippingEditAddressFragmentArgs(
-            EditAddressFlow.EditDestinationAddress(destination,1L)
+            EditAddressFlow.EditDestinationAddress(destination, 1L)
         ).toSavedStateHandle()
     }
 

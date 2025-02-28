@@ -28,7 +28,8 @@ class ShouldRequireCustomsFormTest {
                 Address.EMPTY.copy(
                     country = Location.EMPTY.copy(code = "CA"),
                     state = AmbiguousLocation.Defined(Location.EMPTY.copy(code = "ON"))
-                ), false
+                ),
+                false
             ),
             originAddresses = emptyList()
         )
@@ -43,7 +44,8 @@ class ShouldRequireCustomsFormTest {
                 Address.EMPTY.copy(
                     country = Location.EMPTY.copy(code = "US"),
                     state = AmbiguousLocation.Defined(Location.EMPTY.copy(code = "NY"))
-                ), false
+                ),
+                false
             ),
             originAddresses = emptyList()
         )
@@ -58,7 +60,8 @@ class ShouldRequireCustomsFormTest {
                 Address.EMPTY.copy(
                     country = Location.EMPTY.copy(code = "US"),
                     state = AmbiguousLocation.Defined(Location.EMPTY.copy(code = "NY"))
-                ), false
+                ),
+                false
             ),
             originAddresses = emptyList()
         )
@@ -73,7 +76,8 @@ class ShouldRequireCustomsFormTest {
                 Address.EMPTY.copy(
                     country = Location.EMPTY.copy(code = "US"),
                     state = AmbiguousLocation.Defined(Location.EMPTY.copy(code = "AE"))
-                ), false
+                ),
+                false
             ),
             originAddresses = emptyList()
         )
@@ -88,7 +92,8 @@ class ShouldRequireCustomsFormTest {
                 Address.EMPTY.copy(
                     country = Location.EMPTY.copy(code = "US"),
                     state = AmbiguousLocation.Defined(Location.EMPTY.copy(code = "NY"))
-                ), false
+                ),
+                false
             ),
             originAddresses = emptyList()
         )

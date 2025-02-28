@@ -22,7 +22,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class WooShippingEditAddressViewModelTest: BaseUnitTest() {
+abstract class WooShippingEditAddressViewModelTest : BaseUnitTest() {
     protected val addressValidator: AddressValidationHelper = mock()
     protected val getAcceptedOriginCountries: GetAcceptedOriginCountries = mock()
     protected val getStatesByCountryCode: GetStatesByCountryCode = mock()
@@ -526,7 +526,7 @@ abstract class WooShippingEditAddressViewModelTest: BaseUnitTest() {
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
         Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address,true)
+            val savedState = createSavedStateHandle(address, true)
             createViewModel(savedState)
         }
 
@@ -558,7 +558,7 @@ abstract class WooShippingEditAddressViewModelTest: BaseUnitTest() {
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
         Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address,true)
+            val savedState = createSavedStateHandle(address, true)
             createViewModel(savedState)
             sut.onAddressChange("Updated address")
         }
@@ -591,7 +591,7 @@ abstract class WooShippingEditAddressViewModelTest: BaseUnitTest() {
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
         Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address,true)
+            val savedState = createSavedStateHandle(address, true)
             createViewModel(savedState)
             sut.onEmailChange("email@test.com")
         }
