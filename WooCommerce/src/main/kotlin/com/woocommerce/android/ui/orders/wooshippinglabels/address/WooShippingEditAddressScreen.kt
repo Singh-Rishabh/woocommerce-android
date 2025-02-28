@@ -125,6 +125,7 @@ fun WooShippingEditAddressScreen(
         onNormalizeAddress = viewModel::onNormalizeAddress,
         onUpdateOriginAddress = viewModel::onUpdateOriginAddress,
         onUpdateNormalizedOriginAddress = viewModel::onUpdateNormalizedOriginAddress,
+        onNavigateBack = viewModel::onNavigateBack,
         modifier = modifier
     )
 }
@@ -155,6 +156,7 @@ fun WooShippingEditAddressScreen(
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -170,7 +172,7 @@ fun WooShippingEditAddressScreen(
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.woo_shipping_edit_origin_address_title),
-                onNavigationButtonClick = {},
+                onNavigationButtonClick = onNavigateBack,
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack
             )
         },
@@ -364,6 +366,7 @@ fun WooShippingEditAddressScreen(
                     addressStatus = addressStatus,
                     onNormalizeAddress = onNormalizeAddress,
                     onUpdateOriginAddress = onUpdateOriginAddress,
+                    onClose = onNavigateBack,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -447,6 +450,7 @@ internal fun AddressStatusSection(
     addressStatus: AddressStatus,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -479,7 +483,7 @@ internal fun AddressStatusSection(
 
         val buttonAction: () -> Unit = when (addressStatus) {
             AddressStatus.VERIFIED -> {
-                {}
+                { onClose() }
             }
             AddressStatus.UNVERIFIED -> {
                 { onNormalizeAddress(editableAddress) }
