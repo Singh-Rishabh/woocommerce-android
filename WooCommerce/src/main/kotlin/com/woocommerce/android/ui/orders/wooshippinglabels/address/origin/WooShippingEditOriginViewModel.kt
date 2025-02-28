@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormali
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils.combineStrings
 import com.woocommerce.android.viewmodel.MultiLiveEvent
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
@@ -229,6 +230,21 @@ class WooShippingEditOriginViewModel @Inject constructor(
                     selectedState.value = Location.EMPTY
                 }
             }
+    }
+
+    fun allowBackNavigation(): Boolean {
+        return when (viewState.value.addressValidationState) {
+            is AddressValidationState.AddressSelection,
+            is AddressValidationState.NormalizedAddressUpdateFailed -> {
+                onCloseAddressSelection()
+                return false
+            }
+            else -> true
+        }
+    }
+
+    fun onNavigateBack() {
+        if (allowBackNavigation()) triggerEvent(Event.Exit)
     }
 
     fun onExpandCompany() {

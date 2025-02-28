@@ -16,15 +16,17 @@ import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
+import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.details.editing.address.LocationCode
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressScreen
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel.ShowCountrySelector
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel.ShowStateSelector
 import com.woocommerce.android.ui.searchfilter.SearchFilterItem
+import com.woocommerce.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WooShippingEditOriginAddressFragment : BaseFragment() {
+class WooShippingEditOriginAddressFragment : BaseFragment(), BackPressListener {
     private companion object {
         const val SELECT_COUNTRY_REQUEST = "select_address_country_request"
         const val SELECT_STATE_REQUEST = "select_address_state_request"
@@ -58,6 +60,7 @@ class WooShippingEditOriginAddressFragment : BaseFragment() {
             when (event) {
                 is ShowCountrySelector -> showCountrySearchScreen(event.countries)
                 is ShowStateSelector -> showStatesSearchScreen(event.states)
+                is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
             }
         }
     }
@@ -100,4 +103,6 @@ class WooShippingEditOriginAddressFragment : BaseFragment() {
         )
         findNavController().navigateSafely(action)
     }
+
+    override fun onRequestAllowBackPress(): Boolean = viewModel.allowBackNavigation()
 }

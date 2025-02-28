@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,6 +31,8 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductListItem
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 
 @Composable
 fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
@@ -45,14 +47,16 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         isAddCustomsButtonEnabled = viewState?.isAddCustomsButtonEnabled ?: false,
         shouldDisplayContentTypeInput = viewState?.shouldDisplayContentTypeInput ?: false,
         shouldDisplayRestrictionTypeInput = viewState?.shouldDisplayRestrictionTypeInput ?: false,
+        shippingProducts = viewState?.shippingProducts ?: emptyList(),
         onContentTypeClick = viewModel::onContentTypeClick,
         onRestrictionTypeClick = viewModel::onRestrictionTypeClick,
         onItnChanged = viewModel::onITNChanged,
         onOtherContentDetailsInputChanged = viewModel::onOtherContentInputChanged,
         onOtherRestrictionDetailsInputChanged = viewModel::onRestrictionDetailsInputChanged,
         onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
-    ) {
-    }
+        onProductExpanded = viewModel::onProductExpanded,
+        onAddCustomsDataClick = viewModel::onAddCustomsDataClick
+    )
 }
 
 @Composable
@@ -67,12 +71,14 @@ fun WooShippingCustomsFormScreen(
     isAddCustomsButtonEnabled: Boolean,
     shouldDisplayContentTypeInput: Boolean,
     shouldDisplayRestrictionTypeInput: Boolean,
+    shippingProducts: List<WooShippingCustomsProductUIModel>,
     onContentTypeClick: () -> Unit,
     onRestrictionTypeClick: () -> Unit,
     onItnChanged: (String) -> Unit,
     onReturnToSenderChanged: (Boolean) -> Unit,
     onOtherContentDetailsInputChanged: (String) -> Unit,
     onOtherRestrictionDetailsInputChanged: (String) -> Unit,
+    onProductExpanded: (WooShippingCustomsProductUIModel, Boolean) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -157,9 +163,22 @@ fun WooShippingCustomsFormScreen(
                     checked = returnToSenderChecked,
                     onCheckedChange = onReturnToSenderChanged,
                     colors = CheckboxDefaults.colors(
-                        checkedColor = MaterialTheme.colors.primary,
-                        uncheckedColor = MaterialTheme.colors.onSurface
+                        checkedColor = MaterialTheme.colorScheme.primary,
+                        uncheckedColor = MaterialTheme.colorScheme.onSurface
                     )
+                )
+            }
+
+            Text(
+                text = stringResource(R.string.woo_shipping_labels_customs_product_details_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            shippingProducts.forEach { product ->
+                WooShippingCustomsProductListItem(
+                    modifier = modifier.fillMaxWidth(),
+                    itemData = product,
+                    onExpand = { onProductExpanded(product, it) }
                 )
             }
         }
@@ -187,12 +206,33 @@ fun PreviewWooShippingCustomsFormScreen() {
             isAddCustomsButtonEnabled = true,
             shouldDisplayContentTypeInput = true,
             shouldDisplayRestrictionTypeInput = false,
+            shippingProducts = listOf(
+                WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Data("Product Description"),
+                    tariffNumber = InputValue.Data("123456"),
+                    valuePerUnit = InputValue.Data("10.00"),
+                    weightPerUnit = InputValue.Data("1.00"),
+                    originCountry = "US",
+                    isExpanded = false
+                ),
+                WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Data("Product Description"),
+                    tariffNumber = InputValue.Data("123456"),
+                    valuePerUnit = InputValue.Data("10.00"),
+                    weightPerUnit = InputValue.Data("1.00"),
+                    originCountry = "US",
+                    isExpanded = true
+                )
+            ),
             onContentTypeClick = {},
             onRestrictionTypeClick = {},
             onItnChanged = {},
             onReturnToSenderChanged = {},
             onOtherContentDetailsInputChanged = {},
             onOtherRestrictionDetailsInputChanged = {},
+            onProductExpanded = { _, _ -> },
             onAddCustomsDataClick = {}
         )
     }
