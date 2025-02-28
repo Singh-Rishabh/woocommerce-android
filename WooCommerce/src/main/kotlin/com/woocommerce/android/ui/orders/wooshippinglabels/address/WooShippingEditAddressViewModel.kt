@@ -470,7 +470,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
     }
 
     fun onNameChange(value: String) {
-        val isCompanyRequired = value.isEmpty() && company.value.isNotNullOrEmpty()
+        val isCompanyRequired = value.isEmpty() && company.value.isNotEmpty()
         name = InputValue(
             value = value,
             isRequired = isCompanyRequired.not(),
@@ -480,7 +480,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
     }
 
     fun onCompanyChange(value: String) {
-        val isCompanyRequired = value.isEmpty() && name.value.isNotEmpty()
+        val isCompanyRequired = value.isNotEmpty() && name.value.isEmpty()
         company = InputValue(
             value = value,
             isRequired = isCompanyRequired,
