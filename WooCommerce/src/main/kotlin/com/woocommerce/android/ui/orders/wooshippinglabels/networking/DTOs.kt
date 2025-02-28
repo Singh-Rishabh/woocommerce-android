@@ -110,6 +110,6 @@ data class UpdateAddressResponseDTO(
 
 data class VerifyDestinationAddressResponseDTO(
     val success: Boolean,
-    val address: AddressDTO,
+    val normalizedAddress: AddressDTO,
     val isVerified: Boolean
 )
