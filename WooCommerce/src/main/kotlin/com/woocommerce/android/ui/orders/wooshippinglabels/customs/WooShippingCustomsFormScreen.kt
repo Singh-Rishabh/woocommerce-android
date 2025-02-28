@@ -54,7 +54,11 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onOtherContentDetailsInputChanged = viewModel::onOtherContentInputChanged,
         onOtherRestrictionDetailsInputChanged = viewModel::onRestrictionDetailsInputChanged,
         onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
-        onProductExpanded = viewModel::onProductExpanded,
+        onProductExpanded = viewModel::onShippableProductExpanded,
+        onDescriptionChanged = viewModel::onShippableProductDescriptionChanged,
+        onTariffChanged = viewModel::onShippableProductTariffNumberChanged,
+        onValuePerUnitChanged = viewModel::onShippableProductValuePerUnitChanged,
+        onWeightPerUnitChanged = viewModel::onShippableProductWeightPerUnitChanged,
         onAddCustomsDataClick = viewModel::onAddCustomsDataClick
     )
 }
@@ -78,7 +82,11 @@ fun WooShippingCustomsFormScreen(
     onReturnToSenderChanged: (Boolean) -> Unit,
     onOtherContentDetailsInputChanged: (String) -> Unit,
     onOtherRestrictionDetailsInputChanged: (String) -> Unit,
-    onProductExpanded: (WooShippingCustomsProductUIModel, Boolean) -> Unit,
+    onProductExpanded: (position: Int, isExpanded: Boolean) -> Unit,
+    onDescriptionChanged: (position: Int, description: String) -> Unit,
+    onTariffChanged: (position: Int, tariff: String) -> Unit,
+    onValuePerUnitChanged: (position: Int, valuePerUnit: String) -> Unit,
+    onWeightPerUnitChanged: (position: Int, weightPerUnit: String) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -174,11 +182,15 @@ fun WooShippingCustomsFormScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
 
-            shippingProducts.forEach { product ->
+            shippingProducts.forEachIndexed { index, product ->
                 WooShippingCustomsProductListItem(
                     modifier = modifier.fillMaxWidth(),
                     itemData = product,
-                    onExpand = { onProductExpanded(product, it) }
+                    onExpand = { onProductExpanded(index, it) },
+                    onDescriptionChanged = { onDescriptionChanged(index, it) },
+                    onTariffChanged = { onTariffChanged(index, it) },
+                    onValuePerUnitChanged = { onValuePerUnitChanged(index, it) },
+                    onWeightPerUnitChanged = { onWeightPerUnitChanged(index, it) }
                 )
             }
         }
@@ -233,7 +245,11 @@ fun PreviewWooShippingCustomsFormScreen() {
             onOtherContentDetailsInputChanged = {},
             onOtherRestrictionDetailsInputChanged = {},
             onProductExpanded = { _, _ -> },
-            onAddCustomsDataClick = {}
+            onAddCustomsDataClick = {},
+            onDescriptionChanged = { _, _ -> },
+            onTariffChanged = { _, _ -> },
+            onValuePerUnitChanged = { _, _ -> },
+            onWeightPerUnitChanged = { _, _ -> },
         )
     }
 }
