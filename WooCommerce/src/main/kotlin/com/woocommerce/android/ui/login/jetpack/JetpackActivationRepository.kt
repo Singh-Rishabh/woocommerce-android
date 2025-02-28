@@ -69,14 +69,17 @@ class JetpackActivationRepository @Inject constructor(
         useApplicationPasswords: Boolean
     ): Result<String> = runWithRetry {
         WooLog.d(WooLog.T.LOGIN, "Fetching email of Jetpack User")
-        val result = jetpackStore.fetchJetpackUser(site = site, useApplicationPasswords = useApplicationPasswords)
+        val result = jetpackStore.fetchJetpackConnectionData(
+            site = site,
+            useApplicationPasswords = useApplicationPasswords
+        )
         return@runWithRetry when {
             result.isError -> {
                 WooLog.w(WooLog.T.LOGIN, "Fetching Jetpack User failed error: $result.error.message")
                 Result.failure(OnChangedException(result.error, result.error.message))
             }
 
-            result.data?.wpcomEmail.isNullOrEmpty() -> {
+            result.data?.currentUser?.wpcomEmail.isNullOrEmpty() -> {
                 analyticsTrackerWrapper.track(
                     stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_CANNOT_FIND_WPCOM_USER
                 )
@@ -86,7 +89,7 @@ class JetpackActivationRepository @Inject constructor(
 
             else -> {
                 WooLog.d(WooLog.T.LOGIN, "Jetpack User fetched successfully")
-                Result.success(result.data!!.wpcomEmail)
+                Result.success(result.data!!.currentUser.wpcomEmail)
             }
         }
     }
