@@ -248,89 +248,10 @@ abstract class WooShippingEditAddressViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when email is empty then address error is not null`() = testBlocking {
-        val address = Address.EMPTY
-        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
-        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
-        Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address)
-            createViewModel(savedState)
-        }
-
-        advanceUntilIdle()
-
-        val result = sut.viewState.value
-
-        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
-
-        assertThat(result.editableAddress.email.error).isNotEmpty()
-    }
-
-    @Test
-    fun `when email is NOT empty then address error is null`() = testBlocking {
-        val address = Address.EMPTY.copy(email = "This is an email")
-        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
-        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
-        Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address)
-            createViewModel(savedState)
-        }
-
-        advanceUntilIdle()
-
-        val result = sut.viewState.value
-
-        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
-
-        assertThat(result.editableAddress.email.error).isNull()
-    }
-
-    @Test
-    fun `when phone is empty then phone error is not null`() = testBlocking {
-        val address = Address.EMPTY
-        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
-        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
-        whenever(addressValidator.validateUSCustomsPhone("")).doReturn("error")
-        Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address)
-            createViewModel(savedState)
-        }
-
-        advanceUntilIdle()
-
-        val result = sut.viewState.value
-
-        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
-
-        assertThat(result.editableAddress.phone.error).isNotEmpty()
-    }
-
-    @Test
-    fun `when phone is NOT empty and invalid then phone error is not null`() = testBlocking {
-        val address = Address.EMPTY.copy(phone = "1234567890")
-        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
-        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
-        whenever(addressValidator.validateUSCustomsPhone("1234567890")).doReturn("error")
-        Snapshot.withMutableSnapshot {
-            val savedState = createSavedStateHandle(address)
-            createViewModel(savedState)
-        }
-
-        advanceUntilIdle()
-
-        val result = sut.viewState.value
-
-        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
-
-        assertThat(result.editableAddress.phone.error).isNotEmpty()
-    }
-
-    @Test
     fun `when phone is NOT empty and valid then phone error is null`() = testBlocking {
         val address = Address.EMPTY.copy(phone = "1234567890")
         whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
         whenever(addressValidator.validateFieldRequired("")).doReturn("error")
-        whenever(addressValidator.validateUSCustomsPhone("1234567890")).doReturn(null)
         Snapshot.withMutableSnapshot {
             val savedState = createSavedStateHandle(address)
             createViewModel(savedState)
@@ -705,17 +626,6 @@ abstract class WooShippingEditAddressViewModelTest : BaseUnitTest() {
             lastName = "",
             company = "",
         )
-        val editableAddress = EditableAddress(
-            name = InputValue(address.firstName),
-            company = InputValue(address.company),
-            country = countries.first { it.code == address.country.code },
-            address = InputValue(address.address1),
-            city = InputValue(address.city),
-            state = states.first { it.code == address.state.codeOrRaw },
-            postalCode = InputValue(address.postcode),
-            email = InputValue(address.email),
-            phone = InputValue(address.phone)
-        )
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
@@ -728,7 +638,7 @@ abstract class WooShippingEditAddressViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        sut.onNormalizeAddress(editableAddress)
+        sut.onNormalizeAddress(sut.viewState.value.editableAddress)
 
         val result = sut.viewState.value
 

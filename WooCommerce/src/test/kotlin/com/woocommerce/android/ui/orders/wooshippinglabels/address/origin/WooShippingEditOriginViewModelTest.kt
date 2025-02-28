@@ -9,6 +9,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditAddressFl
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditableAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragmentArgs
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressViewModelTest
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.toAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
@@ -19,6 +20,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -127,17 +129,6 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
             lastName = "",
             company = ""
         )
-        val editableAddress = EditableAddress(
-            name = InputValue(address.firstName),
-            company = InputValue(address.company),
-            country = countries.first { it.code == address.country.code },
-            address = InputValue(address.address1),
-            city = InputValue(address.city),
-            state = states.first { it.code == address.state.codeOrRaw },
-            postalCode = InputValue(address.postcode),
-            email = InputValue(address.email),
-            phone = InputValue(address.phone)
-        )
 
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
@@ -151,7 +142,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
 
         advanceUntilIdle()
 
-        sut.onUpdateAddress(editableAddress)
+        sut.onUpdateAddress(sut.viewState.value.editableAddress)
 
         val result = sut.viewState.value
         assertThat(result.addressValidationState).isInstanceOf(AddressValidationState.AddressUpdateFailed::class.java)
@@ -229,5 +220,62 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
 
         assertThat(result.error).isNotNull()
         verify(updateDestinationAddress, never()).invoke(any(), any())
+    }
+
+    @Test
+    fun `when phone is empty phone then error is NOT null`() = testBlocking {
+        val address = Address.EMPTY.copy(phone = "")
+        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
+        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
+        Snapshot.withMutableSnapshot {
+            val savedState = createSavedStateHandle(address)
+            createViewModel(savedState)
+        }
+
+        advanceUntilIdle()
+
+        val result = sut.viewState.value
+
+        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
+
+        assertThat(result.editableAddress.phone.error).isNotEmpty
+    }
+
+    @Test
+    fun `when email is empty then address error is not null`() = testBlocking {
+        val address = Address.EMPTY
+        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
+        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
+        Snapshot.withMutableSnapshot {
+            val savedState = createSavedStateHandle(address)
+            createViewModel(savedState)
+        }
+
+        advanceUntilIdle()
+
+        val result = sut.viewState.value
+
+        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
+
+        assertThat(result.editableAddress.email.error).isNotEmpty()
+    }
+
+    @Test
+    fun `when email is NOT empty then address error is null`() = testBlocking {
+        val address = Address.EMPTY.copy(email = "This is an email")
+        whenever(addressValidator.validateAtLeastOneOf(eq(""), eq(""))).doReturn("error")
+        whenever(addressValidator.validateFieldRequired("")).doReturn("error")
+        Snapshot.withMutableSnapshot {
+            val savedState = createSavedStateHandle(address)
+            createViewModel(savedState)
+        }
+
+        advanceUntilIdle()
+
+        val result = sut.viewState.value
+
+        assertThat(result).isInstanceOf(WooShippingEditAddressViewModel.ViewState::class.java)
+
+        assertThat(result.editableAddress.email.error).isNull()
     }
 }
