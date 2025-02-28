@@ -5,8 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetStatesByCountryCode
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -24,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
     private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
-    private val getStatesByCountryCode: GetStatesByCountryCode,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private val itnRegex by lazy { ITN_REGEX_STRING.toRegex() }
@@ -171,17 +170,27 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onCountrySelectorClick(itemIndex: Int) {
         itemIndexUnderCountrySelection = itemIndex
-        val currentCountry = _viewState.value.shippingProducts[itemIndex].originCountry
-        triggerEvent(ShowCountrySelector(emptyList()))
+
+        countriesState.value
+            .run { this as? LocationState.Loaded }
+            ?.let { triggerEvent(ShowCountrySelector(it.locations)) }
     }
 
     fun onShippableProductOriginCountryChanged(newValue: String) {
         val itemIndex = itemIndexUnderCountrySelection ?: return
         itemIndexUnderCountrySelection = null
 
+        val possibleSelections = countriesState.value
+        val defaultLocation = AmbiguousLocation.Raw(newValue).asLocation()
+        val selectedLocation = when (possibleSelections) {
+            is LocationState.Loaded -> possibleSelections
+                .locations.firstOrNull { it.code == newValue } ?: defaultLocation
+            else -> defaultLocation
+        }
+
         _viewState.update { state ->
             val updatedItem = state.shippingProducts[itemIndex]
-                .copy(originCountry = newValue)
+                .copy(originCountry = selectedLocation.name)
 
             state.shippingProducts.toMutableList().apply {
                 set(itemIndex, updatedItem)
