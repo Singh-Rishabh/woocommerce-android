@@ -38,6 +38,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
+    private val itemIndexUnderCountrySelection = MutableStateFlow<Int?>(null)
 
     init {
         launch { loadCountries() }
@@ -169,15 +170,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onCountrySelectorClick(itemIndex: Int) {
-        _viewState.update { it.copy(itemIndexUnderCountrySelection = itemIndex) }
+        itemIndexUnderCountrySelection.update { itemIndex }
         val currentCountry = _viewState.value.shippingProducts[itemIndex].originCountry
         triggerEvent(ShowCountrySelector(emptyList()))
     }
 
     fun onShippableProductOriginCountryChanged(newValue: String) {
-        val itemIndex = _viewState.value
-            .itemIndexUnderCountrySelection
-            ?: return
+        val itemIndex = itemIndexUnderCountrySelection.value ?: return
 
         _viewState.update { state ->
             val updatedItem = state.shippingProducts[itemIndex]
@@ -218,8 +217,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val otherRestrictionInput: InputValue = InputValue.Empty,
         val itnValue: InputValue = InputValue.Empty,
         val returnToSenderChecked: Boolean = false,
-        val shippingProducts: List<WooShippingCustomsProductUIModel> = emptyList(),
-        val itemIndexUnderCountrySelection: Int? = null
+        val shippingProducts: List<WooShippingCustomsProductUIModel> = emptyList()
     ) : Parcelable {
         val shouldDisplayContentTypeInput: Boolean
             get() = contentType == ContentType.OTHER
