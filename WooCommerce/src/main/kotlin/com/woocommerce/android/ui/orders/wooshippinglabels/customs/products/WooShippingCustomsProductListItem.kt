@@ -45,6 +45,7 @@ fun WooShippingCustomsProductListItem(
     onTariffChanged: (String) -> Unit,
     onValuePerUnitChanged: (String) -> Unit,
     onWeightPerUnitChanged: (String) -> Unit,
+    onCountrySelectorClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val rotationAnimation = itemData.isExpanded
@@ -100,6 +101,7 @@ fun WooShippingCustomsProductListItem(
                 onTariffChanged = onTariffChanged,
                 onValuePerUnitChanged = onValuePerUnitChanged,
                 onWeightPerUnitChanged = onWeightPerUnitChanged,
+                onCountrySelectorClick = onCountrySelectorClick,
                 modifier = modifier
             )
         } else {
@@ -159,7 +161,8 @@ fun WooShippingCustomsProductExpandedListItem(
     onDescriptionChanged: (String) -> Unit,
     onTariffChanged: (String) -> Unit,
     onValuePerUnitChanged: (String) -> Unit,
-    onWeightPerUnitChanged: (String) -> Unit
+    onWeightPerUnitChanged: (String) -> Unit,
+    onCountrySelectorClick: () -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(modifier.padding(vertical = 8.dp))
@@ -217,7 +220,7 @@ fun WooShippingCustomsProductExpandedListItem(
 
             RoundedBorderDropDownWithLabel(
                 label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_origin_country),
-                onClick = { },
+                onClick = onCountrySelectorClick,
                 modifier = modifier.fillMaxWidth(),
                 text = itemData.originCountry
                     .takeIf { it.isNotBlank() }
@@ -246,7 +249,8 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
                 onDescriptionChanged = { },
                 onTariffChanged = { },
                 onValuePerUnitChanged = { },
-                onWeightPerUnitChanged = { }
+                onWeightPerUnitChanged = { },
+                onCountrySelectorClick = { }
             )
         }
     }
@@ -271,7 +275,8 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
                 onDescriptionChanged = { },
                 onTariffChanged = { },
                 onValuePerUnitChanged = { },
-                onWeightPerUnitChanged = { }
+                onWeightPerUnitChanged = { },
+                onCountrySelectorClick = { }
             )
         }
     }
