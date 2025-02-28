@@ -30,12 +30,6 @@ import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Payme
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.PaymentInProgress
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
-import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
-import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
-import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
-import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ReaderReadyForCardPayment
-import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
-import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.UiStringParser
 import com.woocommerce.android.util.WooLog
@@ -47,7 +41,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
@@ -61,11 +54,10 @@ class WooPosTotalsViewModel @Inject constructor(
     private val cardReaderFacade: WooPosCardReaderFacade,
     private val totalsRepository: WooPosTotalsRepository,
     private val priceFormat: WooPosFormatPrice,
-    private val analyticsTracker: WooPosAnalyticsTracker,
     private val networkStatus: WooPosNetworkStatus,
     private val cardReaderPaymentControllerFactory: WooPosCardReaderPaymentControllerFactory,
     private val uiStringParser: UiStringParser,
-    private val analyticsData: WooPosAnalyticsTrackingDataKeeper,
+    private val totalsAnalyticsTracker: WooPosTotalsAnalyticsTracker,
     savedState: SavedStateHandle,
 ) : ViewModel() {
 
@@ -147,7 +139,7 @@ class WooPosTotalsViewModel @Inject constructor(
         when (event) {
             is WooPosTotalsUIEvent.OnNewTransactionClicked -> viewModelScope.launch {
                 childrenToParentEventSender.sendToParent(NewTransactionClicked)
-                analyticsTracker.track(CreateNewOrderTapped)
+                totalsAnalyticsTracker.trackCreateNewOrderTapped()
             }
 
             is WooPosTotalsUIEvent.RetryOrderCreationClicked -> {
@@ -170,7 +162,7 @@ class WooPosTotalsViewModel @Inject constructor(
 
     private fun handleEmailReceiptClicked() {
         viewModelScope.launch {
-            analyticsTracker.track(EmailReceiptTapped)
+            totalsAnalyticsTracker.trackEmailReceiptTapped()
             childrenToParentEventSender.sendToParent(
                 ToEmailReceipt(dataState.value.orderId)
             )
@@ -270,7 +262,7 @@ class WooPosTotalsViewModel @Inject constructor(
                     is ParentToChildrenEvent.CheckoutClicked -> {
                         dataState.value = dataState.value.copy(itemClickedDataList = event.itemClickedDataList)
                         createOrderDraft(dataState.value.itemClickedDataList)
-                        analyticsData.checkoutButtonTapsCount = analyticsData.checkoutButtonTapsCount + 1
+                        totalsAnalyticsTracker.incrementCheckoutButtonTaps()
                     }
 
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> {
@@ -325,44 +317,7 @@ class WooPosTotalsViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch { trackPaymentStates() }
-    }
-
-    private suspend fun trackPaymentStates() {
-        cardReaderPaymentController?.paymentState?.distinctUntilChanged { old, new -> old::class == new::class }
-            ?.collect {
-                when (it) {
-                    is CardReaderPaymentState.CollectingPayment -> {
-                        analyticsData.readerReadyForPaymentTimestamp = System.currentTimeMillis()
-                        trackReaderReadyForPayment()
-                    }
-
-                    is CardReaderPaymentState.ProcessingPayment -> {
-                        analyticsData.cardTappedTimestamp = System.currentTimeMillis()
-                    }
-
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.CollectingInteracRefund,
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.InteracRefundFailure.Cancelable,
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.InteracRefundFailure.NonCancelable,
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.InteracRefundSuccessful,
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.LoadingData,
-                    is CardReaderPaymentOrRefundState.CardReaderInteracRefundState.ProcessingInteracRefund,
-                    is CardReaderPaymentState.LoadingData,
-                    is CardReaderPaymentState.PaymentCapturing.BuiltInReaderPaymentCapturing,
-                    is CardReaderPaymentState.PaymentCapturing.ExternalReaderPaymentCapturing,
-                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment.Cancelable,
-                    is CardReaderPaymentState.PaymentFailed.BuiltInReaderFailedPayment.NonCancelable,
-                    is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.Cancelable,
-                    is CardReaderPaymentState.PaymentFailed.ExternalReaderFailedPayment.NonCancelable,
-                    is CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessful,
-                    is CardReaderPaymentState.PaymentSuccessful.BuiltInReaderPaymentSuccessfulReceiptSentAutomatically,
-                    is CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessful,
-                    is CardReaderPaymentState.PaymentSuccessful.ExternalReaderPaymentSuccessfulReceiptSentAutomatically,
-                    is CardReaderPaymentState.PrintingReceipt,
-                    CardReaderPaymentState.ReFetchingOrder,
-                    CardReaderPaymentState.SharingReceipt -> Unit
-                }
-            }
+        viewModelScope.launch { totalsAnalyticsTracker.trackPaymentStates(cardReaderPaymentController?.paymentState) }
     }
 
     private suspend fun handleProcessingOrCapturingPaymentState() {
@@ -398,22 +353,6 @@ class WooPosTotalsViewModel @Inject constructor(
             uiState.value = buildWooPosTotalsViewState(order)
             childrenToParentEventSender.sendToParent(ChildToParentEvent.PaymentCollecting)
         }
-    }
-
-    private suspend fun trackReaderReadyForPayment() {
-        analyticsTracker.track(
-            ReaderReadyForCardPayment.apply {
-                val props = mutableMapOf<String, String>()
-                val readerReadyForPaymentTimestamp = analyticsData.readerReadyForPaymentTimestamp
-                val orderSyncTimestamp = analyticsData.orderSyncSuccessTimestamp
-                if (readerReadyForPaymentTimestamp != null && orderSyncTimestamp != null) {
-                    @Suppress("MagicNumber")
-                    val waitingTimeSeconds = (readerReadyForPaymentTimestamp - orderSyncTimestamp) / 1000
-                    props["waiting_time"] = "$waitingTimeSeconds"
-                }
-                addProperties(props)
-            }
-        )
     }
 
     private suspend fun handleReaderLoadingPaymentState() {
@@ -478,8 +417,7 @@ class WooPosTotalsViewModel @Inject constructor(
                             orderTotal = order.total
                         )
                         uiState.value = buildWooPosTotalsViewState(order)
-                        analyticsTracker.track(WooPosAnalyticsEvent.Event.OrderCreationSuccess)
-                        analyticsData.orderSyncSuccessTimestamp = System.currentTimeMillis()
+                        totalsAnalyticsTracker.trackOrderCreationSuccess()
                         collectPayment()
                     },
                     onFailure = { error ->
@@ -487,13 +425,7 @@ class WooPosTotalsViewModel @Inject constructor(
                         uiState.value = WooPosTotalsViewState.Error(
                             resourceProvider.getString(R.string.woopos_totals_order_creation_error)
                         )
-                        analyticsTracker.track(
-                            WooPosAnalyticsEvent.Error.OrderCreationError(
-                                errorContext = WooPosTotalsViewModel::class,
-                                errorType = error::class.simpleName,
-                                errorDescription = error.message
-                            )
-                        )
+                        totalsAnalyticsTracker.trackOrderCreationFailed(error)
                     }
                 )
         }

@@ -1485,11 +1485,13 @@ class WooPosTotalsViewModelTest {
         cardReaderFacade = cardReaderFacade,
         totalsRepository = totalsRepository,
         priceFormat = priceFormat,
-        analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
         uiStringParser = uiStringParser,
         savedState = savedState,
-        analyticsData = WooPosAnalyticsTrackingDataKeeper()
+        totalsAnalyticsTracker = WooPosTotalsAnalyticsTracker(
+            analyticsTracker = analyticsTracker,
+            analyticsData = WooPosAnalyticsTrackingDataKeeper()
+        ),
     )
 }
