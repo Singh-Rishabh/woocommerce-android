@@ -67,6 +67,50 @@ class JetpackStore @Inject constructor(
         }
     }
 
+    /**
+     * Register a site with Jetpack
+     *
+     * @return the blog ID of the registered site
+     */
+    suspend fun registerSite(
+        site: SiteModel,
+        useApplicationPasswords: Boolean
+    ): JetpackResult<Long> {
+        if (site.isUsingWpComRestApi) error("This function is not implemented yet for Jetpack tunnel")
+        return coroutineEngine.withDefaultContext(T.API, this, "registerSite") {
+            val result = jetpackWPAPIRestClient.registerSite(site, useApplicationPasswords)
+
+            result.toJetpackResult { result ->
+                JetpackResult(result)
+            }
+        }
+    }
+
+    suspend fun connectJetpackAccount(
+        site: SiteModel,
+        blogId: Long,
+        useApplicationPasswords: Boolean
+    ): JetpackResult<Unit> {
+        return coroutineEngine.withDefaultContext(T.API, this, "connectJetpackAccount") {
+            val provision = jetpackWPAPIRestClient.provisionConnection(site, useApplicationPasswords).also {
+                if (it.isError) return@withDefaultContext JetpackResult<Unit>(
+                    JetpackError(
+                        it.error?.message,
+                        it.error?.volleyError?.networkResponse?.statusCode
+                    )
+                )
+            }
+
+            val result = jetpackWPAPIRestClient.connectJetpackAccount(
+                site = site,
+                blogId = blogId,
+                provisioningParams = provision.result!!
+            )
+
+            result.toJetpackResult { JetpackResult(Unit) }
+        }
+    }
+
     data class JetpackResult<T>(
         val data: T?
     ) : Payload<JetpackError>() {
