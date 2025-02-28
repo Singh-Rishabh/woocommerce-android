@@ -663,10 +663,10 @@ class WooShippingEditAddressViewModel @Inject constructor(
     }
 
     private fun onUpdateAddress(updatedAddress: Address, updatedIsVerified: Boolean) {
+        isVerified.value = updatedIsVerified
         fillAddressForm(updatedAddress)
         addressValidationState.value = AddressValidationState.NotStarted
         currentAddress.value = updatedAddress
-        isVerified.value = updatedIsVerified
     }
 
     data class ViewState(
