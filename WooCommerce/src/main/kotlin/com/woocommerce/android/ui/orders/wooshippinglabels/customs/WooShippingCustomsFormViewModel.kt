@@ -5,6 +5,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
+import com.woocommerce.android.model.Location
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -15,9 +17,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
+    private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
     private val itnRegex by lazy { ITN_REGEX_STRING.toRegex() }
@@ -30,9 +35,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     )
     val viewState = _viewState.asLiveData()
 
+    private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
+
     init {
+        launch { loadCountries() }
         val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
         _viewState.update { it.copy(shippingProducts = shippableProducts) }
+
     }
 
     fun onContentTypeClick() {
@@ -174,6 +183,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         triggerEvent(FinishCustomsForm)
     }
 
+    private suspend fun loadCountries() {
+        getAcceptedOriginCountries().fold(
+            onSuccess = { countriesState.value = LocationState.Loaded(it) },
+            onFailure = { countriesState.value = LocationState.Error }
+        )
+    }
+
     private fun ShippableItemModel.toProductUIModel() = WooShippingCustomsProductUIModel(
         name = title,
         description = InputValue.Empty,
@@ -225,6 +241,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
         val errorMessageOrNull: Int?
             get() = run { this as? Error }?.errorMessageId
+    }
+
+    sealed class LocationState {
+        data object Loading : LocationState()
+        data object DisplayLoading : LocationState()
+        data object Error : LocationState()
+        data class Loaded(val locations: List<Location>) : LocationState()
     }
 
     enum class ContentType(val resourceId: Int) {
