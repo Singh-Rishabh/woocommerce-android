@@ -38,7 +38,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
-    private val itemIndexUnderCountrySelection = MutableStateFlow<Int?>(null)
+    private var itemIndexUnderCountrySelection: Int? = null
 
     init {
         launch { loadCountries() }
@@ -170,13 +170,14 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onCountrySelectorClick(itemIndex: Int) {
-        itemIndexUnderCountrySelection.update { itemIndex }
+        itemIndexUnderCountrySelection = itemIndex
         val currentCountry = _viewState.value.shippingProducts[itemIndex].originCountry
         triggerEvent(ShowCountrySelector(emptyList()))
     }
 
     fun onShippableProductOriginCountryChanged(newValue: String) {
-        val itemIndex = itemIndexUnderCountrySelection.value ?: return
+        val itemIndex = itemIndexUnderCountrySelection ?: return
+        itemIndexUnderCountrySelection = null
 
         _viewState.update { state ->
             val updatedItem = state.shippingProducts[itemIndex]
