@@ -28,39 +28,26 @@ class JetpackStore @Inject constructor(
         return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackConnectionUrl") {
             val result = jetpackWPAPIRestClient.fetchJetpackConnectionUrl(site, useApplicationPasswords)
 
-            when {
-                result.isError -> JetpackResult(
-                    JetpackError(
-                        message = result.error?.message,
-                        errorCode = result.error?.volleyError?.networkResponse?.statusCode
-                    )
-                )
-
-                result.result.isNullOrEmpty() -> JetpackResult(
-                    JetpackError("Response Empty")
-                )
-
-                else -> {
-                    val url = result.result.trim('"').replace("\\", "")
-                    val connectionUri = URI.create(url)
-                    if (!autoRegisterSiteIfNeeded || connectionUri.host == JETPACK_DOMAIN || useApplicationPasswords) {
-                        JetpackResult(url)
-                    } else {
-                        registerJetpackSite(url).fold(
-                            onSuccess = {
-                                JetpackResult(it)
-                            },
-                            onFailure = {
-                                val errorCode = (it as? VolleyError)?.networkResponse?.statusCode
-                                JetpackResult(
-                                    JetpackError(
-                                        message = it.message,
-                                        errorCode = errorCode
-                                    )
+            result.toJetpackResult { result ->
+                val url = result.trim('"').replace("\\", "")
+                val connectionUri = URI.create(url)
+                if (!autoRegisterSiteIfNeeded || connectionUri.host == JETPACK_DOMAIN || useApplicationPasswords) {
+                    JetpackResult(url)
+                } else {
+                    registerJetpackSite(url).fold(
+                        onSuccess = {
+                            JetpackResult(it)
+                        },
+                        onFailure = {
+                            val errorCode = (it as? VolleyError)?.networkResponse?.statusCode
+                            JetpackResult(
+                                JetpackError(
+                                    message = it.message,
+                                    errorCode = errorCode
                                 )
-                            }
-                        )
-                    }
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -77,21 +64,8 @@ class JetpackStore @Inject constructor(
         return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackUser") {
             val result = jetpackWPAPIRestClient.fetchJetpackUser(site, useApplicationPasswords)
 
-            when {
-                result.isError -> JetpackResult(
-                    JetpackError(
-                        message = result.error?.message,
-                        errorCode = result.error?.volleyError?.networkResponse?.statusCode
-                    )
-                )
-
-                result.result == null -> JetpackResult(
-                    JetpackError("Response Empty")
-                )
-
-                else -> {
-                    JetpackResult(result.result)
-                }
+            result.toJetpackResult { result ->
+                JetpackResult(result)
             }
         }
     }
@@ -108,4 +82,14 @@ class JetpackStore @Inject constructor(
         val message: String? = null,
         val errorCode: Int? = null
     ) : OnChangedError
+
+    private suspend inline fun <T, R> JetpackWPAPIRestClient.JetpackWPAPIPayload<T>.toJetpackResult(
+        transform: suspend (T) -> JetpackResult<R>
+    ): JetpackResult<R> {
+        return when {
+            isError -> JetpackResult(JetpackError(error?.message, error?.volleyError?.networkResponse?.statusCode))
+            result == null -> JetpackResult(JetpackError("Response Empty"))
+            else -> transform(result)
+        }
+    }
 }
