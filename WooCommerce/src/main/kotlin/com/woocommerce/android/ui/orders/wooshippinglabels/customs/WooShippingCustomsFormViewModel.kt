@@ -102,14 +102,13 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         _viewState.update { it.copy(itnValue = input) }
     }
 
-    fun onProductExpanded(itemData: WooShippingCustomsProductUIModel, isExpanded: Boolean) {
+    fun onProductExpanded(itemIndex: Int, isExpanded: Boolean) {
         _viewState.update { state ->
-            state.shippingProducts.map { product ->
-                if (product == itemData) {
-                    product.copy(isExpanded = isExpanded)
-                } else {
-                    product
-                }
+            val updatedItem = state.shippingProducts[itemIndex]
+                .copy(isExpanded = isExpanded)
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
             }.let { state.copy(shippingProducts = it) }
         }
     }
