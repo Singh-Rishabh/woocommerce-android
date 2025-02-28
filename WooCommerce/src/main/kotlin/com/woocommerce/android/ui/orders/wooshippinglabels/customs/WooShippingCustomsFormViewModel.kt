@@ -125,46 +125,26 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onShippableProductDescriptionChanged(itemIndex: Int, newValue: String) {
-        _viewState.update { state ->
-            val updatedItem = state.shippingProducts[itemIndex]
-                .copy(description = InputValue.Data(newValue))
-
-            state.shippingProducts.toMutableList().apply {
-                set(itemIndex, updatedItem)
-            }.let { state.copy(shippingProducts = it) }
+        updateShippingProductsAt(itemIndex) { item ->
+            item.copy(description = InputValue.Data(newValue))
         }
     }
 
     fun onShippableProductTariffNumberChanged(itemIndex: Int, newValue: String) {
-        _viewState.update { state ->
-            val updatedItem = state.shippingProducts[itemIndex]
-                .copy(tariffNumber = InputValue.Data(newValue))
-
-            state.shippingProducts.toMutableList().apply {
-                set(itemIndex, updatedItem)
-            }.let { state.copy(shippingProducts = it) }
+        updateShippingProductsAt(itemIndex) { item ->
+            item.copy(tariffNumber = InputValue.Data(newValue))
         }
     }
 
     fun onShippableProductValuePerUnitChanged(itemIndex: Int, newValue: String) {
-        _viewState.update { state ->
-            val updatedItem = state.shippingProducts[itemIndex]
-                .copy(valuePerUnit = InputValue.Data(newValue))
-
-            state.shippingProducts.toMutableList().apply {
-                set(itemIndex, updatedItem)
-            }.let { state.copy(shippingProducts = it) }
+        updateShippingProductsAt(itemIndex) { item ->
+            item.copy(valuePerUnit = InputValue.Data(newValue))
         }
     }
 
     fun onShippableProductWeightPerUnitChanged(itemIndex: Int, newValue: String) {
-        _viewState.update { state ->
-            val updatedItem = state.shippingProducts[itemIndex]
-                .copy(weightPerUnit = InputValue.Data(newValue))
-
-            state.shippingProducts.toMutableList().apply {
-                set(itemIndex, updatedItem)
-            }.let { state.copy(shippingProducts = it) }
+        updateShippingProductsAt(itemIndex) { item ->
+            item.copy(weightPerUnit = InputValue.Data(newValue))
         }
     }
 
@@ -200,6 +180,20 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onAddCustomsDataClick() {
         triggerEvent(FinishCustomsForm)
+    }
+
+    private fun updateShippingProductsAt(
+        itemIndex: Int,
+        generateUpdatedItem: (WooShippingCustomsProductUIModel) -> WooShippingCustomsProductUIModel
+    ) {
+        _viewState.update { state ->
+            val updatedItem = state.shippingProducts[itemIndex]
+                .let(generateUpdatedItem)
+
+            state.shippingProducts.toMutableList().apply {
+                set(itemIndex, updatedItem)
+            }.let { state.copy(shippingProducts = it) }
+        }
     }
 
     private suspend fun loadCountries() {
