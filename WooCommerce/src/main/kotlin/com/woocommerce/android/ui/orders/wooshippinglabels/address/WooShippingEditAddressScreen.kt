@@ -194,9 +194,10 @@ fun WooShippingEditAddressScreen(
                 val keyboardController = LocalSoftwareKeyboardController.current
 
                 RoundedBorderTextFieldWithLabel(
-                    label = "${stringResource(id = R.string.woo_shipping_label_name)} *",
+                    label = stringResource(id = R.string.woo_shipping_label_name),
                     text = editableAddress.name.value,
                     error = editableAddress.name.error,
+                    isRequired = editableAddress.name.isRequired,
                     onTextChange = onNameChange,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -219,6 +220,7 @@ fun WooShippingEditAddressScreen(
                     RoundedBorderTextFieldWithLabel(
                         label = stringResource(id = R.string.woo_shipping_label_company),
                         text = editableAddress.company.value,
+                        isRequired = editableAddress.company.isRequired,
                         onTextChange = onCompanyChange,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                         keyboardActions = KeyboardActions(
@@ -238,9 +240,10 @@ fun WooShippingEditAddressScreen(
                     onClick = onCountryChange
                 )
                 RoundedBorderTextFieldWithLabel(
-                    label = "${stringResource(id = R.string.woo_shipping_label_address)} *",
+                    label = stringResource(id = R.string.woo_shipping_label_address),
                     text = editableAddress.address.value,
                     error = editableAddress.address.error,
+                    isRequired = editableAddress.address.isRequired,
                     onTextChange = onAddressChange,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -252,9 +255,10 @@ fun WooShippingEditAddressScreen(
                     modifier = Modifier.padding(top = 8.dp)
                 )
                 RoundedBorderTextFieldWithLabel(
-                    label = "${stringResource(id = R.string.woo_shipping_label_city)} *",
+                    label = stringResource(id = R.string.woo_shipping_label_city),
                     text = editableAddress.city.value,
                     error = editableAddress.city.error,
+                    isRequired = editableAddress.city.isRequired,
                     onTextChange = onCityChange,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
                     keyboardActions = KeyboardActions(
@@ -302,9 +306,10 @@ fun WooShippingEditAddressScreen(
                     }
                     Spacer(modifier = Modifier.size(8.dp))
                     RoundedBorderTextFieldWithLabel(
-                        label = "${stringResource(id = R.string.woo_shipping_label_post_code)} *",
+                        label = stringResource(id = R.string.woo_shipping_label_post_code),
                         text = editableAddress.postalCode.value,
                         error = editableAddress.postalCode.error,
+                        isRequired = editableAddress.postalCode.isRequired,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
                             imeAction = ImeAction.Next
@@ -323,9 +328,10 @@ fun WooShippingEditAddressScreen(
                 }
 
                 RoundedBorderTextFieldWithLabel(
-                    label = "${stringResource(id = R.string.woo_shipping_label_email)} *",
+                    label = stringResource(id = R.string.woo_shipping_label_email),
                     text = editableAddress.email.value,
                     error = editableAddress.email.error,
+                    isRequired = editableAddress.email.isRequired,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
                         imeAction = ImeAction.Next
@@ -340,9 +346,10 @@ fun WooShippingEditAddressScreen(
                     modifier = Modifier.padding(top = 32.dp)
                 )
                 RoundedBorderTextFieldWithLabel(
-                    label = "${stringResource(id = R.string.woo_shipping_label_phone)} *",
+                    label = stringResource(id = R.string.woo_shipping_label_phone),
                     text = editableAddress.phone.value,
                     error = editableAddress.phone.error,
+                    isRequired = editableAddress.phone.isRequired,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Phone,
                         imeAction = ImeAction.Done
@@ -483,12 +490,15 @@ internal fun AddressStatusSection(
             AddressStatus.VERIFIED -> {
                 { onClose() }
             }
+
             AddressStatus.UNVERIFIED -> {
                 { onNormalizeAddress(editableAddress) }
             }
+
             AddressStatus.MISSING_INFO -> {
                 {}
             }
+
             AddressStatus.SAVE_CHANGES -> {
                 { onUpdateAddress(editableAddress) }
             }
@@ -522,6 +532,7 @@ internal fun RoundedBorderTextFieldWithLabel(
     text: String,
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    isRequired: Boolean = false,
     hint: String = "",
     error: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -544,9 +555,11 @@ internal fun RoundedBorderTextFieldWithLabel(
         Modifier
     }
 
+    val labelWithRequired = if (isRequired) "$label *" else label
+
     Column(modifier = modifier) {
         Text(
-            text = label,
+            text = labelWithRequired,
             style = MaterialTheme.typography.body2,
             modifier = Modifier.padding(vertical = 8.dp)
         )
