@@ -59,6 +59,7 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onTariffChanged = viewModel::onShippableProductTariffNumberChanged,
         onValuePerUnitChanged = viewModel::onShippableProductValuePerUnitChanged,
         onWeightPerUnitChanged = viewModel::onShippableProductWeightPerUnitChanged,
+        onCountrySelectorClick = viewModel::onCountrySelectorClick,
         onAddCustomsDataClick = viewModel::onAddCustomsDataClick
     )
 }
@@ -87,6 +88,7 @@ fun WooShippingCustomsFormScreen(
     onTariffChanged: (position: Int, tariff: String) -> Unit,
     onValuePerUnitChanged: (position: Int, valuePerUnit: String) -> Unit,
     onWeightPerUnitChanged: (position: Int, weightPerUnit: String) -> Unit,
+    onCountrySelectorClick: (position: Int) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -190,7 +192,8 @@ fun WooShippingCustomsFormScreen(
                     onDescriptionChanged = { onDescriptionChanged(index, it) },
                     onTariffChanged = { onTariffChanged(index, it) },
                     onValuePerUnitChanged = { onValuePerUnitChanged(index, it) },
-                    onWeightPerUnitChanged = { onWeightPerUnitChanged(index, it) }
+                    onWeightPerUnitChanged = { onWeightPerUnitChanged(index, it) },
+                    onCountrySelectorClick = { onCountrySelectorClick(index) }
                 )
             }
         }
@@ -250,6 +253,7 @@ fun PreviewWooShippingCustomsFormScreen() {
             onTariffChanged = { _, _ -> },
             onValuePerUnitChanged = { _, _ -> },
             onWeightPerUnitChanged = { _, _ -> },
+            onCountrySelectorClick = { }
         )
     }
 }
