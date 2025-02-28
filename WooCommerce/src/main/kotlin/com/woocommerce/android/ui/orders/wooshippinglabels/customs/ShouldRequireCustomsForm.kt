@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
+import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class ShouldRequireCustomsForm @Inject constructor() {
     }
 
     private val WooShippingAddresses.isDifferentCountryShipment
-        get() = shipFrom.country != shipTo.address.country.code
+        get() = shipTo.address.country.code.isNotNullOrEmpty() && shipFrom.country != shipTo.address.country.code
 
     private fun isAddressInMilitaryState(
         countryCode: String,
