@@ -78,8 +78,12 @@ class WooShippingEditAddressViewModel @Inject constructor(
         snapshotFlow { rawState },
         selectedState
     ) { rawState, selectedState ->
-        if (selectedState != Location.EMPTY) selectedState else AmbiguousLocation.Raw(rawState)
-            .asLocation()
+        if (selectedState != Location.EMPTY) {
+            selectedState
+        } else {
+            AmbiguousLocation.Raw(rawState)
+                .asLocation()
+        }
     }
 
     private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
@@ -461,12 +465,12 @@ class WooShippingEditAddressViewModel @Inject constructor(
 
     private fun hasIncorrectOrMissingData(editableAddress: EditableAddress): Boolean {
         return editableAddress.address.error.isNotNullOrEmpty() ||
-                editableAddress.city.error.isNotNullOrEmpty() ||
-                editableAddress.postalCode.error.isNotNullOrEmpty() ||
-                editableAddress.email.error.isNotNullOrEmpty() ||
-                editableAddress.phone.error.isNotNullOrEmpty() ||
-                editableAddress.name.error.isNotNullOrEmpty() ||
-                editableAddress.company.error.isNotNullOrEmpty()
+            editableAddress.city.error.isNotNullOrEmpty() ||
+            editableAddress.postalCode.error.isNotNullOrEmpty() ||
+            editableAddress.email.error.isNotNullOrEmpty() ||
+            editableAddress.phone.error.isNotNullOrEmpty() ||
+            editableAddress.name.error.isNotNullOrEmpty() ||
+            editableAddress.company.error.isNotNullOrEmpty()
     }
 
     fun onNameChange(value: String) {
