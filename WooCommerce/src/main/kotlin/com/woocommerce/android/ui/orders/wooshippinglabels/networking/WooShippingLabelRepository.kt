@@ -196,8 +196,27 @@ class WooShippingLabelRepository @Inject constructor(
     suspend fun verifyDestinationAddress(
         site: SiteModel,
         orderId: Long,
-    ) = restClient.verifyDestinationAddress(
-        site = site,
-        orderId = orderId,
-    ).asWooResult { it.isVerified }
+    ): WooResult<DestinationShippingAddress> {
+        val verifyDestinationAddress = restClient.verifyDestinationAddress(
+            site = site,
+            orderId = orderId,
+        )
+
+        return if (verifyDestinationAddress.result?.success == true) {
+            verifyDestinationAddress.asWooResult {
+                DestinationShippingAddress(
+                    address = mapper(it.normalizedAddress),
+                    isVerified = it.isVerified
+                )
+            }
+        } else {
+            WooResult(
+                WooError(
+                    type = WooErrorType.INVALID_RESPONSE,
+                    original = GenericErrorType.INVALID_RESPONSE,
+                    message = "Address verification failed"
+                )
+            )
+        }
+    }
 }

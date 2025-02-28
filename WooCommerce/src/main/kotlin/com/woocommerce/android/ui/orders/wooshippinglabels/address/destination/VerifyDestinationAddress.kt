@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.address.destination
 
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
 import com.woocommerce.android.util.CoroutineDispatchers
 import kotlinx.coroutines.withContext
@@ -13,11 +14,21 @@ class VerifyDestinationAddress @Inject constructor(
 ) {
     suspend operator fun invoke(
         orderId: Long
-    ): Result<Boolean> {
+    ): Result<DestinationShippingAddress> {
         return withContext(coroutineDispatchers.io) {
             selectedSite.getOrNull()?.let {
                 val response = shippingRepository.verifyDestinationAddress(it, orderId)
-                Result.success(response.model == true)
+                val result = response.model
+                when {
+                    response.isError || result == null -> {
+                        val message =
+                            response.error.message
+                                ?: if (result == null) "Empty response" else "Unknown error"
+                        Result.failure(Exception(message))
+                    }
+
+                    else -> Result.success(result)
+                }
             } ?: Result.failure(Exception("No site selected"))
         }
     }
