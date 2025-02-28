@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.address.origin
+package com.woocommerce.android.ui.orders.wooshippinglabels.address.destination
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.SavedStateHandle
@@ -12,7 +12,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEd
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressViewModelTest
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.toAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
@@ -24,28 +24,15 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest() {
+class WooShippingEditDestinationViewModelTest : WooShippingEditAddressViewModelTest() {
     override fun createSavedStateHandle(
         address: Address,
         isVerified: Boolean
     ): SavedStateHandle {
-        val originAddress = OriginShippingAddress(
-            id = "123",
-            company = address.company,
-            firstName = address.firstName,
-            lastName = address.lastName,
-            email = address.email,
-            address1 = address.address1,
-            address2 = address.address2,
-            city = address.city,
-            state = address.state.codeOrRaw,
-            postcode = address.postcode,
-            country = address.country.code,
-            phone = address.phone,
-            isDefault = true,
-            isVerified = isVerified
-        )
-        return WooShippingEditAddressFragmentArgs(EditAddressFlow.EditOriginAddress(originAddress)).toSavedStateHandle()
+        val destination = DestinationShippingAddress(address,isVerified)
+        return WooShippingEditAddressFragmentArgs(
+            EditAddressFlow.EditDestinationAddress(destination,1L)
+        ).toSavedStateHandle()
     }
 
     @Test
@@ -56,7 +43,8 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
-        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.success(OriginShippingAddress.EMPTY))
+        whenever(updateDestinationAddress.invoke(any(), any()))
+            .doReturn(Result.success(DestinationShippingAddress.EMPTY))
         Snapshot.withMutableSnapshot {
             val savedState = createSavedStateHandle(initialAddress)
             createViewModel(savedState)
@@ -68,7 +56,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
 
         val result = sut.viewState.value
         assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
-        verify(updateDestinationAddress, never()).invoke(any(), any())
+        verify(updateOriginAddress, never()).invoke(any(), any())
     }
 
     @Test
@@ -85,7 +73,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
-        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
+        whenever(updateDestinationAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
         whenever(resourceProvider.getString(any())).doReturn("error")
         Snapshot.withMutableSnapshot {
             val savedState = createSavedStateHandle(initialAddress)
@@ -109,9 +97,10 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
 
         val shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isFalse()
-        verify(updateDestinationAddress, never()).invoke(any(), any())
+        verify(updateOriginAddress, never()).invoke(any(), any())
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `when update address fails then address state is failure`() = testBlocking {
         val address = Address(
@@ -142,7 +131,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
-        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
+        whenever(updateDestinationAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
         whenever(resourceProvider.getString(any())).doReturn("error")
         Snapshot.withMutableSnapshot {
             val savedState = createSavedStateHandle(address)
@@ -156,7 +145,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
         val result = sut.viewState.value
         assertThat(result.addressValidationState).isInstanceOf(AddressValidationState.AddressUpdateFailed::class.java)
         assertThat(result.error).isNotNull()
-        verify(updateDestinationAddress, never()).invoke(any(), any())
+        verify(updateOriginAddress, never()).invoke(any(), any())
     }
 
     @Test
@@ -173,7 +162,8 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
-        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.success(OriginShippingAddress.EMPTY))
+        whenever(updateDestinationAddress.invoke(any(), any()))
+            .doReturn(Result.success(DestinationShippingAddress.EMPTY))
         Snapshot.withMutableSnapshot {
             val savedState = createSavedStateHandle(initialAddress)
             createViewModel(savedState)
@@ -190,7 +180,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
 
         val result = sut.viewState.value
         assertThat(result.addressValidationState).isEqualTo(AddressValidationState.NotStarted)
-        verify(updateDestinationAddress, never()).invoke(any(), any())
+        verify(updateOriginAddress, never()).invoke(any(), any())
     }
 
     @Test
@@ -207,7 +197,7 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
         whenever(addressValidator.validateFieldRequired(any())).doReturn(null)
         whenever(getAcceptedOriginCountries.invoke()).doReturn(Result.success(countries))
         whenever(getStatesByCountryCode.invoke(any())).doReturn(states)
-        whenever(updateOriginAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
+        whenever(updateDestinationAddress.invoke(any(), any())).doReturn(Result.failure(Exception("error")))
         whenever(resourceProvider.getString(any())).doReturn("error")
         Snapshot.withMutableSnapshot {
             val savedState = createSavedStateHandle(initialAddress)
@@ -228,6 +218,6 @@ class WooShippingEditOriginViewModelTest : WooShippingEditAddressViewModelTest()
             .isInstanceOf(AddressValidationState.NormalizedAddressUpdateFailed::class.java)
 
         assertThat(result.error).isNotNull()
-        verify(updateDestinationAddress, never()).invoke(any(), any())
+        verify(updateOriginAddress, never()).invoke(any(), any())
     }
 }
