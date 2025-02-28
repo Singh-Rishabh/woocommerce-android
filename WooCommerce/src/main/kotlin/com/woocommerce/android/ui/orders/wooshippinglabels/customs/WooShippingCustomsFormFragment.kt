@@ -111,8 +111,6 @@ class WooShippingCustomsFormFragment : BaseFragment() {
             ).let { findNavController().navigateSafely(it) }
     }
 
-
-
     private fun showCountrySearchScreen(countries: List<Location>) {
         val action = WooShippingCustomsFormFragmentDirections.actionSearchFilterFragment(
             items = countries.map {
