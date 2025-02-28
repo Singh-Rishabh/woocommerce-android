@@ -1559,6 +1559,73 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
         verify(cardReaderManager).disconnectReader()
     }
 
+    @Test
+    fun `given battery critically low error, when connecting fails, then hint label shows battery low message`() =
+        testBlocking {
+            init()
+            (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
+            readerStatusFlow.emit(CardReaderStatus.Connecting)
+            readerStatusFlow.emit(
+                CardReaderStatus.NotConnected(
+                    errorCode = CardReaderStatus.NotConnected.ErrorCode.BATTERY_CRITICALLY_LOW,
+                    errorMessage = "Battery critically low"
+                )
+            )
+
+            val state = viewModel.viewStateData.value as ConnectingFailedState
+            assertThat(state.hintLabel).isEqualTo(R.string.card_reader_connect_failed_battery_low_hint)
+        }
+
+    @Test
+    fun `given other error, when connecting fails, then hint label is null`() =
+        testBlocking {
+            init()
+            (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
+            readerStatusFlow.emit(CardReaderStatus.Connecting)
+            readerStatusFlow.emit(
+                CardReaderStatus.NotConnected(
+                    errorCode = CardReaderStatus.NotConnected.ErrorCode.OTHER,
+                    errorMessage = "Other error"
+                )
+            )
+
+            val state = viewModel.viewStateData.value as ConnectingFailedState
+            assertThat(state.hintLabel).isNull()
+        }
+
+    @Test
+    fun `given battery low error with message, when connecting fails, then toast is not shown`() =
+        testBlocking {
+            init()
+            (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
+            readerStatusFlow.emit(CardReaderStatus.Connecting)
+            readerStatusFlow.emit(
+                CardReaderStatus.NotConnected(
+                    errorCode = CardReaderStatus.NotConnected.ErrorCode.BATTERY_CRITICALLY_LOW,
+                    errorMessage = "Battery critically low"
+                )
+            )
+
+            assertThat(viewModel.event.value).isNotInstanceOf(ShowToastString::class.java)
+        }
+
+    @Test
+    fun `given other error with message, when connecting fails, then toast shows error message`() =
+        testBlocking {
+            val errorMessage = "Other error message"
+            init()
+            (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
+            readerStatusFlow.emit(CardReaderStatus.Connecting)
+            readerStatusFlow.emit(
+                CardReaderStatus.NotConnected(
+                    errorCode = CardReaderStatus.NotConnected.ErrorCode.OTHER,
+                    errorMessage = errorMessage
+                )
+            )
+
+            assertThat(viewModel.event.value).isEqualTo(ShowToastString(errorMessage))
+        }
+
     private fun initVM(
         cardReaderFlowParam: CardReaderFlowParam = CardReaderFlowParam.CardReadersHub(),
         cardReaderType: CardReaderType = EXTERNAL
