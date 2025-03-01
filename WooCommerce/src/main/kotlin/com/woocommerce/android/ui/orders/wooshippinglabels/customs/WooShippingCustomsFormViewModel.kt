@@ -15,7 +15,6 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -36,7 +35,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     )
     val viewState = _viewState.asLiveData()
 
-    private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
+    private var possibleLocations: List<Location>? = null
     private var itemIndexUnderCountrySelection: Int? = null
 
     private val isITNRequired: Boolean
@@ -188,24 +187,16 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     fun onCountrySelectorClick(itemIndex: Int) {
         itemIndexUnderCountrySelection = itemIndex
 
-        countriesState.value
-            .run { this as? LocationState.Loaded }
-            ?.let { triggerEvent(ShowCountrySelector(it.locations)) }
+        possibleLocations?.let { triggerEvent(ShowCountrySelector(it)) }
     }
 
     fun onShippableProductOriginCountryChanged(newValue: String) {
         val itemIndex = itemIndexUnderCountrySelection ?: return
         itemIndexUnderCountrySelection = null
 
-        val possibleSelections = countriesState.value
-        val defaultLocation = AmbiguousLocation.Raw(newValue).asLocation()
-        val selectedLocation = when (possibleSelections) {
-            is LocationState.Loaded ->
-                possibleSelections
-                    .locations.firstOrNull { it.code == newValue } ?: defaultLocation
-
-            else -> defaultLocation
-        }
+        val selectedLocation = possibleLocations
+            ?.firstOrNull { it.code == newValue }
+            ?: AmbiguousLocation.Raw(newValue).asLocation()
 
         _viewState.update { state ->
             val updatedItem = state.shippingProducts[itemIndex]
@@ -237,8 +228,8 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     private suspend fun loadCountries() {
         getAcceptedOriginCountries().fold(
-            onSuccess = { countriesState.value = LocationState.Loaded(it) },
-            onFailure = { countriesState.value = LocationState.Error }
+            onSuccess = { possibleLocations = it },
+            onFailure = { possibleLocations = null }
         )
     }
 
@@ -294,12 +285,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
         val errorMessageOrNull: Int?
             get() = run { this as? Error }?.errorMessageId
-    }
-
-    sealed class LocationState {
-        data object Loading : LocationState()
-        data object Error : LocationState()
-        data class Loaded(val locations: List<Location>) : LocationState()
     }
 
     enum class ContentType(val resourceId: Int) {
