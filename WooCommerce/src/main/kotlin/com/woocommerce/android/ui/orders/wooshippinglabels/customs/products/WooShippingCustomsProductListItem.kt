@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -52,10 +54,10 @@ fun WooShippingCustomsProductListItem(
         .let { if (it) 180f else 0f }
         .let { animateFloatAsState(targetValue = it, label = "rotationAnimation") }
 
-    val borderColor = if (itemData.isExpanded) {
-        colorResource(R.color.woo_black)
-    } else {
-        colorResource(R.color.divider_color)
+    val borderColor = when {
+        itemData.isExpanded -> colorResource(R.color.woo_black)
+        itemData.isValid.not() -> colorResource(R.color.color_error)
+        else -> colorResource(R.color.divider_color)
     }
 
     Column(
@@ -81,6 +83,16 @@ fun WooShippingCustomsProductListItem(
                 fontWeight = FontWeight.Bold,
                 modifier = modifier.weight(1f)
             )
+
+            if(itemData.isValid.not()) {
+            Icon(
+                imageVector = Icons.Outlined.Error,
+                tint = MaterialTheme.colorScheme.error,
+                contentDescription = stringResource(
+                    id = R.string.shipping_label_package_details_items_expand_content_description
+                )
+            )
+                }
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
                 tint = MaterialTheme.colorScheme.primary,
