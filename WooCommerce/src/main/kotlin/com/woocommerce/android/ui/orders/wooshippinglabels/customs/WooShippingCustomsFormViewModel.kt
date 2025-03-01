@@ -200,8 +200,9 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val possibleSelections = countriesState.value
         val defaultLocation = AmbiguousLocation.Raw(newValue).asLocation()
         val selectedLocation = when (possibleSelections) {
-            is LocationState.Loaded -> possibleSelections
-                .locations.firstOrNull { it.code == newValue } ?: defaultLocation
+            is LocationState.Loaded ->
+                possibleSelections
+                    .locations.firstOrNull { it.code == newValue } ?: defaultLocation
 
             else -> defaultLocation
         }
@@ -297,7 +298,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     sealed class LocationState {
         data object Loading : LocationState()
-        data object DisplayLoading : LocationState()
         data object Error : LocationState()
         data class Loaded(val locations: List<Location>) : LocationState()
     }
