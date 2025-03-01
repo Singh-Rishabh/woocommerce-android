@@ -130,7 +130,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 false -> InputValue.Data(newValue)
                 true -> InputValue.Error(
                     input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_description_missing
                 )
             }.let { item.copy(description = it) }
         }
@@ -142,7 +142,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 false -> InputValue.Data(newValue)
                 true -> InputValue.Error(
                     input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_tariff_missing
                 )
             }.let { item.copy(tariffNumber = it) }
         }
@@ -154,7 +154,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 false -> InputValue.Data(newValue)
                 true -> InputValue.Error(
                     input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_per_unit
                 )
             }.let { item.copy(valuePerUnit = it) }
         }
@@ -166,7 +166,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 false -> InputValue.Data(newValue)
                 true -> InputValue.Error(
                     input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_other_error_message
+                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_weight_per_unit
                 )
             }.let { item.copy(weightPerUnit = it) }
         }

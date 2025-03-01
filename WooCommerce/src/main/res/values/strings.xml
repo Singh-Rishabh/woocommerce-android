@@ -4484,6 +4484,7 @@
     <string name="woo_shipping_labels_customs_restriction_other">Other</string>
     <string name="woo_shipping_labels_customs_other_error_message">Type must not be empty</string>
     <string name="woo_shipping_labels_customs_itn_error_message">Invalid ITN format</string>
+    <string name="woo_shipping_labels_customs_itn_required_message">ITN must not be empty</string>
     <string name="woo_shipping_labels_customs_product_details_title">Product Details</string>
     <string name="woo_shipping_labels_customs_product_details_description">Description</string>
     <string name="woo_shipping_labels_customs_product_details_description_missing">Missing Description</string>
