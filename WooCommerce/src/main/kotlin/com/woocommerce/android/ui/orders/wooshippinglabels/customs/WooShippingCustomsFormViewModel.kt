@@ -57,10 +57,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     private fun observeShippableItemsChanges() {
         _viewState
-            .map { it.shippingProducts }
+            .map { Pair(it.shippingProducts, it.itnValue) }
             .distinctUntilChanged()
-            .onEach {
-                onITNChanged(_viewState.value.itnValue.currentInput, it.isITNRequired)
+            .onEach { (products, itnValue) ->
+                onITNChanged(itnValue.currentInput, products.isITNRequired)
             }.launchIn(viewModelScope)
     }
 
@@ -128,8 +128,6 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                     input = newItnValue,
                     errorMessageId = R.string.woo_shipping_labels_customs_itn_required_message
                 )
-
-            newItnValue.isBlank() -> InputValue.Empty
 
             itnRegex.matches(newItnValue).not() ->
                 InputValue.Error(
