@@ -229,6 +229,7 @@ fun PreviewWooShippingCustomsFormScreen() {
                     valuePerUnit = InputValue.Data("10.00"),
                     weightPerUnit = InputValue.Data("1.00"),
                     originCountry = "US",
+                    quantity = 1F,
                     isExpanded = false
                 ),
                 WooShippingCustomsProductUIModel(
@@ -238,6 +239,7 @@ fun PreviewWooShippingCustomsFormScreen() {
                     valuePerUnit = InputValue.Data("10.00"),
                     weightPerUnit = InputValue.Data("1.00"),
                     originCountry = "US",
+                    quantity = 1F,
                     isExpanded = true
                 )
             ),

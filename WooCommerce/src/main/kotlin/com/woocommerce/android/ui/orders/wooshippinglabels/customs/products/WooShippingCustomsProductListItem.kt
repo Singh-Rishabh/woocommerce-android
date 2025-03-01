@@ -243,6 +243,7 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
                     valuePerUnit = InputValue.Data("$20.00"),
                     weightPerUnit = InputValue.Data("0.3kg"),
                     originCountry = "Japan",
+                    quantity = 1F,
                     isExpanded = false
                 ),
                 onExpand = { },
@@ -269,6 +270,7 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
                     valuePerUnit = InputValue.Data("$20.00"),
                     weightPerUnit = InputValue.Data("0.3kg"),
                     originCountry = "Japan",
+                    quantity = 1F,
                     isExpanded = true
                 ),
                 onExpand = { },
