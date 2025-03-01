@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
@@ -14,13 +15,21 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 import java.math.BigDecimal
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 @ExperimentalCoroutinesApi
 class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     private lateinit var viewModel: WooShippingCustomsFormViewModel
 
+    private val getAcceptedOriginCountries = mock<GetAcceptedOriginCountries> {
+        onBlocking { invoke() } doReturn Result.success(emptyList())
+    }
+
     @Before
     fun setup() {
+
+
         viewModel = WooShippingCustomsFormViewModel(
             savedState = WooShippingCustomsFormFragmentArgs(
                 shippableItems = arrayOf(
@@ -37,7 +46,8 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
                         weight = 1f
                     )
                 )
-            ).toSavedStateHandle()
+            ).toSavedStateHandle(),
+            getAcceptedOriginCountries = getAcceptedOriginCountries
         )
     }
 
