@@ -23,4 +23,12 @@ data class WooShippingCustomsProductUIModel(
             tariffNumber is InputValue.Data &&
             valuePerUnit is InputValue.Data &&
             weightPerUnit is InputValue.Data
+
+    val shippingTotalValue: Float?
+        get() = valuePerUnit
+            .takeIf { valuePerUnit is InputValue.Data && quantity > 0 }
+            ?.run { this as? InputValue.Data }
+            ?.currentInput
+            ?.toFloatOrNull()
+            ?.let { it * quantity }
 }
