@@ -19,6 +19,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
@@ -38,9 +43,8 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     private var possibleLocations: List<Location>? = null
     private var itemIndexUnderCountrySelection: Int? = null
 
-    private val isITNRequired: Boolean
-        get() = _viewState.value.shippingProducts
-            .mapNotNull { it.shippingTotalValue }
+    private val List<WooShippingCustomsProductUIModel>.isITNRequired: Boolean
+        get() = mapNotNull { it.shippingTotalValue }
             .reduce { acc, current -> acc + current }
             .let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
 
@@ -48,6 +52,16 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         launch { loadCountries() }
         val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
         _viewState.update { it.copy(shippingProducts = shippableProducts) }
+        observeShippableItemsChanges()
+    }
+
+    private fun observeShippableItemsChanges() {
+        _viewState
+            .map { it.shippingProducts }
+            .distinctUntilChanged()
+            .onEach {
+                onITNChanged(_viewState.value.itnValue.currentInput, it.isITNRequired)
+            }.launchIn(viewModelScope)
     }
 
     fun onContentTypeClick() {
@@ -104,9 +118,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         }
     }
 
-    fun onITNChanged(newItnValue: String) {
+    fun onITNChanged(
+        newItnValue: String,
+        shouldRequireITN: Boolean = false
+    ) {
         val input = when {
-            newItnValue.isBlank() && isITNRequired ->
+            newItnValue.isBlank() && shouldRequireITN ->
                 InputValue.Error(
                     input = newItnValue,
                     errorMessageId = R.string.woo_shipping_labels_customs_itn_required_message
