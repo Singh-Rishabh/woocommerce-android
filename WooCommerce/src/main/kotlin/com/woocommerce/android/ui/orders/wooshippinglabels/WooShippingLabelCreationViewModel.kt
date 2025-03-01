@@ -146,13 +146,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 address = order.shippingAddress.copy(email = order.billingAddress.email),
                 isVerified = false
             )
+
+            destinationAddress.value = defaultDestination
+
             if (order.shippingAddress != Address.EMPTY) {
                 verifyDestinationAddress(order.id).fold(
                     onSuccess = { destinationAddress.value = it },
-                    onFailure = { destinationAddress.value = defaultDestination }
+                    onFailure = { }
                 )
-            } else {
-                destinationAddress.value = defaultDestination
             }
         }
     }
