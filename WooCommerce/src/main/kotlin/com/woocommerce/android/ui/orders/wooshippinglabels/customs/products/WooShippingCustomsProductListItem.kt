@@ -271,6 +271,33 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
 
 @Preview
 @Composable
+fun WooShippingCustomsProductListCollapsedItemErrorPreview() {
+    WooThemeWithBackground {
+        Box(Modifier.padding(16.dp)) {
+            WooShippingCustomsProductListItem(
+                itemData = WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Error("Coffee Beans", 0),
+                    tariffNumber = InputValue.Data("HS 14-1"),
+                    valuePerUnit = InputValue.Data("$20.00"),
+                    weightPerUnit = InputValue.Data("0.3kg"),
+                    originCountry = "Japan",
+                    quantity = 1F,
+                    isExpanded = false
+                ),
+                onExpand = { },
+                onDescriptionChanged = { },
+                onTariffChanged = { },
+                onValuePerUnitChanged = { },
+                onWeightPerUnitChanged = { },
+                onCountrySelectorClick = { }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
 fun WooShippingCustomsProductListExpandedItemPreview() {
     WooThemeWithBackground {
         Box(Modifier.padding(16.dp)) {
@@ -279,6 +306,33 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Data("Coffee Beans"),
                     tariffNumber = InputValue.Data("HS 14-1"),
+                    valuePerUnit = InputValue.Data("$20.00"),
+                    weightPerUnit = InputValue.Data("0.3kg"),
+                    originCountry = "Japan",
+                    quantity = 1F,
+                    isExpanded = true
+                ),
+                onExpand = { },
+                onDescriptionChanged = { },
+                onTariffChanged = { },
+                onValuePerUnitChanged = { },
+                onWeightPerUnitChanged = { },
+                onCountrySelectorClick = { }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun WooShippingCustomsProductListExpandedItemErrorPreview() {
+    WooThemeWithBackground {
+        Box(Modifier.padding(16.dp)) {
+            WooShippingCustomsProductListItem(
+                itemData = WooShippingCustomsProductUIModel(
+                    name = "Little Nap Brazil 250g",
+                    description = InputValue.Error("Coffee Beans", 0),
+                    tariffNumber = InputValue.Error("HS 14-1", 0),
                     valuePerUnit = InputValue.Data("$20.00"),
                     weightPerUnit = InputValue.Data("0.3kg"),
                     originCountry = "Japan",
