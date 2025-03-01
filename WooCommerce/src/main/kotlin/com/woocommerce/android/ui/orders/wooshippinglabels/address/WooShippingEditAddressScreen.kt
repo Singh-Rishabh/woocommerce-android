@@ -50,8 +50,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.CheckCircleOutline
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SheetState
@@ -87,7 +85,6 @@ import com.woocommerce.android.ui.compose.component.dismissWCModalBottomSheet
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetailsSectionTitle
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
 import kotlinx.coroutines.launch
 
@@ -462,28 +459,12 @@ internal fun AddressStatusSection(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val text = when (addressStatus) {
-            AddressStatus.VERIFIED -> stringResource(id = R.string.woo_shipping_address_verified)
-            AddressStatus.UNVERIFIED -> stringResource(id = R.string.woo_shipping_address_unverified)
-            AddressStatus.MISSING_INFO -> stringResource(id = R.string.woo_shipping_address_missing_info)
-            AddressStatus.SAVE_CHANGES -> stringResource(id = R.string.woo_shipping_address_unsaved_changes)
-        }
-
-        val color = when (addressStatus) {
-            AddressStatus.VERIFIED -> MaterialTheme.colors.successColor
-            else -> MaterialTheme.colors.error
-        }
-
-        val icon = when (addressStatus) {
-            AddressStatus.VERIFIED -> Icons.Outlined.CheckCircleOutline
-            else -> Icons.Outlined.Info
-        }
-
         val buttonText = when (addressStatus) {
             AddressStatus.VERIFIED -> stringResource(id = R.string.close)
             AddressStatus.UNVERIFIED -> stringResource(id = R.string.woo_shipping_address_validate_and_save)
             AddressStatus.MISSING_INFO -> stringResource(id = R.string.woo_shipping_address_missing_info_hint)
             AddressStatus.SAVE_CHANGES -> stringResource(id = R.string.woo_shipping_address_save_changes)
+            AddressStatus.MISSING_ADDRESS -> ""
         }
 
         val buttonAction: () -> Unit = when (addressStatus) {
@@ -502,20 +483,15 @@ internal fun AddressStatusSection(
             AddressStatus.SAVE_CHANGES -> {
                 { onUpdateAddress(editableAddress) }
             }
+            AddressStatus.MISSING_ADDRESS -> {
+                {}
+            }
         }
 
-        Row(modifier = Modifier.padding(bottom = 16.dp)) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.padding(end = 8.dp)
-            )
-            Text(
-                text = text,
-                color = color
-            )
-        }
+        AddressStatusIndicator(
+            addressStatus = addressStatus,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
         WCColoredButton(
             onClick = buttonAction,
