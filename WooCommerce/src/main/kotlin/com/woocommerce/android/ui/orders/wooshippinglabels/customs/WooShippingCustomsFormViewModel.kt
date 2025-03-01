@@ -183,7 +183,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 false -> InputValue.Data(newValue)
                 true -> InputValue.Error(
                     input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_per_unit
+                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_required
                 )
             }.let { item.copy(valuePerUnit = it) }
         }
@@ -195,7 +195,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 false -> InputValue.Data(newValue)
                 true -> InputValue.Error(
                     input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_weight_per_unit
+                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_required
                 )
             }.let { item.copy(weightPerUnit = it) }
         }
