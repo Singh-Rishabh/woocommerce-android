@@ -22,7 +22,8 @@ data class WooShippingCustomsProductUIModel(
         get() = description is InputValue.Data &&
             tariffNumber is InputValue.Data &&
             valuePerUnit is InputValue.Data &&
-            weightPerUnit is InputValue.Data
+            weightPerUnit is InputValue.Data &&
+            originCountry.isNotBlank()
 
     val shippingTotalValue: Float?
         get() = valuePerUnit
