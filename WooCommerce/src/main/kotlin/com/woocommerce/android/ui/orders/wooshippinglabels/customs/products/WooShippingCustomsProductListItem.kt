@@ -84,15 +84,15 @@ fun WooShippingCustomsProductListItem(
                 modifier = modifier.weight(1f)
             )
 
-            if(itemData.isValid.not()) {
-            Icon(
-                imageVector = Icons.Outlined.Error,
-                tint = MaterialTheme.colorScheme.error,
-                contentDescription = stringResource(
-                    id = R.string.shipping_label_package_details_items_expand_content_description
+            if (itemData.isValid.not()) {
+                Icon(
+                    imageVector = Icons.Outlined.Error,
+                    tint = MaterialTheme.colorScheme.error,
+                    contentDescription = stringResource(
+                        id = R.string.shipping_label_package_details_items_expand_content_description
+                    )
                 )
-            )
-                }
+            }
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_down),
                 tint = MaterialTheme.colorScheme.primary,
