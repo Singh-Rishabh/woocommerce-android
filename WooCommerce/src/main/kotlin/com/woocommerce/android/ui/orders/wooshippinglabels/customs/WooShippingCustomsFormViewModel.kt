@@ -39,6 +39,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     private val countriesState = MutableStateFlow<LocationState>(LocationState.Loading)
     private var itemIndexUnderCountrySelection: Int? = null
 
+    private val isITNRequired: Boolean
+        get() = _viewState.value.shippingProducts
+            .asSequence()
+            .mapNotNull { it.shippingTotalValue }
+            .any { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
+
     init {
         launch { loadCountries() }
         val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
@@ -101,7 +107,14 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     fun onITNChanged(newItnValue: String) {
         val input = when {
+            newItnValue.isBlank() && isITNRequired ->
+                InputValue.Error(
+                    input = newItnValue,
+                    errorMessageId = R.string.woo_shipping_labels_customs_itn_required_message
+                )
+
             newItnValue.isBlank() -> InputValue.Empty
+
             itnRegex.matches(newItnValue).not() ->
                 InputValue.Error(
                     input = newItnValue,
@@ -189,6 +202,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val selectedLocation = when (possibleSelections) {
             is LocationState.Loaded -> possibleSelections
                 .locations.firstOrNull { it.code == newValue } ?: defaultLocation
+
             else -> defaultLocation
         }
 
@@ -316,5 +330,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
          */
         private const val ITN_REGEX_STRING =
             """^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))${'$'}"""
+
+        private const val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500
     }
 }
