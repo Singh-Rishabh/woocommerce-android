@@ -292,7 +292,8 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         val isAddCustomsButtonEnabled: Boolean
             get() = itnValue is InputValue.Data &&
                 (contentType != ContentType.OTHER || otherContentInput is InputValue.Data) &&
-                (restrictionType != RestrictionType.OTHER || otherRestrictionInput is InputValue.Data)
+                (restrictionType != RestrictionType.OTHER || otherRestrictionInput is InputValue.Data) &&
+                shippingProducts.all { it.isValid }
     }
 
     @Parcelize
