@@ -233,6 +233,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         tariffNumber = InputValue.Empty,
         valuePerUnit = InputValue.Data(price.toString()),
         weightPerUnit = InputValue.Data(weight.toString()),
+        quantity = quantity,
         originCountry = "",
         isExpanded = false
     )
