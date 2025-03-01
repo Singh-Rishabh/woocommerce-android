@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -181,10 +180,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         updateShippingProductsAt(itemIndex) { item ->
             when (newValue.isBlank()) {
                 false -> InputValue.Data(newValue)
-                true -> InputValue.Error(
-                    input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_required
-                )
+                true -> newValue.asInputValueError
             }.let { item.copy(valuePerUnit = it) }
         }
     }
@@ -193,10 +189,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         updateShippingProductsAt(itemIndex) { item ->
             when (newValue.isBlank()) {
                 false -> InputValue.Data(newValue)
-                true -> InputValue.Error(
-                    input = newValue,
-                    errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_required
-                )
+                true -> newValue.asInputValueError
             }.let { item.copy(weightPerUnit = it) }
         }
     }
@@ -252,14 +245,20 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     private fun ShippableItemModel.toProductUIModel() = WooShippingCustomsProductUIModel(
         name = title,
-        description = InputValue.Empty,
-        tariffNumber = InputValue.Empty,
+        description = "".asInputValueError,
+        tariffNumber = "".asInputValueError,
         valuePerUnit = InputValue.Data(price.toString()),
         weightPerUnit = InputValue.Data(weight.toString()),
         quantity = quantity,
         originCountry = "",
         isExpanded = false
     )
+
+    private val String.asInputValueError
+        get() = InputValue.Error(
+            input = this,
+            errorMessageId = R.string.woo_shipping_labels_customs_product_details_value_required
+        )
 
     @Parcelize
     data class ViewState(
