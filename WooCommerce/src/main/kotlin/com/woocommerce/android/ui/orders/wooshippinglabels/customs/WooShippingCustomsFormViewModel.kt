@@ -40,9 +40,9 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     private val isITNRequired: Boolean
         get() = _viewState.value.shippingProducts
-            .asSequence()
             .mapNotNull { it.shippingTotalValue }
-            .any { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
+            .reduce { acc, current -> acc + current }
+            .let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
 
     init {
         launch { loadCountries() }
