@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
@@ -198,7 +199,10 @@ fun WooShippingCustomsProductExpandedListItem(
                 label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_tariff),
                 singleLine = true,
                 isError = itemData.tariffNumber is InputValue.Error,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Number
+                ),
                 modifier = modifier.fillMaxWidth(),
                 helperText = itemData.tariffNumber.errorMessageOrNull
                     ?.let { stringResource(it) }
@@ -211,7 +215,10 @@ fun WooShippingCustomsProductExpandedListItem(
                     label = stringResource(id = R.string.woo_shipping_labels_customs_product_details_value_per_unit),
                     singleLine = true,
                     isError = itemData.valuePerUnit is InputValue.Error,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                        keyboardType = KeyboardType.Number
+                    ),
                     modifier = modifier.weight(1f),
                     helperText = itemData.valuePerUnit.errorMessageOrNull
                         ?.let { stringResource(it) }
