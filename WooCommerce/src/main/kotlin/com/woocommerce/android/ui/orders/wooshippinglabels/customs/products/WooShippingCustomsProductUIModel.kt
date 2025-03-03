@@ -3,8 +3,8 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 import android.os.Parcelable
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
-import java.math.BigDecimal
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 
 @Parcelize
 data class WooShippingCustomsProductUIModel(

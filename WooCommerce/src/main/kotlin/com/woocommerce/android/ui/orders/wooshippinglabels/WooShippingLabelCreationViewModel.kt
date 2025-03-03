@@ -44,6 +44,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
@@ -51,8 +53,6 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 import javax.inject.Inject
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(

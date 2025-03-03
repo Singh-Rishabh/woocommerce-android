@@ -424,9 +424,15 @@ private fun CustomsCard(
     modifier: Modifier = Modifier
 ) {
     val (backgroundColor, labelText) = if (customsState is Unavailable) {
-        Pair(colorResource(id = R.color.woo_red_20), stringResource(id = R.string.shipping_labels_customs_missing_info_badge))
+        Pair(
+            colorResource(id = R.color.woo_red_20),
+            stringResource(id = R.string.shipping_labels_customs_missing_info_badge)
+        )
     } else {
-        Pair(colorResource(id = R.color.woo_green_20), stringResource(id = R.string.shipping_labels_customs_completed_badge))
+        Pair(
+            colorResource(id = R.color.woo_green_20),
+            stringResource(id = R.string.shipping_labels_customs_completed_badge)
+        )
     }
 
     if (customsState !is NotRequired) {
