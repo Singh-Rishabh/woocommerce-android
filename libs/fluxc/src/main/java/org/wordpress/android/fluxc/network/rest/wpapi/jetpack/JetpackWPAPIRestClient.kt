@@ -182,7 +182,7 @@ class JetpackWPAPIRestClient @Inject constructor(
                 "redirect_uri" to site.url,
                 "secret" to provisioningParams.secret,
                 "scope" to provisioningParams.scope,
-                "external_user_id" to provisioningParams.userId
+                "external_user_id" to provisioningParams.userId.toString()
             ),
             clazz = Unit::class.java
         )
