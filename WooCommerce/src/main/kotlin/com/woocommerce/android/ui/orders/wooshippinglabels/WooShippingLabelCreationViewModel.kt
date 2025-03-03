@@ -19,6 +19,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -76,6 +77,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
 
     private val packageSelected = MutableStateFlow<PackageData?>(null)
+    private val customsFormData = MutableStateFlow<CustomsData?>(null)
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
@@ -142,10 +144,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private suspend fun observeShippingRates() {
         combine(
             packageSelected,
+            customsFormData,
             shippingAddresses,
             packageWeight,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, addresses, packageWeight, _ ->
+        ) { selectedPackage, customsData, addresses, packageWeight, _ ->
             if (
                 selectedPackage != null &&
                 addresses != null &&
@@ -154,7 +157,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             ) {
                 ShippingRatesInfo(
                     orderId = navArgs.orderId,
-                    packageSelected = selectedPackage,
+                    packageSelected = selectedPackage.copy(customsData = customsData),
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo,
                     weight = packageWeight.totalWeight,
@@ -233,13 +236,22 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private suspend fun observeCustomsDataChanges() {
         combine(
             shippingAddresses,
+            customsFormData,
             customsState
-        ) { addresses, _ ->
+        ) { addresses, customsData, _ ->
             when {
+                customsData != null -> CustomsState.DataAvailable(customsData)
                 addresses != null && shouldRequireCustoms(addresses) -> Unavailable
                 else -> NotRequired
             }
-        }.collectLatest { customsState.value = it }
+        }.collectLatest {
+            if (it is CustomsState.DataAvailable) {
+                packageSelected.update { packageSelected ->
+                    packageSelected?.copy(customsData = it.customsData)
+                }
+            }
+            customsState.value = it
+        }
     }
 
     private suspend fun getShippingAddresses() {
@@ -609,6 +621,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     sealed class CustomsState {
         data object NotRequired : CustomsState()
         data object Unavailable : CustomsState()
+        data class DataAvailable(val customsData: CustomsData) : CustomsState()
     }
 
     companion object {
