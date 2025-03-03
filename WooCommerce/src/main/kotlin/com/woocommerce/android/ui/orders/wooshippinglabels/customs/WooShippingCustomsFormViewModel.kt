@@ -129,7 +129,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                     errorMessageId = R.string.woo_shipping_labels_customs_itn_required_message
                 )
 
-            itnRegex.matches(newItnValue).not() ->
+            newItnValue.isNotBlank() && itnRegex.matches(newItnValue).not() ->
                 InputValue.Error(
                     input = newItnValue,
                     errorMessageId = R.string.woo_shipping_labels_customs_itn_error_message
