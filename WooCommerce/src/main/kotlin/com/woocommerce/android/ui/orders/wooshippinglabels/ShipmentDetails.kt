@@ -3,6 +3,10 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -548,71 +552,94 @@ private fun ShippingAddressNotification(
     onAction: () -> Unit = {},
     onDismiss: () -> Unit = {}
 ) {
-    if (addressNotification != null && addressNotification.isExpired().not()) {
-        if (addressNotification.expireAfter != null) {
-            LaunchedEffect(addressNotification) {
-                delay(addressNotification.expireAfter)
-                onDismiss()
-            }
-        }
-
-        val color = if (addressNotification.isSuccess) {
-            MaterialTheme.colors.successColor
-        } else {
-            MaterialTheme.colors.errorColor
-        }
-
-        val backgroundColor = if (addressNotification.isSuccess) {
-            MaterialTheme.colors.successSurface
-        } else {
-            MaterialTheme.colors.errorSurface
-        }
-
-        val icon = if (addressNotification.isSuccess) {
-            Icons.Outlined.CheckCircleOutline
-        } else {
-            Icons.Outlined.Info
-        }
-
-        val configuration = LocalConfiguration.current
-        val rowModifier = when (configuration.orientation) {
-            Configuration.ORIENTATION_LANDSCAPE -> {
-                modifier.widthIn(max = 600.dp).fillMaxWidth()
-            }
-            else -> {
-                modifier.fillMaxWidth()
-            }
-        }
-
-        Row(
-            rowModifier
-                .padding(dimensionResource(R.dimen.major_100))
-                .background(
-                    color = backgroundColor,
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                )
-                .clickable { onAction() }
-                .padding(vertical = 8.dp, horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.padding(end = 8.dp)
+    AnimatedVisibility(
+        visible = addressNotification != null && addressNotification.isExpired().not(),
+        enter = fadeIn(
+            animationSpec = androidx.compose.animation.core.tween(
+                durationMillis = 180
             )
-            Text(
-                text = addressNotification.message,
-                color = color,
-                modifier = Modifier.weight(1f)
+        ) + scaleIn(
+            animationSpec = androidx.compose.animation.core.tween(
+                durationMillis = 180
             )
-            if (addressNotification.isSuccess.not()) {
+        ),
+        exit = fadeOut(
+            animationSpec = androidx.compose.animation.core.tween(
+                durationMillis = 90
+            )
+        ) + scaleOut(
+            animationSpec = androidx.compose.animation.core.tween(
+                durationMillis = 90
+            )
+
+        )
+    ) {
+        if (addressNotification != null && addressNotification.isExpired().not()) {
+            if (addressNotification.expireAfter != null) {
+                LaunchedEffect(addressNotification) {
+                    delay(addressNotification.expireAfter)
+                    onDismiss()
+                }
+            }
+
+            val color = if (addressNotification.isSuccess) {
+                MaterialTheme.colors.successColor
+            } else {
+                MaterialTheme.colors.errorColor
+            }
+
+            val backgroundColor = if (addressNotification.isSuccess) {
+                MaterialTheme.colors.successSurface
+            } else {
+                MaterialTheme.colors.errorSurface
+            }
+
+            val icon = if (addressNotification.isSuccess) {
+                Icons.Outlined.CheckCircleOutline
+            } else {
+                Icons.Outlined.Info
+            }
+
+            val configuration = LocalConfiguration.current
+            val rowModifier = when (configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    modifier.widthIn(max = 600.dp).fillMaxWidth()
+                }
+                else -> {
+                    modifier.fillMaxWidth()
+                }
+            }
+
+            Row(
+                rowModifier
+                    .padding(dimensionResource(R.dimen.major_100))
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                    )
+                    .clickable { onAction() }
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Icon(
-                    imageVector = Icons.Outlined.Close,
+                    imageVector = icon,
                     contentDescription = null,
                     tint = color,
-                    modifier = Modifier.clickable { onDismiss() }
+                    modifier = Modifier.padding(end = 8.dp)
                 )
+                Text(
+                    text = addressNotification.message,
+                    color = color,
+                    modifier = Modifier.weight(1f)
+                )
+                if (addressNotification.isSuccess.not()) {
+                    Icon(
+                        imageVector = Icons.Outlined.Close,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.clickable { onDismiss() }
+                    )
+                }
             }
         }
     }
