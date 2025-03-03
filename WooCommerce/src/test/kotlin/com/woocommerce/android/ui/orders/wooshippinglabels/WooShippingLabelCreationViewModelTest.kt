@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PurchaseState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
@@ -42,6 +43,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -856,5 +858,62 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         // Navigate back
         val shouldNavigateBack = sut.allowBackNavigation()
         assertThat(shouldNavigateBack).isTrue()
+    }
+
+    @Test
+    fun `when there are address notifications then display the notification`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+        val notification = AddressNotification(
+            isSuccess = false,
+            message = "Origin warning",
+            isDestinationNotification = false
+        )
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(getAddressNotification(any(), anyOrNull())) doReturn notification
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        val currentViewState = sut.viewState.value
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        val dataState = currentViewState as DataState
+        assertThat(dataState.uiState.addressNotification).isEqualTo(notification)
+    }
+
+    @Test
+    fun `when an address notifications is displayed then dismissAddressNotification should dismiss the notification`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+        val notification = AddressNotification(
+            isSuccess = false,
+            message = "Origin warning",
+            isDestinationNotification = false
+        )
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(getAddressNotification(any(), anyOrNull())) doReturn notification
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        var currentViewState = sut.viewState.value
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        var dataState = currentViewState as DataState
+        assertThat(dataState.uiState.addressNotification).isEqualTo(notification)
+
+        sut.dismissAddressNotification()
+
+        currentViewState = sut.viewState.value
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        dataState = currentViewState as DataState
+        assertThat(dataState.uiState.addressNotification).isNull()
     }
 }
