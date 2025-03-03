@@ -18,7 +18,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveAddressNotification
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
@@ -40,6 +40,7 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -50,6 +51,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -71,7 +73,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val fetchAccountSettings: FetchAccountSettings,
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val verifyDestinationAddress: VerifyDestinationAddress,
-    private val observeAddressNotification: ObserveAddressNotification
+    private val getAddressNotification: GetAddressNotification
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -140,17 +142,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
-    @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private suspend fun observeNotifications() {
-        observeAddressNotification(
-            shippingAddresses.filterNotNull()
-        ).onStart {
-            delay(NOTIFICATIONS_DELAY)
-        }
+        shippingAddresses.filterNotNull()
+            .onStart { delay(NOTIFICATIONS_DELAY) }
+            .runningFold(initial = null as AddressNotification?) { previousNotification, addresses ->
+                getAddressNotification(addresses, previousNotification)
+            }
             .collectLatest { notification ->
-                if (notification != null && notification.isSuccess && uiState.value.addressNotification == null) {
-                    return@collectLatest
-                }
                 uiState.update { it.copy(addressNotification = notification) }
             }
     }

@@ -1,0 +1,88 @@
+package com.woocommerce.android.ui.orders.wooshippinglabels.address
+
+import com.woocommerce.android.R
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
+import com.woocommerce.android.viewmodel.ResourceProvider
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import javax.inject.Inject
+
+class GetAddressNotification @Inject constructor(
+    private val resourceProvider: ResourceProvider
+) {
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    operator fun invoke(
+        addresses: WooShippingAddresses,
+        previousNotification: AddressNotification? = null
+    ): AddressNotification? {
+        return when {
+            addresses.shipFrom.isVerified.not() -> {
+                AddressNotification(
+                    isSuccess = false,
+                    message = resourceProvider.getString(
+                        R.string.woo_shipping_address_notification_origin_unverified
+                    ),
+                    isDestinationNotification = false
+                )
+            }
+
+            addresses.shipTo.address.hasInfo().not() -> {
+                AddressNotification(
+                    isSuccess = false,
+                    message = resourceProvider.getString(
+                        R.string.woo_shipping_address_notification_destination_missing
+                    ),
+                    isDestinationNotification = true
+                )
+            }
+
+            addresses.shipTo.isVerified.not() -> {
+                AddressNotification(
+                    isSuccess = false,
+                    message = resourceProvider.getString(
+                        R.string.woo_shipping_address_notification_destination_unverified
+                    ),
+                    isDestinationNotification = true
+                )
+            }
+
+            addresses.shipTo.isVerified &&
+                previousNotification?.let { it.isSuccess.not() && it.isDestinationNotification } == true -> {
+                AddressNotification(
+                    isSuccess = true,
+                    message = resourceProvider.getString(
+                        R.string.woo_shipping_address_notification_destination_verified
+                    ),
+                    expireAfter = 2_000,
+                    isDestinationNotification = true
+                )
+            }
+
+            addresses.shipFrom.isVerified &&
+                previousNotification?.let { it.isSuccess.not() && it.isDestinationNotification.not() } == true -> {
+                AddressNotification(
+                    isSuccess = true,
+                    message = resourceProvider.getString(
+                        R.string.woo_shipping_address_notification_origin_verified
+                    ),
+                    expireAfter = 2_000,
+                    isDestinationNotification = true
+                )
+            }
+
+            else -> null
+        }
+    }
+}
+
+data class AddressNotification(
+    val isSuccess: Boolean,
+    val message: String,
+    val expireAfter: Long? = null,
+    private val timestamp: Long = System.currentTimeMillis(),
+    val isDestinationNotification: Boolean = false,
+) {
+    fun isExpired(): Boolean = expireAfter?.let {
+        timestamp + it < System.currentTimeMillis()
+    } == true
+}

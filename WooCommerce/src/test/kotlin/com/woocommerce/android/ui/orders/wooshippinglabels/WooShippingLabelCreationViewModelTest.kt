@@ -12,7 +12,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PurchaseState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveAddressNotification
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
@@ -218,7 +218,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val purchaseShippingLabel: PurchaseShippingLabel = mock()
     private val observeStoreOptions: ObserveStoreOptions = mock()
     private val verifyDestinationAddress: VerifyDestinationAddress = mock()
-    private val observeAddressNotification: ObserveAddressNotification = mock()
+    private val getAddressNotification: GetAddressNotification = mock()
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -235,7 +235,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             fetchAccountSettings = mock(),
             shouldRequireCustoms = shouldRequireCustomsForm,
             verifyDestinationAddress = verifyDestinationAddress,
-            observeAddressNotification = observeAddressNotification,
+            getAddressNotification = getAddressNotification,
             savedState = savedState
         )
     }
