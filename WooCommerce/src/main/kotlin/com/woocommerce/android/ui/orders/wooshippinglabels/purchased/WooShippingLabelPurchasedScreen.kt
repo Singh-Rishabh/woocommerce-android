@@ -67,9 +67,19 @@ private val darkGreen = Color(0xFF005C12)
 @Suppress("MagicNumber")
 private val lightGreen = Color(0xFFEDFAEF)
 
+@Suppress("MagicNumber")
+private val darkRed = Color(0xFFB32D2E)
+
+@Suppress("MagicNumber")
+private val lightRed = Color(0xFFF7EBEC)
+
 val Colors.successColor: Color get() = if (isLight) darkGreen else lightGreen
 
 val Colors.successSurface: Color get() = if (isLight) lightGreen else darkGreen
+
+val Colors.errorColor: Color get() = if (isLight) darkRed else lightRed
+
+val Colors.errorSurface: Color get() = if (isLight) lightRed else darkRed
 
 @Composable
 fun WooShippingLabelPurchasedScreen(viewModel: WooShippingLabelPurchasedViewModel) {
