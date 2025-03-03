@@ -66,7 +66,7 @@ class GetAddressNotification @Inject constructor(
                         R.string.woo_shipping_address_notification_origin_verified
                     ),
                     expireAfter = 2_000,
-                    isDestinationNotification = true
+                    isDestinationNotification = false
                 )
             }
 
