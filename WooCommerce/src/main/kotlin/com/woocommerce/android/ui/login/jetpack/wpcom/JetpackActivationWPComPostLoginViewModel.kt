@@ -23,7 +23,7 @@ open class JetpackActivationWPComPostLoginViewModel(
         analyticsTrackerWrapper.track(JETPACK_SETUP_LOGIN_COMPLETED)
 
         val siteUrl = selectedSite.get().url
-        if (jetpackStatus.isJetpackConnected) {
+        if (jetpackStatus.isCurrentUserConnected) {
             // Attempt returning the site from the DB if it exists, otherwise fetch it from API
             val jetpackSite = jetpackActivationRepository.getJetpackSiteByUrl(siteUrl)
                 .takeIf { it?.hasWooCommerce == true }

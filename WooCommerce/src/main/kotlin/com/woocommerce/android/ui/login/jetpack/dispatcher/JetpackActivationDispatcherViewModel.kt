@@ -21,7 +21,7 @@ class JetpackActivationDispatcherViewModel @Inject constructor(
         val jetpackStatus = args.jetpackStatus
         when (selectedSite.connectionType) {
             SiteConnectionType.ApplicationPasswords -> {
-                if (jetpackStatus.isJetpackConnected && jetpackStatus.wpComEmail != null) {
+                if (jetpackStatus.isCurrentUserConnected && jetpackStatus.wpComEmail != null) {
                     // Jetpack is already connected and we know the address email, handle the authentication
                     triggerEvent(
                         StartWPComAuthenticationForEmail(

@@ -8,11 +8,10 @@ data class JetpackStatus(
     val isJetpackInstalled: Boolean,
     val jetpackConnectionStatus: JetpackConnectionStatus
 ) : Parcelable {
-
-    // TODO: remove these properties later
-    val isJetpackConnected: Boolean
+    val isCurrentUserConnected: Boolean
         get() = jetpackConnectionStatus is JetpackConnectionStatus.AccountConnected
 
+    // TODO: remove these properties later
     val wpComEmail: String?
         get() = (jetpackConnectionStatus as? JetpackConnectionStatus.AccountConnected)?.wpComEmail
 
