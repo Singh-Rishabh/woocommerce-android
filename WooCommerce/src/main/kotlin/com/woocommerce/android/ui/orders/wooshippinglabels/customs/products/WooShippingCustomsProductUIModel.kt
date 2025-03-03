@@ -1,11 +1,14 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 
 import android.os.Parcelable
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsItem
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
+import java.math.BigDecimal
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class WooShippingCustomsProductUIModel(
+    val productId: Long,
     val name: String,
     val description: InputValue,
     val tariffNumber: InputValue,
@@ -32,4 +35,15 @@ data class WooShippingCustomsProductUIModel(
             ?.currentInput
             ?.toFloatOrNull()
             ?.let { it * quantity }
+
+    val asCustomItem: CustomsItem
+        get() = CustomsItem(
+            productID = productId,
+            description = description.currentInput,
+            hsTariffNumber = tariffNumber.currentInput,
+            value = valuePerUnit.currentInput.toBigDecimalOrNull() ?: BigDecimal.ZERO,
+            weight = weightPerUnit.currentInput.toFloatOrNull() ?: 0F,
+            originCountry = originCountry,
+            quantity = quantity
+        )
 }
