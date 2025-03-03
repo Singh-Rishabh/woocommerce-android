@@ -296,7 +296,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
         val asCustomData: CustomsData
             get() = CustomsData(
-                packageId = 0,
+                packageId = "",
                 packageName = "",
                 contentType = contentType,
                 contentDescription = otherContentInput.currentInput,

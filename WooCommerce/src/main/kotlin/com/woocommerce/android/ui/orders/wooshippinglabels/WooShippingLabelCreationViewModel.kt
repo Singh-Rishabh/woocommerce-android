@@ -51,6 +51,8 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(
@@ -250,6 +252,22 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 }
             }
             customsState.value = it
+        }
+
+        combine(
+            packageSelected.filterNotNull(),
+            customsState.filter { it is CustomsState.DataAvailable }
+        ) { packageSelected, customState ->
+            val customData = customState
+                .run { this as? CustomsState.DataAvailable }
+                ?.customsData?.copy(
+                    packageId = packageSelected.id,
+                    packageName = packageSelected.name
+                )
+
+            packageSelected.copy(customsData = customData)
+        }.collectLatest {
+            packageSelected.value = it
         }
     }
 

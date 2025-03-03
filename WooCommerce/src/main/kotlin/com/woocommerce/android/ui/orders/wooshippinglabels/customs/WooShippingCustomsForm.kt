@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CustomsData(
-    val packageId: Long,
+    val packageId: String,
     val packageName: String,
     val contentType: ContentType,
     val contentDescription: String,
