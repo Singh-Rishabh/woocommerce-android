@@ -218,7 +218,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onAddCustomsDataClick() {
-        triggerEvent(FinishCustomsForm)
+        _viewState.value.asCustomData.let { triggerEvent(FinishCustomsForm(it)) }
     }
 
     private fun updateShippingProductsAt(
@@ -243,6 +243,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     private fun ShippableItemModel.toProductUIModel() = WooShippingCustomsProductUIModel(
+        productId = productId,
         name = title,
         description = "".asInputValueError,
         tariffNumber = "".asInputValueError,
@@ -292,6 +293,19 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 (contentType != ContentType.OTHER || otherContentInput is InputValue.Data) &&
                 (restrictionType != RestrictionType.OTHER || otherRestrictionInput is InputValue.Data) &&
                 shippingProducts.all { it.isValid }
+
+        val asCustomData: CustomsData
+            get() = CustomsData(
+                packageId = 0,
+                packageName = "",
+                contentType = contentType,
+                contentDescription = otherContentInput.currentInput,
+                restrictionType = restrictionType,
+                restrictionDescription = otherRestrictionInput.currentInput,
+                itn = itnValue.currentInput,
+                noDeliveryOption = returnToSenderChecked,
+                items = shippingProducts.map { it.asCustomItem }
+            )
     }
 
     @Parcelize
@@ -334,7 +348,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     data class ShowContentTypeDialog(val currentSelection: ContentType) : MultiLiveEvent.Event()
     data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType) : MultiLiveEvent.Event()
     data class ShowCountrySelector(val countries: List<Location>) : MultiLiveEvent.Event()
-    object FinishCustomsForm : MultiLiveEvent.Event()
+    data class FinishCustomsForm(val customData: CustomsData) : MultiLiveEvent.Event()
 
     companion object {
         /**
