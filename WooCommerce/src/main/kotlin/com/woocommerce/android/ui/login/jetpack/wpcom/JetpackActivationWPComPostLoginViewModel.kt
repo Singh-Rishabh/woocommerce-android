@@ -43,7 +43,7 @@ open class JetpackActivationWPComPostLoginViewModel(
         } else {
             triggerEvent(
                 ShowJetpackActivationScreen(
-                    isJetpackInstalled = jetpackStatus.isJetpackInstalled,
+                    jetpackStatus = jetpackStatus,
                     siteUrl = siteUrl
                 )
             )
@@ -52,7 +52,7 @@ open class JetpackActivationWPComPostLoginViewModel(
     }
 
     data class ShowJetpackActivationScreen(
-        val isJetpackInstalled: Boolean,
+        val jetpackStatus: JetpackStatus,
         val siteUrl: String
     ) : MultiLiveEvent.Event()
 

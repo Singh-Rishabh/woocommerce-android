@@ -2,6 +2,9 @@ package com.woocommerce.android.ui.login.jetpack.main
 
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.model.JetpackConnectionStatus
+import com.woocommerce.android.model.JetpackSiteRegistrationStatus
+import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
 import com.woocommerce.android.ui.common.PluginRepository
@@ -63,7 +66,14 @@ class JetpackActivationMainViewModelTest : BaseUnitTest() {
 
         viewModel = JetpackActivationMainViewModel(
             savedStateHandle = JetpackActivationMainFragmentArgs(
-                isJetpackInstalled = isJetpackInstalled, siteUrl = siteUrl
+                jetpackStatus = JetpackStatus(
+                    isJetpackInstalled = isJetpackInstalled,
+                    jetpackConnectionStatus = JetpackConnectionStatus.AccountNotConnected(
+                        siteRegistrationStatus = JetpackSiteRegistrationStatus.UNKNOWN,
+                        blogId = null
+                    )
+                ),
+                siteUrl = siteUrl
             ).toSavedStateHandle(),
             jetpackActivationRepository = jetpackActivationRepository,
             pluginRepository = pluginRepository,

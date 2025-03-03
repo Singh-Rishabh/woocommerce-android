@@ -39,8 +39,8 @@ class JetpackActivationDispatcherViewModel @Inject constructor(
                 // Handle connecting a new site
                 triggerEvent(
                     StartJetpackActivationForNewSite(
-                        args.siteUrl,
-                        jetpackStatus.isJetpackInstalled
+                        siteUrl = args.siteUrl,
+                        jetpackStatus = jetpackStatus
                     )
                 )
             }
@@ -49,7 +49,7 @@ class JetpackActivationDispatcherViewModel @Inject constructor(
 
     data class StartJetpackActivationForNewSite(
         val siteUrl: String,
-        val isJetpackInstalled: Boolean
+        val jetpackStatus: JetpackStatus
     ) : MultiLiveEvent.Event()
 
     data class StartWPComLoginForJetpackActivation(

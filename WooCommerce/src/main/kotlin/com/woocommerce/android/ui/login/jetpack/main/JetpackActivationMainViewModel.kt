@@ -104,7 +104,7 @@ class JetpackActivationMainViewModel @Inject constructor(
 
     private val currentStep = savedStateHandle.getStateFlow(
         scope = viewModelScope,
-        initialValue = Step(if (navArgs.isJetpackInstalled) StepType.Connection else StepType.Installation),
+        initialValue = Step(if (navArgs.jetpackStatus.isJetpackInstalled) StepType.Connection else StepType.Installation),
     )
     private val connectionStep = savedStateHandle.getStateFlow(
         scope = viewModelScope,
@@ -114,13 +114,13 @@ class JetpackActivationMainViewModel @Inject constructor(
     val viewState = combine(
         currentStep,
         connectionStep,
-        flowOf(if (navArgs.isJetpackInstalled) stepsForConnection() else stepsForInstallation()),
+        flowOf(if (navArgs.jetpackStatus.isJetpackInstalled) stepsForConnection() else stepsForInstallation()),
         isShowingErrorState
     ) { currentStep, connectionStep, stepTypes, isShowingErrorState ->
         when (isShowingErrorState) {
             false -> ViewState.ProgressViewState(
                 siteUrl = UrlUtils.removeScheme(navArgs.siteUrl),
-                isJetpackInstalled = navArgs.isJetpackInstalled,
+                isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled,
                 steps = stepTypes.map { stepType ->
                     Step(
                         type = stepType,
