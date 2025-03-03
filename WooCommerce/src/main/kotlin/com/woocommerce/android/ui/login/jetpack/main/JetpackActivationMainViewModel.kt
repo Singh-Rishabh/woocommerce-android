@@ -14,6 +14,7 @@ import com.woocommerce.android.analytics.AnalyticsEvent.LOGIN_JETPACK_SETUP_INST
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.extensions.isNotNullOrEmpty
+import com.woocommerce.android.model.JetpackConnectionStatus
 import com.woocommerce.android.support.help.HelpOrigin.JETPACK_INSTALLATION
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
@@ -83,8 +84,14 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     private val navArgs: JetpackActivationMainFragmentArgs by savedStateHandle.navArgs()
+
     // Whether to use the application passwords for fetching the connection URL or the Cookie-nonce authentication
     private val useApplicationPasswords = selectedSite.connectionType == SiteConnectionType.ApplicationPasswords
+
+    // The cast is safe because we use this flow only when Jetpack is not connected
+    private val supportNativeConnectionAPI = (navArgs.jetpackStatus.jetpackConnectionStatus
+        as JetpackConnectionStatus.AccountNotConnected).supportsConnectionApi
+
     private val site: Deferred<SiteModel>
         get() = async {
             val site = jetpackActivationRepository.getSiteByUrl(navArgs.siteUrl)?.takeIf {
@@ -422,7 +429,54 @@ class JetpackActivationMainViewModel @Inject constructor(
 
     @Suppress("LongMethod")
     private suspend fun startJetpackConnection() {
-        WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: start Jetpack Connection")
+        val onFailure: (Throwable) -> Unit = {
+            val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
+
+            if (isFromBanner) {
+                analyticsTrackerWrapper.track(
+                    stat = JETPACK_SETUP_FLOW,
+                    properties = mapOf(
+                        AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
+                        AnalyticsTracker.KEY_FAILURE to "Jetpack connection failed: ${it.message}",
+                    )
+                )
+            } else {
+                analyticsTrackerWrapper.track(
+                    stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_FETCH_JETPACK_CONNECTION_URL_FAILED,
+                    properties = mapOf(AnalyticsTracker.KEY_ERROR_CODE to error?.errorCode.toString()),
+                    errorContext = this@JetpackActivationMainViewModel::class.simpleName,
+                    errorType = it::class.simpleName,
+                    errorDescription = it.message.orEmpty()
+                )
+            }
+            currentStep.update { state -> state.copy(state = StepState.Error(error?.errorCode)) }
+        }
+
+        if (supportNativeConnectionAPI) {
+            startJetpackNativeConnection(onFailure)
+        } else {
+            startJetpackWebViewConnection(onFailure)
+        }
+    }
+
+    private suspend fun startJetpackNativeConnection(onFailure: (Throwable) -> Unit) {
+        WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: start Jetpack Connection using Native API")
+        val currentSite = site.await()
+        jetpackActivationRepository.connectJetpackAccount(
+            site = currentSite,
+            jetpackConnectionStatus = navArgs.jetpackStatus.jetpackConnectionStatus
+                as JetpackConnectionStatus.AccountNotConnected,
+            useApplicationPasswords = useApplicationPasswords
+        ).fold(
+            onSuccess = {
+                connectionStep.value = ConnectionStep.Validation
+            },
+            onFailure = onFailure
+        )
+    }
+
+    private suspend fun startJetpackWebViewConnection(onFailure: (Throwable) -> Unit) {
+        WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: start Jetpack Connection using WebView")
         val currentSite = site.await()
         jetpackActivationRepository.fetchJetpackConnectionUrl(currentSite, useApplicationPasswords).fold(
             onSuccess = { connectionUrl ->
@@ -470,28 +524,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                     )
                 }
             },
-            onFailure = {
-                val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
-
-                if (isFromBanner) {
-                    analyticsTrackerWrapper.track(
-                        stat = JETPACK_SETUP_FLOW,
-                        properties = mapOf(
-                            AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                            AnalyticsTracker.KEY_FAILURE to "Jetpack installation failed: ${it.message}",
-                        )
-                    )
-                } else {
-                    analyticsTrackerWrapper.track(
-                        stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_FETCH_JETPACK_CONNECTION_URL_FAILED,
-                        properties = mapOf(AnalyticsTracker.KEY_ERROR_CODE to error?.errorCode.toString()),
-                        errorContext = this@JetpackActivationMainViewModel::class.simpleName,
-                        errorType = it::class.simpleName,
-                        errorDescription = it.message.orEmpty()
-                    )
-                }
-                currentStep.update { state -> state.copy(state = StepState.Error(error?.errorCode)) }
-            }
+            onFailure = onFailure
         )
     }
 
