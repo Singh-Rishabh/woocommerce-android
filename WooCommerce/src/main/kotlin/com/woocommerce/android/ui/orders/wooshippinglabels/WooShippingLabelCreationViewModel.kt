@@ -17,6 +17,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
@@ -39,12 +41,14 @@ import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
@@ -66,7 +70,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
-    private val verifyDestinationAddress: VerifyDestinationAddress
+    private val verifyDestinationAddress: VerifyDestinationAddress,
+    private val observeAddressNotification: ObserveAddressNotification
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -123,6 +128,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch { observeShippingRates() }
         launch { observeShippingRatesState() }
         launch { observeCustomsDataChanges() }
+        launch { observeNotifications() }
     }
 
     private suspend fun getOrderInformation() {
@@ -132,6 +138,25 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             triggerEvent(Event.ShowSnackbar(R.string.woo_shipping_labels_loading_order_error))
             postTriggerEvent(Event.Exit)
         }
+    }
+
+    @OptIn(FlowPreview::class)
+    private suspend fun observeNotifications() {
+        observeAddressNotification(
+            shippingAddresses.filterNotNull()
+        ).onStart {
+            delay(NOTIFICATIONS_DELAY)
+        }
+            .collectLatest { notification ->
+                if (notification != null && notification.isSuccess && uiState.value.addressNotification == null) {
+                    return@collectLatest
+                }
+                uiState.update { it.copy(addressNotification = notification) }
+            }
+    }
+
+    fun dismissAddressNotification() {
+        uiState.update { it.copy(addressNotification = null) }
     }
 
     private suspend fun getStoreOptions() {
@@ -626,7 +651,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data class UIControlsState(
         val markOrderComplete: Boolean,
         val isShipmentDetailsExpanded: Boolean,
-        val isAddressSelectionExpanded: Boolean
+        val isAddressSelectionExpanded: Boolean,
+        val addressNotification: AddressNotification? = null
     )
 
     data class ShippingRatesInfo(
@@ -645,6 +671,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     companion object {
+        private const val NOTIFICATIONS_DELAY = 2_000L
         private const val TYPING_DELAY = 800L
         private const val MULTIPLE_CALLS_DELAY = 50L
     }
