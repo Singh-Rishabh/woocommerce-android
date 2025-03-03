@@ -1,10 +1,13 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
+import android.os.Parcelable
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
 import java.math.BigDecimal
+import kotlinx.parcelize.Parcelize
 
-data class WooShippingCustomsForm(
+@Parcelize
+data class CustomsData(
     val packageId: String,
     val packageName: String,
     val contentType: ContentType,
@@ -14,8 +17,9 @@ data class WooShippingCustomsForm(
     val noDeliveryOption: Boolean,
     val itn: String,
     val items: List<CustomsItem>
-)
+) : Parcelable
 
+@Parcelize
 data class CustomsItem(
     val productID: Long,
     val description: String,
@@ -24,4 +28,4 @@ data class CustomsItem(
     val weight: Float,
     val hsTariffNumber: String,
     val originCountry: String
-)
+) : Parcelable
