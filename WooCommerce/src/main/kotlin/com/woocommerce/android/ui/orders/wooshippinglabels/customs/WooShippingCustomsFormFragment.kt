@@ -12,11 +12,13 @@ import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleDialogResult
 import com.woocommerce.android.extensions.handleResult
+import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.FinishCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowContentTypeDialog
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ShowCountrySelector
@@ -73,6 +75,8 @@ class WooShippingCustomsFormFragment : BaseFragment() {
                 }
 
                 is ShowCountrySelector -> showCountrySearchScreen(event.countries)
+
+                is FinishCustomsForm -> navigateBackWithResult(CUSTOMS_DATA_RESULT, event.customData)
             }
         }
     }
@@ -135,5 +139,7 @@ class WooShippingCustomsFormFragment : BaseFragment() {
         const val SELECTOR_CONTENT_REQUEST_KEY = "label_customs_content_selector"
         const val SELECTOR_RESTRICTION_REQUEST_KEY = "label_customs_restriction_selector"
         const val SELECT_COUNTRY_REQUEST = "select_address_country_request"
+
+        const val CUSTOMS_DATA_RESULT = "customs_data_result"
     }
 }
