@@ -78,7 +78,8 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                 is StartCustomsFormEdit -> {
                     WooShippingLabelCreationFragmentDirections
                         .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment(
-                            shippableItems = event.shippableItems.toTypedArray()
+                            shippableItems = event.shippableItems.toTypedArray(),
+                            customsData = event.customData
                         ).let { findNavController().navigateSafely(it) }
                 }
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)

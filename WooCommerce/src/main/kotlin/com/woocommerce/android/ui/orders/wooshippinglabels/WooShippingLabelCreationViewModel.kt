@@ -518,7 +518,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onEditCustomsClick() {
-        triggerEvent(StartCustomsFormEdit(shippableItems.value))
+        val event = StartCustomsFormEdit(shippableItems.value, customsFormData.value)
+        triggerEvent(event)
     }
 
     fun allowBackNavigation(): Boolean {
@@ -564,7 +565,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
-    data class StartCustomsFormEdit(val shippableItems: List<ShippableItemModel>) : Event()
+    data class StartCustomsFormEdit(
+        val shippableItems: List<ShippableItemModel>,
+        val customData: CustomsData?
+    ) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()

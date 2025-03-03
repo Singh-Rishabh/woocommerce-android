@@ -50,8 +50,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     init {
         launch { loadCountries() }
-        val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
-        _viewState.update { it.copy(shippingProducts = shippableProducts) }
+        navArgs.customsData?.let { customData ->
+            loadViewStateFromExistentCustomData(customData)
+        } ?: run {
+            val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
+            _viewState.update { it.copy(shippingProducts = shippableProducts) }
+        }
         observeShippableItemsChanges()
     }
 
@@ -62,6 +66,32 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             .onEach { (products, itnValue) ->
                 onITNChanged(itnValue.currentInput, products.isITNRequired)
             }.launchIn(viewModelScope)
+    }
+
+    private fun loadViewStateFromExistentCustomData(customData: CustomsData) {
+        _viewState.update {
+            it.copy(
+                contentType = customData.contentType,
+                otherContentInput = InputValue.Data(customData.contentDescription),
+                restrictionType = customData.restrictionType,
+                otherRestrictionInput = InputValue.Data(customData.restrictionDescription),
+                itnValue = InputValue.Data(customData.itn),
+                returnToSenderChecked = customData.noDeliveryOption,
+                shippingProducts = customData.items.map { item ->
+                    WooShippingCustomsProductUIModel(
+                        productId = item.productID,
+                        name = item.description,
+                        description = InputValue.Data(item.description),
+                        tariffNumber = InputValue.Data(item.hsTariffNumber),
+                        valuePerUnit = InputValue.Data(item.value.toString()),
+                        weightPerUnit = InputValue.Data(item.weight.toString()),
+                        originCountry = item.originCountry,
+                        quantity = item.quantity,
+                        isExpanded = false
+                    )
+                }
+            )
+        }
     }
 
     fun onContentTypeClick() {
