@@ -114,7 +114,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onShipmentDetailsExpandedChange = viewModel::onShipmentDetailsExpandedChange,
                 onSelectAddressExpandedChange = viewModel::onSelectAddressExpandedChange,
                 onEditCustomsClick = viewModel::onEditCustomsClick,
-                onEditDestinationAddress = viewModel::onEditDestinationAddress
+                onEditDestinationAddress = viewModel::onEditDestinationAddress,
+                dismissAddressNotification = viewModel::dismissAddressNotification
             )
         }
 
@@ -154,6 +155,7 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    dismissAddressNotification: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
@@ -215,7 +217,8 @@ fun WooShippingLabelCreationScreen(
             shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
             onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
             onEditCustomsClick = onEditCustomsClick,
-            onEditDestinationAddress = onEditDestinationAddress
+            onEditDestinationAddress = onEditDestinationAddress,
+            dismissAddressNotification = dismissAddressNotification
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -290,11 +293,19 @@ private fun LabelCreationScreenWithBottomSheet(
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditCustomsClick: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    dismissAddressNotification: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
-    val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
-    val paddingBottom = if (isPurchaseButtonDisplayed) 72.dp else 0.dp
+
+    val bottomSheetPeekHeight = when {
+        isPurchaseButtonDisplayed || uiState.addressNotification != null -> 132.dp
+        else -> 76.dp
+    }
+    val paddingBottom = when {
+        isPurchaseButtonDisplayed -> 72.dp
+        else -> 0.dp
+    }
     val shippingRateSummary =
         (shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState)?.selectedRate?.summary
 
@@ -319,7 +330,10 @@ private fun LabelCreationScreenWithBottomSheet(
                     isShipmentDetailsExpanded = uiState.isShipmentDetailsExpanded,
                     markOrderComplete = uiState.markOrderComplete,
                     onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
-                    onEditDestinationAddress = onEditDestinationAddress
+                    onEditDestinationAddress = onEditDestinationAddress,
+                    addressNotification = uiState.addressNotification,
+                    dismissAddressNotification = dismissAddressNotification,
+                    onEditOriginAddress = onEditOriginAddress
                 )
             }
         },

@@ -19,7 +19,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
@@ -29,8 +31,13 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircleOutline
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,13 +55,19 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.appendWithIfNotEmpty
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionLandscape
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionPortrait
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.errorColor
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.errorSurface
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
+import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successSurface
 import com.woocommerce.android.util.StringUtils
+import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
 
 @Composable
@@ -65,12 +78,15 @@ fun ShipmentDetails(
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
+    addressNotification: AddressNotification?,
     modifier: Modifier = Modifier,
     isShipmentDetailsExpanded: Boolean = false,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    onEditOriginAddress: (OriginShippingAddress) -> Unit,
     markOrderComplete: Boolean = false,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
+    dismissAddressNotification: () -> Unit = {},
     handlerModifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -98,13 +114,33 @@ fun ShipmentDetails(
                 tint = colorResource(id = R.color.color_primary),
             )
             AnimatedVisibility(isShipmentDetailsExpanded.not()) {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Text(
                         text = stringResource(R.string.shipping_label_shipment_details_title),
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
                             .padding(top = dimensionResource(R.dimen.minor_100))
                     )
+
+                    ShippingAddressNotification(
+                        addressNotification = addressNotification,
+                        onDismiss = dismissAddressNotification,
+                        onAction = {
+                            addressNotification?.let {
+                                when {
+                                    it.isSuccess.not() && it.isDestinationNotification -> {
+                                        onEditDestinationAddress(shippingAddresses.shipTo)
+                                    }
+                                    it.isSuccess.not() && it.isDestinationNotification.not() -> {
+                                        onEditOriginAddress(shippingAddresses.shipFrom)
+                                    }
+                                }
+                            }
+                        }
+                    )
+
                     Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
                 }
             }
@@ -502,6 +538,83 @@ private fun ShipmentCostRow(
             width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
             height = dimensionResource(id = R.dimen.major_100)
         )
+    }
+}
+
+@Composable
+private fun ShippingAddressNotification(
+    addressNotification: AddressNotification?,
+    modifier: Modifier = Modifier,
+    onAction: () -> Unit = {},
+    onDismiss: () -> Unit = {}
+) {
+    if (addressNotification != null && addressNotification.isExpired().not()) {
+        if (addressNotification.expireAfter != null) {
+            LaunchedEffect(addressNotification) {
+                delay(addressNotification.expireAfter)
+                onDismiss()
+            }
+        }
+
+        val color = if (addressNotification.isSuccess) {
+            MaterialTheme.colors.successColor
+        } else {
+            MaterialTheme.colors.errorColor
+        }
+
+        val backgroundColor = if (addressNotification.isSuccess) {
+            MaterialTheme.colors.successSurface
+        } else {
+            MaterialTheme.colors.errorSurface
+        }
+
+        val icon = if (addressNotification.isSuccess) {
+            Icons.Outlined.CheckCircleOutline
+        } else {
+            Icons.Outlined.Info
+        }
+
+        val configuration = LocalConfiguration.current
+        val rowModifier = when (configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                modifier.widthIn(max = 600.dp).fillMaxWidth()
+            }
+            else -> {
+                modifier.fillMaxWidth()
+            }
+        }
+
+        Row(
+            rowModifier
+                .padding(dimensionResource(R.dimen.major_100))
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+                .clickable { onAction() }
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = color,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Text(
+                text = addressNotification.message,
+                color = color,
+                modifier = Modifier.weight(1f)
+            )
+            if (addressNotification.isSuccess.not()) {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.clickable { onDismiss() }
+                )
+            }
+        }
     }
 }
 

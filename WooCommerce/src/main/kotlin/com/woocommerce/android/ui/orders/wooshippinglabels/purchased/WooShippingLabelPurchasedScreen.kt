@@ -136,7 +136,9 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
                         }
                         true
                     },
-                    onEditDestinationAddress = {}
+                    addressNotification = null,
+                    onEditDestinationAddress = {},
+                    onEditOriginAddress = {}
                 )
             }
         },
