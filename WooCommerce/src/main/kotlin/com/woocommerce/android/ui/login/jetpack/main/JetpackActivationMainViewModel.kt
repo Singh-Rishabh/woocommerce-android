@@ -530,7 +530,15 @@ class JetpackActivationMainViewModel @Inject constructor(
 
     private suspend fun startJetpackValidation() {
         WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: start Jetpack Connection validation")
-        jetpackActivationRepository.fetchJetpackConnectedEmail(site.await(), useApplicationPasswords).fold(
+
+        val connectedEmail = if (supportNativeConnectionAPI) {
+            // If we're using the native connection API, we can assume the same email as the logged in user
+            Result.success(accountRepository.getUserAccount()!!.email)
+        } else {
+            jetpackActivationRepository.fetchJetpackConnectedEmail(site.await(), useApplicationPasswords)
+        }
+
+        connectedEmail.fold(
             onSuccess = { email ->
                 jetpackConnectedEmail = email
                 if (accountRepository.getUserAccount()?.email != email) {
