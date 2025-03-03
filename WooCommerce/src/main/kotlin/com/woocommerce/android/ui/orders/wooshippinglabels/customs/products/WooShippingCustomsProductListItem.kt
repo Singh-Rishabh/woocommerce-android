@@ -256,6 +256,7 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
         Box(Modifier.padding(16.dp)) {
             WooShippingCustomsProductListItem(
                 itemData = WooShippingCustomsProductUIModel(
+                    productId = 0,
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Data("Coffee Beans"),
                     tariffNumber = InputValue.Data("HS 14-1"),
@@ -283,6 +284,7 @@ fun WooShippingCustomsProductListCollapsedItemErrorPreview() {
         Box(Modifier.padding(16.dp)) {
             WooShippingCustomsProductListItem(
                 itemData = WooShippingCustomsProductUIModel(
+                    productId = 0,
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Error("Coffee Beans", 0),
                     tariffNumber = InputValue.Data("HS 14-1"),
@@ -310,6 +312,7 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
         Box(Modifier.padding(16.dp)) {
             WooShippingCustomsProductListItem(
                 itemData = WooShippingCustomsProductUIModel(
+                    productId = 0,
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Data("Coffee Beans"),
                     tariffNumber = InputValue.Data("HS 14-1"),
@@ -337,6 +340,7 @@ fun WooShippingCustomsProductListExpandedItemErrorPreview() {
         Box(Modifier.padding(16.dp)) {
             WooShippingCustomsProductListItem(
                 itemData = WooShippingCustomsProductUIModel(
+                    productId = 0,
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Error("Coffee Beans", 0),
                     tariffNumber = InputValue.Error("HS 14-1", 0),
