@@ -42,13 +42,13 @@ class GetAddressNotificationTests : BaseUnitTest() {
     )
 
     @Test
-    fun `when addresses as no issues, then don't display any notification`(){
+    fun `when addresses as no issues, then don't display any notification`() {
         val result = sut.invoke(defaultAddresses)
         assertThat(result).isNull()
     }
 
     @Test
-    fun `when addresses as no issues and previous was a destination warning, then display destination success`(){
+    fun `when addresses as no issues and previous was a destination warning, then display destination success`() {
         val previous = AddressNotification(
             isSuccess = false,
             message = "Destination warning",
@@ -61,7 +61,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
     }
 
     @Test
-    fun `when addresses as no issues and previous was a origin warning, then display origin success`(){
+    fun `when addresses as no issues and previous was a origin warning, then display origin success`() {
         val previous = AddressNotification(
             isSuccess = false,
             message = "Origin warning",
@@ -76,7 +76,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
     }
 
     @Test
-    fun `when shipTo is not verified, then display destination not verified`(){
+    fun `when shipTo is not verified, then display destination not verified`() {
         val addresses = defaultAddresses.copy(shipTo = defaultAddresses.shipTo.copy(isVerified = false))
 
         val result = sut.invoke(addresses, null)
@@ -90,7 +90,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
     }
 
     @Test
-    fun `when shipFrom is not verified, then display origin not verified`(){
+    fun `when shipFrom is not verified, then display origin not verified`() {
         val addresses = defaultAddresses.copy(shipFrom = defaultAddresses.shipFrom.copy(isVerified = false))
 
         val result = sut.invoke(addresses, null)
@@ -104,7 +104,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
     }
 
     @Test
-    fun `when shipTo is missing, then display destination missing`(){
+    fun `when shipTo is missing, then display destination missing`() {
         val addresses = defaultAddresses.copy(shipTo = DestinationShippingAddress.EMPTY)
 
         val result = sut.invoke(addresses, null)
