@@ -67,7 +67,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     private val accountRepository: AccountRepository,
     private val appPrefsWrapper: AppPrefsWrapper,
     private val analyticsTrackerWrapper: AnalyticsTrackerWrapper,
-    private val selectedSite: SelectedSite
+    selectedSite: SelectedSite
 ) : ScopedViewModel(savedStateHandle) {
     companion object {
         private const val JETPACK_SLUG = "jetpack"
@@ -614,9 +614,9 @@ class JetpackActivationMainViewModel @Inject constructor(
         )
     }
 
-    private fun stepsForInstallation() = StepType.values()
+    private fun stepsForInstallation() = StepType.entries
 
-    private fun stepsForConnection() = arrayOf(StepType.Connection, StepType.Done)
+    private fun stepsForConnection() = listOf(StepType.Connection, StepType.Done)
 
     sealed interface ViewState {
         data class ProgressViewState(
