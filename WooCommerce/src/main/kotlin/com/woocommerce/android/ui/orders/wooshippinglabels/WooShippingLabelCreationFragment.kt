@@ -18,6 +18,8 @@ import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartCustomsFormEdit
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartPackageSelection
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment.Companion.CUSTOMS_DATA_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment.Companion.PACKAGE_SELECTION_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -88,6 +90,10 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
     private fun setupResultHandlers() {
         handleResult<PackageData>(PACKAGE_SELECTION_RESULT) {
             viewModel.onPackageSelected(it)
+        }
+
+        handleResult<CustomsData>(CUSTOMS_DATA_RESULT) {
+            viewModel.onCustomsDataAvailable(it)
         }
     }
 

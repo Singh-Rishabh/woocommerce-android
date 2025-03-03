@@ -492,6 +492,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         packageSelected.value = packageData
     }
 
+    fun onCustomsDataAvailable(customsData: CustomsData) {
+        customsFormData.value = customsData
+    }
+
     fun onCustomWeightChange(input: String) {
         customWeight = input
     }
