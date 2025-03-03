@@ -144,11 +144,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private suspend fun observeShippingRates() {
         combine(
             packageSelected,
-            customsFormData,
             shippingAddresses,
             packageWeight,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, customsData, addresses, packageWeight, _ ->
+        ) { selectedPackage, addresses, packageWeight, _ ->
             if (
                 selectedPackage != null &&
                 addresses != null &&
@@ -157,7 +156,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             ) {
                 ShippingRatesInfo(
                     orderId = navArgs.orderId,
-                    packageSelected = selectedPackage.copy(customsData = customsData),
+                    packageSelected = selectedPackage,
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo,
                     weight = packageWeight.totalWeight,
