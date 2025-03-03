@@ -5,7 +5,7 @@ import com.woocommerce.android.model.JetpackConnectionStatus
 import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.util.WooLog
+import org.wordpress.android.fluxc.model.jetpack.JetpackConnectionData
 import org.wordpress.android.fluxc.store.JetpackStore
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import javax.inject.Inject
@@ -68,49 +68,52 @@ class FetchJetpackStatus @Inject constructor(
                 }
 
                 else -> {
-                    val isJetpackInstalled = wooCommerceStore.fetchSitePlugins(selectedSite.get())
-                        .let { pluginResult ->
-                            when {
-                                pluginResult.isError -> {
-                                    return Result.failure(OnChangedException(pluginResult.error))
-                                }
-
-                                else -> {
-                                    pluginResult.model!!.any { it.slug == JETPACK_SLUG && it.isActive }
-                                }
-                            }
-                        }
-                    val jetpackConnectionData = userResult.data!!
-                    val connectionStatus = if (jetpackConnectionData.currentUser.isConnected) {
-                        JetpackConnectionStatus.AccountConnected(jetpackConnectionData.currentUser.wpcomEmail)
-                    } else {
-                        if (jetpackConnectionData.isSiteRegistered == true
-                            && jetpackConnectionData.blogId == null
-                        ) {
-                            WooLog.e(WooLog.T.LOGIN, "Jetpack connection data is invalid, $jetpackConnectionData")
-                            return Result.failure(IllegalStateException("Jetpack connection data is invalid"))
-                        }
-
-                        JetpackConnectionStatus.AccountNotConnected(
-                            siteRegistrationStatus = when (jetpackConnectionData.isSiteRegistered) {
-                                true -> JetpackSiteRegistrationStatus.REGISTERED
-                                false -> JetpackSiteRegistrationStatus.NOT_REGISTERED
-                                else -> JetpackSiteRegistrationStatus.UNKNOWN
-                            },
-                            blogId = jetpackConnectionData.blogId
-                        )
+                    val isJetpackInstalled = checkIfJetpackIsInstalled().getOrElse {
+                        return Result.failure(it)
                     }
+
+                    val jetpackConnectionData = userResult.data!!
 
                     Result.success(
                         JetpackStatusFetchResponse.Success(
                             JetpackStatus(
                                 isJetpackInstalled = isJetpackInstalled,
-                                jetpackConnectionStatus = connectionStatus
+                                jetpackConnectionStatus = jetpackConnectionData.toConnectionStatus()
                             )
                         )
                     )
                 }
             }
+        }
+    }
+
+    private suspend fun checkIfJetpackIsInstalled(): Result<Boolean> {
+        return wooCommerceStore.fetchSitePlugins(selectedSite.get())
+            .let { pluginResult ->
+                when {
+                    pluginResult.isError -> {
+                        Result.failure(OnChangedException(pluginResult.error))
+                    }
+
+                    else -> {
+                        Result.success(pluginResult.model!!.any { it.slug == JETPACK_SLUG && it.isActive })
+                    }
+                }
+            }
+    }
+
+    private fun JetpackConnectionData.toConnectionStatus(): JetpackConnectionStatus {
+        return if (currentUser.isConnected) {
+            JetpackConnectionStatus.AccountConnected(currentUser.wpcomEmail)
+        } else {
+            JetpackConnectionStatus.AccountNotConnected(
+                siteRegistrationStatus = when (isSiteRegistered) {
+                    true -> JetpackSiteRegistrationStatus.REGISTERED
+                    false -> JetpackSiteRegistrationStatus.NOT_REGISTERED
+                    else -> JetpackSiteRegistrationStatus.UNKNOWN
+                },
+                blogId = blogId
+            )
         }
     }
 }
