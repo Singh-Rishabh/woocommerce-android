@@ -86,10 +86,6 @@ import com.woocommerce.android.ui.compose.component.dismissWCModalBottomSheet
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetailsSectionTitle
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.AddressStatus
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.AddressValidationState
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.EditableAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.components.RoundedBorderDropDownWithLabel
 import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
@@ -97,7 +93,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun WooShippingEditAddressScreen(
-    viewModel: WooShippingEditOriginViewModel,
+    viewModel: WooShippingEditAddressViewModel,
     modifier: Modifier = Modifier
 ) {
     val viewState = viewModel.viewState.collectAsState().value
@@ -123,7 +119,7 @@ fun WooShippingEditAddressScreen(
         onRawStateChange = viewModel::onRawStateChange,
         onStateChange = viewModel::onStateChange,
         onNormalizeAddress = viewModel::onNormalizeAddress,
-        onUpdateOriginAddress = viewModel::onUpdateOriginAddress,
+        onUpdateAddress = viewModel::onUpdateAddress,
         onUpdateNormalizedOriginAddress = viewModel::onUpdateNormalizedOriginAddress,
         onNavigateBack = viewModel::onNavigateBack,
         modifier = modifier
@@ -134,8 +130,8 @@ fun WooShippingEditAddressScreen(
 @Composable
 fun WooShippingEditAddressScreen(
     editableAddress: EditableAddress,
-    loading: WooShippingEditOriginViewModel.LoadingState,
-    error: WooShippingEditOriginViewModel.EditAddressError?,
+    loading: WooShippingEditAddressViewModel.LoadingState,
+    error: WooShippingEditAddressViewModel.EditAddressError?,
     shouldUseStatesInput: Boolean,
     isCompanyExpanded: Boolean,
     addressStatus: AddressStatus,
@@ -154,7 +150,7 @@ fun WooShippingEditAddressScreen(
     onRawStateChange: (String) -> Unit,
     onStateChange: () -> Unit,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
-    onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
+    onUpdateAddress: (editableAddress: EditableAddress) -> Unit,
     onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -297,7 +293,7 @@ fun WooShippingEditAddressScreen(
                             label = stringResource(id = R.string.woo_shipping_label_state),
                             text = editableAddress.state.name,
                             modifier = Modifier
-                                .padding(top = 8.dp)
+                                .padding(top = 4.dp)
                                 .weight(1f),
                             onClick = onStateChange
                         )
@@ -365,7 +361,7 @@ fun WooShippingEditAddressScreen(
                     editableAddress = editableAddress,
                     addressStatus = addressStatus,
                     onNormalizeAddress = onNormalizeAddress,
-                    onUpdateOriginAddress = onUpdateOriginAddress,
+                    onUpdateAddress = onUpdateAddress,
                     onClose = onNavigateBack,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -435,7 +431,7 @@ fun WooShippingEditAddressScreen(
             }
         }
     }
-    if (loading is WooShippingEditOriginViewModel.LoadingState.DisplayLoading) {
+    if (loading is WooShippingEditAddressViewModel.LoadingState.DisplayLoading) {
         LoadingModal(
             title = loading.title,
             description = loading.message
@@ -449,7 +445,7 @@ internal fun AddressStatusSection(
     editableAddress: EditableAddress,
     addressStatus: AddressStatus,
     onNormalizeAddress: (editableAddress: EditableAddress) -> Unit,
-    onUpdateOriginAddress: (editableAddress: EditableAddress) -> Unit,
+    onUpdateAddress: (editableAddress: EditableAddress) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -492,7 +488,7 @@ internal fun AddressStatusSection(
                 {}
             }
             AddressStatus.SAVE_CHANGES -> {
-                { onUpdateOriginAddress(editableAddress) }
+                { onUpdateAddress(editableAddress) }
             }
         }
 
@@ -663,7 +659,7 @@ private fun SelectAddressWithCustomSnackBar(
     onAddressSelectionChange: (AddressValidationState.AddressSelection) -> Unit,
     onUpdateNormalizedOriginAddress: (selection: AddressValidationState.AddressSelection) -> Unit,
     onCloseAddressSelection: () -> Unit,
-    error: WooShippingEditOriginViewModel.EditAddressError?,
+    error: WooShippingEditAddressViewModel.EditAddressError?,
     isBottomSheetSnackBarVisible: Boolean,
     modalSheetState: SheetState,
     modifier: Modifier = Modifier

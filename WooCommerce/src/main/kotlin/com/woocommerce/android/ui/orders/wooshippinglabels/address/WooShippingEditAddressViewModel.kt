@@ -1,5 +1,6 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.address.origin
+package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
+import android.os.Parcelable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,12 +13,11 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.orders.details.editing.address.LocationCode
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetStatesByCountryCode
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.UpdateOriginAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils.combineStrings
-import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -32,11 +32,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
 @Suppress("TooManyFunctions")
-class WooShippingEditOriginViewModel @Inject constructor(
+class WooShippingEditAddressViewModel @Inject constructor(
     private val addressValidator: AddressValidationHelper,
     private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
     private val getStatesByCountryCode: GetStatesByCountryCode,
@@ -71,9 +72,19 @@ class WooShippingEditOriginViewModel @Inject constructor(
     private val addressValidationState =
         MutableStateFlow<AddressValidationState>(AddressValidationState.NotStarted)
 
-    private val navArgs: WooShippingEditOriginAddressFragmentArgs by savedState.navArgs()
+    private val navArgs: WooShippingEditAddressFragmentArgs by savedState.navArgs()
 
-    private val currentAddress = MutableStateFlow(navArgs.originAddress)
+    private val currentAddress = when (val currentFlow = navArgs.flow) {
+        is EditAddressFlow.EditDestinationAddress -> currentFlow.address.address
+        is EditAddressFlow.EditOriginAddress -> currentFlow.address.toAddress()
+    }.let { MutableStateFlow(it) }
+
+    private val isVerified = when (val currentFlow = navArgs.flow) {
+        is EditAddressFlow.EditDestinationAddress -> currentFlow.address.isVerified
+        is EditAddressFlow.EditOriginAddress -> currentFlow.address.isVerified
+    }.let { MutableStateFlow(it) }
+
+    private val addressId = (navArgs.flow as? EditAddressFlow.EditOriginAddress)?.address?.id
 
     private val nameValidatedFlow = snapshotFlow { name }
         .combine(snapshotFlow { company }) { name, company ->
@@ -172,25 +183,25 @@ class WooShippingEditOriginViewModel @Inject constructor(
         }
     }
 
-    private fun fillAddressForm(originAddress: OriginShippingAddress) {
+    private fun fillAddressForm(addressInformation: Address) {
         val fullName = combineStrings(
-            originAddress.firstName.orEmpty(),
-            originAddress.lastName.orEmpty()
+            addressInformation.firstName,
+            addressInformation.lastName
         )
         val fullAddress = combineStrings(
-            originAddress.address1.orEmpty(),
-            originAddress.address2.orEmpty()
+            addressInformation.address1,
+            addressInformation.address2
         )
         name = InputValue(fullName)
-        company = InputValue(originAddress.company.orEmpty())
-        country.value = findLocationByCode(originAddress.country, countriesState.value)
+        company = InputValue(addressInformation.company)
+        country.value = findLocationByCode(addressInformation.country.code, countriesState.value)
         address = InputValue(fullAddress)
-        city = InputValue(originAddress.city.orEmpty())
-        selectedState.value = findLocationByCode(originAddress.state.orEmpty(), statesState.value)
-        postalCode = InputValue(originAddress.postcode)
-        email = InputValue(originAddress.email.orEmpty())
-        phone = InputValue(originAddress.phone.orEmpty())
-        isCompanyExpanded.value = originAddress.company.isNotNullOrEmpty()
+        city = InputValue(addressInformation.city)
+        selectedState.value = findLocationByCode(addressInformation.state.codeOrRaw, statesState.value)
+        postalCode = InputValue(addressInformation.postcode)
+        email = InputValue(addressInformation.email)
+        phone = InputValue(addressInformation.phone)
+        isCompanyExpanded.value = addressInformation.company.isNotNullOrEmpty()
     }
 
     private fun findLocationByCode(code: String, state: LocationState): Location {
@@ -267,7 +278,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
             val addressStatus = when {
                 hasIncorrectOrMissingData(address) -> AddressStatus.MISSING_INFO
                 hasOnlyNoAddressChanges(address, currentAddress) -> AddressStatus.SAVE_CHANGES
-                isSameAddress(address, currentAddress) && currentAddress.isVerified -> AddressStatus.VERIFIED
+                isSameAddress(address, currentAddress) && isVerified.value -> AddressStatus.VERIFIED
                 else -> AddressStatus.UNVERIFIED
             }
 
@@ -316,7 +327,7 @@ class WooShippingEditOriginViewModel @Inject constructor(
                     EditAddressError(
                         resourceProvider.getString(R.string.woo_shipping_updating_address_failed)
                     ) {
-                        onUpdateOriginAddress(addressSelection.editableAddress)
+                        onUpdateAddress(addressSelection.editableAddress)
                     }
                 } else {
                     addressValidationState.value = AddressValidationState.NotStarted
@@ -367,25 +378,25 @@ class WooShippingEditOriginViewModel @Inject constructor(
         }
     }
 
-    private fun isSameAddress(newAddress: EditableAddress, currentAddress: OriginShippingAddress): Boolean {
+    private fun isSameAddress(newAddress: EditableAddress, currentAddress: Address): Boolean {
         val originalFullAddress = combineStrings(
-            currentAddress.address1.orEmpty(),
-            currentAddress.address2.orEmpty()
+            currentAddress.address1,
+            currentAddress.address2
         )
 
         val isSameAddress = originalFullAddress == newAddress.address.value
         val isSameCity = currentAddress.city == newAddress.city.value
-        val isSameState = currentAddress.state == newAddress.state.code
-        val isSameCountry = currentAddress.country == newAddress.country.code
+        val isSameState = currentAddress.state.codeOrRaw == newAddress.state.code
+        val isSameCountry = currentAddress.country.code == newAddress.country.code
         val isSamePostalCode = currentAddress.postcode == newAddress.postalCode.value
 
         return isSameAddress && isSameCity && isSameState && isSameCountry && isSamePostalCode
     }
 
-    private fun hasOnlyNoAddressChanges(newAddress: EditableAddress, currentAddress: OriginShippingAddress): Boolean {
+    private fun hasOnlyNoAddressChanges(newAddress: EditableAddress, currentAddress: Address): Boolean {
         val originalFullName = combineStrings(
-            currentAddress.firstName.orEmpty(),
-            currentAddress.lastName.orEmpty()
+            currentAddress.firstName,
+            currentAddress.lastName
         )
         val isDifferentName = newAddress.name.value != originalFullName
         val isDifferentCompany = newAddress.company.value != currentAddress.company
@@ -505,11 +516,13 @@ class WooShippingEditOriginViewModel @Inject constructor(
     fun onUpdateNormalizedOriginAddress(selection: AddressValidationState.AddressSelection) {
         addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
-            updateOriginAddress(selection.selectedAddress, currentAddress.value.id).fold(
+            updateOriginAddress(selection.selectedAddress, addressId).fold(
                 onSuccess = {
-                    fillAddressForm(it)
+                    val address = it.toAddress()
+                    fillAddressForm(address)
                     addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = it
+                    currentAddress.value = address
+                    isVerified.value = it.isVerified
                 },
                 onFailure = {
                     addressValidationState.value = AddressValidationState.NormalizedAddressUpdateFailed(selection)
@@ -518,15 +531,29 @@ class WooShippingEditOriginViewModel @Inject constructor(
         }
     }
 
-    fun onUpdateOriginAddress(editableAddress: EditableAddress) {
+    fun onUpdateAddress(editableAddress: EditableAddress) {
+        when (navArgs.flow) {
+            is EditAddressFlow.EditDestinationAddress -> onUpdateDestinationAddress(editableAddress)
+            is EditAddressFlow.EditOriginAddress -> onUpdateOriginAddress(editableAddress)
+        }
+    }
+
+    @Suppress("UnusedParameter")
+    private fun onUpdateDestinationAddress(editableAddress: EditableAddress) {
+        // To be created
+    }
+
+    private fun onUpdateOriginAddress(editableAddress: EditableAddress) {
         addressValidationState.value = AddressValidationState.UpdatingAddress
         launch {
             val address = editableAddress.toAddress()
-            updateOriginAddress(address, currentAddress.value.id).fold(
+            updateOriginAddress(address, addressId).fold(
                 onSuccess = {
-                    fillAddressForm(it)
+                    val address = it.toAddress()
+                    fillAddressForm(address)
                     addressValidationState.value = AddressValidationState.NotStarted
-                    currentAddress.value = it
+                    currentAddress.value = address
+                    isVerified.value = it.isVerified
                 },
                 onFailure = {
                     addressValidationState.value = AddressValidationState.AddressUpdateFailed(editableAddress)
@@ -567,11 +594,11 @@ class WooShippingEditOriginViewModel @Inject constructor(
 
     data class ShowCountrySelector(
         val countries: List<Location>
-    ) : MultiLiveEvent.Event()
+    ) : Event()
 
     data class ShowStateSelector(
         val states: List<Location>
-    ) : MultiLiveEvent.Event()
+    ) : Event()
 
     companion object {
         private const val DELAY_TIME_MILLIS = 500L
@@ -616,6 +643,22 @@ fun EditableAddress.toAddress(): Address {
     )
 }
 
+fun OriginShippingAddress.toAddress(): Address {
+    return Address(
+        firstName = firstName.orEmpty(),
+        lastName = lastName.orEmpty(),
+        company = company.orEmpty(),
+        address1 = address1.orEmpty(),
+        address2 = address2.orEmpty(),
+        city = city.orEmpty(),
+        state = AmbiguousLocation.Raw(state.orEmpty()),
+        postcode = postcode,
+        country = AmbiguousLocation.Raw(country).asLocation(),
+        email = email.orEmpty(),
+        phone = phone.orEmpty()
+    )
+}
+
 sealed class AddressValidationState {
     data object NotStarted : AddressValidationState()
     data object VerifyingAddress : AddressValidationState()
@@ -637,6 +680,12 @@ sealed class AddressValidationState {
     ) : AddressValidationState()
 }
 
+@Parcelize
+sealed class EditAddressFlow : Parcelable {
+    data class EditOriginAddress(val address: OriginShippingAddress) : EditAddressFlow()
+    data class EditDestinationAddress(val address: DestinationShippingAddress) : EditAddressFlow()
+}
+
 enum class AddressStatus {
     VERIFIED,
     UNVERIFIED,
@@ -652,3 +701,9 @@ data class InputValue(
         val EMPTY = InputValue("")
     }
 }
+
+@Parcelize
+data class DestinationShippingAddress(
+    val address: Address,
+    val isVerified: Boolean
+) : Parcelable

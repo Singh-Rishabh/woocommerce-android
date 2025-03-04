@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.address.origin
+package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,21 +18,18 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.details.editing.address.LocationCode
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressScreen
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel.ShowCountrySelector
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginViewModel.ShowStateSelector
 import com.woocommerce.android.ui.searchfilter.SearchFilterItem
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WooShippingEditOriginAddressFragment : BaseFragment(), BackPressListener {
+class WooShippingEditAddressFragment : BaseFragment(), BackPressListener {
     private companion object {
         const val SELECT_COUNTRY_REQUEST = "select_address_country_request"
         const val SELECT_STATE_REQUEST = "select_address_state_request"
     }
 
-    private val viewModel: WooShippingEditOriginViewModel by viewModels()
+    private val viewModel: WooShippingEditAddressViewModel by viewModels()
 
     override val activityAppBarStatus: AppBarStatus = AppBarStatus.Hidden
 
@@ -58,8 +55,8 @@ class WooShippingEditOriginAddressFragment : BaseFragment(), BackPressListener {
     private fun observeEvents() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is ShowCountrySelector -> showCountrySearchScreen(event.countries)
-                is ShowStateSelector -> showStatesSearchScreen(event.states)
+                is WooShippingEditAddressViewModel.ShowCountrySelector -> showCountrySearchScreen(event.countries)
+                is WooShippingEditAddressViewModel.ShowStateSelector -> showStatesSearchScreen(event.states)
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
             }
         }
@@ -75,7 +72,7 @@ class WooShippingEditOriginAddressFragment : BaseFragment(), BackPressListener {
     }
 
     private fun showCountrySearchScreen(countries: List<Location>) {
-        val action = WooShippingEditOriginAddressFragmentDirections.actionSearchFilterFragment(
+        val action = WooShippingEditAddressFragmentDirections.Companion.actionSearchFilterFragment(
             items = countries.map {
                 SearchFilterItem(
                     name = it.name,
@@ -90,7 +87,7 @@ class WooShippingEditOriginAddressFragment : BaseFragment(), BackPressListener {
     }
 
     private fun showStatesSearchScreen(states: List<Location>) {
-        val action = WooShippingEditOriginAddressFragmentDirections.actionSearchFilterFragment(
+        val action = WooShippingEditAddressFragmentDirections.Companion.actionSearchFilterFragment(
             items = states.map {
                 SearchFilterItem(
                     name = it.name,
