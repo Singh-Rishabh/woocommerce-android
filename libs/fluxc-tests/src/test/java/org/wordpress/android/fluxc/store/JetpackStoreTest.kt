@@ -1,27 +1,26 @@
 package org.wordpress.android.fluxc.store
 
-import org.junit.Before
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.whenever
+import org.junit.Ignore
+import org.mockito.Mockito.mock
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.network.rest.wpapi.jetpack.JetpackWPAPIRestClient
 import org.wordpress.android.fluxc.tools.initCoroutineEngine
+import kotlin.test.Test
 
-@RunWith(MockitoJUnitRunner::class)
+@Suppress("unused")
 class JetpackStoreTest {
-    @Mock private lateinit var jetpackWPAPIRestClient: JetpackWPAPIRestClient
-    @Mock private lateinit var site: SiteModel
-    private lateinit var jetpackStore: JetpackStore
+    private val jetpackWPAPIRestClient: JetpackWPAPIRestClient = mock()
+    private val site: SiteModel = SiteModel()
 
-    @Before
-    fun setUp() {
-        jetpackStore = JetpackStore(
-            jetpackWPAPIRestClient,
-            initCoroutineEngine()
-        )
-        val siteId = 1
-        whenever(site.id).thenReturn(siteId)
+    private val jetpackStore: JetpackStore = JetpackStore(
+        jetpackWPAPIRestClient,
+        initCoroutineEngine()
+    )
+
+    @Test
+    @Ignore("Empty test to keep JUnit happy, we'll add real tests later")
+    @Suppress("EmptyFunctionBlock")
+    fun `empty test to keep JUnit happy`() {
+
     }
 }
