@@ -41,7 +41,7 @@ class JetpackActivationRepository @Inject constructor(
     suspend fun connectJetpackAccount(
         site: SiteModel,
         jetpackConnectionStatus: JetpackConnectionStatus.AccountNotConnected,
-        useApplicationPasswords: Boolean = false
+        useApplicationPasswords: Boolean
     ): Result<Unit> {
         suspend fun registerSite(): Result<Long> {
             return jetpackStore.registerSite(site, useApplicationPasswords).let {
@@ -75,7 +75,7 @@ class JetpackActivationRepository @Inject constructor(
 
             JetpackSiteRegistrationStatus.REGISTERED -> {
                 requireNotNull(jetpackConnectionStatus.blogId) {
-                    "Invalid Jetpack Connection Status, $jetpackConnectionStatus"
+                    "Invalid Jetpack Connection Status: site registered but blogId is missing $jetpackConnectionStatus"
                 }
             }
 
