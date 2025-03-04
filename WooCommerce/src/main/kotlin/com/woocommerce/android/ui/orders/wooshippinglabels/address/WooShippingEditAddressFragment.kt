@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleResult
+import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.model.Location
 import com.woocommerce.android.ui.base.BaseFragment
@@ -24,9 +25,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class WooShippingEditAddressFragment : BaseFragment(), BackPressListener {
-    private companion object {
-        const val SELECT_COUNTRY_REQUEST = "select_address_country_request"
-        const val SELECT_STATE_REQUEST = "select_address_state_request"
+    companion object {
+        private const val SELECT_COUNTRY_REQUEST = "select_address_country_request"
+        private const val SELECT_STATE_REQUEST = "select_address_state_request"
+        const val DESTINATION_ADDRESS_UPDATE_RESULT = "destination_address_update_result"
     }
 
     private val viewModel: WooShippingEditAddressViewModel by viewModels()
@@ -58,6 +60,10 @@ class WooShippingEditAddressFragment : BaseFragment(), BackPressListener {
                 is WooShippingEditAddressViewModel.ShowCountrySelector -> showCountrySearchScreen(event.countries)
                 is WooShippingEditAddressViewModel.ShowStateSelector -> showStatesSearchScreen(event.states)
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
+                is MultiLiveEvent.Event.ExitWithResult<*> -> navigateBackWithResult(
+                    key = DESTINATION_ADDRESS_UPDATE_RESULT,
+                    result = event.data
+                )
             }
         }
     }
@@ -101,5 +107,5 @@ class WooShippingEditAddressFragment : BaseFragment(), BackPressListener {
         findNavController().navigateSafely(action)
     }
 
-    override fun onRequestAllowBackPress(): Boolean = viewModel.allowBackNavigation()
+    override fun onRequestAllowBackPress(): Boolean = viewModel.handleBackPress()
 }

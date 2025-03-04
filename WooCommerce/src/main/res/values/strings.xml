@@ -4501,6 +4501,7 @@
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
 
     <string name="woo_shipping_edit_origin_address_title">Edit Origin</string>
+    <string name="woo_shipping_edit_destination_address_title">Edit Destination</string>
     <string name="woo_shipping_label_name">Name</string>
     <string name="woo_shipping_label_company">Company</string>
     <string name="woo_shipping_label_country">Country</string>

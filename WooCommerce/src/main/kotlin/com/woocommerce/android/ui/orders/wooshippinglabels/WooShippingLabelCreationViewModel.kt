@@ -20,6 +20,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
@@ -156,7 +157,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     orderId = navArgs.orderId,
                     packageSelected = selectedPackage,
                     shipFrom = addresses.shipFrom,
-                    shipTo = addresses.shipTo,
+                    shipTo = addresses.shipTo.address,
                     weight = packageWeight.totalWeight,
                     currencyCode = order.value.currency
                 )
@@ -249,7 +250,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 WooShippingAddresses(
                     shipFrom = selectedOriginAddress,
                     originAddresses = originAddresses,
-                    shipTo = order.shippingAddress
+                    shipTo = DestinationShippingAddress(order.shippingAddress, false)
                 )
             } else {
                 null
@@ -343,9 +344,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartOriginAddressEdit(address))
     }
 
-    fun onShippingToAddressChange(address: Address) {
+    fun onEditDestinationAddress(destinationAddress: DestinationShippingAddress) {
+        triggerEvent(
+            StartDestinationAddressEdit(
+                destinationAddress = destinationAddress,
+                orderId = navArgs.orderId
+            )
+        )
+    }
+
+    fun onUpdateDestinationAddress(destinationAddress: DestinationShippingAddress) {
         shippingAddresses.value?.let {
-            shippingAddresses.value = it.copy(shipTo = address)
+            shippingAddresses.value = it.copy(shipTo = destinationAddress)
         }
     }
 
@@ -417,7 +427,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 orderId,
                 shippableItemsIdList,
                 selectedPackage,
-                addresses.shipTo,
+                addresses.shipTo.address,
                 addresses.shipFrom,
                 shippingRate,
                 weight,
@@ -532,6 +542,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
     data class StartCustomsFormEdit(val shippableItems: List<ShippableItemModel>) : Event()
+    data class StartDestinationAddressEdit(
+        val destinationAddress: DestinationShippingAddress,
+        val orderId: Long
+    ) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
@@ -620,13 +634,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 @Parcelize
 data class WooShippingAddresses(
     val shipFrom: OriginShippingAddress,
-    val shipTo: Address,
+    val shipTo: DestinationShippingAddress,
     val originAddresses: List<OriginShippingAddress>
 ) : Parcelable {
     companion object {
         val EMPTY = WooShippingAddresses(
             shipFrom = OriginShippingAddress.EMPTY,
-            shipTo = Address.EMPTY,
+            shipTo = DestinationShippingAddress.EMPTY,
             originAddresses = emptyList()
         )
     }
