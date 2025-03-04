@@ -299,9 +299,10 @@ private fun LabelCreationScreenWithBottomSheet(
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
 
     val bottomSheetPeekHeight = when {
-        isPurchaseButtonDisplayed || uiState.addressNotification != null -> 132.dp
-        else -> 76.dp
-    }
+        isPurchaseButtonDisplayed || uiState.addressNotification != null -> 128.dp
+        else -> 72.dp
+    } * LocalConfiguration.current.fontScale
+
     val paddingBottom = when {
         isPurchaseButtonDisplayed -> 72.dp
         else -> 0.dp

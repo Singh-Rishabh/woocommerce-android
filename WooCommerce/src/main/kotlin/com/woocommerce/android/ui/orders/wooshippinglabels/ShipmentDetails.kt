@@ -125,7 +125,7 @@ fun ShipmentDetails(
                         text = stringResource(R.string.shipping_label_shipment_details_title),
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
-                            .padding(top = dimensionResource(R.dimen.minor_100))
+                            .padding(top = dimensionResource(R.dimen.minor_100) * LocalConfiguration.current.fontScale)
                     )
 
                     ShippingAddressNotification(
@@ -145,7 +145,11 @@ fun ShipmentDetails(
                         }
                     )
 
-                    Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
+                    Spacer(
+                        modifier = Modifier.size(
+                            dimensionResource(R.dimen.major_200) * LocalConfiguration.current.fontScale
+                        )
+                    )
                 }
             }
         }
