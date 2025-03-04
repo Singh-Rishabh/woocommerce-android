@@ -497,7 +497,7 @@ class JetpackActivationMainViewModel @Inject constructor(
 
     private suspend fun startJetpackValidation() {
         WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: start Jetpack Connection validation")
-        jetpackActivationRepository.fetchJetpackConnectedEmail(site.await()).fold(
+        jetpackActivationRepository.fetchJetpackConnectedEmail(site.await(), useApplicationPasswords).fold(
             onSuccess = { email ->
                 jetpackConnectedEmail = email
                 if (accountRepository.getUserAccount()?.email != email) {

@@ -21,8 +21,8 @@ class JetpackStore @Inject constructor(
 ) {
     suspend fun fetchJetpackConnectionUrl(
         site: SiteModel,
-        autoRegisterSiteIfNeeded: Boolean = false,
-        useApplicationPasswords: Boolean = false
+        useApplicationPasswords: Boolean,
+        autoRegisterSiteIfNeeded: Boolean,
     ): JetpackResult<String> {
         if (site.isUsingWpComRestApi) error("This function supports only self-hosted site using WPAPI")
         return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackConnectionUrl") {
@@ -58,7 +58,7 @@ class JetpackStore @Inject constructor(
 
     suspend fun fetchJetpackUser(
         site: SiteModel,
-        useApplicationPasswords: Boolean = false
+        useApplicationPasswords: Boolean
     ): JetpackResult<JetpackUser> {
         if (site.isUsingWpComRestApi) error("This function is not implemented yet for Jetpack tunnel")
         return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackUser") {

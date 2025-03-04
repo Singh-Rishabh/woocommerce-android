@@ -30,7 +30,11 @@ class AccountMismatchRepository @Inject constructor(
 
     suspend fun fetchJetpackConnectionUrl(site: SiteModel): Result<String> {
         WooLog.d(WooLog.T.LOGIN, "Fetching Jetpack Connection URL")
-        val result = jetpackStore.fetchJetpackConnectionUrl(site, autoRegisterSiteIfNeeded = true)
+        val result = jetpackStore.fetchJetpackConnectionUrl(
+            site,
+            useApplicationPasswords = false,
+            autoRegisterSiteIfNeeded = true
+        )
         return when {
             result.isError -> {
                 WooLog.w(WooLog.T.LOGIN, "Fetching Jetpack Connection URL failed: ${result.error.message}")
@@ -94,7 +98,7 @@ class AccountMismatchRepository @Inject constructor(
     }
 
     private suspend fun fetchJetpackUser(site: SiteModel): Result<JetpackUser?> {
-        return jetpackStore.fetchJetpackUser(site).let {
+        return jetpackStore.fetchJetpackUser(site, useApplicationPasswords = false).let {
             if (it.isError) {
                 Result.failure(OnChangedException(it.error, it.error.message))
             } else {

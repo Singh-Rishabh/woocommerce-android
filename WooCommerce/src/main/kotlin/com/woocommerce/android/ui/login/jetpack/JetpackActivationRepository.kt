@@ -38,11 +38,11 @@ class JetpackActivationRepository @Inject constructor(
 
     suspend fun fetchJetpackConnectionUrl(
         site: SiteModel,
-        useApplicationPasswords: Boolean = false
+        useApplicationPasswords: Boolean
     ): Result<String> = runWithRetry {
         WooLog.d(WooLog.T.LOGIN, "Fetching Jetpack Connection URL")
         val result = jetpackStore.fetchJetpackConnectionUrl(
-            site,
+            site = site,
             autoRegisterSiteIfNeeded = true,
             useApplicationPasswords = useApplicationPasswords
         )
@@ -64,9 +64,12 @@ class JetpackActivationRepository @Inject constructor(
         }
     }
 
-    suspend fun fetchJetpackConnectedEmail(site: SiteModel): Result<String> = runWithRetry {
+    suspend fun fetchJetpackConnectedEmail(
+        site: SiteModel,
+        useApplicationPasswords: Boolean
+    ): Result<String> = runWithRetry {
         WooLog.d(WooLog.T.LOGIN, "Fetching email of Jetpack User")
-        val result = jetpackStore.fetchJetpackUser(site)
+        val result = jetpackStore.fetchJetpackUser(site = site, useApplicationPasswords = useApplicationPasswords)
         return@runWithRetry when {
             result.isError -> {
                 WooLog.w(WooLog.T.LOGIN, "Fetching Jetpack User failed error: $result.error.message")
