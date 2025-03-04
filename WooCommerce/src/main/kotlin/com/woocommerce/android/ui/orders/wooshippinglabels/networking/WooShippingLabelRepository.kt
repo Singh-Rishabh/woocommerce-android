@@ -172,7 +172,7 @@ class WooShippingLabelRepository @Inject constructor(
         val updatedAddress = restClient.updateDestinationAddress(
             site = site,
             orderId = orderId,
-            address = mapper.toAddressDTO(address, null)
+            address = mapper.toAddressDTO(address)
         )
 
         return if (updatedAddress.result?.success == true) {
