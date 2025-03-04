@@ -15,9 +15,6 @@ updates:
       - dependency-name: "com.github.tomakehurst:wiremock"
       # Our libraries that are stored in S3 have a custom versioning scheme which doesn't work with Dependabot.
       - dependency-name: "org.wordpress:utils"
-      - dependency-name: "org.wordpress:fluxc"
-      - dependency-name: "org.wordpress.fluxc.plugins:woocommerce"
-      - dependency-name: "org.wordpress:login"
       - dependency-name: "com.automattic:Automattic-Tracks-Android"
       - dependency-name: "com.automattic.tracks:experimentation"
       # Assertj is a java first library only used for testing. It has caused troubles several times due to library
