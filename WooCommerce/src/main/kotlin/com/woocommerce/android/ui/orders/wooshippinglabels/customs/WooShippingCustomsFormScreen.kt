@@ -222,6 +222,7 @@ fun PreviewWooShippingCustomsFormScreen() {
             shouldDisplayRestrictionTypeInput = false,
             shippingProducts = listOf(
                 WooShippingCustomsProductUIModel(
+                    productId = 0,
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Data("Product Description"),
                     tariffNumber = InputValue.Data("123456"),
@@ -232,6 +233,7 @@ fun PreviewWooShippingCustomsFormScreen() {
                     isExpanded = false
                 ),
                 WooShippingCustomsProductUIModel(
+                    productId = 0,
                     name = "Little Nap Brazil 250g",
                     description = InputValue.Data("Product Description"),
                     tariffNumber = InputValue.Data("123456"),

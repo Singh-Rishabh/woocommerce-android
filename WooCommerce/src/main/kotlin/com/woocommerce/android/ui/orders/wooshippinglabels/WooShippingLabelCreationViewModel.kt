@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
@@ -21,6 +22,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -46,6 +48,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
@@ -81,6 +87,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
 
     private val packageSelected = MutableStateFlow<PackageData?>(null)
+    private val customsFormData = MutableStateFlow<CustomsData?>(null)
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
@@ -255,13 +262,33 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private suspend fun observeCustomsDataChanges() {
         combine(
             shippingAddresses,
+            customsFormData,
             customsState
-        ) { addresses, _ ->
+        ) { addresses, customsData, _ ->
             when {
+                customsData != null -> CustomsState.DataAvailable(customsData)
                 addresses != null && shouldRequireCustoms(addresses) -> Unavailable
                 else -> NotRequired
             }
-        }.collectLatest { customsState.value = it }
+        }.onEach {
+            customsState.value = it
+        }.launchIn(viewModelScope)
+
+        combine(
+            packageSelected.filterNotNull(),
+            customsState.filter { it is CustomsState.DataAvailable }
+        ) { packageSelected, customState ->
+            val customData = customState
+                .run { this as? CustomsState.DataAvailable }
+                ?.customsData?.copy(
+                    packageId = packageSelected.id,
+                    packageName = packageSelected.name
+                )
+
+            packageSelected.copy(customsData = customData)
+        }.onEach {
+            packageSelected.value = it
+        }.launchIn(viewModelScope)
     }
 
     private suspend fun getShippingAddresses() {
@@ -517,12 +544,17 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         packageSelected.value = packageData
     }
 
+    fun onCustomsDataAvailable(customsData: CustomsData) {
+        customsFormData.value = customsData
+    }
+
     fun onCustomWeightChange(input: String) {
         customWeight = input
     }
 
     fun onEditCustomsClick() {
-        triggerEvent(StartCustomsFormEdit(shippableItems.value))
+        val event = StartCustomsFormEdit(shippableItems.value, customsFormData.value)
+        triggerEvent(event)
     }
 
     fun allowBackNavigation(): Boolean {
@@ -568,10 +600,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
-    data class StartCustomsFormEdit(val shippableItems: List<ShippableItemModel>) : Event()
     data class StartDestinationAddressEdit(
         val destinationAddress: DestinationShippingAddress,
         val orderId: Long
+    ) : Event()
+    data class StartCustomsFormEdit(
+        val shippableItems: List<ShippableItemModel>,
+        val customData: CustomsData?
     ) : Event()
 
     sealed class WooShippingViewState {
@@ -651,6 +686,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     sealed class CustomsState {
         data object NotRequired : CustomsState()
         data object Unavailable : CustomsState()
+        data class DataAvailable(val customsData: CustomsData) : CustomsState()
     }
 
     companion object {

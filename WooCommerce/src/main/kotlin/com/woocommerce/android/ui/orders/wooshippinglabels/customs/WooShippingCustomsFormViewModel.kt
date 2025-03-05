@@ -50,8 +50,12 @@ class WooShippingCustomsFormViewModel @Inject constructor(
 
     init {
         launch { loadCountries() }
-        val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
-        _viewState.update { it.copy(shippingProducts = shippableProducts) }
+        navArgs.customsData?.let { customData ->
+            loadViewStateFromExistentCustomData(customData)
+        } ?: run {
+            val shippableProducts = navArgs.shippableItems.map { item -> item.toProductUIModel() }
+            _viewState.update { it.copy(shippingProducts = shippableProducts) }
+        }
         observeShippableItemsChanges()
     }
 
@@ -62,6 +66,32 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             .onEach { (products, itnValue) ->
                 onITNChanged(itnValue.currentInput, products.isITNRequired)
             }.launchIn(viewModelScope)
+    }
+
+    private fun loadViewStateFromExistentCustomData(customData: CustomsData) {
+        _viewState.update {
+            it.copy(
+                contentType = customData.contentType,
+                otherContentInput = InputValue.Data(customData.contentDescription),
+                restrictionType = customData.restrictionType,
+                otherRestrictionInput = InputValue.Data(customData.restrictionDescription),
+                itnValue = InputValue.Data(customData.itn),
+                returnToSenderChecked = customData.noDeliveryOption,
+                shippingProducts = customData.items.map { item ->
+                    WooShippingCustomsProductUIModel(
+                        productId = item.productID,
+                        name = item.description,
+                        description = InputValue.Data(item.description),
+                        tariffNumber = InputValue.Data(item.hsTariffNumber),
+                        valuePerUnit = InputValue.Data(item.value.toString()),
+                        weightPerUnit = InputValue.Data(item.weight.toString()),
+                        originCountry = item.originCountry,
+                        quantity = item.quantity,
+                        isExpanded = false
+                    )
+                }
+            )
+        }
     }
 
     fun onContentTypeClick() {
@@ -218,7 +248,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     fun onAddCustomsDataClick() {
-        triggerEvent(FinishCustomsForm)
+        _viewState.value.asCustomData.let { triggerEvent(FinishCustomsForm(it)) }
     }
 
     private fun updateShippingProductsAt(
@@ -243,6 +273,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     private fun ShippableItemModel.toProductUIModel() = WooShippingCustomsProductUIModel(
+        productId = productId,
         name = title,
         description = "".asInputValueError,
         tariffNumber = "".asInputValueError,
@@ -292,6 +323,19 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 (contentType != ContentType.OTHER || otherContentInput is InputValue.Data) &&
                 (restrictionType != RestrictionType.OTHER || otherRestrictionInput is InputValue.Data) &&
                 shippingProducts.all { it.isValid }
+
+        val asCustomData: CustomsData
+            get() = CustomsData(
+                packageId = "",
+                packageName = "",
+                contentType = contentType,
+                contentDescription = otherContentInput.currentInput,
+                restrictionType = restrictionType,
+                restrictionDescription = otherRestrictionInput.currentInput,
+                itn = itnValue.currentInput,
+                noDeliveryOption = returnToSenderChecked,
+                items = shippingProducts.map { it.asCustomItem }
+            )
     }
 
     @Parcelize
@@ -334,7 +378,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     data class ShowContentTypeDialog(val currentSelection: ContentType) : MultiLiveEvent.Event()
     data class ShowRestrictionTypeDialog(val currentSelection: RestrictionType) : MultiLiveEvent.Event()
     data class ShowCountrySelector(val countries: List<Location>) : MultiLiveEvent.Event()
-    object FinishCustomsForm : MultiLiveEvent.Event()
+    data class FinishCustomsForm(val customData: CustomsData) : MultiLiveEvent.Event()
 
     companion object {
         /**

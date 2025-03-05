@@ -75,7 +75,8 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
 
         viewModel = WooShippingCustomsFormViewModel(
             savedState = WooShippingCustomsFormFragmentArgs(
-                shippableItems = arrayOf(testProduct, expensiveProduct)
+                shippableItems = arrayOf(testProduct, expensiveProduct),
+                customsData = null
             ).toSavedStateHandle(),
             getAcceptedOriginCountries = getAcceptedOriginCountries
         )

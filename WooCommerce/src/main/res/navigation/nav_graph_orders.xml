@@ -755,6 +755,11 @@
             android:name="shippableItems"
             app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel[]" />
 
+        <argument
+            android:name="customsData"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData"
+            app:nullable="true"/>
+
         <action
             android:id="@+id/action_wooShippingLabelCustomsFormFragment_to_itemSelectorDialog"
             app:destination="@id/itemSelectorDialog" />
