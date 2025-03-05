@@ -11,10 +11,6 @@ data class JetpackStatus(
     val isCurrentUserConnected: Boolean
         get() = jetpackConnectionStatus is JetpackConnectionStatus.AccountConnected
 
-    // TODO: remove these properties later
-    val wpComEmail: String?
-        get() = (jetpackConnectionStatus as? JetpackConnectionStatus.AccountConnected)?.wpComEmail
-
     companion object {
         // TODO: remove this function later
         operator fun invoke(
