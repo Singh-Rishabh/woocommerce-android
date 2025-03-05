@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -54,7 +54,12 @@ fun WooShippingCustomsFormScreen(viewModel: WooShippingCustomsFormViewModel) {
         onOtherContentDetailsInputChanged = viewModel::onOtherContentInputChanged,
         onOtherRestrictionDetailsInputChanged = viewModel::onRestrictionDetailsInputChanged,
         onReturnToSenderChanged = viewModel::onReturnToSenderChanged,
-        onProductExpanded = viewModel::onProductExpanded,
+        onProductExpanded = viewModel::onShippableProductExpanded,
+        onDescriptionChanged = viewModel::onShippableProductDescriptionChanged,
+        onTariffChanged = viewModel::onShippableProductTariffNumberChanged,
+        onValuePerUnitChanged = viewModel::onShippableProductValuePerUnitChanged,
+        onWeightPerUnitChanged = viewModel::onShippableProductWeightPerUnitChanged,
+        onCountrySelectorClick = viewModel::onCountrySelectorClick,
         onAddCustomsDataClick = viewModel::onAddCustomsDataClick
     )
 }
@@ -78,7 +83,12 @@ fun WooShippingCustomsFormScreen(
     onReturnToSenderChanged: (Boolean) -> Unit,
     onOtherContentDetailsInputChanged: (String) -> Unit,
     onOtherRestrictionDetailsInputChanged: (String) -> Unit,
-    onProductExpanded: (WooShippingCustomsProductUIModel, Boolean) -> Unit,
+    onProductExpanded: (position: Int, isExpanded: Boolean) -> Unit,
+    onDescriptionChanged: (position: Int, description: String) -> Unit,
+    onTariffChanged: (position: Int, tariff: String) -> Unit,
+    onValuePerUnitChanged: (position: Int, valuePerUnit: String) -> Unit,
+    onWeightPerUnitChanged: (position: Int, weightPerUnit: String) -> Unit,
+    onCountrySelectorClick: (position: Int) -> Unit,
     onAddCustomsDataClick: () -> Unit
 
 ) {
@@ -174,21 +184,25 @@ fun WooShippingCustomsFormScreen(
                 style = MaterialTheme.typography.titleMedium,
             )
 
-            shippingProducts.forEach { product ->
+            shippingProducts.forEachIndexed { index, product ->
                 WooShippingCustomsProductListItem(
                     modifier = modifier.fillMaxWidth(),
                     itemData = product,
-                    onExpand = { onProductExpanded(product, it) }
+                    onExpand = { onProductExpanded(index, it) },
+                    onDescriptionChanged = { onDescriptionChanged(index, it) },
+                    onTariffChanged = { onTariffChanged(index, it) },
+                    onValuePerUnitChanged = { onValuePerUnitChanged(index, it) },
+                    onWeightPerUnitChanged = { onWeightPerUnitChanged(index, it) },
+                    onCountrySelectorClick = { onCountrySelectorClick(index) }
                 )
             }
         }
-        Button(
+        WCColoredButton(
             modifier = modifier.fillMaxWidth(),
             enabled = isAddCustomsButtonEnabled,
-            onClick = onAddCustomsDataClick
-        ) {
-            Text(stringResource(id = R.string.woo_shipping_labels_customs_add_missing_information))
-        }
+            onClick = onAddCustomsDataClick,
+            text = stringResource(id = R.string.woo_shipping_labels_customs_add_missing_information)
+        )
     }
 }
 
@@ -214,6 +228,7 @@ fun PreviewWooShippingCustomsFormScreen() {
                     valuePerUnit = InputValue.Data("10.00"),
                     weightPerUnit = InputValue.Data("1.00"),
                     originCountry = "US",
+                    quantity = 1F,
                     isExpanded = false
                 ),
                 WooShippingCustomsProductUIModel(
@@ -223,6 +238,7 @@ fun PreviewWooShippingCustomsFormScreen() {
                     valuePerUnit = InputValue.Data("10.00"),
                     weightPerUnit = InputValue.Data("1.00"),
                     originCountry = "US",
+                    quantity = 1F,
                     isExpanded = true
                 )
             ),
@@ -233,7 +249,12 @@ fun PreviewWooShippingCustomsFormScreen() {
             onOtherContentDetailsInputChanged = {},
             onOtherRestrictionDetailsInputChanged = {},
             onProductExpanded = { _, _ -> },
-            onAddCustomsDataClick = {}
+            onAddCustomsDataClick = {},
+            onDescriptionChanged = { _, _ -> },
+            onTariffChanged = { _, _ -> },
+            onValuePerUnitChanged = { _, _ -> },
+            onWeightPerUnitChanged = { _, _ -> },
+            onCountrySelectorClick = { }
         )
     }
 }

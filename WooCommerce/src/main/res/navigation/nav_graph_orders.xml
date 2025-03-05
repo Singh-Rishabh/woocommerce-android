@@ -758,5 +758,9 @@
         <action
             android:id="@+id/action_wooShippingLabelCustomsFormFragment_to_itemSelectorDialog"
             app:destination="@id/itemSelectorDialog" />
+
+        <action
+            android:id="@+id/action_search_filter_fragment"
+            app:destination="@id/searchFilterFragment" />
     </fragment>
 </navigation>
