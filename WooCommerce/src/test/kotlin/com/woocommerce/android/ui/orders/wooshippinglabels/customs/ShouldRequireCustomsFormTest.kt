@@ -99,4 +99,17 @@ class ShouldRequireCustomsFormTest {
         )
         assertFalse(shouldRequireCustomsForm(addressData))
     }
+
+    @Test
+    fun `should return false for empty destination addresses`() {
+        val addressData = WooShippingAddresses(
+            shipFrom = OriginShippingAddress.EMPTY.copy(country = "US", state = "CA"),
+            shipTo = DestinationShippingAddress(
+                Address.EMPTY,
+                false
+            ),
+            originAddresses = emptyList()
+        )
+        assertFalse(shouldRequireCustomsForm(addressData))
+    }
 }
