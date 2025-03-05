@@ -21,7 +21,12 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
@@ -69,12 +74,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
-    private val shouldRequireCustoms: ShouldRequireCustomsForm
+    private val shouldRequireCustoms: ShouldRequireCustomsForm,
+    private val verifyDestinationAddress: VerifyDestinationAddress
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order>(emptyOrder)
+    private val destinationAddress = MutableStateFlow<DestinationShippingAddress>(DestinationShippingAddress.EMPTY)
     private val shippingAddresses = MutableStateFlow<WooShippingAddresses?>(WooShippingAddresses.EMPTY)
     private val loadTrigger = MutableSharedFlow<Unit>()
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
@@ -118,6 +125,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     init {
         launch { observeShippingLabelInformation() }
         launch { getStoreOptions() }
+        launch { getDestinationAddress() }
         launch { getShippingAddresses() }
         launch { getOrderInformation() }
         launch { observePackageWeight() }
@@ -136,10 +144,26 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
-    private fun getStoreOptions() {
-        launch {
-            observeStoreOptions().collectLatest { options ->
-                storeOptions.value = options
+    private suspend fun getStoreOptions() {
+        observeStoreOptions().collectLatest { options ->
+            storeOptions.value = options
+        }
+    }
+
+    private suspend fun getDestinationAddress() {
+        order.drop(1).collectLatest { order ->
+            val defaultDestination = DestinationShippingAddress(
+                address = order.shippingAddress.copy(email = order.billingAddress.email),
+                isVerified = false
+            )
+
+            destinationAddress.value = defaultDestination
+
+            if (order.shippingAddress != Address.EMPTY) {
+                verifyDestinationAddress(order.id).fold(
+                    onSuccess = { destinationAddress.value = it },
+                    onFailure = { }
+                )
             }
         }
     }
@@ -163,7 +187,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     orderId = navArgs.orderId,
                     packageSelected = selectedPackage,
                     shipFrom = addresses.shipFrom,
-                    shipTo = addresses.shipTo,
+                    shipTo = addresses.shipTo.address,
                     weight = packageWeight.totalWeight,
                     currencyCode = order.value.currency
                 )
@@ -270,13 +294,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun getShippingAddresses() {
-        combine(order, observeOriginAddresses()) { order, originAddresses ->
+        combine(destinationAddress, observeOriginAddresses()) { destination, originAddresses ->
             if (!originAddresses.isNullOrEmpty()) {
                 val selectedOriginAddress = getSelectedOriginAddress(originAddresses)
                 WooShippingAddresses(
                     shipFrom = selectedOriginAddress,
                     originAddresses = originAddresses,
-                    shipTo = order.shippingAddress
+                    shipTo = destination
                 )
             } else {
                 null
@@ -327,6 +351,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             }
 
             val items = getShippableItems(order)
+
+            val destinationStatus = when {
+                addresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
+                addresses.shipTo.isVerified -> AddressStatus.VERIFIED
+                else -> AddressStatus.UNVERIFIED
+            }
+
             shippableItems.value = items
 
             val shippableItemsUI = items.map { item -> item.toUIModel(currencyFormatter, storeOptions) }
@@ -347,7 +378,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 packageSelection = packageSelection,
                 uiState = uiState,
                 purchaseState = purchaseState,
-                customsState = customsState
+                customsState = customsState,
+                destinationStatus = destinationStatus
             )
         }.collectLatest {
             viewState.value = it
@@ -370,10 +402,17 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartOriginAddressEdit(address))
     }
 
-    fun onShippingToAddressChange(address: Address) {
-        shippingAddresses.value?.let {
-            shippingAddresses.value = it.copy(shipTo = address)
-        }
+    fun onEditDestinationAddress(destinationAddress: DestinationShippingAddress) {
+        triggerEvent(
+            StartDestinationAddressEdit(
+                destinationAddress = destinationAddress,
+                orderId = navArgs.orderId
+            )
+        )
+    }
+
+    fun onUpdateDestinationAddress(updatedDestinationAddress: DestinationShippingAddress) {
+        destinationAddress.value = updatedDestinationAddress
     }
 
     fun onRefreshShippingRates() {
@@ -444,7 +483,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 orderId,
                 shippableItemsIdList,
                 selectedPackage,
-                addresses.shipTo,
+                addresses.shipTo.address,
                 addresses.shipFrom,
                 shippingRate,
                 weight,
@@ -563,6 +602,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
+    data class StartCustomsFormEdit(val shippableItems: List<ShippableItemModel>) : Event()
+    data class StartDestinationAddressEdit(
+        val destinationAddress: DestinationShippingAddress,
+        val orderId: Long
+    ) : Event()
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
         val customData: CustomsData?
@@ -579,7 +623,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val packageSelection: PackageSelectionState,
             val uiState: UIControlsState,
             val purchaseState: PurchaseState,
-            val customsState: CustomsState
+            val customsState: CustomsState,
+            val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
 
@@ -656,13 +701,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 @Parcelize
 data class WooShippingAddresses(
     val shipFrom: OriginShippingAddress,
-    val shipTo: Address,
+    val shipTo: DestinationShippingAddress,
     val originAddresses: List<OriginShippingAddress>
 ) : Parcelable {
     companion object {
         val EMPTY = WooShippingAddresses(
             shipFrom = OriginShippingAddress.EMPTY,
-            shipTo = Address.EMPTY,
+            shipTo = DestinationShippingAddress.EMPTY,
             originAddresses = emptyList()
         )
     }

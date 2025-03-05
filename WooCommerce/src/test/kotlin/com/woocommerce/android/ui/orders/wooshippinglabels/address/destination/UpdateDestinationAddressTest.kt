@@ -1,9 +1,8 @@
-package com.woocommerce.android.ui.orders.wooshippinglabels.address.origin
+package com.woocommerce.android.ui.orders.wooshippinglabels.address.destination
 
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.NormalizeAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,32 +18,29 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooErrorType.GENERIC_ER
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooResult
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class NormalizeAddressTest : BaseUnitTest() {
-
+class UpdateDestinationAddressTest : BaseUnitTest() {
     private val repository: WooShippingLabelRepository = mock()
     private val site: SelectedSite = mock()
 
-    private val sut = NormalizeAddress(repository, site)
+    private val sut = UpdateDestinationAddress(repository, site, coroutinesTestRule.testDispatchers)
+
     private val defaultAddress = Address.EMPTY
-    private val defaultNormalizeAddressResponse = AddressNormalizationModel(
-        address = Address.EMPTY.copy(postcode = "1001"),
-        normalizedAddress = Address.EMPTY.copy(postcode = "1001-900"),
-        isTrivial = false
-    )
+    private val defaultOrderId = 2L
+    private val defaultAddressResponse = DestinationShippingAddress.EMPTY
 
     @Test
     fun `when selected site is null then return failure`() = testBlocking {
-        val result = sut.invoke(defaultAddress)
-
+        val result = sut.invoke(defaultAddress, defaultOrderId)
         assert(result.isFailure)
     }
 
     @Test
     fun `when normalize address fails then return failure`() = testBlocking {
         whenever(site.getOrNull()).thenReturn(SiteModel())
-        whenever(repository.normalizeAddress(any(), any())).thenReturn(WooResult(WooError(GENERIC_ERROR, UNKNOWN)))
+        whenever(repository.updateDestinationAddress(any(), any(), any()))
+            .thenReturn(WooResult(WooError(GENERIC_ERROR, UNKNOWN)))
 
-        val result = sut.invoke(defaultAddress)
+        val result = sut.invoke(defaultAddress, defaultOrderId)
 
         assert(result.isFailure)
     }
@@ -52,11 +48,12 @@ class NormalizeAddressTest : BaseUnitTest() {
     @Test
     fun `when normalize address succeed then return expected data`() = testBlocking {
         whenever(site.getOrNull()).thenReturn(SiteModel())
-        whenever(repository.normalizeAddress(any(), any())).thenReturn(WooResult(defaultNormalizeAddressResponse))
+        whenever(repository.updateDestinationAddress(any(), any(), any()))
+            .thenReturn(WooResult(defaultAddressResponse))
 
-        val result = sut.invoke(defaultAddress)
+        val result = sut.invoke(defaultAddress, defaultOrderId)
 
         assert(result.isSuccess)
-        assertThat(result.getOrNull()).isEqualTo(defaultNormalizeAddressResponse)
+        assertThat(result.getOrNull()).isEqualTo(defaultAddressResponse)
     }
 }
