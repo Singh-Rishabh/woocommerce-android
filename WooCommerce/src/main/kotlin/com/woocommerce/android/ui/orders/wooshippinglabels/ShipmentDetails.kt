@@ -66,10 +66,6 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.errorColor
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.errorSurface
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successSurface
 import com.woocommerce.android.util.StringUtils
 import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
@@ -587,15 +583,15 @@ private fun ShippingAddressNotification(
             }
 
             val color = if (addressNotification.isSuccess) {
-                MaterialTheme.colors.successColor
+                colorResource(id = R.color.woo_shipping_label_success)
             } else {
-                MaterialTheme.colors.errorColor
+                colorResource(id = R.color.woo_shipping_label_error)
             }
 
             val backgroundColor = if (addressNotification.isSuccess) {
-                MaterialTheme.colors.successSurface
+                colorResource(id = R.color.woo_shipping_label_success_surface)
             } else {
-                MaterialTheme.colors.errorSurface
+                colorResource(id = R.color.woo_shipping_label_error_surface)
             }
 
             val icon = if (addressNotification.isSuccess) {
