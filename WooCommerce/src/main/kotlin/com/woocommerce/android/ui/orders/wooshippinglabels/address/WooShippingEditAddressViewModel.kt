@@ -804,6 +804,7 @@ sealed class EditAddressFlow : Parcelable {
 enum class AddressStatus {
     VERIFIED,
     UNVERIFIED,
+    MISSING_ADDRESS,
     MISSING_INFO,
     SAVE_CHANGES
 }
