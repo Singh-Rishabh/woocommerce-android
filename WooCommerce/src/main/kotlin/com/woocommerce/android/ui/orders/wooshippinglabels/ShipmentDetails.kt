@@ -628,7 +628,7 @@ private fun ShippingAddressNotification(
                     modifier = Modifier.padding(end = 8.dp)
                 )
                 Text(
-                    text = addressNotification.message,
+                    text = stringResource(addressNotification.message),
                     color = color,
                     modifier = Modifier.weight(1f)
                 )

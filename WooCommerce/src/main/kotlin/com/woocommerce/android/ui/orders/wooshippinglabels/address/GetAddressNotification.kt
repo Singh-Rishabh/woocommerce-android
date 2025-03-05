@@ -1,16 +1,11 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.address
 
+import androidx.annotation.StringRes
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
-import com.woocommerce.android.viewmodel.ResourceProvider
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
 
-class GetAddressNotification @Inject constructor(
-    private val resourceProvider: ResourceProvider
-) {
-    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+class GetAddressNotification @Inject constructor() {
     operator fun invoke(
         addresses: WooShippingAddresses,
         previousNotification: AddressNotification? = null
@@ -19,9 +14,7 @@ class GetAddressNotification @Inject constructor(
             addresses.shipFrom.isVerified.not() -> {
                 AddressNotification(
                     isSuccess = false,
-                    message = resourceProvider.getString(
-                        R.string.woo_shipping_address_notification_origin_unverified
-                    ),
+                    message = R.string.woo_shipping_address_notification_origin_unverified,
                     isDestinationNotification = false
                 )
             }
@@ -29,9 +22,7 @@ class GetAddressNotification @Inject constructor(
             addresses.shipTo.address.hasInfo().not() -> {
                 AddressNotification(
                     isSuccess = false,
-                    message = resourceProvider.getString(
-                        R.string.woo_shipping_address_notification_destination_missing
-                    ),
+                    message = R.string.woo_shipping_address_notification_destination_missing,
                     isDestinationNotification = true
                 )
             }
@@ -39,9 +30,7 @@ class GetAddressNotification @Inject constructor(
             addresses.shipTo.isVerified.not() -> {
                 AddressNotification(
                     isSuccess = false,
-                    message = resourceProvider.getString(
-                        R.string.woo_shipping_address_notification_destination_unverified
-                    ),
+                    message = R.string.woo_shipping_address_notification_destination_unverified,
                     isDestinationNotification = true
                 )
             }
@@ -50,9 +39,7 @@ class GetAddressNotification @Inject constructor(
                 previousNotification?.let { it.isSuccess.not() && it.isDestinationNotification } == true -> {
                 AddressNotification(
                     isSuccess = true,
-                    message = resourceProvider.getString(
-                        R.string.woo_shipping_address_notification_destination_verified
-                    ),
+                    message = R.string.woo_shipping_address_notification_destination_verified,
                     expireAfter = 2_000,
                     isDestinationNotification = true
                 )
@@ -62,9 +49,7 @@ class GetAddressNotification @Inject constructor(
                 previousNotification?.let { it.isSuccess.not() && it.isDestinationNotification.not() } == true -> {
                 AddressNotification(
                     isSuccess = true,
-                    message = resourceProvider.getString(
-                        R.string.woo_shipping_address_notification_origin_verified
-                    ),
+                    message = R.string.woo_shipping_address_notification_origin_verified,
                     expireAfter = 2_000,
                     isDestinationNotification = false
                 )
@@ -77,7 +62,7 @@ class GetAddressNotification @Inject constructor(
 
 data class AddressNotification(
     val isSuccess: Boolean,
-    val message: String,
+    @StringRes val message: Int,
     val expireAfter: Long? = null,
     private val timestamp: Long = System.currentTimeMillis(),
     val isDestinationNotification: Boolean = false,
