@@ -245,14 +245,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses != null && shouldRequireCustoms(addresses) -> Unavailable
                 else -> NotRequired
             }
-        }.collectLatest {
-            if (it is CustomsState.DataAvailable) {
-                packageSelected.update { packageSelected ->
-                    packageSelected?.copy(customsData = it.customsData)
-                }
-            }
-            customsState.value = it
-        }
+        }.collectLatest { customsState.value = it }
 
         combine(
             packageSelected.filterNotNull(),
