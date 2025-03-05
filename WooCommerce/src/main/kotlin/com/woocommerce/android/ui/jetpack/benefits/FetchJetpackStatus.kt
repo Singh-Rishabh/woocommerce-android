@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.jetpack.benefits
 
 import com.woocommerce.android.OnChangedException
+import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.model.JetpackConnectionStatus
 import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
@@ -78,7 +79,7 @@ class FetchJetpackStatus @Inject constructor(
                         JetpackStatusFetchResponse.Success(
                             JetpackStatus(
                                 isJetpackInstalled = isJetpackInstalled,
-                                jetpackConnectionStatus = jetpackConnectionData.toConnectionStatus()
+                                jetpackConnectionStatus = jetpackConnectionData.toConnectionStatus(isJetpackInstalled)
                             )
                         )
                     )
@@ -102,7 +103,7 @@ class FetchJetpackStatus @Inject constructor(
             }
     }
 
-    private fun JetpackConnectionData.toConnectionStatus(): JetpackConnectionStatus {
+    private fun JetpackConnectionData.toConnectionStatus(isJetpackInstalled: Boolean): JetpackConnectionStatus {
         return if (currentUser.isConnected) {
             JetpackConnectionStatus.AccountConnected(currentUser.wpcomEmail)
         } else {
@@ -110,7 +111,24 @@ class FetchJetpackStatus @Inject constructor(
                 siteRegistrationStatus = when (isSiteRegistered) {
                     true -> JetpackSiteRegistrationStatus.REGISTERED
                     false -> JetpackSiteRegistrationStatus.NOT_REGISTERED
-                    else -> JetpackSiteRegistrationStatus.UNKNOWN
+                    else -> {
+                        if (isJetpackInstalled) {
+                            // Which means the installed version of Jetpack doesn't support the connection API
+                            JetpackSiteRegistrationStatus.UNKNOWN
+                        } else {
+                            // Infer the site registration status based on whether the site has an owner or not
+                            // Discussion:
+                            // - If the site has an owner, it means the site is already registered
+                            // - If the site doesn't have an owner, while the site may already be registered, it's OK
+                            //   to treat it as not registered since we'll register it later when connecting the account
+                            //   and there are no accounts that could be affected by the second registration.
+                            if (connectionOwner.isNotNullOrEmpty()) {
+                                JetpackSiteRegistrationStatus.REGISTERED
+                            } else {
+                                JetpackSiteRegistrationStatus.NOT_REGISTERED
+                            }
+                        }
+                    }
                 },
                 blogId = blogId
             )
