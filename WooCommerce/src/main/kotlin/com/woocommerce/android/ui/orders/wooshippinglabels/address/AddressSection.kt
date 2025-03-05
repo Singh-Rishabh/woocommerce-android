@@ -49,6 +49,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithB
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetailsSectionTitle
 import com.woocommerce.android.ui.orders.wooshippinglabels.VerticalDivider
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.toShippingFromString
@@ -59,6 +60,7 @@ import kotlinx.coroutines.launch
 internal fun AddressSectionPortrait(
     shippingAddresses: WooShippingAddresses,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
+    onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -157,7 +159,7 @@ internal fun AddressSectionPortrait(
                     )
             )
             Text(
-                text = shippingAddresses.shipTo.toString(),
+                text = shippingAddresses.shipTo.address.toString(),
                 modifier = Modifier
                     .constrainAs(shipToValue) {
                         top.linkTo(shipToLabel.top)
@@ -174,7 +176,7 @@ internal fun AddressSectionPortrait(
             )
             if (isReadOnly.not()) {
                 IconButton(
-                    onClick = { },
+                    onClick = { onEditDestinationAddress(shippingAddresses.shipTo) },
                     modifier = Modifier
                         .constrainAs(shipToEdit) {
                             top.linkTo(shipToLabel.top)
@@ -205,6 +207,7 @@ private fun AddressSectionPortraitPreview() {
                     shipTo = getShipTo(),
                     originAddresses = listOf(getShipFrom())
                 ),
+                onEditDestinationAddress = {},
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
                 isReadOnly = false
             )
@@ -217,6 +220,7 @@ private fun AddressSectionPortraitPreview() {
 internal fun AddressSectionLandscape(
     shippingAddresses: WooShippingAddresses,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
+    onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -245,7 +249,7 @@ internal fun AddressSectionLandscape(
                 )
 
                 Text(
-                    text = shippingAddresses.shipTo.toString(),
+                    text = shippingAddresses.shipTo.address.toString(),
                     modifier = Modifier
                         .padding(
                             top = dimensionResource(R.dimen.major_100),
@@ -270,7 +274,7 @@ internal fun AddressSectionLandscape(
                     }
 
                     IconButton(
-                        onClick = { },
+                        onClick = { onEditDestinationAddress(shippingAddresses.shipTo) },
                         modifier = iconModifier
                     ) {
                         Icon(
@@ -465,7 +469,8 @@ private fun AddressSectionLandscapePreview() {
                     originAddresses = listOf(getShipFrom())
                 ),
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-                isReadOnly = false
+                isReadOnly = false,
+                onEditDestinationAddress = {}
             )
         }
     }
@@ -488,18 +493,21 @@ internal fun getShipFrom() = OriginShippingAddress(
     isVerified = true
 )
 
-internal fun getShipTo() = Address(
-    firstName = "first name",
-    lastName = "last name",
-    company = "Company",
-    phone = "",
-    address1 = "Another Address",
-    address2 = "",
-    city = "City",
-    postcode = "",
-    email = "email",
-    country = Location("US", "USA"),
-    state = AmbiguousLocation.Defined(Location("CA", "California", "USA"))
+internal fun getShipTo() = DestinationShippingAddress(
+    address = Address(
+        firstName = "first name",
+        lastName = "last name",
+        company = "Company",
+        phone = "",
+        address1 = "Another Address",
+        address2 = "",
+        city = "City",
+        postcode = "",
+        email = "email",
+        country = Location("US", "USA"),
+        state = AmbiguousLocation.Defined(Location("CA", "California", "USA")),
+    ),
+    isVerified = true
 )
 
 fun OriginShippingAddress.getFormattedName(context: Context): String {

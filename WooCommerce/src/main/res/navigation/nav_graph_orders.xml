@@ -738,11 +738,11 @@
     </fragment>
     <fragment
         android:id="@+id/wooShippingEditOriginAddressFragment"
-        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginAddressFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragment"
         android:label="WooShippingEditOriginAddressFragment" >
         <argument
-            android:name="originAddress"
-            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
+            android:name="flow"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.address.EditAddressFlow" />
         <action
             android:id="@+id/action_search_filter_fragment"
             app:destination="@id/searchFilterFragment" />

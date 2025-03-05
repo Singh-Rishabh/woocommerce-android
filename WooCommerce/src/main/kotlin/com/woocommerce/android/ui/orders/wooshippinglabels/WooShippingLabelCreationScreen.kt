@@ -72,6 +72,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.ErrorMessageWithButton
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
@@ -110,7 +111,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 purchaseState = viewState.purchaseState,
                 onShipmentDetailsExpandedChange = viewModel::onShipmentDetailsExpandedChange,
                 onSelectAddressExpandedChange = viewModel::onSelectAddressExpandedChange,
-                onEditCustomsClick = viewModel::onEditCustomsClick
+                onEditCustomsClick = viewModel::onEditCustomsClick,
+                onEditDestinationAddress = viewModel::onEditDestinationAddress
             )
         }
 
@@ -149,6 +151,7 @@ fun WooShippingLabelCreationScreen(
     purchaseState: WooShippingLabelCreationViewModel.PurchaseState,
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
+    onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
@@ -209,7 +212,8 @@ fun WooShippingLabelCreationScreen(
             onMarkOrderCompleteChange = onMarkOrderCompleteChange,
             shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
             onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
-            onEditCustomsClick = onEditCustomsClick
+            onEditCustomsClick = onEditCustomsClick,
+            onEditDestinationAddress = onEditDestinationAddress
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -283,6 +287,7 @@ private fun LabelCreationScreenWithBottomSheet(
     onNavigateBack: () -> Unit,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditCustomsClick: () -> Unit,
+    onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
@@ -311,7 +316,8 @@ private fun LabelCreationScreenWithBottomSheet(
                     scaffoldState = scaffoldState,
                     isShipmentDetailsExpanded = uiState.isShipmentDetailsExpanded,
                     markOrderComplete = uiState.markOrderComplete,
-                    onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange
+                    onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
+                    onEditDestinationAddress = onEditDestinationAddress
                 )
             }
         },
@@ -764,7 +770,8 @@ private fun WooShippingLabelCreationScreenPreview() {
             ),
             onShipmentDetailsExpandedChange = { true },
             onSelectAddressExpandedChange = { true },
-            onEditCustomsClick = {}
+            onEditCustomsClick = {},
+            onEditDestinationAddress = {}
         )
     }
 }
