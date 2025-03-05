@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
@@ -321,6 +322,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             }
 
             val items = getShippableItems(order)
+
+            val destinationStatus = when {
+                addresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
+                addresses.shipTo.isVerified -> AddressStatus.VERIFIED
+                else -> AddressStatus.UNVERIFIED
+            }
+
             shippableItems.value = items
 
             val shippableItemsUI = items.map { item -> item.toUIModel(currencyFormatter, storeOptions) }
@@ -341,7 +349,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 packageSelection = packageSelection,
                 uiState = uiState,
                 purchaseState = purchaseState,
-                customsState = customsState
+                customsState = customsState,
+                destinationStatus = destinationStatus
             )
         }.collectLatest {
             viewState.value = it
@@ -577,7 +586,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val packageSelection: PackageSelectionState,
             val uiState: UIControlsState,
             val purchaseState: PurchaseState,
-            val customsState: CustomsState
+            val customsState: CustomsState,
+            val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
 

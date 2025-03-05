@@ -50,6 +50,7 @@ import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionLandscape
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionPortrait
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
@@ -69,6 +70,7 @@ fun ShipmentDetails(
     isShipmentDetailsExpanded: Boolean = false,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     markOrderComplete: Boolean = false,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
     handlerModifier: Modifier = Modifier,
@@ -131,7 +133,8 @@ fun ShipmentDetails(
                 modifier = modifier.padding(top = dimensionResource(R.dimen.minor_100)),
                 isReadOnly = isReadOnly,
                 shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
-                onEditDestinationAddress = onEditDestinationAddress
+                onEditDestinationAddress = onEditDestinationAddress,
+                destinationStatus = destinationStatus
             )
         }
     }
@@ -147,6 +150,7 @@ private fun ShipmentDetailsPortrait(
     shippingRateSummary: ShippingRateSummaryUI?,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -165,7 +169,8 @@ private fun ShipmentDetailsPortrait(
                 shippingLines = shippingLines,
                 isReadOnly = isReadOnly,
                 shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
-                onEditDestinationAddress = onEditDestinationAddress
+                onEditDestinationAddress = onEditDestinationAddress,
+                destinationStatus = destinationStatus
             )
             Divider(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)))
             ShipmentCostSection(
@@ -261,6 +266,7 @@ private fun OrderDetailsSection(
     shippingLines: List<ShippingLineSummaryUI>,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -275,7 +281,8 @@ private fun OrderDetailsSection(
             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
             isReadOnly = isReadOnly,
             shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
-            onEditDestinationAddress = onEditDestinationAddress
+            onEditDestinationAddress = onEditDestinationAddress,
+            destinationStatus = destinationStatus
         )
         TotalCard(
             totalItems = totalItems,
