@@ -56,6 +56,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithB
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetails
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemsUI
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingProductsCard
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.generateItems
 import kotlinx.coroutines.launch
 
@@ -116,7 +117,8 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
                     },
                     addressNotification = null,
                     onEditDestinationAddress = {},
-                    onEditOriginAddress = {}
+                    onEditOriginAddress = {},
+                    destinationStatus = AddressStatus.VERIFIED
                 )
             }
         },

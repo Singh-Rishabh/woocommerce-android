@@ -64,6 +64,7 @@ internal fun AddressSectionPortrait(
     shippingAddresses: WooShippingAddresses,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -83,12 +84,6 @@ internal fun AddressSectionPortrait(
             val barrier = createEndBarrier(shipFromLabel, shipToLabel)
             val endBarrier = createStartBarrier(shipFromSelect)
             val scope = rememberCoroutineScope()
-
-            val destinationStatus = when {
-                shippingAddresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
-                shippingAddresses.shipTo.isVerified -> AddressStatus.VERIFIED
-                else -> AddressStatus.UNVERIFIED
-            }
 
             val destinationStatusModifier = if (destinationStatus == AddressStatus.MISSING_ADDRESS) {
                 Modifier.constrainAs(destinationAddressStatus) {
@@ -242,7 +237,8 @@ private fun AddressSectionPortraitPreview() {
                 ),
                 onEditDestinationAddress = {},
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-                isReadOnly = false
+                isReadOnly = false,
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }
@@ -261,7 +257,8 @@ private fun AddressSectionPortraitMissingAddressPreview() {
                 ),
                 onEditDestinationAddress = {},
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-                isReadOnly = false
+                isReadOnly = false,
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }
@@ -273,6 +270,7 @@ internal fun AddressSectionLandscape(
     shippingAddresses: WooShippingAddresses,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -325,11 +323,7 @@ internal fun AddressSectionLandscape(
                         )
                     }
                     AddressStatusIndicator(
-                        addressStatus = when {
-                            shippingAddresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
-                            shippingAddresses.shipTo.isVerified -> AddressStatus.VERIFIED
-                            else -> AddressStatus.UNVERIFIED
-                        },
+                        addressStatus = destinationStatus,
                         modifier = destinationAddressStatusModifier
                     )
                 }
@@ -537,7 +531,8 @@ private fun AddressSectionLandscapePreview() {
                 ),
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
                 isReadOnly = false,
-                onEditDestinationAddress = {}
+                onEditDestinationAddress = {},
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }
@@ -556,7 +551,8 @@ private fun AddressSectionLandscapeMissingAddressPreview() {
                 ),
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
                 isReadOnly = false,
-                onEditDestinationAddress = {}
+                onEditDestinationAddress = {},
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }

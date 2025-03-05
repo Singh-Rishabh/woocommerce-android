@@ -20,6 +20,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditAddressFlow
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragment.Companion.DESTINATION_ADDRESS_UPDATE_RESULT
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment.Companion.CUSTOMS_DATA_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment.Companion.PACKAGE_SELECTION_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
@@ -87,8 +89,10 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
 
                 is StartCustomsFormEdit -> {
                     WooShippingLabelCreationFragmentDirections
-                        .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment()
-                        .let { findNavController().navigateSafely(it) }
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment(
+                            shippableItems = event.shippableItems.toTypedArray(),
+                            customsData = event.customData
+                        ).let { findNavController().navigateSafely(it) }
                 }
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
@@ -102,6 +106,10 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
         }
         handleResult<DestinationShippingAddress>(DESTINATION_ADDRESS_UPDATE_RESULT) {
             viewModel.onUpdateDestinationAddress(it)
+        }
+
+        handleResult<CustomsData>(CUSTOMS_DATA_RESULT) {
+            viewModel.onCustomsDataAvailable(it)
         }
     }
 

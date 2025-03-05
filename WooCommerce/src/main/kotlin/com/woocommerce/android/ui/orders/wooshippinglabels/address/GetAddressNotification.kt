@@ -62,7 +62,6 @@ class GetAddressNotification @Inject constructor() {
     companion object {
         private const val SUCCESS_EXPIRE_TIME = 2_000L
     }
-
 }
 
 data class AddressNotification(

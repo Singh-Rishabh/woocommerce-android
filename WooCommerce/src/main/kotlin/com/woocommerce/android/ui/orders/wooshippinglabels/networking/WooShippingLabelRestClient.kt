@@ -74,7 +74,7 @@ class WooShippingLabelRestClient @Inject constructor(
         return result.toWooPayload()
     }
 
-    @Suppress("LongParameterList")
+    @Suppress("LongParameterList", "ForbiddenComment")
     suspend fun purchaseShippingLabel(
         orderId: Long,
         site: SiteModel,
@@ -100,6 +100,8 @@ class WooShippingLabelRestClient @Inject constructor(
                         "parent" to null
                     )
                 ),
+                // TODO: `selected_rate_options` will be updated while adding UPS support PaJDVv-2Gf-p2
+                "selected_rate_options" to "",
                 "hazmat" to mapOf(selectedPackage.boxId to hazmat),
                 "customs" to emptyMap<String, String>(),
                 "user_meta" to mapOf("last_order_completed" to markOrderComplete)

@@ -751,8 +751,21 @@
         android:id="@+id/wooShippingLabelCustomsFormFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment"
         android:label="WooShippingLabelCustomsFormFragment" >
+        <argument
+            android:name="shippableItems"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel[]" />
+
+        <argument
+            android:name="customsData"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData"
+            app:nullable="true"/>
+
         <action
             android:id="@+id/action_wooShippingLabelCustomsFormFragment_to_itemSelectorDialog"
             app:destination="@id/itemSelectorDialog" />
+
+        <action
+            android:id="@+id/action_search_filter_fragment"
+            app:destination="@id/searchFilterFragment" />
     </fragment>
 </navigation>
