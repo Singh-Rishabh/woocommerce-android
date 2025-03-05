@@ -10,27 +10,6 @@ data class JetpackStatus(
 ) : Parcelable {
     val isCurrentUserConnected: Boolean
         get() = jetpackConnectionStatus is JetpackConnectionStatus.AccountConnected
-
-    companion object {
-        // TODO: remove this function later
-        operator fun invoke(
-            isJetpackInstalled: Boolean,
-            isJetpackConnected: Boolean,
-            wpComEmail: String?
-        ): JetpackStatus {
-            return JetpackStatus(
-                isJetpackInstalled = isJetpackInstalled,
-                jetpackConnectionStatus = if (isJetpackConnected) {
-                    JetpackConnectionStatus.AccountConnected(wpComEmail.orEmpty())
-                } else {
-                    JetpackConnectionStatus.AccountNotConnected(
-                        siteRegistrationStatus = JetpackSiteRegistrationStatus.UNKNOWN,
-                        blogId = null
-                    )
-                }
-            )
-        }
-    }
 }
 
 sealed interface JetpackConnectionStatus : Parcelable {
