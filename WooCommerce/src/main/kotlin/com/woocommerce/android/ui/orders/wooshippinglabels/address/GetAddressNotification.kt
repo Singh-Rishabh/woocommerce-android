@@ -40,7 +40,7 @@ class GetAddressNotification @Inject constructor() {
                 AddressNotification(
                     isSuccess = true,
                     message = R.string.woo_shipping_address_notification_destination_verified,
-                    expireAfter = 2_000,
+                    expireAfter = SUCCESS_EXPIRE_TIME,
                     isDestinationNotification = true
                 )
             }
@@ -50,7 +50,7 @@ class GetAddressNotification @Inject constructor() {
                 AddressNotification(
                     isSuccess = true,
                     message = R.string.woo_shipping_address_notification_origin_verified,
-                    expireAfter = 2_000,
+                    expireAfter = SUCCESS_EXPIRE_TIME,
                     isDestinationNotification = false
                 )
             }
@@ -58,6 +58,11 @@ class GetAddressNotification @Inject constructor() {
             else -> null
         }
     }
+
+    companion object {
+        private const val SUCCESS_EXPIRE_TIME = 2_000L
+    }
+
 }
 
 data class AddressNotification(
