@@ -58,7 +58,7 @@ class JetpackStore @Inject constructor(
         useApplicationPasswords: Boolean
     ): JetpackResult<JetpackConnectionData> {
         if (site.isUsingWpComRestApi) error("This function is not implemented yet for Jetpack tunnel")
-        return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackUser") {
+        return coroutineEngine.withDefaultContext(T.API, this, "fetchJetpackConnectionData") {
             val result = jetpackWPAPIRestClient.fetchJetpackConnectionData(site, useApplicationPasswords)
 
             result.toJetpackResult { result ->
