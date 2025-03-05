@@ -18,13 +18,11 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.FetchOriginAddresses
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.ObserveOriginAddresses
-import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -602,7 +600,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
-    data class StartCustomsFormEdit(val shippableItems: List<ShippableItemModel>) : Event()
     data class StartDestinationAddressEdit(
         val destinationAddress: DestinationShippingAddress,
         val orderId: Long
