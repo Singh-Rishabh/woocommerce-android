@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
@@ -53,6 +54,8 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(
@@ -245,7 +248,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses != null && shouldRequireCustoms(addresses) -> Unavailable
                 else -> NotRequired
             }
-        }.collectLatest { customsState.value = it }
+        }.onEach {
+            customsState.value = it
+        }.launchIn(viewModelScope)
 
         combine(
             packageSelected.filterNotNull(),
@@ -259,9 +264,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 )
 
             packageSelected.copy(customsData = customData)
-        }.collectLatest {
+        }.onEach {
             packageSelected.value = it
-        }
+        }.launchIn(viewModelScope)
     }
 
     private suspend fun getShippingAddresses() {
