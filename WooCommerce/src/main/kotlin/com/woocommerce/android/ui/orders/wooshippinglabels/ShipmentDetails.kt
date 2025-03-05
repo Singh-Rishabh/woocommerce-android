@@ -120,7 +120,8 @@ fun ShipmentDetails(
                 modifier = modifier.padding(top = dimensionResource(R.dimen.major_100)),
                 isReadOnly = isReadOnly,
                 shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
-                onEditDestinationAddress = onEditDestinationAddress
+                onEditDestinationAddress = onEditDestinationAddress,
+                destinationStatus = destinationStatus
             )
         } else {
             ShipmentDetailsPortrait(
@@ -196,6 +197,7 @@ private fun ShipmentDetailsLandscape(
     shippingRateSummary: ShippingRateSummaryUI?,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -212,7 +214,8 @@ private fun ShipmentDetailsLandscape(
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.major_100)),
                 isReadOnly = isReadOnly,
                 shipFromSelectionBottomSheetState = shipFromSelectionBottomSheetState,
-                onEditDestinationAddress = onEditDestinationAddress
+                onEditDestinationAddress = onEditDestinationAddress,
+                destinationStatus = destinationStatus
             )
             Row(
                 modifier = Modifier
@@ -336,7 +339,8 @@ fun ShipmentDetailsLandscapePreview() {
                 ),
                 shippingRateSummary = null,
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
-                onEditDestinationAddress = {}
+                onEditDestinationAddress = {},
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }

@@ -271,6 +271,7 @@ internal fun AddressSectionLandscape(
     shippingAddresses: WooShippingAddresses,
     shipFromSelectionBottomSheetState: ModalBottomSheetState,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -323,11 +324,7 @@ internal fun AddressSectionLandscape(
                         )
                     }
                     AddressStatusIndicator(
-                        addressStatus = when {
-                            shippingAddresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
-                            shippingAddresses.shipTo.isVerified -> AddressStatus.VERIFIED
-                            else -> AddressStatus.UNVERIFIED
-                        },
+                        addressStatus = destinationStatus,
                         modifier = destinationAddressStatusModifier
                     )
                 }
@@ -535,7 +532,8 @@ private fun AddressSectionLandscapePreview() {
                 ),
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
                 isReadOnly = false,
-                onEditDestinationAddress = {}
+                onEditDestinationAddress = {},
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }
@@ -554,7 +552,8 @@ private fun AddressSectionLandscapeMissingAddressPreview() {
                 ),
                 shipFromSelectionBottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
                 isReadOnly = false,
-                onEditDestinationAddress = {}
+                onEditDestinationAddress = {},
+                destinationStatus = AddressStatus.VERIFIED
             )
         }
     }
