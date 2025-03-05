@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.component.WCOutlinedSpinner
 import com.woocommerce.android.ui.compose.component.WCOutlinedTextField
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -197,13 +198,12 @@ fun WooShippingCustomsFormScreen(
                 )
             }
         }
-        Button(
+        WCColoredButton(
             modifier = modifier.fillMaxWidth(),
             enabled = isAddCustomsButtonEnabled,
-            onClick = onAddCustomsDataClick
-        ) {
-            Text(stringResource(id = R.string.woo_shipping_labels_customs_add_missing_information))
-        }
+            onClick = onAddCustomsDataClick,
+            text = stringResource(id = R.string.woo_shipping_labels_customs_add_missing_information)
+        )
     }
 }
 
