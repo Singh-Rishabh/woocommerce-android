@@ -161,7 +161,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             }
     }
 
-    fun dismissAddressNotification() {
+    fun onDismissAddressNotification() {
         uiState.update { it.copy(addressNotification = null) }
     }
 

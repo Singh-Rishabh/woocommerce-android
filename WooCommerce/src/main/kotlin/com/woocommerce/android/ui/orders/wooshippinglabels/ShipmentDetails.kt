@@ -88,7 +88,7 @@ fun ShipmentDetails(
     destinationStatus: AddressStatus,
     markOrderComplete: Boolean = false,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
-    dismissAddressNotification: () -> Unit = {},
+    onDismissAddressNotification: () -> Unit = {},
     handlerModifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -128,7 +128,7 @@ fun ShipmentDetails(
 
                     ShippingAddressNotification(
                         addressNotification = addressNotification,
-                        onDismiss = dismissAddressNotification,
+                        onDismiss = onDismissAddressNotification,
                         onAction = {
                             addressNotification?.let {
                                 when {

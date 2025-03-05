@@ -909,7 +909,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         var dataState = currentViewState as DataState
         assertThat(dataState.uiState.addressNotification).isEqualTo(notification)
 
-        sut.dismissAddressNotification()
+        sut.onDismissAddressNotification()
 
         currentViewState = sut.viewState.value
         assertThat(currentViewState).isInstanceOf(DataState::class.java)

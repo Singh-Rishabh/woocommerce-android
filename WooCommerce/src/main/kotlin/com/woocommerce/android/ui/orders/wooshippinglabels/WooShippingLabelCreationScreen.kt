@@ -115,7 +115,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onEditCustomsClick = viewModel::onEditCustomsClick,
                 onEditDestinationAddress = viewModel::onEditDestinationAddress,
                 destinationStatus = viewState.destinationStatus,
-                dismissAddressNotification = viewModel::dismissAddressNotification
+                onDismissAddressNotification = viewModel::onDismissAddressNotification
             )
         }
 
@@ -155,7 +155,7 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
-    dismissAddressNotification: () -> Unit = {},
+    onDismissAddressNotification: () -> Unit = {},
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier
 ) {
@@ -219,7 +219,7 @@ fun WooShippingLabelCreationScreen(
             onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
             onEditCustomsClick = onEditCustomsClick,
             onEditDestinationAddress = onEditDestinationAddress,
-            dismissAddressNotification = dismissAddressNotification,
+            onDismissAddressNotification = onDismissAddressNotification,
             destinationStatus = destinationStatus
         )
         val isDarkTheme = isSystemInDarkTheme()
@@ -296,7 +296,7 @@ private fun LabelCreationScreenWithBottomSheet(
     onEditCustomsClick: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     destinationStatus: AddressStatus,
-    dismissAddressNotification: () -> Unit = {},
+    onDismissAddressNotification: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
@@ -337,7 +337,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     onEditDestinationAddress = onEditDestinationAddress,
                     destinationStatus = destinationStatus,
                     addressNotification = uiState.addressNotification,
-                    dismissAddressNotification = dismissAddressNotification,
+                    onDismissAddressNotification = onDismissAddressNotification,
                     onEditOriginAddress = onEditOriginAddress
                 )
             }
