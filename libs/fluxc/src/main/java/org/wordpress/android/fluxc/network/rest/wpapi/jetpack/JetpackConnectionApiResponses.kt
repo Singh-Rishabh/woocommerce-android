@@ -5,7 +5,8 @@ import com.google.gson.annotations.SerializedName
 
 data class JetpackConnectionDataResponse(
     @SerializedName("isRegistered") val isRegistered: Boolean?,
-    @SerializedName("currentUser") val currentUser: CurrentUser
+    @SerializedName("currentUser") val currentUser: CurrentUser,
+    @SerializedName("connectionOwner") val connectionOwner: String?
 )
 
 data class CurrentUser(

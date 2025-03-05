@@ -5,6 +5,7 @@ data class JetpackConnectionData(
     val currentUser: JetpackUser,
     val blogId: Long?,
     val isSiteRegistered: Boolean?,
+    val connectionOwner: String?
 )
 
 data class JetpackUser(

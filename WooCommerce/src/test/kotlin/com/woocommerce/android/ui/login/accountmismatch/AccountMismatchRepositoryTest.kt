@@ -108,6 +108,7 @@ class AccountMismatchRepositoryTest : BaseUnitTest() {
             wpcomUsername = "wpcomUsername"
         ),
         isSiteRegistered = null,
-        blogId = 1L
+        blogId = 1L,
+        connectionOwner = null
     )
 }

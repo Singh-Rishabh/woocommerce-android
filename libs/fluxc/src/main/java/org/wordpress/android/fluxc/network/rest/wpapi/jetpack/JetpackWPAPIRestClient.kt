@@ -255,7 +255,8 @@ class JetpackWPAPIRestClient @Inject constructor(
                 wpcomEmail = currentUser.wpcomUser?.email.orEmpty(),
                 wpcomId = currentUser.wpcomUser?.id ?: 0L,
                 wpcomUsername = currentUser.wpcomUser?.login.orEmpty()
-            )
+            ),
+            connectionOwner = connectionOwner
         )
     }
 
