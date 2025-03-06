@@ -4,10 +4,7 @@ import com.woocommerce.android.AppUrls
 import com.woocommerce.android.BuildConfig
 
 @Suppress("MagicNumber")
-enum class SurveyType(
-    private val untaggedUrl: String,
-    private val milestone: Int? = null,
-) {
+enum class SurveyType(private val untaggedUrl: String, private val milestone: Int? = null) {
     PRODUCT(AppUrls.CROWDSIGNAL_PRODUCT_SURVEY, 4),
     MAIN(AppUrls.CROWDSIGNAL_MAIN_SURVEY),
     ADDONS(AppUrls.ADDONS_SURVEY),
