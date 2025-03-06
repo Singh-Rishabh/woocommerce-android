@@ -87,7 +87,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
-    private val isItnRequired = shippableItems.map { it.isItnRequired() }
 
     private val packageSelected = MutableStateFlow<PackageData?>(null)
     private val customsFormData = MutableStateFlow<CustomsData?>(null)
@@ -266,7 +265,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         combine(
             shippingAddresses,
             customsFormData,
-            isItnRequired
+            shippableItems.map { it.isItnRequired() }
         ) { addresses, customsData, isItnRequired ->
             val customsRequired by lazy {
                 addresses != null && shouldRequireCustoms(addresses)
