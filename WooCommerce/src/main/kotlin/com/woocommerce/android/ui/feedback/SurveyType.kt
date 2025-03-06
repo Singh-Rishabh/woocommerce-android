@@ -4,7 +4,10 @@ import com.woocommerce.android.AppUrls
 import com.woocommerce.android.BuildConfig
 
 @Suppress("MagicNumber")
-enum class SurveyType(private val untaggedUrl: String, private val milestone: Int? = null) {
+enum class SurveyType(
+    private val untaggedUrl: String,
+    private val milestone: Int? = null,
+) {
     PRODUCT(AppUrls.CROWDSIGNAL_PRODUCT_SURVEY, 4),
     MAIN(AppUrls.CROWDSIGNAL_MAIN_SURVEY),
     ADDONS(AppUrls.ADDONS_SURVEY),
@@ -24,4 +27,10 @@ enum class SurveyType(private val untaggedUrl: String, private val milestone: In
     private val appVersionTag = "&app-version=${BuildConfig.VERSION_NAME}"
 
     private val platformTag = "woo-mobile-platform=android"
+
+//    private val storeUrlTag
+//        get() = when {
+//            storeUrl.isNullOrBlank() -> ""
+//            else -> "&store-url=$storeUrl"
+//        }
 }
