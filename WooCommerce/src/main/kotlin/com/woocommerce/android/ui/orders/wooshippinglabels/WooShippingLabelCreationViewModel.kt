@@ -14,6 +14,7 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
@@ -265,11 +266,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         combine(
             shippingAddresses,
             customsFormData,
-            customsState
-        ) { addresses, customsData, _ ->
+            isItnRequired
+        ) { addresses, customsData, isItnRequired ->
+            val customsRequired by lazy {
+                addresses != null && shouldRequireCustoms(addresses)
+            }
+
             when {
                 customsData != null -> CustomsState.DataAvailable(customsData)
-                addresses != null && shouldRequireCustoms(addresses) -> Unavailable
+                customsRequired && isItnRequired -> ItnMissing
+                customsRequired -> Unavailable
                 else -> NotRequired
             }
         }.onEach {
@@ -693,6 +699,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     // This will be extended later introducing the state with data coming from the Customs form
     sealed class CustomsState {
         data object NotRequired : CustomsState()
+        data object ItnMissing : CustomsState()
         data object Unavailable : CustomsState()
         data class DataAvailable(val customsData: CustomsData) : CustomsState()
     }
