@@ -565,6 +565,10 @@ class JetpackActivationMainViewModel @Inject constructor(
                 AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
                 AnalyticsTracker.KEY_TAP to tap,
                 AnalyticsTracker.KEY_FAILURE to failure,
+                AnalyticsTracker.KEY_CONNECTION_TYPE to when {
+                    supportNativeConnectionAPI -> AnalyticsTracker.VALUE_CONNECTION_TYPE_NATIVE
+                    else -> AnalyticsTracker.VALUE_CONNECTION_TYPE_WEB
+                }
             ).filterNotNull()
         )
     }
