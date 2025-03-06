@@ -45,6 +45,7 @@ class FeedbackSurveyFragment : BaseFragment(R.layout.fragment_feedback_survey) {
 
     @Inject
     lateinit var selectedSite: SelectedSite
+
     @Inject
     lateinit var appPrefsWrapper: AppPrefsWrapper
 
@@ -93,16 +94,18 @@ class FeedbackSurveyFragment : BaseFragment(R.layout.fragment_feedback_survey) {
 
     private fun getSurveyUrlFromArguments(): String = arguments.customUrl ?: arguments.surveyType.url
 
-private fun addCrowdSignalTagsTo(url: String): String {
-    val storeId = appPrefsWrapper.getWCStoreID(selectedSite.getOrNull()?.siteId ?: 0L)
-    val storeUrl = selectedSite.getOrNull()?.url
+    private fun addCrowdSignalTagsTo(url: String): String {
+        val siteId = selectedSite.getOrNull()?.siteId
+        val storeId = appPrefsWrapper.getWCStoreID(siteId ?: 0L)
+        val storeUrl = selectedSite.getOrNull()?.url
 
-    return buildString {
-        append(url)
-        if (!storeId.isNullOrBlank()) append("&store-id=$storeId")
-        if (!storeUrl.isNullOrBlank()) append("&store-url=$storeUrl")
+        return buildString {
+            append(url)
+            if (siteId != null) append("&site-id=$siteId")
+            if (!storeId.isNullOrBlank()) append("&store-id=$storeId")
+            if (!storeUrl.isNullOrBlank()) append("&store-url=$storeUrl")
+        }
     }
-}
 
     override fun onDestroyView() {
         super.onDestroyView()
