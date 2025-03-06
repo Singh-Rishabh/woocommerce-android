@@ -86,6 +86,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val storeOptions = MutableStateFlow<StoreOptionsModel?>(StoreOptionsModel.EMPTY)
 
     private val shippableItems = MutableStateFlow<List<ShippableItemModel>>(emptyList())
+    private val isItnRequired = shippableItems.map { it.isItnRequired() }
 
     private val packageSelected = MutableStateFlow<PackageData?>(null)
     private val customsFormData = MutableStateFlow<CustomsData?>(null)
@@ -598,9 +599,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
-    private fun isItnRequired(): Boolean {
-        return shippableItems.value
-            .map { it.shippingTotalValue }
+    private fun List<ShippableItemModel>.isItnRequired(): Boolean {
+        return map { it.shippingTotalValue }
             .reduce { acc, current -> acc + current }
             .let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
     }
