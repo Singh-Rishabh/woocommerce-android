@@ -164,8 +164,7 @@ class JetpackActivationMainViewModelTest : BaseUnitTest() {
 
             assertThat(event).isEqualTo(
                 ShowJetpackConnectionWebView(
-                    url = "https://wordpress.com/jetpack/connect?url=example.com" +
-                        "&mobile_redirect=${JetpackActivationMainViewModel.MOBILE_REDIRECT}&from=mobile"
+                    url = "$siteUrl/wp-admin/admin.php?page=jetpack"
                 )
             )
         }

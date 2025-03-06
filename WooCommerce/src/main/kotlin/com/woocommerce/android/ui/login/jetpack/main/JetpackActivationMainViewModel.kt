@@ -56,6 +56,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.JetpackStore
+import org.wordpress.android.fluxc.utils.extensions.slashJoin
 import org.wordpress.android.util.UrlUtils
 import javax.inject.Inject
 
@@ -78,9 +79,6 @@ class JetpackActivationMainViewModel @Inject constructor(
 
         @VisibleForTesting
         const val JETPACK_SITE_CONNECTED_AUTH_URL_PREFIX = "https://jetpack.wordpress.com/jetpack.authorize"
-
-        @VisibleForTesting
-        const val MOBILE_REDIRECT = "woocommerce://jetpack-connected"
     }
 
     private val navArgs: JetpackActivationMainFragmentArgs by savedStateHandle.navArgs()
@@ -488,27 +486,22 @@ class JetpackActivationMainViewModel @Inject constructor(
 
                 if (useApplicationPasswords) {
                     // Depending on the site's connection status, we should provide different URLs to the webview.
-                    // If the site already has a Jetpack site-connection, we can use the API-given URL as-is. We
+                    // If the site is already registered with WordPress.com, we can use the API-given URL as-is. We
                     // know this is the case if the URL starts with JETPACK_SITE_CONNECTED_AUTH_URL_PREFIX.
 
                     // If the site lacks a connection, the API-provided URL will be in the format of
                     // https://{site_url}/wp-admin/admin.php?page=jetpack&action=register&_wpnonce={nonce}.
-                    // For application password login, where we don't want to use cookie-nonce authentication, the URL
+                    // For application password login, where we can't use cookie-nonce authentication, the URL
                     // above cannot be used to connect the site to Jetpack.
                     // See: https://github.com/woocommerce/woocommerce-android/issues/7525
 
-                    // As a workaround, we use a special URL that enables site connection without the app needing
-                    // cookie-nonce authentication. The format looks like below:
-                    // https://wordpress.com/jetpack/connect?url=<site_url>
-                    //  &mobile_redirect=woocommerce://jetpack-connected&from=mobile
-                    // See: pe5sF9-1le-p2#comment-1942
+                    // As a workaround, we load the site's wp-admin Jetpack page, which will allow the user to
+                    // connect the site to Jetpack using their WordPress.com account.
 
                     val chosenUrl = if (connectionUrl.startsWith(JETPACK_SITE_CONNECTED_AUTH_URL_PREFIX)) {
                         connectionUrl
                     } else {
-                        "https://wordpress.com/jetpack/connect?url=" + navArgs.siteUrl +
-                            "&mobile_redirect=" + MOBILE_REDIRECT +
-                            "&from=mobile"
+                        navArgs.siteUrl.slashJoin("wp-admin/admin.php?page=jetpack")
                     }
 
                     triggerEvent(
