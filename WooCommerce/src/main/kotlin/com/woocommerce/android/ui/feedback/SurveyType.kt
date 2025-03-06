@@ -27,10 +27,4 @@ enum class SurveyType(
     private val appVersionTag = "&app-version=${BuildConfig.VERSION_NAME}"
 
     private val platformTag = "woo-mobile-platform=android"
-
-//    private val storeUrlTag
-//        get() = when {
-//            storeUrl.isNullOrBlank() -> ""
-//            else -> "&store-url=$storeUrl"
-//        }
 }
