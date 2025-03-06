@@ -144,10 +144,8 @@ class JetpackActivationMainViewModel @Inject constructor(
         }
     }.asLiveData()
 
-    private val isFromBanner = appPrefsWrapper.getJetpackInstallationIsFromBanner()
-
     init {
-        if (!isFromBanner) {
+        if (!useApplicationPasswords) {
             analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SETUP_SCREEN_VIEWED)
         }
 
@@ -157,7 +155,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onCloseClick() {
-        if (isFromBanner) {
+        if (useApplicationPasswords) {
             trackSetupFlow(tap = AnalyticsTracker.VALUE_DISMISS)
         } else {
             analyticsTrackerWrapper.track(
@@ -172,7 +170,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onContinueClick() = launch {
-        if (isFromBanner) {
+        if (useApplicationPasswords) {
             trackSetupFlow(tap = AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_GO_TO_STORE)
         } else {
             analyticsTrackerWrapper.track(stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_GO_TO_STORE_BUTTON_TAPPED)
@@ -186,7 +184,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 jetpackActivationRepository.setSelectedSiteAndCleanOldSites(site)
                 triggerEvent(GoToStore)
 
-                if (isFromBanner) {
+                if (useApplicationPasswords) {
                     analyticsTrackerWrapper.track(stat = AnalyticsEvent.JETPACK_SETUP_SYNCHRONIZATION_COMPLETED)
                 }
             } else {
@@ -212,7 +210,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onRetryClick() {
-        if (isFromBanner) {
+        if (useApplicationPasswords) {
             trackSetupFlow(tap = AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_TRY_AGAIN)
         } else {
             analyticsTrackerWrapper.track(
@@ -227,7 +225,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onGetHelpClick() {
-        if (isFromBanner) {
+        if (useApplicationPasswords) {
             trackSetupFlow(tap = AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_SUPPORT)
         } else {
             analyticsTrackerWrapper.track(
@@ -292,7 +290,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                     }
 
                     StepType.Done -> {
-                        if (isFromBanner) {
+                        if (useApplicationPasswords) {
                             analyticsTrackerWrapper.track(stat = AnalyticsEvent.JETPACK_SETUP_COMPLETED)
                         } else {
                             analyticsTrackerWrapper.track(
@@ -333,7 +331,7 @@ class JetpackActivationMainViewModel @Inject constructor(
         ).collect { status ->
             when (status) {
                 is PluginInstalled -> {
-                    if (!isFromBanner) {
+                    if (!useApplicationPasswords) {
                         analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SETUP_INSTALL_SUCCESSFUL)
                     }
                     currentStep.value = Step(type = StepType.Activation, state = StepState.Ongoing)
@@ -345,7 +343,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 }
 
                 is PluginActivated -> {
-                    if (!isFromBanner) {
+                    if (!useApplicationPasswords) {
                         analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SETUP_ACTIVATION_SUCCESSFUL)
                     }
                     currentStep.value = Step(type = StepType.Connection, state = StepState.Ongoing)
@@ -360,7 +358,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     private fun trackPluginActivationError(status: PluginActivationFailed) {
-        if (isFromBanner) {
+        if (useApplicationPasswords) {
             trackSetupFlow(failure =  "Jetpack activation failed: $status")
         } else {
             analyticsTrackerWrapper.track(
@@ -374,7 +372,7 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     private fun trackPluginInstallationError(status: PluginInstallFailed) {
-        if (isFromBanner) {
+        if (useApplicationPasswords) {
             trackSetupFlow(failure =  "Jetpack installation failed: $status")
         } else {
             analyticsTrackerWrapper.track(
@@ -392,7 +390,7 @@ class JetpackActivationMainViewModel @Inject constructor(
         val onFailure: (Throwable) -> Unit = {
             val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
 
-            if (isFromBanner) {
+            if (useApplicationPasswords) {
                 trackSetupFlow(failure = "Jetpack connection failed: ${it.message}")
             } else {
                 analyticsTrackerWrapper.track(
@@ -434,7 +432,7 @@ class JetpackActivationMainViewModel @Inject constructor(
         val currentSite = site.await()
         jetpackActivationRepository.fetchJetpackConnectionUrl(currentSite, useApplicationPasswords).fold(
             onSuccess = { connectionUrl ->
-                if (!isFromBanner) {
+                if (!useApplicationPasswords) {
                     analyticsTrackerWrapper.track(
                         stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_FETCH_JETPACK_CONNECTION_URL_SUCCESSFUL
                     )
@@ -491,7 +489,7 @@ class JetpackActivationMainViewModel @Inject constructor(
             onSuccess = { email ->
                 jetpackConnectedEmail = email
                 if (accountRepository.getUserAccount()?.email != email) {
-                    if (!isFromBanner) {
+                    if (!useApplicationPasswords) {
                         analyticsTrackerWrapper.track(
                             stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_AUTHORIZED_USING_DIFFERENT_WPCOM_ACCOUNT
                         )
@@ -508,7 +506,7 @@ class JetpackActivationMainViewModel @Inject constructor(
             onFailure = {
                 val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
 
-                if (isFromBanner) {
+                if (useApplicationPasswords) {
                     trackSetupFlow(failure = "Jetpack connection validation failed: ${it.message}")
                 } else {
                     analyticsTrackerWrapper.track(
@@ -536,7 +534,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 connectionStep.value = ConnectionStep.Approved
             },
             onFailure = {
-                if (isFromBanner) {
+                if (useApplicationPasswords) {
                     trackSetupFlow(failure = "Site connection confirmation failed: ${it.message}")
                 } else {
                     analyticsTrackerWrapper.track(
