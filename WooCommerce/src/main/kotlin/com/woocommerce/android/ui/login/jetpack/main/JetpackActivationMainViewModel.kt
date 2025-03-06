@@ -263,6 +263,10 @@ class JetpackActivationMainViewModel @Inject constructor(
                 val stepType = step.type
                 WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: handle step: $stepType")
 
+                if (useApplicationPasswords) {
+                    trackSetupFlow()
+                }
+
                 when (stepType) {
                     StepType.Installation -> {
                         startJetpackInstallation()
