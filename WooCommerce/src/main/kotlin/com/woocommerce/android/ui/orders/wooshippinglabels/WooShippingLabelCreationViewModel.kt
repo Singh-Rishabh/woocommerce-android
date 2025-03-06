@@ -59,6 +59,7 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 import javax.inject.Inject
+import kotlinx.coroutines.flow.map
 
 @HiltViewModel
 class WooShippingLabelCreationViewModel @Inject constructor(
@@ -597,6 +598,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    private fun isItnRequired(): Boolean {
+        return shippableItems.value
+            .map { it.shippingTotalValue }
+            .reduce { acc, current -> acc + current }
+            .let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
+    }
+
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
@@ -692,6 +700,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     companion object {
         private const val TYPING_DELAY = 800L
         private const val MULTIPLE_CALLS_DELAY = 50L
+        private val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500.toBigDecimal()
     }
 }
 
