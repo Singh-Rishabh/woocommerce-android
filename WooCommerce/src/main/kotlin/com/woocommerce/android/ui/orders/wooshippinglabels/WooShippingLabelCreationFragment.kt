@@ -95,6 +95,11 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                         ).let { findNavController().navigateSafely(it) }
                 }
                 is MultiLiveEvent.Event.ShowSnackbar -> uiMessageResolver.showSnack(event.message)
+                is MultiLiveEvent.Event.ShowActionSnackbar -> uiMessageResolver.showActionSnack(
+                    event.message,
+                    event.actionText,
+                    event.action
+                )
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
             }
         }

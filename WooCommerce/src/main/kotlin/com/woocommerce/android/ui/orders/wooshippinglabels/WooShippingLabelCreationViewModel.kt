@@ -474,6 +474,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
 
+        val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
 
         launch {
@@ -511,7 +512,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                         }
                     }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
             } else {
-                purchaseState.value = PurchaseState.Error
+                purchaseState.value = backupPurchaseState
+                triggerEvent(
+                    Event.ShowActionSnackbar(
+                        message = R.string.woo_shipping_labels_purchase_error,
+                        actionText = R.string.retry
+                    ) { onPurchaseShippingLabel() }
+                )
             }
         }
     }
@@ -604,6 +611,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val destinationAddress: DestinationShippingAddress,
         val orderId: Long
     ) : Event()
+
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
         val customData: CustomsData?
