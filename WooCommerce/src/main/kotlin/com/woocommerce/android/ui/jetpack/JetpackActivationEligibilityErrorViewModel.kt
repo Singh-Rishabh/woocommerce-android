@@ -55,7 +55,10 @@ class JetpackActivationEligibilityErrorViewModel @Inject constructor(
 
     fun onRetryButtonClicked() = launch {
         isRetrying.value = true
-        val jetpackStatusResult = fetchJetpackStatus()
+        val jetpackStatusResult = fetchJetpackStatus(
+            site = selectedSite.get(),
+            useApplicationPasswords = true
+        )
         handleJetpackStatusResult(jetpackStatusResult)
         isRetrying.value = false
     }

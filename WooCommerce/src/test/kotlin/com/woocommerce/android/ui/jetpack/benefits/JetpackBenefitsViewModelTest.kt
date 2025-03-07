@@ -184,7 +184,7 @@ class JetpackBenefitsViewModelTest : BaseUnitTest() {
         jetpackStatusFetchResponse: FetchJetpackStatus.JetpackStatusFetchResponse
     ) = testBlocking {
         val result = Result.success(jetpackStatusFetchResponse)
-        whenever(fetchJetpackStatus.invoke()).thenReturn(result)
+        whenever(fetchJetpackStatus.invoke(site = siteModelMock, useApplicationPasswords = true)).thenReturn(result)
     }
 
     private fun givenUserEligibility(user: User, role: UserRole) = testBlocking {

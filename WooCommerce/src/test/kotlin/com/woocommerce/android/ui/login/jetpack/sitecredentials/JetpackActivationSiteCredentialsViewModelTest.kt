@@ -139,6 +139,6 @@ class JetpackActivationSiteCredentialsViewModelTest : BaseUnitTest() {
     private suspend fun givenJetpackFetchResult(
         result: Result<FetchJetpackStatus.JetpackStatusFetchResponse>
     ) {
-        given(fetchJetpackStatus.invoke(any(), any())).willReturn(result)
+        given(fetchJetpackStatus.invoke(any(), any(), any())).willReturn(result)
     }
 }

@@ -122,9 +122,14 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
     }
 
     private suspend fun fetchJetpackStatusAndContinue(site: SiteModel) {
-        fetchJetpackStatus(site = site, isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled).fold(
+        fetchJetpackStatus(
+            site = site,
+            useApplicationPasswords = false,
+            isJetpackInstalled = navArgs.jetpackStatus.isJetpackInstalled
+        ).fold(
             onSuccess = {
-                val jetpackStatus = when (it) {is JetpackStatusFetchResponse.Success -> it.status
+                val jetpackStatus = when (it) {
+                    is JetpackStatusFetchResponse.Success -> it.status
                     is JetpackStatusFetchResponse.ConnectionForbidden -> {
                         // When we can't fetch the connection data, we know that the site is not registered with Jetpack
                         // The user won't be to connect to Jetpack, and the next screen will show the error message
