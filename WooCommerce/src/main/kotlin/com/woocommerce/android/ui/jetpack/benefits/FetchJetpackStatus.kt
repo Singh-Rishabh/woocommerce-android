@@ -6,6 +6,7 @@ import com.woocommerce.android.model.JetpackConnectionStatus
 import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.tools.SelectedSite
+import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.jetpack.JetpackConnectionData
 import org.wordpress.android.fluxc.store.JetpackStore
 import org.wordpress.android.fluxc.store.WooCommerceStore
@@ -40,9 +41,9 @@ class FetchJetpackStatus @Inject constructor(
     }
 
     @Suppress("ReturnCount", "NestedBlockDepth")
-    suspend operator fun invoke(): Result<JetpackStatusFetchResponse> {
+    suspend operator fun invoke(site: SiteModel = selectedSite.get()): Result<JetpackStatusFetchResponse> {
         return jetpackStore.fetchJetpackConnectionData(
-            site = selectedSite.get(),
+            site = site,
             useApplicationPasswords = true
         ).let { userResult ->
             when {
