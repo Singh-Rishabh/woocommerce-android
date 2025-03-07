@@ -428,6 +428,13 @@ fun AddressSelection(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = dimensionResource(id = R.dimen.minor_100))
             )
+
+            errorMessage?.let {
+                Box {
+                    Text(errorMessage)
+                }
+            }
+
             ShipmentDetailsSectionTitle(
                 title = stringResource(R.string.orderdetail_shipping_label_item_shipfrom),
                 modifier = Modifier.padding(
