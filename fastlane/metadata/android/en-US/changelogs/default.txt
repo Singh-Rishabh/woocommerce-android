@@ -1,3 +1,1 @@
-- [*][Internal] Added Analytics events in POS [https://github.com/woocommerce/woocommerce-android/pull/13622]
-- [*] Fixed an issue that can cause a crash when adding a new payment card in Blaze campaign form [https://github.com/woocommerce/woocommerce-android/pull/13624]
-
+We’ve squashed a pesky bug that could cause a crash when adding a new payment card in the Blaze campaign form. This update ensures a smoother and more reliable experience—enjoy hassle-free payments with WooCommerce! 🚀
