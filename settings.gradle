@@ -22,6 +22,21 @@ plugins {
 
 gradle.ext.isCi = System.getenv('CI')?.toBoolean() ?: false
 
+if (gradle.ext.isCi) {
+    buildCache {
+        remote(HttpBuildCache) {
+            url = "http://10.0.2.214:5071/cache/"
+            allowUntrustedServer = true
+            allowInsecureProtocol = true
+            push = true
+            credentials {
+                username = "ci-user"
+                password = System.getenv('GRADLE_CACHE_NODE_PASSWORD')
+            }
+        }
+    }
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -96,5 +111,4 @@ gradle.ext {
 }
 
 apply from: './config/gradle/include_builds.gradle'
-apply from: './config/gradle/gradle_build_cache.gradle'
 apply from: './config/gradle/gradle_build_scan.gradle'
