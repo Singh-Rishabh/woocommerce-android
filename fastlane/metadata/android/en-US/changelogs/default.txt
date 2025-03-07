@@ -1,1 +1,3 @@
-Our latest update brings a smoother WooCommerce experience! The Dashboard now adapts beautifully to tablets, and accessibility in in-person payments has been improved. We've also fixed currency mismatches in order editing and made product selection more flexible. Plus, enjoy better stability, refined UI elements, and a seamless experience when accessing Analytics reports. Update now! 🚀
+- [*][Internal] Added Analytics events in POS [https://github.com/woocommerce/woocommerce-android/pull/13622]
+- [*] Fixed an issue that can cause a crash when adding a new payment card in Blaze campaign form [https://github.com/woocommerce/woocommerce-android/pull/13624]
+
