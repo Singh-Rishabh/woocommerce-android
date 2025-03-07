@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
+import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
@@ -35,6 +36,7 @@ import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowActionSnackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -680,7 +682,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when onPurchaseShippingLabel fails then display error`() = testBlocking {
+    fun `when onPurchaseShippingLabel fails then show a snackbar`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
 
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
@@ -702,8 +704,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         sut.onPurchaseShippingLabel()
 
-        val currentViewState = sut.viewState.value
-        assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
+        assertThat(sut.event.value).matches {
+            it is ShowActionSnackbar && it.message == R.string.woo_shipping_labels_purchase_error
+        }
     }
 
     @Test
