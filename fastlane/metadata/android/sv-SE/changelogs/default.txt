@@ -1,0 +1,2 @@
+21.8:
+Vår senaste uppdatering ger en smidigare WooCommerce-upplevelse. Adminpanelen anpassar sig nu perfekt till surfplattor och tillgängligheten vid personliga betalningar har förbättrats. Vi har även åtgärdat valutaobalanser vid beställningsredigering och gjort produktvalet mer flexibelt. Dessutom får du bättre stabilitet, förfinade gränssnittselement och en sömlös upplevelse när du använder analysrapporter. Uppdatera nu! 🚀
