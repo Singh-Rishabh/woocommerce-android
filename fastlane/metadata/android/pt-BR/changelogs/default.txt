@@ -1,2 +1,0 @@
-21.8:
-Nossa mais nova atualização traz uma experiência melhor no WooCommerce. O painel agora se adapta perfeitamente aos tablets, e a acessibilidade nos pagamentos presenciais foi melhorada. Também corrigimos incompatibilidades de moeda na edição de pedidos e flexibilizamos ainda mais a seleção de produtos. Aproveite uma melhor estabilidade, elementos refinados na interface do usuário e uma experiência perfeita ao acessar relatórios de análise. Atualize agora mesmo! 🚀

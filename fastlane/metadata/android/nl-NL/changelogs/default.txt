@@ -1,2 +1,0 @@
-21.8:
-Onze nieuwste update zorgt voor een soepelere WooCommerce-ervaring! Het dashboard past zich nu goed aan tablets aan en de toegankelijkheid voor fysieke betalingen is verbeterd. We hebben ook problemen met niet overeenkomende valuta opgelost bij het bewerken van bestellingen en we hebben de productselectie flexibeler gemaakt. Profiteer ook van een betere stabiliteit, verfijnde UI-elementen en een naadloze ervaring bij het openen van Analytics-rapporten. Update nu! 🚀

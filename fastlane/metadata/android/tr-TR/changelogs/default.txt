@@ -1,2 +1,0 @@
-21.8:
-En son güncellememiz daha sorunsuz bir WooCommerce deneyimi getirir! Pano artık tabletlere güzel bir şekilde uyum sağlıyor ve şahsen ödemelerde erişilebilirlik iyileştirildi. Ayrıca sipariş düzenlemede para birimi uyuşmazlıklarını düzelttik ve ürün seçimini daha esnek hale getirdik. Ayrıca, daha iyi kararlılığın, iyileştirilmiş kullanıcı arayüzü öğelerinin ve Analiz raporlarına erişirken sorunsuz bir deneyimin keyfini çıkarın. Şimdi güncelleyin! 🚀
