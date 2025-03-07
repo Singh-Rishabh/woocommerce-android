@@ -34,7 +34,12 @@ class JetpackActivationSiteCredentialsViewModelTest : BaseUnitTest() {
         viewModel = JetpackActivationSiteCredentialsViewModel(
             JetpackActivationSiteCredentialsFragmentArgs(
                 siteUrl = siteUrl,
-                jetpackStatus = JetpackStatus(isJetpackInstalled, null)
+                jetpackStatus = JetpackStatus(
+                    isJetpackInstalled, JetpackConnectionStatus.AccountNotConnected(
+                        siteRegistrationStatus = JetpackSiteRegistrationStatus.UNKNOWN,
+                        blogId = null
+                    )
+                )
             ).toSavedStateHandle(),
             wpApiSiteRepository,
             analyticsTrackerWrapper,

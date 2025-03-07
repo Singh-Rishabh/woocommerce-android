@@ -78,6 +78,8 @@ class SitePickerSiteDiscoveryFragment : BaseFragment() {
                     siteUrl = event.siteAddress,
                     jetpackStatus = JetpackStatus(
                         isJetpackInstalled = event.isJetpackInstalled,
+                        // Pass a default value, we'll update it later after the user signs in
+                        // See JetpackActivationSiteCredentialsViewModel
                         jetpackConnectionStatus = JetpackConnectionStatus.AccountNotConnected(
                             siteRegistrationStatus = JetpackSiteRegistrationStatus.UNKNOWN,
                             blogId = null
