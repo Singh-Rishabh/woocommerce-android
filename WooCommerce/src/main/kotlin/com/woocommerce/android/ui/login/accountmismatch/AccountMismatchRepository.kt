@@ -98,11 +98,11 @@ class AccountMismatchRepository @Inject constructor(
     }
 
     private suspend fun fetchJetpackUser(site: SiteModel): Result<JetpackUser?> {
-        return jetpackStore.fetchJetpackUser(site, useApplicationPasswords = false).let {
+        return jetpackStore.fetchJetpackConnectionData(site, useApplicationPasswords = false).let {
             if (it.isError) {
                 Result.failure(OnChangedException(it.error, it.error.message))
             } else {
-                Result.success(it.data)
+                Result.success(it.data?.currentUser)
             }
         }
     }
