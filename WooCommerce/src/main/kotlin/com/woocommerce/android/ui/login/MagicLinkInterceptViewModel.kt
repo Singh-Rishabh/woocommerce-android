@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
-import com.woocommerce.android.R.string
+import com.woocommerce.android.model.JetpackConnectionStatus
+import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.model.RequestResult
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
+import com.woocommerce.android.ui.jetpack.FetchJetpackStatus
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar
 import com.woocommerce.android.viewmodel.ScopedViewModel
@@ -21,7 +23,8 @@ import javax.inject.Inject
 class MagicLinkInterceptViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val magicLinkInterceptRepository: MagicLinkInterceptRepository,
-    private val selectedSite: SelectedSite
+    private val selectedSite: SelectedSite,
+    private val fetchJetpackStatus: FetchJetpackStatus
 ) : ScopedViewModel(savedState) {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -56,12 +59,7 @@ class MagicLinkInterceptViewModel @Inject constructor(
                 if (flow == MagicLinkFlow.JetpackConnection &&
                     selectedSite.connectionType == SiteConnectionType.ApplicationPasswords
                 ) {
-                    triggerEvent(
-                        ContinueJetpackActivation(
-                            jetpackStatus = TODO(),
-                            siteUrl = selectedSite.get().url
-                        )
-                    )
+                    handleJetpackConnectionFlow()
                 } else {
                     triggerEvent(OpenSitePicker)
                 }
@@ -71,7 +69,7 @@ class MagicLinkInterceptViewModel @Inject constructor(
             // or if the user is not logged in
             // Either way, display error message and redirect user to login screen
             RequestResult.ERROR -> {
-                triggerEvent(ShowSnackbar(string.magic_link_update_error))
+                triggerEvent(ShowSnackbar(R.string.magic_link_update_error))
                 triggerEvent(OpenLogin)
             }
 
@@ -87,6 +85,39 @@ class MagicLinkInterceptViewModel @Inject constructor(
         }
     }
 
+    private fun handleJetpackConnectionFlow() {
+        _isLoading.value = true
+        launch {
+            fetchJetpackStatus(selectedSite.get(), useApplicationPasswords = true).fold(
+                onSuccess = { result ->
+                    _isLoading.value = false
+                    val jetpackStatus = when (result) {
+                        is FetchJetpackStatus.JetpackStatusFetchResponse.Success -> result.status
+
+                        FetchJetpackStatus.JetpackStatusFetchResponse.ConnectionForbidden -> {
+                            // Shouldn't happen unless the user changed their account's role after starting the setup.
+                            // If this occurs, we'll just use a default value, and then the next screens
+                            // will show an error message.
+                            JetpackStatus(
+                                isJetpackInstalled = false,
+                                jetpackConnectionStatus = JetpackConnectionStatus.AccountNotConnected(
+                                    siteRegistrationStatus = JetpackSiteRegistrationStatus.NOT_REGISTERED,
+                                    blogId = null
+                                )
+                            )
+                        }
+                    }
+                    triggerEvent(ContinueJetpackActivation(jetpackStatus, selectedSite.get().url))
+                },
+                onFailure = {
+                    triggerEvent(ShowSnackbar(R.string.magic_link_fetch_account_error))
+                    _isLoading.value = false
+                    _showRetryOption.value = true
+                }
+            )
+        }
+    }
+
     override fun onCleared() {
         super.onCleared()
         magicLinkInterceptRepository.onCleanup()
@@ -98,4 +129,5 @@ class MagicLinkInterceptViewModel @Inject constructor(
         val jetpackStatus: JetpackStatus,
         val siteUrl: String
     ) : MultiLiveEvent.Event()
+    data object CancelJetpackActivation : MultiLiveEvent.Event()
 }

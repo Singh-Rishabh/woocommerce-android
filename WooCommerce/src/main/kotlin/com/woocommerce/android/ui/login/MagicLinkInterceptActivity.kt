@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
+import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.CancelJetpackActivation
 import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.ContinueJetpackActivation
 import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.OpenLogin
 import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.OpenSitePicker
@@ -88,7 +89,7 @@ class MagicLinkInterceptActivity : AppCompatActivity() {
 
         viewModel.event.observe(this) { event ->
             when (event) {
-                OpenSitePicker -> showSitePickerScreen()
+                OpenSitePicker, CancelJetpackActivation -> openMainActivity()
                 OpenLogin -> showLoginScreen()
                 is ContinueJetpackActivation -> continueJetpackActivation(event)
                 is ShowSnackbar -> showSnackBar(event.message)
@@ -135,7 +136,7 @@ class MagicLinkInterceptActivity : AppCompatActivity() {
         retryContainer?.isVisible = show
     }
 
-    private fun showSitePickerScreen() {
+    private fun openMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
