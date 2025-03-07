@@ -1,0 +1,2 @@
+21.8:
+Pengalaman WooCommerce yang lebih baik dengan pembaruan terkini! Dasbor kini dapat diadaptasi dengan apik ke tablet. Selain itu, aksesibilitas pembayaran langsung telah ditingkatkan. Kami juga telah memperbaiki ketidakcocokan mata uang dalam pengeditan pesanan dan membuat pemilihan produk lebih fleksibel. Selain itu, nikmati stabilitas yang lebih baik, elemen UI yang disempurnakan, dan akses laporan Analitik yang lebih lancar. Perbarui sekarang! 🚀
