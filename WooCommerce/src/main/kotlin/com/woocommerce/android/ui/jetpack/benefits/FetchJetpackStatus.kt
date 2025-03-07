@@ -76,8 +76,8 @@ class FetchJetpackStatus @Inject constructor(
                         JetpackStatusFetchResponse.Success(
                             JetpackStatus(
                                 isJetpackInstalled = isJetpackInstalled,
-                                isJetpackConnected = userResult.user!!.isConnected,
-                                wpComEmail = userResult.user!!.wpcomEmail.orNullIfEmpty()
+                                isJetpackConnected = userResult.data!!.isConnected,
+                                wpComEmail = userResult.data!!.wpcomEmail.orNullIfEmpty()
                             )
                         )
                     )
