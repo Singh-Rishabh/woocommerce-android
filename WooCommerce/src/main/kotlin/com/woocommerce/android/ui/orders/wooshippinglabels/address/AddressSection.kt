@@ -416,6 +416,7 @@ fun AddressSelection(
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
     modifier: Modifier = Modifier,
+    errorMessage: String? = null,
     content: @Composable () -> Unit = {}
 ) {
     WCModalBottomSheetLayout(
