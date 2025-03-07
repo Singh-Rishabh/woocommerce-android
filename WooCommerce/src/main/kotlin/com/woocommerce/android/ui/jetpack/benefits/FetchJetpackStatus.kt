@@ -41,7 +41,10 @@ class FetchJetpackStatus @Inject constructor(
     }
 
     @Suppress("ReturnCount", "NestedBlockDepth")
-    suspend operator fun invoke(site: SiteModel = selectedSite.get()): Result<JetpackStatusFetchResponse> {
+    suspend operator fun invoke(
+        site: SiteModel = selectedSite.get(),
+        isJetpackInstalled: Boolean? = null
+    ): Result<JetpackStatusFetchResponse> {
         return jetpackStore.fetchJetpackConnectionData(
             site = site,
             useApplicationPasswords = true
@@ -70,7 +73,7 @@ class FetchJetpackStatus @Inject constructor(
                 }
 
                 else -> {
-                    val isJetpackInstalled = checkIfJetpackIsInstalled().getOrElse {
+                    val isJetpackInstalled = isJetpackInstalled ?: checkIfJetpackIsInstalled().getOrElse {
                         return Result.failure(it)
                     }
 
