@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.R
 import com.woocommerce.android.R.string
-import com.woocommerce.android.model.JetpackConnectionStatus
-import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.model.RequestResult
 import com.woocommerce.android.tools.SelectedSite
@@ -23,8 +21,7 @@ import javax.inject.Inject
 class MagicLinkInterceptViewModel @Inject constructor(
     savedState: SavedStateHandle,
     private val magicLinkInterceptRepository: MagicLinkInterceptRepository,
-    private val selectedSite: SelectedSite,
-    private val accountRepository: AccountRepository
+    private val selectedSite: SelectedSite
 ) : ScopedViewModel(savedState) {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
@@ -33,11 +30,9 @@ class MagicLinkInterceptViewModel @Inject constructor(
     val showRetryOption: LiveData<Boolean> = _showRetryOption
 
     private var flow: MagicLinkFlow? = null
-    private var source: MagicLinkSource? = null
 
-    fun handleMagicLink(authToken: String, flow: MagicLinkFlow?, source: MagicLinkSource?) {
+    fun handleMagicLink(authToken: String, flow: MagicLinkFlow?) {
         this.flow = flow
-        this.source = source
         launch {
             _isLoading.value = true
             handleRequestResultResponse(
@@ -56,16 +51,14 @@ class MagicLinkInterceptViewModel @Inject constructor(
 
     private fun handleRequestResultResponse(requestResult: RequestResult) {
         _isLoading.value = false
-        val source = this.source
         when (requestResult) {
             RequestResult.SUCCESS -> {
-                if (flow == MagicLinkFlow.SiteCredentialsToWPCom &&
-                    source != null &&
+                if (flow == MagicLinkFlow.JetpackConnection &&
                     selectedSite.connectionType == SiteConnectionType.ApplicationPasswords
                 ) {
                     triggerEvent(
                         ContinueJetpackActivation(
-                            jetpackStatus = source.inferJetpackStatus(),
+                            jetpackStatus = TODO(),
                             siteUrl = selectedSite.get().url
                         )
                     )
@@ -97,28 +90,6 @@ class MagicLinkInterceptViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         magicLinkInterceptRepository.onCleanup()
-    }
-
-    private fun MagicLinkSource.inferJetpackStatus(): JetpackStatus {
-        val isJetpackInstalled = this != MagicLinkSource.JetpackInstallation
-        val isJetpackConnected = this == MagicLinkSource.WPComAuthentication
-        val wpComEmail = if (isJetpackConnected) {
-            accountRepository.getUserAccount()?.email
-        } else {
-            null
-        }
-
-        return JetpackStatus(
-            isJetpackInstalled = isJetpackInstalled,
-            jetpackConnectionStatus = if (isJetpackConnected) {
-                JetpackConnectionStatus.AccountConnected(wpComEmail.orEmpty())
-            } else {
-                JetpackConnectionStatus.AccountNotConnected(
-                    siteRegistrationStatus = JetpackSiteRegistrationStatus.UNKNOWN,
-                    blogId = null
-                )
-            }
-        )
     }
 
     object OpenSitePicker : MultiLiveEvent.Event()

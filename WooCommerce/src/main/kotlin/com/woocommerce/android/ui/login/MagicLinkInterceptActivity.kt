@@ -74,14 +74,11 @@ class MagicLinkInterceptActivity : AppCompatActivity() {
 
         val uri = requireNotNull(intent.data)
         val authToken = uri.getQueryParameter(TOKEN_PARAMETER)
-        val source = uri.getQueryParameter(SOURCE_PARAMETER)?.let {
-            MagicLinkSource.fromString(it)
-        }
         val flow = uri.getQueryParameter(FLOW_PARAMETER)?.let {
             MagicLinkFlow.fromString(it)
         }
 
-        authToken?.let { viewModel.handleMagicLink(it, flow, source) }
+        authToken?.let { viewModel.handleMagicLink(authToken = it, flow = flow) }
     }
 
     private fun setupObservers() {
