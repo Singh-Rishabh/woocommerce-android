@@ -1,4 +1,4 @@
-package com.woocommerce.android.ui.jetpack.benefits
+package com.woocommerce.android.ui.jetpack
 
 import com.woocommerce.android.OnChangedException
 import com.woocommerce.android.extensions.isNotNullOrEmpty

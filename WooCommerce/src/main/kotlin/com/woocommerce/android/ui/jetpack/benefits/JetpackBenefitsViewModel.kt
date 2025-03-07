@@ -15,7 +15,8 @@ import com.woocommerce.android.model.UserRole
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
 import com.woocommerce.android.ui.common.UserEligibilityFetcher
-import com.woocommerce.android.ui.jetpack.benefits.FetchJetpackStatus.JetpackStatusFetchResponse
+import com.woocommerce.android.ui.jetpack.FetchJetpackStatus
+import com.woocommerce.android.ui.jetpack.FetchJetpackStatus.JetpackStatusFetchResponse
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowSnackbar

@@ -10,6 +10,7 @@ import com.woocommerce.android.model.UserRole
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.tools.SiteConnectionType
 import com.woocommerce.android.ui.common.UserEligibilityFetcher
+import com.woocommerce.android.ui.jetpack.FetchJetpackStatus
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat

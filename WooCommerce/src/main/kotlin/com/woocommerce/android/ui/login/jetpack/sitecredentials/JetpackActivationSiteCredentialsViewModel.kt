@@ -13,8 +13,8 @@ import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.model.UiString
 import com.woocommerce.android.model.UiString.UiStringRes
-import com.woocommerce.android.ui.jetpack.benefits.FetchJetpackStatus
-import com.woocommerce.android.ui.jetpack.benefits.FetchJetpackStatus.JetpackStatusFetchResponse
+import com.woocommerce.android.ui.jetpack.FetchJetpackStatus
+import com.woocommerce.android.ui.jetpack.FetchJetpackStatus.JetpackStatusFetchResponse
 import com.woocommerce.android.ui.login.WPApiSiteRepository
 import com.woocommerce.android.ui.login.WPApiSiteRepository.CookieNonceAuthenticationException
 import com.woocommerce.android.viewmodel.MultiLiveEvent
