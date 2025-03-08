@@ -41,7 +41,7 @@ import java.io.IOException
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Named
 
-abstract class BaseWPV2MediaRestClient constructor(
+abstract class BaseWPV2MediaRestClient(
     private val dispatcher: Dispatcher,
     private val coroutineEngine: CoroutineEngine,
     @Named("regular") private val okHttpClient: OkHttpClient,
