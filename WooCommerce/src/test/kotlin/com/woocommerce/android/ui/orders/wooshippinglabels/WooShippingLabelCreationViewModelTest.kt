@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
+import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
@@ -865,7 +866,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
         val notification = AddressNotification(
             isSuccess = false,
-            message = "Origin warning",
+            message = R.string.woo_shipping_address_notification_destination_missing,
             isDestinationNotification = false
         )
 
@@ -890,7 +891,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
         val notification = AddressNotification(
             isSuccess = false,
-            message = "Origin warning",
+            message = R.string.woo_shipping_address_notification_destination_missing,
             isDestinationNotification = false
         )
 

@@ -6,21 +6,13 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.viewmodel.BaseUnitTest
-import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.mock
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class GetAddressNotificationTests : BaseUnitTest() {
-
-    private val resourceProvider: ResourceProvider = mock {
-        on { getString(any()) } doAnswer { invocationOnMock -> invocationOnMock.arguments[0].toString() }
-    }
-    private val sut = GetAddressNotification(resourceProvider)
+    private val sut = GetAddressNotification()
 
     private val defaultAddresses = WooShippingAddresses(
         shipFrom = OriginShippingAddress.EMPTY.copy(
@@ -51,7 +43,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
     fun `when addresses as no issues and previous was a destination warning, then display destination success`() {
         val previous = AddressNotification(
             isSuccess = false,
-            message = "Destination warning",
+            message = R.string.woo_shipping_address_notification_destination_missing,
             isDestinationNotification = true
         )
         val result = sut.invoke(defaultAddresses, previous)
@@ -64,7 +56,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
     fun `when addresses as no issues and previous was a origin warning, then display origin success`() {
         val previous = AddressNotification(
             isSuccess = false,
-            message = "Origin warning",
+            message = R.string.woo_shipping_address_notification_destination_missing,
             isDestinationNotification = false
         )
 
@@ -85,7 +77,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
         assertThat(result!!.isSuccess).isFalse
         assertThat(result.isDestinationNotification).isTrue
         assertThat(result.message).isEqualTo(
-            R.string.woo_shipping_address_notification_destination_unverified.toString()
+            R.string.woo_shipping_address_notification_destination_unverified
         )
     }
 
@@ -99,7 +91,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
         assertThat(result!!.isSuccess).isFalse
         assertThat(result.isDestinationNotification).isFalse
         assertThat(result.message).isEqualTo(
-            R.string.woo_shipping_address_notification_origin_unverified.toString()
+            R.string.woo_shipping_address_notification_origin_unverified
         )
     }
 
@@ -113,7 +105,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
         assertThat(result!!.isSuccess).isFalse
         assertThat(result.isDestinationNotification).isTrue
         assertThat(result.message).isEqualTo(
-            R.string.woo_shipping_address_notification_destination_missing.toString()
+            R.string.woo_shipping_address_notification_destination_missing
         )
     }
 
@@ -132,7 +124,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
         assertThat(result!!.isSuccess).isFalse
         assertThat(result.isDestinationNotification).isFalse
         assertThat(result.message).isEqualTo(
-            R.string.woo_shipping_address_notification_origin_unverified.toString()
+            R.string.woo_shipping_address_notification_origin_unverified
         )
 
         // Fix origin issue
@@ -146,7 +138,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
         assertThat(result!!.isSuccess).isFalse
         assertThat(result.isDestinationNotification).isTrue
         assertThat(result.message).isEqualTo(
-            R.string.woo_shipping_address_notification_destination_unverified.toString()
+            R.string.woo_shipping_address_notification_destination_unverified
         )
 
         // Fix destination issue
@@ -157,7 +149,7 @@ class GetAddressNotificationTests : BaseUnitTest() {
         assertThat(result!!.isSuccess).isTrue
         assertThat(result.isDestinationNotification).isTrue
         assertThat(result.message).isEqualTo(
-            R.string.woo_shipping_address_notification_destination_verified.toString()
+            R.string.woo_shipping_address_notification_destination_verified
         )
     }
 }
