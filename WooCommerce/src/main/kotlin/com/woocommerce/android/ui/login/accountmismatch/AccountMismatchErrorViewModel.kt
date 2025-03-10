@@ -11,6 +11,7 @@ import com.woocommerce.android.OnChangedException
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.model.UiString.UiStringRes
 import com.woocommerce.android.model.UiString.UiStringText
 import com.woocommerce.android.support.help.HelpOrigin.LOGIN_SITE_ADDRESS
@@ -125,6 +126,7 @@ class AccountMismatchErrorViewModel @Inject constructor(
                         )
                     )
                 }
+
                 AccountMismatchPrimaryButton.NONE ->
                     error("NONE as primary button shouldn't trigger the callback")
             }
@@ -165,6 +167,7 @@ class AccountMismatchErrorViewModel @Inject constructor(
                                     )
                                 )
                             }
+
                             JetpackConnectionStatus.NotConnected -> startJetpackConnection()
                         }
                     },
@@ -221,29 +224,19 @@ class AccountMismatchErrorViewModel @Inject constructor(
 
     private fun startJetpackConnection() = launch {
         analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_CONNECT_BUTTON_TAPPED)
-        val site = site.await()
-        if (site == null || site.username.isNullOrEmpty() || site.password.isNullOrEmpty()) {
-            unifiedLoginTracker.track(step = UnifiedLoginTracker.Step.USERNAME_PASSWORD)
-            step.value = Step.SiteCredentials()
-            return@launch
-        }
-        _loadingDialogMessage.value = R.string.loading
-        accountMismatchRepository.fetchJetpackConnectionUrl(site).fold(
-            onSuccess = {
-                _loadingDialogMessage.value = null
-                step.value = Step.JetpackConnection(it)
-            },
-            onFailure = {
-                _loadingDialogMessage.value = null
-                step.value = Step.MainContent
-                triggerEvent(ShowSnackbar(R.string.login_jetpack_connection_url_failed))
-                analyticsTrackerWrapper.track(
-                    stat = AnalyticsEvent.LOGIN_JETPACK_CONNECTION_URL_FETCH_FAILED,
-                    errorContext = this.javaClass.simpleName,
-                    errorType = (it as? OnChangedException)?.error?.javaClass?.simpleName,
-                    errorDescription = it.message
+        triggerEvent(
+            NavigateToJetpackActivationSteps(
+                siteUrl = siteUrl,
+                // Pass a default value, we'll update it later after the user signs in
+                // See JetpackActivationSiteCredentialsViewModel
+                jetpackStatus = JetpackStatus(
+                    isJetpackInstalled = true,
+                    jetpackConnectionStatus = com.woocommerce.android.model.JetpackConnectionStatus.AccountNotConnected(
+                        siteRegistrationStatus = com.woocommerce.android.model.JetpackSiteRegistrationStatus.UNKNOWN,
+                        blogId = null
+                    )
                 )
-            }
+            )
         )
     }
 
@@ -289,8 +282,10 @@ class AccountMismatchErrorViewModel @Inject constructor(
             } else {
                 R.string.username_or_password_incorrect
             }
+
         INVALID_OTP, INVALID_TOKEN, AUTHORIZATION_REQUIRED, NEEDS_2FA ->
             R.string.login_2fa_not_supported_self_hosted_site
+
         else -> {
             null
         }
@@ -347,6 +342,10 @@ class AccountMismatchErrorViewModel @Inject constructor(
     object NavigateToEmailHelpDialogEvent : MultiLiveEvent.Event()
     object NavigateToLoginScreen : MultiLiveEvent.Event()
     data class OnJetpackConnectedEvent(val email: String, val isAuthenticated: Boolean) : MultiLiveEvent.Event()
+    data class NavigateToJetpackActivationSteps(
+        val siteUrl: String,
+        val jetpackStatus: JetpackStatus
+    ) : MultiLiveEvent.Event()
 
     private sealed interface Step : Parcelable {
         @Parcelize
