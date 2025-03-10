@@ -22,8 +22,42 @@ plugins {
 
 gradle.ext.isCi = System.getenv('CI')?.toBoolean() ?: false
 
-if (gradle.ext.isCi) {
-    buildCache {
+gradle.ext {
+    secretProperties = loadPropertiesWithFallback(
+            logger,
+            file("${rootDir}/defaults.properties"),
+            file("${System.getProperty("user.home")}/.configure/woocommerce-android/secrets/secrets.properties")
+    )
+    developerProperties = loadPropertiesWithFallback(
+            logger,
+            file("${rootDir}/developer.properties-example"),
+            file("${rootDir}/developer.properties")
+    )
+}
+
+static def loadPropertiesWithFallback(Logger logger, File fallbackFile, File primaryFile) {
+    def defaultProperties = readPropertiesFromFile(fallbackFile)
+    def primaryProperties
+    if (primaryFile.exists()) {
+        primaryProperties = readPropertiesFromFile(primaryFile)
+    } else {
+        logger.warn("Primary properties file not found: ${primaryFile}. Using fallback: ${fallbackFile}.")
+        primaryProperties = new Properties()
+    }
+
+    return defaultProperties + primaryProperties
+}
+
+static def readPropertiesFromFile(File file) {
+    def properties = new Properties()
+    file.withInputStream { stream ->
+        properties.load(stream)
+    }
+    return properties
+}
+
+buildCache {
+    if (gradle.ext.isCi) {
         remote(HttpBuildCache) {
             url = "http://10.0.2.214:5071/cache/"
             allowUntrustedServer = true
@@ -32,6 +66,15 @@ if (gradle.ext.isCi) {
             credentials {
                 username = "ci-user"
                 password = System.getenv('GRADLE_CACHE_NODE_PASSWORD')
+            }
+        }
+    } else {
+        remote(HttpBuildCache) {
+            url = gradle.ext.secretProperties.get('gradleCacheNodeUrl')
+            push = false
+            credentials {
+                username = "developer"
+                password = gradle.ext.secretProperties.get('gradleCacheNodePassword')
             }
         }
     }
