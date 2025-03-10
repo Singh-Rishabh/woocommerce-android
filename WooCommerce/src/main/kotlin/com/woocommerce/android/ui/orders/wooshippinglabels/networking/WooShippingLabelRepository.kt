@@ -4,6 +4,7 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingAddressDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingConfigurationDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippingLabelStatus
@@ -42,7 +43,7 @@ class WooShippingLabelRepository @Inject constructor(
                 ?.takeIf { response.isError.not() }
                 ?.let {
                     configurationDataStore.saveStoreOptions(it)
-                } ?: configurationDataStore.clearStoreOptions()
+                }
         }
 
     suspend fun fetchPurchasedShippingLabels(
@@ -158,6 +159,62 @@ class WooShippingLabelRepository @Inject constructor(
                     type = WooErrorType.INVALID_RESPONSE,
                     original = GenericErrorType.INVALID_RESPONSE,
                     message = "Address update failed"
+                )
+            )
+        }
+    }
+
+    suspend fun updateDestinationAddress(
+        site: SiteModel,
+        orderId: Long,
+        address: Address,
+    ): WooResult<DestinationShippingAddress> {
+        val updatedAddress = restClient.updateDestinationAddress(
+            site = site,
+            orderId = orderId,
+            address = mapper.toAddressDTO(address)
+        )
+
+        return if (updatedAddress.result?.success == true) {
+            updatedAddress.asWooResult {
+                DestinationShippingAddress(
+                    address = mapper(it.address),
+                    isVerified = it.isVerified
+                )
+            }
+        } else {
+            WooResult(
+                WooError(
+                    type = WooErrorType.INVALID_RESPONSE,
+                    original = GenericErrorType.INVALID_RESPONSE,
+                    message = "Address update failed"
+                )
+            )
+        }
+    }
+
+    suspend fun verifyDestinationAddress(
+        site: SiteModel,
+        orderId: Long,
+    ): WooResult<DestinationShippingAddress> {
+        val verifyDestinationAddress = restClient.verifyDestinationAddress(
+            site = site,
+            orderId = orderId,
+        )
+
+        return if (verifyDestinationAddress.result?.success == true) {
+            verifyDestinationAddress.asWooResult {
+                DestinationShippingAddress(
+                    address = mapper(it.normalizedAddress),
+                    isVerified = it.isVerified
+                )
+            }
+        } else {
+            WooResult(
+                WooError(
+                    type = WooErrorType.INVALID_RESPONSE,
+                    original = GenericErrorType.INVALID_RESPONSE,
+                    message = "Address verification failed"
                 )
             )
         }
