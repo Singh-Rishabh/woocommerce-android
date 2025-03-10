@@ -99,7 +99,7 @@ buildCache {
                 password = System.getenv('GRADLE_CACHE_NODE_PASSWORD')
             }
         }
-    } else if (gradle.ext.developerProperties.get('enable_remote_build_cache') != null) {
+    } else if (gradle.ext.developerProperties.get('use_remote_build_cache_locally').toBoolean() == true) {
 
         // This checks will help to optimize experience of usage of remote build cache for developers
         assertSecretsApplied()
