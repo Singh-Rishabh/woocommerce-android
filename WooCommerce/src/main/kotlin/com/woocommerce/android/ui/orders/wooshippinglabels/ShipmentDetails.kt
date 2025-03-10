@@ -72,6 +72,7 @@ fun ShipmentDetails(
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     destinationStatus: AddressStatus,
     markOrderComplete: Boolean = false,
+    errorMessage: String? = null,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
     handlerModifier: Modifier = Modifier,
     isReadOnly: Boolean = false
@@ -108,6 +109,11 @@ fun ShipmentDetails(
                             .padding(top = dimensionResource(R.dimen.minor_100))
                     )
                     Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
+                    errorMessage?.let {
+                        Box {
+                            Text(errorMessage)
+                        }
+                    }
                 }
             }
         }
