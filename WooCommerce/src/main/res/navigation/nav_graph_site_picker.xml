@@ -58,9 +58,6 @@
             android:name="primaryButton"
             android:defaultValue="NONE"
             app:argType="com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorViewModel$AccountMismatchPrimaryButton" />
-        <argument
-            android:name="errorType"
-            app:argType="com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorViewModel$AccountMismatchErrorType" />
     </fragment>
     <dialog
         android:id="@+id/closeAccountDialogFragment"
