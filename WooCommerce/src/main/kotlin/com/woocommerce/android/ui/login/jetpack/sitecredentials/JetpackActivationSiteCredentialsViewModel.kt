@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.OnChangedException
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
@@ -40,7 +41,8 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val wpApiSiteRepository: WPApiSiteRepository,
     private val analyticsTrackerWrapper: AnalyticsTrackerWrapper,
-    private val fetchJetpackStatus: FetchJetpackStatus
+    private val fetchJetpackStatus: FetchJetpackStatus,
+    private val appPrefs: AppPrefsWrapper
 ) : ScopedViewModel(savedStateHandle) {
     private val navArgs: JetpackActivationSiteCredentialsFragmentArgs by savedStateHandle.navArgs()
 
@@ -49,6 +51,9 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
         initialValue = false,
         key = "is-showing-account-connection-dialog"
     )
+    private var connectedWPComEmail: String?
+        get() = savedState["connected-wpcom-email"]
+        set(value) = savedState.set("connected-wpcom-email", value)
 
     private val _viewState = savedStateHandle.getStateFlow(
         scope = viewModelScope,
@@ -66,7 +71,7 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
                 message = R.string.login_jetpack_user_already_connected_dialog_message,
                 positiveButton = DialogState.DialogButton(
                     text = R.string.yes,
-                    onClick = { TODO() }
+                    onClick = ::signInUsingConnectedWPComAccount
                 ),
                 negativeButton = DialogState.DialogButton(
                     text = R.string.no,
@@ -163,6 +168,7 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
                 val jetpackStatus = when (it) {
                     is JetpackStatusFetchResponse.Success -> {
                         if (it.status.jetpackConnectionStatus is JetpackConnectionStatus.AccountConnected) {
+                            connectedWPComEmail = it.status.jetpackConnectionStatus.wpComEmail
                             isShowingAccountConnectionDialog.value = true
                             return@fold
                         }
@@ -190,6 +196,14 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
         )
     }
 
+    private fun signInUsingConnectedWPComAccount() {
+        connectedWPComEmail?.let {
+            // Save the address of the site the user is trying to connect to to be used later in the login screen
+            appPrefs.setLoginSiteAddress(navArgs.siteUrl)
+            triggerEvent(OpenWordPressComLogin(it))
+        }
+    }
+
     @Parcelize
     data class JetpackActivationSiteCredentialsViewState(
         val isJetpackInstalled: Boolean,
@@ -207,6 +221,8 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
         val siteUrl: String,
         val jetpackStatus: JetpackStatus
     ) : MultiLiveEvent.Event()
+
+    data class OpenWordPressComLogin(val email: String) : MultiLiveEvent.Event()
 
     data class ResetPassword(val siteUrl: String) : MultiLiveEvent.Event()
 }
