@@ -416,7 +416,6 @@ fun AddressSelection(
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
     modifier: Modifier = Modifier,
-    errorMessage: String? = null,
     content: @Composable () -> Unit = {}
 ) {
     WCModalBottomSheetLayout(
@@ -428,12 +427,6 @@ fun AddressSelection(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = dimensionResource(id = R.dimen.minor_100))
             )
-
-            errorMessage?.let {
-                Box {
-                    Text(errorMessage)
-                }
-            }
 
             ShipmentDetailsSectionTitle(
                 title = stringResource(R.string.orderdetail_shipping_label_item_shipfrom),

@@ -309,9 +309,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 onShippingFromAddressChange = onShippingFromAddressChange,
                 modalBottomSheetState = shipFromSelectionBottomSheetState,
                 modifier = Modifier.padding(bottom = paddingBottom),
-                onEditOriginAddress = onEditOriginAddress,
-                errorMessage = stringResource(R.string.woo_shipping_labels_customs_itn_required_error)
-                    .takeIf { customsState is CustomsState.ItnMissing }
+                onEditOriginAddress = onEditOriginAddress
             ) {
                 ShipmentDetails(
                     shippableItems = shippableItems,
@@ -323,6 +321,8 @@ private fun LabelCreationScreenWithBottomSheet(
                     scaffoldState = scaffoldState,
                     isShipmentDetailsExpanded = uiState.isShipmentDetailsExpanded,
                     markOrderComplete = uiState.markOrderComplete,
+                    errorMessage = stringResource(R.string.woo_shipping_labels_customs_itn_required_error),
+                        //.takeIf { customsState is CustomsState.ItnMissing }
                     onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
                     onEditDestinationAddress = onEditDestinationAddress,
                     destinationStatus = destinationStatus
