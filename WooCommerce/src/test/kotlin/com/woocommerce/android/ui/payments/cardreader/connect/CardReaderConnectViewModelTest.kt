@@ -1563,6 +1563,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
     fun `given battery critically low error, when connecting fails, then hint label shows battery low message`() =
         testBlocking {
             init()
+
             (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
             readerStatusFlow.emit(CardReaderStatus.Connecting)
             readerStatusFlow.emit(
@@ -1580,6 +1581,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
     fun `given other error, when connecting fails, then hint label is null`() =
         testBlocking {
             init()
+
             (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
             readerStatusFlow.emit(CardReaderStatus.Connecting)
             readerStatusFlow.emit(
@@ -1597,6 +1599,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
     fun `given battery low error with message, when connecting fails, then toast is not shown`() =
         testBlocking {
             init()
+
             (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
             readerStatusFlow.emit(CardReaderStatus.Connecting)
             readerStatusFlow.emit(
@@ -1614,6 +1617,7 @@ class CardReaderConnectViewModelTest : BaseUnitTest() {
         testBlocking {
             val errorMessage = "Other error message"
             init()
+
             (viewModel.viewStateData.value as ExternalReaderFoundState).onPrimaryActionClicked.invoke()
             readerStatusFlow.emit(CardReaderStatus.Connecting)
             readerStatusFlow.emit(
