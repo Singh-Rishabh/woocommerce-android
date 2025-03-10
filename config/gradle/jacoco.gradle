@@ -9,9 +9,9 @@ jacoco {
 rootProject.afterEvaluate {
     tasks.register("jacocoTestReport", JacocoReport) {
         dependsOn(
-                ':WooCommerce:testWasabiDebugUnitTest',
+                ':WooCommerce:testJalapenoDebugUnitTest',
                 ':libs:cardreader:testDebugUnitTest',
-                ':WooCommerce-Wear:testWasabiDebugUnitTest',
+                ':WooCommerce-Wear:testJalapenoDebugUnitTest',
                 ':libs:fluxc:testDebugUnitTest',
                 ':libs:fluxc-plugin:testDebugUnitTest',
                 ':libs:fluxc-tests:testDebugUnitTest',
