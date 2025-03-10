@@ -499,11 +499,7 @@ class CardReaderConnectViewModel @Inject constructor(
         viewState.value = ConnectingFailedState(
             onPrimaryActionClicked = ::restartFlow,
             onSecondaryActionClicked = ::onCancelClicked,
-            hintLabel = when (errorCode) {
-                CardReaderStatus.NotConnected.ErrorCode.BATTERY_CRITICALLY_LOW ->
-                    R.string.card_reader_connect_failed_battery_low_hint
-                else -> null
-            }
+            hintLabel = hintLabel
         )
         cardReaderOnboardingChecker.invalidateCache()
     }
