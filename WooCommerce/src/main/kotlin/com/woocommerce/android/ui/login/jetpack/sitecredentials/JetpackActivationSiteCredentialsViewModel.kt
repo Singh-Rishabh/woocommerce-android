@@ -13,6 +13,7 @@ import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.model.UiString
 import com.woocommerce.android.model.UiString.UiStringRes
+import com.woocommerce.android.ui.compose.DialogState
 import com.woocommerce.android.ui.jetpack.FetchJetpackStatus
 import com.woocommerce.android.ui.jetpack.FetchJetpackStatus.JetpackStatusFetchResponse
 import com.woocommerce.android.ui.login.WPApiSiteRepository
@@ -24,6 +25,7 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.IgnoredOnParcel
@@ -42,6 +44,12 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
 ) : ScopedViewModel(savedStateHandle) {
     private val navArgs: JetpackActivationSiteCredentialsFragmentArgs by savedStateHandle.navArgs()
 
+    private var isShowingAccountConnectionDialog = savedStateHandle.getStateFlow(
+        scope = viewModelScope,
+        initialValue = false,
+        key = "is-showing-account-connection-dialog"
+    )
+
     private val _viewState = savedStateHandle.getStateFlow(
         scope = viewModelScope,
         initialValue = JetpackActivationSiteCredentialsViewState(
@@ -50,6 +58,30 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
         )
     )
     val viewState = _viewState.asLiveData()
+
+    val dialogState = isShowingAccountConnectionDialog.map {
+        when (it) {
+            true -> DialogState(
+                title = R.string.login_jetpack_user_already_connected_dialog_title,
+                message = R.string.login_jetpack_user_already_connected_dialog_message,
+                positiveButton = DialogState.DialogButton(
+                    text = R.string.yes,
+                    onClick = { TODO() }
+                ),
+                negativeButton = DialogState.DialogButton(
+                    text = R.string.no,
+                    onClick = {
+                        _viewState.update {
+                            it.copy(username = "", password = "")
+                        }
+                        isShowingAccountConnectionDialog.value = false
+                    }
+                )
+            )
+
+            false -> null
+        }
+    }.asLiveData()
 
     init {
         analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SITE_CREDENTIAL_SCREEN_VIEWED)
@@ -129,7 +161,14 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
         ).fold(
             onSuccess = {
                 val jetpackStatus = when (it) {
-                    is JetpackStatusFetchResponse.Success -> it.status
+                    is JetpackStatusFetchResponse.Success -> {
+                        if (it.status.jetpackConnectionStatus is JetpackConnectionStatus.AccountConnected) {
+                            isShowingAccountConnectionDialog.value = true
+                            return@fold
+                        }
+                        it.status
+                    }
+
                     is JetpackStatusFetchResponse.ConnectionForbidden -> {
                         // When we can't fetch the connection data, we know that the site is not registered with Jetpack
                         // The user won't be to connect to Jetpack, and the next screen will show the error message
