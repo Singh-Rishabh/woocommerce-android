@@ -68,7 +68,7 @@ buildCache {
                 password = System.getenv('GRADLE_CACHE_NODE_PASSWORD')
             }
         }
-    } else {
+    } else if(gradle.ext.developerProperties.get('enable_remote_build_cache') != null) {
         remote(HttpBuildCache) {
             url = gradle.ext.secretProperties.get('gradleCacheNodeUrl')
             push = false
