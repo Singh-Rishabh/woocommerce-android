@@ -36,7 +36,6 @@ import javax.inject.Inject
 class MagicLinkInterceptActivity : AppCompatActivity() {
     companion object {
         private const val TOKEN_PARAMETER = "token"
-        private const val SOURCE_PARAMETER = "source"
         private const val FLOW_PARAMETER = "flow"
     }
 
