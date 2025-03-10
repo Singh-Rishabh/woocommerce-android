@@ -8,11 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.AppPrefsWrapper
 import com.woocommerce.android.OnChangedException
 import com.woocommerce.android.analytics.AnalyticsEvent
-import com.woocommerce.android.analytics.AnalyticsEvent.JETPACK_SETUP_FLOW
-import com.woocommerce.android.analytics.AnalyticsEvent.LOGIN_JETPACK_SETUP_ACTIVATION_FAILED
-import com.woocommerce.android.analytics.AnalyticsEvent.LOGIN_JETPACK_SETUP_INSTALL_FAILED
 import com.woocommerce.android.analytics.AnalyticsTracker
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.extensions.filterNotNull
 import com.woocommerce.android.extensions.isNotNullOrEmpty
 import com.woocommerce.android.model.JetpackConnectionStatus
 import com.woocommerce.android.support.help.HelpOrigin.JETPACK_INSTALLATION
@@ -56,6 +54,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.JetpackStore
+import org.wordpress.android.fluxc.utils.extensions.slashJoin
 import org.wordpress.android.util.UrlUtils
 import javax.inject.Inject
 
@@ -78,9 +77,6 @@ class JetpackActivationMainViewModel @Inject constructor(
 
         @VisibleForTesting
         const val JETPACK_SITE_CONNECTED_AUTH_URL_PREFIX = "https://jetpack.wordpress.com/jetpack.authorize"
-
-        @VisibleForTesting
-        const val MOBILE_REDIRECT = "woocommerce://jetpack-connected"
     }
 
     private val navArgs: JetpackActivationMainFragmentArgs by savedStateHandle.navArgs()
@@ -148,10 +144,8 @@ class JetpackActivationMainViewModel @Inject constructor(
         }
     }.asLiveData()
 
-    private val isFromBanner = appPrefsWrapper.getJetpackInstallationIsFromBanner()
-
     init {
-        if (!isFromBanner) {
+        if (!useApplicationPasswords) {
             analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SETUP_SCREEN_VIEWED)
         }
 
@@ -161,14 +155,8 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onCloseClick() {
-        if (isFromBanner) {
-            analyticsTrackerWrapper.track(
-                stat = JETPACK_SETUP_FLOW,
-                properties = mapOf(
-                    AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                    AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_DISMISS
-                )
-            )
+        if (useApplicationPasswords) {
+            trackSetupFlow(tap = AnalyticsTracker.VALUE_DISMISS)
         } else {
             analyticsTrackerWrapper.track(
                 stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_SCREEN_DISMISSED,
@@ -182,14 +170,8 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onContinueClick() = launch {
-        if (isFromBanner) {
-            analyticsTrackerWrapper.track(
-                stat = JETPACK_SETUP_FLOW,
-                properties = mapOf(
-                    AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                    AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_GO_TO_STORE
-                )
-            )
+        if (useApplicationPasswords) {
+            trackSetupFlow(tap = AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_GO_TO_STORE)
         } else {
             analyticsTrackerWrapper.track(stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_GO_TO_STORE_BUTTON_TAPPED)
         }
@@ -202,7 +184,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 jetpackActivationRepository.setSelectedSiteAndCleanOldSites(site)
                 triggerEvent(GoToStore)
 
-                if (isFromBanner) {
+                if (useApplicationPasswords) {
                     analyticsTrackerWrapper.track(stat = AnalyticsEvent.JETPACK_SETUP_SYNCHRONIZATION_COMPLETED)
                 }
             } else {
@@ -228,14 +210,8 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onRetryClick() {
-        if (isFromBanner) {
-            analyticsTrackerWrapper.track(
-                stat = JETPACK_SETUP_FLOW,
-                properties = mapOf(
-                    AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                    AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_TRY_AGAIN
-                )
-            )
+        if (useApplicationPasswords) {
+            trackSetupFlow(tap = AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_TRY_AGAIN)
         } else {
             analyticsTrackerWrapper.track(
                 stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_TRY_AGAIN_BUTTON_TAPPED,
@@ -249,14 +225,8 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     fun onGetHelpClick() {
-        if (isFromBanner) {
-            analyticsTrackerWrapper.track(
-                stat = JETPACK_SETUP_FLOW,
-                properties = mapOf(
-                    AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                    AnalyticsTracker.KEY_TAP to AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_SUPPORT
-                )
-            )
+        if (useApplicationPasswords) {
+            trackSetupFlow(tap = AnalyticsTracker.VALUE_JETPACK_SETUP_TAP_SUPPORT)
         } else {
             analyticsTrackerWrapper.track(
                 stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_GET_SUPPORT_BUTTON_TAPPED,
@@ -293,6 +263,10 @@ class JetpackActivationMainViewModel @Inject constructor(
                 val stepType = step.type
                 WooLog.d(WooLog.T.LOGIN, "Jetpack Activation: handle step: $stepType")
 
+                if (useApplicationPasswords) {
+                    trackSetupFlow()
+                }
+
                 when (stepType) {
                     StepType.Installation -> {
                         startJetpackInstallation()
@@ -320,7 +294,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                     }
 
                     StepType.Done -> {
-                        if (isFromBanner) {
+                        if (useApplicationPasswords) {
                             analyticsTrackerWrapper.track(stat = AnalyticsEvent.JETPACK_SETUP_COMPLETED)
                         } else {
                             analyticsTrackerWrapper.track(
@@ -361,7 +335,7 @@ class JetpackActivationMainViewModel @Inject constructor(
         ).collect { status ->
             when (status) {
                 is PluginInstalled -> {
-                    if (!isFromBanner) {
+                    if (!useApplicationPasswords) {
                         analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SETUP_INSTALL_SUCCESSFUL)
                     }
                     currentStep.value = Step(type = StepType.Activation, state = StepState.Ongoing)
@@ -373,7 +347,7 @@ class JetpackActivationMainViewModel @Inject constructor(
                 }
 
                 is PluginActivated -> {
-                    if (!isFromBanner) {
+                    if (!useApplicationPasswords) {
                         analyticsTrackerWrapper.track(AnalyticsEvent.LOGIN_JETPACK_SETUP_ACTIVATION_SUCCESSFUL)
                     }
                     currentStep.value = Step(type = StepType.Connection, state = StepState.Ongoing)
@@ -388,17 +362,11 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     private fun trackPluginActivationError(status: PluginActivationFailed) {
-        if (isFromBanner) {
-            analyticsTrackerWrapper.track(
-                stat = JETPACK_SETUP_FLOW,
-                properties = mapOf(
-                    AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                    AnalyticsTracker.KEY_FAILURE to "Jetpack activation failed: $status",
-                )
-            )
+        if (useApplicationPasswords) {
+            trackSetupFlow(failure =  "Jetpack activation failed: $status")
         } else {
             analyticsTrackerWrapper.track(
-                stat = LOGIN_JETPACK_SETUP_ACTIVATION_FAILED,
+                stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_ACTIVATION_FAILED,
                 properties = mapOf(AnalyticsTracker.KEY_ERROR_CODE to status.errorCode.toString()),
                 errorContext = this@JetpackActivationMainViewModel::class.simpleName,
                 errorType = status.errorType,
@@ -408,17 +376,11 @@ class JetpackActivationMainViewModel @Inject constructor(
     }
 
     private fun trackPluginInstallationError(status: PluginInstallFailed) {
-        if (isFromBanner) {
-            analyticsTrackerWrapper.track(
-                stat = JETPACK_SETUP_FLOW,
-                properties = mapOf(
-                    AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                    AnalyticsTracker.KEY_FAILURE to "Jetpack installation failed: $status",
-                )
-            )
+        if (useApplicationPasswords) {
+            trackSetupFlow(failure =  "Jetpack installation failed: $status")
         } else {
             analyticsTrackerWrapper.track(
-                stat = LOGIN_JETPACK_SETUP_INSTALL_FAILED,
+                stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_INSTALL_FAILED,
                 properties = mapOf(AnalyticsTracker.KEY_ERROR_CODE to status.errorCode.toString()),
                 errorContext = this@JetpackActivationMainViewModel::class.simpleName,
                 errorType = status.errorType,
@@ -432,14 +394,8 @@ class JetpackActivationMainViewModel @Inject constructor(
         val onFailure: (Throwable) -> Unit = {
             val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
 
-            if (isFromBanner) {
-                analyticsTrackerWrapper.track(
-                    stat = JETPACK_SETUP_FLOW,
-                    properties = mapOf(
-                        AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                        AnalyticsTracker.KEY_FAILURE to "Jetpack connection failed: ${it.message}",
-                    )
-                )
+            if (useApplicationPasswords) {
+                trackSetupFlow(failure = "Jetpack connection failed: ${it.message}")
             } else {
                 analyticsTrackerWrapper.track(
                     stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_FETCH_JETPACK_CONNECTION_URL_FAILED,
@@ -480,7 +436,7 @@ class JetpackActivationMainViewModel @Inject constructor(
         val currentSite = site.await()
         jetpackActivationRepository.fetchJetpackConnectionUrl(currentSite, useApplicationPasswords).fold(
             onSuccess = { connectionUrl ->
-                if (!isFromBanner) {
+                if (!useApplicationPasswords) {
                     analyticsTrackerWrapper.track(
                         stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_FETCH_JETPACK_CONNECTION_URL_SUCCESSFUL
                     )
@@ -488,27 +444,22 @@ class JetpackActivationMainViewModel @Inject constructor(
 
                 if (useApplicationPasswords) {
                     // Depending on the site's connection status, we should provide different URLs to the webview.
-                    // If the site already has a Jetpack site-connection, we can use the API-given URL as-is. We
+                    // If the site is already registered with WordPress.com, we can use the API-given URL as-is. We
                     // know this is the case if the URL starts with JETPACK_SITE_CONNECTED_AUTH_URL_PREFIX.
 
                     // If the site lacks a connection, the API-provided URL will be in the format of
                     // https://{site_url}/wp-admin/admin.php?page=jetpack&action=register&_wpnonce={nonce}.
-                    // For application password login, where we don't want to use cookie-nonce authentication, the URL
+                    // For application password login, where we can't use cookie-nonce authentication, the URL
                     // above cannot be used to connect the site to Jetpack.
                     // See: https://github.com/woocommerce/woocommerce-android/issues/7525
 
-                    // As a workaround, we use a special URL that enables site connection without the app needing
-                    // cookie-nonce authentication. The format looks like below:
-                    // https://wordpress.com/jetpack/connect?url=<site_url>
-                    //  &mobile_redirect=woocommerce://jetpack-connected&from=mobile
-                    // See: pe5sF9-1le-p2#comment-1942
+                    // As a workaround, we load the site's wp-admin Jetpack page, which will allow the user to
+                    // connect the site to Jetpack using their WordPress.com account.
 
                     val chosenUrl = if (connectionUrl.startsWith(JETPACK_SITE_CONNECTED_AUTH_URL_PREFIX)) {
                         connectionUrl
                     } else {
-                        "https://wordpress.com/jetpack/connect?url=" + navArgs.siteUrl +
-                            "&mobile_redirect=" + MOBILE_REDIRECT +
-                            "&from=mobile"
+                        navArgs.siteUrl.slashJoin("wp-admin/admin.php?page=jetpack")
                     }
 
                     triggerEvent(
@@ -542,7 +493,7 @@ class JetpackActivationMainViewModel @Inject constructor(
             onSuccess = { email ->
                 jetpackConnectedEmail = email
                 if (accountRepository.getUserAccount()?.email != email) {
-                    if (!isFromBanner) {
+                    if (!useApplicationPasswords) {
                         analyticsTrackerWrapper.track(
                             stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_AUTHORIZED_USING_DIFFERENT_WPCOM_ACCOUNT
                         )
@@ -559,14 +510,8 @@ class JetpackActivationMainViewModel @Inject constructor(
             onFailure = {
                 val error = (it as? OnChangedException)?.error as? JetpackStore.JetpackError
 
-                if (isFromBanner) {
-                    analyticsTrackerWrapper.track(
-                        stat = JETPACK_SETUP_FLOW,
-                        properties = mapOf(
-                            AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                            AnalyticsTracker.KEY_FAILURE to "Jetpack connection validation failed: ${it.message}",
-                        )
-                    )
+                if (useApplicationPasswords) {
+                    trackSetupFlow(failure = "Jetpack connection validation failed: ${it.message}")
                 } else {
                     analyticsTrackerWrapper.track(
                         stat = AnalyticsEvent.LOGIN_JETPACK_SETUP_ERROR_CHECKING_JETPACK_CONNECTION,
@@ -593,14 +538,8 @@ class JetpackActivationMainViewModel @Inject constructor(
                 connectionStep.value = ConnectionStep.Approved
             },
             onFailure = {
-                if (isFromBanner) {
-                    analyticsTrackerWrapper.track(
-                        stat = JETPACK_SETUP_FLOW,
-                        properties = mapOf(
-                            AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
-                            AnalyticsTracker.KEY_FAILURE to "Site connection confirmation failed: ${it.message}",
-                        )
-                    )
+                if (useApplicationPasswords) {
+                    trackSetupFlow(failure = "Site connection confirmation failed: ${it.message}")
                 } else {
                     analyticsTrackerWrapper.track(
                         stat = AnalyticsEvent.LOGIN_JETPACK_FETCHING_WPCOM_SITES_FAILED,
@@ -617,6 +556,24 @@ class JetpackActivationMainViewModel @Inject constructor(
     private fun stepsForInstallation() = StepType.entries
 
     private fun stepsForConnection() = listOf(StepType.Connection, StepType.Done)
+
+    private fun trackSetupFlow(
+        tap: String? = null,
+        failure: String? = null
+    ) {
+        analyticsTrackerWrapper.track(
+            stat = AnalyticsEvent.JETPACK_SETUP_FLOW,
+            properties = mapOf(
+                AnalyticsTracker.KEY_STEP to currentStep.value.type.analyticsName,
+                AnalyticsTracker.KEY_TAP to tap,
+                AnalyticsTracker.KEY_FAILURE to failure,
+                AnalyticsTracker.KEY_CONNECTION_TYPE to when {
+                    supportNativeConnectionAPI -> AnalyticsTracker.VALUE_CONNECTION_TYPE_NATIVE
+                    else -> AnalyticsTracker.VALUE_CONNECTION_TYPE_WEB
+                }
+            ).filterNotNull()
+        )
+    }
 
     sealed interface ViewState {
         data class ProgressViewState(
