@@ -218,7 +218,8 @@ class OrderDetailViewModel @Inject constructor(
             triggerEvent(
                 StartPaymentFlow(
                     orderId = navArgs.orderId,
-                    paymentTypeFlow = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER_CREATION
+                    paymentTypeFlow = CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType.ORDER_CREATION,
+                    useDefaultNavigationAnimation = false
                 )
             )
         }
