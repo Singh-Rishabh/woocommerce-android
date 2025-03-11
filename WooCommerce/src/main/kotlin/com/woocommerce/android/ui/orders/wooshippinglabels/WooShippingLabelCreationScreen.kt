@@ -295,6 +295,7 @@ private fun LabelCreationScreenWithBottomSheet(
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier
 ) {
+    val isItnMissing = customsState is CustomsState.ItnMissing
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
     val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
     val paddingBottom = if (isPurchaseButtonDisplayed) 72.dp else 0.dp
@@ -321,11 +322,12 @@ private fun LabelCreationScreenWithBottomSheet(
                     scaffoldState = scaffoldState,
                     isShipmentDetailsExpanded = uiState.isShipmentDetailsExpanded,
                     markOrderComplete = uiState.markOrderComplete,
-                    errorMessage = stringResource(R.string.woo_shipping_labels_customs_itn_required_error),
-                        //.takeIf { customsState is CustomsState.ItnMissing }
                     onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
                     onEditDestinationAddress = onEditDestinationAddress,
-                    destinationStatus = destinationStatus
+                    destinationStatus = destinationStatus,
+                    errorMessage = takeIf { isItnMissing }?.let {
+                        stringResource(R.string.woo_shipping_labels_customs_itn_required_error)
+                    }
                 )
             }
         },
