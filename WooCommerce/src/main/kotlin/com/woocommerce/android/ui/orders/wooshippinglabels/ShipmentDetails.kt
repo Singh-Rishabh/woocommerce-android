@@ -31,6 +31,9 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -113,19 +116,31 @@ fun ShipmentDetails(
                     )
                     errorMessage?.let {
                         Row(
-                            horizontalArrangement = Arrangement.Start,
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                             .fillMaxWidth()
                             .background(
                                 color = colorResource(R.color.woo_red_5),
                                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
                             )
-                            .padding(dimensionResource(R.dimen.major_100))
+                            .padding(dimensionResource(R.dimen.major_75))
                         ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                tint = MaterialTheme.colors.error,
+                                contentDescription = null
+                            )
+                            Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
                             Text(
                                 text = errorMessage,
                                 style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error
+                                color = MaterialTheme.colors.error,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Icon(
+                                imageVector = Icons.Outlined.Close,
+                                tint = MaterialTheme.colors.error,
+                                contentDescription = null
                             )
                         }
                     }
