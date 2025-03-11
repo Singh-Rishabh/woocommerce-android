@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductType
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
@@ -36,6 +37,7 @@ class WooPosItemsViewModel @Inject constructor(
     private val preferencesRepository: WooPosPreferencesRepository,
     private val navigator: WooPosItemsNavigator,
     private val analyticsTracker: WooPosAnalyticsTracker,
+    private val isCouponsEnabled: WooPosIsCouponsEnabled,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
 
@@ -98,6 +100,15 @@ class WooPosItemsViewModel @Inject constructor(
 
             WooPosItemsUIEvent.BackButtonClicked -> {
                 navigateBackToItemListScreen()
+            }
+
+            WooPosItemsUIEvent.CouponsButtonClicked -> {
+                sendEventToParent(
+                    ChildToParentEvent.ItemClickedInProductSelector(
+                        // CouponsProject: Show available coupons instead
+                        ItemClickedData.Coupon(id = 0, couponCode = "DummyCoupon")
+                    )
+                )
             }
         }
     }
@@ -239,6 +250,7 @@ class WooPosItemsViewModel @Inject constructor(
         },
         paginationState = paginationState,
         reloadingProductsWithPullToRefresh = false,
+        couponsEnabled = isCouponsEnabled.invoke(),
         bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
             title = R.string.woopos_banner_simple_products_only_title,
@@ -308,5 +320,6 @@ class WooPosItemsViewModel @Inject constructor(
     sealed class ItemClickedData(open val id: Long) : Parcelable {
         data class SimpleProduct(override val id: Long) : ItemClickedData(id)
         data class Variation(val productId: Long, override val id: Long) : ItemClickedData(id)
+        data class Coupon(override val id: Long, val couponCode: String) : ItemClickedData(id)
     }
 }
