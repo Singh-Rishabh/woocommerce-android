@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -118,12 +117,12 @@ fun ShipmentDetails(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                color = colorResource(R.color.woo_red_5),
-                                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                            )
-                            .padding(dimensionResource(R.dimen.major_75))
+                                .fillMaxWidth()
+                                .background(
+                                    color = colorResource(R.color.woo_red_5),
+                                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                                )
+                                .padding(dimensionResource(R.dimen.major_75))
                         ) {
                             Icon(
                                 imageVector = Icons.Outlined.Info,
