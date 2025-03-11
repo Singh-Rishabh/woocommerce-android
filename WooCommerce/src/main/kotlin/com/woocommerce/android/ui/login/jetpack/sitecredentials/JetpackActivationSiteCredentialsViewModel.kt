@@ -70,11 +70,11 @@ class JetpackActivationSiteCredentialsViewModel @Inject constructor(
                 title = R.string.login_jetpack_user_already_connected_dialog_title,
                 message = R.string.login_jetpack_user_already_connected_dialog_message,
                 positiveButton = DialogState.DialogButton(
-                    text = R.string.yes,
+                    text = R.string.login_jetpack_user_already_connected_dialog_proceed_button,
                     onClick = ::signInUsingConnectedWPComAccount
                 ),
                 negativeButton = DialogState.DialogButton(
-                    text = R.string.no,
+                    text = R.string.login_jetpack_user_already_connected_dialog_cancel_button,
                     onClick = {
                         _viewState.update {
                             it.copy(username = "", password = "")

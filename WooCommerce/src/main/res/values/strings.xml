@@ -311,7 +311,9 @@
     <string name="login_jetpack_installation_enter_site_credentials">Log in to &lt;b&gt;%1$s&lt;/b&gt; with your store credentials to install Jetpack.</string>
     <string name="login_jetpack_connection_enter_site_credentials">Log in to &lt;b&gt;%1$s&lt;/b&gt; with your store credentials to connect Jetpack.</string>
     <string name="login_jetpack_user_already_connected_dialog_title">Account already connected</string>
-    <string name="login_jetpack_user_already_connected_dialog_message">The selected account is already connected to a different WordPress.com account. Signing in with that account will log you out of your current account.\nWould you like to proceed?</string>
+    <string name="login_jetpack_user_already_connected_dialog_message">This WordPress admin account is already connected to a different WordPress.com account.\nContinuing with that account will log you out of your current account.</string>
+    <string name="login_jetpack_user_already_connected_dialog_proceed_button">Proceed</string>
+    <string name="login_jetpack_user_already_connected_dialog_cancel_button">Cancel</string>
     <string name="login_jetpack_steps_installing">Installing Jetpack</string>
     <string name="login_jetpack_steps_activating">Activating</string>
     <string name="login_jetpack_steps_authorizing">Connect store to Jetpack</string>

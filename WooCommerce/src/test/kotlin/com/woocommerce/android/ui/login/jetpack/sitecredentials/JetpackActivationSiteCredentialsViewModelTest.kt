@@ -164,8 +164,8 @@ class JetpackActivationSiteCredentialsViewModelTest : BaseUnitTest() {
         assertThat(dialogState).matches {
             it?.title == UiStringRes(R.string.login_jetpack_user_already_connected_dialog_title) &&
                 it.message == UiStringRes(R.string.login_jetpack_user_already_connected_dialog_message) &&
-                it.positiveButton?.text == UiStringRes(R.string.yes) &&
-                it.negativeButton?.text == UiStringRes(R.string.no)
+                it.positiveButton?.text == UiStringRes(R.string.login_jetpack_user_already_connected_dialog_proceed_button) &&
+                it.negativeButton?.text == UiStringRes(R.string.login_jetpack_user_already_connected_dialog_cancel_button)
         }
     }
 
