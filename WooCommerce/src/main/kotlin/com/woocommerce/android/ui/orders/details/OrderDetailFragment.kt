@@ -204,6 +204,10 @@ class OrderDetailFragment :
             return
         }
 
+        if (navArgs.startPaymentFlow) {
+            communicationViewModel.notifyOrdersLoaded()
+        }
+
         _binding = FragmentOrderDetailBinding.bind(view)
 
         setMarginsIfTablet()
