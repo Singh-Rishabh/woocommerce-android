@@ -109,6 +109,7 @@ fun ShipmentDetails(
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
                             .padding(vertical = dimensionResource(R.dimen.minor_100))
+                            .align(Alignment.CenterHorizontally)
                     )
                     errorMessage?.let {
                         Row(
