@@ -57,6 +57,7 @@ sealed class OrderNavigationTarget : Event() {
     data class StartPaymentFlow(
         val orderId: Long,
         val paymentTypeFlow: CardReaderFlowParam.PaymentOrRefund.Payment.PaymentType,
+        val useDefaultNavigationAnimation: Boolean = true,
     ) : OrderNavigationTarget()
     object ViewPrintingInstructions : OrderNavigationTarget()
     data class PreviewReceipt(val billingEmail: String, val receiptUrl: String, val orderId: Long) :
