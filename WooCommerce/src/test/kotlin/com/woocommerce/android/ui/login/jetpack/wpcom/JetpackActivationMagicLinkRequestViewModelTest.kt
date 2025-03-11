@@ -1,9 +1,10 @@
 package com.woocommerce.android.ui.login.jetpack.wpcom
 
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
+import com.woocommerce.android.model.JetpackConnectionStatus
+import com.woocommerce.android.model.JetpackSiteRegistrationStatus
 import com.woocommerce.android.model.JetpackStatus
 import com.woocommerce.android.ui.login.MagicLinkFlow
-import com.woocommerce.android.ui.login.MagicLinkSource
 import com.woocommerce.android.ui.login.WPComLoginRepository
 import com.woocommerce.android.util.runAndCaptureValues
 import com.woocommerce.android.viewmodel.BaseUnitTest
@@ -22,8 +23,10 @@ class JetpackActivationMagicLinkRequestViewModelTest : BaseUnitTest() {
         private const val EMAIL = "email@example.com"
         private val JetpackStatus = JetpackStatus(
             isJetpackInstalled = true,
-            isJetpackConnected = false,
-            wpComEmail = null
+            jetpackConnectionStatus = JetpackConnectionStatus.AccountNotConnected(
+                siteRegistrationStatus = JetpackSiteRegistrationStatus.REGISTERED,
+                blogId = 1
+            )
         )
     }
 
@@ -58,8 +61,7 @@ class JetpackActivationMagicLinkRequestViewModelTest : BaseUnitTest() {
 
             verify(wpComLoginRepository).requestMagicLink(
                 emailOrUsername = EMAIL,
-                flow = MagicLinkFlow.SiteCredentialsToWPCom,
-                source = MagicLinkSource.JetpackConnection,
+                flow = MagicLinkFlow.JetpackConnection,
                 isSignup = false
             )
         }
@@ -71,8 +73,7 @@ class JetpackActivationMagicLinkRequestViewModelTest : BaseUnitTest() {
 
             verify(wpComLoginRepository, never()).requestMagicLink(
                 emailOrUsername = EMAIL,
-                flow = MagicLinkFlow.SiteCredentialsToWPCom,
-                source = MagicLinkSource.JetpackConnection,
+                flow = MagicLinkFlow.JetpackConnection,
                 isSignup = false
             )
         }
@@ -86,8 +87,7 @@ class JetpackActivationMagicLinkRequestViewModelTest : BaseUnitTest() {
 
             verify(wpComLoginRepository).requestMagicLink(
                 emailOrUsername = EMAIL,
-                flow = MagicLinkFlow.SiteCredentialsToWPCom,
-                source = MagicLinkSource.JetpackConnection,
+                flow = MagicLinkFlow.JetpackConnection,
                 isSignup = false
             )
         }

@@ -19,7 +19,9 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
@@ -42,7 +44,9 @@ import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -55,6 +59,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
@@ -75,7 +80,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
-    private val verifyDestinationAddress: VerifyDestinationAddress
+    private val verifyDestinationAddress: VerifyDestinationAddress,
+    private val getAddressNotification: GetAddressNotification
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -133,6 +139,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         launch { observeShippingRates() }
         launch { observeShippingRatesState() }
         launch { observeCustomsDataChanges() }
+        launch { observeNotifications() }
     }
 
     private suspend fun getOrderInformation() {
@@ -142,6 +149,22 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             triggerEvent(Event.ShowSnackbar(R.string.woo_shipping_labels_loading_order_error))
             postTriggerEvent(Event.Exit)
         }
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private suspend fun observeNotifications() {
+        shippingAddresses.filterNotNull()
+            .onStart { delay(NOTIFICATIONS_DELAY) }
+            .runningFold(initial = null as AddressNotification?) { previousNotification, addresses ->
+                getAddressNotification(addresses, previousNotification)
+            }
+            .collectLatest { notification ->
+                uiState.update { it.copy(addressNotification = notification) }
+            }
+    }
+
+    fun onDismissAddressNotification() {
+        uiState.update { it.copy(addressNotification = null) }
     }
 
     private suspend fun getStoreOptions() {
@@ -685,7 +708,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data class UIControlsState(
         val markOrderComplete: Boolean,
         val isShipmentDetailsExpanded: Boolean,
-        val isAddressSelectionExpanded: Boolean
+        val isAddressSelectionExpanded: Boolean,
+        val addressNotification: AddressNotification? = null
     )
 
     data class ShippingRatesInfo(
@@ -706,6 +730,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     companion object {
+        private const val NOTIFICATIONS_DELAY = 2_000L
         private const val TYPING_DELAY = 800L
         private const val MULTIPLE_CALLS_DELAY = 50L
         private val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500.toBigDecimal()
