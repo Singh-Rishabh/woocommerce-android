@@ -108,27 +108,27 @@ fun ShipmentDetails(
                         text = stringResource(R.string.shipping_label_shipment_details_title),
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
-                            .padding(top = dimensionResource(R.dimen.minor_100))
+                            .padding(vertical = dimensionResource(R.dimen.minor_100))
                     )
-                    Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
                     errorMessage?.let {
                         Row(
                             horizontalArrangement = Arrangement.Start,
                             modifier = Modifier
                             .fillMaxWidth()
                             .background(
-                                color = MaterialTheme.colors.onError,
+                                color = colorResource(R.color.woo_red_5),
                                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
                             )
-                            .border(
-                                width = dimensionResource(R.dimen.minor_10),
-                                color = MaterialTheme.colors.error,
-                                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                            )
+                            .padding(dimensionResource(R.dimen.major_100))
                         ) {
-                            Text(errorMessage)
+                            Text(
+                                text = errorMessage,
+                                style = MaterialTheme.typography.body2,
+                                color = MaterialTheme.colors.error
+                            )
                         }
                     }
+                    Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_150)))
                 }
             }
         }
