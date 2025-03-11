@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
@@ -110,7 +112,20 @@ fun ShipmentDetails(
                     )
                     Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
                     errorMessage?.let {
-                        Box {
+                        Row(
+                            horizontalArrangement = Arrangement.Start,
+                            modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colors.onError,
+                                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                            )
+                            .border(
+                                width = dimensionResource(R.dimen.minor_10),
+                                color = MaterialTheme.colors.error,
+                                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                            )
+                        ) {
                             Text(errorMessage)
                         }
                     }
