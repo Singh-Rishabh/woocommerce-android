@@ -58,6 +58,7 @@ fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     listState: LazyListState,
 ) {
+    // CouponsProject: Needs to be renamed to WooPosItemsViewModel
     val productsViewModel: WooPosItemsViewModel = hiltViewModel()
     WooPosItemsScreen(
         modifier = modifier,
@@ -78,6 +79,9 @@ fun WooPosItemsScreen(
         onToolbarInfoIconClicked = {
             productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
         },
+        onCouponsButtonClicked = {
+            productsViewModel.onUIEvent(WooPosItemsUIEvent.CouponsButtonClicked)
+        }
     )
 }
 
@@ -94,6 +98,7 @@ private fun WooPosItemsScreen(
     onSimpleProductsBannerClosed: () -> Unit,
     onSimpleProductsBannerLearnMoreClicked: () -> Unit,
     onToolbarInfoIconClicked: () -> Unit,
+    onCouponsButtonClicked: () -> Unit,
 ) {
     val state = itemsStateFlow.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(state.value.reloadingProductsWithPullToRefresh, onPullToRefresh)
@@ -108,7 +113,8 @@ private fun WooPosItemsScreen(
         onSimpleProductsBannerClosed = onSimpleProductsBannerClosed,
         onItemClicked = onItemClicked,
         onEndOfItemListReached = onEndOfItemListReached,
-        onRetryClicked = onRetryClicked
+        onRetryClicked = onRetryClicked,
+        onCouponsButtonClicked = onCouponsButtonClicked
     )
 }
 
@@ -124,7 +130,8 @@ private fun MainItemsList(
     onSimpleProductsBannerClosed: () -> Unit,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfItemListReached: () -> Unit,
-    onRetryClicked: () -> Unit
+    onRetryClicked: () -> Unit,
+    onCouponsButtonClicked: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -147,7 +154,7 @@ private fun MainItemsList(
 
                 is WooPosItemsViewState.Content -> MaterialTheme.colorScheme.onSurface
             }
-            ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
+            ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked, onCouponsButtonClicked)
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Large.value))
 
@@ -198,6 +205,7 @@ private fun ItemsToolbar(
     productViewState: WooPosItemsViewState,
     titleColor: Color,
     onToolbarInfoIconClicked: () -> Unit,
+    onCouponsButtonClicked: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -225,6 +233,22 @@ private fun ItemsToolbar(
                             painterResource(id = R.drawable.info),
                             contentDescription = stringResource(
                                 id = R.string.woopos_banner_simple_products_info_content_description
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                        )
+                    }
+                }
+                if (productViewState.couponsEnabled) {
+                    IconButton(
+                        modifier = Modifier.size(40.dp),
+                        onClick = {
+                            onCouponsButtonClicked()
+                        }
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_more_menu_coupons),
+                            contentDescription = stringResource(
+                                id = R.string.coupons
                             ),
                             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
                         )

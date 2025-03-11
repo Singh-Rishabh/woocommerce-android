@@ -8,5 +8,6 @@ sealed class WooPosItemsUIEvent {
     data object SimpleProductsBannerClosed : WooPosItemsUIEvent()
     data object SimpleProductsBannerLearnMoreClicked : WooPosItemsUIEvent()
     data object SimpleProductsDialogInfoIconClicked : WooPosItemsUIEvent()
+    data object CouponsButtonClicked : WooPosItemsUIEvent()
     data object BackButtonClicked : WooPosItemsUIEvent()
 }
