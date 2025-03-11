@@ -222,6 +222,23 @@ private fun ItemsToolbar(
         )
         when (productViewState) {
             is WooPosItemsViewState.Content -> {
+                if (productViewState.couponsEnabled) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        modifier = Modifier.size(40.dp),
+                        onClick = {
+                            onCouponsButtonClicked()
+                        }
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_more_menu_coupons),
+                            contentDescription = stringResource(
+                                id = R.string.coupons
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                        )
+                    }
+                }
                 if (productViewState.bannerState.isBannerHiddenByUser) {
                     IconButton(
                         modifier = Modifier.size(40.dp),
@@ -238,24 +255,7 @@ private fun ItemsToolbar(
                         )
                     }
                 }
-                if (productViewState.couponsEnabled) {
-                    IconButton(
-                        modifier = Modifier.size(40.dp),
-                        onClick = {
-                            onCouponsButtonClicked()
-                        }
-                    ) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_more_menu_coupons),
-                            contentDescription = stringResource(
-                                id = R.string.coupons
-                            ),
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
-                        )
-                    }
-                }
             }
-
             else -> {
                 // no op
             }
@@ -374,6 +374,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
@@ -430,6 +431,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
@@ -455,6 +457,7 @@ fun WooPosItemsScreenLoadingPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
@@ -475,6 +478,7 @@ fun WooPosProductsScreenEmptyListPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
@@ -495,6 +499,7 @@ fun WooPosProductsScreenErrorPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
@@ -547,6 +552,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
@@ -599,6 +605,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
             onSimpleProductsBannerClosed = {},
             onSimpleProductsBannerLearnMoreClicked = {},
             onToolbarInfoIconClicked = {},
+            onCouponsButtonClicked = {},
         )
     }
 }
