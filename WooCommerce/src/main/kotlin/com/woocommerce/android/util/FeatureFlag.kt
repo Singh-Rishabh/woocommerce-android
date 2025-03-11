@@ -14,6 +14,7 @@ enum class FeatureFlag {
     ENDLESS_CAMPAIGNS_SUPPORT,
     REVAMP_WOO_SHIPPING,
     OBJECTIVE_SECTION,
+    POS_COUPONS,
     BULK_UPDATE_ORDERS_STATUS,
     HIDE_SITES_FROM_SITE_PICKER;
 
@@ -25,6 +26,7 @@ enum class FeatureFlag {
 
             WC_SHIPPING_BANNER,
             BETTER_CUSTOMER_SEARCH_M2,
+            POS_COUPONS,
             ORDER_CREATION_AUTO_TAX_RATE,
             REVAMP_WOO_SHIPPING -> PackageUtils.isDebugBuild()
 
