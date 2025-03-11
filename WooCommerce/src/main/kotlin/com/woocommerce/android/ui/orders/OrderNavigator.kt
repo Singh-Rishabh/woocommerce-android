@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders
 
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.navigateSafely
@@ -167,7 +168,15 @@ class OrderNavigator @Inject constructor() {
                 val action = OrderDetailFragmentDirections.actionOrderDetailFragmentToCardReaderFlow(
                     CardReaderFlowParam.PaymentOrRefund.Payment(target.orderId, target.paymentTypeFlow)
                 )
-                fragment.findNavController().navigateSafely(directions = action)
+                val navOptions = if (!target.useDefaultNavigationAnimation) {
+                    NavOptions.Builder()
+                        .setEnterAnim(R.anim.activity_fade_in)
+                        .setExitAnim(R.anim.activity_fade_out)
+                        .build()
+                } else {
+                    null
+                }
+                fragment.findNavController().navigateSafely(directions = action, navOptions = navOptions)
             }
             is ViewPrintingInstructions -> {
                 val action = OrderDetailFragmentDirections
