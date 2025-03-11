@@ -297,7 +297,7 @@ private fun LabelCreationScreenWithBottomSheet(
 ) {
     val isItnMissing = customsState is CustomsState.ItnMissing
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
-    val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
+    val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed || isItnMissing) 132.dp else 76.dp
     val paddingBottom = if (isPurchaseButtonDisplayed) 72.dp else 0.dp
     val shippingRateSummary =
         (shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState)?.selectedRate?.summary
