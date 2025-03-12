@@ -85,6 +85,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
+    var actionSnackbar by mutableStateOf<ActionSnackbar?>(null)
+
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order>(emptyOrder)
     private val destinationAddress = MutableStateFlow<DestinationShippingAddress>(DestinationShippingAddress.EMPTY)
@@ -508,6 +510,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
 
+        val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
 
         launch {
@@ -545,7 +548,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                         }
                     }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
             } else {
-                purchaseState.value = PurchaseState.Error
+                purchaseState.value = backupPurchaseState
+                actionSnackbar = ActionSnackbar(
+                    R.string.woo_shipping_labels_purchase_error,
+                    R.string.retry
+                ) { onPurchaseShippingLabel() }
             }
         }
     }
@@ -646,6 +653,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val destinationAddress: DestinationShippingAddress,
         val orderId: Long
     ) : Event()
+
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
         val customData: CustomsData?
@@ -666,6 +674,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
+
+    data class ActionSnackbar(
+        val message: Int,
+        val actionLabel: Int,
+        val action: () -> Unit
+    )
 
     sealed class ShippingRatesState {
         data object NoAvailable : ShippingRatesState()

@@ -686,7 +686,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when onPurchaseShippingLabel fails then display error`() = testBlocking {
+    fun `when onPurchaseShippingLabel fails then show a snackbar`() = testBlocking {
         val order = OrderTestUtils.generateTestOrder(orderId = orderId)
 
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
@@ -708,8 +708,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         sut.onPurchaseShippingLabel()
 
-        val currentViewState = sut.viewState.value
-        assertThat(currentViewState).isInstanceOf(WooShippingViewState.Error::class.java)
+        assertThat(sut.actionSnackbar).matches { it?.message == R.string.woo_shipping_labels_purchase_error }
     }
 
     @Test
