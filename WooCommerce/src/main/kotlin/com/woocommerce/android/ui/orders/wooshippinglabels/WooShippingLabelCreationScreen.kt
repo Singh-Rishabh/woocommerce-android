@@ -121,8 +121,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onEditCustomsClick = viewModel::onEditCustomsClick,
                 onEditDestinationAddress = viewModel::onEditDestinationAddress,
                 destinationStatus = viewState.destinationStatus,
-                onDismissAddressNotification = viewModel::onDismissAddressNotification,
-                actionSnackbar = viewModel.actionSnackbar
+                actionSnackbar = viewModel.actionSnackbar,
+                onDismissAddressNotification = viewModel::onDismissAddressNotification
             )
         }
 
@@ -162,10 +162,10 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
-    onDismissAddressNotification: () -> Unit = {},
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
-    actionSnackbar: ActionSnackbar? = null
+    actionSnackbar: ActionSnackbar? = null,
+    onDismissAddressNotification: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
