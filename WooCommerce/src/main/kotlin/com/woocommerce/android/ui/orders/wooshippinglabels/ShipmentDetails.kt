@@ -80,6 +80,7 @@ fun ShipmentDetails(
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
     addressNotification: AddressNotification?,
+    errorNotification: ShipmentDetailErrorNotification? = null,
     modifier: Modifier = Modifier,
     isShipmentDetailsExpanded: Boolean = false,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
@@ -87,7 +88,6 @@ fun ShipmentDetails(
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
     destinationStatus: AddressStatus,
     markOrderComplete: Boolean = false,
-    errorMessage: String? = null,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
     onDismissAddressNotification: () -> Unit = {},
     handlerModifier: Modifier = Modifier,
@@ -127,8 +127,8 @@ fun ShipmentDetails(
                             .padding(top = dimensionResource(R.dimen.minor_100) * LocalConfiguration.current.fontScale)
                     )
 
-                    if (errorMessage != null) {
-                        CollapsedErrorMessage(errorMessage)
+                    if (errorNotification != null) {
+                        CollapsedErrorMessage(errorNotification)
                     } else {
                         ShippingAddressNotification(
                             addressNotification = addressNotification,
@@ -562,7 +562,9 @@ private fun ShipmentCostRow(
 }
 
 @Composable
-private fun CollapsedErrorMessage(errorMessage: String) {
+private fun CollapsedErrorMessage(
+    errorNotification: ShipmentDetailErrorNotification
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -580,7 +582,7 @@ private fun CollapsedErrorMessage(errorMessage: String) {
         )
         Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
         Text(
-            text = errorMessage,
+            text = errorNotification.errorMessage,
             style = MaterialTheme.typography.body2,
             color = MaterialTheme.colors.error,
             modifier = Modifier.weight(1f)
@@ -732,6 +734,11 @@ data class ShippingRateSummaryUI(
     val optionName: String? = null,
     val optionFee: String? = null
 ) : Parcelable
+
+data class ShipmentDetailErrorNotification(
+    val errorMessage: String,
+    val onErrorDismissed: () -> Unit
+)
 
 @Composable
 fun VerticalDivider(
