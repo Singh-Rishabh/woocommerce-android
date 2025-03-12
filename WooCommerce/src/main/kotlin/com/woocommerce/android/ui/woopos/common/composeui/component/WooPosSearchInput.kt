@@ -85,7 +85,6 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
         onClick = { onEvent(WooPosSearchUIEvent.Search("")) },
         border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
         modifier = Modifier
-            .padding(vertical = WooPosSpacing.XSmall.value)
             .size(48.dp),
         colors = IconButtonDefaults.outlinedIconButtonColors(
             containerColor = Color.Transparent,
@@ -167,7 +166,8 @@ private fun AnimatedSearchInput(
         ),
         colors = OutlinedTextFieldDefaults.colors(
             unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-            focusedBorderColor = MaterialTheme.colorScheme.outline
+            focusedBorderColor = MaterialTheme.colorScheme.outline,
+            cursorColor = MaterialTheme.colorScheme.onBackground,
         ),
         leadingIcon = {
             IconButton(
