@@ -30,6 +30,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -128,7 +129,7 @@ fun ShipmentDetails(
                     )
 
                     if (errorNotification != null) {
-                        CollapsedErrorMessage(errorNotification)
+                        ErrorMessageNotification(errorNotification)
                     } else {
                         ShippingAddressNotification(
                             addressNotification = addressNotification,
@@ -562,7 +563,7 @@ private fun ShipmentCostRow(
 }
 
 @Composable
-private fun CollapsedErrorMessage(
+private fun ErrorMessageNotification(
     errorNotification: ShipmentDetailErrorNotification
 ) {
     Row(
@@ -587,11 +588,13 @@ private fun CollapsedErrorMessage(
             color = MaterialTheme.colors.error,
             modifier = Modifier.weight(1f)
         )
-        Icon(
-            imageVector = Icons.Outlined.Close,
-            tint = MaterialTheme.colors.error,
-            contentDescription = null
-        )
+        IconButton(onClick = errorNotification.onErrorDismissed) {
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                tint = MaterialTheme.colors.error,
+                contentDescription = null
+            )
+        }
     }
 }
 
