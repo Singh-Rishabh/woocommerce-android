@@ -105,9 +105,9 @@ private fun WooPosItemsScreen(
         onRetryClicked = { onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
         onSearchEvent = {
             when (it) {
-                WooPosSearchUIEvent.Clear -> TODO()
-                WooPosSearchUIEvent.Close -> TODO()
-                is WooPosSearchUIEvent.Search -> TODO()
+                WooPosSearchUIEvent.Clear -> onUIEvent(WooPosItemsUIEvent.ClearSearchClicked)
+                WooPosSearchUIEvent.Close -> onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
+                is WooPosSearchUIEvent.Search -> onUIEvent(WooPosItemsUIEvent.SearchChanged(it.query))
             }
         }
     )
@@ -367,7 +367,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
             search = WooPosItemsViewState.Content.SearchState.Visible(
                 state = WooPosSearchInputState.Open(
                     input = WooPosSearchInputState.Open.Input.Query(""),
-                    loading = false,
+                    isLoading = false,
                 )
             )
         )
@@ -518,7 +518,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
             search = WooPosItemsViewState.Content.SearchState.Visible(
                 state = WooPosSearchInputState.Open(
                     input = WooPosSearchInputState.Open.Input.Query(""),
-                    loading = false,
+                    isLoading = false,
                 )
             )
         )
@@ -570,7 +570,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
             search = WooPosItemsViewState.Content.SearchState.Visible(
                 state = WooPosSearchInputState.Open(
                     input = WooPosSearchInputState.Open.Input.Query(""),
-                    loading = false,
+                    isLoading = false,
                 )
             )
         )

@@ -20,8 +20,10 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
+import com.woocommerce.android.viewmodel.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -40,6 +42,7 @@ class WooPosItemsViewModel @Inject constructor(
     private val preferencesRepository: WooPosPreferencesRepository,
     private val navigator: WooPosItemsNavigator,
     private val analyticsTracker: WooPosAnalyticsTracker,
+    private val resourceProvider: ResourceProvider,
     private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
@@ -104,6 +107,64 @@ class WooPosItemsViewModel @Inject constructor(
             WooPosItemsUIEvent.BackButtonClicked -> {
                 navigateBackToItemListScreen()
             }
+
+            WooPosItemsUIEvent.ClearSearchClicked -> onClearSearchClicked()
+            WooPosItemsUIEvent.CloseSearchClicked -> onCloseSearchClicked()
+            is WooPosItemsUIEvent.SearchChanged -> onSearchChanged(event.query)
+        }
+    }
+
+    private fun onSearchChanged(newQuery: String) {
+        viewModelScope.launch {
+            val currentState = _viewState.value as? WooPosItemsViewState.Content
+            if (currentState != null) {
+                _viewState.value = currentState.copy(
+                    search = WooPosItemsViewState.Content.SearchState.Visible(
+                        state = WooPosSearchInputState.Open(
+                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                            isLoading = true,
+                        )
+                    )
+                )
+
+                delay(1000)
+
+                _viewState.value = currentState.copy(
+                    search = WooPosItemsViewState.Content.SearchState.Visible(
+                        state = WooPosSearchInputState.Open(
+                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                            isLoading = true,
+                        )
+                    )
+                )
+            }
+        }
+    }
+
+    private fun onCloseSearchClicked() {
+        val currentState = _viewState.value as? WooPosItemsViewState.Content
+        if (currentState != null) {
+            _viewState.value = currentState.copy(
+                search = WooPosItemsViewState.Content.SearchState.Visible(
+                    state = WooPosSearchInputState.Closed
+                )
+            )
+        }
+    }
+
+    private fun onClearSearchClicked() {
+        val currentState = _viewState.value as? WooPosItemsViewState.Content
+        if (currentState != null) {
+            _viewState.value = currentState.copy(
+                search = WooPosItemsViewState.Content.SearchState.Visible(
+                    state = WooPosSearchInputState.Open(
+                        input = WooPosSearchInputState.Open.Input.Hint(
+                            resourceProvider.getString(R.string.woopos_search_products)
+                        ),
+                        isLoading = false
+                    )
+                )
+            )
         }
     }
 
@@ -289,6 +350,7 @@ class WooPosItemsViewModel @Inject constructor(
 
                 is WooPosItemsViewState.Empty,
                 is WooPosItemsViewState.Error -> ChildToParentEvent.ProductsStatusChanged.FullScreen
+
                 is WooPosItemsViewState.Loading -> {
                     if (newState.withCart) {
                         ChildToParentEvent.ProductsStatusChanged.WithCart
