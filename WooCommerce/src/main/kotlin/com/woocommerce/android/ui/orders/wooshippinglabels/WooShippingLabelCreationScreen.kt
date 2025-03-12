@@ -41,7 +41,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult.ActionPerformed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +68,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.ActionSnackbar
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
@@ -115,6 +121,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onEditCustomsClick = viewModel::onEditCustomsClick,
                 onEditDestinationAddress = viewModel::onEditDestinationAddress,
                 destinationStatus = viewState.destinationStatus,
+                actionSnackbar = viewModel.actionSnackbar,
                 onDismissAddressNotification = viewModel::onDismissAddressNotification
             )
         }
@@ -155,9 +162,10 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
-    onDismissAddressNotification: () -> Unit = {},
     destinationStatus: AddressStatus,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    actionSnackbar: ActionSnackbar? = null,
+    onDismissAddressNotification: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
@@ -220,7 +228,8 @@ fun WooShippingLabelCreationScreen(
             onEditCustomsClick = onEditCustomsClick,
             onEditDestinationAddress = onEditDestinationAddress,
             onDismissAddressNotification = onDismissAddressNotification,
-            destinationStatus = destinationStatus
+            destinationStatus = destinationStatus,
+            actionSnackbar = actionSnackbar
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -296,9 +305,12 @@ private fun LabelCreationScreenWithBottomSheet(
     onEditCustomsClick: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     destinationStatus: AddressStatus,
+    modifier: Modifier = Modifier,
     onDismissAddressNotification: () -> Unit = {},
-    modifier: Modifier = Modifier
+    actionSnackbar: ActionSnackbar? = null
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
 
     val bottomSheetPeekHeight = when {
@@ -310,10 +322,21 @@ private fun LabelCreationScreenWithBottomSheet(
         isPurchaseButtonDisplayed -> 72.dp
         else -> 0.dp
     }
+    val snackbarPaddingBottom = if (isPurchaseButtonDisplayed && scaffoldState.bottomSheetState.isExpanded) {
+        paddingBottom
+    } else {
+        0.dp
+    }
     val shippingRateSummary =
         (shippingRatesState as? WooShippingLabelCreationViewModel.ShippingRatesState.DataState)?.selectedRate?.summary
 
     BottomSheetScaffold(
+        snackbarHost = {
+            SnackbarHost(
+                snackbarHostState,
+                modifier = Modifier.padding(bottom = snackbarPaddingBottom)
+            )
+        },
         sheetContent = {
             AddressSelection(
                 shipFrom = shippingAddresses.shipFrom,
@@ -389,6 +412,22 @@ private fun LabelCreationScreenWithBottomSheet(
                     onSelectedSippingRateChanged = onSelectedSippingRateChanged
                 )
             }
+
+            val actionSnackbarMessage = actionSnackbar?.let { stringResource(it.message) }
+            val actionSnackbarActionLabel = actionSnackbar?.let { stringResource(it.actionLabel) }
+
+            LaunchedEffect(actionSnackbar) {
+                if (actionSnackbar != null) {
+                    val snackBarResult = snackbarHostState.showSnackbar(
+                        message = actionSnackbarMessage ?: "",
+                        actionLabel = actionSnackbarActionLabel,
+                        duration = SnackbarDuration.Short
+                    )
+                    if (snackBarResult == ActionPerformed) {
+                        actionSnackbar.action()
+                    }
+                }
+            }
         }
     }
 }
@@ -435,8 +474,9 @@ internal fun HazmatCard(
         Icon(
             painter = painterResource(R.drawable.ic_arrow_right),
             tint = colorResource(id = R.color.color_on_surface_medium),
-            contentDescription =
-            stringResource(id = R.string.shipping_label_package_details_items_expand_content_description),
+            contentDescription = stringResource(
+                id = R.string.shipping_label_package_details_items_expand_content_description
+            ),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(end = dimensionResource(R.dimen.minor_50))
