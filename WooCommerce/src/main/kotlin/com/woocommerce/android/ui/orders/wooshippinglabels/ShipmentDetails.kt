@@ -563,7 +563,8 @@ private fun ShipmentCostRow(
 
 @Composable
 private fun ErrorMessageNotification(
-    errorNotification: ShipmentDetailErrorNotification?
+    errorNotification: ShipmentDetailErrorNotification?,
+    modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
         visible = errorNotification != null,
@@ -588,10 +589,19 @@ private fun ErrorMessageNotification(
         )
     ) {
         if (errorNotification == null) return@AnimatedVisibility
+
+        val rowModifier = when (LocalConfiguration.current.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                modifier.widthIn(max = 600.dp).fillMaxWidth()
+            }
+            else -> {
+                modifier.fillMaxWidth()
+            }
+        }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = rowModifier
                 .background(
                     color = colorResource(R.color.woo_red_5),
                     shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
@@ -610,13 +620,14 @@ private fun ErrorMessageNotification(
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = errorNotification.onErrorDismissed) {
-                Icon(
-                    imageVector = Icons.Outlined.Close,
-                    tint = MaterialTheme.colors.error,
-                    contentDescription = null
-                )
-            }
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                tint = MaterialTheme.colors.error,
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    errorNotification.onErrorDismissed()
+                }
+            )
         }
     }
 
