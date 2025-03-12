@@ -49,6 +49,7 @@
     <string name="untitled">Untitled</string>
     <string name="dialog_ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="cancel_anyway">Cancel anyway</string>
     <string name="keep_editing">Keep editing</string>
@@ -309,6 +310,10 @@
     <string name="login_jetpack_connect">Connect Jetpack</string>
     <string name="login_jetpack_installation_enter_site_credentials">Log in to &lt;b&gt;%1$s&lt;/b&gt; with your store credentials to install Jetpack.</string>
     <string name="login_jetpack_connection_enter_site_credentials">Log in to &lt;b&gt;%1$s&lt;/b&gt; with your store credentials to connect Jetpack.</string>
+    <string name="login_jetpack_user_already_connected_dialog_title">Account already connected</string>
+    <string name="login_jetpack_user_already_connected_dialog_message">This WordPress admin account is already connected to a different WordPress.com account.\nContinuing with that account will log you out of your current account.</string>
+    <string name="login_jetpack_user_already_connected_dialog_proceed_button">Proceed</string>
+    <string name="login_jetpack_user_already_connected_dialog_cancel_button">Cancel</string>
     <string name="login_jetpack_steps_installing">Installing Jetpack</string>
     <string name="login_jetpack_steps_activating">Activating</string>
     <string name="login_jetpack_steps_authorizing">Connect store to Jetpack</string>
@@ -338,7 +343,7 @@
     <string name="login_jetpack_installation_retry_activating">Try activating again</string>
     <string name="login_jetpack_installation_retry_authorizing">Try authorising again</string>
     <string name="login_jetpack_installation_cancel">Cancel installation</string>
-    <string name="login_jetpack_installation_error_forbidden_suggestion">Please contact your shop manager or administrator for help.</string>
+    <string name="login_jetpack_installation_error_forbidden_suggestion">Please contact your administrator for help.</string>
     <string name="login_jetpack_installation_error_connection_permission_message">You don’t have permission to connect to Jetpack on this store</string>
     <string name="login_jetpack_installation_connection_dismissed">Jetpack is installed, but not connected.</string>
     <string name="login_jetpack_installation_connection_dismissed_explanation">Try connecting again to access your store.</string>
@@ -1797,6 +1802,7 @@
     <string name="card_reader_connect_missing_bluetooth_permissions_header">Missing required nearby devices permission</string>
     <string name="card_reader_connect_missing_bluetooth_permission_button">Open settings</string>
     <string name="card_reader_connect_learn_more">&lt;a href=\'\'&gt;Learn more&lt;/a&gt; about In-Person Payments</string>
+    <string name="card_reader_connect_failed_battery_low_hint">The reader battery is low. Please charge the reader and try again</string>
 
     <!--
         Card Reader Detail
@@ -4524,6 +4530,13 @@
     <string name="woo_shipping_address_unsaved_changes">Unsaved changes</string>
     <string name="woo_shipping_verifying_address_failed">The address verification failed. Please try again.</string>
     <string name="woo_shipping_updating_address_failed">We couldn\'t update your address. Please try again.</string>
+
+    <string name="woo_shipping_address_notification_destination_unverified">Destination address unverified</string>
+    <string name="woo_shipping_address_notification_origin_unverified">Origin address unverified</string>
+    <string name="woo_shipping_address_notification_destination_missing">Destination address missing</string>
+
+    <string name="woo_shipping_address_notification_destination_verified">Verified destination address</string>
+    <string name="woo_shipping_address_notification_origin_verified">Verified origin address</string>
 
 
     <string name="woo_shipping_address_validate_and_save">Validate &amp; Save</string>

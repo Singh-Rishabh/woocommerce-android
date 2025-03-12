@@ -168,7 +168,7 @@ class AnalyticsTracker private constructor(
         private const val TRACKS_ANON_ID = "nosara_tracks_anon_id"
         private const val EVENTS_PREFIX = "woocommerceandroid_"
         private const val POS_EVENTS_PREFIX = "woocommerceandroid_pos_"
-        private const val KEY_SITE_URL = "site_url"
+        const val KEY_SITE_URL = "site_url"
 
         const val IS_DEBUG = "is_debug"
         const val KEY_ALREADY_READ = "already_read"
@@ -531,6 +531,9 @@ class AnalyticsTracker private constructor(
         const val VALUE_JETPACK_SETUP_TAP_GO_TO_STORE = "go_to_store"
         const val VALUE_JETPACK_SETUP_TAP_SUPPORT = "support"
         const val VALUE_JETPACK_SETUP_TAP_TRY_AGAIN = "try_again"
+        const val KEY_CONNECTION_TYPE = "connection_type"
+        const val VALUE_CONNECTION_TYPE_NATIVE = "native"
+        const val VALUE_CONNECTION_TYPE_WEB = "web"
 
         // -- Upsell banner
         const val KEY_BANNER_SOURCE = "source"

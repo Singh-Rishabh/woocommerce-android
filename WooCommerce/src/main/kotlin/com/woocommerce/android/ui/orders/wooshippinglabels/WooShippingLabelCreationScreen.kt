@@ -121,6 +121,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onEditCustomsClick = viewModel::onEditCustomsClick,
                 onEditDestinationAddress = viewModel::onEditDestinationAddress,
                 destinationStatus = viewState.destinationStatus,
+                onDismissAddressNotification = viewModel::onDismissAddressNotification,
                 actionSnackbar = viewModel.actionSnackbar
             )
         }
@@ -161,6 +162,7 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    onDismissAddressNotification: () -> Unit = {},
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null
@@ -225,6 +227,7 @@ fun WooShippingLabelCreationScreen(
             onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
             onEditCustomsClick = onEditCustomsClick,
             onEditDestinationAddress = onEditDestinationAddress,
+            onDismissAddressNotification = onDismissAddressNotification,
             destinationStatus = destinationStatus,
             actionSnackbar = actionSnackbar
         )
@@ -303,13 +306,22 @@ private fun LabelCreationScreenWithBottomSheet(
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
+    onDismissAddressNotification: () -> Unit = {},
     actionSnackbar: ActionSnackbar? = null
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
-    val bottomSheetPeekHeight = if (isPurchaseButtonDisplayed) 132.dp else 76.dp
-    val paddingBottom = if (isPurchaseButtonDisplayed) 72.dp else 0.dp
+
+    val bottomSheetPeekHeight = when {
+        isPurchaseButtonDisplayed || uiState.addressNotification != null -> 128.dp
+        else -> 72.dp
+    } * LocalConfiguration.current.fontScale
+
+    val paddingBottom = when {
+        isPurchaseButtonDisplayed -> 72.dp
+        else -> 0.dp
+    }
     val snackbarPaddingBottom = if (isPurchaseButtonDisplayed && scaffoldState.bottomSheetState.isExpanded) {
         paddingBottom
     } else {
@@ -346,7 +358,10 @@ private fun LabelCreationScreenWithBottomSheet(
                     markOrderComplete = uiState.markOrderComplete,
                     onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
                     onEditDestinationAddress = onEditDestinationAddress,
-                    destinationStatus = destinationStatus
+                    destinationStatus = destinationStatus,
+                    addressNotification = uiState.addressNotification,
+                    onDismissAddressNotification = onDismissAddressNotification,
+                    onEditOriginAddress = onEditOriginAddress
                 )
             }
         },
