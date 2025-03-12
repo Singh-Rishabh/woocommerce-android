@@ -301,9 +301,11 @@ private fun LabelCreationScreenWithBottomSheet(
 ) {
     val isItnMissing = customsState is CustomsState.ItnMissing
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
+    val requiresLargePeekHeight = isPurchaseButtonDisplayed || uiState.addressNotification != null || isItnMissing
+
 
     val bottomSheetPeekHeight = when {
-        isPurchaseButtonDisplayed || uiState.addressNotification != null -> 128.dp
+        requiresLargePeekHeight -> 128.dp
         else -> 72.dp
     } * LocalConfiguration.current.fontScale
 
