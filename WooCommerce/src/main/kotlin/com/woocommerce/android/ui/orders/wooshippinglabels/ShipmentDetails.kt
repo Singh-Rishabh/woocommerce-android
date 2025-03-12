@@ -127,24 +127,26 @@ fun ShipmentDetails(
                             .padding(top = dimensionResource(R.dimen.minor_100) * LocalConfiguration.current.fontScale)
                     )
 
-                    errorMessage?.let { CollapsedErrorMessage(it) }
-
-                    ShippingAddressNotification(
-                        addressNotification = addressNotification,
-                        onDismiss = onDismissAddressNotification,
-                        onAction = {
-                            addressNotification?.let {
-                                when {
-                                    it.isSuccess.not() && it.isDestinationNotification -> {
-                                        onEditDestinationAddress(shippingAddresses.shipTo)
-                                    }
-                                    it.isSuccess.not() && it.isDestinationNotification.not() -> {
-                                        onEditOriginAddress(shippingAddresses.shipFrom)
+                    if (errorMessage != null) {
+                        CollapsedErrorMessage(errorMessage)
+                    } else {
+                        ShippingAddressNotification(
+                            addressNotification = addressNotification,
+                            onDismiss = onDismissAddressNotification,
+                            onAction = {
+                                addressNotification?.let {
+                                    when {
+                                        it.isSuccess.not() && it.isDestinationNotification -> {
+                                            onEditDestinationAddress(shippingAddresses.shipTo)
+                                        }
+                                        it.isSuccess.not() && it.isDestinationNotification.not() -> {
+                                            onEditOriginAddress(shippingAddresses.shipFrom)
+                                        }
                                     }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
 
                     Spacer(
                         modifier = Modifier.size(
