@@ -39,7 +39,9 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInput
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchUIEvent
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
@@ -63,22 +65,8 @@ fun WooPosItemsScreen(
     WooPosItemsScreen(
         modifier = modifier,
         itemsStateFlow = productsViewModel.viewState,
-        listState,
-        onItemClicked = { item ->
-            productsViewModel.onUIEvent(WooPosItemsUIEvent.ItemClicked(item))
-        },
-        onEndOfItemListReached = { productsViewModel.onUIEvent(EndOfItemsListReached) },
-        onPullToRefresh = { productsViewModel.onUIEvent(PullToRefreshTriggered) },
-        onRetryClicked = { productsViewModel.onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
-        onSimpleProductsBannerClosed = {
-            productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
-        },
-        onSimpleProductsBannerLearnMoreClicked = {
-            productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
-        },
-        onToolbarInfoIconClicked = {
-            productsViewModel.onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
-        },
+        listState = listState,
+        onUIEvent = { productsViewModel.onUIEvent(it) },
     )
 }
 
@@ -88,28 +76,40 @@ private fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     itemsStateFlow: StateFlow<WooPosItemsViewState>,
     listState: LazyListState,
-    onItemClicked: (item: WooPosItem) -> Unit,
-    onEndOfItemListReached: () -> Unit,
-    onPullToRefresh: () -> Unit,
-    onRetryClicked: () -> Unit,
-    onSimpleProductsBannerClosed: () -> Unit,
-    onSimpleProductsBannerLearnMoreClicked: () -> Unit,
-    onToolbarInfoIconClicked: () -> Unit,
+    onUIEvent: (WooPosItemsUIEvent) -> Unit,
 ) {
     val state = itemsStateFlow.collectAsState()
-    val pullToRefreshState = rememberPullRefreshState(state.value.reloadingProductsWithPullToRefresh, onPullToRefresh)
+    val pullToRefreshState = rememberPullRefreshState(
+        state.value.reloadingProductsWithPullToRefresh,
+        onRefresh = { onUIEvent(PullToRefreshTriggered) },
+    )
 
     MainItemsList(
         modifier = modifier,
         pullToRefreshState = pullToRefreshState,
         state = state,
         listState = listState,
-        onToolbarInfoIconClicked = onToolbarInfoIconClicked,
-        onSimpleProductsBannerLearnMoreClicked = onSimpleProductsBannerLearnMoreClicked,
-        onSimpleProductsBannerClosed = onSimpleProductsBannerClosed,
-        onItemClicked = onItemClicked,
-        onEndOfItemListReached = onEndOfItemListReached,
-        onRetryClicked = onRetryClicked
+        onToolbarInfoIconClicked = {
+            onUIEvent(WooPosItemsUIEvent.SimpleProductsDialogInfoIconClicked)
+        },
+        onSimpleProductsBannerLearnMoreClicked = {
+            onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerLearnMoreClicked)
+        },
+        onSimpleProductsBannerClosed = {
+            onUIEvent(WooPosItemsUIEvent.SimpleProductsBannerClosed)
+        },
+        onItemClicked = { item ->
+            onUIEvent(WooPosItemsUIEvent.ItemClicked(item))
+        },
+        onEndOfItemListReached = { onUIEvent(EndOfItemsListReached) },
+        onRetryClicked = { onUIEvent(ProductsLoadingErrorRetryButtonClicked) },
+        onSearchEvent = {
+            when (it) {
+                WooPosSearchUIEvent.Clear -> TODO()
+                WooPosSearchUIEvent.Close -> TODO()
+                is WooPosSearchUIEvent.Search -> TODO()
+            }
+        }
     )
 }
 
@@ -125,7 +125,8 @@ private fun MainItemsList(
     onSimpleProductsBannerClosed: () -> Unit,
     onItemClicked: (item: WooPosItem) -> Unit,
     onEndOfItemListReached: () -> Unit,
-    onRetryClicked: () -> Unit
+    onRetryClicked: () -> Unit,
+    onSearchEvent: (WooPosSearchUIEvent) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -160,6 +161,12 @@ private fun MainItemsList(
                             onSimpleProductsBannerLearnMoreClicked,
                             onSimpleProductsBannerClosed
                         )
+
+                        ProductsSearch(
+                            itemsState.search,
+                            onSearchEvent = onSearchEvent,
+                        )
+
                         WooPosItemList(
                             itemsState,
                             listState,
@@ -265,6 +272,26 @@ private fun SimpleProductsBanner(
 }
 
 @Composable
+private fun ProductsSearch(
+    searchState: WooPosItemsViewState.Content.SearchState,
+    onSearchEvent: (WooPosSearchUIEvent) -> Unit,
+) {
+    when (searchState) {
+        is WooPosItemsViewState.Content.SearchState.Visible -> {
+            WooPosSearchInput(
+                state = searchState.state,
+                onEvent = onSearchEvent,
+            )
+        }
+
+        WooPosItemsViewState.Content.SearchState.Hidden -> {
+            // No search input to show
+        }
+    }
+
+}
+
+@Composable
 fun ProductsError(onRetryClicked: () -> Unit) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -350,13 +377,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
             modifier = modifier,
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
@@ -407,13 +428,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
             modifier = modifier,
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
@@ -432,13 +447,7 @@ fun WooPosItemsScreenLoadingPreview() {
         WooPosItemsScreen(
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
@@ -452,13 +461,7 @@ fun WooPosProductsScreenEmptyListPreview() {
         WooPosItemsScreen(
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
@@ -472,13 +475,7 @@ fun WooPosProductsScreenErrorPreview() {
         WooPosItemsScreen(
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
@@ -530,13 +527,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
         WooPosItemsScreen(
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
@@ -588,13 +579,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
         WooPosItemsScreen(
             itemsStateFlow = productState,
             listState = rememberLazyListState(),
-            onItemClicked = {},
-            onEndOfItemListReached = {},
-            onPullToRefresh = {},
-            onRetryClicked = {},
-            onSimpleProductsBannerClosed = {},
-            onSimpleProductsBannerLearnMoreClicked = {},
-            onToolbarInfoIconClicked = {},
+            onUIEvent = {},
         )
     }
 }
