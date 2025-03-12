@@ -31,7 +31,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
@@ -146,7 +145,6 @@ fun ShipmentDetails(
                         }
                     )
                     ErrorMessageNotification(errorNotification)
-
 
                     Spacer(
                         modifier = Modifier.size(
@@ -631,7 +629,6 @@ private fun ErrorMessageNotification(
             )
         }
     }
-
 }
 
 @Composable
