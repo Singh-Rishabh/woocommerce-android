@@ -36,7 +36,6 @@ import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.Exit
-import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.ShowActionSnackbar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -704,9 +703,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         sut.onPurchaseShippingLabel()
 
-        assertThat(sut.event.value).matches {
-            it is ShowActionSnackbar && it.message == R.string.woo_shipping_labels_purchase_error
-        }
+        assertThat(sut.actionSnackbar).matches { it?.message == R.string.woo_shipping_labels_purchase_error }
     }
 
     @Test
