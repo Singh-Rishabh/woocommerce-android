@@ -4394,6 +4394,10 @@
     <string name="woopos_email_receipt_email_label">Type email</string>
     <string name="woopos_email_receipt_send_error">Error trying to send this email. Try again</string>
 
+    <string name="woopos_search_back_content_description">Back</string>
+    <string name="woopos_clear_back_content_description">Clear</string>
+    <string name="woopos_search_button_content_description">Search</string>
+
 
     <string name="customers_details_customer_section">Customer</string>
     <string name="customers_details_orders_section">Orders</string>
