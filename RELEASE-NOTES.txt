@@ -4,6 +4,7 @@
 22.0
 -----
 - [*] Payments: display specific error for the cases when a reader with low battery level attempted to connect [https://github.com/woocommerce/woocommerce-android/pull/13642]
+- [*] Fixed an animation glitch on tablets when collecting payment from order creation screen [https://github.com/woocommerce/woocommerce-android/pull/13725]
 
 21.9
 -----
