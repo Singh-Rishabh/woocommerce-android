@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home.items
 import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
@@ -43,6 +44,7 @@ class WooPosItemsViewModelTest {
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
+    private val isCouponsEnabled: WooPosIsCouponsEnabled = mock()
 
     @Before
     fun setup() {
@@ -930,6 +932,68 @@ class WooPosItemsViewModelTest {
             }
         }
 
+    @Test
+    fun `given ff disabled, when view model created, then coupons button hidden`() = runTest {
+        // GIVEN
+        whenever(isCouponsEnabled.invoke()).thenReturn(false)
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple",
+                isDownloadable = false,
+            )
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        viewModel.viewState.test {
+            val value = awaitItem() as WooPosItemsViewState.Content
+            assertThat(value.couponsEnabled).isFalse()
+        }
+    }
+
+    @Test
+    fun `given ff enabled, when view model created, then coupons button visible`() = runTest {
+        // GIVEN
+        whenever(isCouponsEnabled.invoke()).thenReturn(true)
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple",
+                isDownloadable = false,
+            )
+        )
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        viewModel.viewState.test {
+            val value = awaitItem() as WooPosItemsViewState.Content
+            assertThat(value.couponsEnabled).isTrue()
+        }
+    }
+
     private fun createViewModel() =
         WooPosItemsViewModel(
             productsDataSource,
@@ -938,5 +1002,6 @@ class WooPosItemsViewModelTest {
             posPreferencesRepository,
             wooPosItemsNavigator,
             analyticsTracker,
+            isCouponsEnabled,
         )
 }
