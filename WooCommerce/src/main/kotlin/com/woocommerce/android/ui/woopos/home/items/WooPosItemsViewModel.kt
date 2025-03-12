@@ -118,6 +118,11 @@ class WooPosItemsViewModel @Inject constructor(
         viewModelScope.launch {
             val currentState = _viewState.value as? WooPosItemsViewState.Content
             if (currentState != null) {
+                if (newQuery.isEmpty()) {
+                    setSearchInitialState(currentState)
+                    return@launch
+                }
+
                 _viewState.value = currentState.copy(
                     search = WooPosItemsViewState.Content.SearchState.Visible(
                         state = WooPosSearchInputState.Open(
@@ -133,7 +138,7 @@ class WooPosItemsViewModel @Inject constructor(
                     search = WooPosItemsViewState.Content.SearchState.Visible(
                         state = WooPosSearchInputState.Open(
                             input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                            isLoading = true,
+                            isLoading = false,
                         )
                     )
                 )
@@ -155,17 +160,21 @@ class WooPosItemsViewModel @Inject constructor(
     private fun onClearSearchClicked() {
         val currentState = _viewState.value as? WooPosItemsViewState.Content
         if (currentState != null) {
-            _viewState.value = currentState.copy(
-                search = WooPosItemsViewState.Content.SearchState.Visible(
-                    state = WooPosSearchInputState.Open(
-                        input = WooPosSearchInputState.Open.Input.Hint(
-                            resourceProvider.getString(R.string.woopos_search_products)
-                        ),
-                        isLoading = false
-                    )
+            setSearchInitialState(currentState)
+        }
+    }
+
+    private fun setSearchInitialState(currentState: WooPosItemsViewState.Content) {
+        _viewState.value = currentState.copy(
+            search = WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Open(
+                    input = WooPosSearchInputState.Open.Input.Hint(
+                        resourceProvider.getString(R.string.woopos_search_products)
+                    ),
+                    isLoading = false
                 )
             )
-        }
+        )
     }
 
     private fun navigateBackToItemListScreen() {
