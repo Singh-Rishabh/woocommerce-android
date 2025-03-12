@@ -370,8 +370,8 @@ private fun LabelCreationScreenWithBottomSheet(
                     addressNotification = uiState.addressNotification,
                     onDismissAddressNotification = onDismissAddressNotification,
                     onEditOriginAddress = onEditOriginAddress,
-                    errorNotification = takeIf { isItnMissing }?.let {
-                        ShipmentDetailErrorNotification(
+                    itnNotification = takeIf { isItnMissing }?.let {
+                        ItnMissingNotification(
                             errorMessage = stringResource(R.string.woo_shipping_labels_customs_itn_required_error),
                             onErrorDismissed = onDismissItnNotice
                         )

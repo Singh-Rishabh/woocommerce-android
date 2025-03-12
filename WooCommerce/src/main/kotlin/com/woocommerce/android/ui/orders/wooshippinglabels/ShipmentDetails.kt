@@ -81,7 +81,7 @@ fun ShipmentDetails(
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
     addressNotification: AddressNotification?,
-    errorNotification: ShipmentDetailErrorNotification? = null,
+    itnNotification: ItnMissingNotification? = null,
     modifier: Modifier = Modifier,
     isShipmentDetailsExpanded: Boolean = false,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
@@ -144,7 +144,7 @@ fun ShipmentDetails(
                             }
                         }
                     )
-                    ErrorMessageNotification(errorNotification)
+                    ItnMissingNotification(itnNotification)
 
                     Spacer(
                         modifier = Modifier.size(
@@ -560,12 +560,12 @@ private fun ShipmentCostRow(
 }
 
 @Composable
-private fun ErrorMessageNotification(
-    errorNotification: ShipmentDetailErrorNotification?,
+private fun ItnMissingNotification(
+    itnNotification: ItnMissingNotification?,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
-        visible = errorNotification != null,
+        visible = itnNotification != null,
         enter = fadeIn(
             animationSpec = tween(
                 durationMillis = 180
@@ -586,7 +586,7 @@ private fun ErrorMessageNotification(
 
         )
     ) {
-        if (errorNotification == null) return@AnimatedVisibility
+        if (itnNotification == null) return@AnimatedVisibility
 
         val rowModifier = when (LocalConfiguration.current.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> {
@@ -614,7 +614,7 @@ private fun ErrorMessageNotification(
             )
             Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
             Text(
-                text = errorNotification.errorMessage,
+                text = itnNotification.errorMessage,
                 style = MaterialTheme.typography.body2,
                 color = MaterialTheme.colors.error,
                 modifier = Modifier.weight(1f)
@@ -624,7 +624,7 @@ private fun ErrorMessageNotification(
                 tint = MaterialTheme.colors.error,
                 contentDescription = null,
                 modifier = Modifier.clickable {
-                    errorNotification.onErrorDismissed()
+                    itnNotification.onErrorDismissed()
                 }
             )
         }
@@ -771,7 +771,7 @@ data class ShippingRateSummaryUI(
     val optionFee: String? = null
 ) : Parcelable
 
-data class ShipmentDetailErrorNotification(
+data class ItnMissingNotification(
     val errorMessage: String,
     val onErrorDismissed: () -> Unit
 )
