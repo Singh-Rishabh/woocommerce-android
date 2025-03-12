@@ -70,6 +70,7 @@ import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.ActionSnackbar
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
@@ -316,7 +317,7 @@ private fun LabelCreationScreenWithBottomSheet(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val isItnMissing = customsState is CustomsState.ItnMissing
+    val isItnMissing = customsState is ItnMissing
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
     val requiresLargePeekHeight = isPurchaseButtonDisplayed || uiState.addressNotification != null || isItnMissing
 
@@ -503,7 +504,8 @@ private fun CustomsCard(
     onEditCustomsClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val (backgroundColor, labelText) = if (customsState is Unavailable) {
+    val missingCustomData = customsState is Unavailable || customsState is ItnMissing
+    val (backgroundColor, labelText) = if (missingCustomData) {
         Pair(
             colorResource(id = R.color.woo_red_20),
             stringResource(id = R.string.shipping_labels_customs_missing_info_badge)
