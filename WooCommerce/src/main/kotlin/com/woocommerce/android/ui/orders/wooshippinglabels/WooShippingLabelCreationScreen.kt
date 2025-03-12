@@ -115,7 +115,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onEditCustomsClick = viewModel::onEditCustomsClick,
                 onEditDestinationAddress = viewModel::onEditDestinationAddress,
                 destinationStatus = viewState.destinationStatus,
-                onDismissAddressNotification = viewModel::onDismissAddressNotification
+                onDismissAddressNotification = viewModel::onDismissAddressNotification,
+                onDismissItnNotice = viewModel::onDismissItnNotice
             )
         }
 
@@ -155,6 +156,7 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    onDismissItnNotice: () -> Unit,
     onDismissAddressNotification: () -> Unit = {},
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier
@@ -219,6 +221,7 @@ fun WooShippingLabelCreationScreen(
             onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
             onEditCustomsClick = onEditCustomsClick,
             onEditDestinationAddress = onEditDestinationAddress,
+            onDismissItnNotice = onDismissItnNotice,
             onDismissAddressNotification = onDismissAddressNotification,
             destinationStatus = destinationStatus
         )
@@ -295,6 +298,7 @@ private fun LabelCreationScreenWithBottomSheet(
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditCustomsClick: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    onDismissItnNotice: () -> Unit,
     destinationStatus: AddressStatus,
     onDismissAddressNotification: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -344,7 +348,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     errorNotification = takeIf { isItnMissing }?.let {
                         ShipmentDetailErrorNotification(
                             errorMessage = stringResource(R.string.woo_shipping_labels_customs_itn_required_error),
-                            onErrorDismissed = { }
+                            onErrorDismissed = onDismissItnNotice
                         )
                     }
                 )
@@ -813,6 +817,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             onSelectAddressExpandedChange = { true },
             onEditCustomsClick = {},
             onEditDestinationAddress = {},
+            onDismissItnNotice = {},
             destinationStatus = AddressStatus.VERIFIED
         )
     }
