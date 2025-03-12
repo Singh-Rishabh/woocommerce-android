@@ -465,6 +465,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         return true
     }
 
+    fun onDismissItnNotice() {
+        customsState.value = Unavailable
+    }
+
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
         val totalPrice = items.sumOf { it.price }
         val formattedTotalPrice = items.firstOrNull()?.currency?.let {
