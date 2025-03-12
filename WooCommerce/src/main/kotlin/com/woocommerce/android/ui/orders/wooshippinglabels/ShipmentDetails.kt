@@ -127,36 +127,7 @@ fun ShipmentDetails(
                             .padding(top = dimensionResource(R.dimen.minor_100) * LocalConfiguration.current.fontScale)
                     )
 
-                    errorMessage?.let {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    color = colorResource(R.color.woo_red_5),
-                                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                                )
-                                .padding(dimensionResource(R.dimen.major_75))
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Info,
-                                tint = MaterialTheme.colors.error,
-                                contentDescription = null
-                            )
-                            Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
-                            Text(
-                                text = errorMessage,
-                                style = MaterialTheme.typography.body2,
-                                color = MaterialTheme.colors.error,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Icon(
-                                imageVector = Icons.Outlined.Close,
-                                tint = MaterialTheme.colors.error,
-                                contentDescription = null
-                            )
-                        }
-                    }
+                    errorMessage?.let { CollapsedErrorMessage(it) }
 
                     ShippingAddressNotification(
                         addressNotification = addressNotification,
@@ -584,6 +555,38 @@ private fun ShipmentCostRow(
         } ?: SkeletonView(
             width = dimensionResource(id = R.dimen.skeleton_text_medium_width),
             height = dimensionResource(id = R.dimen.major_100)
+        )
+    }
+}
+
+@Composable
+private fun CollapsedErrorMessage(errorMessage: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = colorResource(R.color.woo_red_5),
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+            )
+            .padding(dimensionResource(R.dimen.major_75))
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Info,
+            tint = MaterialTheme.colors.error,
+            contentDescription = null
+        )
+        Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
+        Text(
+            text = errorMessage,
+            style = MaterialTheme.typography.body2,
+            color = MaterialTheme.colors.error,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            imageVector = Icons.Outlined.Close,
+            tint = MaterialTheme.colors.error,
+            contentDescription = null
         )
     }
 }
