@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -128,26 +129,24 @@ fun ShipmentDetails(
                             .padding(top = dimensionResource(R.dimen.minor_100) * LocalConfiguration.current.fontScale)
                     )
 
-                    if (errorNotification != null) {
-                        ErrorMessageNotification(errorNotification)
-                    } else {
-                        ShippingAddressNotification(
-                            addressNotification = addressNotification,
-                            onDismiss = onDismissAddressNotification,
-                            onAction = {
-                                addressNotification?.let {
-                                    when {
-                                        it.isSuccess.not() && it.isDestinationNotification -> {
-                                            onEditDestinationAddress(shippingAddresses.shipTo)
-                                        }
-                                        it.isSuccess.not() && it.isDestinationNotification.not() -> {
-                                            onEditOriginAddress(shippingAddresses.shipFrom)
-                                        }
+                    ShippingAddressNotification(
+                        addressNotification = addressNotification,
+                        onDismiss = onDismissAddressNotification,
+                        onAction = {
+                            addressNotification?.let {
+                                when {
+                                    it.isSuccess.not() && it.isDestinationNotification -> {
+                                        onEditDestinationAddress(shippingAddresses.shipTo)
+                                    }
+                                    it.isSuccess.not() && it.isDestinationNotification.not() -> {
+                                        onEditOriginAddress(shippingAddresses.shipFrom)
                                     }
                                 }
                             }
-                        )
-                    }
+                        }
+                    )
+                    ErrorMessageNotification(errorNotification)
+
 
                     Spacer(
                         modifier = Modifier.size(
@@ -564,38 +563,63 @@ private fun ShipmentCostRow(
 
 @Composable
 private fun ErrorMessageNotification(
-    errorNotification: ShipmentDetailErrorNotification
+    errorNotification: ShipmentDetailErrorNotification?
 ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(
-                color = colorResource(R.color.woo_red_5),
-                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+    AnimatedVisibility(
+        visible = errorNotification != null,
+        enter = fadeIn(
+            animationSpec = tween(
+                durationMillis = 180
             )
-            .padding(dimensionResource(R.dimen.major_75))
+        ) + scaleIn(
+            animationSpec = tween(
+                durationMillis = 180
+            )
+        ),
+        exit = fadeOut(
+            animationSpec = tween(
+                durationMillis = 90
+            )
+        ) + scaleOut(
+            animationSpec = tween(
+                durationMillis = 90
+            )
+
+        )
     ) {
-        Icon(
-            imageVector = Icons.Outlined.Info,
-            tint = MaterialTheme.colors.error,
-            contentDescription = null
-        )
-        Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
-        Text(
-            text = errorNotification.errorMessage,
-            style = MaterialTheme.typography.body2,
-            color = MaterialTheme.colors.error,
-            modifier = Modifier.weight(1f)
-        )
-        IconButton(onClick = errorNotification.onErrorDismissed) {
+        if (errorNotification == null) return@AnimatedVisibility
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = colorResource(R.color.woo_red_5),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+        ) {
             Icon(
-                imageVector = Icons.Outlined.Close,
+                imageVector = Icons.Outlined.Info,
                 tint = MaterialTheme.colors.error,
                 contentDescription = null
             )
+            Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
+            Text(
+                text = errorNotification.errorMessage,
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = errorNotification.onErrorDismissed) {
+                Icon(
+                    imageVector = Icons.Outlined.Close,
+                    tint = MaterialTheme.colors.error,
+                    contentDescription = null
+                )
+            }
         }
     }
+
 }
 
 @Composable
@@ -608,20 +632,20 @@ private fun ShippingAddressNotification(
     AnimatedVisibility(
         visible = addressNotification != null && addressNotification.isExpired().not(),
         enter = fadeIn(
-            animationSpec = androidx.compose.animation.core.tween(
+            animationSpec = tween(
                 durationMillis = 180
             )
         ) + scaleIn(
-            animationSpec = androidx.compose.animation.core.tween(
+            animationSpec = tween(
                 durationMillis = 180
             )
         ),
         exit = fadeOut(
-            animationSpec = androidx.compose.animation.core.tween(
+            animationSpec = tween(
                 durationMillis = 90
             )
         ) + scaleOut(
-            animationSpec = androidx.compose.animation.core.tween(
+            animationSpec = tween(
                 durationMillis = 90
             )
 
