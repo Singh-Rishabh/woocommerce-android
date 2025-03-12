@@ -77,6 +77,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
+    var actionSnackbar by mutableStateOf<ActionSnackbar?>(null)
+
     private val emptyOrder = Order.getEmptyOrder(Date(), Date())
     private val order = MutableStateFlow<Order>(emptyOrder)
     private val destinationAddress = MutableStateFlow<DestinationShippingAddress>(DestinationShippingAddress.EMPTY)
@@ -513,12 +515,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
             } else {
                 purchaseState.value = backupPurchaseState
-                triggerEvent(
-                    Event.ShowActionSnackbar(
-                        message = R.string.woo_shipping_labels_purchase_error,
-                        actionText = R.string.retry
-                    ) { onPurchaseShippingLabel() }
-                )
+                actionSnackbar = ActionSnackbar(
+                    R.string.woo_shipping_labels_purchase_error,
+                    R.string.retry
+                ) { onPurchaseShippingLabel() }
             }
         }
     }
@@ -632,6 +632,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
+
+    data class ActionSnackbar(
+        val message: Int,
+        val actionLabel: Int,
+        val action: () -> Unit
+    )
 
     sealed class ShippingRatesState {
         data object NoAvailable : ShippingRatesState()
