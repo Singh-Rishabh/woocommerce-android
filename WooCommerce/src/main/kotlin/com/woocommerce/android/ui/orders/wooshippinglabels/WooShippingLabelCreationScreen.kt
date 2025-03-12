@@ -283,6 +283,7 @@ fun WooShippingLabelCreationScreen(
     }
 }
 
+@Suppress("CyclomaticComplexMethod")
 @Composable
 private fun LabelCreationScreenWithBottomSheet(
     shippableItems: ShippableItemsUI,
