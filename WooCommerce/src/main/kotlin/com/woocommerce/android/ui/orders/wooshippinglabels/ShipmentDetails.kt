@@ -602,6 +602,7 @@ private fun ErrorMessageNotification(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = rowModifier
+                .padding(dimensionResource(R.dimen.major_100))
                 .background(
                     color = colorResource(R.color.woo_red_5),
                     shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
