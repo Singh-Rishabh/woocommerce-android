@@ -39,6 +39,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosText
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
@@ -336,6 +337,12 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                 message = R.string.woopos_banner_simple_products_only_message,
                 icon = R.drawable.info,
             ),
+            search = WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Open(
+                    input = WooPosSearchInputState.Open.Input.Query(""),
+                    loading = false,
+                )
+            )
         )
     )
     WooPosTheme {
@@ -392,6 +399,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                 message = R.string.woopos_banner_simple_products_only_message,
                 icon = R.drawable.info,
             ),
+            search = WooPosItemsViewState.Content.SearchState.Hidden,
         )
     )
     WooPosTheme {
@@ -509,6 +517,12 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                 title = R.string.woopos_banner_simple_products_only_title,
                 message = R.string.woopos_banner_simple_products_only_message,
                 icon = R.drawable.info,
+            ),
+            search = WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Open(
+                    input = WooPosSearchInputState.Open.Input.Query(""),
+                    loading = false,
+                )
             )
         )
     )
@@ -561,6 +575,12 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
                 title = R.string.woopos_banner_simple_products_only_title,
                 message = R.string.woopos_banner_simple_products_only_message,
                 icon = R.drawable.info,
+            ),
+            search = WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Open(
+                    input = WooPosSearchInputState.Open.Input.Query(""),
+                    loading = false,
+                )
             )
         )
     )

@@ -6,12 +6,15 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductType
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ProductsPullToRefreshTriggered
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -37,6 +40,7 @@ class WooPosItemsViewModel @Inject constructor(
     private val preferencesRepository: WooPosPreferencesRepository,
     private val navigator: WooPosItemsNavigator,
     private val analyticsTracker: WooPosAnalyticsTracker,
+    private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
 
@@ -124,8 +128,8 @@ class WooPosItemsViewModel @Inject constructor(
             is VariableProduct -> {
                 viewModelScope.launch {
                     navigator.sendNavigationEvent(
-                        WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen(
-                            WooPosItemNavigationData.VariableProductData(
+                        NavigateToVariationsScreen(
+                            VariableProductData(
                                 id = event.item.id,
                                 name = event.item.name,
                                 numOfVariations = event.item.numOfVariations,
@@ -246,6 +250,13 @@ class WooPosItemsViewModel @Inject constructor(
             message = R.string.woopos_banner_simple_products_only_message,
             icon = R.drawable.info,
         ),
+        search = when (isProductsSearchEnabled()) {
+            true -> WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Closed
+            )
+
+            false -> WooPosItemsViewState.Content.SearchState.Hidden
+        }
     )
 
     private fun onEndOfProductsListReached() {
