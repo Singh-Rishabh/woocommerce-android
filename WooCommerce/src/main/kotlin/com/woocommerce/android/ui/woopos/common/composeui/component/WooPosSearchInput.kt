@@ -42,6 +42,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState.Open.Input
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 
 @Composable
 fun WooPosSearchInput(
@@ -52,7 +53,7 @@ fun WooPosSearchInput(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(WooPosSpacing.Small.value)
+            .padding(vertical = WooPosSpacing.Small.value)
     ) {
         when (state) {
             is WooPosSearchInputState.Open -> {
@@ -242,23 +243,33 @@ fun WooPosSearchInputOpenHintPreview() {
 @WooPosPreview
 @Composable
 fun WooPosSearchInputOpenSearchPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(WooPosSpacing.Small.value)
-    ) {
-        WooPosSearchInput(
-            state = WooPosSearchInputState.Open(Input.Query("Search products..."), false),
-            onEvent = {}
-        )
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(WooPosSpacing.Small.value)
+        ) {
+            WooPosSearchInput(
+                state = WooPosSearchInputState.Open(Input.Query("Search products..."), false),
+                onEvent = {}
+            )
+        }
     }
 }
 
 @WooPosPreview
 @Composable
 fun WooPosSearchInputClosedPreview() {
-    WooPosSearchInput(
-        state = WooPosSearchInputState.Closed,
-        onEvent = {}
-    )
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(WooPosSpacing.Small.value)
+        ) {
+            WooPosSearchInput(
+                state = WooPosSearchInputState.Closed,
+                onEvent = {}
+            )
+        }
+    }
 }
