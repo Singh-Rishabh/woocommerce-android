@@ -30,9 +30,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class WooPosItemsViewModel @Inject constructor(
@@ -46,6 +48,7 @@ class WooPosItemsViewModel @Inject constructor(
     private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
+    private var searchJob: Job? = null
 
     private val _viewState =
         MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
@@ -115,33 +118,51 @@ class WooPosItemsViewModel @Inject constructor(
     }
 
     private fun onSearchChanged(newQuery: String) {
-        viewModelScope.launch {
-            val currentState = _viewState.value as? WooPosItemsViewState.Content
-            if (currentState != null) {
-                if (newQuery.isEmpty()) {
-                    setSearchInitialState(currentState)
-                    return@launch
+        searchJob?.cancel()
+
+        val currentState = _viewState.value as? WooPosItemsViewState.Content
+        if (currentState != null) {
+            if (newQuery.isEmpty()) {
+                setSearchInitialState(currentState)
+                return
+            }
+
+            _viewState.value = currentState.copy(
+                search = WooPosItemsViewState.Content.SearchState.Visible(
+                    state = WooPosSearchInputState.Open(
+                        input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                        isLoading = false,
+                    )
+                )
+            )
+
+            searchJob = viewModelScope.launch {
+                try {
+                    delay(500)
+
+                    _viewState.value = currentState.copy(
+                        search = WooPosItemsViewState.Content.SearchState.Visible(
+                            state = WooPosSearchInputState.Open(
+                                input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                                isLoading = true,
+                            )
+                        )
+                    )
+
+                    // simulates remote call
+                    delay(2000)
+
+                    if (!isActive) return@launch
+                    _viewState.value = currentState.copy(
+                        search = WooPosItemsViewState.Content.SearchState.Visible(
+                            state = WooPosSearchInputState.Open(
+                                input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                                isLoading = false,
+                            )
+                        )
+                    )
+                } catch (_: CancellationException) {
                 }
-
-                _viewState.value = currentState.copy(
-                    search = WooPosItemsViewState.Content.SearchState.Visible(
-                        state = WooPosSearchInputState.Open(
-                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                            isLoading = true,
-                        )
-                    )
-                )
-
-                delay(1000)
-
-                _viewState.value = currentState.copy(
-                    search = WooPosItemsViewState.Content.SearchState.Visible(
-                        state = WooPosSearchInputState.Open(
-                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                            isLoading = false,
-                        )
-                    )
-                )
             }
         }
     }
