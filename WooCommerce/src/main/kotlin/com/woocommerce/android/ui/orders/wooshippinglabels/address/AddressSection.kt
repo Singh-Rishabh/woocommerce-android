@@ -183,22 +183,24 @@ internal fun AddressSectionPortrait(
                         bottom = dimensionResource(R.dimen.major_100)
                     )
             )
-            Text(
-                text = shippingAddresses.shipTo.address.toString(),
-                modifier = Modifier
-                    .constrainAs(shipToValue) {
-                        top.linkTo(shipToLabel.top)
-                        start.linkTo(barrier)
-                        end.linkTo(shipToEdit.start)
-                        width = Dimension.fillToConstraints
-                    }
-                    .padding(
-                        top = dimensionResource(R.dimen.major_100),
-                        bottom = dimensionResource(R.dimen.minor_100),
-                        start = dimensionResource(R.dimen.major_100),
-                        end = dimensionResource(R.dimen.minor_100)
-                    )
-            )
+            if (destinationStatus != AddressStatus.MISSING_ADDRESS) {
+                Text(
+                    text = shippingAddresses.shipTo.address.toString(),
+                    modifier = Modifier
+                        .constrainAs(shipToValue) {
+                            top.linkTo(shipToLabel.top)
+                            start.linkTo(barrier)
+                            end.linkTo(shipToEdit.start)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(
+                            top = dimensionResource(R.dimen.major_100),
+                            bottom = dimensionResource(R.dimen.minor_100),
+                            start = dimensionResource(R.dimen.major_100),
+                            end = dimensionResource(R.dimen.minor_100)
+                        ),
+                )
+            }
             AddressStatusIndicator(
                 addressStatus = destinationStatus,
                 modifier = destinationStatusModifier
