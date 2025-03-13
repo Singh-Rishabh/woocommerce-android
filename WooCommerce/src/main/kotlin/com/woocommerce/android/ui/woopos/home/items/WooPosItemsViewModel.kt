@@ -168,6 +168,7 @@ class WooPosItemsViewModel @Inject constructor(
             )
         )
 
+        @Suppress("MagicNumber")
         searchJob = viewModelScope.launch {
             try {
                 delay(500)
