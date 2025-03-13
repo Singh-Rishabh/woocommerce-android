@@ -14,6 +14,7 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
@@ -55,6 +56,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.runningFold
@@ -288,11 +290,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         combine(
             shippingAddresses,
             customsFormData,
-            customsState
-        ) { addresses, customsData, _ ->
+            shippableItems.map { it.isItnRequired() }
+        ) { addresses, customsData, isItnRequired ->
+            val customsRequired by lazy {
+                addresses != null && shouldRequireCustoms(addresses)
+            }
+
             when {
                 customsData != null -> CustomsState.DataAvailable(customsData)
-                addresses != null && shouldRequireCustoms(addresses) -> Unavailable
+                customsRequired && isItnRequired -> ItnMissing
+                customsRequired -> Unavailable
                 else -> NotRequired
             }
         }.onEach {
@@ -458,6 +465,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     fun onSelectAddressExpandedChange(value: Boolean): Boolean {
         uiState.update { it.copy(isAddressSelectionExpanded = value) }
         return true
+    }
+
+    fun onDismissItnNotice() {
+        customsState.value = Unavailable
     }
 
     private fun getTotalPrice(items: List<ShippableItemModel>): String {
@@ -629,6 +640,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }
     }
 
+    private fun List<ShippableItemModel>.isItnRequired(): Boolean {
+        return map { it.shippingTotalValue }
+            .takeIf { it.isNotEmpty() }
+            ?.reduce { acc, current -> acc + current }
+            ?.let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
+            ?: false
+    }
+
     data object StartPackageSelection : Event()
     data class LabelPurchased(val purchaseData: PurchasedShippingLabelData) : Event()
     data class StartOriginAddressEdit(val originAddress: OriginShippingAddress) : Event()
@@ -727,6 +746,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     // This will be extended later introducing the state with data coming from the Customs form
     sealed class CustomsState {
         data object NotRequired : CustomsState()
+        data object ItnMissing : CustomsState()
         data object Unavailable : CustomsState()
         data class DataAvailable(val customsData: CustomsData) : CustomsState()
     }
@@ -735,6 +755,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         private const val NOTIFICATIONS_DELAY = 2_000L
         private const val TYPING_DELAY = 800L
         private const val MULTIPLE_CALLS_DELAY = 50L
+        private val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500.toBigDecimal()
     }
 }
 
