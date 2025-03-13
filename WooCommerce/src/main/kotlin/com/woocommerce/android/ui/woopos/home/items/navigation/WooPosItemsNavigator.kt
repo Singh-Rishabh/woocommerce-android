@@ -16,6 +16,5 @@ class WooPosItemsNavigator @Inject constructor() {
     sealed class WooPosItemsScreenNavigationEvent {
         data class NavigateToVariationsScreen(val product: VariableProductData) : WooPosItemsScreenNavigationEvent()
         data object NavigateBackToItemListScreen : WooPosItemsScreenNavigationEvent()
-        data object NavigateToItemListSearchScreen : WooPosItemsScreenNavigationEvent()
     }
 }

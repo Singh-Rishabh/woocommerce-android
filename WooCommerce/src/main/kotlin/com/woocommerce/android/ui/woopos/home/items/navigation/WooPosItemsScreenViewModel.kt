@@ -27,11 +27,7 @@ class WooPosItemsScreenViewModel @Inject constructor(
     }
 
     private fun navigateBackToItemListScreen() {
-        _screenState.value = ItemsScreens.ItemListScreen.List
-    }
-
-    private fun navigateToItemListSearchScreen() {
-        _screenState.value = ItemsScreens.ItemListScreen.Search
+        _screenState.value = ItemsScreens.ItemListScreen
     }
 
     private suspend fun listenToNavigationEvents() {
@@ -42,10 +38,6 @@ class WooPosItemsScreenViewModel @Inject constructor(
                 }
                 is WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen -> {
                     navigateBackToItemListScreen()
-                }
-
-                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToItemListSearchScreen -> {
-                    navigateToItemListSearchScreen()
                 }
             }
         }
@@ -58,10 +50,7 @@ class WooPosItemsScreenViewModel @Inject constructor(
     }
 
     sealed class ItemsScreens {
-        sealed class ItemListScreen : ItemsScreens() {
-            object Search : ItemListScreen()
-            object List : ItemListScreen()
-        }
+        data object ItemListScreen : ItemsScreens()
         data class VariationsScreen(val product: VariableProductData) : ItemsScreens()
     }
 }
