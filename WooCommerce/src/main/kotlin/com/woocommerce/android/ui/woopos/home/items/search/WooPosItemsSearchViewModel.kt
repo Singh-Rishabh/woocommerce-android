@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 @HiltViewModel
-class WooPosItemsSearchViewModel() : ViewModel() {
+class WooPosItemsSearchViewModel @Inject constructor() : ViewModel() {
     private val _viewState =
         MutableStateFlow<WooPosItemsSearchViewState>(WooPosItemsSearchViewState.Empty)
     val viewState: StateFlow<WooPosItemsSearchViewState> = _viewState

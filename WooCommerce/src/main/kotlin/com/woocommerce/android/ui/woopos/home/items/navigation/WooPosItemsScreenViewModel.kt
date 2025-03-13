@@ -13,7 +13,7 @@ import javax.inject.Inject
 class WooPosItemsScreenViewModel @Inject constructor(
     private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
-    private val _screenState = MutableStateFlow<ItemsScreens>(ItemsScreens.ItemListScreen)
+    private val _screenState = MutableStateFlow<ItemsScreens>(ItemsScreens.ItemListScreen.List)
     val screenState: StateFlow<ItemsScreens> = _screenState
 
     init {
