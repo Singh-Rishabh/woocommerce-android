@@ -11,7 +11,9 @@ import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 
 @Composable
-fun WooPosItemsSearchScreen() {
+fun WooPosItemsSearchScreen(
+    modifier: Modifier = Modifier,
+) {
     val viewModel = hiltViewModel<WooPosItemsSearchViewModel>()
     val viewState = viewModel.viewState
     Box(
