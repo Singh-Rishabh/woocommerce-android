@@ -16,7 +16,8 @@ data class PackagePurchaseDTO(
     @SerializedName("rate_id") val rateId: String,
     @SerializedName("service_id") val serviceId: String,
     @SerializedName("carrier_id") val carrierId: String,
-    @SerializedName("service_name") val serviceName: String
+    @SerializedName("service_name") val serviceName: String,
+    val customs: CustomsPurchaseDTO? = null
 )
 
 data class OriginAddressPurchaseDTO(
@@ -55,4 +56,13 @@ data class RateDTO(
 data class HazmatDTO(
     val isHazmat: Boolean = false,
     val category: String = "",
+)
+
+data class CustomsPurchaseDTO(
+    val contentsType: String,
+    val contentExplanation: String,
+    val restrictionType: String,
+    val restrictionComments: String,
+    val noDeliveryOption: Boolean,
+    val itn: String
 )
