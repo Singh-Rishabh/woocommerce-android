@@ -6,18 +6,16 @@ class ShouldRequireITN @Inject constructor() {
     operator fun invoke(
         destinationCountryCode: String,
         totalShippingItemValue: Float
-    ): Boolean {
-        if (itnExemptCountries.contains(destinationCountryCode)) {
-            return false
-        }
-
-        if (itnRequiredCountries.contains(destinationCountryCode)) {
-            return true
-        }
-
-        return totalShippingItemValue >= 2500
+    ) = when (destinationCountryCode) {
+        in itnExemptCountries -> false
+        in itnRequiredCountries -> true
+        else -> totalShippingItemValue > MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS
     }
 
     private val itnExemptCountries = listOf("CA")
     private val itnRequiredCountries = listOf("IR", "KP", "SY", "CU", "SD")
+
+    companion object {
+        private const val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500f
+    }
 }
