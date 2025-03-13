@@ -17,7 +17,7 @@ fun WooPosItemsSearchScreen(
     val viewModel = hiltViewModel<WooPosItemsSearchViewModel>()
     val viewState = viewModel.viewState
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
