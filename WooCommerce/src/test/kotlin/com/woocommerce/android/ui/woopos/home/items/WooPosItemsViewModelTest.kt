@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home.items
 import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -933,6 +934,103 @@ class WooPosItemsViewModelTest {
                 assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
             }
         }
+
+    @Test
+    fun `given products search feature enabled, when view model created, then search state is visible`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        whenever(isProductsSearchEnabled()).thenReturn(true)
+
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        viewModel.viewState.test {
+            val contentState = awaitItem() as WooPosItemsViewState.Content
+            assertThat(contentState.search).isInstanceOf(WooPosItemsViewState.Content.SearchState.Visible::class.java)
+            val searchState = contentState.search as WooPosItemsViewState.Content.SearchState.Visible
+            assertThat(searchState.state).isEqualTo(WooPosSearchInputState.Closed)
+        }
+    }
+
+    @Test
+    fun `given products search feature disabled, when view model created, then search state is hidden`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        whenever(isProductsSearchEnabled()).thenReturn(false)
+
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        viewModel.viewState.test {
+            val contentState = awaitItem() as WooPosItemsViewState.Content
+            assertThat(contentState.search).isInstanceOf(WooPosItemsViewState.Content.SearchState.Hidden::class.java)
+        }
+    }
+
+    @Test
+    fun `given search visible, when close search clicked, then search state is closed`() = runTest {
+        // GIVEN
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        whenever(isProductsSearchEnabled()).thenReturn(true)
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
+
+        // THEN
+        viewModel.viewState.test {
+            val contentState = awaitItem() as WooPosItemsViewState.Content
+            val searchState = contentState.search as WooPosItemsViewState.Content.SearchState.Visible
+            assertThat(searchState.state).isEqualTo(WooPosSearchInputState.Closed)
+        }
+    }
 
     private fun createViewModel() =
         WooPosItemsViewModel(
