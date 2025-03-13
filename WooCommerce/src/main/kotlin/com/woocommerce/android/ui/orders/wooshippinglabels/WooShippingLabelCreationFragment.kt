@@ -57,6 +57,7 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
 
     override val activityAppBarStatus: AppBarStatus = AppBarStatus.Hidden
 
+    @Suppress("CyclomaticComplexMethod")
     private fun setupObservers() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
@@ -101,6 +102,12 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                     event.action
                 )
                 is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
+                is WooShippingLabelCreationViewModel.StartSplitShipment -> {
+                    WooShippingLabelCreationFragmentDirections
+                        .actionWooShippingLabelCreationFragmentToWooShippingSplitShipmentFragment().let {
+                            findNavController().navigateSafely(it)
+                        }
+                }
             }
         }
     }

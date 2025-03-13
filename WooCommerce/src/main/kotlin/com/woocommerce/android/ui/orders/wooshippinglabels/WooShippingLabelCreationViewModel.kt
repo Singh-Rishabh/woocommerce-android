@@ -554,6 +554,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         selectedRate.update { rate }
     }
 
+    fun onSplitShipment() { triggerEvent(StartSplitShipment) }
+
     private fun sortShippingRates(
         option: ShippingSortOption,
         shippingRates: Map<CarrierUI, List<ShippingRateUI>>
@@ -634,6 +636,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val destinationAddress: DestinationShippingAddress,
         val orderId: Long
     ) : Event()
+
+    data object StartSplitShipment : Event()
 
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
