@@ -91,7 +91,7 @@ fun WooPosSearchInput(
 fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
     OutlinedIconButton(
         onClick = { onEvent(WooPosSearchUIEvent.Search("")) },
-        border = BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
         modifier = Modifier.size(BUTTON_SIZE),
         shape = CircleShape,
         colors = IconButtonDefaults.outlinedIconButtonColors(
@@ -104,7 +104,7 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
             contentDescription = stringResource(
                 R.string.woopos_search_products
             ),
-            modifier = Modifier.size(28.dp),
+            modifier = Modifier.size(32.dp),
         )
     }
 }
