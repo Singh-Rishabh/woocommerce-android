@@ -594,7 +594,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onEditCustomsClick() {
-        val event = StartCustomsFormEdit(shippableItems.value, customsFormData.value)
+        val destinationCountryCode = shippingAddresses.value
+            ?.shipTo?.address?.country?.code.orEmpty()
+
+        val event = StartCustomsFormEdit(
+            shippableItems = shippableItems.value,
+            destinationCountryCode = destinationCountryCode,
+            customData = customsFormData.value
+        )
         triggerEvent(event)
     }
 
@@ -656,6 +663,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
+        val destinationCountryCode: String,
         val customData: CustomsData?
     ) : Event()
 
