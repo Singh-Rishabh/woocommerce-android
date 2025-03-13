@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home.items
 import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
@@ -12,6 +13,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
+import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
@@ -43,6 +45,8 @@ class WooPosItemsViewModelTest {
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
+    private val resourceProvider: ResourceProvider = mock()
+    private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled = mock()
 
     @Before
     fun setup() {
@@ -938,5 +942,7 @@ class WooPosItemsViewModelTest {
             posPreferencesRepository,
             wooPosItemsNavigator,
             analyticsTracker,
+            resourceProvider,
+            isProductsSearchEnabled,
         )
 }
