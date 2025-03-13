@@ -637,6 +637,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId: Long
     ) : Event()
 
+    data object StartSplitShipment : Event()
+
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
         val customData: CustomsData?
