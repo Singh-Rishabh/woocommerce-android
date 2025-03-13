@@ -281,16 +281,6 @@ private fun AnimatedSearchInput(
                             )
                         }
                     }
-
-                    else -> {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .alpha(searchIconAlpha)
-                        )
-                    }
                 }
             }
         )
