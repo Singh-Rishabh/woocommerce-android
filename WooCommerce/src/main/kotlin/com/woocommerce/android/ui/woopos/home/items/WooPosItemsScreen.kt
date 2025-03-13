@@ -291,7 +291,6 @@ private fun ProductsSearch(
             // No search input to show
         }
     }
-
 }
 
 @Composable

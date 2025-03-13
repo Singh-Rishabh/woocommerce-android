@@ -32,7 +32,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -54,6 +52,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearch
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosCornerRadius
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import kotlinx.coroutines.delay
 
 private val BUTTON_SIZE = 48.dp
@@ -95,7 +94,7 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
         modifier = Modifier.size(BUTTON_SIZE),
         shape = CircleShape,
         colors = IconButtonDefaults.outlinedIconButtonColors(
-            containerColor = Color.Transparent,
+            containerColor = WooPosTheme.colors.transparent,
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
@@ -197,9 +196,10 @@ private fun AnimatedSearchInput(
                 .height(height)
                 .focusRequester(focusRequester),
             placeholder = {
-                Text(
+                WooPosText(
                     text = hint,
-                    modifier = Modifier.alpha(iconAlpha)
+                    modifier = Modifier.alpha(iconAlpha),
+                    style = WooPosTypography.BodyMedium,
                 )
             },
             singleLine = true,

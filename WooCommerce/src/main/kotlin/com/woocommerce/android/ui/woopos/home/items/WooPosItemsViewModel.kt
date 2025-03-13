@@ -127,7 +127,6 @@ class WooPosItemsViewModel @Inject constructor(
             if (searchState is WooPosSearchInputState.Open &&
                 searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress
             ) {
-
                 _viewState.value = currentState.copy(
                     search = WooPosItemsViewState.Content.SearchState.Visible(
                         state = searchState.copy(
@@ -157,16 +156,6 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             )
             return
-        }
-
-        val currentSearch = currentState.search
-        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
-            val searchState = currentSearch.state
-            if (searchState is WooPosSearchInputState.Open &&
-                searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress
-            ) {
-                return
-            }
         }
 
         _viewState.value = currentState.copy(
