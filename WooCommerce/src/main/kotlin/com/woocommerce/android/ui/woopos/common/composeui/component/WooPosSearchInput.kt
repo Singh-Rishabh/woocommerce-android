@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.common.composeui.component
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
@@ -45,6 +46,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
@@ -56,6 +58,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTyp
 import kotlinx.coroutines.delay
 
 private val BUTTON_SIZE = 48.dp
+private const val ANIMATION_TIME = 300L
 
 @Composable
 fun WooPosSearchInput(
@@ -123,61 +126,16 @@ private fun AnimatedSearchInput(
         var isExpanded by remember { mutableStateOf(false) }
         var isClosing by remember { mutableStateOf(false) }
 
+        val animationTime = 300L
         val transition = updateTransition(
             targetState = if (isClosing) false else isExpanded,
             label = "searchTransition"
         )
 
-        val animationTime = 300L
-
-        val width by transition.animateDp(
-            label = "width",
-            transitionSpec = {
-                tween(
-                    durationMillis = animationTime.toInt(),
-                    easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
-                )
-            }
-        ) { expanded ->
-            if (expanded) maxWidthPx else BUTTON_SIZE
-        }
-
-        val cornerRadius by transition.animateDp(
-            label = "cornerRadius",
-            transitionSpec = {
-                tween(
-                    durationMillis = animationTime.toInt(),
-                    easing = CubicBezierEasing(0.2f, 0.0f, 0.2f, 1.0f)
-                )
-            }
-        ) { expanded ->
-            if (expanded) WooPosCornerRadius.Medium.value else BUTTON_SIZE / 2
-        }
-
-        val height by transition.animateDp(
-            label = "height",
-            transitionSpec = {
-                tween(
-                    durationMillis = animationTime.toInt(),
-                    easing = CubicBezierEasing(0.2f, 0.0f, 0.2f, 1.0f)
-                )
-            }
-        ) { expanded ->
-            if (expanded) 56.dp else BUTTON_SIZE
-        }
-
-        val iconAlpha by transition.animateFloat(
-            label = "iconAlpha",
-            transitionSpec = {
-                tween(
-                    durationMillis = (animationTime * 0.7).toInt(),
-                    easing = FastOutSlowInEasing,
-                    delayMillis = if (isClosing) 0 else (animationTime * 0.3).toInt()
-                )
-            }
-        ) { expanded ->
-            if (expanded) 1f else 0f
-        }
+        val width = animateSearchWidth(transition, maxWidthPx)
+        val height = animateSearchHeight(transition)
+        val cornerRadius = animateCornerRadius(transition)
+        val iconAlpha = animateIconAlpha(transition, isClosing)
 
         val (hint, query) = when (state.input) {
             is Input.Query -> "" to state.input.text
@@ -219,9 +177,7 @@ private fun AnimatedSearchInput(
             ),
             leadingIcon = {
                 IconButton(
-                    onClick = {
-                        isClosing = true
-                    },
+                    onClick = { isClosing = true },
                     modifier = Modifier.alpha(iconAlpha)
                 ) {
                     Icon(
@@ -265,7 +221,7 @@ private fun AnimatedSearchInput(
 
         LaunchedEffect(Unit) {
             isExpanded = true
-            delay(animationTime.toLong())
+            delay(animationTime)
             onEvent(WooPosSearchUIEvent.AnimationComplete)
             focusRequester.requestFocus()
         }
@@ -273,10 +229,82 @@ private fun AnimatedSearchInput(
         LaunchedEffect(isClosing) {
             if (isClosing) {
                 delay(animationTime)
+                onEvent(WooPosSearchUIEvent.AnimationComplete)
                 onEvent(WooPosSearchUIEvent.Close)
             }
         }
     }
+}
+
+@Composable
+private fun animateSearchWidth(
+    transition: Transition<Boolean>,
+    maxWidth: Dp,
+): Dp {
+    val width by transition.animateDp(
+        label = "width",
+        transitionSpec = {
+            tween(
+                durationMillis = ANIMATION_TIME.toInt(),
+                easing = CubicBezierEasing(0.2f, 0.0f, 0.0f, 1.0f)
+            )
+        }
+    ) { expanded ->
+        if (expanded) maxWidth else BUTTON_SIZE
+    }
+    return width
+}
+
+@Composable
+private fun animateSearchHeight(transition: Transition<Boolean>): Dp {
+    val height by transition.animateDp(
+        label = "height",
+        transitionSpec = {
+            tween(
+                durationMillis = ANIMATION_TIME.toInt(),
+                easing = CubicBezierEasing(0.2f, 0.0f, 0.2f, 1.0f)
+            )
+        }
+    ) { expanded ->
+        if (expanded) 56.dp else BUTTON_SIZE
+    }
+    return height
+}
+
+@Composable
+private fun animateCornerRadius(transition: Transition<Boolean>): Dp {
+    val cornerRadius by transition.animateDp(
+        label = "cornerRadius",
+        transitionSpec = {
+            tween(
+                durationMillis = ANIMATION_TIME.toInt(),
+                easing = CubicBezierEasing(0.2f, 0.0f, 0.2f, 1.0f)
+            )
+        }
+    ) { expanded ->
+        if (expanded) WooPosCornerRadius.Medium.value else BUTTON_SIZE / 2
+    }
+    return cornerRadius
+}
+
+@Composable
+private fun animateIconAlpha(
+    transition: Transition<Boolean>,
+    isClosing: Boolean
+): Float {
+    val iconAlpha by transition.animateFloat(
+        label = "iconAlpha",
+        transitionSpec = {
+            tween(
+                durationMillis = (ANIMATION_TIME * 0.7).toInt(),
+                easing = FastOutSlowInEasing,
+                delayMillis = if (isClosing) 0 else (ANIMATION_TIME * 0.3).toInt()
+            )
+        }
+    ) { expanded ->
+        if (expanded) 1f else 0f
+    }
+    return iconAlpha
 }
 
 sealed class WooPosSearchInputState {
