@@ -237,6 +237,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             observeStoreOptions = observeStoreOptions,
             fetchAccountSettings = mock(),
             shouldRequireCustoms = shouldRequireCustomsForm,
+            addressValidationHelper = mock(),
             verifyDestinationAddress = verifyDestinationAddress,
             getAddressNotification = getAddressNotification,
             savedState = savedState
