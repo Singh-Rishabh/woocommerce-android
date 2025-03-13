@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsScreen
-import com.woocommerce.android.ui.woopos.home.items.search.WooPosItemsSearchScreen
 import com.woocommerce.android.ui.woopos.home.items.variations.WooPosVariationsScreen
 import kotlinx.coroutines.flow.StateFlow
 
@@ -34,15 +33,7 @@ fun WooPosItemsScreens(
         Crossfade(targetState = currentNavigationState.value, label = "LeftPaneScreen") { navigationState ->
             when (navigationState) {
                 is WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen -> {
-                    when (navigationState) {
-                        WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen.List -> {
-                            WooPosItemsScreen(modifier = modifier, listState)
-                        }
-
-                        WooPosItemsScreenViewModel.ItemsScreens.ItemListScreen.Search -> {
-                            WooPosItemsSearchScreen(modifier = modifier)
-                        }
-                    }
+                    WooPosItemsScreen(modifier = modifier, listState)
                 }
 
                 is WooPosItemsScreenViewModel.ItemsScreens.VariationsScreen -> {

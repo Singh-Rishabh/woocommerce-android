@@ -156,11 +156,6 @@ class WooPosItemsViewModel @Inject constructor(
                     )
                 )
             )
-            viewModelScope.launch {
-                navigator.sendNavigationEvent(
-                    WooPosItemsScreenNavigationEvent.NavigateToItemListSearchScreen
-                )
-            }
             return
         }
 

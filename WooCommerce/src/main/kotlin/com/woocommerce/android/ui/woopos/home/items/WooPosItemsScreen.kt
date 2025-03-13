@@ -54,6 +54,7 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsL
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchAnimationCompleted
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchChanged
+import com.woocommerce.android.ui.woopos.home.items.search.WooPosItemsSearchScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -165,22 +166,45 @@ private fun MainItemsList(
                             onSimpleProductsBannerClosed
                         )
 
-                        ProductsSearch(
-                            itemsState.search,
-                            onSearchEvent = onSearchEvent,
-                        )
-
-                        WooPosItemList(
-                            itemsState,
-                            listState,
-                            onItemClicked,
-                            onEndOfItemListReached,
-                        ) {
-                            ProductsPaginationError(
-                                onRetryClicked = {
-                                    onEndOfItemListReached()
+                        when (itemsState.search) {
+                            is WooPosItemsViewState.Content.SearchState.Visible -> {
+                                WooPosSearchInput(
+                                    state = itemsState.search.state,
+                                    onEvent = onSearchEvent,
+                                )
+                                when (itemsState.search.state) {
+                                    WooPosSearchInputState.Closed -> {
+                                        WooPosItemList(
+                                            itemsState,
+                                            listState,
+                                            onItemClicked,
+                                            onEndOfItemListReached,
+                                        ) {
+                                            ProductsPaginationError(
+                                                onRetryClicked = {
+                                                    onEndOfItemListReached()
+                                                }
+                                            )
+                                        }
+                                    }
+                                    is WooPosSearchInputState.Open -> WooPosItemsSearchScreen()
                                 }
-                            )
+                            }
+
+                            WooPosItemsViewState.Content.SearchState.Hidden -> {
+                                WooPosItemList(
+                                    itemsState,
+                                    listState,
+                                    onItemClicked,
+                                    onEndOfItemListReached,
+                                ) {
+                                    ProductsPaginationError(
+                                        onRetryClicked = {
+                                            onEndOfItemListReached()
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -244,7 +268,6 @@ private fun ItemsToolbar(
             }
 
             else -> {
-                // no op
             }
         }
     }
@@ -271,25 +294,6 @@ private fun SimpleProductsBanner(
                 onSimpleProductsBannerLearnMoreClicked()
             }
         )
-    }
-}
-
-@Composable
-private fun ProductsSearch(
-    searchState: WooPosItemsViewState.Content.SearchState,
-    onSearchEvent: (WooPosSearchUIEvent) -> Unit,
-) {
-    when (searchState) {
-        is WooPosItemsViewState.Content.SearchState.Visible -> {
-            WooPosSearchInput(
-                state = searchState.state,
-                onEvent = onSearchEvent,
-            )
-        }
-
-        WooPosItemsViewState.Content.SearchState.Hidden -> {
-            // No search input to show
-        }
     }
 }
 
