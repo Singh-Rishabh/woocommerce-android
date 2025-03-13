@@ -20,6 +20,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
@@ -78,6 +79,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
+    private val addressValidationHelper: AddressValidationHelper,
     private val verifyDestinationAddress: VerifyDestinationAddress,
     private val getAddressNotification: GetAddressNotification
 ) : ScopedViewModel(savedState) {
@@ -182,7 +184,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
             destinationAddress.value = defaultDestination
 
-            if (order.shippingAddress != Address.EMPTY) {
+            if (addressValidationHelper.isMissingDestinationAddress(order.shippingAddress)) {
                 verifyDestinationAddress(order.id).fold(
                     onSuccess = { destinationAddress.value = it },
                     onFailure = { }
@@ -376,7 +378,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val items = getShippableItems(order)
 
             val destinationStatus = when {
-                addresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
+                addressValidationHelper.isMissingDestinationAddress(addresses.shipTo.address) -> {
+                    AddressStatus.MISSING_ADDRESS
+                }
+
                 addresses.shipTo.isVerified -> AddressStatus.VERIFIED
                 else -> AddressStatus.UNVERIFIED
             }
