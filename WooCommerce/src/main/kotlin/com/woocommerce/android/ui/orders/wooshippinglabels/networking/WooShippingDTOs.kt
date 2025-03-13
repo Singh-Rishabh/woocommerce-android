@@ -64,5 +64,16 @@ data class CustomsPurchaseDTO(
     val restrictionType: String,
     val restrictionComments: String,
     val noDeliveryOption: Boolean,
-    val itn: String
+    val itn: String,
+    val items: List<CustomsItemPurchaseDTO>
+)
+
+data class CustomsItemPurchaseDTO(
+    val description: String,
+    val quantity: Int,
+    val value: Double,
+    val weight: Double,
+    val hsTariffNumber: String,
+    val originCountry: String,
+    val productId: Long
 )
