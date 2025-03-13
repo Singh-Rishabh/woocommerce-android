@@ -638,7 +638,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `CustomState is ItnMissing when shouldRequireCustomsForm returns true and ShippingLines exceeds the 2500 limit`() = testBlocking {
+    fun `CustomState is ItnMissing when shouldRequireCustomsForm and ShouldRequireITN returns true`() = testBlocking {
         var currentViewState: WooShippingViewState? = null
         val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
             shippingLines = defaultShippingLines
@@ -647,6 +647,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
+        whenever(shouldRequireITN.invoke(any(), any())) doReturn true
         whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
 
         createViewModel()
@@ -673,6 +674,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
+        whenever(shouldRequireITN.invoke(any(), any())) doReturn true
         whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
 
         createViewModel()
