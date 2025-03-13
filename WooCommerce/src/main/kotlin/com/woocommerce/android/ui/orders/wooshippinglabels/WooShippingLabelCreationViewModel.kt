@@ -27,6 +27,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchO
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireITN
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -81,7 +82,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val fetchAccountSettings: FetchAccountSettings,
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val verifyDestinationAddress: VerifyDestinationAddress,
-    private val getAddressNotification: GetAddressNotification
+    private val getAddressNotification: GetAddressNotification,
+    private val shouldRequireITN: ShouldRequireITN
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -646,11 +648,15 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun List<ShippableItemModel>.isItnRequired(): Boolean {
-        return map { it.shippingTotalValue }
+        val totalShippingValue = map { it.shippingTotalValue }
             .takeIf { it.isNotEmpty() }
             ?.reduce { acc, current -> acc + current }
-            ?.let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
-            ?: false
+            ?: 0f
+
+        val destinationCountryCode = shippingAddresses.value
+            ?.shipTo?.address?.country?.code.orEmpty()
+
+        return shouldRequireITN(destinationCountryCode, totalShippingValue)
     }
 
     data object StartPackageSelection : Event()
