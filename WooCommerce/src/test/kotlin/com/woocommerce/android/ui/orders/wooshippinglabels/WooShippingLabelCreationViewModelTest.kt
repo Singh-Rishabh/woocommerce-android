@@ -648,7 +648,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
         whenever(shouldRequireITN.invoke(any(), any())) doReturn true
-        whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
 
         createViewModel()
 
@@ -675,7 +675,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
         whenever(shouldRequireITN.invoke(any(), any())) doReturn true
-        whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
 
         createViewModel()
 
