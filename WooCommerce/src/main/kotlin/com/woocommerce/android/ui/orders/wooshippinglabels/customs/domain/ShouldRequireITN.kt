@@ -7,7 +7,15 @@ class ShouldRequireITN @Inject constructor() {
         destinationCountryCode: String,
         totalShippingItemValue: Float
     ): Boolean {
-        return false
+        if (itnExemptCountries.contains(destinationCountryCode)) {
+            return false
+        }
+
+        if (itnRequiredCountries.contains(destinationCountryCode)) {
+            return true
+        }
+
+        return totalShippingItemValue >= 2500
     }
 
     private val itnExemptCountries = listOf("CA")
