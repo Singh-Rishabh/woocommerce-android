@@ -395,7 +395,5 @@ class WooShippingCustomsFormViewModel @Inject constructor(
          */
         private const val ITN_REGEX_STRING =
             """^(?:(?:AES X\d{14})|(?:NOEEI 30\.\d{1,2}(?:\([a-z]\)(?:\(\d\))?)?))${'$'}"""
-
-        private const val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500
     }
 }
