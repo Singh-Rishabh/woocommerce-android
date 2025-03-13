@@ -554,6 +554,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         selectedRate.update { rate }
     }
 
+    fun onSplitShipment() { triggerEvent(StartSplitShipment) }
+
     private fun sortShippingRates(
         option: ShippingSortOption,
         shippingRates: Map<CarrierUI, List<ShippingRateUI>>
