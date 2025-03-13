@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
@@ -213,7 +214,32 @@ class WooShippingNetworkingMapper @Inject constructor(
             rateId = selectedRate.rateId,
             serviceId = selectedRate.serviceId,
             carrierId = selectedRate.carrierId,
-            serviceName = selectedRate.serviceName
+            serviceName = selectedRate.serviceName,
+            customs = selectedPackage.customsData?.let { toCustomsPurchaseDTO(it) }
+        )
+    }
+
+    private fun toCustomsPurchaseDTO(
+        customsData: CustomsData
+    ): CustomsPurchaseDTO {
+        return CustomsPurchaseDTO(
+            contentsType = customsData.contentType.name,
+            contentExplanation = customsData.contentDescription,
+            restrictionType = customsData.restrictionType.name,
+            restrictionComments = customsData.restrictionDescription,
+            nonDeliveryOption = customsData.noDeliveryOption,
+            itn = customsData.itn,
+            items = customsData.items.map {
+                CustomsItemPurchaseDTO(
+                    productId = it.productID,
+                    description = it.description,
+                    quantity = it.quantity,
+                    value = it.value.toDouble(),
+                    weight = it.weight.toDouble(),
+                    hsTariffNumber = it.hsTariffNumber,
+                    originCountry = it.originCountry
+                )
+            }
         )
     }
 

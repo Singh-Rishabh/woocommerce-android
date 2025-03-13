@@ -70,7 +70,7 @@ data class CustomsPurchaseDTO(
 
 data class CustomsItemPurchaseDTO(
     val description: String,
-    val quantity: Int,
+    val quantity: Float,
     val value: Double,
     val weight: Double,
     @SerializedName("hs_tariff_number") val hsTariffNumber: String,
