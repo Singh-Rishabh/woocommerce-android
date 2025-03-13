@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDp
@@ -92,7 +91,7 @@ fun WooPosSearchInput(
 fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
     OutlinedIconButton(
         onClick = { onEvent(WooPosSearchUIEvent.Search("")) },
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(3.dp, MaterialTheme.colorScheme.onSurface),
         modifier = Modifier.size(BUTTON_SIZE),
         shape = CircleShape,
         colors = IconButtonDefaults.outlinedIconButtonColors(
@@ -104,7 +103,8 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
             imageVector = Icons.Default.Search,
             contentDescription = stringResource(
                 R.string.woopos_search_products
-            )
+            ),
+            modifier = Modifier.size(28.dp),
         )
     }
 }
@@ -117,7 +117,7 @@ private fun AnimatedSearchInput(
 ) {
     BoxWithConstraints(
         modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.CenterEnd
+        contentAlignment = Alignment.CenterEnd,
     ) {
         val maxWidthPx = maxWidth
         val focusRequester = remember { FocusRequester() }
@@ -129,7 +129,7 @@ private fun AnimatedSearchInput(
             label = "searchTransition"
         )
 
-        val animationTime = 400L
+        val animationTime = 300L
 
         val width by transition.animateDp(
             label = "width",
@@ -180,31 +180,6 @@ private fun AnimatedSearchInput(
             if (expanded) 1f else 0f
         }
 
-        val searchIconAlpha by transition.animateFloat(
-            label = "searchIconAlpha",
-            transitionSpec = {
-                tween(
-                    durationMillis = (animationTime * 0.5).toInt(),
-                    easing = FastOutSlowInEasing
-                )
-            }
-        ) { expanded ->
-            if (expanded) 0f else 1f
-        }
-
-        val backgroundColor by transition.animateColor(
-            label = "backgroundColor",
-            transitionSpec = {
-                tween(
-                    durationMillis = animationTime.toInt(),
-                    easing = FastOutSlowInEasing
-                )
-            }
-        ) { expanded ->
-            if (expanded) MaterialTheme.colorScheme.surface
-            else MaterialTheme.colorScheme.surface.copy(alpha = 0f)
-        }
-
         val (hint, query) = when (state.input) {
             is Input.Query -> "" to state.input.text
             is Input.Hint -> state.input.text to ""
@@ -240,8 +215,6 @@ private fun AnimatedSearchInput(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
                 focusedBorderColor = MaterialTheme.colorScheme.outline,
                 cursorColor = MaterialTheme.colorScheme.onBackground,
-                unfocusedContainerColor = backgroundColor,
-                focusedContainerColor = backgroundColor
             ),
             leadingIcon = {
                 IconButton(
@@ -308,53 +281,38 @@ sealed class WooPosSearchUIEvent {
     object Clear : WooPosSearchUIEvent()
     data class Search(val query: String) : WooPosSearchUIEvent()
     object Close : WooPosSearchUIEvent()
-}
 
-@WooPosPreview
-@Composable
-fun WooPosSearchInputOpenHintPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(WooPosSpacing.Small.value)
-    ) {
-        WooPosSearchInput(
-            state = WooPosSearchInputState.Open(Input.Hint("Search products..."), false),
-            onEvent = {}
-        )
-    }
-}
-
-@WooPosPreview
-@Composable
-fun WooPosSearchInputOpenSearchPreview() {
-    WooPosTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(WooPosSpacing.Small.value)
-        ) {
-            WooPosSearchInput(
-                state = WooPosSearchInputState.Open(Input.Query("Search products..."), false),
-                onEvent = {}
-            )
+    @WooPosPreview
+    @Composable
+    fun WooPosSearchInputOpenSearchPreview() {
+        WooPosTheme {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(WooPosSpacing.Small.value)
+            ) {
+                WooPosSearchInput(
+                    state = WooPosSearchInputState.Open(Input.Query("Search products..."), false),
+                    onEvent = {}
+                )
+            }
         }
     }
-}
 
-@WooPosPreview
-@Composable
-fun WooPosSearchInputClosedPreview() {
-    WooPosTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(WooPosSpacing.Small.value)
-        ) {
-            WooPosSearchInput(
-                state = WooPosSearchInputState.Closed,
-                onEvent = {}
-            )
+    @WooPosPreview
+    @Composable
+    fun WooPosSearchInputClosedPreview() {
+        WooPosTheme {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(WooPosSpacing.Small.value)
+            ) {
+                WooPosSearchInput(
+                    state = WooPosSearchInputState.Closed,
+                    onEvent = {}
+                )
+            }
         }
     }
 }
