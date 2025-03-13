@@ -86,12 +86,13 @@ internal fun AddressSectionPortrait(
             val scope = rememberCoroutineScope()
 
             val destinationStatusModifier = if (destinationStatus == AddressStatus.MISSING_ADDRESS) {
-                Modifier.constrainAs(destinationAddressStatus) {
-                    top.linkTo(divider.bottom)
-                    start.linkTo(shipToValue.start)
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(shipToEdit.start)
-                }
+                Modifier
+                    .padding(start = dimensionResource(R.dimen.major_100))
+                    .constrainAs(destinationAddressStatus) {
+                        top.linkTo(divider.bottom)
+                        start.linkTo(barrier)
+                        bottom.linkTo(parent.bottom)
+                    }
             } else {
                 Modifier
                     .padding(
