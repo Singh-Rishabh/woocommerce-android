@@ -54,7 +54,6 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.VerticalDivider
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.purchased.successColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.shippingSelectedBackgroundColor
 import com.woocommerce.android.ui.orders.wooshippinglabels.toShippingFromString
 import kotlinx.coroutines.launch
@@ -87,12 +86,13 @@ internal fun AddressSectionPortrait(
             val scope = rememberCoroutineScope()
 
             val destinationStatusModifier = if (destinationStatus == AddressStatus.MISSING_ADDRESS) {
-                Modifier.constrainAs(destinationAddressStatus) {
-                    top.linkTo(divider.bottom)
-                    start.linkTo(shipToValue.start)
-                    bottom.linkTo(parent.bottom)
-                    end.linkTo(shipToEdit.start)
-                }
+                Modifier
+                    .padding(start = dimensionResource(R.dimen.major_100))
+                    .constrainAs(destinationAddressStatus) {
+                        top.linkTo(divider.bottom)
+                        start.linkTo(barrier)
+                        bottom.linkTo(parent.bottom)
+                    }
             } else {
                 Modifier
                     .padding(
@@ -183,22 +183,24 @@ internal fun AddressSectionPortrait(
                         bottom = dimensionResource(R.dimen.major_100)
                     )
             )
-            Text(
-                text = shippingAddresses.shipTo.address.toString(),
-                modifier = Modifier
-                    .constrainAs(shipToValue) {
-                        top.linkTo(shipToLabel.top)
-                        start.linkTo(barrier)
-                        end.linkTo(shipToEdit.start)
-                        width = Dimension.fillToConstraints
-                    }
-                    .padding(
-                        top = dimensionResource(R.dimen.major_100),
-                        bottom = dimensionResource(R.dimen.minor_100),
-                        start = dimensionResource(R.dimen.major_100),
-                        end = dimensionResource(R.dimen.minor_100)
-                    )
-            )
+            if (destinationStatus != AddressStatus.MISSING_ADDRESS) {
+                Text(
+                    text = shippingAddresses.shipTo.address.toString(),
+                    modifier = Modifier
+                        .constrainAs(shipToValue) {
+                            top.linkTo(shipToLabel.top)
+                            start.linkTo(barrier)
+                            end.linkTo(shipToEdit.start)
+                            width = Dimension.fillToConstraints
+                        }
+                        .padding(
+                            top = dimensionResource(R.dimen.major_100),
+                            bottom = dimensionResource(R.dimen.minor_100),
+                            start = dimensionResource(R.dimen.major_100),
+                            end = dimensionResource(R.dimen.minor_100)
+                        ),
+                )
+            }
             AddressStatusIndicator(
                 addressStatus = destinationStatus,
                 modifier = destinationStatusModifier
@@ -306,7 +308,8 @@ internal fun AddressSectionLandscape(
                             bottom = dimensionResource(R.dimen.major_100)
                         )
                     } else {
-                        Modifier.align(Alignment.CenterHorizontally)
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(16.dp)
                             .height(IntrinsicSize.Min)
                     }
@@ -427,6 +430,7 @@ fun AddressSelection(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = dimensionResource(id = R.dimen.minor_100))
             )
+
             ShipmentDetailsSectionTitle(
                 title = stringResource(R.string.orderdetail_shipping_label_item_shipfrom),
                 modifier = Modifier.padding(
@@ -573,8 +577,8 @@ fun AddressStatusIndicator(
     }
 
     val color = when (addressStatus) {
-        AddressStatus.VERIFIED -> MaterialTheme.colors.successColor
-        else -> MaterialTheme.colors.error
+        AddressStatus.VERIFIED -> colorResource(id = R.color.woo_shipping_label_success)
+        else -> colorResource(id = R.color.woo_shipping_label_error)
     }
 
     val icon = when (addressStatus) {
@@ -595,6 +599,7 @@ fun AddressStatusIndicator(
         )
     }
 }
+
 internal fun getShipFrom() = OriginShippingAddress(
     firstName = "first name",
     lastName = "last name",

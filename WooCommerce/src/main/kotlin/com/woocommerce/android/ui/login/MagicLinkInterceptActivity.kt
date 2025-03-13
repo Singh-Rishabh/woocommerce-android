@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent
 import com.woocommerce.android.analytics.AnalyticsTracker
+import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.CancelJetpackActivation
 import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.ContinueJetpackActivation
 import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.OpenLogin
 import com.woocommerce.android.ui.login.MagicLinkInterceptViewModel.OpenSitePicker
@@ -35,7 +36,6 @@ import javax.inject.Inject
 class MagicLinkInterceptActivity : AppCompatActivity() {
     companion object {
         private const val TOKEN_PARAMETER = "token"
-        private const val SOURCE_PARAMETER = "source"
         private const val FLOW_PARAMETER = "flow"
     }
 
@@ -74,14 +74,11 @@ class MagicLinkInterceptActivity : AppCompatActivity() {
 
         val uri = requireNotNull(intent.data)
         val authToken = uri.getQueryParameter(TOKEN_PARAMETER)
-        val source = uri.getQueryParameter(SOURCE_PARAMETER)?.let {
-            MagicLinkSource.fromString(it)
-        }
         val flow = uri.getQueryParameter(FLOW_PARAMETER)?.let {
             MagicLinkFlow.fromString(it)
         }
 
-        authToken?.let { viewModel.handleMagicLink(it, flow, source) }
+        authToken?.let { viewModel.handleMagicLink(authToken = it, flow = flow) }
     }
 
     private fun setupObservers() {
@@ -91,7 +88,7 @@ class MagicLinkInterceptActivity : AppCompatActivity() {
 
         viewModel.event.observe(this) { event ->
             when (event) {
-                OpenSitePicker -> showSitePickerScreen()
+                OpenSitePicker, CancelJetpackActivation -> openMainActivity()
                 OpenLogin -> showLoginScreen()
                 is ContinueJetpackActivation -> continueJetpackActivation(event)
                 is ShowSnackbar -> showSnackBar(event.message)
@@ -138,7 +135,7 @@ class MagicLinkInterceptActivity : AppCompatActivity() {
         retryContainer?.isVisible = show
     }
 
-    private fun showSitePickerScreen() {
+    private fun openMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
