@@ -114,85 +114,131 @@ class WooPosItemsViewModel @Inject constructor(
             WooPosItemsUIEvent.ClearSearchClicked -> onClearSearchClicked()
             WooPosItemsUIEvent.CloseSearchClicked -> onCloseSearchClicked()
             is WooPosItemsUIEvent.SearchChanged -> onSearchChanged(event.query)
+            WooPosItemsUIEvent.SearchAnimationCompleted -> onSearchAnimationCompleted()
+        }
+    }
+
+    private fun onSearchAnimationCompleted() {
+        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
+        val currentSearch = currentState.search
+
+        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
+            val searchState = currentSearch.state
+            if (searchState is WooPosSearchInputState.Open &&
+                searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress
+            ) {
+
+                _viewState.value = currentState.copy(
+                    search = WooPosItemsViewState.Content.SearchState.Visible(
+                        state = searchState.copy(
+                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
+                        )
+                    )
+                )
+            }
         }
     }
 
     private fun onSearchChanged(newQuery: String) {
         searchJob?.cancel()
 
-        val currentState = _viewState.value as? WooPosItemsViewState.Content
-        if (currentState != null) {
-            if (newQuery.isEmpty()) {
-                setSearchInitialState(currentState)
-                return
-            }
+        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
 
+        if (newQuery.isEmpty()) {
             _viewState.value = currentState.copy(
                 search = WooPosItemsViewState.Content.SearchState.Visible(
                     state = WooPosSearchInputState.Open(
-                        input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                        input = WooPosSearchInputState.Open.Input.Hint(
+                            resourceProvider.getString(R.string.woopos_search_products)
+                        ),
                         isLoading = false,
+                        animationState = WooPosSearchInputState.Open.AnimationState.InProgress
                     )
                 )
             )
+            return
+        }
 
-            searchJob = viewModelScope.launch {
-                try {
-                    delay(500)
+        val currentSearch = currentState.search
+        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
+            val searchState = currentSearch.state
+            if (searchState is WooPosSearchInputState.Open &&
+                searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress
+            ) {
+                return
+            }
+        }
 
-                    _viewState.value = currentState.copy(
-                        search = WooPosItemsViewState.Content.SearchState.Visible(
-                            state = WooPosSearchInputState.Open(
-                                input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                                isLoading = true,
-                            )
+        _viewState.value = currentState.copy(
+            search = WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Open(
+                    input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                    isLoading = false,
+                    animationState = WooPosSearchInputState.Open.AnimationState.Complete
+                )
+            )
+        )
+
+        searchJob = viewModelScope.launch {
+            try {
+                delay(500)
+
+                _viewState.value = currentState.copy(
+                    search = WooPosItemsViewState.Content.SearchState.Visible(
+                        state = WooPosSearchInputState.Open(
+                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                            isLoading = true,
+                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
                         )
                     )
+                )
 
-                    // simulates remote call
-                    delay(2000)
+                delay(2000)
 
-                    if (!isActive) return@launch
-                    _viewState.value = currentState.copy(
-                        search = WooPosItemsViewState.Content.SearchState.Visible(
-                            state = WooPosSearchInputState.Open(
-                                input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                                isLoading = false,
-                            )
+                if (!isActive) return@launch
+                _viewState.value = currentState.copy(
+                    search = WooPosItemsViewState.Content.SearchState.Visible(
+                        state = WooPosSearchInputState.Open(
+                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
+                            isLoading = false,
+                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
                         )
                     )
-                } catch (_: CancellationException) {
-                }
+                )
+            } catch (_: CancellationException) {
             }
         }
     }
 
     private fun onCloseSearchClicked() {
-        val currentState = _viewState.value as? WooPosItemsViewState.Content
-        if (currentState != null) {
-            _viewState.value = currentState.copy(
-                search = WooPosItemsViewState.Content.SearchState.Visible(
-                    state = WooPosSearchInputState.Closed
-                )
+        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
+        _viewState.value = currentState.copy(
+            search = WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Closed
             )
-        }
+        )
     }
 
     private fun onClearSearchClicked() {
-        val currentState = _viewState.value as? WooPosItemsViewState.Content
-        if (currentState != null) {
-            setSearchInitialState(currentState)
+        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
+        val currentSearch = currentState.search
+        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
+            val currentInput = currentSearch.state
+            if (currentInput is WooPosSearchInputState.Open &&
+                currentInput.input is WooPosSearchInputState.Open.Input.Hint
+            ) {
+                return
+            }
         }
-    }
 
-    private fun setSearchInitialState(currentState: WooPosItemsViewState.Content) {
         _viewState.value = currentState.copy(
             search = WooPosItemsViewState.Content.SearchState.Visible(
                 state = WooPosSearchInputState.Open(
                     input = WooPosSearchInputState.Open.Input.Hint(
                         resourceProvider.getString(R.string.woopos_search_products)
                     ),
-                    isLoading = false
+                    isLoading = false,
+                    animationState = WooPosSearchInputState.Open.AnimationState.Complete
                 )
             )
         )
@@ -231,7 +277,6 @@ class WooPosItemsViewModel @Inject constructor(
             }
 
             is WooPosItem.Variation -> {
-                // Do nothing
             }
         }
     }

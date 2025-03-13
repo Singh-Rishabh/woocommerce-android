@@ -185,16 +185,13 @@ private fun AnimatedSearchInput(
             is Input.Hint -> state.input.text to ""
         }
 
-        LaunchedEffect(isClosing) {
-            if (isClosing) {
-                delay(animationTime)
-                onEvent(WooPosSearchUIEvent.Close)
-            }
-        }
-
         OutlinedTextField(
             value = query,
-            onValueChange = { onEvent(WooPosSearchUIEvent.Search(it)) },
+            onValueChange = {
+                if (state.animationState == WooPosSearchInputState.Open.AnimationState.Complete) {
+                    onEvent(WooPosSearchUIEvent.Search(it))
+                }
+            },
             modifier = Modifier
                 .width(width)
                 .height(height)
@@ -209,7 +206,11 @@ private fun AnimatedSearchInput(
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
             shape = RoundedCornerShape(cornerRadius),
             keyboardActions = KeyboardActions(
-                onSearch = { onEvent(WooPosSearchUIEvent.Search(query)) }
+                onSearch = {
+                    if (state.animationState == WooPosSearchInputState.Open.AnimationState.Complete) {
+                        onEvent(WooPosSearchUIEvent.Search(query))
+                    }
+                }
             ),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outline,
@@ -243,7 +244,11 @@ private fun AnimatedSearchInput(
 
                     query.isNotEmpty() -> {
                         IconButton(
-                            onClick = { onEvent(WooPosSearchUIEvent.Clear) },
+                            onClick = {
+                                if (state.animationState == WooPosSearchInputState.Open.AnimationState.Complete) {
+                                    onEvent(WooPosSearchUIEvent.Clear)
+                                }
+                            },
                             modifier = Modifier.alpha(iconAlpha)
                         ) {
                             Icon(
@@ -261,16 +266,33 @@ private fun AnimatedSearchInput(
         LaunchedEffect(Unit) {
             isExpanded = true
             delay(animationTime.toLong())
+            onEvent(WooPosSearchUIEvent.AnimationComplete)
             focusRequester.requestFocus()
+        }
+
+        LaunchedEffect(isClosing) {
+            if (isClosing) {
+                delay(animationTime)
+                onEvent(WooPosSearchUIEvent.Close)
+            }
         }
     }
 }
 
 sealed class WooPosSearchInputState {
-    data class Open(val input: Input, val isLoading: Boolean) : WooPosSearchInputState() {
+    data class Open(
+        val input: Input,
+        val isLoading: Boolean,
+        val animationState: AnimationState = AnimationState.InProgress
+    ) : WooPosSearchInputState() {
         sealed class Input(val text: String) {
             data class Query(val query: String) : Input(query)
             data class Hint(val hint: String) : Input(hint)
+        }
+
+        enum class AnimationState {
+            InProgress,
+            Complete
         }
     }
 
@@ -281,38 +303,39 @@ sealed class WooPosSearchUIEvent {
     object Clear : WooPosSearchUIEvent()
     data class Search(val query: String) : WooPosSearchUIEvent()
     object Close : WooPosSearchUIEvent()
+    object AnimationComplete : WooPosSearchUIEvent()
+}
 
-    @WooPosPreview
-    @Composable
-    fun WooPosSearchInputOpenSearchPreview() {
-        WooPosTheme {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(WooPosSpacing.Small.value)
-            ) {
-                WooPosSearchInput(
-                    state = WooPosSearchInputState.Open(Input.Query("Search products..."), false),
-                    onEvent = {}
-                )
-            }
+@WooPosPreview
+@Composable
+fun WooPosSearchInputOpenSearchPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(WooPosSpacing.Small.value)
+        ) {
+            WooPosSearchInput(
+                state = WooPosSearchInputState.Open(Input.Query("Search products..."), false),
+                onEvent = {}
+            )
         }
     }
+}
 
-    @WooPosPreview
-    @Composable
-    fun WooPosSearchInputClosedPreview() {
-        WooPosTheme {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(WooPosSpacing.Small.value)
-            ) {
-                WooPosSearchInput(
-                    state = WooPosSearchInputState.Closed,
-                    onEvent = {}
-                )
-            }
+@WooPosPreview
+@Composable
+fun WooPosSearchInputClosedPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(WooPosSpacing.Small.value)
+        ) {
+            WooPosSearchInput(
+                state = WooPosSearchInputState.Closed,
+                onEvent = {}
+            )
         }
     }
 }

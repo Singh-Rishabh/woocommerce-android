@@ -52,6 +52,8 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchAnimationCompleted
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchChanged
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -107,7 +109,8 @@ private fun WooPosItemsScreen(
             when (it) {
                 WooPosSearchUIEvent.Clear -> onUIEvent(WooPosItemsUIEvent.ClearSearchClicked)
                 WooPosSearchUIEvent.Close -> onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
-                is WooPosSearchUIEvent.Search -> onUIEvent(WooPosItemsUIEvent.SearchChanged(it.query))
+                is WooPosSearchUIEvent.Search -> onUIEvent(SearchChanged(it.query))
+                WooPosSearchUIEvent.AnimationComplete -> onUIEvent(SearchAnimationCompleted)
             }
         }
     )
