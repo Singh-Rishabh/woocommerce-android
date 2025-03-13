@@ -765,7 +765,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         private const val NOTIFICATIONS_DELAY = 2_000L
         private const val TYPING_DELAY = 800L
         private const val MULTIPLE_CALLS_DELAY = 50L
-        private val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500.toBigDecimal()
     }
 }
 

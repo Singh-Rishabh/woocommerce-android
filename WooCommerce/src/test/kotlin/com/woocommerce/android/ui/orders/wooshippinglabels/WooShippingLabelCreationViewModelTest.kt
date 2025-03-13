@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNot
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireITN
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -222,6 +223,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val observeStoreOptions: ObserveStoreOptions = mock()
     private val verifyDestinationAddress: VerifyDestinationAddress = mock()
     private val getAddressNotification: GetAddressNotification = mock()
+    private val shouldRequireITN: ShouldRequireITN = mock {
+        on { invoke(any(), any()) } doReturn false
+    }
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -239,6 +243,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             shouldRequireCustoms = shouldRequireCustomsForm,
             verifyDestinationAddress = verifyDestinationAddress,
             getAddressNotification = getAddressNotification,
+            shouldRequireITN = shouldRequireITN,
             savedState = savedState
         )
     }
