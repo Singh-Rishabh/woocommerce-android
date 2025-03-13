@@ -308,7 +308,8 @@ internal fun AddressSectionLandscape(
                             bottom = dimensionResource(R.dimen.major_100)
                         )
                     } else {
-                        Modifier.align(Alignment.CenterHorizontally)
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
                             .padding(16.dp)
                             .height(IntrinsicSize.Min)
                     }
@@ -597,6 +598,7 @@ fun AddressStatusIndicator(
         )
     }
 }
+
 internal fun getShipFrom() = OriginShippingAddress(
     firstName = "first name",
     lastName = "last name",
