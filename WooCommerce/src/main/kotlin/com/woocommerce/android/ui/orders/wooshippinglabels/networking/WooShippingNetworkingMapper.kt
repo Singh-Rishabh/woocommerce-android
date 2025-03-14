@@ -282,7 +282,7 @@ class WooShippingNetworkingMapper @Inject constructor(
                     value = it.value.toDouble(),
                     weight = it.weight.toDouble(),
                     hsTariffNumber = it.hsTariffNumber,
-                    originCountry = it.originCountry
+                    originCountry = it.originCountryCode
                 )
             }
         )
