@@ -44,6 +44,7 @@ internal fun ShippingRatesSection(
 
         is WooShippingLabelCreationViewModel.ShippingRatesState.Loading -> {
             ShippingRatesLoading(
+                modifier = Modifier.padding(horizontal = 16.dp),
                 selectedSortOption = shippingRatesState.selectedRatesSortOrder,
                 onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged
             )

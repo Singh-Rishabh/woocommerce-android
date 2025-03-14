@@ -166,13 +166,25 @@ internal fun ShippingRatesLoading(
             onSortOptionSelected = onSelectedRateSortOrderChanged,
             modifier = Modifier.padding(start = dimensionResource(R.dimen.major_100))
         )
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .sizeIn(minHeight = 300.dp),
-            contentAlignment = Alignment.Center
+                .dashedBorder(
+                    color = colorResource(R.color.divider_color),
+                    strokeWidth = 2.dp,
+                    dashLength = 8.dp,
+                    gapLength = 8.dp,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+                .padding(horizontal = 32.dp, vertical = 40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            CircularProgressIndicator()
+            Image(
+                modifier = Modifier.size(88.dp),
+                painter = painterResource(id = R.drawable.ic_themes),
+                contentDescription = null,
+            )
+            CircularProgressIndicator(modifier = Modifier.padding(top = dimensionResource(id = R.dimen.major_200)))
         }
     }
 }
