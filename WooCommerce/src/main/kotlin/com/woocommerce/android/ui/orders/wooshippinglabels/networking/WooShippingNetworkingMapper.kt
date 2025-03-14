@@ -214,32 +214,7 @@ class WooShippingNetworkingMapper @Inject constructor(
             rateId = selectedRate.rateId,
             serviceId = selectedRate.serviceId,
             carrierId = selectedRate.carrierId,
-            serviceName = selectedRate.serviceName,
-            customs = selectedPackage.customsData?.let { toCustomsPurchaseDTO(it) }
-        )
-    }
-
-    private fun toCustomsPurchaseDTO(
-        customsData: CustomsData
-    ): CustomsPurchaseDTO {
-        return CustomsPurchaseDTO(
-            contentsType = customsData.contentType.name,
-            contentExplanation = customsData.contentDescription,
-            restrictionType = customsData.restrictionType.name,
-            restrictionComments = customsData.restrictionDescription,
-            nonDeliveryOption = customsData.noDeliveryOption,
-            itn = customsData.itn,
-            items = customsData.items.map {
-                CustomsItemPurchaseDTO(
-                    productId = it.productID,
-                    description = it.description,
-                    quantity = it.quantity,
-                    value = it.value.toDouble(),
-                    weight = it.weight.toDouble(),
-                    hsTariffNumber = it.hsTariffNumber,
-                    originCountry = it.originCountry
-                )
-            }
+            serviceName = selectedRate.serviceName
         )
     }
 
@@ -286,6 +261,30 @@ class WooShippingNetworkingMapper @Inject constructor(
             name = combineStrings(address.firstName, address.lastName),
             phone = address.phone,
             email = address.email
+        )
+    }
+
+    fun toCustomsPurchaseDTO(
+        customsData: CustomsData
+    ): CustomsPurchaseDTO {
+        return CustomsPurchaseDTO(
+            contentsType = customsData.contentType.name,
+            contentExplanation = customsData.contentDescription,
+            restrictionType = customsData.restrictionType.name,
+            restrictionComments = customsData.restrictionDescription,
+            nonDeliveryOption = customsData.noDeliveryOption,
+            itn = customsData.itn,
+            items = customsData.items.map {
+                CustomsItemPurchaseDTO(
+                    productId = it.productID,
+                    description = it.description,
+                    quantity = it.quantity,
+                    value = it.value.toDouble(),
+                    weight = it.weight.toDouble(),
+                    hsTariffNumber = it.hsTariffNumber,
+                    originCountry = it.originCountry
+                )
+            }
         )
     }
 

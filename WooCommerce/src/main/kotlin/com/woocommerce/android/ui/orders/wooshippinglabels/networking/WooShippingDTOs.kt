@@ -16,8 +16,7 @@ data class PackagePurchaseDTO(
     @SerializedName("rate_id") val rateId: String,
     @SerializedName("service_id") val serviceId: String,
     @SerializedName("carrier_id") val carrierId: String,
-    @SerializedName("service_name") val serviceName: String,
-    val customs: CustomsPurchaseDTO? = null
+    @SerializedName("service_name") val serviceName: String
 )
 
 data class OriginAddressPurchaseDTO(
