@@ -361,6 +361,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
@@ -390,6 +391,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
@@ -418,6 +420,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
@@ -446,6 +449,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
@@ -474,6 +478,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
