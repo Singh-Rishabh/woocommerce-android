@@ -232,16 +232,21 @@ class WooShippingEditAddressViewModel @Inject constructor(
         country.value = findLocationByCode(addressInformation.country.code, countriesState.value)
         address = address.copy(value = fullAddress, error = null)
         city = city.copy(value = addressInformation.city, error = null)
-        selectedState.value =
-            findLocationByCode(addressInformation.state.codeOrRaw, statesState.value)
+        findLocationByCode(addressInformation.state.codeOrRaw, statesState.value).let {
+            selectedState.value = it
+            rawState = addressInformation.state.codeOrRaw
+        }
         postalCode = postalCode.copy(value = addressInformation.postcode, error = null)
         email = email.copy(value = addressInformation.email, error = null)
         phone = phone.copy(value = addressInformation.phone, error = null)
         isCompanyExpanded.value = addressInformation.company.isNotNullOrEmpty()
     }
 
-    private fun findLocationByCode(code: String, state: LocationState): Location {
-        val default = AmbiguousLocation.Raw(code).asLocation()
+    private fun findLocationByCode(
+        code: String,
+        state: LocationState,
+        default: Location = AmbiguousLocation.Raw(code).asLocation()
+    ): Location {
         return when (val currentState = state) {
             is LocationState.Loaded -> {
                 currentState.locations.firstOrNull { it.code == code } ?: default
@@ -270,14 +275,20 @@ class WooShippingEditAddressViewModel @Inject constructor(
         country.mapLatest { country -> getStatesByCountryCode(country.code) }
             .collectLatest { states ->
                 statesState.value = LocationState.Loaded(states)
-                rawState = ""
+                val stateCode = if (country.value.code == currentAddress.value.country.code) {
+                    currentAddress.value.state.codeOrRaw
+                } else {
+                    ""
+                }
                 if (states.isNotEmpty()) {
-                    findLocationByCode(selectedState.value.code, statesState.value)
+                    findLocationByCode(stateCode, statesState.value, Location.EMPTY)
                         .takeIf { it != Location.EMPTY }
                         ?.let { selectedState.value = it } ?: run {
                         selectedState.value = states.first()
                     }
+                    rawState = ""
                 } else {
+                    rawState = stateCode
                     selectedState.value = Location.EMPTY
                 }
             }
