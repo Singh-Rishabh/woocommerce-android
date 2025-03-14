@@ -42,6 +42,7 @@ import javax.inject.Inject
 class WooShippingEditAddressViewModel @Inject constructor(
     private val addressValidator: AddressValidationHelper,
     private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
+    private val getAllCountries: GetAllCountries,
     private val getStatesByCountryCode: GetStatesByCountryCode,
     private val normalizeAddress: NormalizeAddress,
     private val resourceProvider: ResourceProvider,
@@ -251,7 +252,11 @@ class WooShippingEditAddressViewModel @Inject constructor(
     }
 
     private suspend fun loadCountries() {
-        getAcceptedOriginCountries().fold(
+        val getCountries = when (navArgs.flow) {
+            is EditAddressFlow.EditDestinationAddress -> getAllCountries()
+            is EditAddressFlow.EditOriginAddress -> getAcceptedOriginCountries()
+        }
+        getCountries.fold(
             onSuccess = {
                 countriesState.value = LocationState.Loaded(it)
                 country.value = findLocationByCode(country.value.code, countriesState.value)
