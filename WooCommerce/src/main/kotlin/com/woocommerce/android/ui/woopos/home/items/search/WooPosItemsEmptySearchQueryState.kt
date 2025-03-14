@@ -69,7 +69,9 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
                     }
                 }
 
-                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
+                if (state.popularItems.isNotEmpty() && state.recentSearches.isNotEmpty()) {
+                    Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
+                }
 
                 if (state.recentSearches.isNotEmpty()) {
                     Column(
