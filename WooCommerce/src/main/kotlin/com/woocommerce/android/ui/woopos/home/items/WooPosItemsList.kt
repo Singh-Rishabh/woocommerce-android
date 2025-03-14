@@ -149,7 +149,7 @@ private fun ProductItem(
         item.name,
         item.price
     )
-    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+    WooPosItemCard(modifier, itemContentDescription, onItemClicked, item)
 }
 
 @Composable
@@ -163,7 +163,7 @@ private fun VariableProductItem(
         item.name,
         item.price
     )
-    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+    WooPosItemCard(modifier, itemContentDescription, onItemClicked, item)
 }
 
 @Composable
@@ -177,11 +177,11 @@ private fun VariationItem(
         item.name,
         item.price
     )
-    ItemCard(modifier, itemContentDescription, onItemClicked, item)
+    WooPosItemCard(modifier, itemContentDescription, onItemClicked, item)
 }
 
 @Composable
-private fun ItemCard(
+fun WooPosItemCard(
     modifier: Modifier,
     itemContentDescription: String,
     onItemClicked: (item: WooPosItem) -> Unit,
