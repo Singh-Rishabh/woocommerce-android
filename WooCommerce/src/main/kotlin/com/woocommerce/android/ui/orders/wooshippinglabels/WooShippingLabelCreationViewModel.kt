@@ -54,7 +54,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -304,9 +303,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 customsRequired -> Unavailable
                 else -> NotRequired
             }
-        }.onEach {
+        }.collectLatest {
             customsState.value = it
-        }.launchIn(viewModelScope)
+        }
     }
 
     private suspend fun getShippingAddresses() {

@@ -91,7 +91,7 @@ class WooShippingLabelRepository @Inject constructor(
             weight = weight
         )
         val rateDTO = mapper.toRateDTO(selectedRate)
-        val customsDTO = customsData?.let{ mapper.toCustomsPurchaseDTO(it) }
+        val customsDTO = customsData?.let { mapper.toCustomsPurchaseDTO(it) }
         return restClient.purchaseShippingLabel(
             site = site,
             orderId = orderId,

@@ -3,7 +3,6 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui
 import android.os.Parcelable
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.isNotNullOrEmpty
-import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationViewModel.PackageType
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.datasource.PackageDAO
 import kotlinx.parcelize.IgnoredOnParcel
