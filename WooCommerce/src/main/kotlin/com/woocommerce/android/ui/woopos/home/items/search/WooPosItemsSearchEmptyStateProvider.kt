@@ -4,6 +4,7 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
+@Suppress("MagicNumber")
 class WooPosItemsSearchEmptyStateProvider @Inject constructor() {
     suspend fun getPopularItems(): List<WooPosItem> {
         delay(50)

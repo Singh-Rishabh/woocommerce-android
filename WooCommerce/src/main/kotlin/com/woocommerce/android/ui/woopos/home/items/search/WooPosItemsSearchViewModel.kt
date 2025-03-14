@@ -30,9 +30,13 @@ class WooPosItemsSearchViewModel @Inject constructor(
             val popularItemsDeferred = async { emptyStateProvider.getPopularItems() }
 
             _viewState.value = WooPosItemsSearchViewState.EmptySearchQuery(
-                popularItems = popularItemsDeferred.await().let { it.take(minOf(3, it.size)) },
-                recentSearches = lastSearchesDeferred.await().let { it.take(minOf(3, it.size)) },
+                popularItems = popularItemsDeferred.await().let { it.take(minOf(MAX_ITEMS_COUNT, it.size)) },
+                recentSearches = lastSearchesDeferred.await().let { it.take(minOf(MAX_ITEMS_COUNT, it.size)) },
             )
         }
+    }
+
+    private companion object {
+        const val MAX_ITEMS_COUNT = 3
     }
 }
