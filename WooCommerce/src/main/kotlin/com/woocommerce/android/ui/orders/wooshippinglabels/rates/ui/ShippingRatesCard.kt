@@ -6,6 +6,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,15 +52,18 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.SelectionCheck
+import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippingRateSummaryUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.WooShippingCarrier
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource.WooShippingRateModel.Option
@@ -106,6 +110,46 @@ private fun ShippingRatesCardPreview() {
             selectedSortOption = ShippingSortOption.CHEAPEST,
             onSelectedRateSortOrderChanged = {},
             onSelectedSippingRateChanged = {}
+        )
+    }
+}
+
+@Composable
+internal fun ShippingRatesSectionMissingInfo(
+    modifier: Modifier = Modifier,
+    missingInfo: WooShippingLabelCreationViewModel.ShippingRatesState.MissingInfo
+) {
+    Column(
+        modifier = modifier
+            .dashedBorder(
+                color = colorResource(R.color.divider_color),
+                strokeWidth = 2.dp,
+                dashLength = 8.dp,
+                gapLength = 8.dp,
+                shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+            )
+            .padding(horizontal = 32.dp, vertical = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(88.dp),
+            painter = painterResource(id = R.drawable.ic_themes),
+            contentDescription = stringResource(id = R.string.woopos_error_icon_content_description),
+        )
+        Text(
+            text = stringResource(missingInfo.missingTitle),
+            style = MaterialTheme.typography.subtitle1,
+            color = MaterialTheme.colors.onSurface,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(top = dimensionResource(id = R.dimen.major_200))
+        )
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = stringResource(missingInfo.missingDescription),
+            style = MaterialTheme.typography.subtitle1,
+            color = colorResource(id = R.color.color_on_surface_medium),
+            textAlign = TextAlign.Center,
         )
     }
 }

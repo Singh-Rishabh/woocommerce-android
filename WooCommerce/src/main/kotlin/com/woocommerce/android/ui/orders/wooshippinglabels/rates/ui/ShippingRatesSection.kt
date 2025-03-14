@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,6 +26,13 @@ internal fun ShippingRatesSection(
                 onSelectedRateSortOrderChanged = onSelectedRateSortOrderChanged,
                 onSelectedSippingRateChanged = onSelectedSippingRateChanged,
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        is WooShippingLabelCreationViewModel.ShippingRatesState.MissingInfo -> {
+            ShippingRatesSectionMissingInfo(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                missingInfo = shippingRatesState
             )
         }
 
