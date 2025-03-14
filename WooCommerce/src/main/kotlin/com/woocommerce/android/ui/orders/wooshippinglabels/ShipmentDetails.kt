@@ -3,6 +3,11 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 import android.content.res.Configuration
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -19,7 +24,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Divider
@@ -29,8 +36,13 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckCircleOutline
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +60,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.extensions.appendWithIfNotEmpty
 import com.woocommerce.android.ui.compose.animations.SkeletonView
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionLandscape
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSectionPortrait
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
@@ -56,6 +69,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.util.StringUtils
+import kotlinx.coroutines.delay
 import kotlinx.parcelize.Parcelize
 
 @Composable
@@ -66,13 +80,17 @@ fun ShipmentDetails(
     shippingLines: List<ShippingLineSummaryUI>,
     shippingAddresses: WooShippingAddresses,
     shippingRateSummary: ShippingRateSummaryUI?,
+    addressNotification: AddressNotification?,
+    itnNotification: ItnMissingNotification? = null,
     modifier: Modifier = Modifier,
     isShipmentDetailsExpanded: Boolean = false,
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
+    onEditOriginAddress: (OriginShippingAddress) -> Unit,
     destinationStatus: AddressStatus,
     markOrderComplete: Boolean = false,
     onMarkOrderCompleteChange: (Boolean) -> Unit = {},
+    onDismissAddressNotification: () -> Unit = {},
     handlerModifier: Modifier = Modifier,
     isReadOnly: Boolean = false
 ) {
@@ -100,14 +118,39 @@ fun ShipmentDetails(
                 tint = colorResource(id = R.color.color_primary),
             )
             AnimatedVisibility(isShipmentDetailsExpanded.not()) {
-                Column {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
                     Text(
                         text = stringResource(R.string.shipping_label_shipment_details_title),
                         color = MaterialTheme.colors.primary,
                         modifier = Modifier
-                            .padding(top = dimensionResource(R.dimen.minor_100))
+                            .padding(top = dimensionResource(R.dimen.minor_100) * LocalConfiguration.current.fontScale)
                     )
-                    Spacer(modifier = Modifier.size(dimensionResource(id = R.dimen.major_200)))
+
+                    ShippingAddressNotification(
+                        addressNotification = addressNotification,
+                        onDismiss = onDismissAddressNotification,
+                        onAction = {
+                            addressNotification?.let {
+                                when {
+                                    it.isSuccess.not() && it.isDestinationNotification -> {
+                                        onEditDestinationAddress(shippingAddresses.shipTo)
+                                    }
+                                    it.isSuccess.not() && it.isDestinationNotification.not() -> {
+                                        onEditOriginAddress(shippingAddresses.shipFrom)
+                                    }
+                                }
+                            }
+                        }
+                    )
+                    ItnMissingNotification(itnNotification)
+
+                    Spacer(
+                        modifier = Modifier.size(
+                            dimensionResource(R.dimen.major_200) * LocalConfiguration.current.fontScale
+                        )
+                    )
                 }
             }
         }
@@ -516,6 +559,178 @@ private fun ShipmentCostRow(
     }
 }
 
+@Composable
+private fun ItnMissingNotification(
+    itnNotification: ItnMissingNotification?,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = itnNotification != null,
+        enter = fadeIn(
+            animationSpec = tween(
+                durationMillis = 180
+            )
+        ) + scaleIn(
+            animationSpec = tween(
+                durationMillis = 180
+            )
+        ),
+        exit = fadeOut(
+            animationSpec = tween(
+                durationMillis = 90
+            )
+        ) + scaleOut(
+            animationSpec = tween(
+                durationMillis = 90
+            )
+
+        )
+    ) {
+        if (itnNotification == null) return@AnimatedVisibility
+
+        val rowModifier = when (LocalConfiguration.current.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> {
+                modifier.widthIn(max = 600.dp).fillMaxWidth()
+            }
+            else -> {
+                modifier.fillMaxWidth()
+            }
+        }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = rowModifier
+                .padding(dimensionResource(R.dimen.major_100))
+                .background(
+                    color = colorResource(R.color.woo_red_5),
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+                .padding(vertical = 8.dp, horizontal = 16.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                tint = MaterialTheme.colors.error,
+                contentDescription = null
+            )
+            Spacer(Modifier.size(dimensionResource(R.dimen.minor_50)))
+            Text(
+                text = itnNotification.errorMessage,
+                style = MaterialTheme.typography.body2,
+                color = MaterialTheme.colors.error,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = Icons.Outlined.Close,
+                tint = MaterialTheme.colors.error,
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    itnNotification.onErrorDismissed()
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShippingAddressNotification(
+    addressNotification: AddressNotification?,
+    modifier: Modifier = Modifier,
+    onAction: () -> Unit = {},
+    onDismiss: () -> Unit = {}
+) {
+    AnimatedVisibility(
+        visible = addressNotification != null && addressNotification.isExpired().not(),
+        enter = fadeIn(
+            animationSpec = tween(
+                durationMillis = 180
+            )
+        ) + scaleIn(
+            animationSpec = tween(
+                durationMillis = 180
+            )
+        ),
+        exit = fadeOut(
+            animationSpec = tween(
+                durationMillis = 90
+            )
+        ) + scaleOut(
+            animationSpec = tween(
+                durationMillis = 90
+            )
+
+        )
+    ) {
+        if (addressNotification != null && addressNotification.isExpired().not()) {
+            if (addressNotification.expireAfter != null) {
+                LaunchedEffect(addressNotification) {
+                    delay(addressNotification.expireAfter)
+                    onDismiss()
+                }
+            }
+
+            val color = if (addressNotification.isSuccess) {
+                colorResource(id = R.color.woo_shipping_label_success)
+            } else {
+                colorResource(id = R.color.woo_shipping_label_error)
+            }
+
+            val backgroundColor = if (addressNotification.isSuccess) {
+                colorResource(id = R.color.woo_shipping_label_success_surface)
+            } else {
+                colorResource(id = R.color.woo_shipping_label_error_surface)
+            }
+
+            val icon = if (addressNotification.isSuccess) {
+                Icons.Outlined.CheckCircleOutline
+            } else {
+                Icons.Outlined.Info
+            }
+
+            val configuration = LocalConfiguration.current
+            val rowModifier = when (configuration.orientation) {
+                Configuration.ORIENTATION_LANDSCAPE -> {
+                    modifier.widthIn(max = 600.dp).fillMaxWidth()
+                }
+                else -> {
+                    modifier.fillMaxWidth()
+                }
+            }
+
+            Row(
+                rowModifier
+                    .padding(dimensionResource(R.dimen.major_100))
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                    )
+                    .clickable { onAction() }
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.padding(end = 8.dp)
+                )
+                Text(
+                    text = stringResource(addressNotification.message),
+                    color = color,
+                    modifier = Modifier.weight(1f)
+                )
+                if (addressNotification.isSuccess.not()) {
+                    Icon(
+                        imageVector = Icons.Outlined.Close,
+                        contentDescription = null,
+                        tint = color,
+                        modifier = Modifier.clickable { onDismiss() }
+                    )
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun ShipmentCostSectionPreview() {
@@ -555,6 +770,11 @@ data class ShippingRateSummaryUI(
     val optionName: String? = null,
     val optionFee: String? = null
 ) : Parcelable
+
+data class ItnMissingNotification(
+    val errorMessage: String,
+    val onErrorDismissed: () -> Unit
+)
 
 @Composable
 fun VerticalDivider(
