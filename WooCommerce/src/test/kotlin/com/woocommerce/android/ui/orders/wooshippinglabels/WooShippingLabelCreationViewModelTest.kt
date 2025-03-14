@@ -53,6 +53,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 import java.util.Date
@@ -987,4 +988,38 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             dataState = currentViewState as DataState
             assertThat(dataState.uiState.addressNotification).isNull()
         }
+
+    @Test
+    fun `when the destination address is missing then verify endpoint should not be called`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(addressValidationHelper.isMissingDestinationAddress(any())) doReturn true
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        verifyNoInteractions(verifyDestinationAddress)
+    }
+
+    @Test
+    fun `when the destination address exists then verify endpoint should be called`() = testBlocking {
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(addressValidationHelper.isMissingDestinationAddress(any())) doReturn false
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        verify(verifyDestinationAddress).invoke(orderId)
+    }
 }
