@@ -94,6 +94,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                         valuePerUnit = InputValue.Data(item.value.toString()),
                         weightPerUnit = InputValue.Data(item.weight.toString()),
                         originCountry = item.originCountry,
+                        originCountryCode = item.originCountryCode,
                         quantity = item.quantity,
                         isExpanded = false
                     )
@@ -246,8 +247,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             ?: AmbiguousLocation.Raw(newValue).asLocation()
 
         _viewState.update { state ->
-            val updatedItem = state.shippingProducts[itemIndex]
-                .copy(originCountry = selectedLocation.name)
+            val updatedItem = state.shippingProducts[itemIndex].copy(
+                originCountry = selectedLocation.name,
+                originCountryCode = selectedLocation.code
+            )
 
             state.shippingProducts.toMutableList().apply {
                 set(itemIndex, updatedItem)
