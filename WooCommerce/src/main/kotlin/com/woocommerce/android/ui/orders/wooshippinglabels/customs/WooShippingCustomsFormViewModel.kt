@@ -287,6 +287,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         tariffNumber = "".asInputValueError,
         quantity = quantity,
         originCountry = "",
+        originCountryCode = "",
         isExpanded = false,
         valuePerUnit = when {
             price == BigDecimal.ZERO -> InputValue.Error(

@@ -27,5 +27,6 @@ data class CustomsItem(
     val value: BigDecimal,
     val weight: Float,
     val hsTariffNumber: String,
-    val originCountry: String
+    val originCountry: String,
+    val originCountryCode: String
 ) : Parcelable
