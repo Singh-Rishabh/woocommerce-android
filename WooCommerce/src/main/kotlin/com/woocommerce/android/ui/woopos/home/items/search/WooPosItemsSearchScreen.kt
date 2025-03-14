@@ -48,7 +48,7 @@ private fun WooPosItemsSearchScreen(
 
 @Composable
 @WooPosPreview
-private fun WooPosItemsSearchScreenPreview() {
+fun WooPosItemsSearchScreenPreview() {
     WooPosTheme {
         Box(
             modifier = Modifier

@@ -43,7 +43,6 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptiv
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemCard
 
-
 @Composable
 fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySearchQuery) {
     val scrollState = rememberScrollState()
@@ -236,7 +235,6 @@ fun WooPosItemsEmptySearchQueryStatePreview() {
     }
 }
 
-
 @WooPosPreview
 @Composable
 fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
@@ -275,4 +273,3 @@ fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
         }
     }
 }
-
