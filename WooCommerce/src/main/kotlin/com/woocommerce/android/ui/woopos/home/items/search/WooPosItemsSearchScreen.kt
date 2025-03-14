@@ -2,10 +2,15 @@ package com.woocommerce.android.ui.woopos.home.items.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
+import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 
 @Composable
 fun WooPosItemsSearchScreen(
@@ -37,6 +42,36 @@ private fun WooPosItemsSearchScreen(
 
             WooPosItemsSearchViewState.Empty -> {
             }
+        }
+    }
+}
+
+@Composable
+@WooPosPreview
+private fun WooPosItemsSearchScreenPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WooPosSpacing.Medium.value)
+        ) {
+            WooPosItemsEmptySearchQueryState(
+                state = WooPosItemsSearchViewState.EmptySearchQuery(
+                    popularItems = listOf<WooPosItem>(
+                        WooPosItem.SimpleProduct(
+                            id = 1,
+                            name = "Popular Item 1",
+                            price = "10.0$",
+                            imageUrl = "https://example.com/image1.jpg",
+                        ),
+                    ),
+                    recentSearches = listOf(
+                        "Recent Search 1",
+                        "Recent Search 2",
+                        "Recent Search 3",
+                    )
+                )
+            )
         }
     }
 }
