@@ -76,9 +76,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
-    private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val verifyDestinationAddress: VerifyDestinationAddress,
     private val getAddressNotification: GetAddressNotification,
+    private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val shouldRequireITN: ShouldRequireITN
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
@@ -198,12 +198,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelected,
             shippingAddresses,
             packageWeight,
+            customsState,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, addresses, packageWeight, _ ->
+        ) { selectedPackage, addresses, packageWeight, customState, _ ->
+            val customsFulfilled = customState is CustomsState.DataAvailable || customState is NotRequired
+
             if (
                 selectedPackage != null &&
                 addresses != null &&
                 packageWeight != null &&
+                customsFulfilled &&
                 addresses.shipTo != Address.EMPTY
             ) {
                 ShippingRatesInfo(
