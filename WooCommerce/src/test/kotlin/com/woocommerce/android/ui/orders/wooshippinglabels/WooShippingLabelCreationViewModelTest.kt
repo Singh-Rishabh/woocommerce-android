@@ -53,7 +53,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 import java.util.Date
@@ -957,34 +956,35 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when an address notifications is displayed then dismissAddressNotification should dismiss the notification`() = testBlocking {
-        val order = OrderTestUtils.generateTestOrder(orderId = orderId)
-        val notification = AddressNotification(
-            isSuccess = false,
-            message = R.string.woo_shipping_address_notification_destination_missing,
-            isDestinationNotification = false
-        )
+    fun `when an address notifications is displayed then dismissAddressNotification should dismiss the notification`() =
+        testBlocking {
+            val order = OrderTestUtils.generateTestOrder(orderId = orderId)
+            val notification = AddressNotification(
+                isSuccess = false,
+                message = R.string.woo_shipping_address_notification_destination_missing,
+                isDestinationNotification = false
+            )
 
-        whenever(orderDetailRepository.getOrderById(any())) doReturn order
-        whenever(getShippableItems(any())) doReturn defaultShippableItems
-        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
-        whenever(getAddressNotification(any(), anyOrNull())) doReturn notification
+            whenever(orderDetailRepository.getOrderById(any())) doReturn order
+            whenever(getShippableItems(any())) doReturn defaultShippableItems
+            whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+            whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+            whenever(getAddressNotification(any(), anyOrNull())) doReturn notification
 
-        createViewModel()
+            createViewModel()
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        var currentViewState = sut.viewState.value
-        assertThat(currentViewState).isInstanceOf(DataState::class.java)
-        var dataState = currentViewState as DataState
-        assertThat(dataState.uiState.addressNotification).isEqualTo(notification)
+            var currentViewState = sut.viewState.value
+            assertThat(currentViewState).isInstanceOf(DataState::class.java)
+            var dataState = currentViewState as DataState
+            assertThat(dataState.uiState.addressNotification).isEqualTo(notification)
 
-        sut.onDismissAddressNotification()
+            sut.onDismissAddressNotification()
 
-        currentViewState = sut.viewState.value
-        assertThat(currentViewState).isInstanceOf(DataState::class.java)
-        dataState = currentViewState as DataState
-        assertThat(dataState.uiState.addressNotification).isNull()
-    }
+            currentViewState = sut.viewState.value
+            assertThat(currentViewState).isInstanceOf(DataState::class.java)
+            dataState = currentViewState as DataState
+            assertThat(dataState.uiState.addressNotification).isNull()
+        }
 }
