@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Address
+import com.woocommerce.android.model.AmbiguousLocation
+import com.woocommerce.android.model.Location
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
@@ -14,6 +16,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
@@ -50,6 +53,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 import java.util.Date
@@ -67,7 +71,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             title = "Product $it",
             price = BigDecimal(it),
             quantity = it.toFloat(),
-            weight = it.toFloat(),
+            weight = it + 0.01f,
             currency = "USD",
             imageUrl = "https://example.com/image.jpg",
             width = it.toFloat(),
@@ -128,6 +132,12 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val defaultPackageName = "customPackage"
 
     private val defaultShipToAddress = Address.EMPTY.copy(
+        firstName = "first name",
+        lastName = "last name",
+        country = Location("US", "US"),
+        state = AmbiguousLocation.Raw("AA"),
+        city = "city",
+        postcode = "postcode",
         address1 = "1278 24st Perito AVE"
     )
     private val defaultStoreOptions = StoreOptionsModel(
@@ -216,6 +226,10 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         on { invoke(any()) } doReturn true
     }
 
+    private val addressValidationHelper: AddressValidationHelper = mock {
+        on { canFetchShippingRates(any()) } doReturn true
+    }
+
     private val observeOriginAddresses: ObserveOriginAddresses = mock()
     private val getShippingRates: GetShippingRates = mock()
     private val purchaseShippingLabel: PurchaseShippingLabel = mock()
@@ -237,7 +251,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             observeStoreOptions = observeStoreOptions,
             fetchAccountSettings = mock(),
             shouldRequireCustoms = shouldRequireCustomsForm,
-            addressValidationHelper = mock(),
+            addressValidationHelper = addressValidationHelper,
             verifyDestinationAddress = verifyDestinationAddress,
             getAddressNotification = getAddressNotification,
             savedState = savedState
@@ -634,30 +648,31 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `CustomState is ItnMissing when shouldRequireCustomsForm returns true and ShippingLines exceeds the 2500 limit`() = testBlocking {
-        var currentViewState: WooShippingViewState? = null
-        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
-            shippingLines = defaultShippingLines
-        )
-        whenever(orderDetailRepository.getOrderById(any())) doReturn order
-        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
-        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
-        whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
-        whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
+    fun `CustomState is ItnMissing when shouldRequireCustomsForm returns true and ShippingLines exceeds the 2500 limit`() =
+        testBlocking {
+            var currentViewState: WooShippingViewState? = null
+            val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+                shippingLines = defaultShippingLines
+            )
+            whenever(orderDetailRepository.getOrderById(any())) doReturn order
+            whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+            whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+            whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
+            whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
 
-        createViewModel()
+            createViewModel()
 
-        advanceUntilIdle()
+            advanceUntilIdle()
 
-        sut.viewState.asLiveData().observeForever {
-            currentViewState = it
+            sut.viewState.asLiveData().observeForever {
+                currentViewState = it
+            }
+
+            assertThat(currentViewState).isInstanceOf(DataState::class.java)
+            val dataState = currentViewState as DataState
+
+            assertThat(dataState.customsState).isEqualTo(CustomsState.ItnMissing)
         }
-
-        assertThat(currentViewState).isInstanceOf(DataState::class.java)
-        val dataState = currentViewState as DataState
-
-        assertThat(dataState.customsState).isEqualTo(CustomsState.ItnMissing)
-    }
 
     @Test
     fun `ItnMissing is dismissed when onDismissItnNotice is called`() = testBlocking {
