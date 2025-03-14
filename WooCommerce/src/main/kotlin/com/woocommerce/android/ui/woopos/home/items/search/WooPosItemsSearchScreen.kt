@@ -95,14 +95,28 @@ private fun WooPosItemsEmptySearchQueryState(
                 bottom = WooPosSpacing.None.value.toAdaptivePadding(),
             )
     ) {
-        if (state.popularItems.isNotEmpty()) {
-            PopularItemsSection(state.popularItems)
+        if (state.popularItems.isNotEmpty() || state.recentSearches.isNotEmpty()) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (state.popularItems.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        PopularItemsSection(state.popularItems)
+                    }
+                }
 
-            Spacer(modifier = Modifier.height(WooPosSpacing.Large.value))
-        }
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
 
-        if (state.recentSearches.isNotEmpty()) {
-            RecentSearchesSection(state)
+                if (state.recentSearches.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        RecentSearchesSection(state)
+                    }
+                }
+            }
         }
 
         @Suppress("WooPosDesignSystemSpacingUsageRule")
@@ -117,7 +131,7 @@ private fun PopularItemsSection(popularItems: List<WooPosItem>) {
         title = stringResource(R.string.woopos_search_popular_items_title)
     )
 
-    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Small.value.toAdaptivePadding()))
 
     popularItems.forEach { popularItem ->
         val itemContentDescription = stringResource(
@@ -133,7 +147,7 @@ private fun PopularItemsSection(popularItems: List<WooPosItem>) {
             item = popularItem,
         )
 
-        Spacer(modifier = Modifier.height(WooPosSpacing.Small.value))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Small.value.toAdaptivePadding()))
     }
 }
 
@@ -144,7 +158,7 @@ private fun RecentSearchesSection(state: WooPosItemsSearchViewState.EmptySearchQ
         title = stringResource(R.string.woopos_search_recent_searches_title)
     )
 
-    Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
+    Spacer(modifier = Modifier.height(WooPosSpacing.Small.value.toAdaptivePadding()))
 
     state.recentSearches.forEach { recentSearch ->
         WooPosCard(
@@ -155,7 +169,7 @@ private fun RecentSearchesSection(state: WooPosItemsSearchViewState.EmptySearchQ
             Row(
                 modifier = Modifier
                     .clickable { }
-                    .height(64.dp)
+                    .height(112.dp)
                     .fillMaxWidth()
                     .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
                 verticalAlignment = Alignment.CenterVertically
@@ -164,7 +178,9 @@ private fun RecentSearchesSection(state: WooPosItemsSearchViewState.EmptySearchQ
                 Icon(
                     imageVector = Icons.Outlined.Search,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .size(32.dp)
                 )
 
                 Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
@@ -181,12 +197,14 @@ private fun RecentSearchesSection(state: WooPosItemsSearchViewState.EmptySearchQ
                 Icon(
                     imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowRight,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier
+                        .size(32.dp)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(WooPosSpacing.Small.value))
+        Spacer(modifier = Modifier.height(WooPosSpacing.Small.value.toAdaptivePadding()))
     }
 }
 
@@ -249,6 +267,46 @@ fun WooPosItemsEmptySearchQueryStatePreview() {
                         ),
                     ),
                     recentSearches = listOf("T-shirt", "Jeans", "Shoes"),
+                )
+            )
+        }
+    }
+}
+
+
+@WooPosPreview
+@Composable
+fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WooPosSpacing.Medium.value)
+        ) {
+            WooPosItemsSearchScreen(
+                state = WooPosItemsSearchViewState.EmptySearchQuery(
+                    popularItems = listOf<WooPosItem>(
+                        WooPosItem.SimpleProduct(
+                            id = 1,
+                            name = "Popular Item 1",
+                            price = "10.0$",
+                            imageUrl = "https://example.com/image1.jpg",
+                        ),
+                        WooPosItem.SimpleProduct(
+                            id = 2,
+                            name = "Popular Item 2",
+                            price = "20.0$",
+                            imageUrl = "https://example.com/image2.jpg",
+                        ),
+                        WooPosItem.Variation(
+                            id = 3,
+                            name = "Popular Item 3",
+                            productId = 1,
+                            price = "30.0$",
+                            imageUrl = "https://example.com/image3.jpg",
+                        ),
+                    ),
+                    recentSearches = emptyList()
                 )
             )
         }
