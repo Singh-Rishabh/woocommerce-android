@@ -692,6 +692,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     sealed class ShippingRatesState {
         data object NoAvailable : ShippingRatesState()
+        data class MissingInfo(
+            val missingTitle: Int,
+            val missingDescription: Int
+        ) : ShippingRatesState()
+
         data object Error : ShippingRatesState()
 
         data class Loading(
