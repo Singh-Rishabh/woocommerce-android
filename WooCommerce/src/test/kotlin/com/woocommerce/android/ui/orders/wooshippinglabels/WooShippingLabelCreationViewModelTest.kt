@@ -48,6 +48,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -704,7 +705,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(
-            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
+            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.success(defaultPurchasedLabelData)
 
         val label = defaultPurchasedLabelData.labels.first()
@@ -756,7 +757,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(
-            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
+            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.failure(Exception("Random error"))
 
         createViewModel()

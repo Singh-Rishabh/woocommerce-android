@@ -23,8 +23,8 @@ class PurchaseShippingLabel @Inject constructor(
         shipFrom: OriginShippingAddress,
         shippingRate: WooShippingRateModel,
         weight: Float,
-        customsData: CustomsData?,
         lastOrderComplete: Boolean,
+        customsData: CustomsData? = null,
     ): Result<PurchasedLabelData> {
         return selectedSite.getOrNull()?.let {
             val response = wooShippingLabelRepository.purchaseShippingLabel(

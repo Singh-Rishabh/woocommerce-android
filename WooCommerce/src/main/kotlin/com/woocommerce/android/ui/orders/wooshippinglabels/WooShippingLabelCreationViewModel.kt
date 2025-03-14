@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
 import com.woocommerce.android.extensions.formatToString
@@ -55,9 +54,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.update
@@ -509,8 +506,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses.shipFrom,
                 shippingRate,
                 weight,
-                customsData,
-                lastOrderComplete
+                lastOrderComplete,
+                customsData
             )
 
             if (result.isSuccess) {
