@@ -245,8 +245,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
     private fun findLocationByCode(
         code: String,
         state: LocationState,
-        default: Location = AmbiguousLocation.Raw(code).asLocation()
     ): Location {
+        val default = AmbiguousLocation.Raw(code).asLocation()
         return when (val currentState = state) {
             is LocationState.Loaded -> {
                 currentState.locations.firstOrNull { it.code == code } ?: default
@@ -281,7 +281,7 @@ class WooShippingEditAddressViewModel @Inject constructor(
                     ""
                 }
                 if (states.isNotEmpty()) {
-                    findLocationByCode(stateCode, statesState.value, Location.EMPTY)
+                    findLocationByCode(stateCode, statesState.value)
                         .takeIf { it != Location.EMPTY }
                         ?.let { selectedState.value = it } ?: run {
                         selectedState.value = states.first()
