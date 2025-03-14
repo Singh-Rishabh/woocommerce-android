@@ -283,7 +283,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     // This logic will be updated later once the Customs data state is available
-    private suspend fun observeCustomsDataChanges() {
+    private fun observeCustomsDataChanges() {
         combine(
             shippingAddresses,
             customsFormData,
