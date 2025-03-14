@@ -307,22 +307,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         }.onEach {
             customsState.value = it
         }.launchIn(viewModelScope)
-
-        combine(
-            packageSelected.filterNotNull(),
-            customsState.filter { it is CustomsState.DataAvailable }
-        ) { packageSelected, customState ->
-            val customData = customState
-                .run { this as? CustomsState.DataAvailable }
-                ?.customsData?.copy(
-                    packageId = packageSelected.id,
-                    packageName = packageSelected.name
-                )
-
-            packageSelected.copy(customsData = customData)
-        }.onEach {
-            packageSelected.value = it
-        }.launchIn(viewModelScope)
     }
 
     private suspend fun getShippingAddresses() {
@@ -515,6 +499,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
 
+        val customsData = customsFormData.value
+
         launch {
             val result = purchaseShippingLabel(
                 orderId,
@@ -524,8 +510,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses.shipFrom,
                 shippingRate,
                 weight,
+                customsData,
                 lastOrderComplete
             )
+
             if (result.isSuccess) {
                 purchaseState.value = PurchaseState.Success
                 result.getOrNull()

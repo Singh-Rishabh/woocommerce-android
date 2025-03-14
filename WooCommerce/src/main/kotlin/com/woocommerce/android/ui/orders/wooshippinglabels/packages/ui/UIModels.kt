@@ -20,8 +20,7 @@ data class PackageData(
     val isPredefined: Boolean = false,
     val dimensionUnit: String = "cm",
     val weightUnit: String = "kg",
-    val groupName: String? = null,
-    val customsData: CustomsData? = null
+    val groupName: String? = null
 ) : Parcelable {
     @IgnoredOnParcel
     val length: String
