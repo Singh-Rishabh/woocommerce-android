@@ -3,6 +3,7 @@ package com.woocommerce.android.extensions
 import android.text.TextUtils
 import com.woocommerce.android.ui.plans.domain.FREE_TRIAL_PLAN_ID
 import com.woocommerce.android.util.WooLog
+import com.woocommerce.android.ui.ai.AINetworkLogger
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.SiteStore.SiteVisibility.PUBLIC
 import org.wordpress.android.fluxc.utils.SiteUtils.getNormalizedTimezone
@@ -77,4 +78,13 @@ val SiteModel?.isSitePublic: Boolean
     get() = this?.let { !isWPComAtomic || publishedStatus == PUBLIC.value() } ?: false
 
 val SiteModel.isEligibleForAI: Boolean
-    get() = isWPComAtomic || planActiveFeatures.orEmpty().contains("ai-assistant")
+    get() {
+        val isAtomic = isWPComAtomic
+        val hasFeature = planActiveFeatures.orEmpty().contains("ai-assistant")
+        AINetworkLogger.logFeatureCheck(
+            isAtomic = isAtomic,
+            features = planActiveFeatures.orEmpty(),
+            hasFeature = hasFeature
+        )
+        return isAtomic || hasFeature
+    }

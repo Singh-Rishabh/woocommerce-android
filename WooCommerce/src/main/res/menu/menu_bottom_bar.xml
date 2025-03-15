@@ -16,6 +16,11 @@
         android:title="@string/products" />
 
     <item
+        android:id="@+id/ai"
+        android:icon="@drawable/ic_ai"
+        android:title="@string/ai_screen_title" />
+
+    <item
         android:id="@+id/moreMenu"
         android:icon="@drawable/as_menu_more"
         android:title="@string/more_menu" />

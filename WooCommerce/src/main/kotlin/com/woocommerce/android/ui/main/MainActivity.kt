@@ -69,6 +69,7 @@ import com.woocommerce.android.ui.main.BottomNavigationPosition.MORE
 import com.woocommerce.android.ui.main.BottomNavigationPosition.MY_STORE
 import com.woocommerce.android.ui.main.BottomNavigationPosition.ORDERS
 import com.woocommerce.android.ui.main.BottomNavigationPosition.PRODUCTS
+import com.woocommerce.android.ui.main.BottomNavigationPosition.AI
 import com.woocommerce.android.ui.main.MainActivityViewModel.BottomBarState
 import com.woocommerce.android.ui.main.MainActivityViewModel.MoreMenuBadgeState.Hidden
 import com.woocommerce.android.ui.main.MainActivityViewModel.MoreMenuBadgeState.NewFeature
@@ -742,6 +743,7 @@ class MainActivity :
             ORDERS -> AnalyticsEvent.MAIN_TAB_ORDERS_SELECTED
             PRODUCTS -> AnalyticsEvent.MAIN_TAB_PRODUCTS_SELECTED
             MORE -> AnalyticsEvent.MAIN_TAB_HUB_MENU_SELECTED
+            AI -> AnalyticsEvent.MAIN_TAB_AI_SELECTED
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
 
@@ -756,6 +758,7 @@ class MainActivity :
             ORDERS -> AnalyticsEvent.MAIN_TAB_ORDERS_RESELECTED
             PRODUCTS -> AnalyticsEvent.MAIN_TAB_PRODUCTS_RESELECTED
             MORE -> AnalyticsEvent.MAIN_TAB_HUB_MENU_RESELECTED
+            AI -> AnalyticsEvent.MAIN_TAB_AI_RESELECTED
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
 
@@ -1309,6 +1312,38 @@ class MainActivity :
             // Reset these flag now that they have being processed
             intent.removeExtra(FIELD_OPENED_FROM_WIDGET)
             intent.removeExtra(FIELD_WIDGET_NAME)
+        }
+    }
+
+    private fun updateActiveNavigationPosition(navPos: BottomNavigationPosition) {
+        when (navPos) {
+            MY_STORE -> binding.bottomNav.active(R.id.dashboard)
+            ORDERS -> binding.bottomNav.active(R.id.orders)
+            PRODUCTS -> binding.bottomNav.active(R.id.products)
+            MORE -> binding.bottomNav.active(R.id.moreMenu)
+            AI -> binding.bottomNav.active(R.id.ai)
+        }
+    }
+
+    private fun getNavPositionFromMenuItem(menuItem: MenuItem): BottomNavigationPosition {
+        return when (menuItem.itemId) {
+            R.id.dashboard -> BottomNavigationPosition.MY_STORE
+            R.id.orders -> BottomNavigationPosition.ORDERS
+            R.id.products -> BottomNavigationPosition.PRODUCTS
+            R.id.moreMenu -> BottomNavigationPosition.MORE
+            R.id.ai -> BottomNavigationPosition.AI
+            else -> BottomNavigationPosition.MY_STORE
+        }
+    }
+
+    private fun getNavPositionFromDestination(destination: NavDestination): BottomNavigationPosition {
+        return when (destination.id) {
+            R.id.dashboard -> MY_STORE
+            R.id.orders -> ORDERS
+            R.id.products -> PRODUCTS
+            R.id.moreMenu -> MORE
+            R.id.ai -> AI
+            else -> MY_STORE
         }
     }
 }
