@@ -60,7 +60,7 @@ GLOTPRESS_APP_STRINGS_PROJECT_URL = 'https://translate.wordpress.com/projects/wo
 # URL of the GlotPress project containing the Play Store metadata (title, keywords, release notes, …)
 GLOTPRESS_PLAYSTORE_METADATA_PROJECT_URL = "#{GLOTPRESS_APP_STRINGS_PROJECT_URL}/release-notes/".freeze
 
-APP_PACKAGE_NAME = 'com.woocommerce.android'
+APP_PACKAGE_NAME = 'com.cataloghub.android'
 GOOGLE_FIREBASE_SECRETS_PATH = File.join(PROJECT_ROOT_FOLDER, '.configure-files', 'firebase.secrets.json')
 
 # Instantiate versioning classes

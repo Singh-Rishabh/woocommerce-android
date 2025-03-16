@@ -9,7 +9,7 @@
         tools:node="remove" />
 
     <application
-        android:name=".WooCommerceRelease"
+        android:name="com.cataloghub.android.WooCommerceRelease"
         tools:replace="android:name">
 
         <meta-data
