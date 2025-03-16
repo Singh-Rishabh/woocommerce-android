@@ -71,8 +71,6 @@ class NonceRestClient @Inject constructor(
 
                 val errorType = if (hasInvalidCredentialsPattern(response.data.orEmpty())) {
                     Nonce.CookieNonceErrorType.INVALID_CREDENTIALS
-                } else if (errorMessage != null) {
-                    Nonce.CookieNonceErrorType.NOT_AUTHENTICATED
                 } else {
                     Nonce.CookieNonceErrorType.INVALID_RESPONSE
                 }
