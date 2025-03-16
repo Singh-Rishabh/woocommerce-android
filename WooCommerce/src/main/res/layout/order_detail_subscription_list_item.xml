@@ -64,7 +64,7 @@
         android:textAlignment="viewEnd"
         android:labelFor="@+id/subscription_period"/>
 
-    <com.woocommerce.android.widgets.tags.TagView
+    <com.cataloghub.android.widgets.tags.TagView
         android:id="@+id/subscription_status_tag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

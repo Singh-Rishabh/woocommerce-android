@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.woocommerce.android.widgets.WCElevatedLinearLayout
+            <com.cataloghub.android.widgets.WCElevatedLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
@@ -34,9 +34,9 @@
                     android:padding="@dimen/major_100"
                     android:text="@string/product_visibility_headline"
                     android:textColor="@color/color_on_surface_high" />
-            </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+            </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
-            <com.woocommerce.android.widgets.WCElevatedLinearLayout
+            <com.cataloghub.android.widgets.WCElevatedLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/minor_100"
@@ -48,9 +48,9 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/major_100"
                     android:text="@string/product_featured" />
-            </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+            </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
-            <com.woocommerce.android.widgets.WCElevatedLinearLayout
+            <com.cataloghub.android.widgets.WCElevatedLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/minor_100"
@@ -94,7 +94,7 @@
 
                 <View style="@style/Woo.Divider" />
 
-            </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+            </com.cataloghub.android.widgets.WCElevatedLinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

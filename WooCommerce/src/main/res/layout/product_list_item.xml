@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.woocommerce.android.ui.products.ProductItemView
+    <com.cataloghub.android.ui.products.ProductItemView
         android:id="@+id/productItemView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

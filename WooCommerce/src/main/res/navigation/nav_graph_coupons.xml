@@ -5,7 +5,7 @@
     app:startDestination="@id/couponListFragment">
     <fragment
         android:id="@+id/couponListFragment"
-        android:name="com.woocommerce.android.ui.coupons.CouponListFragment"
+        android:name="com.cataloghub.android.ui.coupons.CouponListFragment"
         android:label="CouponListFragment">
         <action
             android:id="@+id/action_couponListFragment_to_couponTypePickerFragment"
@@ -16,7 +16,7 @@
     </fragment>
     <dialog
         android:id="@+id/couponTypePickerFragment"
-        android:name="com.woocommerce.android.ui.coupons.create.CouponTypePickerFragment"
+        android:name="com.cataloghub.android.ui.coupons.create.CouponTypePickerFragment"
         android:label="CouponTypePickerFragment">
         <action
             android:id="@+id/action_couponTypePickerFragment_to_editCouponFragment"
@@ -24,7 +24,7 @@
     </dialog>
     <fragment
         android:id="@+id/couponDetailsFragment"
-        android:name="com.woocommerce.android.ui.coupons.details.CouponDetailsFragment"
+        android:name="com.cataloghub.android.ui.coupons.details.CouponDetailsFragment"
         android:label="CouponDetailsFragment">
         <argument
             android:name="couponId"
@@ -35,20 +35,20 @@
     </fragment>
     <fragment
         android:id="@+id/editCouponFragment"
-        android:name="com.woocommerce.android.ui.coupons.edit.EditCouponFragment"
+        android:name="com.cataloghub.android.ui.coupons.edit.EditCouponFragment"
         android:label="EditCouponFragment">
         <argument
             android:name="mode"
-            app:argType="com.woocommerce.android.ui.coupons.edit.EditCouponViewModel$Mode" />
+            app:argType="com.cataloghub.android.ui.coupons.edit.EditCouponViewModel$Mode" />
         <action
             android:id="@+id/action_editCouponFragment_to_productSelectorFragment"
             app:destination="@id/nav_graph_product_selector" >
             <argument
                 android:name="selectedItems"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$SelectedItem[]" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$SelectedItem[]" />
             <argument
                 android:name="productSelectorFlow"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
         </action>
         <action
             android:id="@+id/action_editCouponFragment_to_couponRestrictionsFragment"
@@ -59,11 +59,11 @@
     </fragment>
     <fragment
         android:id="@+id/couponRestrictionsFragment"
-        android:name="com.woocommerce.android.ui.coupons.edit.CouponRestrictionsFragment"
+        android:name="com.cataloghub.android.ui.coupons.edit.CouponRestrictionsFragment"
         android:label="CouponRestrictionsFragment">
         <argument
             android:name="restrictions"
-            app:argType="com.woocommerce.android.model.Coupon$CouponRestrictions" />
+            app:argType="com.cataloghub.android.model.Coupon$CouponRestrictions" />
         <argument
             android:name="currencyCode"
             app:argType="string" />
@@ -81,15 +81,15 @@
             app:destination="@id/nav_graph_product_selector" >
             <argument
                 android:name="selectedItems"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$SelectedItem[]" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$SelectedItem[]" />
             <argument
                 android:name="productSelectorFlow"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/productCategorySelectorFragment"
-        android:name="com.woocommerce.android.ui.products.categories.selector.ProductCategorySelectorFragment"
+        android:name="com.cataloghub.android.ui.products.categories.selector.ProductCategorySelectorFragment"
         android:label="ProductCategorySelectorFragment">
         <argument
             android:name="categoryIds"
@@ -97,7 +97,7 @@
     </fragment>
     <fragment
         android:id="@+id/emailRestrictionFragment"
-        android:name="com.woocommerce.android.ui.coupons.edit.EmailRestrictionFragment"
+        android:name="com.cataloghub.android.ui.coupons.edit.EmailRestrictionFragment"
         android:label="EmailRestrictionFragment">
         <argument
             android:name="allowedEmails"

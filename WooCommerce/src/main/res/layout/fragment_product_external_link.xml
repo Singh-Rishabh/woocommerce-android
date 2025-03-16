@@ -18,13 +18,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.woocommerce.android.widgets.WCElevatedLinearLayout
+        <com.cataloghub.android.widgets.WCElevatedLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingBottom="@dimen/major_100">
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/product_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                 android:inputType="text"
                 app:helperText="@string/product_external_link_label" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/product_button_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                 android:hint="@string/product_external_link_button_text"
                 android:inputType="text"
                 app:helperText="@string/product_external_link_button_text_label" />
-        </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+        </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
     </ScrollView>
 

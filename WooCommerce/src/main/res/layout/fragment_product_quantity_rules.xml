@@ -40,7 +40,7 @@
                         android:screenReaderFocusable="true"
                         tools:ignore="UnusedAttribute">
 
-                        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                             android:id="@+id/min_quantity"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                             android:layout_marginBottom="@dimen/major_100"
                             android:hint="@string/min_quantity"
                             android:inputType="numberDecimal" />
-                        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                             android:id="@+id/max_quantity"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
                             android:layout_marginBottom="@dimen/major_100"
                             android:hint="@string/max_quantity"
                             android:inputType="numberDecimal" />
-                        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                             android:id="@+id/group_of"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

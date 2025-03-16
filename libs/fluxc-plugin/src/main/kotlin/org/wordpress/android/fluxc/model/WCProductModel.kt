@@ -21,7 +21,7 @@ import org.wordpress.android.util.AppLog
 import org.wordpress.android.util.AppLog.T
 
 /**
- * Single Woo product - see http://woocommerce.github.io/woocommerce-rest-api-docs/#product-properties
+ * Single Woo product - see http://cataloghub.github.io/cataloghub-rest-api-docs/#product-properties
  * Note that products have more properties than we support below
  */
 @Table(addOn = WellSqlConfig.ADDON_WOOCOMMERCE)
@@ -390,10 +390,10 @@ data class WCProductModel(@PrimaryKey @Column private var id: Int = 0) : Identif
      * variations, groupedProductIds, upsellIds, crossSellIds
      *
      * There are some instances where the [jsonString] param can be a JsonArray or a JsonElement.
-     * https://github.com/woocommerce/woocommerce-android/issues/2374
+     * https://github.com/cataloghub/cataloghub-android/issues/2374
      *
      * And there are some instances where the [jsonString] can be a JsonArray of JsonObjects
-     * https://github.com/woocommerce/woocommerce-android/issues/6737
+     * https://github.com/cataloghub/cataloghub-android/issues/6737
      *
      * To address the above issues, we check if the [jsonString] param is a JsonArray or
      * a JsonElement, then we check each item if it's a JsonPrimitive or JsonObject and return

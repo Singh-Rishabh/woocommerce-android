@@ -23,12 +23,12 @@
 
     </LinearLayout>
 
-    <com.woocommerce.android.widgets.WCElevatedLinearLayout
+    <com.cataloghub.android.widgets.WCElevatedLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/last_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-    </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+    </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
     <LinearLayout
         android:id="@+id/address_header_container"
@@ -96,13 +96,13 @@
 
     </LinearLayout>
 
-    <com.woocommerce.android.widgets.WCElevatedLinearLayout
+    <com.cataloghub.android.widgets.WCElevatedLinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/minor_100"
         android:orientation="vertical">
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/company"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/address1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/address2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/city"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/postcode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -162,7 +162,7 @@
             android:saveEnabled="false"
             app:errorEnabled="true" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
             android:id="@+id/countrySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -171,7 +171,7 @@
             android:inputType="text"
             android:saveEnabled="false" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/stateEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
             android:id="@+id/stateSpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -194,6 +194,6 @@
             android:inputType="text"
             android:saveEnabled="false" />
 
-    </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+    </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
 </LinearLayout>

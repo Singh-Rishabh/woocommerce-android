@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.woocommerce.android.ui.products.grouped.GroupedProductListFragment">
+    tools:context="com.cataloghub.android.ui.products.grouped.GroupedProductListFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:title="@string/app_name" />
 
-    <com.woocommerce.android.ui.products.AddProductElementView
+    <com.cataloghub.android.ui.products.AddProductElementView
         android:id="@+id/addGroupedProductView"
         style="@style/Woo.Card"
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         tools:listitem="@layout/product_list_item"
         tools:visibility="visible" />
 
-    <com.woocommerce.android.widgets.WCEmptyView
+    <com.cataloghub.android.widgets.WCEmptyView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"

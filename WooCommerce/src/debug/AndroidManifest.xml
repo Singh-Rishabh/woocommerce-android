@@ -33,7 +33,7 @@
             android:exported="false" />
 
         <activity
-            android:name="com.woocommerce.android.ui.woopos.root.WooPosActivity"
+            android:name="com.cataloghub.android.ui.woopos.root.WooPosActivity"
             android:exported="true"
             tools:replace="android:exported" />
 

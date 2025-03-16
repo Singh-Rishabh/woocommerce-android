@@ -31,7 +31,7 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <com.woocommerce.android.widgets.WCElevatedLinearLayout
+        <com.cataloghub.android.widgets.WCElevatedLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
@@ -94,6 +94,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/shippingLabelPrint_paperSize" />
 
-        </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+        </com.cataloghub.android.widgets.WCElevatedLinearLayout>
     </ScrollView>
 </LinearLayout>

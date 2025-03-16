@@ -1,0 +1,62 @@
+package com.cataloghub.android.ui.orders.details
+
+import com.cataloghub.android.WooException
+import com.cataloghub.android.model.Subscription
+import com.cataloghub.android.tools.SelectedSite
+import com.cataloghub.android.ui.common.subscription.SubscriptionRepository
+import com.cataloghub.android.util.CoroutineDispatchers
+import kotlinx.coroutines.withContext
+import org.wordpress.android.fluxc.model.metadata.WCMetaData
+import org.wordpress.android.fluxc.model.metadata.WCMetaDataValue
+import org.wordpress.android.fluxc.store.WCOrderStore
+import javax.inject.Inject
+
+class GetOrderSubscriptions @Inject constructor(
+    private val selectedSite: SelectedSite,
+    private val orderStore: WCOrderStore,
+    private val subscriptionRepository: SubscriptionRepository,
+    private val dispatchers: CoroutineDispatchers,
+) {
+    suspend operator fun invoke(orderId: Long): Result<List<Subscription>> {
+        return withContext(dispatchers.io) {
+            val renewalId = getRenewalId(orderId)
+            if (renewalId != null) {
+                getRenewalSubscription(renewalId)
+            } else {
+                getSubscriptions(orderId)
+            }
+        }
+    }
+
+    private suspend fun getRenewalId(orderId: Long): Long? {
+        val metadataList = orderStore.getOrderMetadata(orderId, selectedSite.get())
+        val renewal = metadataList.find { metadata ->
+            metadata.key == WCMetaData.SubscriptionMetadataKeys.SUBSCRIPTION_RENEWAL
+        }
+        return (renewal?.value as? WCMetaDataValue.NumberValue)?.number?.toLong()
+    }
+
+    private suspend fun getRenewalSubscription(subscriptionId: Long): Result<List<Subscription>> {
+        val result = subscriptionRepository.fetchSubscriptionsById(
+            site = selectedSite.get(),
+            subscriptionId = subscriptionId
+        )
+        return when {
+            result.isError -> Result.failure(WooException(result.error))
+            result.model != null -> Result.success(listOf(result.model!!))
+            else -> Result.failure(Exception("Error fetching renewal subscription"))
+        }
+    }
+
+    private suspend fun getSubscriptions(orderId: Long): Result<List<Subscription>> {
+        val result = subscriptionRepository.fetchSubscriptionsByOrderId(
+            site = selectedSite.get(),
+            orderId = orderId
+        )
+        return when {
+            result.isError -> Result.failure(WooException(result.error))
+            result.model != null -> Result.success(result.model!!)
+            else -> Result.failure(Exception("Error fetching subscriptions"))
+        }
+    }
+}

@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/stockQuantityEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

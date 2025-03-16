@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/product_menu_order"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

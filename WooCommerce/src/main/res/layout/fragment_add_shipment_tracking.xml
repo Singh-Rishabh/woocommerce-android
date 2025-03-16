@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingFragment">
+    tools:context="com.cataloghub.android.ui.payments.cardreader.onboarding.CardReaderOnboardingFragment">
 
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -25,7 +25,7 @@
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.woocommerce.android.ui.orders.tracking.AddOrderShipmentTrackingFragment">
+        tools:context="com.cataloghub.android.ui.orders.tracking.AddOrderShipmentTrackingFragment">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/snack_root"

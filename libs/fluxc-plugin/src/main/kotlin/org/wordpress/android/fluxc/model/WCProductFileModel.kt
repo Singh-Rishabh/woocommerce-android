@@ -4,7 +4,7 @@ import com.google.gson.JsonObject
 
 /**
  * This class represents a downloadable file:
- *      http://woocommerce.github.io/woocommerce-rest-api-docs/?shell#product-downloads-properties
+ *      http://cataloghub.github.io/cataloghub-rest-api-docs/?shell#product-downloads-properties
  *
  * The id is nullable as during the creation of downloadable file, we send the payload without any id, and we get the
  * created ID in the response.

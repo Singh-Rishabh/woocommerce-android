@@ -24,7 +24,7 @@
                 android:layout_height="match_parent">
 
                 <!-- Login User Info -->
-                <com.woocommerce.android.ui.sitepicker.views.LoginUserInfoView
+                <com.cataloghub.android.ui.sitepicker.views.LoginUserInfoView
                     android:id="@+id/login_user_info"
                     style="@style/Woo.Card.WithoutPadding"
                     android:layout_width="0dp"
@@ -64,7 +64,7 @@
                     app:layout_constraintVertical_bias="0" />
 
                 <!-- Login no stores view -->
-                <com.woocommerce.android.ui.sitepicker.views.LoginNoStoresView
+                <com.cataloghub.android.ui.sitepicker.views.LoginNoStoresView
                     android:id="@+id/no_stores_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

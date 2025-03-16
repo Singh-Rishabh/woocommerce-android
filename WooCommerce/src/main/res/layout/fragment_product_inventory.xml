@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content">
 
                 <!-- Product SKU -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_sku"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- Product Global Unique Id -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_global_unique_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/product_global_unique_id" />
 
                 <!-- Product Stock Status -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                     android:id="@+id/edit_product_stock_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -106,7 +106,7 @@
                     app:layout_goneMarginBottom="@dimen/major_75"
                     tools:visibility="gone">
 
-                    <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                    <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                         android:id="@+id/product_stock_quantity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                         app:helperText="@string/product_inventory_quantity_summary" />
 
                     <!-- Product Stock Status -->
-                    <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                    <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                         android:id="@+id/edit_product_backorders"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

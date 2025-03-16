@@ -57,7 +57,7 @@
     <ID>ExplicitItLambdaParameter:WCSSRModelExt.kt${ it -&gt; sb.append(parseFormatTablesData(it, "woocommerce")) .append(parseFormatTablesData(it, "other")) }</ID>
     <ID>ExplicitItLambdaParameter:WCSSRModelExt.kt${ it -&gt; try { sb.append(formatEnvironmentData(JSONObject(it))) } catch (e: JSONException) { WooLog.e(WooLog.T.UTILS, e) } }</ID>
     <ID>ExplicitItLambdaParameter:ZendeskTicketRepository.kt$ZendeskTicketRepository${ it -&gt; // Add wpcom tag if at least one site is WordPress.com site if (it.any { it.isWPCom }) { tags.add(ZendeskTags.wpComTag) } // Add Jetpack tag if at least one site is Jetpack connected. Even if a site is Jetpack connected, // it does not necessarily mean that user is connected with the REST API, but we don't care about that here if (it.any { it.isJetpackConnected }) { tags.add(ZendeskTags.jetpackTag) } // Find distinct plans and add them val plans = it.asSequence().mapNotNull { it.planShortName }.distinct().toList() tags.addAll(plans) }</ID>
-    <ID>Filename:JSONArray+iterator.kt$com.woocommerce.android.e2e.helpers.util.JSONArray+iterator.kt</ID>
+    <ID>Filename:JSONArray+iterator.kt$com.cataloghub.android.e2e.helpers.util.JSONArray+iterator.kt</ID>
     <ID>ForEachOnRange:AlignedDividerDecoration.kt$AlignedDividerDecoration$(0..adjustedChildCount) .map { parent.getChildAt(it) }</ID>
     <ID>ForbiddenComment:AddressUtils.kt$AddressUtils$// TODO: soon to be deprecated</ID>
     <ID>ForbiddenComment:CreateShippingLabelViewModel.kt$CreateShippingLabelViewModel$// TODO: Once we start supporting countries other than the US, we'll need to verify what currency the shipping labels purchases use</ID>
@@ -157,38 +157,54 @@
     <ID>NestedBlockDepth:SectionedRecyclerViewAdapter.kt$SectionedRecyclerViewAdapter$override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int)</ID>
     <ID>NoSemicolons:CardReaderDetailFragment.kt$CardReaderDetailFragment$;</ID>
     <ID>NoWildcardImports:AboutConfigBuilder.kt$import com.automattic.about.model.*</ID>
-    <ID>NoWildcardImports:AddOrderNoteViewModel.kt$import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.*</ID>
+    <ID>NoWildcardImports:AddOrderNoteViewModel.kt$import
+        com.cataloghub.android.viewmodel.MultiLiveEvent.Event.*</ID>
     <ID>NoWildcardImports:AddonTestFixtures.kt$import org.wordpress.android.fluxc.domain.Addon.HasAdjustablePrice.Price.Adjusted.*</ID>
     <ID>NoWildcardImports:AddonsExt.kt$import org.wordpress.android.fluxc.domain.Addon.HasAdjustablePrice.Price.Adjusted.PriceType.*</ID>
-    <ID>NoWildcardImports:CreateShippingLabelEvent.kt$import com.woocommerce.android.model.*</ID>
-    <ID>NoWildcardImports:CreateShippingLabelTestUtils.kt$import com.woocommerce.android.model.*</ID>
-    <ID>NoWildcardImports:EditShippingLabelPaymentViewModelTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.EditShippingLabelPaymentViewModel.*</ID>
+    <ID>NoWildcardImports:CreateShippingLabelEvent.kt$import com.cataloghub.android.model.*</ID>
+    <ID>NoWildcardImports:CreateShippingLabelTestUtils.kt$import com.cataloghub.android.model.*</ID>
+    <ID>NoWildcardImports:EditShippingLabelPaymentViewModelTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.EditShippingLabelPaymentViewModel.*</ID>
     <ID>NoWildcardImports:FeatureAnnouncementDialogFragment.kt$import android.view.*</ID>
-    <ID>NoWildcardImports:FeatureFeedbackSettingsTest.kt$import com.woocommerce.android.model.FeatureFeedbackSettings.*</ID>
+    <ID>NoWildcardImports:FeatureFeedbackSettingsTest.kt$import
+        com.cataloghub.android.model.FeatureFeedbackSettings.*</ID>
     <ID>NoWildcardImports:InfiniteListHandler.kt$import androidx.compose.runtime.*</ID>
-    <ID>NoWildcardImports:MagicLinkInterceptRepository.kt$import com.woocommerce.android.model.RequestResult.*</ID>
+    <ID>NoWildcardImports:MagicLinkInterceptRepository.kt$import
+        com.cataloghub.android.model.RequestResult.*</ID>
     <ID>NoWildcardImports:MagicLinkInterceptRepository.kt$import org.wordpress.android.fluxc.store.AccountStore.*</ID>
-    <ID>NoWildcardImports:MarkAllReviewsAsSeen.kt$import com.woocommerce.android.model.RequestResult.*</ID>
-    <ID>NoWildcardImports:MoveShippingItemViewModel.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.MoveShippingItemViewModel.DestinationPackage.*</ID>
+    <ID>NoWildcardImports:MarkAllReviewsAsSeen.kt$import
+        com.cataloghub.android.model.RequestResult.*</ID>
+    <ID>NoWildcardImports:MoveShippingItemViewModel.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.MoveShippingItemViewModel.DestinationPackage.*</ID>
     <ID>NoWildcardImports:NumberRounding.kt$import kotlin.math.*</ID>
-    <ID>NoWildcardImports:PaymentManager.kt$import com.woocommerce.android.cardreader.payments.CardPaymentStatus.*</ID>
-    <ID>NoWildcardImports:PrintShippingLabelCustomsFormFragment.kt$import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.*</ID>
-    <ID>NoWildcardImports:ProductImagesUploadWorker.kt$import com.woocommerce.android.media.MediaFilesRepository.UploadResult.*</ID>
+    <ID>NoWildcardImports:PaymentManager.kt$import
+        com.cataloghub.android.cardreader.payments.CardPaymentStatus.*</ID>
+    <ID>NoWildcardImports:PrintShippingLabelCustomsFormFragment.kt$import
+        com.cataloghub.android.viewmodel.MultiLiveEvent.Event.*</ID>
+    <ID>NoWildcardImports:ProductImagesUploadWorker.kt$import
+        com.cataloghub.android.media.MediaFilesRepository.UploadResult.*</ID>
     <ID>NoWildcardImports:ProductImagesUploadWorker.kt$import kotlinx.coroutines.*</ID>
     <ID>NoWildcardImports:ProductImagesUploadWorker.kt$import kotlinx.coroutines.flow.*</ID>
     <ID>NoWildcardImports:Refund.kt$import org.wordpress.android.fluxc.model.refunds.WCRefundModel.*</ID>
-    <ID>NoWildcardImports:ReviewListRepository.kt$import com.woocommerce.android.model.RequestResult.*</ID>
+    <ID>NoWildcardImports:ReviewListRepository.kt$import
+        com.cataloghub.android.model.RequestResult.*</ID>
     <ID>NoWildcardImports:ReviewListRepository.kt$import org.wordpress.android.fluxc.store.NotificationStore.*</ID>
-    <ID>NoWildcardImports:ReviewModerationHandler.kt$import com.woocommerce.android.model.ActionStatus.*</ID>
+    <ID>NoWildcardImports:ReviewModerationHandler.kt$import
+        com.cataloghub.android.model.ActionStatus.*</ID>
     <ID>NoWildcardImports:ReviewModerationHandler.kt$import kotlinx.coroutines.*</ID>
     <ID>NoWildcardImports:ReviewModerationHandler.kt$import kotlinx.coroutines.flow.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachine.kt$import com.woocommerce.android.model.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachine.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachine.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.model.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
-    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachine.kt$import com.cataloghub.android.model.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachine.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachine.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import com.cataloghub.android.model.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
+    <ID>NoWildcardImports:ShippingLabelsStateMachineTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
     <ID>ParameterListWrapping:MainSettingsModule.kt$MainSettingsModule$(mainSettingsPresenter: MainSettingsPresenter)</ID>
     <ID>PrintStackTrace:TestIdler.kt$TestIdler$e</ID>
     <ID>ReturnCount:AddOrderShipmentTrackingViewModel.kt$AddOrderShipmentTrackingViewModel$fun onAddButtonTapped()</ID>
@@ -277,37 +293,50 @@
     <ID>UseRequire:StatelessSection.kt$StatelessSection$throw IllegalArgumentException("Stateless section shouldn't have an empty state resource")</ID>
     <ID>VariableNaming:ScopedViewModel.kt$ScopedViewModel$protected open val _event: MutableLiveData&lt;Event&gt; = MultiLiveEvent()</ID>
     <ID>WildcardImport:AboutConfigBuilder.kt$import com.automattic.about.model.*</ID>
-    <ID>WildcardImport:AddOrderNoteViewModel.kt$import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.*</ID>
+    <ID>WildcardImport:AddOrderNoteViewModel.kt$import
+        com.cataloghub.android.viewmodel.MultiLiveEvent.Event.*</ID>
     <ID>WildcardImport:AddonTestFixtures.kt$import org.wordpress.android.fluxc.domain.Addon.HasAdjustablePrice.Price.Adjusted.*</ID>
     <ID>WildcardImport:AddonsExt.kt$import org.wordpress.android.fluxc.domain.Addon.HasAdjustablePrice.Price.Adjusted.PriceType.*</ID>
-    <ID>WildcardImport:CreateShippingLabelEvent.kt$import com.woocommerce.android.model.*</ID>
-    <ID>WildcardImport:CreateShippingLabelTestUtils.kt$import com.woocommerce.android.model.*</ID>
-    <ID>WildcardImport:EditShippingLabelPaymentViewModelTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.EditShippingLabelPaymentViewModel.*</ID>
+    <ID>WildcardImport:CreateShippingLabelEvent.kt$import com.cataloghub.android.model.*</ID>
+    <ID>WildcardImport:CreateShippingLabelTestUtils.kt$import com.cataloghub.android.model.*</ID>
+    <ID>WildcardImport:EditShippingLabelPaymentViewModelTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.EditShippingLabelPaymentViewModel.*</ID>
     <ID>WildcardImport:FeatureAnnouncementDialogFragment.kt$import android.view.*</ID>
-    <ID>WildcardImport:FeatureFeedbackSettingsTest.kt$import com.woocommerce.android.model.FeatureFeedbackSettings.*</ID>
+    <ID>WildcardImport:FeatureFeedbackSettingsTest.kt$import
+        com.cataloghub.android.model.FeatureFeedbackSettings.*</ID>
     <ID>WildcardImport:InfiniteListHandler.kt$import androidx.compose.runtime.*</ID>
-    <ID>WildcardImport:MagicLinkInterceptRepository.kt$import com.woocommerce.android.model.RequestResult.*</ID>
+    <ID>WildcardImport:MagicLinkInterceptRepository.kt$import
+        com.cataloghub.android.model.RequestResult.*</ID>
     <ID>WildcardImport:MagicLinkInterceptRepository.kt$import org.wordpress.android.fluxc.store.AccountStore.*</ID>
-    <ID>WildcardImport:MarkAllReviewsAsSeen.kt$import com.woocommerce.android.model.RequestResult.*</ID>
-    <ID>WildcardImport:MoveShippingItemViewModel.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.MoveShippingItemViewModel.DestinationPackage.*</ID>
+    <ID>WildcardImport:MarkAllReviewsAsSeen.kt$import com.cataloghub.android.model.RequestResult.*</ID>
+    <ID>WildcardImport:MoveShippingItemViewModel.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.MoveShippingItemViewModel.DestinationPackage.*</ID>
     <ID>WildcardImport:NumberRounding.kt$import kotlin.math.*</ID>
-    <ID>WildcardImport:PaymentManager.kt$import com.woocommerce.android.cardreader.payments.CardPaymentStatus.*</ID>
-    <ID>WildcardImport:PrintShippingLabelCustomsFormFragment.kt$import com.woocommerce.android.viewmodel.MultiLiveEvent.Event.*</ID>
-    <ID>WildcardImport:ProductImagesUploadWorker.kt$import com.woocommerce.android.media.MediaFilesRepository.UploadResult.*</ID>
+    <ID>WildcardImport:PaymentManager.kt$import
+        com.cataloghub.android.cardreader.payments.CardPaymentStatus.*</ID>
+    <ID>WildcardImport:PrintShippingLabelCustomsFormFragment.kt$import
+        com.cataloghub.android.viewmodel.MultiLiveEvent.Event.*</ID>
+    <ID>WildcardImport:ProductImagesUploadWorker.kt$import
+        com.cataloghub.android.media.MediaFilesRepository.UploadResult.*</ID>
     <ID>WildcardImport:ProductImagesUploadWorker.kt$import kotlinx.coroutines.*</ID>
     <ID>WildcardImport:ProductImagesUploadWorker.kt$import kotlinx.coroutines.flow.*</ID>
     <ID>WildcardImport:Refund.kt$import org.wordpress.android.fluxc.model.refunds.WCRefundModel.*</ID>
-    <ID>WildcardImport:ReviewListRepository.kt$import com.woocommerce.android.model.RequestResult.*</ID>
+    <ID>WildcardImport:ReviewListRepository.kt$import com.cataloghub.android.model.RequestResult.*</ID>
     <ID>WildcardImport:ReviewListRepository.kt$import org.wordpress.android.fluxc.store.NotificationStore.*</ID>
-    <ID>WildcardImport:ReviewModerationHandler.kt$import com.woocommerce.android.model.ActionStatus.*</ID>
+    <ID>WildcardImport:ReviewModerationHandler.kt$import com.cataloghub.android.model.ActionStatus.*</ID>
     <ID>WildcardImport:ReviewModerationHandler.kt$import kotlinx.coroutines.*</ID>
     <ID>WildcardImport:ReviewModerationHandler.kt$import kotlinx.coroutines.flow.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachine.kt$import com.woocommerce.android.model.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachine.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachine.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.model.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
-    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachine.kt$import com.cataloghub.android.model.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachine.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachine.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import com.cataloghub.android.model.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.Step.*</ID>
+    <ID>WildcardImport:ShippingLabelsStateMachineTest.kt$import
+        com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelsStateMachine.StepStatus.*</ID>
   </CurrentIssues>
 </SmellBaseline>

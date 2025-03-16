@@ -14,7 +14,7 @@
         android:elevation="@dimen/appbar_elevation"
         tools:title="@string/app_name" />
 
-    <com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout
+    <com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout
         android:id="@+id/componentDetailsRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -50,7 +50,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <com.woocommerce.android.widgets.BorderedImageView
+                            <com.cataloghub.android.widgets.BorderedImageView
                                 android:id="@+id/componentImage"
                                 android:layout_width="wrap_content"
                                 android:layout_height="@dimen/image_major_120"
@@ -192,5 +192,5 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/componentDetails" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout>
+    </com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout>
 </LinearLayout>

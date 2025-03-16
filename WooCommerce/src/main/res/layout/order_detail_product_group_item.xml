@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:background="?selectableItemBackgroundBorderless"/>
 
-        <com.woocommerce.android.ui.orders.OrderDetailProductItemView
+        <com.cataloghub.android.ui.orders.OrderDetailProductItemView
             android:id="@+id/productInfo_groupedProduct"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

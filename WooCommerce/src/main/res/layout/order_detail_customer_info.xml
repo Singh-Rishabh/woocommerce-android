@@ -46,7 +46,7 @@
                 android:layout_marginBottom="@dimen/minor_50"
                 android:text="@string/orderdetail_customer_provided_note" />
 
-            <com.woocommerce.android.widgets.WCActionableEmptyLabel
+            <com.cataloghub.android.widgets.WCActionableEmptyLabel
                 android:id="@+id/customerInfo_customerNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -82,7 +82,7 @@
                     android:layout_marginBottom="@dimen/minor_50"
                     android:text="@string/orderdetail_shipping_details" />
 
-                <com.woocommerce.android.widgets.WCActionableEmptyLabel
+                <com.cataloghub.android.widgets.WCActionableEmptyLabel
                     android:id="@+id/customerInfo_shippingAddr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -163,7 +163,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/customerInfo_divider" />
 
                 <!-- Billing Address -->
-                <com.woocommerce.android.widgets.WCActionableEmptyLabel
+                <com.cataloghub.android.widgets.WCActionableEmptyLabel
                     android:id="@+id/customerInfo_billingAddr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -186,7 +186,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/customerInfo_billingAddressSection" />
 
             <!-- Billing Phone -->
-            <com.woocommerce.android.widgets.WCSelectableTextView
+            <com.cataloghub.android.widgets.WCSelectableTextView
                 android:id="@+id/customerInfo_phone"
                 style="@style/Woo.Card.Body"
                 android:layout_width="wrap_content"
@@ -223,7 +223,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/customerInfo_callOrMessageBtn" />
 
             <!-- Email Address -->
-            <com.woocommerce.android.widgets.WCSelectableTextView
+            <com.cataloghub.android.widgets.WCSelectableTextView
                 android:id="@+id/customerInfo_emailAddr"
                 style="@style/Woo.Card.Body"
                 android:layout_width="wrap_content"

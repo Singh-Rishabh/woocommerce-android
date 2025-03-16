@@ -10,7 +10,7 @@
         android:paddingBottom="@dimen/minor_50"
         android:background="?attr/colorSurface">
 
-        <com.woocommerce.android.widgets.WCToggleOutlinedSelectorButton
+        <com.cataloghub.android.widgets.WCToggleOutlinedSelectorButton
             android:id="@+id/btn_product_sorting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.woocommerce.android.widgets.WCToggleOutlinedButton
+        <com.cataloghub.android.widgets.WCToggleOutlinedButton
             android:id="@+id/btn_product_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

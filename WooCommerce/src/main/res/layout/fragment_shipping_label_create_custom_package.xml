@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.woocommerce.android.widgets.WCElevatedConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.cataloghub.android.widgets.WCElevatedConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="@dimen/minor_100">
@@ -32,7 +32,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                 android:id="@+id/type_spinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/custom_package_form_info" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/type_spinner" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/length"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/width"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/length" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/height"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/width" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/weight"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -109,7 +109,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/height" />
-        </com.woocommerce.android.widgets.WCElevatedConstraintLayout>
+        </com.cataloghub.android.widgets.WCElevatedConstraintLayout>
 
     </ScrollView>
 </LinearLayout>

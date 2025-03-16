@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.woocommerce.android.widgets.WCElevatedLinearLayout
+    <com.cataloghub.android.widgets.WCElevatedLinearLayout
         android:id="@+id/showOrdersButtonFrameLinearLayout"
         style="@style/Woo.Card.WithoutPadding"
         android:layout_width="0dp"
@@ -65,6 +65,6 @@
             android:layout_marginBottom="@dimen/minor_100"
             android:text="@string/orderfilters_show_orders_button" />
 
-    </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+    </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

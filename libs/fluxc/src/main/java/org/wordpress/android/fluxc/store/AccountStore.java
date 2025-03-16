@@ -138,7 +138,7 @@ public class AccountStore extends Store {
 
     public enum AuthEmailPayloadScheme {
         WORDPRESS("wordpress"),
-        WOOCOMMERCE("woocommerce"),
+        WOOCOMMERCE("cataloghub"),
         JETPACK("jetpack");
 
         private final String mString;

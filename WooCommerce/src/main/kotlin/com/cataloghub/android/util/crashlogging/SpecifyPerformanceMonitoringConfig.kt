@@ -1,0 +1,30 @@
+package com.cataloghub.android.util.crashlogging
+
+import com.automattic.android.tracks.crashlogging.PerformanceMonitoringConfig
+import com.cataloghub.android.analytics.AnalyticsTrackerWrapper
+import com.cataloghub.android.util.BuildConfigWrapper
+import javax.inject.Inject
+
+class SpecifyPerformanceMonitoringConfig @Inject constructor(
+    private val buildConfig: BuildConfigWrapper,
+    private val analyticsWrapper: AnalyticsTrackerWrapper
+) {
+
+    private companion object {
+        const val PERFORMANCE_MONITORING_SAMPLE_RATE = 0.02
+        const val PROFILING_SAMPLE_RATE = 0.01
+    }
+
+    operator fun invoke(): PerformanceMonitoringConfig {
+        val userEnabled = analyticsWrapper.sendUsageStats
+
+        return if (!userEnabled || buildConfig.debug) {
+            PerformanceMonitoringConfig.Disabled
+        } else {
+            PerformanceMonitoringConfig.Enabled(
+                sampleRate = PERFORMANCE_MONITORING_SAMPLE_RATE,
+                profilesSampleRate = PROFILING_SAMPLE_RATE
+            )
+        }
+    }
+}

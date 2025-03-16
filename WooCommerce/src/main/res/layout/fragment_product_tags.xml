@@ -13,19 +13,19 @@
         android:elevation="@dimen/appbar_elevation"
         tools:title="@string/app_name" />
 
-    <com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/productTagsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.woocommerce.android.ui.products.tags.ProductTagsFragment">
+        tools:context="com.cataloghub.android.ui.products.tags.ProductTagsFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.woocommerce.android.ui.products.tags.AddProductTagView
+            <com.cataloghub.android.ui.products.tags.AddProductTagView
                 android:id="@+id/addProductTagView"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                 tools:listitem="@layout/product_tag_list_item"
                 tools:visibility="visible" />
 
-            <com.woocommerce.android.widgets.WCEmptyView
+            <com.cataloghub.android.widgets.WCEmptyView
                 android:id="@+id/empty_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -74,5 +74,5 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout>
+    </com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout>
 </LinearLayout>

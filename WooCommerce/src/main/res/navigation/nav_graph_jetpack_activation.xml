@@ -6,11 +6,11 @@
 
     <fragment
         android:id="@+id/jetpackActivationDispatcherFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.dispatcher.JetpackActivationDispatcherFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.dispatcher.JetpackActivationDispatcherFragment"
         android:label="JetpackActivationDispatcherFragment">
         <argument
             android:name="jetpackStatus"
-            app:argType="com.woocommerce.android.model.JetpackStatus" />
+            app:argType="com.cataloghub.android.model.JetpackStatus" />
         <argument
             android:name="siteUrl"
             app:argType="string" />
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationStartFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.start.JetpackActivationStartFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.start.JetpackActivationStartFragment"
         android:label="JetpackActivationStartFragment">
         <argument
             android:name="siteUrl"
@@ -54,7 +54,7 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationSiteCredentialsFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.sitecredentials.JetpackActivationSiteCredentialsFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.sitecredentials.JetpackActivationSiteCredentialsFragment"
         android:label="JetpackActivationSiteCredentialsFragment">
         <argument
             android:name="siteUrl"
@@ -70,7 +70,7 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationMainFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.main.JetpackActivationMainFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.main.JetpackActivationMainFragment"
         android:label="JetpackActivationMainFragment">
         <argument
             android:name="siteUrl"
@@ -84,11 +84,11 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationWPComEmailFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.wpcom.JetpackActivationWPComEmailFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.wpcom.JetpackActivationWPComEmailFragment"
         android:label="JetpackActivationWPComEmailFragment">
         <argument
             android:name="jetpackStatus"
-            app:argType="com.woocommerce.android.model.JetpackStatus" />
+            app:argType="com.cataloghub.android.model.JetpackStatus" />
         <action
             android:id="@+id/action_jetpackActivationWPComEmailFragment_to_jetpackActivationWPComPasswordFragment"
             app:destination="@id/jetpackActivationWPComPasswordFragment" />
@@ -102,11 +102,11 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationWPComPasswordFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.wpcom.JetpackActivationWPComPasswordFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.wpcom.JetpackActivationWPComPasswordFragment"
         android:label="JetpackActivationWPComPasswordFragment">
         <argument
             android:name="jetpackStatus"
-            app:argType="com.woocommerce.android.model.JetpackStatus" />
+            app:argType="com.cataloghub.android.model.JetpackStatus" />
         <argument
             android:name="emailOrUsername"
             app:argType="string" />
@@ -122,11 +122,11 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationWPCom2FAFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.wpcom.JetpackActivationWPCom2FAFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.wpcom.JetpackActivationWPCom2FAFragment"
         android:label="JetpackActivationWPCom2FAFragment">
         <argument
             android:name="jetpackStatus"
-            app:argType="com.woocommerce.android.model.JetpackStatus" />
+            app:argType="com.cataloghub.android.model.JetpackStatus" />
         <argument
             android:name="emailOrUsername"
             app:argType="string" />
@@ -139,11 +139,11 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationMagicLinkRequestFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.wpcom.JetpackActivationMagicLinkRequestFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.wpcom.JetpackActivationMagicLinkRequestFragment"
         android:label="JetpackActivationMagicLinkRequestFragment">
         <argument
             android:name="jetpackStatus"
-            app:argType="com.woocommerce.android.model.JetpackStatus" />
+            app:argType="com.cataloghub.android.model.JetpackStatus" />
         <argument
             android:name="emailOrUsername"
             app:argType="string" />
@@ -171,11 +171,11 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationMagicLinkHandlerFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.wpcom.JetpackActivationMagicLinkHandlerFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.wpcom.JetpackActivationMagicLinkHandlerFragment"
         android:label="JetpackActivationMagicLinkHandlerFragment">
         <argument
             android:name="jetpackStatus"
-            app:argType="com.woocommerce.android.model.JetpackStatus" />
+            app:argType="com.cataloghub.android.model.JetpackStatus" />
         <action
             android:id="@+id/action_jetpackActivationMagicLinkHandlerFragment_to_jetpackActivationMainFragment"
             app:destination="@id/jetpackActivationMainFragment"
@@ -184,7 +184,7 @@
     </fragment>
     <fragment
         android:id="@+id/jetpackActivationWebViewFragment"
-        android:name="com.woocommerce.android.ui.login.jetpack.connection.JetpackActivationWebViewFragment"
+        android:name="com.cataloghub.android.ui.login.jetpack.connection.JetpackActivationWebViewFragment"
         android:label="JetpackActivationWebViewFragment">
         <argument
             android:name="urlToLoad"

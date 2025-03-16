@@ -80,7 +80,7 @@ include ':WooCommerce'
 include ':libs:detektrules'
 
 gradle.ext.fluxCBinaryPath = "org.wordpress:fluxc"
-gradle.ext.fluxCWooCommercePluginBinaryPath = "org.wordpress.fluxc.plugins:woocommerce"
+gradle.ext.fluxCWooCommercePluginBinaryPath = "org.wordpress.fluxc.plugins:cataloghub"
 gradle.ext.loginFlowBinaryPath = "org.wordpress:login"
 gradle.ext.mediaPickerBinaryPath = "org.wordpress:mediapicker"
 gradle.ext.mediaPickerDomainBinaryPath = "org.wordpress.mediapicker:domain"

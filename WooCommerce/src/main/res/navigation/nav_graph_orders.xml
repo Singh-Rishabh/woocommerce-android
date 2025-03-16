@@ -12,7 +12,7 @@
 
     <dialog
         android:id="@+id/itemSelectorDialog"
-        android:name="com.woocommerce.android.ui.ItemSelectorDialog"
+        android:name="com.cataloghub.android.ui.ItemSelectorDialog"
         android:label="ItemSelectorDialog">
         <argument
             android:name="selectedItem"
@@ -35,7 +35,7 @@
     </dialog>
     <fragment
         android:id="@+id/printShippingLabelFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.PrintShippingLabelFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.PrintShippingLabelFragment"
         android:label="PrintShippingLabelFragment"
         tools:layout="@layout/fragment_print_shipping_label">
         <argument
@@ -69,7 +69,7 @@
     </fragment>
     <fragment
         android:id="@+id/printShippingLabelCustomsFormFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.PrintShippingLabelCustomsFormFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.PrintShippingLabelCustomsFormFragment"
         android:label="PrintShippingLabelCustomsFormFragment"
         tools:layout="@layout/fragment_print_label_customs_form">
         <argument
@@ -81,17 +81,17 @@
     </fragment>
     <fragment
         android:id="@+id/editShippingLabelAddressFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.EditShippingLabelAddressFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.EditShippingLabelAddressFragment"
         android:label="EditShippingLabelAddressFragment">
         <argument
             android:name="address"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
         <argument
             android:name="addressType"
-            app:argType="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelAddressValidator$AddressType" />
+            app:argType="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelAddressValidator$AddressType" />
         <argument
             android:name="validationResult"
-            app:argType="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelAddressValidator$ValidationResult"
+            app:argType="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelAddressValidator$ValidationResult"
             app:nullable="true" />
         <argument
             android:name="isCustomsFormRequired"
@@ -106,7 +106,7 @@
     </fragment>
     <fragment
         android:id="@+id/addOrderTrackingProviderListFragment"
-        android:name="com.woocommerce.android.ui.orders.tracking.AddOrderTrackingProviderListFragment"
+        android:name="com.cataloghub.android.ui.orders.tracking.AddOrderTrackingProviderListFragment"
         tools:layout="@layout/dialog_order_tracking_provider_list">
         <argument
             android:name="orderId"
@@ -118,7 +118,7 @@
     </fragment>
     <fragment
         android:id="@+id/addOrderNoteFragment"
-        android:name="com.woocommerce.android.ui.orders.notes.AddOrderNoteFragment"
+        android:name="com.cataloghub.android.ui.orders.notes.AddOrderNoteFragment"
         tools:layout="@layout/fragment_add_order_note">
         <argument
             android:name="orderId"
@@ -130,7 +130,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderFulfillFragment"
-        android:name="com.woocommerce.android.ui.orders.fulfill.OrderFulfillFragment"
+        android:name="com.cataloghub.android.ui.orders.fulfill.OrderFulfillFragment"
         tools:layout="@layout/fragment_order_fulfill">
         <argument
             android:name="orderId"
@@ -138,14 +138,14 @@
     </fragment>
     <dialog
         android:id="@+id/shippingLabelPaperSizeSelectorDialog"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelPaperSizeSelectorDialog">
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelPaperSizeSelectorDialog">
         <argument
             android:name="currentPaperSize"
-            app:argType="com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelPaperSizeSelectorDialog$ShippingLabelPaperSize" />
+            app:argType="com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelPaperSizeSelectorDialog$ShippingLabelPaperSize" />
     </dialog>
     <fragment
         android:id="@+id/refundDetailFragment"
-        android:name="com.woocommerce.android.ui.payments.refunds.RefundDetailFragment"
+        android:name="com.cataloghub.android.ui.payments.refunds.RefundDetailFragment"
         android:label="RefundDetailFragment">
         <argument
             android:name="orderId"
@@ -162,7 +162,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderDetailFragment"
-        android:name="com.woocommerce.android.ui.orders.details.OrderDetailFragment"
+        android:name="com.cataloghub.android.ui.orders.details.OrderDetailFragment"
         tools:layout="@layout/fragment_order_detail">
         <argument
             android:name="orderId"
@@ -257,7 +257,7 @@
             app:destination="@id/nav_graph_payment_flow">
             <argument
                 android:name="cardReaderFlowParam"
-                app:argType="com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderFlowParam"
+                app:argType="com.cataloghub.android.ui.payments.cardreader.onboarding.CardReaderFlowParam"
                 app:nullable="false" />
         </action>
         <action
@@ -269,14 +269,14 @@
             app:popExitAnim="@anim/activity_fade_out">
             <argument
                 android:name="mode"
-                app:argType="com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
+                app:argType="com.cataloghub.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
             <argument
                 android:name="sku"
                 app:argType="string"
                 app:nullable="true"/>
             <argument
                 android:name="barcodeFormat"
-                app:argType="com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper$BarcodeFormat"
+                app:argType="com.cataloghub.android.ui.orders.creation.GoogleBarcodeFormatMapper$BarcodeFormat"
                 app:nullable="true"/>
             <argument
                 android:name="giftCardCode"
@@ -311,24 +311,24 @@
     </fragment>
     <dialog
         android:id="@+id/orderStatusSelectorDialog"
-        android:name="com.woocommerce.android.ui.orders.details.OrderStatusSelectorDialog">
+        android:name="com.cataloghub.android.ui.orders.details.OrderStatusSelectorDialog">
         <argument
             android:name="currentStatus"
             app:argType="string"
             app:nullable="false" />
         <argument
             android:name="orderStatusList"
-            app:argType="com.woocommerce.android.model.Order$OrderStatus[]" />
+            app:argType="com.cataloghub.android.model.Order$OrderStatus[]" />
         <argument
             android:name="positiveButtonLabel"
             app:argType="integer" />
     </dialog>
     <fragment
         android:id="@+id/printShippingLabelInfoFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.PrintShippingLabelInfoFragment" />
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.PrintShippingLabelInfoFragment" />
     <fragment
         android:id="@+id/shippingLabelRefundFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelRefundFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelRefundFragment"
         android:label="ShippingLabelRefundFragment"
         tools:layout="@layout/fragment_shipping_label_refund">
         <argument
@@ -342,10 +342,10 @@
     </fragment>
     <fragment
         android:id="@+id/shippingLabelFormatOptionsFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.LabelFormatOptionsFragment" />
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.LabelFormatOptionsFragment" />
     <fragment
         android:id="@+id/createShippingLabelFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.CreateShippingLabelFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.CreateShippingLabelFragment"
         android:label="CreateShippingLabelFragment"
         tools:layout="@layout/fragment_create_shipping_label">
         <argument
@@ -395,26 +395,26 @@
     </fragment>
     <fragment
         android:id="@+id/shippingLabelAddressSuggestionFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelAddressSuggestionFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelAddressSuggestionFragment"
         android:label="ShippingLabelAddressSuggestionFragment">
         <argument
             android:name="enteredAddress"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
         <argument
             android:name="suggestedAddress"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
         <argument
             android:name="addressType"
-            app:argType="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelAddressValidator$AddressType" />
+            app:argType="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelAddressValidator$AddressType" />
     </fragment>
     <fragment
         android:id="@+id/barcodeScanningFragment"
-        android:name="com.woocommerce.android.ui.barcodescanner.BarcodeScanningFragment"
+        android:name="com.cataloghub.android.ui.barcodescanner.BarcodeScanningFragment"
         android:label="BarcodeScanningFragment"
         tools:layout="@layout/fragment_barcode_scanning" />
     <fragment
         android:id="@+id/addOrderShipmentTrackingFragment"
-        android:name="com.woocommerce.android.ui.orders.tracking.AddOrderShipmentTrackingFragment"
+        android:name="com.cataloghub.android.ui.orders.tracking.AddOrderShipmentTrackingFragment"
         tools:layout="@layout/fragment_add_shipment_tracking">
         <argument
             android:name="orderId"
@@ -437,7 +437,7 @@
     </fragment>
     <fragment
         android:id="@+id/editShippingLabelPackagesFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.EditShippingLabelPackagesFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.EditShippingLabelPackagesFragment"
         android:label="EditShippingLabelPackagesFragment"
         tools:layout="@layout/fragment_edit_shipping_label_packages">
         <argument
@@ -445,7 +445,7 @@
             app:argType="long" />
         <argument
             android:name="shippingLabelPackages"
-            app:argType="com.woocommerce.android.model.ShippingLabelPackage[]" />
+            app:argType="com.cataloghub.android.model.ShippingLabelPackage[]" />
         <action
             android:id="@+id/action_editShippingLabelPackagesFragment_to_shippingPackageSelectorFragment"
             app:destination="@id/shippingPackageSelectorFragment" />
@@ -461,7 +461,7 @@
     </fragment>
     <fragment
         android:id="@+id/shippingPackageSelectorFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingPackageSelectorFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingPackageSelectorFragment"
         android:label="ShippingPackageSelectorFragment"
         tools:layout="@layout/fragment_shipping_packages_selector">
         <argument
@@ -473,7 +473,7 @@
     </fragment>
     <fragment
         android:id="@+id/shippingLabelCreatePackageFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingLabelCreatePackageFragment"
         android:label="ShippingLabelCreatePackageFragment"
         tools:layout="@layout/fragment_shipping_label_create_package">
         <argument
@@ -482,38 +482,38 @@
     </fragment>
     <fragment
         android:id="@+id/editShippingLabelPaymentFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.EditShippingLabelPaymentFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.EditShippingLabelPaymentFragment"
         android:label="EditShippingLabelPaymentFragment"
         tools:layout="@layout/fragment_edit_shipping_label_payment">
     </fragment>
     <fragment
         android:id="@+id/shippingCarrierRatesFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingCarrierRatesFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingCarrierRatesFragment"
         android:label="ShippingCarrierRatesFragment"
         tools:layout="@layout/fragment_shipping_carrier_rates">
         <argument
             android:name="originAddress"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
         <argument
             android:name="destinationAddress"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
         <argument
             android:name="packages"
-            app:argType="com.woocommerce.android.model.ShippingLabelPackage[]" />
+            app:argType="com.cataloghub.android.model.ShippingLabelPackage[]" />
         <argument
             android:name="order"
-            app:argType="com.woocommerce.android.model.Order" />
+            app:argType="com.cataloghub.android.model.Order" />
         <argument
             android:name="customsPackages"
-            app:argType="com.woocommerce.android.model.CustomsPackage[]"
+            app:argType="com.cataloghub.android.model.CustomsPackage[]"
             app:nullable="true" />
         <argument
             android:name="selectedRates"
-            app:argType="com.woocommerce.android.model.ShippingRate[]" />
+            app:argType="com.cataloghub.android.model.ShippingRate[]" />
     </fragment>
     <fragment
         android:id="@+id/receiptPreviewFragment"
-        android:name="com.woocommerce.android.ui.payments.receipt.preview.ReceiptPreviewFragment"
+        android:name="com.cataloghub.android.ui.payments.receipt.preview.ReceiptPreviewFragment"
         android:label="ReceiptPreviewFragment"
         tools:layout="@layout/fragment_receipt_preview">
         <argument
@@ -533,12 +533,12 @@
     </fragment>
     <dialog
         android:id="@+id/printingInstructionsFragment"
-        android:name="com.woocommerce.android.ui.orders.details.PrintingInstructionsFragment"
+        android:name="com.cataloghub.android.ui.orders.details.PrintingInstructionsFragment"
         android:label="PrintingInstructionsFragment"
         tools:layout="@layout/fragment_printing_instructions" />
     <fragment
         android:id="@+id/shippingCustomsFragment"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingCustomsFragment"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.ShippingCustomsFragment"
         android:label="ShippingCustomsFragment"
         tools:layout="@layout/fragment_shipping_customs">
         <argument
@@ -549,35 +549,35 @@
             app:argType="string" />
         <argument
             android:name="shippingPackages"
-            app:argType="com.woocommerce.android.model.ShippingLabelPackage[]" />
+            app:argType="com.cataloghub.android.model.ShippingLabelPackage[]" />
         <argument
             android:name="customsPackages"
-            app:argType="com.woocommerce.android.model.CustomsPackage[]" />
+            app:argType="com.cataloghub.android.model.CustomsPackage[]" />
         <argument
             android:name="isEUShippingScenario"
             app:argType="boolean" />
     </fragment>
     <dialog
         android:id="@+id/moveShippingItemDialog"
-        android:name="com.woocommerce.android.ui.orders.shippinglabels.creation.MoveShippingItemDialog"
+        android:name="com.cataloghub.android.ui.orders.shippinglabels.creation.MoveShippingItemDialog"
         android:label="MoveShippingItemDialog"
         tools:layout="@layout/dialog_move_shipping_item">
         <argument
             android:name="item"
-            app:argType="com.woocommerce.android.model.ShippingLabelPackage$Item" />
+            app:argType="com.cataloghub.android.model.ShippingLabelPackage$Item" />
         <argument
             android:name="currentPackage"
-            app:argType="com.woocommerce.android.model.ShippingLabelPackage" />
+            app:argType="com.cataloghub.android.model.ShippingLabelPackage" />
         <argument
             android:name="packagesList"
-            app:argType="com.woocommerce.android.model.ShippingLabelPackage[]" />
+            app:argType="com.cataloghub.android.model.ShippingLabelPackage[]" />
     </dialog>
     <action
         android:id="@+id/action_global_addOrderShipmentTrackingFragment"
         app:destination="@id/addOrderShipmentTrackingFragment" />
     <fragment
         android:id="@+id/orderedAddonFragment"
-        android:name="com.woocommerce.android.ui.products.addons.order.OrderedAddonFragment"
+        android:name="com.cataloghub.android.ui.products.addons.order.OrderedAddonFragment"
         android:label="OrderedAddonFragment"
         tools:layout="@layout/fragment_ordered_addon">
         <argument
@@ -595,7 +595,7 @@
     </fragment>
     <fragment
         android:id="@+id/editCustomerOrderNoteFragment"
-        android:name="com.woocommerce.android.ui.orders.details.editing.CustomerOrderNoteEditingFragment"
+        android:name="com.cataloghub.android.ui.orders.details.editing.CustomerOrderNoteEditingFragment"
         android:label="EditCustomerOrderNoteFragment"
         tools:layout="@layout/fragment_order_create_edit_customer_note">
         <argument
@@ -605,21 +605,21 @@
     </fragment>
     <fragment
         android:id="@+id/shippingAddressEditingFragment"
-        android:name="com.woocommerce.android.ui.orders.details.editing.address.ShippingAddressEditingFragment"
+        android:name="com.cataloghub.android.ui.orders.details.editing.address.ShippingAddressEditingFragment"
         android:label="ShippingAddressEditingFragment"
         tools:layout="@layout/fragment_base_edit_address" >
         <argument
             android:name="storedAddress"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
     </fragment>
     <fragment
         android:id="@+id/billingAddressEditingFragment"
-        android:name="com.woocommerce.android.ui.orders.details.editing.address.BillingAddressEditingFragment"
+        android:name="com.cataloghub.android.ui.orders.details.editing.address.BillingAddressEditingFragment"
         android:label="BillingAddressEditingFragment"
         tools:layout="@layout/fragment_base_edit_address" >
         <argument
             android:name="storedAddress"
-            app:argType="com.woocommerce.android.model.Address" />
+            app:argType="com.cataloghub.android.model.Address" />
     </fragment>
     <action
         android:id="@+id/action_global_item_selector_dialog"
@@ -629,7 +629,7 @@
         app:destination="@id/searchFilterFragment" />
     <fragment
         android:id="@+id/searchFilterFragment"
-        android:name="com.woocommerce.android.ui.searchfilter.SearchFilterFragment"
+        android:name="com.cataloghub.android.ui.searchfilter.SearchFilterFragment"
         android:label="searchFilterFragment"
         tools:layout="@layout/fragment_search_filter">
         <argument
@@ -642,18 +642,18 @@
             app:argType="string" />
         <argument
             android:name="items"
-            app:argType="com.woocommerce.android.ui.searchfilter.SearchFilterItem[]" />
+            app:argType="com.cataloghub.android.ui.searchfilter.SearchFilterItem[]" />
         <argument
             android:name="requestKey"
             app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/installWcShippingFlowFragment"
-        android:name="com.woocommerce.android.ui.shipping.InstallWCShippingFragment"
+        android:name="com.cataloghub.android.ui.shipping.InstallWCShippingFragment"
         android:label="InstallWcShippingFlowFragment" />
     <dialog
         android:id="@+id/hazmatCategorySelectorDialog"
-        android:name="com.woocommerce.android.ui.ItemSelectorDialog"
+        android:name="com.cataloghub.android.ui.ItemSelectorDialog"
         android:label="ItemSelectorDialog">
         <argument
             android:name="selectedItem"
@@ -676,7 +676,7 @@
     </dialog>
     <dialog
         android:id="@+id/AIThankYouNoteBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.orders.AIThankYouNoteBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.orders.AIThankYouNoteBottomSheetFragment"
         android:label="AIThankYouNoteBottomSheetFragment">
         <argument
             android:name="customerName"
@@ -694,7 +694,7 @@
     </dialog>
     <fragment
         android:id="@+id/wooShippingLabelCreationFragment"
-        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationFragment"
+        android:name="com.cataloghub.android.ui.orders.wooshippinglabels.WooShippingLabelCreationFragment"
         android:label="WooShippingLabelCreationFragment" >
         <argument
             android:name="orderId"
@@ -716,7 +716,7 @@
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPackageCreationFragment"
-        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment"
+        android:name="com.cataloghub.android.ui.orders.wooshippinglabels.packages.WooShippingLabelPackageCreationFragment"
         android:label="WooShippingLabelPackageCreationFragment" >
 
         <action
@@ -726,11 +726,11 @@
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPurchasedFragment"
-        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
+        android:name="com.cataloghub.android.ui.orders.wooshippinglabels.purchased.WooShippingLabelPurchasedFragment"
         android:label="WooShippingLabelPurchasedFragment">
         <argument
             android:name="purchaseData"
-            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData" />
+            app:argType="com.cataloghub.android.ui.orders.wooshippinglabels.purchased.PurchasedShippingLabelData" />
 
         <action
             android:id="@+id/action_wooShippingLabelPurchasedFragment_to_printShippingLabelInfoFragment"
@@ -738,18 +738,18 @@
     </fragment>
     <fragment
         android:id="@+id/wooShippingEditOriginAddressFragment"
-        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginAddressFragment"
+        android:name="com.cataloghub.android.ui.orders.wooshippinglabels.address.origin.WooShippingEditOriginAddressFragment"
         android:label="WooShippingEditOriginAddressFragment" >
         <argument
             android:name="originAddress"
-            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
+            app:argType="com.cataloghub.android.ui.orders.wooshippinglabels.models.OriginShippingAddress" />
         <action
             android:id="@+id/action_search_filter_fragment"
             app:destination="@id/searchFilterFragment" />
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelCustomsFormFragment"
-        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment"
+        android:name="com.cataloghub.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormFragment"
         android:label="WooShippingLabelCustomsFormFragment" >
         <action
             android:id="@+id/action_wooShippingLabelCustomsFormFragment_to_itemSelectorDialog"

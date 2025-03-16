@@ -29,7 +29,7 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <com.woocommerce.android.widgets.WCElevatedConstraintLayout
+        <com.cataloghub.android.widgets.WCElevatedConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/minor_100"
@@ -171,6 +171,6 @@
                 android:text="@string/shipping_label_address_suggestion_edit_selected_address"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
-        </com.woocommerce.android.widgets.WCElevatedConstraintLayout>
+        </com.cataloghub.android.widgets.WCElevatedConstraintLayout>
     </ScrollView>
 </LinearLayout>

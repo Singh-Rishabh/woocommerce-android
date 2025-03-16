@@ -1,0 +1,36 @@
+package com.cataloghub.android.ui.woopos.common.di
+
+import com.cataloghub.android.ui.woopos.home.WooPosChildrenToParentCommunication
+import com.cataloghub.android.ui.woopos.home.WooPosChildrenToParentEventReceiver
+import com.cataloghub.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.cataloghub.android.ui.woopos.home.WooPosParentToChildrenCommunication
+import com.cataloghub.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.cataloghub.android.ui.woopos.home.WooPosParentToChildrenEventSender
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityRetainedComponent
+
+@InstallIn(ActivityRetainedComponent::class)
+@Module
+abstract class WooPosActivityModule {
+    @Binds
+    abstract fun bindParentToChildrenEventReceiver(
+        parentToChildrenCommunication: WooPosParentToChildrenCommunication
+    ): WooPosParentToChildrenEventReceiver
+
+    @Binds
+    abstract fun bindParentToChildrenEventSender(
+        parentToChildrenCommunication: WooPosParentToChildrenCommunication
+    ): WooPosParentToChildrenEventSender
+
+    @Binds
+    abstract fun bindChildrenToParentEventReceiver(
+        childToParentCommunication: WooPosChildrenToParentCommunication
+    ): WooPosChildrenToParentEventReceiver
+
+    @Binds
+    abstract fun bindChildrenToParentEventSender(
+        childToParentCommunication: WooPosChildrenToParentCommunication
+    ): WooPosChildrenToParentEventSender
+}

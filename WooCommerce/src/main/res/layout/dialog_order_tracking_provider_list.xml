@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.orders.tracking.AddOrderTrackingProviderListFragment">
+    tools:context="com.cataloghub.android.ui.orders.tracking.AddOrderTrackingProviderListFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"

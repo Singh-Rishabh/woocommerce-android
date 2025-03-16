@@ -19,7 +19,7 @@ fladle {
     variant = "vanillaDebug"
     serviceAccountCredentials = rootProject.file(".configure-files/firebase.secrets.json")
     testTargets = [
-            "notPackage com.woocommerce.android.e2e.tests.screenshot"
+            "notPackage com.cataloghub.android.e2e.tests.screenshot"
     ]
     devices = [
             ["model": "Pixel2.arm", "version": "30"]
@@ -28,7 +28,7 @@ fladle {
 
     maxTestShards = 50
     shardTime = 120
-    smartFlankGcsPath = "gs://fladle/woocommerce-android/smart-flank/JUnitReport.xml"
+    smartFlankGcsPath = "gs://fladle/cataloghub-android/smart-flank/JUnitReport.xml"
 }
 
 sentry {
@@ -62,12 +62,12 @@ sentry {
 def versionProperties = loadPropertiesFromFile(file("${rootDir}/version.properties"))
 
 android {
-    namespace "com.woocommerce.android"
+    namespace "com.cataloghub.android"
 
     compileSdk gradle.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.woocommerce.android"
+        applicationId "com.cataloghub.android"
 
         versionName versionProperties.getProperty("versionName")
         versionCode versionProperties.getProperty("versionCode").toInteger()
@@ -78,7 +78,7 @@ android {
         // P.S. Update the targetSdkVersion in all the modules, otherwise static analysis tools won't give you a heads-up about potential issues.
         targetSdkVersion gradle.ext.targetSdkVersion
 
-        testInstrumentationRunner 'com.woocommerce.android.WooCommerceTestRunner'
+        testInstrumentationRunner 'com.cataloghub.android.WooCommerceTestRunner'
         // TODO remove this once the hilt migration is complete
         javaCompileOptions.annotationProcessorOptions.arguments['dagger.hilt.disableModulesHaveInstallInCheck'] = 'true'
 
@@ -120,7 +120,7 @@ android {
         // Used for local development - preferred variant for developers.
         // AppName: WooCommerce (Dev)
         wasabi {
-            applicationId "com.woocommerce.android.dev"
+            applicationId "com.cataloghub.android.dev"
             dimension "buildType"
             isDefault true
 
@@ -131,7 +131,7 @@ android {
         // to install multiple versions of the app on the same device.
         // AppName: WooCommerce (PreAlpha)
         jalapeno {
-            applicationId "com.woocommerce.android.prealpha"
+            applicationId "com.cataloghub.android.prealpha"
             dimension "buildType"
         }
     }

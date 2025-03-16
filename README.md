@@ -35,7 +35,7 @@
 
     ```bash
     $ git clone https://github.com/woocommerce/woocommerce-android.git
-    $ cd woocommerce-android
+    $ cd cataloghub-android
     ```
 
 1. Copy `defaults.properties` to the secrets directory: `cp defaults.properties ~/.configure/woocommerce-android/secrets/secrets.properties`. See the [Configuration Files](docs/project-overview.md#configuration-files) section for a breakdown of the properties.

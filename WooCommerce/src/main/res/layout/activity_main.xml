@@ -97,7 +97,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:text="7 days left in your trial. Upgrade Now" />
 
-    <com.woocommerce.android.ui.network.OfflineStatusBarView
+    <com.cataloghub.android.ui.network.OfflineStatusBarView
         android:id="@+id/offline_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -106,7 +106,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.woocommerce.android.ui.main.MainBottomNavigationView
+    <com.cataloghub.android.ui.main.MainBottomNavigationView
         android:id="@+id/bottom_nav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

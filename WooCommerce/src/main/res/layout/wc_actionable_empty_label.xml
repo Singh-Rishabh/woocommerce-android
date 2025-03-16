@@ -15,7 +15,7 @@
         android:textColor="@color/color_icon_primary"
         tools:text="@string/order_detail_add_customer_note" />
 
-    <com.woocommerce.android.widgets.WCSelectableTextView
+    <com.cataloghub.android.widgets.WCSelectableTextView
         android:id="@+id/notEmptyLabel"
         style="@style/Woo.Card.Body"
         android:layout_width="match_parent"

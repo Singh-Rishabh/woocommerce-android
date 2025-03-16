@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.payments.cardreader.onboarding.CardReaderOnboardingFragment">
+    tools:context="com.cataloghub.android.ui.payments.cardreader.onboarding.CardReaderOnboardingFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"

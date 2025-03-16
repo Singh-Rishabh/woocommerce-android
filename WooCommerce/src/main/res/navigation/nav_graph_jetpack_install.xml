@@ -10,7 +10,7 @@
         app:destination="@id/jetpackCPInstallProgressDialog" />
     <dialog
         android:id="@+id/jetpackCPInstallStartDialog"
-        android:name="com.woocommerce.android.ui.jetpack.JetpackCPInstallStartDialog"
+        android:name="com.cataloghub.android.ui.jetpack.JetpackCPInstallStartDialog"
         android:label="JetpackCPInstallStartDialog"
         tools:layout="@layout/dialog_jetpack_install_start">
         <action
@@ -19,12 +19,12 @@
     </dialog>
     <dialog
         android:id="@+id/jetpackCPInstallProgressDialog"
-        android:name="com.woocommerce.android.ui.jetpack.JetpackCPInstallProgressDialog"
+        android:name="com.cataloghub.android.ui.jetpack.JetpackCPInstallProgressDialog"
         android:label="JetpackInstallProgressDialog"
         tools:layout="@layout/dialog_jetpack_install_progress" />
     <dialog
         android:id="@+id/jetpackBenefitsDialog"
-        android:name="com.woocommerce.android.ui.jetpack.benefits.JetpackBenefitsDialog"
+        android:name="com.cataloghub.android.ui.jetpack.benefits.JetpackBenefitsDialog"
         android:label="JetpackBenefitsDialog">
         <action
             android:id="@+id/action_jetpackBenefitsDialog_to_jetpackCPInstallStartDialog"
@@ -37,7 +37,7 @@
                 app:argType="string" />
             <argument
                 android:name="jetpackStatus"
-                app:argType="com.woocommerce.android.model.JetpackStatus" />
+                app:argType="com.cataloghub.android.model.JetpackStatus" />
         </action>
         <action
             android:id="@+id/action_jetpackBenefitsDialog_to_jetpackActivationEligibilityErrorFragment"
@@ -45,7 +45,7 @@
     </dialog>
     <fragment
         android:id="@+id/jetpackActivationEligibilityErrorFragment"
-        android:name="com.woocommerce.android.ui.jetpack.JetpackActivationEligibilityErrorFragment"
+        android:name="com.cataloghub.android.ui.jetpack.JetpackActivationEligibilityErrorFragment"
         android:label="JetpackActivationEligibilityErrorFragment">
         <argument
             android:name="username"
@@ -63,7 +63,7 @@
                 app:argType="string" />
             <argument
                 android:name="jetpackStatus"
-                app:argType="com.woocommerce.android.model.JetpackStatus" />
+                app:argType="com.cataloghub.android.model.JetpackStatus" />
         </action>
     </fragment>
 </navigation>

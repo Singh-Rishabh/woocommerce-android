@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/productSettingsFragment"
-        android:name="com.woocommerce.android.ui.products.settings.ProductSettingsFragment"
+        android:name="com.cataloghub.android.ui.products.settings.ProductSettingsFragment"
         tools:layout="@layout/fragment_product_settings">
         <argument
             android:name="remoteProductId"
@@ -35,7 +35,7 @@
 
     <fragment
         android:id="@+id/productStatusFragment"
-        android:name="com.woocommerce.android.ui.products.settings.ProductStatusFragment"
+        android:name="com.cataloghub.android.ui.products.settings.ProductStatusFragment"
         tools:layout="@layout/fragment_product_status">
         <argument
             android:name="status"
@@ -45,7 +45,7 @@
 
     <fragment
         android:id="@+id/productCatalogVisibilityFragment"
-        android:name="com.woocommerce.android.ui.products.settings.ProductCatalogVisibilityFragment"
+        android:name="com.cataloghub.android.ui.products.settings.ProductCatalogVisibilityFragment"
         tools:layout="@layout/fragment_product_catalog_visibility">
         <argument
             android:name="catalogVisibility"
@@ -59,7 +59,7 @@
 
     <fragment
         android:id="@+id/productVisibilityFragment"
-        android:name="com.woocommerce.android.ui.products.settings.ProductVisibilityFragment"
+        android:name="com.cataloghub.android.ui.products.settings.ProductVisibilityFragment"
         tools:layout="@layout/fragment_product_visibility">
         <argument
             android:name="visibility"
@@ -73,7 +73,7 @@
 
     <fragment
         android:id="@+id/productSlugFragment"
-        android:name="com.woocommerce.android.ui.products.settings.ProductSlugFragment"
+        android:name="com.cataloghub.android.ui.products.settings.ProductSlugFragment"
         tools:layout="@layout/fragment_product_slug">
         <argument
             android:name="slug"
@@ -83,7 +83,7 @@
 
     <fragment
         android:id="@+id/productMenuOrderFragment"
-        android:name="com.woocommerce.android.ui.products.settings.ProductMenuOrderFragment"
+        android:name="com.cataloghub.android.ui.products.settings.ProductMenuOrderFragment"
         tools:layout="@layout/fragment_product_menu_order">
         <argument
             android:name="menuOrder"

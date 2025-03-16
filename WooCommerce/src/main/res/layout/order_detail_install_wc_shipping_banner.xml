@@ -45,7 +45,7 @@
 
         </LinearLayout>
 
-        <com.woocommerce.android.util.ScalableImageView
+        <com.cataloghub.android.util.ScalableImageView
             android:layout_width="132dp"
             android:layout_height="match_parent"
             android:importantForAccessibility="no"

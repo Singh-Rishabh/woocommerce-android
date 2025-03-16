@@ -16,11 +16,11 @@
         style="@style/Widget.Woo.Toolbar"
         tools:title="@string/app_name"/>
 
-    <com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout
+    <com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout
         android:id="@+id/variationListRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.woocommerce.android.ui.products.variations.VariationListFragment">
+        tools:context="com.cataloghub.android.ui.products.variations.VariationListFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -58,7 +58,7 @@
 
             </LinearLayout>
 
-            <com.woocommerce.android.widgets.ActionableEmptyView
+            <com.cataloghub.android.widgets.ActionableEmptyView
                 android:id="@+id/first_variation_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -87,5 +87,5 @@
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout>
+    </com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout>
 </LinearLayout>

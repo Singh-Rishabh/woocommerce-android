@@ -35,7 +35,7 @@
             </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <com.woocommerce.android.widgets.WCEmptyView
+    <com.cataloghub.android.widgets.WCEmptyView
         android:visibility="gone"
         android:id="@+id/error_view"
         android:layout_width="match_parent"

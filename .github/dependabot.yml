@@ -8,7 +8,7 @@ updates:
     labels:
       - "bot: dependencies update"
     reviewers:
-      - "woocommerce/android-developers"
+      - "cataloghub/android-developers"
     ignore:
       # The Android Gradle Plugin is a dependency we'd like to have in sync with other
       # in-house libraries due to compatibility with composite build.
@@ -21,7 +21,7 @@ updates:
       # Our libraries that are stored in S3 have a custom versioning scheme which doesn't work with Dependabot.
       - dependency-name: "org.wordpress:utils"
       - dependency-name: "org.wordpress:fluxc"
-      - dependency-name: "org.wordpress.fluxc.plugins:woocommerce"
+      - dependency-name: "org.wordpress.fluxc.plugins:cataloghub"
       - dependency-name: "org.wordpress:login"
       - dependency-name: "com.automattic:Automattic-Tracks-Android"
       - dependency-name: "com.automattic.tracks:experimentation"

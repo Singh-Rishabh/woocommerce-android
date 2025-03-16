@@ -9,7 +9,7 @@
     android:gravity="center_horizontal"
     android:minWidth="@dimen/payments_dialog_width"
     android:minHeight="@dimen/payments_dialog_height"
-    tools:context="com.woocommerce.android.ui.payments.cardreader.tutorial.CardReaderTutorialDialogFragment">
+    tools:context="com.cataloghub.android.ui.payments.cardreader.tutorial.CardReaderTutorialDialogFragment">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.woocommerce.android.widgets.WCViewPagerIndicator
+    <com.cataloghub.android.widgets.WCViewPagerIndicator
         android:id="@+id/viewPagerIndicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -23,7 +23,7 @@
         style="@style/Woo.Divider"
         android:layout_gravity="bottom" />
 
-    <com.woocommerce.android.widgets.WCElevatedConstraintLayout
+    <com.cataloghub.android.widgets.WCElevatedConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/minor_100"
@@ -95,7 +95,7 @@
             tools:listitem="@layout/shipping_rate_list_item"
             tools:visibility="visible" />
 
-        <com.woocommerce.android.widgets.WCEmptyView
+        <com.cataloghub.android.widgets.WCEmptyView
             android:id="@+id/emptyView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -106,5 +106,5 @@
             app:layout_constraintTop_toBottomOf="@+id/infoBanner"
             tools:visibility="visible" />
 
-    </com.woocommerce.android.widgets.WCElevatedConstraintLayout>
+    </com.cataloghub.android.widgets.WCElevatedConstraintLayout>
 </LinearLayout>

@@ -84,7 +84,7 @@ class ExperimentStore @Inject constructor(
         WORDPRESS_COM("wpcom"),
         CALYPSO("calypso"),
         JETPACK("jetpack"),
-        WOOCOMMERCE("woocommerce"),
+        WOOCOMMERCE("cataloghub"),
         WORDPRESS_IOS("wpios"),
         WORDPRESS_ANDROID("wpandroid"),
         WOOCOMMERCE_IOS("woocommerceios"),

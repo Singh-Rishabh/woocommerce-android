@@ -39,7 +39,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <!-- Product Regular Price -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_regular_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/product_price_heading" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                     android:id="@+id/subscription_interval"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/product_regular_price" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                     android:id="@+id/subscription_period"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     app:layout_constraintStart_toEndOf="@id/subscription_interval"
                     app:layout_constraintTop_toTopOf="@id/subscription_interval" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/subscription_signup_fee"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
                     app:layout_constraintTop_toBottomOf="@id/divider_1" />
 
                 <!-- Product Sale Price -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_sale_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -131,7 +131,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/product_sale_heading" />
 
                 <!-- Managing Product Stock -->
-                <com.woocommerce.android.widgets.WCToggleSingleOptionView
+                <com.cataloghub.android.widgets.WCToggleSingleOptionView
                     android:id="@+id/scheduleSale_switch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/scheduleSale_switch">
 
                     <!-- Schedule Sale From -->
-                    <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                    <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                         android:id="@+id/scheduleSale_startDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -170,7 +170,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <!-- Schedule Sale To -->
-                    <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                    <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                         android:id="@+id/scheduleSale_endDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -227,7 +227,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/divider_2" />
 
                 <!-- Product Tax Status -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                     android:id="@+id/product_tax_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -241,7 +241,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/product_tax" />
 
                 <!-- Product Tax Class -->
-                <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                     android:id="@+id/product_tax_class"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

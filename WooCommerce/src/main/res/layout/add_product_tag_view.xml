@@ -12,7 +12,7 @@
         android:paddingBottom="@dimen/major_75">
 
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/addTagsEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

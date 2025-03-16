@@ -32,12 +32,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.woocommerce.android.widgets.WCElevatedLinearLayout
+            <com.cataloghub.android.widgets.WCElevatedLinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.woocommerce.android.widgets.WCWarningBanner
+                <com.cataloghub.android.widgets.WCWarningBanner
                     android:id="@+id/edit_warning_banner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -120,11 +120,11 @@
                     app:iconGravity="textEnd"
                     app:iconPadding="@dimen/minor_100" />
 
-            </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+            </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
         </ScrollView>
 
-        <com.woocommerce.android.widgets.WCEmptyView
+        <com.cataloghub.android.widgets.WCEmptyView
             android:id="@+id/error_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

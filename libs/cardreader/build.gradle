@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace "com.woocommerce.android.cardreader"
+    namespace "com.cataloghub.android.cardreader"
 
     compileSdk gradle.ext.compileSdkVersion
 

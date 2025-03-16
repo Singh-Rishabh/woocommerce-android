@@ -19,7 +19,7 @@ import java.lang.IllegalStateException
 typealias VariationAttributes = List<ProductVariantOption>
 
 /**
- * Product variations - see http://woocommerce.github.io/woocommerce-rest-api-docs/#product-variations
+ * Product variations - see http://cataloghub.github.io/cataloghub-rest-api-docs/#product-variations
  * As with WCProductModel, the backend returns more properties than are supported below
  */
 @Table(addOn = WellSqlConfig.ADDON_WOOCOMMERCE)
