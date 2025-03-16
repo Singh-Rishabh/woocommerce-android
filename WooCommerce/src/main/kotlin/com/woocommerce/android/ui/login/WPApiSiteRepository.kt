@@ -193,7 +193,7 @@ class WPApiSiteRepository @Inject constructor(
             }?.let { HTTP_SUCCESS }
 
     private fun Error.mapToUiString() = when (type) {
-        INVALID_CREDENTIALS -> UiStringRes(string.login_invalid_credentials_message)
+        INVALID_CREDENTIALS -> message?.let { UiStringText(it) } ?: UiStringRes(string.login_invalid_credentials_message)
         INVALID_RESPONSE -> UiStringRes(string.login_site_credentials_invalid_response)
         CUSTOM_LOGIN_URL -> UiStringRes(string.login_site_credentials_custom_login_url)
         CUSTOM_ADMIN_URL -> UiStringRes(string.login_site_credentials_custom_admin_url)
