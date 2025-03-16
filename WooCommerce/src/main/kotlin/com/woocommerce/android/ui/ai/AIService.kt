@@ -17,4 +17,4 @@ interface AIService {
 
     @POST("api/v1/collections/edit-product")
     suspend fun editProducts(@Body request: ProductEditRequest): List<ProductReviewResponse>
-} 
+}

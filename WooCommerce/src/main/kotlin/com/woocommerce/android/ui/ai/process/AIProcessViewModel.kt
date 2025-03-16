@@ -48,9 +48,9 @@ class AIProcessViewModel @Inject constructor(
     fun processVideo(youtubeUrl: String, autoApprove: Boolean = false) {
         AINetworkLogger.logRequest(
             "Process Video Request",
-            "URL: $youtubeUrl, AutoApprove: $autoApprove"
+            "URL: $youtubeUrl, AutoApprove: $autoApprove, Store URL: ${selectedSite.get().url}"
         )
-        WooLog.d(WooLog.T.AI, "Processing video: $youtubeUrl (autoApprove: $autoApprove)")
+        WooLog.d(WooLog.T.AI, "Processing video: $youtubeUrl (autoApprove: $autoApprove), store URL: ${selectedSite.get().url}")
 
         if (!isValidYoutubeUrl(youtubeUrl)) {
             _event.value = Event.ShowError(R.string.ai_error_invalid_url)

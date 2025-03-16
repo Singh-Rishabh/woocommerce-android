@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.ai
 
+import com.google.gson.annotations.SerializedName
 import com.woocommerce.android.tools.SelectedSite
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -9,7 +10,7 @@ import javax.inject.Singleton
 @Singleton
 class AIRepository @Inject constructor(
     private val aiService: AIService,
-    private val selectedSite: SelectedSite
+    val selectedSite: SelectedSite
 ) {
     suspend fun processVideo(
         youtubeUrl: String,
@@ -38,15 +39,21 @@ class AIRepository @Inject constructor(
 }
 
 data class ProcessVideoRequest(
+    @SerializedName("youtube_url")
     val youtubeUrl: String,
+    @SerializedName("store_url")
     val storeUrl: String,
-    val autoApprove: Boolean
+    @SerializedName("auto_approve")
+    val autoApprove: Boolean = false
 )
 
 data class ProcessingResult(
     val success: Boolean,
+    @SerializedName("collection_id")
     val collectionId: String,
+    @SerializedName("collection_url")
     val collectionUrl: String,
+    @SerializedName("total_products")
     val totalProducts: Int,
     val status: String,
     val products: List<ProductReviewResponse>
@@ -57,26 +64,40 @@ data class ProductReviewResponse(
     val name: String,
     val price: Double?,
     val status: String,
+    @SerializedName("confidence_score")
     val confidenceScore: Double,
     val description: String?,
+    @SerializedName("video_clip_url")
     val videoClipUrl: String?,
+    @SerializedName("thumbnail_url")
     val thumbnailUrl: String?,
+    @SerializedName("timestamp_start")
     val timestampStart: Double?,
+    @SerializedName("timestamp_end")
     val timestampEnd: Double?,
+    @SerializedName("review_status")
     val reviewStatus: String?,
-    val productUrl: String?
+    @SerializedName("product_url")
+    val productUrl: String?,
+    @SerializedName("created_at")
+    val createdAt: String? = null,
+    val reviewer: String? = null,
+    @SerializedName("review_date")
+    val reviewDate: String? = null
 )
 
 data class ProductEditRequest(
+    @SerializedName("youtube_url")
     val youtubeUrl: String,
+    @SerializedName("store_url")
     val storeUrl: String,
     val products: List<ProductUpdate>
 )
 
 data class ProductUpdate(
     val id: String,
-    val name: String?,
-    val description: String?,
-    val price: Double?,
-    val status: String?
-) 
+    val name: String? = null,
+    val description: String? = null,
+    val price: Double? = null,
+    val status: String? = null
+)
