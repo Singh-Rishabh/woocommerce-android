@@ -170,7 +170,8 @@ fun WooShippingLabelCreationScreen(
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null,
     onDismissAddressNotification: () -> Unit = {},
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
@@ -317,7 +318,8 @@ private fun LabelCreationScreenWithBottomSheet(
     modifier: Modifier = Modifier,
     onDismissAddressNotification: () -> Unit = {},
     actionSnackbar: ActionSnackbar? = null,
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -432,6 +434,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     onExpand = { isExpanded.value = it }
                 )
                 HazmatCard(
+                    onClick = onHazmatNoticeClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)
