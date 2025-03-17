@@ -63,6 +63,7 @@ fun WooPosItemsScreen(
     modifier: Modifier = Modifier,
     listState: LazyListState,
 ) {
+    // CouponsProject: Needs to be renamed to WooPosItemsViewModel
     val productsViewModel: WooPosItemsViewModel = hiltViewModel()
     WooPosItemsScreen(
         modifier = modifier,
@@ -112,7 +113,8 @@ private fun WooPosItemsScreen(
                 is WooPosSearchUIEvent.Search -> onUIEvent(SearchChanged(it.query))
                 WooPosSearchUIEvent.AnimationComplete -> onUIEvent(SearchAnimationCompleted)
             }
-        }
+        },
+        onCouponsButtonClicked = { onUIEvent(WooPosItemsUIEvent.CouponsButtonClicked) },
     )
 }
 
@@ -130,6 +132,7 @@ private fun MainItemsList(
     onEndOfItemListReached: () -> Unit,
     onRetryClicked: () -> Unit,
     onSearchEvent: (WooPosSearchUIEvent) -> Unit,
+    onCouponsButtonClicked: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -152,7 +155,7 @@ private fun MainItemsList(
 
                 is WooPosItemsViewState.Content -> MaterialTheme.colorScheme.onSurface
             }
-            ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked)
+            ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked, onCouponsButtonClicked)
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Large.value))
 
@@ -209,6 +212,7 @@ private fun ItemsToolbar(
     productViewState: WooPosItemsViewState,
     titleColor: Color,
     onToolbarInfoIconClicked: () -> Unit,
+    onCouponsButtonClicked: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -225,6 +229,23 @@ private fun ItemsToolbar(
         )
         when (productViewState) {
             is WooPosItemsViewState.Content -> {
+                if (productViewState.couponsEnabled) {
+                    Spacer(modifier = Modifier.weight(1f))
+                    IconButton(
+                        modifier = Modifier.size(40.dp),
+                        onClick = {
+                            onCouponsButtonClicked()
+                        }
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.ic_more_menu_coupons),
+                            contentDescription = stringResource(
+                                id = R.string.coupons
+                            ),
+                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                        )
+                    }
+                }
                 if (productViewState.bannerState.isBannerHiddenByUser) {
                     IconButton(
                         modifier = Modifier.size(40.dp),
@@ -242,7 +263,6 @@ private fun ItemsToolbar(
                     }
                 }
             }
-
             else -> {
                 // no op
             }
