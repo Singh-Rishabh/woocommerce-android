@@ -76,7 +76,7 @@ class NonceRestClientTest {
         val loginResponse = WPAPIResponse.Success(
             """
             <html>
-              <scrip>${NonceRestClient.INVALID_CREDENTIAL_HTML_PATTERN}</scrip>
+              <script>${NonceRestClient.INVALID_CREDENTIAL_HTML_PATTERN}</script>
               <head>
                     <div id="login_error">
                         <strong>Error:</strong> The password you entered for the username <strong>demo</strong> is incorrect. <a href="link/">Lost your password?</a><br>
@@ -100,7 +100,7 @@ class NonceRestClientTest {
         val loginResponse = WPAPIResponse.Success(
             """
             <html>
-              <scrip>${NonceRestClient.INVALID_CREDENTIAL_HTML_PATTERN}</scrip>
+              <script>${NonceRestClient.INVALID_CREDENTIAL_HTML_PATTERN}</script>
               <head>
                     <div id="login_error">Please enter the captcha to continue</div>
               </head>
