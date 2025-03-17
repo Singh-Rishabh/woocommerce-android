@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,11 +29,13 @@ class WooShippingLabelHazmatFormViewModel(
     }
 
     fun onSelectCategoryClick() {
-
+        triggerEvent(OnSelectCategoryClicked)
     }
 
     @Parcelize
     data class ViewState(
         val containsHazmatChecked: Boolean = false
     ) : Parcelable
+
+    data object OnSelectCategoryClicked: Event()
 }
