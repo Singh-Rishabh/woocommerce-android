@@ -8,11 +8,12 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.update
 import kotlinx.parcelize.Parcelize
 
 @HiltViewModel
-class WooShippingLabelHazmatFormViewModel(
+class WooShippingLabelHazmatFormViewModel @Inject constructor(
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
 
