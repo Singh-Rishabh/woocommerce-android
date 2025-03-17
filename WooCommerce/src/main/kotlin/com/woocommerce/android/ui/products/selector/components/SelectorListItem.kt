@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -36,6 +37,7 @@ import com.woocommerce.android.R.color
 import com.woocommerce.android.R.dimen
 import com.woocommerce.android.R.drawable
 import com.woocommerce.android.R.string
+import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.products.selector.SelectionState
 import com.woocommerce.android.ui.products.selector.SelectionState.PARTIALLY_SELECTED
 import com.woocommerce.android.ui.products.selector.SelectionState.SELECTED
@@ -176,18 +178,49 @@ private fun SelectorListItemInfo(
 
 @Preview
 @Composable
-private fun SelectorListItemPreview() =
-    SelectorListItem(
-        title = "Item name",
-        imageUrl = null,
-        infoLine1 = "Information 1",
-        infoLine2 = "Information 2",
-        selectionState = SELECTED,
-        isArrowVisible = false,
-        onItemClick = {},
-        onClickLabel = null,
-        imageContentDescription = null,
-        isCogwheelVisible = true,
-        enabled = true,
-        onEditConfiguration = {}
-    )
+private fun SelectorListItemPreviewEnabled() =
+    WooThemeWithBackground {
+        LazyColumn {
+            item {
+                SelectorListItem(
+                    title = "Item name",
+                    imageUrl = null,
+                    infoLine1 = "Information 1",
+                    infoLine2 = "Information 2",
+                    selectionState = SELECTED,
+                    isArrowVisible = false,
+                    onItemClick = {},
+                    onClickLabel = null,
+                    imageContentDescription = null,
+                    isCogwheelVisible = true,
+                    enabled = true,
+                    onEditConfiguration = {}
+                )
+            }
+        }
+    }
+
+@Preview
+@Composable
+private fun SelectorListItemPreviewDisabled() =
+    WooThemeWithBackground {
+        LazyColumn {
+            item {
+                SelectorListItem(
+                    title = "Item name",
+                    imageUrl = null,
+                    infoLine1 = "Information 1",
+                    infoLine2 = "Information 2",
+                    selectionState = UNSELECTED,
+                    isArrowVisible = false,
+                    onItemClick = {},
+                    onClickLabel = null,
+                    imageContentDescription = null,
+                    isCogwheelVisible = true,
+                    enabled = false,
+                    onEditConfiguration = {}
+                )
+            }
+        }
+    }
+
