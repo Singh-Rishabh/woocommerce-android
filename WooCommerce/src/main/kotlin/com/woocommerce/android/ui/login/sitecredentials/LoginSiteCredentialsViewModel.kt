@@ -144,6 +144,7 @@ class LoginSiteCredentialsViewModel @Inject constructor(
 
     fun onStartWebAuthorizationClick() {
         launch {
+            errorDialogMessage.value = null
             fetchSiteForTutorial()
         }
     }
