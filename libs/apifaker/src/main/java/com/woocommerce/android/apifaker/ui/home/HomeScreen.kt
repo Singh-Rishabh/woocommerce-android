@@ -1,5 +1,8 @@
 package com.woocommerce.android.apifaker.ui.home
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
 import androidx.compose.material.DismissDirection
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -27,9 +32,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,6 +68,8 @@ internal fun HomeScreen(
         navController = navController,
         onRemoveRequest = viewModel::onRemoveRequest,
         onMockingToggleChanged = viewModel::onMockingToggleChanged,
+        onExportEndpoints = viewModel::onExportEndpoints,
+        onImportEndpoints = viewModel::onImportEndpoints,
         onExit = onExit
     )
 }
@@ -69,6 +81,8 @@ private fun HomeScreen(
     navController: NavController,
     onRemoveRequest: (Request) -> Unit,
     onMockingToggleChanged: (Boolean) -> Unit,
+    onExportEndpoints: (Uri) -> Unit,
+    onImportEndpoints: (Uri) -> Unit,
     onExit: () -> Unit
 ) {
     Scaffold(
@@ -85,6 +99,11 @@ private fun HomeScreen(
                 },
                 actions = {
                     Switch(checked = isEnabled, onCheckedChange = onMockingToggleChanged)
+
+                    TopMenu(
+                        onExportEndpoints = onExportEndpoints,
+                        onImportEndpoints = onImportEndpoints
+                    )
                 },
                 backgroundColor = MaterialTheme.colors.surface,
                 elevation = 4.dp
@@ -121,6 +140,51 @@ private fun HomeScreen(
                 Icon(imageVector = Icons.Filled.Add, contentDescription = "Add endpoint")
             }
         }
+    }
+}
+
+@Composable
+private fun TopMenu(
+    onExportEndpoints: (Uri) -> Unit,
+    onImportEndpoints: (Uri) -> Unit
+) {
+    var expanded by rememberSaveable { mutableStateOf(false) }
+
+    @Composable
+    fun ExportButton() {
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) {
+            it?.let { onExportEndpoints(it) }
+        }
+
+        DropdownMenuItem(onClick = { launcher.launch("endpoints.json") }) {
+            Text("Export")
+        }
+    }
+
+    @Composable
+    fun ImportButton() {
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+            it?.let { onImportEndpoints(it) }
+        }
+
+        DropdownMenuItem(onClick = { launcher.launch(arrayOf("text/plain")) }) {
+            Text("Import")
+        }
+    }
+
+    IconButton(onClick = { expanded = !expanded }) {
+        Icon(
+            Icons.Default.MoreVert,
+            contentDescription = "More"
+        )
+    }
+
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false }
+    ) {
+        ExportButton()
+        ImportButton()
     }
 }
 
@@ -228,6 +292,8 @@ private fun HomeScreenPreview() {
         navController = rememberNavController(),
         onRemoveRequest = {},
         onMockingToggleChanged = {},
+        onExportEndpoints = {},
+        onImportEndpoints = {},
         onExit = {}
     )
 }

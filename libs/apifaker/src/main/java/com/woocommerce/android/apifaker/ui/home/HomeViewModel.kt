@@ -1,5 +1,6 @@
 package com.woocommerce.android.apifaker.ui.home
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.apifaker.ApiFakerConfig
@@ -32,5 +33,13 @@ internal class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             endpointDao.deleteRequest(request)
         }
+    }
+
+    fun onExportEndpoints(uri: Uri) {
+
+    }
+
+    fun onImportEndpoints(uri: Uri) {
+
     }
 }
