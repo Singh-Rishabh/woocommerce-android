@@ -77,10 +77,10 @@ import com.woocommerce.android.util.StringUtils
 import com.woocommerce.android.viewmodel.MultiLiveEvent
 import com.woocommerce.android.widgets.WCEmptyView.EmptyViewType
 import dagger.hilt.android.AndroidEntryPoint
+import org.wordpress.android.util.ActivityUtils as WPActivityUtils
 import org.wordpress.android.util.DisplayUtils
 import org.wordpress.android.util.ToastUtils
 import javax.inject.Inject
-import org.wordpress.android.util.ActivityUtils as WPActivityUtils
 
 @AndroidEntryPoint
 @Suppress("LargeClass")
@@ -389,9 +389,6 @@ class OrderListFragment :
         super.onResume()
         AnalyticsTracker.trackViewShown(this)
         viewModel.loadOrders()
-        if (requireContext().isTwoPanesShouldBeUsed) {
-            refreshOrders()
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
