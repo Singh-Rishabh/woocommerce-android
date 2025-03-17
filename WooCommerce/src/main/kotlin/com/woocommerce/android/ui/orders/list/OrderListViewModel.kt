@@ -60,7 +60,6 @@ import com.woocommerce.android.util.CoroutineDispatchers
 import com.woocommerce.android.util.DateUtils
 import com.woocommerce.android.util.ThrottleLiveData
 import com.woocommerce.android.util.WooLog
-import com.woocommerce.android.util.WooLog.T.ORDERS
 import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ResourceProvider
@@ -939,7 +938,7 @@ class OrderListViewModel @Inject constructor(
                 if (BuildConfig.DEBUG) {
                     throw IllegalStateException(errorMessage)
                 } else {
-                    WooLog.e(ORDERS, errorMessage)
+                    WooLog.e(WooLog.T.ORDERS, errorMessage)
                 }
             } else {
                 analyticsTracker.track(
