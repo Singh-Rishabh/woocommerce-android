@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -88,7 +89,12 @@ fun SelectorListItem(
         ) { icon ->
             Image(
                 painter = painterResource(id = icon),
-                contentDescription = imageContentDescription
+                contentDescription = imageContentDescription,
+                colorFilter = if (!enabled) {
+                    ColorFilter.tint(colorResource(color.color_on_surface_disabled))
+                } else {
+                    null
+                }
             )
         }
 
@@ -211,7 +217,7 @@ private fun SelectorListItemPreviewDisabled() =
                     imageUrl = null,
                     infoLine1 = "Information 1",
                     infoLine2 = "Information 2",
-                    selectionState = UNSELECTED,
+                    selectionState = SELECTED,
                     isArrowVisible = false,
                     onItemClick = {},
                     onClickLabel = null,
