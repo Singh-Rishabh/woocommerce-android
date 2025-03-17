@@ -672,7 +672,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val customData: CustomsData?
     ) : Event()
 
-    data object StartHazmatFormEdit: Event()
+    data object StartHazmatFormEdit : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
