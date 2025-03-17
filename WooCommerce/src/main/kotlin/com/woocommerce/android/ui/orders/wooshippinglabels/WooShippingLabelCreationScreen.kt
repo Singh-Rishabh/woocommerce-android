@@ -125,6 +125,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 actionSnackbar = viewModel.actionSnackbar,
                 onDismissAddressNotification = viewModel::onDismissAddressNotification,
                 onSplitShipment = viewModel::onSplitShipment,
+                onHazmatNoticeClick = viewModel::onHazmatNoticeClick,
                 onDismissItnNotice = viewModel::onDismissItnNotice
             )
         }
