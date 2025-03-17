@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.products.ProductTestUtils
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
@@ -48,6 +49,7 @@ class WooPosItemsViewModelTest {
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
     private val resourceProvider: ResourceProvider = mock()
     private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled = mock()
+    private val isCouponsEnabled: WooPosIsCouponsEnabled = mock()
 
     @Before
     fun setup() {
@@ -936,6 +938,68 @@ class WooPosItemsViewModelTest {
         }
 
     @Test
+    fun `given ff disabled, when view model created, then coupons button hidden`() = runTest {
+        // GIVEN
+        whenever(isCouponsEnabled.invoke()).thenReturn(false)
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple",
+                isDownloadable = false,
+            )
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        viewModel.viewState.test {
+            val value = awaitItem() as WooPosItemsViewState.Content
+            assertThat(value.couponsEnabled).isFalse()
+        }
+    }
+
+    @Test
+    fun `given ff enabled, when view model created, then coupons button visible`() = runTest {
+        // GIVEN
+        whenever(isCouponsEnabled.invoke()).thenReturn(true)
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple",
+                isDownloadable = false,
+            )
+        )
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        viewModel.viewState.test {
+            val value = awaitItem() as WooPosItemsViewState.Content
+            assertThat(value.couponsEnabled).isTrue()
+        }
+    }
+
+    @Test
     fun `given products search feature enabled, when view model created, then search state is visible`() = runTest {
         // GIVEN
         val products = listOf(
@@ -1042,5 +1106,6 @@ class WooPosItemsViewModelTest {
             analyticsTracker,
             resourceProvider,
             isProductsSearchEnabled,
+            isCouponsEnabled,
         )
 }
