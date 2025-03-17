@@ -280,16 +280,22 @@ class WooShippingEditAddressViewModel @Inject constructor(
                 } else {
                     ""
                 }
-                if (states.isNotEmpty()) {
-                    findLocationByCode(stateCode, statesState.value)
-                        .takeIf { it != Location.EMPTY }
-                        ?.let { selectedState.value = it } ?: run {
+                when {
+                    states.isNotEmpty() && stateCode.isNotEmpty() -> {
+                        findLocationByCode(stateCode, statesState.value)
+                            .takeIf { it != Location.EMPTY }
+                            ?.let { selectedState.value = it } ?: run {
+                            selectedState.value = states.first()
+                        }
+                        rawState = ""
+                    }
+                    states.isNotEmpty() -> {
                         selectedState.value = states.first()
                     }
-                    rawState = ""
-                } else {
-                    rawState = stateCode
-                    selectedState.value = Location.EMPTY
+                    else -> {
+                        rawState = stateCode
+                        selectedState.value = Location.EMPTY
+                    }
                 }
             }
     }
