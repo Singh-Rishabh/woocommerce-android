@@ -10,9 +10,21 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.woocommerce.android.ui.compose.component.WCColoredButton
+
+@Composable
+fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewModel) {
+    val viewState by viewModel.viewState.observeAsState()
+    WooShippingLabelHazmatFormScreen(
+        containsHazmatChecked = viewState?.containsHazmatChecked ?: false,
+        onContainsHazmatChanged = viewModel::onContainsHazmatChanged,
+        onSelectCategoryClick = viewModel::onSelectCategoryClick
+    )
+}
 
 @Composable
 fun WooShippingLabelHazmatFormScreen(
