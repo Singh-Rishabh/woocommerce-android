@@ -186,7 +186,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
             destinationAddress.value = defaultDestination
 
-            if (!addressValidationHelper.isMissingDestinationAddress(order.shippingAddress)) {
+            if (addressValidationHelper.isMissingDestinationAddress(order.shippingAddress).not()) {
                 verifyDestinationAddress(order.id).fold(
                     onSuccess = { destinationAddress.value = it },
                     onFailure = { }
