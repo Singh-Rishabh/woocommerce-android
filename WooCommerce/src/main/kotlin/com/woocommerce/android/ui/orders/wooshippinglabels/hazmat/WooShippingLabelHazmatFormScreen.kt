@@ -17,6 +17,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
@@ -47,13 +48,18 @@ fun WooShippingLabelHazmatFormScreen(
     ) {
         Text(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_title),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
         )
         Row(
             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
-            modifier = modifier.fillMaxWidth()
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
         ) {
             Text(
                 text = stringResource(R.string.woo_shipping_labels_hazmat_info_contains_hazmat),
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f)
@@ -70,13 +76,15 @@ fun WooShippingLabelHazmatFormScreen(
         WCColoredButton(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
             onClick = onSelectCategoryClick,
-            enabled = containsHazmatChecked
+            enabled = containsHazmatChecked,
+            modifier = modifier.fillMaxWidth()
         )
 
-        HorizontalDivider()
+        HorizontalDivider(modifier = modifier.padding(vertical = 16.dp))
 
         Text(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_full_description),
+            style = MaterialTheme.typography.bodyMedium
         )
     }
 }
