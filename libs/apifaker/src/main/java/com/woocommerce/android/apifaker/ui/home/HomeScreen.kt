@@ -101,6 +101,7 @@ private fun HomeScreen(
                     Switch(checked = isEnabled, onCheckedChange = onMockingToggleChanged)
 
                     TopMenu(
+                        hasEndpoints = endpoints.isNotEmpty(),
                         onExportEndpoints = onExportEndpoints,
                         onImportEndpoints = onImportEndpoints
                     )
@@ -145,6 +146,7 @@ private fun HomeScreen(
 
 @Composable
 private fun TopMenu(
+    hasEndpoints: Boolean,
     onExportEndpoints: (Uri) -> Unit,
     onImportEndpoints: (Uri) -> Unit
 ) {
@@ -185,7 +187,9 @@ private fun TopMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false }
     ) {
-        ExportButton()
+        if (hasEndpoints) {
+            ExportButton()
+        }
         ImportButton()
     }
 }
