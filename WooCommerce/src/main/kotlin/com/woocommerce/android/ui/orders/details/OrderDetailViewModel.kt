@@ -738,7 +738,8 @@ class OrderDetailViewModel @Inject constructor(
         )
     }
 
-    private suspend fun isPaymentCollectableWithCardReader(order: Order) = cardPaymentCollectibilityChecker.isCollectable(order)
+    private suspend fun isPaymentCollectableWithCardReader(order: Order) =
+        cardPaymentCollectibilityChecker.isCollectable(order)
 
     private fun loadOrderNotes() {
         launch {

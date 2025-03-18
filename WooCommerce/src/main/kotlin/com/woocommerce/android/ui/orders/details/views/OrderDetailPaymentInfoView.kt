@@ -224,7 +224,7 @@ class OrderDetailPaymentInfoView @JvmOverloads constructor(
         binding.paymentInfoPrintingInstructions.visibility = VISIBLE
         binding.paymentInfoPrintingInstructions.setOnClickListener(
             onPrintingInstructionsClickListener
-            )
+        )
     }
 
     fun showRefunds(
