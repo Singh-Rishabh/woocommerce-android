@@ -178,6 +178,10 @@ class OrderDetailFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val isScreenLargerThanCompact = requireContext().isTwoPanesShouldBeUsed
         if (isScreenLargerThanCompact) {
+            // Postpone the transition until the view is ready. We need to do this on tablets to avoid a flicker
+            // when navigating to order detail/list. For instance - While collecting payment during order creation
+            // we navigate from order creation to order detail screen. If we don't postpone the transition, we would
+            // see a flicker of empty order detail screen before the order detail is loaded.
             postponeEnterTransition()
         }
         super.onViewCreated(view, savedInstanceState)
