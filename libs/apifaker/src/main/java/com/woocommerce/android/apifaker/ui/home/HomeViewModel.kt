@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.apifaker.ApiFakerConfig
+import com.woocommerce.android.apifaker.EndpointExportManager
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.Request
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 internal class HomeViewModel @Inject constructor(
     private val endpointDao: EndpointDao,
-    private val config: ApiFakerConfig
+    private val config: ApiFakerConfig,
+    private val endpointExportManager: EndpointExportManager
 ) : ViewModel() {
     @Suppress("MagicNumber")
     val endpoints = endpointDao.observeEndpoints()
@@ -36,10 +38,20 @@ internal class HomeViewModel @Inject constructor(
     }
 
     fun onExportEndpoints(uri: Uri) {
-
+        viewModelScope.launch {
+            endpointExportManager.exportEndpoints(endpoints.value, uri).fold(
+                onSuccess = { /* handle success */ },
+                onFailure = { /* handle error */ }
+            )
+        }
     }
 
     fun onImportEndpoints(uri: Uri) {
-
+        viewModelScope.launch {
+            endpointExportManager.importEndpoints(uri).fold(
+                onSuccess = { /* handle success */ },
+                onFailure = { /* handle error */ }
+            )
+        }
     }
 }

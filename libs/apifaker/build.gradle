@@ -41,6 +41,8 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     debugImplementation(libs.androidx.compose.ui.tooling.main)
 
+    implementation(libs.google.gson)
+
     implementation(project(":libs:fluxc"))
 
     implementation(libs.androidx.room.runtime)
