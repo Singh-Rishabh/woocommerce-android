@@ -1,5 +1,7 @@
 package com.cataloghub.android.ui.ai
 
+import com.cataloghub.android.model.AIProduct
+import com.cataloghub.android.model.AIProductStatus
 import com.google.gson.annotations.SerializedName
 import com.cataloghub.android.tools.SelectedSite
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +38,188 @@ class AIRepository @Inject constructor(
     suspend fun editProducts(request: ProductEditRequest): List<ProductReviewResponse> = withContext(Dispatchers.IO) {
         aiService.editProducts(request)
     }
+
+    // YouTube OAuth methods
+
+    suspend fun getYouTubeAuthUrl(storeUrl: String): YouTubeAuthResponse = withContext(Dispatchers.IO) {
+        aiService.getYouTubeAuthUrl(storeUrl)
+    }
+
+    suspend fun saveYouTubeToken(authCode: String, storeUrl: String): YouTubeTokenResponse = withContext(Dispatchers.IO) {
+        aiService.saveYouTubeToken(authCode, storeUrl)
+    }
+
+    suspend fun checkYouTubeTokenStatus(storeUrl: String): YouTubeTokenStatusResponse = withContext(Dispatchers.IO) {
+        aiService.checkYouTubeTokenStatus(storeUrl)
+    }
+
+    suspend fun revokeYouTubeToken(storeUrl: String): YouTubeTokenRevokeResponse = withContext(Dispatchers.IO) {
+        aiService.revokeYouTubeToken(storeUrl)
+    }
+
+    suspend fun refreshYouTubeToken(storeUrl: String): YouTubeTokenRefreshResponse = withContext(Dispatchers.IO) {
+        aiService.refreshYouTubeToken(storeUrl)
+    }
+
+    // YouTube Videos methods
+
+    suspend fun listYouTubeVideos(
+        storeUrl: String,
+        pageToken: String? = null,
+        maxResults: Int = 10,
+        sortBy: String = "date",
+        order: String = "desc"
+    ): YouTubeVideosResponse = withContext(Dispatchers.IO) {
+        aiService.listYouTubeVideos(
+            storeUrl = storeUrl,
+            pageToken = pageToken,
+            maxResults = maxResults,
+            sortBy = sortBy,
+            order = order
+        )
+    }
+
+    suspend fun searchYouTubeVideos(
+        storeUrl: String,
+        query: String,
+        pageToken: String? = null,
+        maxResults: Int = 10
+    ): YouTubeVideosResponse = withContext(Dispatchers.IO) {
+        aiService.searchYouTubeVideos(
+            storeUrl = storeUrl,
+            query = query,
+            pageToken = pageToken,
+            maxResults = maxResults
+        )
+    }
+
+    suspend fun getYouTubeVideoDetails(
+        storeUrl: String,
+        videoId: String
+    ): YouTubeVideo = withContext(Dispatchers.IO) {
+        aiService.getYouTubeVideoDetails(
+            storeUrl = storeUrl,
+            videoId = videoId
+        )
+    }
+
+    suspend fun processYouTubeVideo(
+        videoId: String,
+        storeUrl: String,
+        autoApprove: Boolean = false
+    ): ProcessingResult = withContext(Dispatchers.IO) {
+        aiService.processYouTubeVideo(
+            YouTubeProcessVideoRequest(
+                videoId = videoId,
+                storeUrl = storeUrl,
+                autoApprove = autoApprove
+            )
+        )
+    }
+
+    // Social Media Connection Methods
+    suspend fun getYouTubeAuthUrl(): String {
+        return aiService.getYouTubeAuthUrl().url
+    }
+
+    suspend fun getFacebookAuthUrl(): String {
+        return aiService.getFacebookAuthUrl().url
+    }
+
+    suspend fun getInstagramAuthUrl(): String {
+        return aiService.getInstagramAuthUrl().url
+    }
+
+    suspend fun completeYouTubeAuth(code: String) {
+        aiService.completeYouTubeAuth(CompleteAuthRequest(code))
+    }
+
+    suspend fun completeFacebookAuth(code: String) {
+        aiService.completeFacebookAuth(CompleteAuthRequest(code))
+    }
+
+    suspend fun completeInstagramAuth(code: String) {
+        aiService.completeInstagramAuth(CompleteAuthRequest(code))
+    }
+
+    suspend fun disconnectYouTube() {
+        aiService.disconnectYouTube()
+    }
+
+    suspend fun disconnectFacebook() {
+        aiService.disconnectFacebook()
+    }
+
+    suspend fun disconnectInstagram() {
+        aiService.disconnectInstagram()
+    }
+
+    suspend fun isYouTubeConnected(): Boolean {
+        return aiService.getYouTubeConnectionStatus().connected
+    }
+
+    suspend fun isFacebookConnected(): Boolean {
+        return aiService.getFacebookConnectionStatus().connected
+    }
+
+    suspend fun isInstagramConnected(): Boolean {
+        return aiService.getInstagramConnectionStatus().connected
+    }
+
+    // YouTube Videos Methods
+    suspend fun getYouTubeVideos(): List<YouTubeVideo> {
+        return aiService.getYouTubeVideos().videos.map { it.toYouTubeVideo() }
+    }
+
+    suspend fun getYouTubeVideoDetails(videoId: String): YouTubeVideo {
+        return aiService.getYouTubeVideoDetails(videoId).toYouTubeVideo()
+    }
+
+    // Product Methods
+    suspend fun getProducts(): List<AIProduct> {
+        return aiService.getProducts().products.map { it.toAIProduct() }
+    }
+
+    suspend fun updateProductStatus(productId: String, status: AIProductStatus) {
+        aiService.updateProductStatus(productId, UpdateProductStatusRequest(status.name))
+    }
+
+    suspend fun generateProductFromVideo(videoId: String): AIProduct {
+        return aiService.generateProductFromVideo(GenerateProductRequest(videoId)).toAIProduct()
+    }
+
+    // Extension Functions for Data Conversion
+    private fun YouTubeVideoResponse.toYouTubeVideo(): YouTubeVideo {
+        return YouTubeVideo(
+            id = id,
+            title = title,
+            description = description,
+            thumbnailUrl = thumbnailUrl,
+            publishedAt = Date(publishedAt),
+            viewCount = viewCount,
+            likeCount = likeCount,
+            commentCount = commentCount,
+            duration = duration,
+            channelTitle = channelTitle
+        )
+    }
+
+    private fun ProductResponse.toAIProduct(): AIProduct {
+        return AIProduct(
+            id = id,
+            title = title,
+            description = description,
+            price = price,
+            imageUrl = imageUrl,
+            videoId = videoId,
+            videoTitle = videoTitle,
+            videoThumbnailUrl = videoThumbnailUrl,
+            createdAt = Date(createdAt),
+            status = AIProductStatus.valueOf(status),
+            categories = categories,
+            tags = tags
+        )
+    }
 }
 
 data class ProcessVideoRequest(
@@ -47,16 +231,25 @@ data class ProcessVideoRequest(
     val autoApprove: Boolean = false
 )
 
+data class YouTubeProcessVideoRequest(
+    @SerializedName("video_id")
+    val videoId: String,
+    @SerializedName("store_url")
+    val storeUrl: String,
+    @SerializedName("auto_approve")
+    val autoApprove: Boolean = false
+)
+
 data class ProcessingResult(
-    val success: Boolean,
+    val success: Boolean = false,
     @SerializedName("collection_id")
-    val collectionId: String,
+    val collectionId: String = "",
     @SerializedName("collection_url")
-    val collectionUrl: String,
+    val collectionUrl: String = "",
     @SerializedName("total_products")
-    val totalProducts: Int,
-    val status: String,
-    val products: List<ProductReviewResponse>
+    val totalProducts: Int = 0,
+    val status: String = "",
+    val products: List<ProductReviewResponse> = emptyList()
 )
 
 data class ProductReviewResponse(
@@ -100,4 +293,83 @@ data class ProductUpdate(
     val description: String? = null,
     val price: Double? = null,
     val status: String? = null
+)
+
+// YouTube OAuth response models
+
+data class YouTubeAuthResponse(
+    @SerializedName("auth_url")
+    val authUrl: String,
+    val message: String
+)
+
+data class YouTubeTokenResponse(
+    val success: Boolean,
+    val message: String,
+    @SerializedName("store_url")
+    val storeUrl: String
+)
+
+data class YouTubeTokenStatusResponse(
+    val hasToken: Boolean,
+    val isValid: Boolean,
+    val expiresAt: String? = null,
+    val message: String? = null
+)
+
+data class YouTubeTokenRevokeResponse(
+    val success: Boolean,
+    val message: String
+)
+
+data class YouTubeTokenRefreshResponse(
+    val success: Boolean,
+    val message: String,
+    @SerializedName("expires_at")
+    val expiresAt: String? = null
+)
+
+// YouTube Videos response models
+
+data class YouTubeVideosResponse(
+    val videos: List<YouTubeVideo>,
+    @SerializedName("next_page_token")
+    val nextPageToken: String? = null,
+    @SerializedName("prev_page_token")
+    val prevPageToken: String? = null,
+    @SerializedName("total_results")
+    val totalResults: Int,
+    @SerializedName("results_per_page")
+    val resultsPerPage: Int
+)
+
+data class YouTubeVideo(
+    @SerializedName("video_id")
+    val videoId: String,
+    val title: String,
+    val description: String = "",
+    @SerializedName("published_at")
+    val publishedAt: String,
+    @SerializedName("channel_title")
+    val channelTitle: String,
+    val thumbnails: Map<String, VideoThumbnail>,
+    @SerializedName("view_count")
+    val viewCount: Int? = null,
+    @SerializedName("like_count")
+    val likeCount: Int? = null,
+    val duration: String? = null,
+    @SerializedName("has_captions")
+    val hasCaptions: Boolean? = null,
+    @SerializedName("formatted_duration")
+    val formattedDuration: String? = null,
+    @SerializedName("video_url")
+    val videoUrl: String? = null,
+    @SerializedName("embed_url")
+    val embedUrl: String? = null
+)
+
+data class VideoThumbnail(
+    val url: String,
+    val width: Int,
+    val height: Int
 )

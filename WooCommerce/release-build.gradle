@@ -1,0 +1,489 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.google.dagger.hilt)
+    alias(libs.plugins.androidx.navigation.safeargs)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.google.protobuf)
+    alias(libs.plugins.fladle)
+    alias(libs.plugins.dependency.analysis)
+}
+
+fladle {
+    variant = "vanillaDebug"
+    serviceAccountCredentials = rootProject.file(".configure-files/firebase.secrets.json")
+    testTargets = [
+            "notPackage com.cataloghub.android.e2e.tests.screenshot"
+    ]
+    devices = [
+            ["model": "Pixel2.arm", "version": "30"]
+    ]
+    localResultsDir = "$rootDir/build/instrumented-tests"
+
+    maxTestShards = 50
+    shardTime = 120
+    smartFlankGcsPath = "gs://fladle/cataloghub-android/smart-flank/JUnitReport.xml"
+}
+
+def versionProperties = loadPropertiesFromFile(file("${rootDir}/version.properties"))
+
+android {
+    namespace "com.cataloghub.android"
+
+    compileSdk gradle.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.cataloghub.android"
+
+        versionName versionProperties.getProperty("versionName")
+        versionCode versionProperties.getProperty("versionCode").toInteger()
+
+        minSdkVersion gradle.ext.minSdkVersion
+        // Update targetSdkVersion only after reviewing all the OS changes (developer.android.com/about/versions/[ENTER_ANDROID_VERSION]/migration)
+        // and thoroughly testing the app. Consider publishing a p2 post to inform the team about the upcoming change.
+        // P.S. Update the targetSdkVersion in all the modules, otherwise static analysis tools won't give you a heads-up about potential issues.
+        targetSdkVersion gradle.ext.targetSdkVersion
+
+        testInstrumentationRunner 'com.cataloghub.android.WooCommerceTestRunner'
+        // TODO remove this once the hilt migration is complete
+        javaCompileOptions.annotationProcessorOptions.arguments['dagger.hilt.disableModulesHaveInstallInCheck'] = 'true'
+
+        resValue "bool", "enable_leak_canary", isLeakCanaryEnabled().toString()
+
+        packagingOptions {
+            exclude 'META-INF/gradle/incremental.annotation.processors'
+            exclude("META-INF/*.kotlin_module")
+            pickFirst 'META-INF/AL2.0'
+            pickFirst 'META-INF/LGPL2.1'
+        }
+
+        resConfigs(
+                "en"
+        )
+    }
+
+    buildFeatures {
+        buildConfig true
+        compose true
+        viewBinding true
+    }
+
+    compileOptions {
+        sourceCompatibility libs.versions.java.get()
+        targetCompatibility libs.versions.java.get()
+        coreLibraryDesugaringEnabled true
+    }
+
+    flavorDimensions = ["buildType"]
+
+    productFlavors {
+        // Used for release/beta builds. Usually shouldn't be build locally.
+        // AppName: WooCommerce
+        vanilla {
+            dimension "buildType"
+        }
+
+        // Used for local development - preferred variant for developers.
+        // AppName: WooCommerce (Dev)
+        wasabi {
+            applicationId "com.cataloghub.android.dev"
+            dimension "buildType"
+            isDefault true
+
+            resConfigs("en", "xxhdpi")
+        }
+
+        // Used for CI builds on PRs (downloadable apks). Can be used locally when a developer needs
+        // to install multiple versions of the app on the same device.
+        // AppName: WooCommerce (PreAlpha)
+        jalapeno {
+            applicationId "com.cataloghub.android.prealpha"
+            dimension "buildType"
+        }
+    }
+
+    buildTypes {
+        release {
+            // Proguard is used to shrink our apk, and reduce the number of methods in our final apk,
+            // but we don't obfuscate the bytecode.
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            minifyEnabled false
+            pseudoLocalesEnabled true
+            isDefault true
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        release.java.srcDirs += 'src/release/kotlin'
+        debug.java.srcDirs += 'src/debug/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+
+        if (isLeakCanaryEnabled()) {
+            debug.java.srcDirs += 'src/leakcanary/kotlin'
+        }
+    }
+
+    lintOptions {
+        sarifReport gradle.ext.isCi
+        checkDependencies true
+        disable 'InvalidPackage'
+    }
+
+    testOptions {
+        animationsDisabled = true
+    }
+
+    signingConfigs {
+        if (["uploadStoreFile", "uploadStorePassword", "uploadKeyAlias", "uploadKeyPassword"].count { !secretProperties.containsKey(it) } == 0) {
+            logger.info("App signing properties found in secrets.properties, configuring signing for release builds.")
+            release {
+                storeFile = rootProject.file(secretProperties.get("uploadStoreFile"))
+                storePassword = secretProperties.get("uploadStorePassword")
+                keyAlias = secretProperties.get("uploadKeyAlias")
+                keyPassword = secretProperties.get("uploadKeyPassword")
+            }
+            android.buildTypes.release.signingConfig = android.signingConfigs.release
+        }
+
+        if (secretProperties.containsKey("debugStoreFile")) {
+            logger.info("Debug signing properties found in secrets.properties, configuring signing for debug builds.")
+            def sharedDebugStore = file(secretProperties.get("debugStoreFile").replaceFirst("^~", System.getProperty("user.home")))
+            if (sharedDebugStore.exists()) {
+                debug {
+                    storeFile sharedDebugStore
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation(libs.wordpress.libaddressinput.common) {
+        exclude group: "org.json", module: "json"
+        exclude group: "com.google.guava", module: "guava"
+    }
+
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.messaging)
+    implementation(libs.google.firebase.config)
+    implementation(libs.google.firebase.analytics)
+
+    implementation(libs.google.play.services.auth)
+
+    // Support library
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.constraintlayout.main)
+    implementation(libs.androidx.recyclerview.main)
+    implementation(libs.androidx.recyclerview.selection)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.google.material)
+    implementation(libs.google.compose.material3)
+    implementation(libs.androidx.transition)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.browser) {
+        exclude group: 'com.google.guava', module: 'listenablefuture'
+    }
+    implementation(libs.androidx.preference.main)
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.main)
+
+    implementation(libs.androidx.navigation.common)
+    implementation(libs.androidx.navigation.fragment)
+    implementation(libs.androidx.navigation.runtime)
+    implementation(libs.androidx.navigation.ui)
+
+    implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.androidx.core.splashscreen)
+
+    implementation(libs.wordpress.utils) {
+        exclude group: "com.mcxiaoke.volley"
+        exclude group: "com.android.support"
+    }
+
+    implementation(libs.automattic.tracks.experimentation) {
+        exclude group: "org.wordpress", module: "fluxc"
+    }
+    implementation(libs.automattic.tracks.android)
+    implementation(libs.automattic.tracks.crashlogging)
+
+    implementation(project(":libs:fluxc"))
+    implementation(project(":libs:fluxc-plugin"))
+    implementation(project(":libs:login"))
+
+    implementation(libs.wordpress.aztec.main) {
+        exclude group: "com.android.volley"
+        exclude group: "com.android.support"
+        exclude group: "org.wordpress", module: "utils"
+    }
+
+    implementation(libs.wordpress.aztec.glide.loader) {
+        exclude group: "com.android.volley"
+        exclude group: "com.android.support"
+        exclude group: "org.wordpress", module: "utils"
+    }
+
+    implementation(libs.gravatar)
+
+    implementation project(":libs:commons")
+    implementation project(":libs:cardreader")
+
+    implementation(libs.facebook.shimmer)
+    implementation(libs.photoview)
+
+    implementation(libs.automattic.about)
+
+    // Dagger
+    implementation(libs.google.dagger.hilt.android.main)
+    implementation(libs.androidx.hilt.navigation.fragment)
+    implementation(libs.androidx.hilt.common)
+    implementation(libs.androidx.hilt.work)
+
+    ksp(libs.androidx.hilt.compiler)
+    ksp(libs.google.dagger.hilt.compiler)
+    implementation(libs.google.dagger.android.support)
+    ksp(libs.google.dagger.android.processor)
+
+    implementation(libs.mpandroidchart)
+
+    implementation(libs.bumptech.glide.main)
+    ksp(libs.bumptech.glide.compiler)
+    implementation(libs.bumptech.glide.volley.integration)
+    implementation(libs.bumptech.glide.avif.integration)
+    implementation(libs.google.play.app.update)
+    implementation(libs.google.play.review)
+
+    implementation(libs.google.play.services.code.scanner)
+
+    implementation(libs.google.mlkit.text.recognition.main)
+    implementation(libs.google.mlkit.text.recognition.japanese)
+    implementation(libs.google.mlkit.text.recognition.chinese)
+    implementation(libs.google.mlkit.text.recognition.korean)
+
+    implementation(libs.google.mlkit.barcode.scanning)
+
+    implementation(libs.google.zxing.core)
+
+    // Debug dependencies
+    debugImplementation project(":libs:apifaker")
+    debugImplementation(libs.facebook.flipper.main)
+    debugImplementation(libs.facebook.soloader)
+    debugImplementation(libs.facebook.flipper.network.plugin) {
+        // Force Flipper to use the okhttp version defined in the fluxc module
+        // okhttp versions higher than 3.9.0 break handling for self-signed SSL sites
+        // See https://github.com/wordpress-mobile/WordPress-FluxC-Android/issues/919
+        exclude group: 'com.squareup.okhttp3'
+    }
+
+    if (isLeakCanaryEnabled()) {
+        debugImplementation(libs.squareup.leakcanary.android)
+    }
+
+    // Dependencies for local unit tests
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlin.test.junit)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.androidx.arch.core.testing) {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-core-utils'
+    }
+
+    // Dependencies for Espresso UI tests
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.main.rules)
+    androidTestImplementation(libs.assertj.core)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.test.espresso.contrib) {
+        exclude group: "com.google.protobuf", module: "protobuf-lite"
+    }
+    androidTestImplementation(libs.google.dagger.hilt.android.testing)
+    kspAndroidTest(libs.google.dagger.hilt.compiler)
+    androidTestImplementation(libs.androidx.test.uiautomator)
+
+    // Dependencies for screenshots
+    androidTestImplementation(libs.fastlane.screengrab)
+    androidTestImplementation(libs.wiremock.get().module.toString()) {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+        exclude group: 'org.apache.commons', module: 'commons-lang3'
+        exclude group: 'asm', module: 'asm'
+        exclude group: 'org.json', module: 'json'
+    }
+    constraints {
+        androidTestImplementation(libs.wiremock) {
+            because("newer versions of WireMock use Java APIs not available on Android")
+        }
+        androidTestImplementation(libs.jetty.webapp) {
+            because("version shipped with WireMock 2.26.3 contains security vulnerabilities")
+        }
+        androidTestImplementation(libs.jackson.databind) {
+            because("version shipped with WireMock 2.26.3 contains security vulnerabilities")
+        }
+        androidTestImplementation(libs.json.path) {
+            because("version shipped with WireMock 2.26.3 contains security vulnerabilities")
+        }
+        androidTestImplementation(libs.commons.fileupload) {
+            because("version shipped with WireMock 2.26.3 contains security vulnerabilities")
+        }
+    }
+    androidTestImplementation(libs.apache.http.client.android)
+
+    implementation(libs.zendesk.support) {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+
+    // ViewModel and LiveData
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    implementation(libs.androidx.lifecycle.process)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+    testImplementation(libs.cashapp.turbine)
+
+    implementation(libs.apache.commons.text)
+
+    implementation(libs.tinder.statemachine)
+
+    implementation("${gradle.ext.mediaPickerBinaryPath}:${libs.versions.wordpress.mediapicker.get()}") {
+        exclude group: "org.wordpress", module: "utils"
+    }
+    implementation("${gradle.ext.mediaPickerSourceCameraBinaryPath}:${libs.versions.wordpress.mediapicker.get()}")
+    implementation("${gradle.ext.mediaPickerSourceWordPressBinaryPath}:${libs.versions.wordpress.mediapicker.get()}") {
+        exclude group: "org.wordpress", module: "utils"
+        exclude group: "org.wordpress", module: "fluxc"
+    }
+
+    // Jetpack Compose
+    implementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    // Dependencies managed by BOM
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material.main)
+    implementation(libs.androidx.compose.animation.main)
+    implementation(libs.androidx.compose.ui.tooling.main)
+    implementation(libs.androidx.compose.runtime.livedata)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material3)
+
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.svg)
+
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    coreLibraryDesugaring(libs.android.desugar)
+
+    // Lottie
+    implementation(libs.lottie.compose)
+
+    // CameraX
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+    implementation(libs.google.guava)
+
+    implementation(libs.google.protobuf.javalite)
+
+    lintChecks(libs.android.security.lint)
+}
+
+protobuf {
+    protoc {
+        artifact = libs.google.protobuf.protoc.get().toString()
+    }
+
+    // Generates the java Protobuf-lite code for the Protobufs in this project. See
+    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
+    // for more information.
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+
+androidComponents {
+    onVariants(selector().all(), { variant ->
+        afterEvaluate {
+            def capName = variant.name.capitalize()
+            tasks.getByName("ksp${capName}Kotlin") {
+                setSource(tasks.getByName("generate${capName}Proto").outputs)
+            }
+        }
+    })
+}
+
+task copyGoogleServicesExampleFile(type: Copy) {
+    from('.')
+    into('.')
+    include('google-services.json-example')
+    rename('google-services.json-example', 'google-services.json')
+}
+
+// Add properties named "wc.xxx" to our BuildConfig
+android.buildTypes.all { buildType ->
+    (secretProperties + developerProperties).any { property ->
+        if (property.key.toLowerCase().startsWith("wc.")) {
+            if (property.value == "true" || property.value == "false") {
+                buildType.buildConfigField "boolean", property.key.replace("wc.", "").replace(".", "_").toUpperCase(),
+                        property.value
+            } else {
+                buildType.buildConfigField "String", property.key.replace("wc.", "").replace(".", "_").toUpperCase(),
+                        "\"${property.value}\""
+            }
+        }
+        if (property.key.toLowerCase().startsWith("wc.res.")) {
+            buildType.resValue "string", property.key.replace("wc.res.", "").replace(".", "_").toLowerCase(),
+                    "${property.value}"
+        }
+    }
+
+    // If Google services file doesn't exist, copy example file.
+    if (!file("google-services.json").exists()) {
+        tasks.copyGoogleServicesExampleFile.copy()
+    }
+
+    // Print warning message if example Google services file is used.
+    if ((file("google-services.json").text) == (file("google-services.json-example").text)) {
+        println("WARNING: You're using the example google-services.json file. Google login will fail.")
+    }
+}
+
+static def loadPropertiesFromFile(inputFile) {
+    def properties = new Properties()
+    inputFile.withInputStream { stream ->
+        properties.load(stream)
+    }
+    return properties
+}
+
+def isLeakCanaryEnabled() {
+    return developerProperties.get("enable_leak_canary") ?: true
+}
+
+apply from: '../config/gradle/build_optimization.gradle'
