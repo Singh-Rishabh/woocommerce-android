@@ -14,7 +14,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.woocommerce.android.ui.compose.component.WCColoredButton
+import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
 @Composable
 fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewModel) {
@@ -61,5 +63,17 @@ fun WooShippingLabelHazmatFormScreen(
         )
         HorizontalDivider()
         Text("Hazmat details and info")
+    }
+}
+
+@Preview
+@Composable
+fun WooShippingLabelHazmatFormScreenPreview() {
+    WooThemeWithBackground {
+        WooShippingLabelHazmatFormScreen(
+            containsHazmatChecked = false,
+            onContainsHazmatChanged = {},
+            onSelectCategoryClick = {}
+        )
     }
 }
