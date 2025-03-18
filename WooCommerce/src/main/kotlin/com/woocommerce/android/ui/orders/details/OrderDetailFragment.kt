@@ -176,6 +176,10 @@ class OrderDetailFragment :
     override fun getFragmentTitle() = screenTitle
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val isScreenLargerThanCompact = requireContext().isTwoPanesShouldBeUsed
+        if (isScreenLargerThanCompact) {
+            postponeEnterTransition()
+        }
         super.onViewCreated(view, savedInstanceState)
 
         /**
@@ -195,7 +199,6 @@ class OrderDetailFragment :
          * during the payment collection process. If this is the case, it navigates to the
          * Select Payment screen on both phone and tablet devices.
          */
-        val isScreenLargerThanCompact = requireContext().isTwoPanesShouldBeUsed
         if (isOrderListFragmentNotVisible() && isScreenLargerThanCompact && !navArgs.startPaymentFlow) {
             navigateBackWithResult(KEY_ORDER_ID, navArgs.orderId)
             return
@@ -209,6 +212,9 @@ class OrderDetailFragment :
         }
 
         _binding = FragmentOrderDetailBinding.bind(view)
+        if (isScreenLargerThanCompact) {
+            view.post { startPostponedEnterTransition() }
+        }
 
         setMarginsIfTablet()
         setupToolbar()
