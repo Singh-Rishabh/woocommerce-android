@@ -153,6 +153,7 @@ private fun TopMenu(
     @Composable
     fun ExportButton() {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) {
+            expanded = false
             it?.let { onExportEndpoints(it) }
         }
 
@@ -164,6 +165,7 @@ private fun TopMenu(
     @Composable
     fun ImportButton() {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+            expanded = false
             it?.let { onImportEndpoints(it) }
         }
 
