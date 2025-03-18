@@ -1,11 +1,7 @@
 package com.woocommerce.android.ui.orders.creation.navigation
 
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.NavDirections
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.woocommerce.android.R
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditFormFragmentDirections
 import com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel
@@ -143,25 +139,6 @@ object OrderCreateEditNavigator {
                 OrderCreateEditFormFragmentDirections.actionOrderCreationFragmentToGiftCardFragment(target.giftCard)
             }
         }
-        navigate(target, navController, action)
-    }
-
-    private fun navigate(
-        target: OrderCreateEditNavigationTarget,
-        navController: NavController,
-        action: NavDirections
-    ) {
-        if (target is ShowCreatedOrder && target.isTablet) {
-            val navOptions = NavOptions.Builder()
-                .setEnterAnim(R.anim.activity_fade_in)
-                .setExitAnim(R.anim.activity_fade_out)
-                .setPopEnterAnim(R.anim.activity_fade_in)
-                .setPopExitAnim(R.anim.activity_fade_out)
-                .setPopUpTo(R.id.orders, false)
-                .build()
-            navController.navigateSafely(action, navOptions = navOptions)
-        } else {
-            navController.navigateSafely(action)
-        }
+        navController.navigateSafely(action)
     }
 }

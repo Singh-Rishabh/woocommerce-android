@@ -1343,9 +1343,7 @@ class OrderCreateEditViewModel @Inject constructor(
                     )
                 }
                 createOrder(currentDraft) {
-                    triggerEvent(
-                        ShowCreatedOrder(it.id, startPaymentFlow = true, isTablet = viewState.isTwoPaneLayout)
-                    )
+                    triggerEvent(ShowCreatedOrder(it.id, startPaymentFlow = true))
                 }
             }
 
