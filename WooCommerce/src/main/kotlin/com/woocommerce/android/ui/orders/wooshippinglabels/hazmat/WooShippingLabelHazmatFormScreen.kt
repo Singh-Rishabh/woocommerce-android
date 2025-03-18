@@ -3,7 +3,9 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.hazmat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -14,7 +16,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
@@ -35,14 +40,20 @@ fun WooShippingLabelHazmatFormScreen(
     onSelectCategoryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column {
-        Text("Are you shipping dangerous goods or hazardous materials?")
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.woo_shipping_labels_hazmat_info_title),
+        )
         Row(
             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
             modifier = modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Contains hazardous materials",
+                text = stringResource(R.string.woo_shipping_labels_hazmat_info_contains_hazmat),
                 modifier = modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f)
@@ -57,12 +68,16 @@ fun WooShippingLabelHazmatFormScreen(
             )
         }
         WCColoredButton(
-            text = "Select Category",
+            text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
             onClick = onSelectCategoryClick,
             enabled = containsHazmatChecked
         )
+
         HorizontalDivider()
-        Text("Hazmat details and info")
+
+        Text(
+            text = stringResource(R.string.woo_shipping_labels_hazmat_info_full_description),
+        )
     }
 }
 
