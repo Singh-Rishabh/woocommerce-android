@@ -282,11 +282,8 @@ class WooShippingEditAddressViewModel @Inject constructor(
                 }
                 when {
                     states.isNotEmpty() && stateCode.isNotEmpty() -> {
-                        findLocationByCode(stateCode, statesState.value)
-                            .takeIf { it != Location.EMPTY }
-                            ?.let { selectedState.value = it } ?: run {
-                            selectedState.value = states.first()
-                        }
+                        selectedState.value = findLocationByCode(stateCode, statesState.value)
+                            .takeIf { it != Location.EMPTY } ?: states.first()
                         rawState = ""
                     }
                     states.isNotEmpty() -> {
