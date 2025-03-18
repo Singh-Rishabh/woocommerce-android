@@ -24,9 +24,16 @@ internal class EndpointExportManager @Inject constructor(
                 return@withContext Result.failure(IllegalStateException("Could not open output stream for uri: $uri"))
             }
 
+            val endpointsExcludingIds = endpoints.map {
+                it.copy(
+                    request = it.request.copy(id = 0),
+                    response = it.response.copy(endpointId = 0)
+                )
+            }
+
             runCatching {
                 outputStream.bufferedWriter().use { writer ->
-                    gson.toJson(endpoints, writer)
+                    gson.toJson(endpointsExcludingIds, writer)
                 }
             }
         }

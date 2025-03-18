@@ -21,7 +21,7 @@ internal sealed interface ApiType {
     data class Custom(val host: String) : ApiType
 }
 
-internal object ApiTypeSerializer : JsonDeserializer<ApiType>, JsonSerializer<ApiType> {
+private class ApiTypeSerializer : JsonDeserializer<ApiType>, JsonSerializer<ApiType> {
     override fun serialize(
         src: ApiType?,
         typeOfSrc: Type?,
