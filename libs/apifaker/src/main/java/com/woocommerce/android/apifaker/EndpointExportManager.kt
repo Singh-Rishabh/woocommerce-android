@@ -48,10 +48,10 @@ internal class EndpointExportManager @Inject constructor(
 
             runCatching {
                 val endpoints = inputStream.bufferedReader().use { reader ->
-                    gson.fromJson(reader, Array<MockedEndpoint>::class.java)
+                    gson.fromJson(reader, Array<MockedEndpoint>::class.java).toList()
                 }
 
-                endpointDao.insertEndpoints(*endpoints)
+                endpointDao.insertEndpoints(endpoints)
             }
         }
     }

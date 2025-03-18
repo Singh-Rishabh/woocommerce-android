@@ -53,7 +53,7 @@ internal interface EndpointDao {
     }
 
     @Transaction
-    suspend fun insertEndpoints(vararg endpoints: MockedEndpoint) {
+    suspend fun insertEndpoints(endpoints: List<MockedEndpoint>) {
         endpoints.forEach {
             insertEndpoint(it.request, it.response)
         }
