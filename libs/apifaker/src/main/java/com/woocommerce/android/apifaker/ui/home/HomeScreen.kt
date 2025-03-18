@@ -154,7 +154,7 @@ private fun TopMenu(
 
     @Composable
     fun ExportButton() {
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/plain")) {
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) {
             expanded = false
             it?.let { onExportEndpoints(it) }
         }
@@ -171,7 +171,7 @@ private fun TopMenu(
             it?.let { onImportEndpoints(it) }
         }
 
-        DropdownMenuItem(onClick = { launcher.launch(arrayOf("text/plain")) }) {
+        DropdownMenuItem(onClick = { launcher.launch(arrayOf("application/json")) }) {
             Text("Import")
         }
     }
