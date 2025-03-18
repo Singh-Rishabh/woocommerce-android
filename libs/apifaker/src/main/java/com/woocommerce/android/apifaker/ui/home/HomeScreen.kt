@@ -24,6 +24,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -38,6 +40,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -66,6 +69,7 @@ internal fun HomeScreen(
         endpoints = viewModel.endpoints.collectAsStateWithLifecycle().value,
         isEnabled = viewModel.isEnabled.collectAsState(initial = false).value,
         navController = navController,
+        snackbarHostState = viewModel.snackbarHostState,
         onRemoveRequest = viewModel::onRemoveRequest,
         onMockingToggleChanged = viewModel::onMockingToggleChanged,
         onExportEndpoints = viewModel::onExportEndpoints,
@@ -79,6 +83,7 @@ private fun HomeScreen(
     endpoints: List<MockedEndpoint>,
     isEnabled: Boolean,
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     onRemoveRequest: (Request) -> Unit,
     onMockingToggleChanged: (Boolean) -> Unit,
     onExportEndpoints: (Uri) -> Unit,
@@ -109,6 +114,9 @@ private fun HomeScreen(
                 backgroundColor = MaterialTheme.colors.surface,
                 elevation = 4.dp
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         }
     ) { paddingValues ->
         Box(
@@ -295,6 +303,7 @@ private fun HomeScreenPreview() {
             )
         ),
         isEnabled = true,
+        snackbarHostState = remember { SnackbarHostState() },
         navController = rememberNavController(),
         onRemoveRequest = {},
         onMockingToggleChanged = {},

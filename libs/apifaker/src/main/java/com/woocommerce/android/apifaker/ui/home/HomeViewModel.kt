@@ -1,10 +1,13 @@
 package com.woocommerce.android.apifaker.ui.home
 
 import android.net.Uri
+import android.util.Log
+import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.apifaker.ApiFakerConfig
 import com.woocommerce.android.apifaker.EndpointExportManager
+import com.woocommerce.android.apifaker.LOG_TAG
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.Request
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +28,8 @@ internal class HomeViewModel @Inject constructor(
 
     val isEnabled = config.enabled
 
+    val snackbarHostState = SnackbarHostState()
+
     fun onMockingToggleChanged(enabled: Boolean) {
         viewModelScope.launch {
             config.setStatus(enabled)
@@ -40,8 +45,13 @@ internal class HomeViewModel @Inject constructor(
     fun onExportEndpoints(uri: Uri) {
         viewModelScope.launch {
             endpointExportManager.exportEndpoints(endpoints.value, uri).fold(
-                onSuccess = { /* handle success */ },
-                onFailure = { /* handle error */ }
+                onSuccess = {
+                    snackbarHostState.showSnackbar("Endpoints exported successfully")
+                },
+                onFailure = {
+                    snackbarHostState.showSnackbar("Failed to export endpoints")
+                    Log.e(LOG_TAG, "Failed to export endpoints", it)
+                }
             )
         }
     }
@@ -49,8 +59,15 @@ internal class HomeViewModel @Inject constructor(
     fun onImportEndpoints(uri: Uri) {
         viewModelScope.launch {
             endpointExportManager.importEndpoints(uri).fold(
-                onSuccess = { /* handle success */ },
-                onFailure = { /* handle error */ }
+                onSuccess = {
+                    snackbarHostState.showSnackbar("Endpoints imported successfully")
+                },
+                onFailure = {
+                    snackbarHostState.showSnackbar(
+                        "Failed to import endpoints, please ensure the file was exported from the same app version"
+                    )
+                    Log.e(LOG_TAG, "Failed to import endpoints", it)
+                }
             )
         }
     }
