@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName
 import com.cataloghub.android.tools.SelectedSite
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -118,106 +121,126 @@ class AIRepository @Inject constructor(
     }
 
     // Social Media Connection Methods
-    suspend fun getYouTubeAuthUrl(): String {
-        return aiService.getYouTubeAuthUrl().url
+    suspend fun getYouTubeAuthUrl(): String = withContext(Dispatchers.IO) {
+        aiService.getYouTubeAuthUrl().url
     }
 
-    suspend fun getFacebookAuthUrl(): String {
-        return aiService.getFacebookAuthUrl().url
+    suspend fun getFacebookAuthUrl(): String = withContext(Dispatchers.IO) {
+        aiService.getFacebookAuthUrl().url
     }
 
-    suspend fun getInstagramAuthUrl(): String {
-        return aiService.getInstagramAuthUrl().url
+    suspend fun getInstagramAuthUrl(): String = withContext(Dispatchers.IO) {
+        aiService.getInstagramAuthUrl().url
     }
 
-    suspend fun completeYouTubeAuth(code: String) {
+    suspend fun completeYouTubeAuth(code: String) = withContext(Dispatchers.IO) {
         aiService.completeYouTubeAuth(CompleteAuthRequest(code))
     }
 
-    suspend fun completeFacebookAuth(code: String) {
+    suspend fun completeFacebookAuth(code: String) = withContext(Dispatchers.IO) {
         aiService.completeFacebookAuth(CompleteAuthRequest(code))
     }
 
-    suspend fun completeInstagramAuth(code: String) {
+    suspend fun completeInstagramAuth(code: String) = withContext(Dispatchers.IO) {
         aiService.completeInstagramAuth(CompleteAuthRequest(code))
     }
 
-    suspend fun disconnectYouTube() {
+    suspend fun disconnectYouTube() = withContext(Dispatchers.IO) {
         aiService.disconnectYouTube()
     }
 
-    suspend fun disconnectFacebook() {
+    suspend fun disconnectFacebook() = withContext(Dispatchers.IO) {
         aiService.disconnectFacebook()
     }
 
-    suspend fun disconnectInstagram() {
+    suspend fun disconnectInstagram() = withContext(Dispatchers.IO) {
         aiService.disconnectInstagram()
     }
 
-    suspend fun isYouTubeConnected(): Boolean {
-        return aiService.getYouTubeConnectionStatus().connected
+    suspend fun isYouTubeConnected(): Boolean = withContext(Dispatchers.IO) {
+        aiService.getYouTubeConnectionStatus().connected
     }
 
-    suspend fun isFacebookConnected(): Boolean {
-        return aiService.getFacebookConnectionStatus().connected
+    suspend fun isFacebookConnected(): Boolean = withContext(Dispatchers.IO) {
+        aiService.getFacebookConnectionStatus().connected
     }
 
-    suspend fun isInstagramConnected(): Boolean {
-        return aiService.getInstagramConnectionStatus().connected
+    suspend fun isInstagramConnected(): Boolean = withContext(Dispatchers.IO) {
+        aiService.getInstagramConnectionStatus().connected
     }
 
     // YouTube Videos Methods
-    suspend fun getYouTubeVideos(): List<YouTubeVideo> {
-        return aiService.getYouTubeVideos().videos.map { it.toYouTubeVideo() }
+    suspend fun getYouTubeVideos(): List<YouTubeVideo> = withContext(Dispatchers.IO) {
+        val responses = aiService.getYouTubeVideos().videos
+        responses.map { response ->
+            YouTubeVideo(
+                videoId = response.videoId,
+                title = response.title,
+                description = response.description,
+                publishedAt = response.publishedAt.toString(),
+                channelTitle = response.channelTitle,
+                thumbnails = mapOf("default" to VideoThumbnail(response.thumbnailUrl, 120, 90)),
+                viewCount = response.viewCount?.toInt(),
+                likeCount = response.likeCount?.toInt(),
+                duration = response.duration
+            )
+        }
     }
 
-    suspend fun getYouTubeVideoDetails(videoId: String): YouTubeVideo {
-        return aiService.getYouTubeVideoDetails(videoId).toYouTubeVideo()
-    }
-
-    // Product Methods
-    suspend fun getProducts(): List<AIProduct> {
-        return aiService.getProducts().products.map { it.toAIProduct() }
-    }
-
-    suspend fun updateProductStatus(productId: String, status: AIProductStatus) {
-        aiService.updateProductStatus(productId, UpdateProductStatusRequest(status.name))
-    }
-
-    suspend fun generateProductFromVideo(videoId: String): AIProduct {
-        return aiService.generateProductFromVideo(GenerateProductRequest(videoId)).toAIProduct()
-    }
-
-    // Extension Functions for Data Conversion
-    private fun YouTubeVideoResponse.toYouTubeVideo(): YouTubeVideo {
-        return YouTubeVideo(
-            id = id,
-            title = title,
-            description = description,
-            thumbnailUrl = thumbnailUrl,
-            publishedAt = Date(publishedAt),
-            viewCount = viewCount,
-            likeCount = likeCount,
-            commentCount = commentCount,
-            duration = duration,
-            channelTitle = channelTitle
+    suspend fun getYouTubeVideoDetails(videoId: String): YouTubeVideo = withContext(Dispatchers.IO) {
+        val response = aiService.getYouTubeVideoDetails(videoId)
+        YouTubeVideo(
+            videoId = response.videoId,
+            title = response.title,
+            description = response.description,
+            publishedAt = response.publishedAt.toString(),
+            channelTitle = response.channelTitle,
+            thumbnails = mapOf("default" to VideoThumbnail(response.thumbnailUrl, 120, 90)),
+            viewCount = response.viewCount?.toInt(),
+            likeCount = response.likeCount?.toInt(),
+            duration = response.duration
         )
     }
 
-    private fun ProductResponse.toAIProduct(): AIProduct {
-        return AIProduct(
-            id = id,
-            title = title,
-            description = description,
-            price = price,
-            imageUrl = imageUrl,
-            videoId = videoId,
-            videoTitle = videoTitle,
-            videoThumbnailUrl = videoThumbnailUrl,
-            createdAt = Date(createdAt),
-            status = AIProductStatus.valueOf(status),
-            categories = categories,
-            tags = tags
+    // Product Methods
+    suspend fun getProducts(): List<AIProduct> = withContext(Dispatchers.IO) {
+        aiService.getProducts().products.map {
+            AIProduct(
+                id = it.id,
+                title = it.title,
+                description = it.description,
+                price = it.price,
+                imageUrl = it.imageUrl,
+                videoId = it.videoId,
+                videoTitle = it.videoTitle,
+                videoThumbnailUrl = it.videoThumbnailUrl,
+                createdAt = Date(it.createdAt),
+                status = AIProductStatus.valueOf(it.status),
+                categories = it.categories,
+                tags = it.tags
+            )
+        }
+    }
+
+    suspend fun updateProductStatus(productId: String, status: AIProductStatus) = withContext(Dispatchers.IO) {
+        aiService.updateProductStatus(productId, UpdateProductStatusRequest(status.name))
+    }
+
+    suspend fun generateProductFromVideo(videoId: String): AIProduct = withContext(Dispatchers.IO) {
+        val response = aiService.generateProductFromVideo(GenerateProductRequest(videoId))
+        AIProduct(
+            id = response.id,
+            title = response.title,
+            description = response.description,
+            price = response.price,
+            imageUrl = response.imageUrl,
+            videoId = response.videoId,
+            videoTitle = response.videoTitle,
+            videoThumbnailUrl = response.videoThumbnailUrl,
+            createdAt = Date(response.createdAt),
+            status = AIProductStatus.valueOf(response.status),
+            categories = response.categories,
+            tags = response.tags
         )
     }
 }

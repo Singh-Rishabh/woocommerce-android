@@ -123,9 +123,9 @@ class VideoDetailFragment : Fragment(R.layout.fragment_video_detail) {
         
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = when (position) {
-                0 -> getString(R.string.pending)
-                1 -> getString(R.string.approved)
-                2 -> getString(R.string.rejected)
+                0 -> getString(R.string.ai_product_status_pending)
+                1 -> getString(R.string.ai_product_status_approved)
+                2 -> getString(R.string.ai_product_status_rejected)
                 else -> ""
             }
         }.attach()

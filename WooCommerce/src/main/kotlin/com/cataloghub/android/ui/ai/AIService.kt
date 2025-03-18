@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Path
+import com.google.gson.annotations.SerializedName
 
 interface AIService {
     @POST("process-video/")
@@ -117,14 +118,14 @@ interface AIService {
     
     // YouTube Videos Endpoints
     @GET("ai/youtube/videos")
-    suspend fun getYouTubeVideos(): YouTubeVideosResponse
+    suspend fun getYouTubeVideos(): APIYouTubeVideosResponse
     
     @GET("ai/youtube/videos/{videoId}")
-    suspend fun getYouTubeVideoDetails(@Path("videoId") videoId: String): YouTubeVideoResponse
+    suspend fun getYouTubeVideoDetails(@Path("videoId") videoId: String): APIYouTubeVideoResponse
     
     // Product Endpoints
     @GET("ai/products")
-    suspend fun getProducts(): ProductsResponse
+    suspend fun getProducts(): APIProductsResponse
     
     @POST("ai/products/{productId}/status")
     suspend fun updateProductStatus(
@@ -133,7 +134,7 @@ interface AIService {
     )
     
     @POST("ai/products/generate")
-    suspend fun generateProductFromVideo(@Body request: GenerateProductRequest): ProductResponse
+    suspend fun generateProductFromVideo(@Body request: GenerateProductRequest): APIProductResponse
 }
 
 // Add these data classes for the new API endpoints
@@ -149,28 +150,37 @@ data class ConnectionStatusResponse(
     val connected: Boolean
 )
 
-data class YouTubeVideosResponse(
-    val videos: List<YouTubeVideoResponse>
+data class APIYouTubeVideosResponse(
+    val videos: List<APIYouTubeVideoResponse>,
+    @SerializedName("next_page_token")
+    val nextPageToken: String? = null,
+    @SerializedName("prev_page_token")
+    val prevPageToken: String? = null,
+    @SerializedName("total_results")
+    val totalResults: Int = 0,
+    @SerializedName("results_per_page")
+    val resultsPerPage: Int = 0
 )
 
-data class YouTubeVideoResponse(
+data class APIYouTubeVideoResponse(
     val id: String,
+    val videoId: String,
     val title: String,
     val description: String,
     val thumbnailUrl: String,
     val publishedAt: Long,
-    val viewCount: Long,
-    val likeCount: Long,
-    val commentCount: Long,
-    val duration: String,
+    val viewCount: Long?,
+    val likeCount: Long?,
+    val commentCount: Long?,
+    val duration: String?,
     val channelTitle: String
 )
 
-data class ProductsResponse(
-    val products: List<ProductResponse>
+data class APIProductsResponse(
+    val products: List<APIProductResponse>
 )
 
-data class ProductResponse(
+data class APIProductResponse(
     val id: String,
     val title: String,
     val description: String,

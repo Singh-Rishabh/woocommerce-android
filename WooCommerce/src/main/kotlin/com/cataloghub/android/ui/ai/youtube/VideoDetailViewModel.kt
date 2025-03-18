@@ -62,11 +62,11 @@ class VideoDetailViewModel @Inject constructor(
             try {
                 val video = repository.getYouTubeVideoDetails(videoId)
                 _videoDetails.value = video
-                youtubeUrl = "https://www.youtube.com/watch?v=${video.id}"
+                youtubeUrl = "https://www.youtube.com/watch?v=${video.videoId}"
                 
                 AINetworkLogger.logResponse(
                     "YouTube Video Details",
-                    "ID: ${video.id}, Title: ${video.title}"
+                    "ID: ${video.videoId}, Title: ${video.title}"
                 )
                 WooLog.d(WooLog.T.AI, "Loaded YouTube video details: ${video.title}")
             } catch (e: Exception) {
