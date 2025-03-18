@@ -238,7 +238,8 @@ fun WooShippingLabelCreationScreen(
             onDismissAddressNotification = onDismissAddressNotification,
             destinationStatus = destinationStatus,
             actionSnackbar = actionSnackbar,
-            onSplitShipment = onSplitShipment
+            onSplitShipment = onSplitShipment,
+            onHazmatNoticeClick = onHazmatNoticeClick
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
