@@ -379,7 +379,7 @@ class OrderDetailFragment :
     private fun setupObservers(viewModel: OrderDetailViewModel) {
         viewModel.viewStateData.observe(viewLifecycleOwner) { old, new ->
             new.orderInfo?.takeIfNotEqualTo(old?.orderInfo) {
-                showOrderDetail(it.order!!, it.isPaymentCollectableWithCardReader, it.receiptButtonStatus)
+                showOrderDetail(it.order!!, it.receiptButtonStatus)
                 if (requireContext().isTwoPanesShouldBeUsed) {
                     orderEditingViewModel.setOrderId(it.order.id)
                 }
@@ -625,7 +625,6 @@ class OrderDetailFragment :
 
     private fun showOrderDetail(
         order: Order,
-        isPaymentCollectableWithCardReader: Boolean,
         receiptButtonStatus: OrderDetailViewState.ReceiptButtonStatus
     ) {
         binding.orderDetailOrderStatus.updateOrder(order)
@@ -636,7 +635,6 @@ class OrderDetailFragment :
         )
         binding.orderDetailPaymentInfo.updatePaymentInfo(
             order = order,
-            isPaymentCollectableWithCardReader = isPaymentCollectableWithCardReader,
             receiptButtonStatus = receiptButtonStatus,
             formatCurrencyForDisplay = currencyFormatter.buildBigDecimalFormatter(order.currency),
             onIssueRefundClickListener = { viewModel.onIssueOrderRefundClicked() },
