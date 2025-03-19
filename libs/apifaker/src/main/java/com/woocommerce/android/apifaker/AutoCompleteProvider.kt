@@ -6,9 +6,13 @@ import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.annotations.endpoint.JPAPIEndpoint
 import org.wordpress.android.fluxc.annotations.endpoint.WCWPAPIEndpoint
 import org.wordpress.android.fluxc.annotations.endpoint.WPAPIEndpoint
+import org.wordpress.android.fluxc.annotations.endpoint.WPComEndpoint
+import org.wordpress.android.fluxc.annotations.endpoint.WPComV2Endpoint
 import org.wordpress.android.fluxc.generated.endpoint.JPAPI
 import org.wordpress.android.fluxc.generated.endpoint.WOOCOMMERCE
 import org.wordpress.android.fluxc.generated.endpoint.WPAPI
+import org.wordpress.android.fluxc.generated.endpoint.WPCOMREST
+import org.wordpress.android.fluxc.generated.endpoint.WPCOMV2
 import java.lang.reflect.Modifier
 import javax.inject.Inject
 
@@ -22,13 +26,23 @@ internal class AutoCompleteProvider @Inject constructor() {
                 .map { AutoCompleteSuggestion(it) }
     }
 
+    private val wpComEndpointsList by lazy {
+        fun String.excludingWPComPrefix() = replace(WPCOM_PREFIX, "")
+
+        getEndpointsFromClass(WPCOMREST::class.java, WPComEndpoint::class.java) { urlV1_1.excludingWPComPrefix() }
+            .map { AutoCompleteSuggestion(it, isNameSpaceConfirmed = false) } +
+            getEndpointsFromClass(WPCOMV2::class.java, WPComV2Endpoint::class.java) { url.excludingWPComPrefix() }
+                .map { AutoCompleteSuggestion(it) }
+    }
+
     suspend fun provideAutoCompleteSuggestions(
         endpointType: ApiType,
         query: String
     ): List<AutoCompleteSuggestion> = withContext(Dispatchers.Default) {
         when (endpointType) {
             ApiType.WPApi -> wpApiEndpointsList
-            else -> error("Not supported yet")
+            ApiType.WPCom -> wpComEndpointsList
+            else -> emptyList()
         }
             .filter { it.endpoint.contains(query) && it.endpoint != query }
             .take(10)
@@ -99,6 +113,7 @@ internal class AutoCompleteProvider @Inject constructor() {
     companion object {
         private const val STRING_PLACEHOLDER = "string"
         private const val INT_PLACEHOLDER = 999
+        private const val WPCOM_PREFIX = "https://public-api.wordpress.com"
     }
 }
 
