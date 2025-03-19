@@ -59,14 +59,12 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is OnUrlSelected -> ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
-                is OnSelectCategoryClicked -> showHazmatCategoryPicker(event.currentSelection)
+                is OnSelectCategoryClicked -> showHazmatCategoryPicker()
             }
         }
     }
 
-    private fun showHazmatCategoryPicker(
-        currentSelection: ShippingLabelHazmatCategory?
-    ) {
+    private fun showHazmatCategoryPicker() {
         WooShippingLabelHazmatFormFragmentDirections
             .actionWooShippingLabelHazmatFormFragmentToHazmatCategorySelector(
                 title = getString(R.string.shipping_label_package_details_hazmat_select_category_action),
