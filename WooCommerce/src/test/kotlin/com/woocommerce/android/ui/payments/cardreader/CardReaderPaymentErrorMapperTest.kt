@@ -81,7 +81,7 @@ class CardReaderPaymentErrorMapperTest {
     @Test
     fun `given UK store and AmountTooSmall error, when map to ui error, then AmountTooSmall error returned`() {
         // GIVEN
-        val error = DeclinedByBackendError.AmountTooSmall(
+        val error = DeclinedByBackendError.AmountTooSmallWooPayments(
             "Amount must be at least US$0.50",
             30,
             "GPB"
@@ -106,7 +106,7 @@ class CardReaderPaymentErrorMapperTest {
     @Test
     fun `given US store and AmountTooSmall error, when map to ui error, then AmountTooSmall error returned`() {
         // GIVEN
-        val error = DeclinedByBackendError.AmountTooSmall(
+        val error = DeclinedByBackendError.AmountTooSmallWooPayments(
             "Amount must be at least US$0.50",
             50,
             "USD"
@@ -132,7 +132,7 @@ class CardReaderPaymentErrorMapperTest {
     @Test
     fun `given CA store and AmountTooSmall error, when map to ui error, then AmountTooSmall error returned`() {
         // GIVEN
-        val error = DeclinedByBackendError.AmountTooSmall(
+        val error = DeclinedByBackendError.AmountTooSmallWooPayments(
             "Amount must be at least CA$0.50",
             50,
             "CAD"

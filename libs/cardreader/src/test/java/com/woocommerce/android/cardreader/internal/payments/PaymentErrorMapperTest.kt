@@ -145,7 +145,7 @@ class PaymentErrorMapperTest : CardReaderBaseUnitTest() {
 
         val result = mapper.mapTerminalError(mock(), terminalException)
 
-        assertThat(result.type).isEqualTo(DeclinedByBackendError.AmountTooSmall)
+        assertThat(result.type).isEqualTo(DeclinedByBackendError.AmountTooSmallWooPayments)
     }
 
     @Test

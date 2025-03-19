@@ -967,7 +967,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     fun `given external reader, when payment fails because of AMOUNT_TOO_SMALL, then failed state is not retryable`() =
         testBlocking {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
-            val errorType = DeclinedByBackendError.AmountTooSmall(
+            val errorType = DeclinedByBackendError.AmountTooSmallWooPayments(
                 "Amount must be at least US$0.50",
                 30,
                 "USD"
@@ -1084,7 +1084,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     fun `given external reader, when payment fails because of AMOUNT_TOO_SMALL, then clicking on ok button triggers exit event`() =
         testBlocking {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
-            val errorType = DeclinedByBackendError.AmountTooSmall(
+            val errorType = DeclinedByBackendError.AmountTooSmallWooPayments(
                 "Amount must be at least US$0.50",
                 30,
                 "USD"
@@ -1118,7 +1118,7 @@ class CardReaderPaymentControllerTest : BaseUnitTest() {
     fun `given built in reader, when payment fails because of AMOUNT_TOO_SMALL, then clicking on ok button triggers exit event`() =
         testBlocking {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
-            val errorType = DeclinedByBackendError.AmountTooSmall(
+            val errorType = DeclinedByBackendError.AmountTooSmallWooPayments(
                 "Amount must be at least US$0.50",
                 30,
                 "USD"

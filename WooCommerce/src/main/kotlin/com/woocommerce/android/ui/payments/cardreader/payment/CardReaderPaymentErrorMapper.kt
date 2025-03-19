@@ -2,7 +2,8 @@ package com.woocommerce.android.ui.payments.cardreader.payment
 
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus
-import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmall
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmallStripe
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmallWooPayments
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.Unknown
 import com.woocommerce.android.model.UiString.UiStringText
@@ -36,8 +37,6 @@ class CardReaderPaymentErrorMapper @Inject constructor(
 
             CardPaymentStatus.CardPaymentStatusErrorType.BuiltInReader.InvalidAppSetup ->
                 PaymentFlowError.BuiltInReader.InvalidAppSetup
-
-            else -> PaymentFlowError.Generic
         }
 
     @Suppress("ComplexMethod")
@@ -45,7 +44,8 @@ class CardReaderPaymentErrorMapper @Inject constructor(
         cardPaymentStatusErrorType: CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError,
         isTapToPayPayment: Boolean,
     ) = when (cardPaymentStatusErrorType) {
-        is AmountTooSmall -> generateAmountToSmallErrorFor(cardPaymentStatusErrorType)
+        is AmountTooSmallWooPayments -> generateAmountToSmallErrorFor(cardPaymentStatusErrorType)
+        is AmountTooSmallStripe -> generateAmountToSmallErrorFor(cardPaymentStatusErrorType)
 
         Unknown -> PaymentFlowError.Unknown
 
@@ -74,7 +74,7 @@ class CardReaderPaymentErrorMapper @Inject constructor(
         CardDeclined.TooManyPinTries -> PaymentFlowError.Declined.TooManyPinTries
     }
 
-    private fun generateAmountToSmallErrorFor(data: AmountTooSmall): PaymentFlowError.AmountTooSmall {
+    private fun generateAmountToSmallErrorFor(data: AmountTooSmallWooPayments): PaymentFlowError.AmountTooSmall {
         val minChargeAmountString = currencyFormatter.formatCurrencyGivenInTheSmallestCurrencyUnit(
             data.minAmountInMicroUnits,
             data.currency,
@@ -83,5 +83,9 @@ class CardReaderPaymentErrorMapper @Inject constructor(
             .format(minChargeAmountString)
 
         return PaymentFlowError.AmountTooSmall(UiStringText(message))
+    }
+
+    private fun generateAmountToSmallErrorFor(data: AmountTooSmallStripe): PaymentFlowError.AmountTooSmall {
+        return PaymentFlowError.AmountTooSmall(UiStringText(data.message))
     }
 }

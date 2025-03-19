@@ -12,7 +12,8 @@ import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPayment
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.Canceled
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.CardReadTimeOut
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError
-import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmall
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmallStripe
+import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.AmountTooSmallWooPayments
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined.CardNotSupported
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined.CurrencyNotSupported
 import com.woocommerce.android.cardreader.payments.CardPaymentStatus.CardPaymentStatusErrorType.DeclinedByBackendError.CardDeclined.DuplicateTransaction
@@ -116,7 +117,10 @@ internal class PaymentErrorMapper {
             "testmode_decline" -> TestCard
 
             "test_mode_live_card" -> TestModeLiveCard
-            else -> DeclinedByBackendError.Unknown
+            else -> when (exception.apiError?.code) {
+                "amount_too_small" -> AmountTooSmallStripe(message = exception.errorMessage)
+                else -> DeclinedByBackendError.Unknown
+            }
         }
 
     fun mapCapturePaymentError(
@@ -131,7 +135,7 @@ internal class PaymentErrorMapper {
             is CapturePaymentResponse.Error.CaptureError -> {
                 when (capturePaymentResponse) {
                     is CapturePaymentResponse.Error.CaptureError.AmountTooSmall -> {
-                        AmountTooSmall(
+                        AmountTooSmallWooPayments(
                             message = capturePaymentResponse.message,
                             minAmountInMicroUnits = capturePaymentResponse.minAmountInMicroUnits,
                             currency = capturePaymentResponse.currency,

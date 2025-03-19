@@ -146,8 +146,8 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
     private val paymentFailedWithPaymentDeclined = PaymentFailed(DeclinedByBackendError.Unknown, mock(), "dummy msg")
     private val paymentFailedWithCardReadTimeOut = PaymentFailed(Generic, mock(), "dummy msg")
     private val paymentFailedWithServerError = PaymentFailed(Server(""), mock(), "dummy msg")
-    private val paymentFailedWithAmountTooSmall = PaymentFailed(
-        DeclinedByBackendError.AmountTooSmall(
+    private val paymentFailedWithAmountTooSmallWooPayments = PaymentFailed(
+        DeclinedByBackendError.AmountTooSmallWooPayments(
             "Amount must be at least US$0.50",
             30,
             "USD"
@@ -1041,7 +1041,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
+                    DeclinedByBackendError.AmountTooSmallWooPayments(
                         "Amount must be at least US$0.50",
                         30,
                         "USD"
@@ -1050,7 +1050,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow { emit(paymentFailedWithAmountTooSmallWooPayments) }
             }
 
             viewModel.start()
@@ -1067,7 +1067,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
+                    DeclinedByBackendError.AmountTooSmallWooPayments(
                         "Amount must be at least US$0.50",
                         30,
                         "USD"
@@ -1076,7 +1076,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow { emit(paymentFailedWithAmountTooSmallWooPayments) }
             }
             initViewModel(BUILT_IN)
 
@@ -1094,7 +1094,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
+                    DeclinedByBackendError.AmountTooSmallWooPayments(
                         "Amount must be at least US$0.50",
                         30,
                         "USD"
@@ -1103,7 +1103,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow { emit(paymentFailedWithAmountTooSmallWooPayments) }
             }
 
             viewModel.start()
@@ -1120,7 +1120,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
+                    DeclinedByBackendError.AmountTooSmallWooPayments(
                         "Amount must be at least US$0.50",
                         30,
                         "USD"
@@ -1129,7 +1129,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow { emit(paymentFailedWithAmountTooSmallWooPayments) }
             }
             initViewModel(BUILT_IN)
 
@@ -1227,7 +1227,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
+                    DeclinedByBackendError.AmountTooSmallWooPayments(
                         "Amount must be at least US$0.50",
                         30,
                         "USD"
@@ -1236,7 +1236,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow { emit(paymentFailedWithAmountTooSmallWooPayments) }
             }
             viewModel.start()
             (viewModel.viewStateData.value as ExternalReaderFailedPaymentState).onPrimaryActionClicked.invoke()
@@ -1250,7 +1250,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
             val error = AmountTooSmall(UiStringText("Amount must be at least US$0.50"))
             whenever(
                 errorMapper.mapPaymentErrorToUiError(
-                    DeclinedByBackendError.AmountTooSmall(
+                    DeclinedByBackendError.AmountTooSmallWooPayments(
                         "Amount must be at least US$0.50",
                         30,
                         "USD"
@@ -1259,7 +1259,7 @@ class CardReaderPaymentViewModelTest : BaseUnitTest() {
                 )
             ).thenReturn(error)
             whenever(cardReaderManager.collectPayment(any())).thenAnswer {
-                flow { emit(paymentFailedWithAmountTooSmall) }
+                flow { emit(paymentFailedWithAmountTooSmallWooPayments) }
             }
             initViewModel(BUILT_IN)
 
