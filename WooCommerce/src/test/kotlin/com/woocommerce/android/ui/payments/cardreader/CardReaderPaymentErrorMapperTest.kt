@@ -448,4 +448,55 @@ class CardReaderPaymentErrorMapperTest {
         assertThat((result as PaymentFlowError.BuiltInReader.InvalidAppSetup).message)
             .isEqualTo(UiStringRes(R.string.card_reader_payment_failed_app_setup_is_invalid))
     }
+
+    @Test
+    fun `given AmountTooSmallStripe error, when map to ui error, then AmountTooSmall error returned with error message`() {
+        // GIVEN
+        val errorMessage = "Amount must be at least $0.50"
+        val error = DeclinedByBackendError.AmountTooSmallStripe(errorMessage)
+
+        // WHEN
+        val result = mapper.mapPaymentErrorToUiError(error, false)
+
+        // THEN
+        assertThat(result).isEqualTo(
+            PaymentFlowError.AmountTooSmall(UiStringText(errorMessage))
+        )
+        assertThat((result as PaymentFlowError.AmountTooSmall).message)
+            .isEqualTo(UiStringText(errorMessage))
+    }
+
+    @Test
+    fun `given AmountTooSmallStripe with different currency, when map to ui error, then correct message is returned`() {
+        // GIVEN
+        val errorMessage = "Amount must be at least €0.30"
+        val error = DeclinedByBackendError.AmountTooSmallStripe(errorMessage)
+
+        // WHEN
+        val result = mapper.mapPaymentErrorToUiError(error, false)
+
+        // THEN
+        assertThat(result).isEqualTo(
+            PaymentFlowError.AmountTooSmall(UiStringText(errorMessage))
+        )
+        assertThat((result as PaymentFlowError.AmountTooSmall).message)
+            .isEqualTo(UiStringText(errorMessage))
+    }
+
+    @Test
+    fun `given AmountTooSmallStripe with empty message, when map to ui error, then empty message is returned`() {
+        // GIVEN
+        val errorMessage = ""
+        val error = DeclinedByBackendError.AmountTooSmallStripe(errorMessage)
+
+        // WHEN
+        val result = mapper.mapPaymentErrorToUiError(error, false)
+
+        // THEN
+        assertThat(result).isEqualTo(
+            PaymentFlowError.AmountTooSmall(UiStringText(errorMessage))
+        )
+        assertThat((result as PaymentFlowError.AmountTooSmall).message)
+            .isEqualTo(UiStringText(errorMessage))
+    }
 }
