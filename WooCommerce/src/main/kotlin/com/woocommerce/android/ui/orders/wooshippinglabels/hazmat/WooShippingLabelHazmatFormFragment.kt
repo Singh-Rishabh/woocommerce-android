@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHa
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.Companion.KEY_HAZMAT_CATEGORY_SELECTOR_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnSelectCategoryClicked
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnUrlSelected
+import com.woocommerce.android.ui.searchfilter.SearchFilterItem
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -70,13 +71,13 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
             .actionWooShippingLabelHazmatFormFragmentToHazmatCategorySelector(
                 title = getString(R.string.shipping_label_package_details_hazmat_select_category_action),
                 requestKey = KEY_HAZMAT_CATEGORY_SELECTOR_RESULT,
-                keys = ShippingLabelHazmatCategory.values()
-                    .map { getString(it.stringResourceID) }
-                    .toTypedArray(),
-                values = ShippingLabelHazmatCategory.values()
-                    .map { it.toString() }
-                    .toTypedArray(),
-                selectedItem = currentSelection.toString()
+                items = ShippingLabelHazmatCategory.entries
+                    .map {
+                        SearchFilterItem(
+                            name = getString(it.stringResourceID),
+                            value = it.toString()
+                        )
+                    }.toTypedArray(),
             ).let { findNavController().navigateSafely(it) }
     }
 }
