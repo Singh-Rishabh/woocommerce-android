@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.woocommerce.android.AppUrls
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringRes
 import com.woocommerce.android.ui.compose.component.WCColoredButton
@@ -45,7 +46,7 @@ fun WooShippingLabelHazmatFormScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -59,7 +60,7 @@ fun WooShippingLabelHazmatFormScreen(
             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp)
+                .padding(vertical = 8.dp)
         ) {
             Text(
                 text = stringResource(R.string.woo_shipping_labels_hazmat_info_contains_hazmat),
@@ -84,7 +85,7 @@ fun WooShippingLabelHazmatFormScreen(
             modifier = modifier.fillMaxWidth()
         )
 
-        HorizontalDivider(modifier = modifier.padding(vertical = 12.dp))
+        HorizontalDivider(modifier = modifier.padding(vertical = 8.dp))
 
         Text(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_full_description),
@@ -95,7 +96,12 @@ fun WooShippingLabelHazmatFormScreen(
             style = MaterialTheme.typography.bodyMedium,
             text = annotatedStringRes(
                 stringResId = R.string.woo_shipping_labels_hazmat_info_tooltip_1,
-                onUrlClick = {}
+                onUrlClick = { url ->
+                    when (url) {
+                        "usps-hazmat" -> onUrlSelected(AppUrls.USPS_HAZMAT_INSTRUCTIONS)
+                        "hazmat-tool" -> onUrlSelected(AppUrls.USPS_HAZMAT_SEARCH_TOOL)
+                    }
+                }
             )
         )
 
@@ -103,7 +109,7 @@ fun WooShippingLabelHazmatFormScreen(
             style = MaterialTheme.typography.bodyMedium,
             text = annotatedStringRes(
                 stringResId = R.string.woo_shipping_labels_hazmat_info_tooltip_2,
-                onUrlClick = {}
+                onUrlClick = { onUrlSelected(AppUrls.DHL_EXPRESS_HAZMAT_INSTRUCTIONS) }
             )
         )
     }
