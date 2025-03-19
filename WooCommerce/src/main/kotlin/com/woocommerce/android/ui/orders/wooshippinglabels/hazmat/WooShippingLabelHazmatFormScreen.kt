@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.annotatedStringRes
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 
@@ -85,6 +86,22 @@ fun WooShippingLabelHazmatFormScreen(
         Text(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_full_description),
             style = MaterialTheme.typography.bodyMedium
+        )
+
+        Text(
+            style = MaterialTheme.typography.bodyMedium,
+            text = annotatedStringRes(
+                stringResId = R.string.woo_shipping_labels_hazmat_info_tooltip_1,
+                onUrlClick = {}
+            )
+        )
+
+        Text(
+            style = MaterialTheme.typography.bodyMedium,
+            text = annotatedStringRes(
+                stringResId = R.string.woo_shipping_labels_hazmat_info_tooltip_2,
+                onUrlClick = {}
+            )
         )
     }
 }
