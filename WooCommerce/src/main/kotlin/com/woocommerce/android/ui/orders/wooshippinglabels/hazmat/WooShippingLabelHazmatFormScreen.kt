@@ -43,6 +43,7 @@ fun WooShippingLabelHazmatFormScreen(
     modifier: Modifier = Modifier
 ) {
     Column(
+        verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
@@ -56,7 +57,7 @@ fun WooShippingLabelHazmatFormScreen(
             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
             modifier = modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
+                .padding(vertical = 12.dp)
         ) {
             Text(
                 text = stringResource(R.string.woo_shipping_labels_hazmat_info_contains_hazmat),
@@ -81,7 +82,7 @@ fun WooShippingLabelHazmatFormScreen(
             modifier = modifier.fillMaxWidth()
         )
 
-        HorizontalDivider(modifier = modifier.padding(vertical = 16.dp))
+        HorizontalDivider(modifier = modifier.padding(vertical = 12.dp))
 
         Text(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_full_description),
