@@ -116,8 +116,8 @@ private fun ShippingRatesCardPreview() {
 
 @Composable
 internal fun ShippingRatesSectionMissingInfo(
+    missingInfo: WooShippingLabelCreationViewModel.ShippingRatesState.MissingInfo,
     modifier: Modifier = Modifier,
-    missingInfo: WooShippingLabelCreationViewModel.ShippingRatesState.MissingInfo
 ) {
     Column(
         modifier = modifier
