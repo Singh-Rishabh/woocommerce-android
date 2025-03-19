@@ -3,7 +3,6 @@ package com.woocommerce.android.apifaker.ui.details
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.Snapshot.Companion.withMutableSnapshot
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,60 +36,44 @@ internal class EndpointDetailsViewModel @Inject constructor(
     }
 
     fun onApiTypeChanged(apiType: ApiType) {
-        withMutableSnapshot {
-            state = state.copy(request = state.request.copy(type = apiType))
-        }
+        state = state.copy(request = state.request.copy(type = apiType))
     }
 
     fun onRequestHttpMethodChanged(httpMethod: HttpMethod?) {
-        withMutableSnapshot {
-            state = state.copy(request = state.request.copy(httpMethod = httpMethod))
-        }
+        state = state.copy(request = state.request.copy(httpMethod = httpMethod))
     }
 
     fun onRequestPathChanged(path: String) {
-        withMutableSnapshot {
-            state = state.copy(request = state.request.copy(path = path))
-        }
+        state = state.copy(request = state.request.copy(path = path))
     }
 
     fun onQueryParameterAdded(name: String, value: String) {
         val queryParameter = QueryParameter(name, value)
-        withMutableSnapshot {
-            state = state.copy(
-                request = state.request.copy(
-                    queryParameters = state.request.queryParameters + queryParameter
-                )
+        state = state.copy(
+            request = state.request.copy(
+                queryParameters = state.request.queryParameters + queryParameter
             )
-        }
+        )
     }
 
     fun onQueryParameterDeleted(queryParameter: QueryParameter) {
-        withMutableSnapshot {
-            state = state.copy(
-                request = state.request.copy(
-                    queryParameters = state.request.queryParameters - queryParameter
-                )
+        state = state.copy(
+            request = state.request.copy(
+                queryParameters = state.request.queryParameters - queryParameter
             )
-        }
+        )
     }
 
     fun onRequestBodyChanged(body: String) {
-        withMutableSnapshot {
-            state = state.copy(request = state.request.copy(body = body.ifEmpty { null }))
-        }
+        state = state.copy(request = state.request.copy(body = body.ifEmpty { null }))
     }
 
     fun onResponseStatusCodeChanged(statusCode: Int) {
-        withMutableSnapshot {
-            state = state.copy(response = state.response.copy(statusCode = statusCode))
-        }
+        state = state.copy(response = state.response.copy(statusCode = statusCode))
     }
 
     fun onResponseBodyChanged(body: String) {
-        withMutableSnapshot {
-            state = state.copy(response = state.response.copy(body = body))
-        }
+        state = state.copy(response = state.response.copy(body = body))
     }
 
     fun onSaveClicked() {
