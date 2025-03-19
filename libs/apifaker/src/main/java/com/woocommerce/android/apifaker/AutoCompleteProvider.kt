@@ -45,7 +45,7 @@ internal class AutoCompleteProvider @Inject constructor() {
             else -> emptyList()
         }
             .filter { it.endpoint.contains(query) && it.endpoint != query }
-            .take(10)
+            .take(SUGGESTIONS_LIMIT)
     }
 
     private inline fun <reified T : Any> getEndpointsFromClass(
@@ -64,7 +64,7 @@ internal class AutoCompleteProvider @Inject constructor() {
             .map { it.replace(STRING_PLACEHOLDER, "%").replace("$INT_PLACEHOLDER", "%") }
     }
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "SpreadOperator")
     private fun <T : Any> T.getNestedEndpoints(
         endpointTypeClass: Class<T>,
         currentClass: Class<*>
@@ -111,6 +111,7 @@ internal class AutoCompleteProvider @Inject constructor() {
     }
 
     companion object {
+        private const val SUGGESTIONS_LIMIT = 10
         private const val STRING_PLACEHOLDER = "string"
         private const val INT_PLACEHOLDER = 999
         private const val WPCOM_PREFIX = "https://public-api.wordpress.com"
