@@ -2,12 +2,14 @@ package com.woocommerce.android.apifaker.ui.details
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,6 +21,8 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Chip
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.Divider
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -37,12 +41,15 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -51,8 +58,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.PopupProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.woocommerce.android.apifaker.AutoCompleteSuggestion
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
 import com.woocommerce.android.apifaker.models.QueryParameter
@@ -72,6 +81,7 @@ internal fun EndpointDetailsScreen(
 
     EndpointDetailsScreen(
         state = viewModel.state,
+        autoCompleteSuggestions = viewModel.autoCompleteSuggestions,
         navController = navController,
         onSaveClicked = viewModel::onSaveClicked,
         onApiTypeChanged = viewModel::onApiTypeChanged,
@@ -88,6 +98,7 @@ internal fun EndpointDetailsScreen(
 @Composable
 private fun EndpointDetailsScreen(
     state: EndpointDetailsViewModel.UiState,
+    autoCompleteSuggestions: List<AutoCompleteSuggestion>,
     navController: NavController,
     onSaveClicked: () -> Unit = {},
     onApiTypeChanged: (ApiType) -> Unit = {},
@@ -135,6 +146,7 @@ private fun EndpointDetailsScreen(
         ) {
             RequestDefinitionSection(
                 request = state.request,
+                autoCompleteSuggestions = autoCompleteSuggestions,
                 onApiTypeChanged = onApiTypeChanged,
                 onHttpMethodChanged = onRequestHttpMethodChanged,
                 onPathChanged = onRequestPathChanged,
@@ -165,6 +177,7 @@ private fun EndpointDetailsScreen(
 @Composable
 private fun RequestDefinitionSection(
     request: Request,
+    autoCompleteSuggestions: List<AutoCompleteSuggestion>,
     onApiTypeChanged: (ApiType) -> Unit,
     onHttpMethodChanged: (HttpMethod?) -> Unit,
     onPathChanged: (String) -> Unit,
@@ -196,6 +209,7 @@ private fun RequestDefinitionSection(
         PathField(
             path = request.path,
             apiType = request.type,
+            autoCompleteSuggestions = autoCompleteSuggestions,
             onPathChanged = onPathChanged,
             modifier = Modifier.fillMaxWidth()
         )
@@ -289,10 +303,12 @@ private fun HttpMethodField(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun PathField(
     path: String,
     apiType: ApiType,
+    autoCompleteSuggestions: List<AutoCompleteSuggestion>,
     onPathChanged: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -300,12 +316,41 @@ private fun PathField(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
     ) {
-        OutlinedTextField(
-            label = { Text(text = "Path") },
-            value = path,
-            onValueChange = onPathChanged,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Box {
+            var expanded by remember { mutableStateOf(true) }
+            var fieldWidth by remember { mutableIntStateOf(0) }
+
+            OutlinedTextField(
+                label = { Text(text = "Path") },
+                value = path,
+                onValueChange = {
+                    onPathChanged(it)
+                    expanded = true
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .onGloballyPositioned {
+                        fieldWidth = it.size.width
+                    }
+            )
+
+            DropdownMenu(
+                expanded = autoCompleteSuggestions.isNotEmpty() && expanded,
+                onDismissRequest = { expanded = false },
+                properties = PopupProperties(
+                    focusable = false
+                ),
+                modifier = Modifier
+                    .width(with(LocalDensity.current) { fieldWidth.toDp() })
+                    .heightIn(max = 200.dp)
+            ) {
+                autoCompleteSuggestions.forEach {
+                    DropdownMenuItem(onClick = { TODO() }) {
+                        Text(text = it.endpoint)
+                    }
+                }
+            }
+        }
+
         val prefix = when (apiType) {
             ApiType.WPApi -> "/wp-json"
             ApiType.WPCom -> "/rest"
@@ -631,6 +676,7 @@ private fun EndpointDetailsScreenPreview() {
                     body = ""
                 )
             ),
+            autoCompleteSuggestions = emptyList(),
             navController = rememberNavController()
         )
     }

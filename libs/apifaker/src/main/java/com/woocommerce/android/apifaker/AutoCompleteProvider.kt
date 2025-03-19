@@ -10,8 +10,9 @@ import org.wordpress.android.fluxc.generated.endpoint.JPAPI
 import org.wordpress.android.fluxc.generated.endpoint.WOOCOMMERCE
 import org.wordpress.android.fluxc.generated.endpoint.WPAPI
 import java.lang.reflect.Modifier
+import javax.inject.Inject
 
-internal class AutoCompleteProvider {
+internal class AutoCompleteProvider @Inject constructor() {
     private val wpApiEndpointsList by lazy {
         getEndpointsFromClass(WPAPI::class.java, WPAPIEndpoint::class.java) { "/$urlV2" }
             .map { AutoCompleteSuggestion(it) } +
@@ -26,9 +27,11 @@ internal class AutoCompleteProvider {
         query: String
     ): List<AutoCompleteSuggestion> = withContext(Dispatchers.Default) {
         when (endpointType) {
-            ApiType.WPApi -> wpApiEndpointsList.filter { it.endpoint.contains(query) }
+            ApiType.WPApi -> wpApiEndpointsList
             else -> error("Not supported yet")
         }
+            .filter { it.endpoint.contains(query) && it.endpoint != query }
+            .take(10)
     }
 
     private inline fun <reified T : Any> getEndpointsFromClass(

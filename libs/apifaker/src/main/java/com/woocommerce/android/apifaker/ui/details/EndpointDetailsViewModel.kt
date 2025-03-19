@@ -3,9 +3,12 @@ package com.woocommerce.android.apifaker.ui.details
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.apifaker.AutoCompleteProvider
+import com.woocommerce.android.apifaker.AutoCompleteSuggestion
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
@@ -14,25 +17,51 @@ import com.woocommerce.android.apifaker.models.Request
 import com.woocommerce.android.apifaker.models.Response
 import com.woocommerce.android.apifaker.ui.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 const val MISSING_ENDPOINT_ID = 0L
 
 @HiltViewModel
 internal class EndpointDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val endpointDao: EndpointDao
+    private val endpointDao: EndpointDao,
+    private val autoCompleteProvider: AutoCompleteProvider
 ) : ViewModel() {
     private val id = checkNotNull(savedStateHandle.get<Long>(Screen.EndpointDetails.endpointIdArgumentName))
 
     var state: UiState by mutableStateOf(defaultEndpoint())
         private set
 
+    var autoCompleteSuggestions by mutableStateOf(emptyList<AutoCompleteSuggestion>())
+        private set
+
+    private var isLastSuggestionApplied: Boolean = false
+
     init {
-        if (id != MISSING_ENDPOINT_ID && state.request.id == MISSING_ENDPOINT_ID) {
-            loadEndpoint()
+        viewModelScope.launch {
+            if (id != MISSING_ENDPOINT_ID && state.request.id == MISSING_ENDPOINT_ID) {
+                loadEndpoint()
+            }
+
+            handleAutoCompleteSuggestions()
         }
+    }
+
+    @OptIn(FlowPreview::class)
+    private suspend fun handleAutoCompleteSuggestions() {
+        snapshotFlow { state.request.path }
+            .drop(1)
+            .filter { !isLastSuggestionApplied && it.length > 2 }
+            .debounce(300.milliseconds)
+            .map { autoCompleteProvider.provideAutoCompleteSuggestions(state.request.type, it) }
+            .collect { autoCompleteSuggestions = it }
     }
 
     fun onApiTypeChanged(apiType: ApiType) {
@@ -44,6 +73,8 @@ internal class EndpointDetailsViewModel @Inject constructor(
     }
 
     fun onRequestPathChanged(path: String) {
+        // Reset the flag when the path is changed by the user
+        isLastSuggestionApplied = false
         state = state.copy(request = state.request.copy(path = path))
     }
 
@@ -83,7 +114,7 @@ internal class EndpointDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun loadEndpoint() = viewModelScope.launch {
+    private suspend fun loadEndpoint() {
         state = endpointDao.getEndpoint(id)!!.let {
             UiState(
                 it.request,
