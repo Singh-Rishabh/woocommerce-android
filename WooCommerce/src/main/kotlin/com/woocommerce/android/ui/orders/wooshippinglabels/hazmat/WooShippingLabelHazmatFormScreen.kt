@@ -31,7 +31,8 @@ fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewMo
     WooShippingLabelHazmatFormScreen(
         containsHazmatChecked = viewState?.containsHazmatChecked ?: false,
         onContainsHazmatChanged = viewModel::onContainsHazmatChanged,
-        onSelectCategoryClick = viewModel::onSelectCategoryClick
+        onSelectCategoryClick = viewModel::onSelectCategoryClick,
+        onUrlSelected = viewModel::onUrlSelected
     )
 }
 
@@ -40,6 +41,7 @@ fun WooShippingLabelHazmatFormScreen(
     containsHazmatChecked: Boolean,
     onContainsHazmatChanged: (Boolean) -> Unit,
     onSelectCategoryClick: () -> Unit,
+    onUrlSelected: (url: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -114,7 +116,8 @@ fun WooShippingLabelHazmatFormScreenPreview() {
         WooShippingLabelHazmatFormScreen(
             containsHazmatChecked = false,
             onContainsHazmatChanged = {},
-            onSelectCategoryClick = {}
+            onSelectCategoryClick = {},
+            onUrlSelected = {}
         )
     }
 }

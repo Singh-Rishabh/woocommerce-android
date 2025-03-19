@@ -33,10 +33,15 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         triggerEvent(OnSelectCategoryClicked)
     }
 
+    fun onUrlSelected(url: String) {
+        triggerEvent(OnUrlSelected(url))
+    }
+
     @Parcelize
     data class ViewState(
         val containsHazmatChecked: Boolean = false
     ) : Parcelable
 
     data object OnSelectCategoryClicked : Event()
+    data class OnUrlSelected(val url: String) : Event()
 }
