@@ -29,7 +29,7 @@ class AdjustProductQuantity @Inject constructor() {
                 val newQuantity = quantity + quantityToAdd
                 val discountAmount = subtotal - total
                 val newSubtotal = pricePreDiscount.multiply(newQuantity.toBigDecimal())
-                if(newQuantity > 0) {
+                if (newQuantity > 0) {
                     items[0L] = copy(
                         itemId = 0L,
                         quantity = newQuantity,
