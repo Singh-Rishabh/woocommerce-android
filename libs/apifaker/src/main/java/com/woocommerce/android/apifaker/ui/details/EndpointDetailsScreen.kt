@@ -51,9 +51,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -325,12 +327,17 @@ private fun PathField(
         Box {
             var expanded by remember { mutableStateOf(true) }
             var fieldWidth by remember { mutableIntStateOf(0) }
+            var textFieldValue by remember { mutableStateOf(TextFieldValue(path, TextRange(path.length))) }
+
+            // Update the field value with the last path
+            textFieldValue = textFieldValue.copy(text = path)
 
             OutlinedTextField(
                 label = { Text(text = "Path") },
-                value = path,
+                value = textFieldValue,
                 onValueChange = {
-                    onPathChanged(it)
+                    textFieldValue = it
+                    onPathChanged(it.text)
                     expanded = true
                 },
                 modifier = Modifier
@@ -353,6 +360,10 @@ private fun PathField(
                 autoCompleteSuggestions.forEach { suggestion ->
                     DropdownMenuItem(onClick = {
                         onSuggestionSelected(suggestion)
+                        textFieldValue = textFieldValue.copy(
+                            text = suggestion.endpoint,
+                            selection = TextRange(suggestion.endpoint.length)
+                        )
                         expanded = false
                     }) {
                         Text(text = suggestion.endpoint)
