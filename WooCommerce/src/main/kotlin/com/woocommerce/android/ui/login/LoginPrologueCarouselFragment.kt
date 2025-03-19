@@ -55,26 +55,24 @@ class LoginPrologueCarouselFragment : Fragment(R.layout.fragment_login_prologue_
 
         val isTablet = DisplayUtils.isTablet(context) || DisplayUtils.isXLargeTablet(context)
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            val buttonHorizontalMargin = resources.getDimension(R.dimen.prologue_button_horizontal_margin)
+
             binding.buttonSkip.updateLayoutParams<MarginLayoutParams> {
                 val currentBottomMargin = resources.getDimension(R.dimen.prologue_button_skip_bottom_margin)
                 bottomMargin = currentBottomMargin.roundToInt() + insets.bottom
                 if (!isTablet) {
-                    val buttonHorizontalMargin = resources.getDimension(R.dimen.prologue_button_horizontal_margin)
                     rightMargin = buttonHorizontalMargin.roundToInt() + insets.right
                 }
             }
-            WindowInsetsCompat.CONSUMED
-        }
-        if (!isTablet) {
-            ViewCompat.setOnApplyWindowInsetsListener(binding.buttonNext) { v, windowInsets ->
-                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-                val buttonHorizontalMargin = resources.getDimension(R.dimen.prologue_button_horizontal_margin)
-                v.updateLayoutParams<MarginLayoutParams> {
+            if (!isTablet) {
+                binding.buttonNext.updateLayoutParams<MarginLayoutParams> {
                     leftMargin = buttonHorizontalMargin.roundToInt() + insets.left
                 }
-                WindowInsetsCompat.CONSUMED
             }
+            WindowInsetsCompat.CONSUMED
         }
 
         val adapter = LoginPrologueAdapter(this)

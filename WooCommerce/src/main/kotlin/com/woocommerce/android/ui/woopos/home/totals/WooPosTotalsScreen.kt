@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Total
 import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymentFailedScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.inprogress.WooPosPaymentInProgressScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
+import com.woocommerce.android.ui.woopos.util.ext.announceForAccessibility
 
 @Composable
 fun WooPosTotalsScreen(modifier: Modifier = Modifier) {
@@ -88,6 +90,7 @@ private fun WooPosTotalsScreen(
 
         StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentSuccess) {
             if (state is WooPosTotalsViewState.PaymentSuccess) {
+                LocalContext.current.announceForAccessibility(stringResource(R.string.woopos_payment_successful_label))
                 WooPosPaymentSuccessScreen(
                     state,
                     onReceiptClicked = { onUIEvent(WooPosTotalsUIEvent.OnStartReceiptFlowClicked) },
@@ -104,6 +107,7 @@ private fun WooPosTotalsScreen(
 
         StateChangeAnimated(visible = state is WooPosTotalsViewState.Error) {
             if (state is WooPosTotalsViewState.Error) {
+                LocalContext.current.announceForAccessibility(state.message)
                 TotalsErrorScreen(
                     errorMessage = state.message,
                     onUIEvent = onUIEvent
@@ -113,12 +117,14 @@ private fun WooPosTotalsScreen(
 
         StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentInProgress) {
             if (state is WooPosTotalsViewState.PaymentInProgress) {
+                LocalContext.current.announceForAccessibility(state.title)
                 WooPosPaymentInProgressScreen(state, onUIEvent)
             }
         }
 
         StateChangeAnimated(visible = state is WooPosTotalsViewState.PaymentFailed) {
             if (state is WooPosTotalsViewState.PaymentFailed) {
+                LocalContext.current.announceForAccessibility(state.title)
                 WooPosPaymentFailedScreen(
                     state = state,
                     onUIEvent = onUIEvent,
@@ -154,27 +160,40 @@ private fun TotalsLoaded(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (!state.isFreeOrder) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1.1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                when (val readerStatus = state.readerStatus) {
-                    is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
-                        ReaderDisconnected(modifier = Modifier, status = readerStatus, onUIEvent = onUIEvent)
-                    }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1.1f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            when (val readerStatus = state.readerStatus) {
+                is WooPosTotalsViewState.ReaderStatus.Disconnected -> {
+                    ReaderDisconnected(modifier = Modifier, status = readerStatus, onUIEvent = onUIEvent)
+                    LocalContext.current.announceForAccessibility(readerStatus.title)
+                }
 
-                    is WooPosTotalsViewState.ReaderStatus.Preparing,
-                    is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
-                        PreparingReader(readerStatus)
-                    }
+                is WooPosTotalsViewState.ReaderStatus.Preparing -> {
+                    PreparingReader(
+                        title = readerStatus.title,
+                        subtitle = readerStatus.subtitle
+                    )
+                    LocalContext.current.announceForAccessibility(readerStatus.title)
+                }
+                is WooPosTotalsViewState.ReaderStatus.CheckingOrder -> {
+                    PreparingReader(
+                        title = readerStatus.title,
+                        subtitle = readerStatus.subtitle
+                    )
+                    LocalContext.current.announceForAccessibility(readerStatus.title)
+                }
 
-                    is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
-                        ReaderReadyForPayment(readerStatus)
-                    }
+                is WooPosTotalsViewState.ReaderStatus.ReadyForPayment -> {
+                    ReaderReadyForPayment(readerStatus)
+                    LocalContext.current.announceForAccessibility(readerStatus.title)
+                }
+
+                is WooPosTotalsViewState.ReaderStatus.Unavailable -> {
                 }
             }
         }
@@ -216,23 +235,23 @@ private fun TotalsLoaded(
 }
 
 @Composable
-private fun PreparingReader(readerStatus: WooPosTotalsViewState.ReaderStatus) {
+private fun PreparingReader(title: String, subtitle: String) {
     WooPosCircularLoadingIndicator(modifier = Modifier.size(160.dp))
     Spacer(modifier = Modifier.height(WooPosSpacing.Large.value.toAdaptivePadding()))
     WooPosText(
-        text = readerStatus.title,
+        text = title,
         style = WooPosTypography.BodyLarge,
     )
     Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value.toAdaptivePadding()))
     WooPosText(
-        text = readerStatus.subtitle,
+        text = subtitle,
         style = WooPosTypography.Heading,
         fontWeight = FontWeight.Bold
     )
 }
 
 @Composable
-private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStatus) {
+private fun ReaderReadyForPayment(readerStatus: WooPosTotalsViewState.ReaderStatus.ReadyForPayment) {
     val tapCardAnimation by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.woopos_card_ilustration))
     LottieAnimation(
         modifier = Modifier.size(256.dp),
@@ -431,7 +450,6 @@ fun WooPosTotalsScreenPreview(modifier: Modifier = Modifier) {
                     title = "Ready for payment",
                     subtitle = "Tap, swipe or insert card"
                 ),
-                isFreeOrder = false
             ),
             onUIEvent = {},
         )
@@ -455,7 +473,6 @@ fun WooPosTotalsScreenPreviewReaderNotConnected(modifier: Modifier = Modifier) {
                     subtitle = "To process this payment, please connect your reader.",
                     actionButtonLabel = "Connect to a reader",
                 ),
-                isFreeOrder = false
             ),
             onUIEvent = {},
         )
@@ -479,7 +496,6 @@ fun WooPosTotalsScreenPreviewWithCashPaymentAvailable() {
                     subtitle = "To process this payment, please connect your reader.",
                     actionButtonLabel = "Connect to a reader",
                 ),
-                isFreeOrder = false
             ),
             onUIEvent = {},
         )
@@ -498,12 +514,7 @@ fun WooPosTotalsScreenPreviewForFreeOrders() {
                     orderTotalText = "$462.00",
                     orderTaxText = "$42.00",
                 ),
-                readerStatus = WooPosTotalsViewState.ReaderStatus.Disconnected(
-                    title = "Reader not connected",
-                    subtitle = "To process this payment, please connect your reader.",
-                    actionButtonLabel = "Connect to a reader",
-                ),
-                isFreeOrder = true
+                readerStatus = WooPosTotalsViewState.ReaderStatus.Unavailable,
             ),
             onUIEvent = {},
         )
@@ -548,10 +559,6 @@ fun WooPosTotalsErrorScreenPreview() {
 @Composable
 @WooPosPreview
 fun PreparingReaderPReview() {
-    val readerStatus = WooPosTotalsViewState.ReaderStatus.Preparing(
-        title = "Getting ready",
-        subtitle = "Preparing reader for payment"
-    )
     WooPosTheme {
         Column(
             modifier = Modifier
@@ -559,7 +566,10 @@ fun PreparingReaderPReview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            PreparingReader(readerStatus)
+            PreparingReader(
+                title = "Getting ready",
+                subtitle = "Preparing reader for payment",
+            )
         }
     }
 }

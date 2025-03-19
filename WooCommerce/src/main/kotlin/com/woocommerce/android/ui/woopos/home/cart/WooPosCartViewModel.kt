@@ -28,6 +28,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ItemRemovedFromCart
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEventConstant
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.getStateFlow
@@ -45,6 +46,7 @@ class WooPosCartViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val formatPrice: WooPosFormatPrice,
     private val analyticsTracker: WooPosAnalyticsTracker,
+    private val analyticsTrackingDataKeeper: WooPosAnalyticsTrackingDataKeeper,
     savedState: SavedStateHandle,
 ) : ViewModel() {
     private val _state = savedState.getStateFlow(
@@ -55,7 +57,7 @@ class WooPosCartViewModel @Inject constructor(
 
     val state: LiveData<WooPosCartState> = _state
         .asLiveData()
-        .map { updateCartStatusDependingOnItems(it) }
+        .map { updateCartStatusDependingOnItems(it).also { newState -> updateAnalyticsData(newState) } }
         .map { updateToolbarState(it) }
         .map { updateStateDependingOnCartStatus(it) }
 
@@ -116,6 +118,7 @@ class WooPosCartViewModel @Inject constructor(
                     productId = it.id.productId,
                     id = it.id.variationId
                 )
+                ProductType.Coupon -> throw NotImplementedError("Coupons are not supported yet")
             }
         }
         sendEventToParent(ChildToParentEvent.CheckoutClicked(itemClickedDataList))
@@ -156,6 +159,8 @@ class WooPosCartViewModel @Inject constructor(
                     when (event.itemData) {
                         is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> event.itemData.id
                         is WooPosItemsViewModel.ItemClickedData.Variation -> event.itemData.productId
+                        is WooPosItemsViewModel.ItemClickedData.Coupon ->
+                            throw NotImplementedError("Coupons are not supported yet")
                     }
                 )!!
                 when (event.itemData) {
@@ -168,6 +173,8 @@ class WooPosCartViewModel @Inject constructor(
                         val itemNumber = getItemNumber()
                         productVariation.toCartListItem(itemNumber, product)
                     }
+                    is WooPosItemsViewModel.ItemClickedData.Coupon ->
+                        throw NotImplementedError("Coupons are not supported yet")
                 }
             }
             if (_state.value.body == WooPosCartState.Body.Empty) {
@@ -267,6 +274,13 @@ class WooPosCartViewModel @Inject constructor(
         }
     }
 
+    private fun updateAnalyticsData(newState: WooPosCartState) {
+        if (newState.body == WooPosCartState.Body.Empty) {
+            analyticsTrackingDataKeeper.reset()
+            analyticsTrackingDataKeeper.interactionWithCustomerStartedTimestamp = System.currentTimeMillis()
+        }
+    }
+
     private suspend fun Product.toCartListItem(itemNumber: Int): WooPosCartState.Body.WithItems.Item =
         WooPosCartState.Body.WithItems.Item(
             id = WooPosCartState.Body.WithItems.Item.Id(
@@ -299,9 +313,13 @@ class WooPosCartViewModel @Inject constructor(
         )
 }
 
+/**
+ * CouponsProject: Needs to be renamed in order to support non-product types
+ */
 private fun WooPosItemsViewModel.ItemClickedData.productTypeForAnalytics(): String {
     return when (this) {
         is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
         is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
+        is WooPosItemsViewModel.ItemClickedData.Coupon -> "coupon"
     }
 }

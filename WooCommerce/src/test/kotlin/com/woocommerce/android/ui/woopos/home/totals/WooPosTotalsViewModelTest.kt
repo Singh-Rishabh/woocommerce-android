@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.totals
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
+import app.cash.turbine.test
 import com.woocommerce.android.AppPrefs
 import com.woocommerce.android.R
 import com.woocommerce.android.cardreader.CardReaderManager
@@ -44,6 +45,7 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.CreateNewOrderTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.EmailReceiptTapped
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
+import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTrackingDataKeeper
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.UiStringParser
@@ -1175,8 +1177,10 @@ class WooPosTotalsViewModelTest {
             )
 
             // THEN
-            val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
-            assertTrue(checkout.isFreeOrder)
+            viewModel.state.test {
+                val checkout = awaitItem() as WooPosTotalsViewState.Checkout
+                assertFalse(checkout.readerStatus is WooPosTotalsViewState.ReaderStatus.Unavailable)
+            }
         }
 
     @Test
@@ -1235,7 +1239,7 @@ class WooPosTotalsViewModelTest {
 
             // THEN
             val checkout = viewModel.state.value as WooPosTotalsViewState.Checkout
-            assertFalse(checkout.isFreeOrder)
+            assertFalse(checkout.readerStatus is WooPosTotalsViewState.ReaderStatus.Unavailable)
         }
 
     @Test
@@ -1478,10 +1482,13 @@ class WooPosTotalsViewModelTest {
         cardReaderFacade = cardReaderFacade,
         totalsRepository = totalsRepository,
         priceFormat = priceFormat,
-        analyticsTracker = analyticsTracker,
         networkStatus = networkStatus,
         cardReaderPaymentControllerFactory = cardReaderPaymentControllerFactory,
         uiStringParser = uiStringParser,
         savedState = savedState,
+        totalsAnalyticsTracker = WooPosTotalsAnalyticsTracker(
+            analyticsTracker = analyticsTracker,
+            analyticsData = WooPosAnalyticsTrackingDataKeeper()
+        ),
     )
 }
