@@ -374,15 +374,15 @@ private fun PathField(
 
         val prefix = when (apiType) {
             ApiType.WPApi -> "/wp-json"
-            ApiType.WPCom -> "/rest"
+            ApiType.WPCom -> "public-api.wordpress.com"
             is ApiType.Custom -> "host"
         }
         val caption = buildAnnotatedString {
-            append("Enter the path after the")
+            append("Enter the path after")
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                 append(" $prefix ")
             }
-            append("part, without the query arguments")
+            append(", without the query arguments")
             append("\n")
             append("Use")
             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
