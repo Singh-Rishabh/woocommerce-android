@@ -781,5 +781,9 @@
     <fragment
         android:id="@+id/wooShippingLabelHazmatFormFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormFragment"
-        android:label="WooShippingLabelHazmatFormFragment" />
+        android:label="WooShippingLabelHazmatFormFragment" >
+        <action
+            android:id="@+id/action_wooShippingLabelHazmatFormFragment_to_hazmatCategorySelector"
+            app:destination="@id/hazmatCategorySelectorDialog" />
+    </fragment>
 </navigation>

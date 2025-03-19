@@ -8,8 +8,10 @@ import androidx.compose.material.Surface
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleDialogResult
+import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
@@ -64,6 +66,17 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
     private fun showHazmatCategoryPicker(
         currentSelection: ShippingLabelHazmatCategory?
     ) {
-
+        WooShippingLabelHazmatFormFragmentDirections
+            .actionWooShippingLabelHazmatFormFragmentToHazmatCategorySelector(
+                title = getString(R.string.shipping_label_package_details_hazmat_select_category_action),
+                requestKey = KEY_HAZMAT_CATEGORY_SELECTOR_RESULT,
+                keys = ShippingLabelHazmatCategory.values()
+                    .map { getString(it.stringResourceID) }
+                    .toTypedArray(),
+                values = ShippingLabelHazmatCategory.values()
+                    .map { it.toString() }
+                    .toTypedArray(),
+                selectedItem = currentSelection.toString()
+            ).let { findNavController().navigateSafely(it) }
     }
 }
