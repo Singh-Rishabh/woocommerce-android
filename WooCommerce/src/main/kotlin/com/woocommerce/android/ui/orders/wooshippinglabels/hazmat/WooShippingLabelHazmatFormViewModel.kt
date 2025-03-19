@@ -31,7 +31,8 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     }
 
     fun onSelectCategoryClick() {
-        triggerEvent(OnSelectCategoryClicked())
+        val currentCategory = _viewState.value.currentHazmatSelection
+        triggerEvent(OnSelectCategoryClicked(currentCategory))
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
