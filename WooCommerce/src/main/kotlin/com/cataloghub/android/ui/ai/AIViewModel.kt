@@ -1,5 +1,7 @@
 package com.cataloghub.android.ui.ai
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -299,6 +301,25 @@ class AIViewModel @Inject constructor(
         }
     }
     
+    // Direct method for OAuth activity to use
+    fun completeYouTubeAuth(code: String) {
+        viewModelScope.launch {
+            AINetworkLogger.logRequest("YouTube Auth", "Completing auth with code: $code")
+            try {
+                _youtubeConnectionState.value = ConnectionState.CONNECTING
+                repository.completeYouTubeAuth(code)
+                _youtubeConnectionState.value = ConnectionState.CONNECTED
+                _isYouTubeConnected.value = true
+                _event.value = Event.ShowSnackbar("YouTube connected successfully")
+                AINetworkLogger.logResponse("YouTube Auth", "Connection successful")
+            } catch (e: Exception) {
+                AINetworkLogger.logError("YouTube Auth", e)
+                _youtubeConnectionState.value = ConnectionState.DISCONNECTED
+                _event.value = Event.ShowSnackbar(e.message ?: "Failed to complete YouTube authentication")
+            }
+        }
+    }
+    
     private fun extractCodeFromUrl(url: String): String {
         return url.substringAfter("code=").substringBefore("&")
     }
@@ -392,5 +413,47 @@ class AIViewModel @Inject constructor(
         DATE_ASC,
         VIEWS_DESC,
         TITLE_ASC
+    }
+
+    // Debug function to diagnose OAuth issues
+    fun debugOAuthRequest(url: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                // Parse and log the URL components
+                val uri = Uri.parse(url)
+                val components = mutableMapOf<String, String?>()
+                
+                // Extract query parameters
+                uri.queryParameterNames.forEach { paramName ->
+                    components[paramName] = uri.getQueryParameter(paramName)
+                }
+                
+                // Log all components
+                Log.d("OAuth-Debug", "URL: $url")
+                Log.d("OAuth-Debug", "Scheme: ${uri.scheme}")
+                Log.d("OAuth-Debug", "Host: ${uri.host}")
+                Log.d("OAuth-Debug", "Path: ${uri.path}")
+                Log.d("OAuth-Debug", "Query parameters: $components")
+                
+                AINetworkLogger.logRequest("OAuth Debug", "URL Components: $components")
+                
+                // If it's an error response, log detailed info
+                if (components.containsKey("error")) {
+                    val error = components["error"] ?: "unknown"
+                    val errorDesc = components["error_description"] ?: "No description"
+                    
+                    Log.e("OAuth-Debug", "OAuth Error: $error - $errorDesc")
+                    AINetworkLogger.logError("OAuth Error", Exception("$error: $errorDesc"))
+                    
+                    _errorMessage.value = R.string.ai_error_auth_url
+                }
+            } catch (e: Exception) {
+                Log.e("OAuth-Debug", "Error debugging OAuth URL", e)
+                AINetworkLogger.logError("OAuth Debug", e)
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }

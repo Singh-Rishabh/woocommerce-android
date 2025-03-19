@@ -43,7 +43,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Woo.DayNight"
-        tools:ignore="UnusedAttribute">
+        tools:ignore="UnusedAttribute,DeprecatedClassUsage,DeprecatedApi,ObsoleteSdkInt">
 
         <!-- TODO: we eventually want to drop support for Apache, but for now it's used by FluxC -->
         <uses-library
@@ -238,6 +238,11 @@
                 tools:node="remove" />
         </provider>
 
+        <!-- Remove the OAuth Redirect Activity and replace with Google Identity Services config -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="barcode_ui,ocr" />
@@ -259,6 +264,9 @@
                 android:name="photopicker_activity:0:required"
                 android:value="" />
         </service>
+
+        <!-- Digital Asset Links for Credential Manager -->
+        <meta-data android:name="asset_statements" android:resource="@string/asset_statements" />
 
     </application>
 

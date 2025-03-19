@@ -41,4 +41,10 @@
     <string name="ai_error_loading_products">Error loading products</string>
     <string name="ai_error_loading_videos">Error loading videos</string>
     <string name="ai_error_searching_videos">Error searching videos</string>
+    
+    <!-- Google OAuth -->
+    <string name="google_web_client_id" translatable="false">71251162222-lbefjggjc925osq9efm0fpufkamdrd80.apps.googleusercontent.com</string>
+    
+    <!-- Credential Manager (Passkey) support -->
+    <string name="asset_statements" translatable="false">[{\"include\": \"https://cataloghub.com/.well-known/assetlinks.json\"}]</string>
 </resources> 
