@@ -47,7 +47,7 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
     private fun bindResultHandlers() {
         handleDialogResult<String>(
             key = KEY_HAZMAT_CATEGORY_SELECTOR_RESULT,
-            entryId = R.id.editShippingLabelPackagesFragment
+            entryId = R.id.wooShippingLabelHazmatFormFragment
         ) { hazmatSelection ->
             val selectedCategory = ShippingLabelHazmatCategory.valueOf(hazmatSelection)
             viewModel.onHazmatCategorySelected(selectedCategory)
