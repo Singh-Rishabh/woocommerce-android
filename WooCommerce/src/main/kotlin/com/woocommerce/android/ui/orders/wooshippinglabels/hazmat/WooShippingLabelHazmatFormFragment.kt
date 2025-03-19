@@ -10,6 +10,8 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnSelectCategoryClicked
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnUrlSelected
 import com.woocommerce.android.util.ChromeCustomTabUtils
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +42,14 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
                 is OnUrlSelected -> ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
+                is OnSelectCategoryClicked -> showHazmatCategoryPicker(event.currentSelection)
             }
         }
+    }
+
+    private fun showHazmatCategoryPicker(
+        currentSelection: ShippingLabelHazmatCategory?
+    ) {
+
     }
 }

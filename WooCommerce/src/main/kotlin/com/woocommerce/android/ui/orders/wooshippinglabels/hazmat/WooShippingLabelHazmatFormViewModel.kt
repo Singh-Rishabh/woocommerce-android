@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
@@ -30,7 +31,7 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     }
 
     fun onSelectCategoryClick() {
-        triggerEvent(OnSelectCategoryClicked)
+        triggerEvent(OnSelectCategoryClicked())
     }
 
     fun onUrlSelected(url: String) {
@@ -42,6 +43,13 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         val containsHazmatChecked: Boolean = false
     ) : Parcelable
 
-    data object OnSelectCategoryClicked : Event()
+    data class OnSelectCategoryClicked(
+        val currentSelection: ShippingLabelHazmatCategory? = null
+    ) : Event()
+
     data class OnUrlSelected(val url: String) : Event()
+
+    companion object {
+        const val KEY_HAZMAT_CATEGORY_SELECTOR_RESULT = "hazmat_category_selector_result"
+    }
 }
