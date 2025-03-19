@@ -34,13 +34,20 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         triggerEvent(OnSelectCategoryClicked())
     }
 
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
+        _viewState.update {
+            _viewState.value.copy(currentHazmatSelection = selectedCategory)
+        }
+    }
+
     fun onUrlSelected(url: String) {
         triggerEvent(OnUrlSelected(url))
     }
 
     @Parcelize
     data class ViewState(
-        val containsHazmatChecked: Boolean = false
+        val containsHazmatChecked: Boolean = false,
+        val currentHazmatSelection: ShippingLabelHazmatCategory? = null
     ) : Parcelable
 
     data class OnSelectCategoryClicked(
