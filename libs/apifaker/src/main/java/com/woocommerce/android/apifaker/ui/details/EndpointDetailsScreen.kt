@@ -87,6 +87,7 @@ internal fun EndpointDetailsScreen(
         onApiTypeChanged = viewModel::onApiTypeChanged,
         onRequestHttpMethodChanged = viewModel::onRequestHttpMethodChanged,
         onRequestPathChanged = viewModel::onRequestPathChanged,
+        onSuggestionSelected = viewModel::onSuggestionSelected,
         onQueryParameterAdded = viewModel::onQueryParameterAdded,
         onQueryParameterDeleted = viewModel::onQueryParameterDeleted,
         onRequestBodyChanged = viewModel::onRequestBodyChanged,
@@ -104,6 +105,7 @@ private fun EndpointDetailsScreen(
     onApiTypeChanged: (ApiType) -> Unit = {},
     onRequestHttpMethodChanged: (HttpMethod?) -> Unit = {},
     onRequestPathChanged: (String) -> Unit = {},
+    onSuggestionSelected: (AutoCompleteSuggestion) -> Unit = {},
     onQueryParameterAdded: (String, String) -> Unit = { _, _ -> },
     onQueryParameterDeleted: (QueryParameter) -> Unit = {},
     onRequestBodyChanged: (String) -> Unit = {},
@@ -150,6 +152,7 @@ private fun EndpointDetailsScreen(
                 onApiTypeChanged = onApiTypeChanged,
                 onHttpMethodChanged = onRequestHttpMethodChanged,
                 onPathChanged = onRequestPathChanged,
+                onSuggestionSelected = onSuggestionSelected,
                 onQueryParameterAdded = onQueryParameterAdded,
                 onQueryParameterDeleted = onQueryParameterDeleted,
                 onBodyChanged = onRequestBodyChanged,
@@ -181,6 +184,7 @@ private fun RequestDefinitionSection(
     onApiTypeChanged: (ApiType) -> Unit,
     onHttpMethodChanged: (HttpMethod?) -> Unit,
     onPathChanged: (String) -> Unit,
+    onSuggestionSelected: (AutoCompleteSuggestion) -> Unit,
     onQueryParameterAdded: (String, String) -> Unit,
     onQueryParameterDeleted: (QueryParameter) -> Unit,
     onBodyChanged: (String) -> Unit,
@@ -211,6 +215,7 @@ private fun RequestDefinitionSection(
             apiType = request.type,
             autoCompleteSuggestions = autoCompleteSuggestions,
             onPathChanged = onPathChanged,
+            onSuggestionSelected = onSuggestionSelected,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -310,6 +315,7 @@ private fun PathField(
     apiType: ApiType,
     autoCompleteSuggestions: List<AutoCompleteSuggestion>,
     onPathChanged: (String) -> Unit,
+    onSuggestionSelected: (AutoCompleteSuggestion) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -327,7 +333,8 @@ private fun PathField(
                     onPathChanged(it)
                     expanded = true
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .onGloballyPositioned {
                         fieldWidth = it.size.width
                     }
@@ -343,9 +350,12 @@ private fun PathField(
                     .width(with(LocalDensity.current) { fieldWidth.toDp() })
                     .heightIn(max = 200.dp)
             ) {
-                autoCompleteSuggestions.forEach {
-                    DropdownMenuItem(onClick = { TODO() }) {
-                        Text(text = it.endpoint)
+                autoCompleteSuggestions.forEach { suggestion ->
+                    DropdownMenuItem(onClick = {
+                        onSuggestionSelected(suggestion)
+                        expanded = false
+                    }) {
+                        Text(text = suggestion.endpoint)
                     }
                 }
             }

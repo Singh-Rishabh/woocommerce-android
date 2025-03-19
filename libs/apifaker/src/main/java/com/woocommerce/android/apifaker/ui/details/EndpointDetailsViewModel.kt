@@ -42,8 +42,6 @@ internal class EndpointDetailsViewModel @Inject constructor(
     var autoCompleteSuggestions by mutableStateOf(emptyList<AutoCompleteSuggestion>())
         private set
 
-    private var isLastSuggestionApplied: Boolean = false
-
     init {
         viewModelScope.launch {
             if (id != MISSING_ENDPOINT_ID && state.request.id == MISSING_ENDPOINT_ID) {
@@ -58,7 +56,7 @@ internal class EndpointDetailsViewModel @Inject constructor(
     private suspend fun handleAutoCompleteSuggestions() {
         snapshotFlow { state.request.path }
             .drop(1)
-            .filter { !isLastSuggestionApplied && it.length > 2 }
+            .filter { it.length > 2 }
             .debounce(300.milliseconds)
             .map { autoCompleteProvider.provideAutoCompleteSuggestions(state.request.type, it) }
             .collect { autoCompleteSuggestions = it }
@@ -73,9 +71,13 @@ internal class EndpointDetailsViewModel @Inject constructor(
     }
 
     fun onRequestPathChanged(path: String) {
-        // Reset the flag when the path is changed by the user
-        isLastSuggestionApplied = false
         state = state.copy(request = state.request.copy(path = path))
+    }
+
+    fun onSuggestionSelected(suggestion: AutoCompleteSuggestion) {
+        state = state.copy(request = state.request.copy(path = suggestion.endpoint))
+
+        // TODO handle the isNameSpaceConfirmed flag
     }
 
     fun onQueryParameterAdded(name: String, value: String) {
