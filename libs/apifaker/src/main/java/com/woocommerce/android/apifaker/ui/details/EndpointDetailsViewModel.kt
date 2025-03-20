@@ -79,7 +79,11 @@ internal class EndpointDetailsViewModel @Inject constructor(
     fun onSuggestionSelected(suggestion: AutoCompleteSuggestion) {
         state = state.copy(request = state.request.copy(path = suggestion.endpoint))
 
-        // TODO handle the isNameSpaceConfirmed flag
+        if (!suggestion.isNameSpaceConfirmed) {
+            viewModelScope.launch {
+                snackbarHostState.showSnackbar("Please verify and confirm that the suggested namespace is correct")
+            }
+        }
     }
 
     fun onQueryParameterAdded(name: String, value: String) {

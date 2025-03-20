@@ -103,10 +103,14 @@ internal class AutoCompleteProvider @Inject constructor() {
             endpoint.startsWith(WOOCOMMERCE.reports.endpoint) -> pathV4Analytics
 
         endpoint.startsWith(WOOCOMMERCE.product_add_ons.endpoint) -> pathV1Addons
+
         endpoint.startsWith(WOOCOMMERCE.options.endpoint) ||
             endpoint.startsWith(WOOCOMMERCE.onboarding.endpoint) -> pathWcAdmin
 
         endpoint.startsWith(WOOCOMMERCE.tracker.endpoint) -> pathWcTelemetry
+
+        endpoint.startsWith(WOOCOMMERCE.connect.endpoint) -> pathV1
+
         else -> pathV3
     }
 
