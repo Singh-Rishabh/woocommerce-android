@@ -279,7 +279,7 @@ class WooShippingNetworkingMapper @Inject constructor(
                     productId = it.productID,
                     description = it.description,
                     quantity = it.quantity,
-                    value = it.value.toDouble(),
+                    price = it.value.toDouble(),
                     weight = it.weight.toDouble(),
                     hsTariffNumber = it.hsTariffNumber,
                     originCountry = it.originCountryCode

@@ -14,7 +14,7 @@ data class CustomsData(
     val contentDescription: String,
     val restrictionType: RestrictionType,
     val restrictionDescription: String,
-    val noDeliveryOption: Boolean,
+    val isReturnToSender: Boolean,
     val itn: String,
     val items: List<CustomsItem>
 ) : Parcelable

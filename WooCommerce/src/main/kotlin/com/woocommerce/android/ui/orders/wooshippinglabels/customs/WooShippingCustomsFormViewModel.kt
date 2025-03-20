@@ -84,7 +84,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 restrictionType = customData.restrictionType,
                 otherRestrictionInput = InputValue.Data(customData.restrictionDescription),
                 itnValue = InputValue.Data(customData.itn),
-                returnToSenderChecked = customData.noDeliveryOption,
+                returnToSenderChecked = customData.isReturnToSender,
                 shippingProducts = customData.items.map { item ->
                     WooShippingCustomsProductUIModel(
                         productId = item.productID,
@@ -345,7 +345,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 restrictionType = restrictionType,
                 restrictionDescription = otherRestrictionInput.currentInput,
                 itn = itnValue.currentInput,
-                noDeliveryOption = returnToSenderChecked,
+                isReturnToSender = returnToSenderChecked,
                 items = shippingProducts.map { it.asCustomItem }
             )
     }

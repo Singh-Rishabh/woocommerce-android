@@ -70,7 +70,7 @@ data class CustomsPurchaseDTO(
 data class CustomsItemPurchaseDTO(
     val description: String,
     val quantity: Float,
-    val value: Double,
+    val price: Double,
     val weight: Double,
     val hsTariffNumber: String,
     val originCountry: String,
