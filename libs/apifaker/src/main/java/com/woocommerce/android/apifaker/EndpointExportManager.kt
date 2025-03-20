@@ -20,9 +20,7 @@ internal class EndpointExportManager @Inject constructor(
     ): Result<Unit> {
         return withContext(Dispatchers.IO) {
             val outputStream = context.contentResolver.openOutputStream(uri)
-            if (outputStream == null) {
-                return@withContext Result.failure(IllegalStateException("Could not open output stream for uri: $uri"))
-            }
+                ?: return@withContext Result.failure(IllegalStateException("Could not open output stream for: $uri"))
 
             val endpointsExcludingIds = endpoints.map {
                 it.copy(
@@ -42,9 +40,8 @@ internal class EndpointExportManager @Inject constructor(
     suspend fun importEndpoints(uri: Uri): Result<Unit> {
         return withContext(Dispatchers.IO) {
             val inputStream = context.contentResolver.openInputStream(uri)
-            if (inputStream == null) {
-                return@withContext Result.failure(IllegalStateException("Could not open input stream for uri: $uri"))
-            }
+                ?: return@withContext Result.failure(IllegalStateException("Could not open input stream for uri: $uri"))
+
 
             runCatching {
                 val endpoints = inputStream.bufferedReader().use { reader ->
