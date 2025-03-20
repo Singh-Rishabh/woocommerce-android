@@ -14,6 +14,7 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
@@ -103,6 +104,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
+    private val hazmatCategory = MutableStateFlow<ShippingLabelHazmatCategory?>(null)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -607,6 +609,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     fun onHazmatNoticeClick() {
         triggerEvent(StartHazmatFormEdit)
+    }
+
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
+        hazmatCategory.value = selectedCategory
     }
 
     fun allowBackNavigation(): Boolean {
