@@ -58,5 +58,6 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
 
     companion object {
         const val KEY_HAZMAT_CATEGORY_SELECTOR_RESULT = "hazmat_category_selector_result"
+        const val HAZMAT_CATEGORY_RESULT = "hazmat_category_result"
     }
 }
