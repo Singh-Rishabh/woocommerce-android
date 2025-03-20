@@ -6,27 +6,28 @@ import javax.inject.Inject
 
 @Suppress("MagicNumber")
 class WooPosItemsSearchEmptyStateProvider @Inject constructor() {
-    suspend fun getPopularItems(): List<WooPosItem> {
+    suspend fun getPopularItems(): List<WooPosItem.Product> {
         delay(50)
-        return listOf<WooPosItem>(
-            WooPosItem.SimpleProduct(
+        return listOf<WooPosItem.Product>(
+            WooPosItem.Product.Simple(
                 id = 1,
                 name = "Popular Item 1",
                 price = "10.0$",
                 imageUrl = "https://example.com/image1.jpg",
             ),
-            WooPosItem.SimpleProduct(
+            WooPosItem.Product.Simple(
                 id = 2,
                 name = "Popular Item 2",
                 price = "20.0$",
                 imageUrl = "https://example.com/image2.jpg",
             ),
-            WooPosItem.Variation(
+            WooPosItem.Product.Variable(
                 id = 3,
                 name = "Popular Item 3",
-                productId = 1,
                 price = "30.0$",
                 imageUrl = "https://example.com/image3.jpg",
+                numOfVariations = 2,
+                variationIds = listOf(4, 5),
             ),
         )
     }

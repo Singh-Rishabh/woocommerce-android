@@ -89,7 +89,7 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
 }
 
 @Composable
-private fun PopularItemsSection(popularItems: List<WooPosItem>) {
+private fun PopularItemsSection(popularItems: List<WooPosItem.Product>) {
     SectionHeader(
         icon = Icons.AutoMirrored.Outlined.TrendingUp,
         title = stringResource(R.string.woopos_search_popular_items_title)
@@ -209,25 +209,26 @@ fun WooPosItemsEmptySearchQueryStatePreview() {
         ) {
             WooPosItemsEmptySearchQueryState(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
-                    popularItems = listOf<WooPosItem>(
-                        WooPosItem.SimpleProduct(
+                    popularItems = listOf<WooPosItem.Product>(
+                        WooPosItem.Product.Simple(
                             id = 1,
                             name = "Popular Item 1",
                             price = "10.0$",
                             imageUrl = "https://example.com/image1.jpg",
                         ),
-                        WooPosItem.SimpleProduct(
+                        WooPosItem.Product.Simple(
                             id = 2,
                             name = "Popular Item 2",
                             price = "20.0$",
                             imageUrl = "https://example.com/image2.jpg",
                         ),
-                        WooPosItem.Variation(
+                        WooPosItem.Product.Variable(
                             id = 3,
                             name = "Popular Item 3",
-                            productId = 1,
                             price = "30.0$",
                             imageUrl = "https://example.com/image3.jpg",
+                            numOfVariations = 3,
+                            variationIds = listOf(1, 2, 3),
                         ),
                     ),
                     recentSearches = listOf("T-shirt", "Jeans", "Shoes"),
@@ -248,25 +249,26 @@ fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
         ) {
             WooPosItemsEmptySearchQueryState(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
-                    popularItems = listOf<WooPosItem>(
-                        WooPosItem.SimpleProduct(
+                    popularItems = listOf<WooPosItem.Product>(
+                        WooPosItem.Product.Simple(
                             id = 1,
                             name = "Popular Item 1",
                             price = "10.0$",
                             imageUrl = "https://example.com/image1.jpg",
                         ),
-                        WooPosItem.SimpleProduct(
+                        WooPosItem.Product.Simple(
                             id = 2,
                             name = "Popular Item 2",
                             price = "20.0$",
                             imageUrl = "https://example.com/image2.jpg",
                         ),
-                        WooPosItem.Variation(
+                        WooPosItem.Product.Variable(
                             id = 3,
                             name = "Popular Item 3",
-                            productId = 1,
                             price = "30.0$",
                             imageUrl = "https://example.com/image3.jpg",
+                            numOfVariations = 3,
+                            variationIds = listOf(1, 2, 3),
                         ),
                     ),
                     recentSearches = emptyList()

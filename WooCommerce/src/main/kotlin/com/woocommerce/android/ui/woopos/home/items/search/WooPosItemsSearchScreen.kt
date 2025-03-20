@@ -57,8 +57,8 @@ fun WooPosItemsSearchScreenPreview() {
         ) {
             WooPosItemsEmptySearchQueryState(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
-                    popularItems = listOf<WooPosItem>(
-                        WooPosItem.SimpleProduct(
+                    popularItems = listOf<WooPosItem.Product>(
+                        WooPosItem.Product.Simple(
                             id = 1,
                             name = "Popular Item 1",
                             price = "10.0$",

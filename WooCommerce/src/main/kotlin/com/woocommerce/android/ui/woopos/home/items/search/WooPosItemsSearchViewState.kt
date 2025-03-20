@@ -4,7 +4,7 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 
 sealed class WooPosItemsSearchViewState {
     data class EmptySearchQuery(
-        val popularItems: List<WooPosItem>,
+        val popularItems: List<WooPosItem.Product>,
         val recentSearches: List<String>,
     ) : WooPosItemsSearchViewState()
 
