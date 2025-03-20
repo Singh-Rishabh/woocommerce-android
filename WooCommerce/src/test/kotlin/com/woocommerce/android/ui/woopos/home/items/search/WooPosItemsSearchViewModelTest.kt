@@ -25,8 +25,8 @@ class WooPosItemsSearchViewModelTest {
             val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
 
             val popularItems = listOf(
-                WooPosItem.SimpleProduct(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
-                WooPosItem.SimpleProduct(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
+                WooPosItem.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
+                WooPosItem.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
             )
             val recentSearches = listOf(
                 "Recent Search 1"
@@ -94,10 +94,10 @@ class WooPosItemsSearchViewModelTest {
         // GIVEN
         val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
         val popularItems = listOf(
-            WooPosItem.SimpleProduct(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
-            WooPosItem.SimpleProduct(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
-            WooPosItem.SimpleProduct(id = 3, name = "Popular Item 3", price = "$20.0", imageUrl = null),
-            WooPosItem.SimpleProduct(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
+            WooPosItem.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
+            WooPosItem.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
+            WooPosItem.Product.Simple(id = 3, name = "Popular Item 3", price = "$20.0", imageUrl = null),
+            WooPosItem.Product.Simple(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
         )
         val recentSearches = listOf(
             "Recent Search 1",
