@@ -20,15 +20,14 @@ import javax.inject.Inject
 internal class HomeViewModel @Inject constructor(
     private val endpointDao: EndpointDao,
     private val config: ApiFakerConfig,
-    private val endpointExportManager: EndpointExportManager
+    private val endpointExportManager: EndpointExportManager,
+    private val snackbarHostState: SnackbarHostState
 ) : ViewModel() {
     @Suppress("MagicNumber")
     val endpoints = endpointDao.observeEndpoints()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     val isEnabled = config.enabled
-
-    val snackbarHostState = SnackbarHostState()
 
     fun onMockingToggleChanged(enabled: Boolean) {
         viewModelScope.launch {

@@ -30,6 +30,8 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -75,7 +77,8 @@ import kotlin.math.min
 @Composable
 internal fun EndpointDetailsScreen(
     viewModel: EndpointDetailsViewModel,
-    navController: NavController
+    navController: NavController,
+    snackbarHostState: SnackbarHostState
 ) {
     if (viewModel.state.isEndpointSaved) {
         navController.navigateUp()
@@ -85,6 +88,7 @@ internal fun EndpointDetailsScreen(
         state = viewModel.state,
         autoCompleteSuggestions = viewModel.autoCompleteSuggestions,
         navController = navController,
+        snackbarHostState = snackbarHostState,
         onSaveClicked = viewModel::onSaveClicked,
         onApiTypeChanged = viewModel::onApiTypeChanged,
         onRequestHttpMethodChanged = viewModel::onRequestHttpMethodChanged,
@@ -103,6 +107,7 @@ private fun EndpointDetailsScreen(
     state: EndpointDetailsViewModel.UiState,
     autoCompleteSuggestions: List<AutoCompleteSuggestion>,
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     onSaveClicked: () -> Unit = {},
     onApiTypeChanged: (ApiType) -> Unit = {},
     onRequestHttpMethodChanged: (HttpMethod?) -> Unit = {},
@@ -140,6 +145,9 @@ private fun EndpointDetailsScreen(
                 backgroundColor = MaterialTheme.colors.surface,
                 elevation = 4.dp
             )
+        },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
         },
         backgroundColor = MaterialTheme.colors.surface
     ) { paddingValues ->
@@ -698,7 +706,8 @@ private fun EndpointDetailsScreenPreview() {
                 )
             ),
             autoCompleteSuggestions = emptyList(),
-            navController = rememberNavController()
+            navController = rememberNavController(),
+            snackbarHostState = SnackbarHostState()
         )
     }
 }

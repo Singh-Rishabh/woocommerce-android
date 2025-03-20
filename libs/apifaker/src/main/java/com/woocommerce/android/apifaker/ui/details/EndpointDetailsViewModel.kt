@@ -1,5 +1,6 @@
 package com.woocommerce.android.apifaker.ui.details
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,7 +33,8 @@ const val MISSING_ENDPOINT_ID = 0L
 internal class EndpointDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val endpointDao: EndpointDao,
-    private val autoCompleteProvider: AutoCompleteProvider
+    private val autoCompleteProvider: AutoCompleteProvider,
+    private val snackbarHostState: SnackbarHostState
 ) : ViewModel() {
     private val id = checkNotNull(savedStateHandle.get<Long>(Screen.EndpointDetails.endpointIdArgumentName))
 
