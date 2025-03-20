@@ -272,7 +272,7 @@ class WooShippingNetworkingMapper @Inject constructor(
             contentExplanation = customsData.contentDescription,
             restrictionType = customsData.restrictionType.name,
             restrictionComments = customsData.restrictionDescription,
-            nonDeliveryOption = customsData.noDeliveryOption,
+            isReturnToSender = customsData.isReturnToSender,
             itn = customsData.itn,
             items = customsData.items.map {
                 CustomsItemPurchaseDTO(
