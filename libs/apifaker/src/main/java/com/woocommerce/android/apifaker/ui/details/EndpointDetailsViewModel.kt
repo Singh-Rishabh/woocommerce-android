@@ -21,7 +21,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -58,9 +57,14 @@ internal class EndpointDetailsViewModel @Inject constructor(
     private suspend fun handleAutoCompleteSuggestions() {
         snapshotFlow { state.request.path }
             .drop(1)
-            .filter { it.length > 2 }
             .debounce(300.milliseconds)
-            .map { autoCompleteProvider.provideAutoCompleteSuggestions(state.request.type, it) }
+            .map { path ->
+                if (path.length > 2) {
+                    autoCompleteProvider.provideAutoCompleteSuggestions(state.request.type, path)
+                } else {
+                    emptyList()
+                }
+            }
             .collect { autoCompleteSuggestions = it }
     }
 
