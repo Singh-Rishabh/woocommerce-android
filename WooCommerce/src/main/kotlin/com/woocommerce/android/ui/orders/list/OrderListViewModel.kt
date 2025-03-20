@@ -65,7 +65,6 @@ import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ResourceProvider
 import com.woocommerce.android.viewmodel.ScopedViewModel
-import com.woocommerce.android.viewmodel.navArgs
 import com.woocommerce.android.widgets.WCEmptyView.EmptyViewType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -122,8 +121,6 @@ class OrderListViewModel @Inject constructor(
     private val shouldUpdateOrdersList: ShouldUpdateOrdersList,
     private val observeOrdersListLastUpdate: ObserveOrdersListLastUpdate
 ) : ScopedViewModel(savedState), LifecycleOwner {
-    private val navArgs: OrderListFragmentArgs by savedState.navArgs()
-
     companion object {
         const val BULK_UPDATE_COUNT_LIMIT = 100
     }
@@ -245,16 +242,6 @@ class OrderListViewModel @Inject constructor(
                 orderListTransactionLauncher.onListFetched()
                 checkChaChingSoundSettings()
             }
-
-        when (navArgs.mode) {
-            Mode.START_ORDER_CREATION_WITH_SIMPLE_PAYMENTS_MIGRATION -> {
-                triggerEvent(OrderListEvent.OpenOrderCreationWithSimplePaymentsMigration)
-            }
-
-            Mode.STANDARD -> {
-                // stay on the screen
-            }
-        }
     }
 
     fun loadOrders() {
@@ -1070,8 +1057,6 @@ class OrderListViewModel @Inject constructor(
 
         data object RetryLoadingOrders : OrderListEvent()
 
-        data object OpenOrderCreationWithSimplePaymentsMigration : OrderListEvent()
-
         data class ShowUpdateStatusDialog(
             val currentStatus: String,
             val orderStatusList: Array<Order.OrderStatus>
@@ -1117,9 +1102,5 @@ class OrderListViewModel @Inject constructor(
         val isFilteringActive = filterCount > 0
 
         enum class OrderListState { Selecting, Browsing }
-    }
-
-    enum class Mode {
-        STANDARD, START_ORDER_CREATION_WITH_SIMPLE_PAYMENTS_MIGRATION
     }
 }

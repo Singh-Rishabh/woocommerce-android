@@ -182,16 +182,6 @@ class PaymentsHubViewModel @Inject constructor(
     ): List<ListItem> = mutableListOf(
         PayoutSummaryListItem(index = 0),
         HeaderItem(
-            label = UiStringRes(R.string.card_reader_hub_actions_category_header),
-            index = 1
-        ),
-        NonToggleableListItem(
-            icon = R.drawable.ic_gridicons_money_on_surface,
-            label = UiStringRes(R.string.card_reader_hub_collect_payment),
-            index = 2,
-            onClick = ::onCollectPaymentClicked
-        ),
-        HeaderItem(
             label = UiStringRes(R.string.card_reader_settings_header),
             index = 3,
         ),
@@ -325,11 +315,6 @@ class PaymentsHubViewModel @Inject constructor(
                 onClick = { onOnboardingErrorClicked(state) }
             ),
         )
-    }
-
-    private fun onCollectPaymentClicked() {
-        trackEvent(AnalyticsEvent.PAYMENTS_HUB_COLLECT_PAYMENT_TAPPED)
-        triggerEvent(PaymentsHubEvents.NavigateToOrderCreationScreen)
     }
 
     private fun onManageCardReaderClicked() {
@@ -531,7 +516,6 @@ class PaymentsHubViewModel @Inject constructor(
             @StringRes val titleRes: Int
         ) : PaymentsHubEvents()
 
-        data object NavigateToOrderCreationScreen : PaymentsHubEvents()
         data object NavigateToTapToPaySummaryScreen : PaymentsHubEvents()
         data class NavigateToCardReaderManualsScreen(
             val countryConfig: CardReaderConfigForSupportedCountry
