@@ -67,7 +67,8 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
     private fun showHazmatCategoryPicker() {
         WooShippingLabelHazmatFormFragmentDirections
             .actionWooShippingLabelHazmatFormFragmentToHazmatCategorySelector(
-                title = getString(R.string.shipping_label_package_details_hazmat_select_category_action),
+                title = getString(R.string.woo_shipping_labels_hazmat_info_select_category),
+                hint = getString(R.string.woo_shipping_labels_hazmat_search_hint),
                 requestKey = KEY_HAZMAT_CATEGORY_SELECTOR_RESULT,
                 items = ShippingLabelHazmatCategory.entries
                     .map {
