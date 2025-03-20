@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAllCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireITN
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.products.WooShippingCustomsProductUIModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WooShippingCustomsFormViewModel @Inject constructor(
-    private val getAcceptedOriginCountries: GetAcceptedOriginCountries,
+    private val getAllCountries: GetAllCountries,
     private val shouldRequireITN: ShouldRequireITN,
     savedState: SavedStateHandle
 ) : ScopedViewModel(savedState) {
@@ -277,7 +277,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
     }
 
     private suspend fun loadCountries() {
-        getAcceptedOriginCountries().fold(
+        getAllCountries().fold(
             onSuccess = { possibleLocations = it },
             onFailure = { possibleLocations = null }
         )

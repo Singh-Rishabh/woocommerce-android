@@ -20,6 +20,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.FetchOriginAddresses
@@ -76,6 +77,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
+    private val addressValidationHelper: AddressValidationHelper,
     private val verifyDestinationAddress: VerifyDestinationAddress,
     private val getAddressNotification: GetAddressNotification,
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
@@ -182,7 +184,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
             destinationAddress.value = defaultDestination
 
-            if (order.shippingAddress != Address.EMPTY) {
+            if (addressValidationHelper.isMissingDestinationAddress(order.shippingAddress).not()) {
                 verifyDestinationAddress(order.id).fold(
                     onSuccess = { destinationAddress.value = it },
                     onFailure = { }
@@ -202,20 +204,13 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             refreshShippingRates.onStart { emit(Unit) }
         ) { selectedPackage, addresses, packageWeight, customState, _ ->
             val customsFulfilled = customState is CustomsState.DataAvailable || customState is NotRequired
-
-            if (
-                selectedPackage != null &&
-                addresses != null &&
-                packageWeight != null &&
-                customsFulfilled &&
-                addresses.shipTo != Address.EMPTY
-            ) {
+            if (selectedPackage != null && addresses != null && customsFulfilled) {
                 ShippingRatesInfo(
                     orderId = navArgs.orderId,
                     packageSelected = selectedPackage,
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo.address,
-                    weight = packageWeight.totalWeight,
+                    weight = packageWeight?.totalWeight,
                     currencyCode = order.value.currency
                 )
             } else {
@@ -288,19 +283,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     // This logic will be updated later once the Customs data state is available
-    private suspend fun observeCustomsDataChanges() {
+    private fun observeCustomsDataChanges() {
         combine(
             shippingAddresses,
             customsFormData,
-            shippableItems.map { it.isItnRequired() }
-        ) { addresses, customsData, isItnRequired ->
-            val customsRequired by lazy {
-                addresses != null && shouldRequireCustoms(addresses)
-            }
+            shippableItems
+        ) { addresses, customsData, shippableItems ->
+            val customsRequired = addresses != null && shouldRequireCustoms(addresses)
+            val itnMissing = customsFormData.value?.itn.isNullOrEmpty() && shippableItems.isItnRequired()
 
             when {
+                customsRequired && itnMissing -> ItnMissing
                 customsData != null -> CustomsState.DataAvailable(customsData)
-                customsRequired && isItnRequired -> ItnMissing
                 customsRequired -> Unavailable
                 else -> NotRequired
             }
@@ -325,27 +319,41 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private suspend fun updateShippingRates(shippingRatesInfo: ShippingRatesInfo?) {
-        if (shippingRatesInfo != null) {
-            val sortOrder = selectedRatesSortOrder.value
-            shippingRatesState.value = ShippingRatesState.Loading(sortOrder)
+        when {
+            shippingRatesInfo == null -> shippingRatesState.value = ShippingRatesState.NoAvailable
+            shippingRatesInfo.shipTo == null ||
+                !addressValidationHelper.canFetchShippingRates(shippingRatesInfo.shipTo) ->
+                shippingRatesState.value = ShippingRatesState.MissingInfo(
+                    missingTitle = R.string.woo_shipping_labels_shipping_rates_missing_destination,
+                    missingDescription = R.string.woo_shipping_labels_shipping_rates_missing_destination_desc
+                )
 
-            val shippingRatesResult = getShippingRates(
-                shippingRatesInfo.orderId,
-                shippingRatesInfo.packageSelected,
-                shippingRatesInfo.shipTo,
-                shippingRatesInfo.shipFrom,
-                shippingRatesInfo.weight,
-                shippingRatesInfo.currencyCode
-            )
+            shippingRatesInfo.weight == null || shippingRatesInfo.weight == 0f ->
+                shippingRatesState.value = ShippingRatesState.MissingInfo(
+                    missingTitle = R.string.woo_shipping_labels_shipping_rates_missing_weight,
+                    missingDescription = R.string.woo_shipping_labels_shipping_rates_missing_weight_desc
+                )
 
-            if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
-                shippingRates.value = shippingRatesResult.getOrThrow()
-            } else {
-                shippingRatesState.value = ShippingRatesState.Error
+            else -> {
+                val sortOrder = selectedRatesSortOrder.value
+                shippingRatesState.value = ShippingRatesState.Loading(sortOrder)
+
+                val shippingRatesResult = getShippingRates(
+                    shippingRatesInfo.orderId,
+                    shippingRatesInfo.packageSelected,
+                    shippingRatesInfo.shipTo,
+                    shippingRatesInfo.shipFrom,
+                    shippingRatesInfo.weight,
+                    shippingRatesInfo.currencyCode
+                )
+
+                if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
+                    shippingRates.value = shippingRatesResult.getOrThrow()
+                } else {
+                    shippingRatesState.value = ShippingRatesState.Error
+                }
+                selectedRate.value = null
             }
-            selectedRate.value = null
-        } else {
-            shippingRatesState.value = ShippingRatesState.NoAvailable
         }
     }
 
@@ -369,7 +377,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val items = getShippableItems(order)
 
             val destinationStatus = when {
-                addresses.shipTo.address.hasInfo().not() -> AddressStatus.MISSING_ADDRESS
+                addressValidationHelper.isMissingDestinationAddress(addresses.shipTo.address) -> {
+                    AddressStatus.MISSING_ADDRESS
+                }
+
                 addresses.shipTo.isVerified -> AddressStatus.VERIFIED
                 else -> AddressStatus.UNVERIFIED
             }
@@ -555,6 +566,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         selectedRate.update { rate }
     }
 
+    fun onSplitShipment() { triggerEvent(StartSplitShipment) }
+
     private fun sortShippingRates(
         option: ShippingSortOption,
         shippingRates: Map<CarrierUI, List<ShippingRateUI>>
@@ -655,6 +668,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId: Long
     ) : Event()
 
+    data object StartSplitShipment : Event()
+
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
         val destinationCountryCode: String,
@@ -685,6 +700,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     sealed class ShippingRatesState {
         data object NoAvailable : ShippingRatesState()
+        data class MissingInfo(
+            val missingTitle: Int,
+            val missingDescription: Int
+        ) : ShippingRatesState()
+
         data object Error : ShippingRatesState()
 
         data class Loading(
@@ -736,8 +756,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId: Long,
         val packageSelected: PackageData,
         val shipFrom: OriginShippingAddress,
-        val shipTo: Address,
-        val weight: Float,
+        val shipTo: Address?,
+        val weight: Float?,
         val currencyCode: String?
     )
 

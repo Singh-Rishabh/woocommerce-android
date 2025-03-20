@@ -1,7 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs
 
 import com.woocommerce.android.model.Location
-import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.GetAcceptedOriginCountries
+import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAllCountries
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.ContentType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.InputValue
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.WooShippingCustomsFormViewModel.RestrictionType
@@ -26,7 +26,7 @@ import java.math.BigDecimal
 @ExperimentalCoroutinesApi
 class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
     private lateinit var viewModel: WooShippingCustomsFormViewModel
-    private lateinit var getAcceptedOriginCountries: GetAcceptedOriginCountries
+    private lateinit var getAllCountries: GetAllCountries
     private lateinit var shouldRequireITN: ShouldRequireITN
 
     @Before
@@ -44,7 +44,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
         )
 
         // Configure the mock to return our test locations
-        getAcceptedOriginCountries = mock {
+        getAllCountries = mock {
             onBlocking { invoke() } doReturn Result.success(mockLocations)
         }
 
@@ -452,7 +452,7 @@ class WooShippingCustomsFormViewModelTest : BaseUnitTest() {
                 destinationCountryCode = "CA",
                 customsData = null
             ).toSavedStateHandle(),
-            getAcceptedOriginCountries = getAcceptedOriginCountries,
+            getAllCountries = getAllCountries,
             shouldRequireITN = shouldRequireITN
         )
     }
