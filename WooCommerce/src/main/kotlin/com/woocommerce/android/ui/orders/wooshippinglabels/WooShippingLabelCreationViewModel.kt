@@ -294,13 +294,12 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             customsFormData,
             shippableItems.map { it.isItnRequired() }
         ) { addresses, customsData, isItnRequired ->
-            val customsRequired by lazy {
-                addresses != null && shouldRequireCustoms(addresses)
-            }
+            val customsRequired = addresses != null && shouldRequireCustoms(addresses)
+            val itnMissing = customsFormData.value?.itn.isNullOrEmpty() && isItnRequired
 
             when {
+                customsRequired && itnMissing -> ItnMissing
                 customsData != null -> CustomsState.DataAvailable(customsData)
-                customsRequired && isItnRequired -> ItnMissing
                 customsRequired -> Unavailable
                 else -> NotRequired
             }
