@@ -367,8 +367,13 @@ class WCOrderStore @Inject constructor(
      */
     class OnOrderSummariesFetched(
         val listDescriptor: WCOrderListDescriptor,
-        val duration: Long
-    ) : OnChanged<OrderError>()
+        val duration: Long,
+        error: OrderError? = null
+    ) : OnChanged<OrderError>() {
+        init {
+            super.error = error
+        }
+    }
 
     class OnOrdersFetchedByIds(
         val site: SiteModel,
@@ -938,10 +943,16 @@ class WCOrderStore @Inject constructor(
 
             // Fetch outdated or missing orders
             fetchOutdatedOrMissingOrders(payload.listDescriptor.site, payload.orderSummaries)
-
-            val duration = Calendar.getInstance().timeInMillis - payload.requestStartTime.timeInMillis
-            emitChange(OnOrderSummariesFetched(listDescriptor = payload.listDescriptor, duration = duration))
         }
+
+        val duration = Calendar.getInstance().timeInMillis - payload.requestStartTime.timeInMillis
+        emitChange(
+            OnOrderSummariesFetched(
+                listDescriptor = payload.listDescriptor,
+                duration = duration,
+                error = payload.error
+            )
+        )
 
         mDispatcher.dispatch(ListActionBuilder.newFetchedListItemsAction(FetchedListItemsPayload(
             listDescriptor = payload.listDescriptor,
