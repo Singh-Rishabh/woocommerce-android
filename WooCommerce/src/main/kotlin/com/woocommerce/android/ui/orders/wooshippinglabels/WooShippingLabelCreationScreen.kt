@@ -124,6 +124,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 destinationStatus = viewState.destinationStatus,
                 actionSnackbar = viewModel.actionSnackbar,
                 onDismissAddressNotification = viewModel::onDismissAddressNotification,
+                onSplitShipment = viewModel::onSplitShipment,
                 onDismissItnNotice = viewModel::onDismissItnNotice
             )
         }
@@ -165,10 +166,11 @@ fun WooShippingLabelCreationScreen(
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
     onDismissItnNotice: () -> Unit,
-    onDismissAddressNotification: () -> Unit = {},
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
-    actionSnackbar: ActionSnackbar? = null
+    actionSnackbar: ActionSnackbar? = null,
+    onDismissAddressNotification: () -> Unit = {},
+    onSplitShipment: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
@@ -233,7 +235,8 @@ fun WooShippingLabelCreationScreen(
             onDismissItnNotice = onDismissItnNotice,
             onDismissAddressNotification = onDismissAddressNotification,
             destinationStatus = destinationStatus,
-            actionSnackbar = actionSnackbar
+            actionSnackbar = actionSnackbar,
+            onSplitShipment = onSplitShipment
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -313,7 +316,8 @@ private fun LabelCreationScreenWithBottomSheet(
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     onDismissAddressNotification: () -> Unit = {},
-    actionSnackbar: ActionSnackbar? = null
+    actionSnackbar: ActionSnackbar? = null,
+    onSplitShipment: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -390,13 +394,43 @@ private fun LabelCreationScreenWithBottomSheet(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Column(modifier.verticalScroll(rememberScrollState())) {
+            Column(
+                modifier
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 16.dp)
+            ) {
                 val isExpanded = remember { mutableStateOf(false) }
+                Row(
+                    modifier = Modifier.padding(
+                        start = dimensionResource(R.dimen.major_100),
+                        end = dimensionResource(R.dimen.major_100),
+                        bottom = dimensionResource(R.dimen.minor_100)
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.products),
+                        style = MaterialTheme.typography.h6,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = stringResource(R.string.woo_shipping_split_shipment),
+                        color = MaterialTheme.colors.primary,
+                        modifier = Modifier
+                            .clickable { onSplitShipment() }
+                            .padding(dimensionResource(R.dimen.minor_100))
+                    )
+                }
+
                 ShippingProductsCard(
                     shippableItems = shippableItems,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(
+                            start = dimensionResource(R.dimen.major_100),
+                            end = dimensionResource(R.dimen.major_100),
+                            bottom = dimensionResource(R.dimen.major_100)
+                        ),
                     isExpanded = isExpanded.value,
                     onExpand = { isExpanded.value = it }
                 )
