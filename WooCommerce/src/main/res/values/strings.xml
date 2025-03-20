@@ -4397,6 +4397,8 @@
     <string name="woopos_search_back_content_description">Back</string>
     <string name="woopos_clear_back_content_description">Clear</string>
     <string name="woopos_search_products">Search products…</string>
+    <string name="woopos_search_popular_items_title">Popular items</string>
+    <string name="woopos_search_recent_searches_title">Recent searches</string>
 
 
     <string name="customers_details_customer_section">Customer</string>
