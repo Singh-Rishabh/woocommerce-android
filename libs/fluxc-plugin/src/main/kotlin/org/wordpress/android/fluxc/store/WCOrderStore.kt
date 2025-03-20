@@ -15,12 +15,12 @@ import org.wordpress.android.fluxc.model.LocalOrRemoteId.LocalId
 import org.wordpress.android.fluxc.model.LocalOrRemoteId.RemoteId
 import org.wordpress.android.fluxc.model.OrderEntity
 import org.wordpress.android.fluxc.model.SiteModel
-import org.wordpress.android.fluxc.model.metadata.WCMetaData
 import org.wordpress.android.fluxc.model.WCOrderListDescriptor
 import org.wordpress.android.fluxc.model.WCOrderShipmentProviderModel
 import org.wordpress.android.fluxc.model.WCOrderShipmentTrackingModel
 import org.wordpress.android.fluxc.model.WCOrderStatusModel
 import org.wordpress.android.fluxc.model.WCOrderSummaryModel
+import org.wordpress.android.fluxc.model.metadata.WCMetaData
 import org.wordpress.android.fluxc.network.BaseRequest.BaseNetworkError
 import org.wordpress.android.fluxc.network.BaseRequest.GenericErrorType.SERVER_ERROR
 import org.wordpress.android.fluxc.network.rest.wpcom.wc.WooError
@@ -42,6 +42,7 @@ import org.wordpress.android.fluxc.store.ListStore.OnListDataFailure
 import org.wordpress.android.fluxc.store.WCOrderStore.OrderErrorType.GENERIC_ERROR
 import org.wordpress.android.fluxc.store.WCOrderStore.OrderErrorType.PARSE_ERROR
 import org.wordpress.android.fluxc.store.WCOrderStore.OrderErrorType.TIMEOUT_ERROR
+import org.wordpress.android.fluxc.store.WCOrderStore.OrderErrorType.values
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.OptimisticUpdateResult
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrderResult.RemoteUpdateResult
 import org.wordpress.android.fluxc.store.WCOrderStore.UpdateOrdersStatusResult.FailedOrder
@@ -937,10 +938,10 @@ class WCOrderStore @Inject constructor(
 
             // Fetch outdated or missing orders
             fetchOutdatedOrMissingOrders(payload.listDescriptor.site, payload.orderSummaries)
-        }
 
-        val duration = Calendar.getInstance().timeInMillis - payload.requestStartTime.timeInMillis
-        emitChange(OnOrderSummariesFetched(listDescriptor = payload.listDescriptor, duration = duration))
+            val duration = Calendar.getInstance().timeInMillis - payload.requestStartTime.timeInMillis
+            emitChange(OnOrderSummariesFetched(listDescriptor = payload.listDescriptor, duration = duration))
+        }
 
         mDispatcher.dispatch(ListActionBuilder.newFetchedListItemsAction(FetchedListItemsPayload(
             listDescriptor = payload.listDescriptor,
