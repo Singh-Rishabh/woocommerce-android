@@ -579,7 +579,21 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         selectedRate.update { rate }
     }
 
-    fun onSplitShipment() { triggerEvent(StartSplitShipment) }
+    fun onSplitShipment() {
+        val currentStoreOptions = storeOptions.value
+        val currentShippableItems = shippableItems.value
+        if (currentStoreOptions != null && currentShippableItems.isNotEmpty()) {
+            triggerEvent(
+                StartSplitShipment(
+                    SplitShipmentArgs(
+                        orderId = navArgs.orderId,
+                        storeOptions = currentStoreOptions,
+                        shipments = mapOf(0 to currentShippableItems)
+                    )
+                )
+            )
+        }
+    }
 
     private fun sortShippingRates(
         option: ShippingSortOption,
@@ -670,7 +684,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId: Long
     ) : Event()
 
-    data object StartSplitShipment : Event()
+    data class StartSplitShipment(val shipmentArgs: SplitShipmentArgs) : Event()
+
+    @Parcelize
+    data class SplitShipmentArgs(
+        val orderId: Long,
+        val shipments: Map<Int, List<ShippableItemModel>>,
+        val storeOptions: StoreOptionsModel
+    ) : Parcelable
 
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
