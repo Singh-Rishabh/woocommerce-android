@@ -9,7 +9,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
-import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -404,18 +403,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
             shippableItems.value = items
 
-            val shippableItemsUI = items.map { item -> item.toUIModel(currencyFormatter, storeOptions) }
-            val formattedTotalPrice = getTotalPrice(items)
-            val formattedTotalWeight = getTotalWeight(items, storeOptions)
+            val shippingLineSummary = order.getShippingLinesSummary(currencyFormatter)
+            val shippableItemsUI = items.toUIModel(
+                currencyFormatter,
+                storeOptions.dimensionUnit,
+                storeOptions.weightUnit
 
-            val shippingLineSummary = getShippingLinesSummary(order)
+            )
 
             return@combine WooShippingViewState.DataState(
-                shippableItems = ShippableItemsUI(
-                    shippableItems = shippableItemsUI,
-                    formattedTotalWeight = formattedTotalWeight,
-                    formattedTotalPrice = formattedTotalPrice
-                ),
+                shippableItems = shippableItemsUI,
                 shippingLines = shippingLineSummary,
                 shippingAddresses = addresses,
                 shippingRates = shippingRates,
@@ -483,28 +480,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     fun onDismissItnNotice() {
         customsState.value = Unavailable
-    }
-
-    private fun getTotalPrice(items: List<ShippableItemModel>): String {
-        val totalPrice = items.sumOf { it.price }
-        val formattedTotalPrice = items.firstOrNull()?.currency?.let {
-            currencyFormatter.formatCurrency(totalPrice, it)
-        } ?: currencyFormatter.formatCurrency(totalPrice)
-        return formattedTotalPrice
-    }
-
-    private fun getTotalWeight(items: List<ShippableItemModel>, storeOptions: StoreOptionsModel): String {
-        val totalWeight = items.sumByFloat { it.weight * it.quantity }
-        return "${totalWeight.formatToString()} ${storeOptions.weightUnit}"
-    }
-
-    private fun getShippingLinesSummary(order: Order): List<ShippingLineSummaryUI> {
-        return order.shippingLines.map {
-            ShippingLineSummaryUI(
-                title = it.methodTitle,
-                amount = currencyFormatter.formatCurrency(it.total, order.currency)
-            )
-        }
     }
 
     fun onSelectPackageClicked() {
