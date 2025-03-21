@@ -1,2 +1,0 @@
-2.19:
-Vi har åtgärdat en irriterande bugg som kunde orsaka en krasch när ett nytt betalkort lades till i Blaze-kampanjformuläret. Den här uppdateringen säkerställer en smidigare och mer tillförlitlig upplevelse – ta del av problemfria betalningar med WooCommerce! 🚀

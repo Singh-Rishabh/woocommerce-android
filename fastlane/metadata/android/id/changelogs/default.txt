@@ -1,2 +1,0 @@
-21.9:
-Kami telah mengatasi bug yang dapat menyebabkan crash saat menambahkan kartu pembayaran baru di formulir kampanye Blaze. Pembaruan ini menjamin pengalaman yang lebih lancar dan andal. Nikmati pembayaran tanpa repot dengan WooCommerce! 🚀
