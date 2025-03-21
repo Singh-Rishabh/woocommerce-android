@@ -38,15 +38,17 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
             shipments = defaultShipment
         )
 
-        whenever(currencyFormatter.formatCurrency(
-            amount = any(),
-            currencyCode = any(),
-            applyDecimalFormatting = any())
+        whenever(
+            currencyFormatter.formatCurrency(
+                amount = any(),
+                currencyCode = any(),
+                applyDecimalFormatting = any()
+            )
         ).thenReturn("$5.00")
 
         createViewModel(shipmentArgs)
 
-        sut.viewState.observeForTesting {  }
+        sut.viewState.observeForTesting { }
 
         val state = sut.viewState.value!!
 
@@ -64,15 +66,17 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
             shipments = defaultShipment
         )
 
-        whenever(currencyFormatter.formatCurrency(
-            amount = any(),
-            currencyCode = any(),
-            applyDecimalFormatting = any())
+        whenever(
+            currencyFormatter.formatCurrency(
+                amount = any(),
+                currencyCode = any(),
+                applyDecimalFormatting = any()
+            )
         ).thenReturn("$5.00")
 
         createViewModel(shipmentArgs)
 
-        sut.viewState.observeForTesting {  }
+        sut.viewState.observeForTesting { }
 
         val state = sut.viewState.value!!
 
@@ -125,5 +129,4 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
             )
         )
     )
-
 }
