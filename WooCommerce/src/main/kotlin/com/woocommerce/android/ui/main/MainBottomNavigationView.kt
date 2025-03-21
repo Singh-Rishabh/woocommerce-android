@@ -133,10 +133,6 @@ class MainBottomNavigationView @JvmOverloads constructor(
         }
     }
 
-    fun clearOrderBadgeCount() {
-        ordersBadge.clearNumber()
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         navController?.let { navController ->
             val navSuccess = NavigationUI.onNavDestinationSelected(item, navController)
