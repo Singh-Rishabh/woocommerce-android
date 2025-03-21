@@ -26,7 +26,7 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     private val shipments = MutableStateFlow(navArgs.shipmentArgs.shipments)
     private val currentShipments = MutableStateFlow(navArgs.shipmentArgs.shipments)
 
-    val selectedItems = shipments.map { shipment ->
+    val selectableItems = shipments.map { shipment ->
         shipment.mapValues {
             it.value.toSelectableUIModel(
                 currencyFormatter = currencyFormatter,
@@ -39,10 +39,10 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     val viewState = combine(
         shipments,
         currentShipments,
-        selectedItems
-    ) { shipments, currentShipments, selectedItems ->
+        selectableItems
+    ) { shipments, currentShipments, selectableItems ->
         SplitShipmentViewState(
-            selectedItems = selectedItems,
+            selectableItems = selectableItems,
             hasChanges = shipments != currentShipments
         )
     }.asLiveData()
@@ -52,7 +52,7 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     }
 
     data class SplitShipmentViewState(
-        val selectedItems: Map<Int, SelectableShippableItemsUI>,
+        val selectableItems: Map<Int, SelectableShippableItemsUI>,
         val hasChanges: Boolean = false
     )
 }

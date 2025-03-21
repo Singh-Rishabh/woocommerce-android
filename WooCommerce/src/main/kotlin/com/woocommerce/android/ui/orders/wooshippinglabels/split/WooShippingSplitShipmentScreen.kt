@@ -72,7 +72,7 @@ fun WooShippingSplitShipmentScreen(
             )
         }
     ) { padding ->
-        val shipment = viewState.selectedItems.values.first()
+        val shipment = viewState.selectableItems.values.first()
         Surface(
             modifier = modifier.fillMaxSize()
         ) {
