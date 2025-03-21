@@ -1,5 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
@@ -265,27 +267,29 @@ class WooShippingNetworkingMapper @Inject constructor(
     }
 
     fun toCustomsPurchaseDTO(
-        customsData: CustomsData
-    ): CustomsPurchaseDTO {
-        return CustomsPurchaseDTO(
-            contentsType = customsData.contentType.name,
-            contentExplanation = customsData.contentDescription,
-            restrictionType = customsData.restrictionType.name,
-            restrictionComments = customsData.restrictionDescription,
-            isReturnToSender = customsData.isReturnToSender,
-            itn = customsData.itn,
-            items = customsData.items.map {
-                CustomsItemPurchaseDTO(
-                    productId = it.productID,
-                    description = it.description,
-                    quantity = it.quantity,
-                    price = it.value.toDouble(),
-                    weight = it.weight.toDouble(),
-                    hsTariffNumber = it.hsTariffNumber,
-                    originCountry = it.originCountryCode
-                )
-            }
-        )
+        customsDataList: List<CustomsData>
+    ): Map<String, CustomsPurchaseDTO> {
+        return customsDataList.mapIndexed { index, customsData ->
+            CustomsPurchaseDTO(
+                contentsType = customsData.contentType.name.toLowerCase(Locale.current),
+                contentExplanation = customsData.contentDescription,
+                restrictionType = customsData.restrictionType.name.toLowerCase(Locale.current),
+                restrictionComments = customsData.restrictionDescription,
+                isReturnToSender = customsData.isReturnToSender,
+                itn = customsData.itn,
+                items = customsData.items.map {
+                    CustomsItemPurchaseDTO(
+                        productId = it.productID,
+                        description = it.description,
+                        quantity = it.quantity,
+                        price = it.value.toDouble(),
+                        weight = it.weight.toDouble(),
+                        hsTariffNumber = it.hsTariffNumber,
+                        originCountry = it.originCountryCode
+                    )
+                }
+            ).let { Pair("${CUSTOMS_PACKAGE_PREFIX}${index}", it) }
+        }.associate { it.first to it.second }
     }
 
     companion object {
@@ -293,5 +297,6 @@ class WooShippingNetworkingMapper @Inject constructor(
         private const val PURCHASED_KEY = "PURCHASED"
         private const val PURCHASE_ERROR_KEY = "PURCHASE_ERROR"
         private const val ANONYMIZED_KEY = "ANONYMIZED"
+        private const val CUSTOMS_PACKAGE_PREFIX = "shipment_"
     }
 }
