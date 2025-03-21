@@ -510,7 +510,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
 
-        val customsData = customsFormData.value
+        val customsData = customsFormData.value?.let { listOf(it) }
 
         launch {
             val result = purchaseShippingLabel(

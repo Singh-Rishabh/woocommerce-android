@@ -80,7 +80,7 @@ class WooShippingLabelRepository @Inject constructor(
         selectedRate: WooShippingRateModel,
         weight: Float,
         lastOrderComplete: Boolean,
-        customsData: CustomsData?
+        customsData: List<CustomsData>?
     ): WooResult<PurchasedLabelData> {
         val origin = mapper.toOriginAddressPurchaseDTO(shipFrom)
         val destination = mapper.toDestinationAddressDTO(shipTo)
@@ -99,7 +99,7 @@ class WooShippingLabelRepository @Inject constructor(
             destination = destination,
             selectedPackage = packageDTO,
             selectedRate = rateDTO,
-            customs = customsDTO,
+            customs = customsDTO ?: emptyMap(),
             markOrderComplete = lastOrderComplete
         ).asWooResult { mapper(it) }
     }

@@ -24,7 +24,7 @@ class PurchaseShippingLabel @Inject constructor(
         shippingRate: WooShippingRateModel,
         weight: Float,
         lastOrderComplete: Boolean,
-        customsData: CustomsData? = null,
+        customsData: List<CustomsData>? = null,
     ): Result<PurchasedLabelData> {
         return selectedSite.getOrNull()?.let {
             val response = wooShippingLabelRepository.purchaseShippingLabel(
