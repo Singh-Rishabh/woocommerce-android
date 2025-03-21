@@ -1,0 +1,2 @@
+21.9:
+Acabamos com um bug que causava um travamento durante a adição de um novo cartão de pagamento no formulário de campanha do Blaze. Esta atualização garante uma experiência mais tranquila e confiável. Aproveite pagamentos sem complicações com o WooCommerce! 🚀

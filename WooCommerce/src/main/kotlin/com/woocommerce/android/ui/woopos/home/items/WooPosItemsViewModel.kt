@@ -11,10 +11,9 @@ import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator.WooPosItemsScreenNavigationEvent
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.ProductsPullToRefreshTriggered
@@ -247,14 +246,14 @@ class WooPosItemsViewModel @Inject constructor(
     private fun navigateBackToItemListScreen() {
         viewModelScope.launch {
             navigator.sendNavigationEvent(
-                WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
+                WooPosItemsScreenNavigationEvent.NavigateBackToItemListScreen
             )
         }
     }
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
         when (event.item) {
-            is SimpleProduct -> {
+            is WooPosItem.Product.Simple -> {
                 onItemClicked(
                     ItemClickedData.SimpleProduct(
                         id = event.item.id
@@ -262,7 +261,7 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
 
-            is VariableProduct -> {
+            is WooPosItem.Product.Variable -> {
                 viewModelScope.launch {
                     navigator.sendNavigationEvent(
                         NavigateToVariationsScreen(
@@ -361,7 +360,7 @@ class WooPosItemsViewModel @Inject constructor(
     ) = WooPosItemsViewState.Content(
         items = map { product ->
             if (product.isVariable()) {
-                VariableProduct(
+                WooPosItem.Product.Variable(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),
@@ -370,7 +369,7 @@ class WooPosItemsViewModel @Inject constructor(
                     variationIds = product.variationIds
                 )
             } else {
-                SimpleProduct(
+                WooPosItem.Product.Simple(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),

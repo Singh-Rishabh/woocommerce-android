@@ -47,13 +47,13 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpa
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.SimpleProduct
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.VariableProduct
+import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Product
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchAnimationCompleted
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchChanged
+import com.woocommerce.android.ui.woopos.home.items.search.WooPosItemsSearchScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -168,22 +168,45 @@ private fun MainItemsList(
                             onSimpleProductsBannerClosed
                         )
 
-                        ProductsSearch(
-                            itemsState.search,
-                            onSearchEvent = onSearchEvent,
-                        )
-
-                        WooPosItemList(
-                            itemsState,
-                            listState,
-                            onItemClicked,
-                            onEndOfItemListReached,
-                        ) {
-                            ProductsPaginationError(
-                                onRetryClicked = {
-                                    onEndOfItemListReached()
+                        when (itemsState.search) {
+                            is WooPosItemsViewState.Content.SearchState.Visible -> {
+                                WooPosSearchInput(
+                                    state = itemsState.search.state,
+                                    onEvent = onSearchEvent,
+                                )
+                                when (itemsState.search.state) {
+                                    WooPosSearchInputState.Closed -> {
+                                        WooPosItemList(
+                                            itemsState,
+                                            listState,
+                                            onItemClicked,
+                                            onEndOfItemListReached,
+                                        ) {
+                                            ProductsPaginationError(
+                                                onRetryClicked = {
+                                                    onEndOfItemListReached()
+                                                }
+                                            )
+                                        }
+                                    }
+                                    is WooPosSearchInputState.Open -> WooPosItemsSearchScreen()
                                 }
-                            )
+                            }
+
+                            WooPosItemsViewState.Content.SearchState.Hidden -> {
+                                WooPosItemList(
+                                    itemsState,
+                                    listState,
+                                    onItemClicked,
+                                    onEndOfItemListReached,
+                                ) {
+                                    ProductsPaginationError(
+                                        onRetryClicked = {
+                                            onEndOfItemListReached()
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -264,7 +287,6 @@ private fun ItemsToolbar(
                 }
             }
             else -> {
-                // no op
             }
         }
     }
@@ -291,25 +313,6 @@ private fun SimpleProductsBanner(
                 onSimpleProductsBannerLearnMoreClicked()
             }
         )
-    }
-}
-
-@Composable
-private fun ProductsSearch(
-    searchState: WooPosItemsViewState.Content.SearchState,
-    onSearchEvent: (WooPosSearchUIEvent) -> Unit,
-) {
-    when (searchState) {
-        is WooPosItemsViewState.Content.SearchState.Visible -> {
-            WooPosSearchInput(
-                state = searchState.state,
-                onEvent = onSearchEvent,
-            )
-        }
-
-        WooPosItemsViewState.Content.SearchState.Hidden -> {
-            // No search input to show
-        }
     }
 }
 
@@ -349,7 +352,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
-                SimpleProduct(
+                Product.Simple(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -357,13 +360,13 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                Product.Simple(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                VariableProduct(
+                Product.Variable(
                     3,
                     name = "Product 3",
                     price = "2000.00$",
@@ -371,7 +374,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     numOfVariations = 20,
                     variationIds = listOf()
                 ),
-                SimpleProduct(
+                Product.Simple(
                     4,
                     name = "Product 4",
                     price = "1.0$",
@@ -411,7 +414,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
-                SimpleProduct(
+                Product.Simple(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -419,13 +422,13 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                Product.Simple(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                VariableProduct(
+                Product.Variable(
                     3,
                     name = "Product 3",
                     price = "2000.00$",
@@ -509,7 +512,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
-                SimpleProduct(
+                Product.Simple(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -517,13 +520,13 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                Product.Simple(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                Product.Simple(
                     3,
                     name = "Product 3",
                     price = "1.0$",
@@ -561,7 +564,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Content(
             items = listOf(
-                SimpleProduct(
+                Product.Simple(
                     1,
                     name = "Product 1, Product 1, Product 1, " +
                         "Product 1, Product 1, Product 1, Product 1, Product 1" +
@@ -569,13 +572,13 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
                     price = "10.0$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                Product.Simple(
                     2,
                     name = "Product 2",
                     price = "2000.00$",
                     imageUrl = null,
                 ),
-                SimpleProduct(
+                Product.Simple(
                     3,
                     name = "Product 3",
                     price = "1.0$",
