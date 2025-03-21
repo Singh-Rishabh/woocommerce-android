@@ -1,0 +1,2 @@
+21.9:
+Beim Hinzufügen einer neuen Zahlungskarte im Blaze-Kampagnenformular kam es öfters zu Abstürzen. In diesem Update haben wir diesen Fehler behoben, damit du von einem noch reibungsloseren und zuverlässigeren Erlebnis und ganz unkomplizierten Zahlungen mit WooCommerce profitierst! 🚀

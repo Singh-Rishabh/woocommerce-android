@@ -1,0 +1,2 @@
+21.9:
+We hebben een vervelende bug geplet die een crash kon veroorzaken bij het toevoegen van een nieuwe betaalkaart in het Blaze-campagneformulier. Deze update zorgt voor een soepelere en betrouwbaardere ervaring: geniet van probleemloze betalingen met WooCommerce! 🚀
