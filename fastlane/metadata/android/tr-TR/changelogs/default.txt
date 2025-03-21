@@ -1,0 +1,2 @@
+21.9:
+Blaze kampanya formuna yeni bir ödeme kartı eklerken kilitlenmeye neden olabilecek sinir bozucu bir hatayı ortadan kaldırdık. Bu güncelleme daha sorunsuz ve daha güvenilir bir deneyim sağlar; WooCommerce ile sorunsuz ödemelerin keyfini çıkarın! 🚀

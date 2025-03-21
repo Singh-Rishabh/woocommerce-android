@@ -1,0 +1,2 @@
+21.9:
+Abbiamo eliminato un fastidioso bug che potrebbe causare un arresto anomalo quando si aggiunge una nuova carta di pagamento nel modulo della campagna Blaze. Questo aggiornamento garantisce un'esperienza più fluida e affidabile: goditi i pagamenti senza problemi con WooCommerce. 🚀
