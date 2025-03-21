@@ -76,7 +76,7 @@ class MainBottomNavigationView @JvmOverloads constructor(
         ordersBadge = getOrCreateBadge(R.id.orders)
         ordersBadge.isVisible = false
         ordersBadge.backgroundColor = ContextCompat.getColor(context, R.color.color_primary)
-        ordersBadge.maxCharacterCount = 3 // this includes the plus sign
+        ordersBadge.maxCharacterCount = 4 // this includes the plus sign
 
         moreMenuBadge = getOrCreateBadge(R.id.moreMenu)
         moreMenuBadge.isVisible = false
