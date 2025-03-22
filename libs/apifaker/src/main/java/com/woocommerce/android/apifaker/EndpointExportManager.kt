@@ -7,13 +7,14 @@ import android.net.Uri
 import androidx.core.content.getSystemService
 import com.google.gson.Gson
 import com.woocommerce.android.apifaker.db.EndpointDao
+import com.woocommerce.android.apifaker.di.ApiFakerGson
 import com.woocommerce.android.apifaker.models.MockedEndpoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class EndpointExportManager @Inject constructor(
-    private val gson: Gson,
+    @ApiFakerGson private val gson: Gson,
     private val endpointDao: EndpointDao,
     private val context: Context,
     private val clipDataFactory: ClipDataFactory
