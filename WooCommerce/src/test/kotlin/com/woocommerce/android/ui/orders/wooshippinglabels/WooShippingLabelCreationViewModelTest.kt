@@ -20,7 +20,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValida
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.GetAddressNotification
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.destination.VerifyDestinationAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.ObserveOriginAddresses
-import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireITN
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -236,6 +237,9 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
     private val observeStoreOptions: ObserveStoreOptions = mock()
     private val verifyDestinationAddress: VerifyDestinationAddress = mock()
     private val getAddressNotification: GetAddressNotification = mock()
+    private val shouldRequireITN: ShouldRequireITN = mock {
+        on { invoke(any(), any()) } doReturn false
+    }
 
     private lateinit var sut: WooShippingLabelCreationViewModel
 
@@ -254,6 +258,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             addressValidationHelper = addressValidationHelper,
             verifyDestinationAddress = verifyDestinationAddress,
             getAddressNotification = getAddressNotification,
+            shouldRequireITN = shouldRequireITN,
             savedState = savedState
         )
     }
@@ -709,6 +714,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
             whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
             whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
             whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
+            whenever(shouldRequireITN.invoke(any(), any())) doReturn true
             whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
 
             createViewModel()
@@ -735,7 +741,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(shouldRequireCustomsForm.invoke(any())) doReturn true
-        whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(price = BigDecimal(10000)) }
+        whenever(shouldRequireITN.invoke(any(), any())) doReturn true
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
 
         createViewModel()
 
