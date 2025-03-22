@@ -88,17 +88,33 @@ class AIRepository @Inject constructor(
     }
 
     /**
-     * Save YouTube token using auth code
+     * Save YouTube token with auth code
      */
     suspend fun saveYouTubeToken(authCode: String, storeUrl: String): YouTubeTokenResponse {
         Log.d(TAG, "Saving YouTube token with auth code for store: $storeUrl")
+        
+        if (authCode.isBlank() || storeUrl.isBlank()) {
+            Log.e(TAG, "Invalid parameters for token exchange: authCode=${authCode.isBlank()}, storeUrl=${storeUrl.isBlank()}")
+            return YouTubeTokenResponse(
+                success = false,
+                message = "Missing required parameters for token exchange",
+                storeUrl = storeUrl
+            )
+        }
+        
         try {
+            // Make the API call to exchange the auth code for tokens
             val response = aiService.saveYouTubeToken(authCode, storeUrl)
             Log.d(TAG, "YouTube token saved: ${response.success}")
             return response
         } catch (e: Exception) {
+            // Handle network/server errors
             Log.e(TAG, "Error saving YouTube token: ${e.message}", e)
-            throw e
+            return YouTubeTokenResponse(
+                success = false,
+                message = e.message ?: "Network error during token exchange",
+                storeUrl = storeUrl
+            )
         }
     }
 

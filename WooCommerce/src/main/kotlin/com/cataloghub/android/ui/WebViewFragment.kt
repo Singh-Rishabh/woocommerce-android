@@ -189,33 +189,58 @@ class WebViewFragment : BaseFragment(R.layout.fragment_web_view) {
         try {
             val uri = Uri.parse(url)
             val code = uri.getQueryParameter("code")
-            val storeUrl = uri.getQueryParameter("state") ?: aiViewModel.getCurrentStoreUrl()
+            val error = uri.getQueryParameter("error")
             
-            // The state parameter may contain the store URL
-            Log.d(TAG, "Auth code: $code, state/storeUrl: $storeUrl")
+            // First check for OAuth errors
+            if (error != null) {
+                Log.e(TAG, "OAuth error: $error")
+                val errorDescription = uri.getQueryParameter("error_description")
+                val errorMessage = if (errorDescription != null) "$error: $errorDescription" else error
+                
+                findNavController().navigateUp()
+                uiMessageResolver.showSnack("Authorization failed: $errorMessage")
+                return true
+            }
             
+            // If we have a valid auth code, process it
             if (code != null) {
-                if (url.contains("youtube")) {
-                    Log.d(TAG, "Handling YouTube auth callback with store URL: $storeUrl")
-                    aiViewModel.handleYouTubeAuthCallback(code)
-                    // Navigate back to previous screen
+                Log.d(TAG, "Authorization code found: $code")
+                
+                when {
+                    url.contains("youtube") -> {
+                        Log.d(TAG, "Processing YouTube auth callback")
+                        aiViewModel.handleYouTubeAuthCallback(code)
+                        findNavController().navigateUp()
+                        uiMessageResolver.showSnack("YouTube authorization successful")
+                    }
+                    url.contains("facebook") -> {
+                        aiViewModel.handleFacebookAuthCallback(code)
+                        findNavController().navigateUp()
+                        uiMessageResolver.showSnack("Facebook authorization successful")
+                    }
+                    url.contains("instagram") -> {
+                        aiViewModel.handleInstagramAuthCallback(code)
+                        findNavController().navigateUp()
+                        uiMessageResolver.showSnack("Instagram authorization successful")
+                    }
+                    else -> {
+                        Log.d(TAG, "Unrecognized OAuth provider in callback URL")
+                        findNavController().navigateUp()
+                        uiMessageResolver.showSnack("Authorization successful")
+                    }
+                }
+                return true
+            } else {
+                // No auth code found, check if it's a cancellation
+                if (url.contains("denied") || url.contains("cancel")) {
+                    Log.d(TAG, "User cancelled the authorization")
                     findNavController().navigateUp()
-                    uiMessageResolver.showSnack("YouTube authorization successful")
-                    return true
-                } else if (url.contains("facebook")) {
-                    aiViewModel.handleFacebookAuthCallback(code)
-                    findNavController().navigateUp()
-                    uiMessageResolver.showSnack("Facebook authorization successful")
-                    return true
-                } else if (url.contains("instagram")) {
-                    aiViewModel.handleInstagramAuthCallback(code)
-                    findNavController().navigateUp()
-                    uiMessageResolver.showSnack("Instagram authorization successful")
+                    uiMessageResolver.showSnack("Authorization cancelled")
                     return true
                 }
-            } else {
-                // No auth code found in URL
-                Log.e(TAG, "No auth code found in callback URL")
+                
+                // Otherwise, it's some other error
+                Log.e(TAG, "No authorization code found in callback URL")
                 findNavController().navigateUp()
                 uiMessageResolver.showSnack("Authorization failed: No code provided")
                 return true
@@ -226,8 +251,6 @@ class WebViewFragment : BaseFragment(R.layout.fragment_web_view) {
             uiMessageResolver.showSnack("Error processing authorization")
             return false
         }
-        
-        return false
     }
     
     override fun onDestroyView() {

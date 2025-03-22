@@ -901,18 +901,6 @@
             app:argType="integer" />
     </dialog>
     <fragment
-        android:id="@+id/ai"
-        android:name="com.cataloghub.android.ui.ai.AIFragment"
-        android:label="@string/ai_screen_title">
-        <action
-            android:id="@+id/action_ai_to_process"
-            app:destination="@id/aiProcessFragment" />
-        <action
-            android:id="@+id/action_ai_to_review"
-            app:destination="@id/aiReviewFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/aiProcessFragment"
         android:name="com.cataloghub.android.ui.ai.process.AIProcessFragment"
         android:label="@string/ai_process_title" />
@@ -924,11 +912,16 @@
 
     <!-- AI Fragment -->
     <fragment
-        android:id="@+id/aiFragment"
+        android:id="@+id/ai"
         android:name="com.cataloghub.android.ui.ai.AIFragment"
         android:label="@string/ai_screen_title"
         tools:layout="@layout/fragment_ai">
-        
+        <action
+            android:id="@+id/action_ai_to_process"
+            app:destination="@id/aiProcessFragment" />
+        <action
+            android:id="@+id/action_ai_to_review"
+            app:destination="@id/aiReviewFragment" />
         <action
             android:id="@+id/action_ai_to_youtube_videos"
             app:destination="@id/youTubeVideosFragment"

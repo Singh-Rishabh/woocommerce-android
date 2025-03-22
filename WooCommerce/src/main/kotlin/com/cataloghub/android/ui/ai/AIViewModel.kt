@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.cataloghub.android.R
 import com.cataloghub.android.model.AIProduct
 import com.cataloghub.android.model.AIProductStatus
+import com.cataloghub.android.tools.SelectedSite
 import com.cataloghub.android.util.WooLog
 import com.cataloghub.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,37 +32,37 @@ class AIViewModel @Inject constructor(
 
     private val _authUrl = MutableLiveData<String?>(null)
     val authUrl: LiveData<String?> = _authUrl
-    
+
     // Store URL for methods that need it
     private var currentStoreUrl: String = ""
 
     // Social Media Connection States
     private val _youtubeConnectionState = MutableLiveData<ConnectionState>()
     val youtubeConnectionState: LiveData<ConnectionState> = _youtubeConnectionState
-    
+
     private val _facebookConnectionState = MutableLiveData<ConnectionState>()
     val facebookConnectionState: LiveData<ConnectionState> = _facebookConnectionState
-    
+
     private val _instagramConnectionState = MutableLiveData<ConnectionState>()
     val instagramConnectionState: LiveData<ConnectionState> = _instagramConnectionState
-    
+
     // YouTube Videos
     private val _youtubeVideos = MutableLiveData<List<YouTubeVideo>>()
     val youtubeVideos: LiveData<List<YouTubeVideo>> = _youtubeVideos
-    
+
     private val _videoSortOrder = MutableLiveData(SortOrder.DATE_DESC)
     val videoSortOrder: LiveData<SortOrder> = _videoSortOrder
-    
+
     private val _isLoadingVideos = MutableLiveData(false)
     val isLoadingVideos: LiveData<Boolean> = _isLoadingVideos
-    
+
     // Products
     private val _pendingProducts = MutableLiveData<List<AIProduct>>()
     val pendingProducts: LiveData<List<AIProduct>> = _pendingProducts
-    
+
     private val _approvedProducts = MutableLiveData<List<AIProduct>>()
     val approvedProducts: LiveData<List<AIProduct>> = _approvedProducts
-    
+
     private val _rejectedProducts = MutableLiveData<List<AIProduct>>()
     val rejectedProducts: LiveData<List<AIProduct>> = _rejectedProducts
 
@@ -73,18 +74,21 @@ class AIViewModel @Inject constructor(
 
     private val TAG = "AIViewModel"
 
+    // Add selectedSite in the class and inject it
+    @Inject
+    lateinit var selectedSite: SelectedSite
+
     init {
         AINetworkLogger.logRequest("AIViewModel", "Initialized")
         WooLog.d(WooLog.T.AI, "AIViewModel initialized")
     }
-    
+
     // Set the current store URL
     fun setStoreUrl(storeUrl: String) {
         currentStoreUrl = storeUrl
         // Check connection states with the updated URL
-        checkAllConnections(storeUrl)
     }
-    
+
     private fun checkAllConnections(storeUrl: String) {
         checkYouTubeConnection(storeUrl)
         checkFacebookConnection()
@@ -98,7 +102,7 @@ class AIViewModel @Inject constructor(
     suspend fun getYouTubeAuthUrl(storeUrl: String): String {
         Log.d(TAG, "Requesting YouTube auth URL for store: $storeUrl")
         currentStoreUrl = storeUrl // Store this for future use
-        
+
         try {
             val url = repository.getYouTubeAuthUrl(storeUrl)
             Log.d(TAG, "Received YouTube auth URL: $url")
@@ -114,7 +118,7 @@ class AIViewModel @Inject constructor(
      */
     fun checkYouTubeConnectionStatus(storeUrl: String) {
         _isLoading.value = true
-        
+
         viewModelScope.launch {
             try {
                 val tokenStatus = repository.checkYouTubeTokenStatus(storeUrl)
@@ -139,14 +143,14 @@ class AIViewModel @Inject constructor(
     fun saveYouTubeToken(authCode: String, storeUrl: String) {
         Log.d(TAG, "Saving YouTube token with auth code for store: $storeUrl")
         currentStoreUrl = storeUrl // Store for future use
-        
+
         _isLoading.value = true
-        
+
         viewModelScope.launch {
             try {
                 val response = repository.saveYouTubeToken(authCode, storeUrl)
                 Log.d(TAG, "YouTube token save response: $response")
-                
+
                 if (response.success) {
                     _isYouTubeConnected.postValue(true)
                     _successMessage.postValue("YouTube connected successfully!")
@@ -157,7 +161,7 @@ class AIViewModel @Inject constructor(
                     _isYouTubeConnected.postValue(false)
                     _event.postValue(Event.ShowSnackbar("Failed to connect YouTube: ${response.message}"))
                 }
-                
+
                 // Refresh connection status
                 checkYouTubeConnectionStatus(storeUrl)
             } catch (e: Exception) {
@@ -204,43 +208,48 @@ class AIViewModel @Inject constructor(
      */
     fun connectYouTube() {
         _isLoading.value = true
-        
-        if (currentStoreUrl.isNullOrEmpty()) {
-            _errorMessage.postValue("No store URL provided")
+
+        // Get store URL from currentStoreUrl or selectedSite
+        val storeUrl = getCurrentStoreUrl()
+
+        if (storeUrl.isEmpty()) {
+            _errorMessage.postValue("Please select a store to connect to YouTube")
             _isLoading.postValue(false)
             return
         }
-        
-        Log.d(TAG, "Starting YouTube connection with store URL: $currentStoreUrl")
-        
+
+        Log.d(TAG, "Starting YouTube authentication with store URL: $storeUrl")
+        currentStoreUrl = storeUrl  // Save for reuse
+
         viewModelScope.launch {
             try {
-                // Get the auth URL and append the store URL as state parameter if not already included
-                var url = getYouTubeAuthUrl(currentStoreUrl!!)
-                
+                // Get the auth URL and append the store URL as state parameter
+                var url = getYouTubeAuthUrl(storeUrl)
+
+                if (url.isEmpty()) {
+                    _errorMessage.postValue("Failed to get authorization URL from server")
+                    _isLoading.postValue(false)
+                    return@launch
+                }
+
                 // Check if URL already has state parameter
                 if (!url.contains("state=")) {
-                    // Add state parameter with store URL
+                    // Add state parameter with store URL for session preservation
                     val separator = if (url.contains("?")) "&" else "?"
-                    url = "${url}${separator}state=${Uri.encode(currentStoreUrl)}"
-                    Log.d(TAG, "Added state parameter to auth URL: $url")
+                    url = "${url}${separator}state=${Uri.encode(storeUrl)}"
+                    Log.d(TAG, "Added state parameter to auth URL")
                 }
-                
-                if (url.isNotEmpty()) {
-                    _authUrl.postValue(url)
-                    Log.d(TAG, "Posted auth URL to LiveData: $url")
-                } else {
-                    _errorMessage.postValue("Failed to get authorization URL")
-                    _isLoading.postValue(false)
-                }
+
+                _authUrl.postValue(url)
+                Log.d(TAG, "Authentication URL ready - launching browser flow")
             } catch (e: Exception) {
-                Log.e(TAG, "Error in connectYouTube: ${e.message}", e)
-                _errorMessage.postValue(e.message ?: "Error connecting to YouTube")
+                Log.e(TAG, "Error preparing YouTube authentication: ${e.message}", e)
+                _errorMessage.postValue("Unable to connect to YouTube: ${e.message ?: "Unknown error"}")
                 _isLoading.postValue(false)
             }
         }
     }
-    
+
     fun connectFacebook() {
         viewModelScope.launch {
             _facebookConnectionState.value = ConnectionState.CONNECTING
@@ -253,7 +262,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun connectInstagram() {
         viewModelScope.launch {
             _instagramConnectionState.value = ConnectionState.CONNECTING
@@ -266,13 +275,13 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun disconnectYouTube() {
         if (currentStoreUrl.isEmpty()) {
             _event.value = Event.ShowSnackbar("Store URL not set")
             return
         }
-        
+
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -291,7 +300,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun disconnectFacebook() {
         viewModelScope.launch {
             try {
@@ -303,7 +312,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun disconnectInstagram() {
         viewModelScope.launch {
             try {
@@ -315,7 +324,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     private fun checkYouTubeConnection(storeUrl: String) {
         viewModelScope.launch {
             try {
@@ -326,7 +335,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     private fun checkFacebookConnection() {
         viewModelScope.launch {
             try {
@@ -337,7 +346,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     private fun checkInstagramConnection() {
         viewModelScope.launch {
             try {
@@ -348,17 +357,17 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     // OAuth Callback Handling
     fun handleOAuthCallback(callbackUrl: String) {
         Log.d(TAG, "Handling OAuth callback: $callbackUrl")
-        
+
         try {
             // Extract the authorization code from the callback URL
             val uri = android.net.Uri.parse(callbackUrl)
             val code = uri.getQueryParameter("code")
             val error = uri.getQueryParameter("error")
-            
+
             if (code != null) {
                 Log.d(TAG, "Authorization code extracted: $code")
                 completeYouTubeAuth(code)
@@ -374,11 +383,11 @@ class AIViewModel @Inject constructor(
             _errorMessage.value = "Error processing YouTube authorization"
         }
     }
-    
+
     // Direct method for OAuth activity to use
     fun completeYouTubeAuth(authCode: String) {
         _isLoading.value = true
-        
+
         viewModelScope.launch {
             try {
                 val result = repository.completeYouTubeAuth(authCode)
@@ -400,7 +409,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     // YouTube Videos Methods
     fun loadYouTubeVideos() {
         viewModelScope.launch {
@@ -415,14 +424,14 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun setSortOrder(sortOrder: SortOrder) {
         _videoSortOrder.value = sortOrder
         _youtubeVideos.value?.let {
             _youtubeVideos.value = sortVideos(it, sortOrder)
         }
     }
-    
+
     private fun sortVideos(videos: List<YouTubeVideo>, sortOrder: SortOrder): List<YouTubeVideo> {
         return when (sortOrder) {
             SortOrder.DATE_DESC -> videos.sortedByDescending { it.publishedAt }
@@ -431,7 +440,7 @@ class AIViewModel @Inject constructor(
             SortOrder.TITLE_ASC -> videos.sortedBy { it.title }
         }
     }
-    
+
     // Product Methods
     fun loadProducts() {
         viewModelScope.launch {
@@ -445,7 +454,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun approveProduct(productId: String) {
         viewModelScope.launch {
             try {
@@ -457,7 +466,7 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     fun rejectProduct(productId: String) {
         viewModelScope.launch {
             try {
@@ -469,21 +478,21 @@ class AIViewModel @Inject constructor(
             }
         }
     }
-    
+
     // Event class for navigation and UI events
     sealed class Event : MultiLiveEvent.Event() {
         data class ShowSnackbar(val message: String) : Event()
         data class NavigateToWebView(val url: String) : Event()
         data class NavigateToVideoDetail(val videoId: String) : Event()
     }
-    
+
     // Connection state enum
     enum class ConnectionState {
         DISCONNECTED,
         CONNECTING,
         CONNECTED
     }
-    
+
     // Sort order enum
     enum class SortOrder {
         DATE_DESC,
@@ -500,29 +509,29 @@ class AIViewModel @Inject constructor(
                 // Parse and log the URL components
                 val uri = Uri.parse(url)
                 val components = mutableMapOf<String, String?>()
-                
+
                 // Extract query parameters
                 uri.queryParameterNames.forEach { paramName ->
                     components[paramName] = uri.getQueryParameter(paramName)
                 }
-                
+
                 // Log all components
                 Log.d("OAuth-Debug", "URL: $url")
                 Log.d("OAuth-Debug", "Scheme: ${uri.scheme}")
                 Log.d("OAuth-Debug", "Host: ${uri.host}")
                 Log.d("OAuth-Debug", "Path: ${uri.path}")
                 Log.d("OAuth-Debug", "Query parameters: $components")
-                
+
                 AINetworkLogger.logRequest("OAuth Debug", "URL Components: $components")
-                
+
                 // If it's an error response, log detailed info
                 if (components.containsKey("error")) {
                     val error = components["error"] ?: "unknown"
                     val errorDesc = components["error_description"] ?: "No description"
-                    
+
                     Log.e("OAuth-Debug", "OAuth Error: $error - $errorDesc")
                     AINetworkLogger.logError("OAuth Error", Exception("$error: $errorDesc"))
-                    
+
                     _errorMessage.value = "YouTube authorization failed: $error"
                 }
             } catch (e: Exception) {
@@ -542,9 +551,15 @@ class AIViewModel @Inject constructor(
     }
 
     /**
-     * Get the current store URL
+     * Get the current store URL - simplified approach
      */
     fun getCurrentStoreUrl(): String {
+        if (currentStoreUrl.isNullOrEmpty()) {
+            // Get store URL from selectedSite as fallback
+            val site = selectedSite.get()
+            Log.d(TAG, "Getting store URL from selectedSite: ${site?.url}")
+            return site?.url ?: ""
+        }
         return currentStoreUrl
     }
 
@@ -552,16 +567,22 @@ class AIViewModel @Inject constructor(
      * Handle YouTube auth callback with authorization code
      */
     fun handleYouTubeAuthCallback(authCode: String) {
-        Log.d(TAG, "Handling YouTube auth callback with code")
-        
-        if (currentStoreUrl.isNullOrEmpty()) {
-            Log.e(TAG, "Store URL is empty, attempting to get from selectedSite")
-            _errorMessage.postValue("Error: No store URL available")
+        Log.d(TAG, "Processing YouTube authentication callback")
+
+        if (authCode.isBlank()) {
+            Log.e(TAG, "Invalid authorization code received")
+            _errorMessage.postValue("Invalid authorization code received from YouTube")
             return
         }
-        
-        Log.d(TAG, "Using store URL: $currentStoreUrl")
-        saveYouTubeToken(authCode, currentStoreUrl)
+
+        val storeUrl = getCurrentStoreUrl()
+        if (storeUrl.isBlank()) {
+            Log.e(TAG, "Store URL is missing for token exchange")
+            _errorMessage.postValue("Unable to complete YouTube connection: Store information missing")
+            return
+        }
+
+        saveYouTubeToken(authCode, storeUrl)
     }
 
     /**

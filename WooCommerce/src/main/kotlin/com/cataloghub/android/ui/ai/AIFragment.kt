@@ -222,16 +222,22 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
      * Navigate to in-app browser with the given URL
      */
     private fun navigateToInAppBrowser(url: String) {
-        Log.d(TAG, "Navigating to WebView with URL: $url")
+        Log.d(TAG, "Navigating to WebView with OAuth URL")
         
-        // Navigate to the WebView fragment with the OAuth URL
-        findNavController().navigate(
-            WebViewFragmentDirections.actionGlobalWebViewFragment(url)
-        )
-        
-        // Reset UI state
-        binding.youtubeConnectButton.isEnabled = true
-        viewModel.setLoading(false)
+        try {
+            // Use the navigation component to navigate to the WebView fragment
+            val directions = WebViewFragmentDirections.actionGlobalWebViewFragment(url)
+            findNavController().navigate(directions)
+            
+            // Reset loading state
+            binding.youtubeConnectButton.isEnabled = true
+            viewModel.setLoading(false)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error navigating to WebView: ${e.message}", e)
+            uiMessageResolver.showSnack("Error opening authentication page. Please try again.")
+            binding.youtubeConnectButton.isEnabled = true
+            viewModel.setLoading(false)
+        }
     }
     
     /**

@@ -277,7 +277,5 @@ data class YouTubeTokenStatusResponse(
     val expiresAt: String?,
     val scopes: List<String>?,
     @SerializedName("valid_for_android")
-    val validForAndroid: Boolean?,
-    @SerializedName("connected")
-    val connected: Boolean?
+    val validForAndroid: Boolean?
 )
