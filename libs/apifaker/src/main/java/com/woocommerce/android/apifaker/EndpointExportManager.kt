@@ -42,7 +42,6 @@ internal class EndpointExportManager @Inject constructor(
             val inputStream = context.contentResolver.openInputStream(uri)
                 ?: return@withContext Result.failure(IllegalStateException("Could not open input stream for uri: $uri"))
 
-
             runCatching {
                 val endpoints = inputStream.bufferedReader().use { reader ->
                     gson.fromJson(reader, Array<MockedEndpoint>::class.java).toList()
