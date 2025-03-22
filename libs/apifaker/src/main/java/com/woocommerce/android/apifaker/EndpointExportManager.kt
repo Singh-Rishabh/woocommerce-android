@@ -14,7 +14,7 @@ internal class EndpointExportManager @Inject constructor(
     private val endpointDao: EndpointDao,
     private val context: Context
 ) {
-    suspend fun exportEndpoints(
+    suspend fun exportEndpointsToFile(
         endpoints: List<MockedEndpoint>,
         uri: Uri
     ): Result<Unit> {
@@ -37,7 +37,7 @@ internal class EndpointExportManager @Inject constructor(
         }
     }
 
-    suspend fun importEndpoints(uri: Uri): Result<Unit> {
+    suspend fun importEndpointsFromFile(uri: Uri): Result<Unit> {
         return withContext(Dispatchers.IO) {
             val inputStream = context.contentResolver.openInputStream(uri)
                 ?: return@withContext Result.failure(IllegalStateException("Could not open input stream for uri: $uri"))

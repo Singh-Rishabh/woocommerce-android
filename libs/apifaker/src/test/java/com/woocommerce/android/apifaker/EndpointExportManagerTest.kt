@@ -48,11 +48,11 @@ class EndpointExportManagerTest {
     )
 
     @Test
-    fun `when exportEndpoints is called, it should export the endpoints to the given uri`() = runTest {
+    fun `when exportEndpointsToFile is called, it should export the endpoints to the given uri`() = runTest {
         val stream = ByteArrayOutputStream()
         given(contentResolver.openOutputStream(any())).willReturn(stream)
 
-        val result = sut.exportEndpoints(mockedEndpoints, mock())
+        val result = sut.exportEndpointsToFile(mockedEndpoints, mock())
         val exportedEndpoints = gson.fromJson(stream.toString(), Array<MockedEndpoint>::class.java).toList()
 
         assertTrue(result.isSuccess)
@@ -66,11 +66,11 @@ class EndpointExportManagerTest {
     }
 
     @Test
-    fun `when importEndpoints is called, it should import the endpoints from the given uri`() = runTest {
+    fun `when importEndpointsFromFile is called, it should import the endpoints from the given uri`() = runTest {
         val stream = gson.toJson(mockedEndpoints).byteInputStream()
         given(contentResolver.openInputStream(any())).willReturn(stream)
 
-        val result = sut.importEndpoints(mock())
+        val result = sut.importEndpointsFromFile(mock())
 
         assertTrue(result.isSuccess)
         verify(endpointDao).insertEndpoints(mockedEndpoints)

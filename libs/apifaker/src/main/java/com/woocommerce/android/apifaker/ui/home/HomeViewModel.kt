@@ -43,7 +43,7 @@ internal class HomeViewModel @Inject constructor(
 
     fun onExportEndpoints(uri: Uri) {
         viewModelScope.launch {
-            endpointExportManager.exportEndpoints(endpoints.value, uri).fold(
+            endpointExportManager.exportEndpointsToFile(endpoints.value, uri).fold(
                 onSuccess = {
                     snackbarHostState.showSnackbar("Endpoints exported successfully")
                 },
@@ -57,7 +57,7 @@ internal class HomeViewModel @Inject constructor(
 
     fun onImportEndpoints(uri: Uri) {
         viewModelScope.launch {
-            endpointExportManager.importEndpoints(uri).fold(
+            endpointExportManager.importEndpointsFromFile(uri).fold(
                 onSuccess = {
                     snackbarHostState.showSnackbar("Endpoints imported successfully")
                 },
