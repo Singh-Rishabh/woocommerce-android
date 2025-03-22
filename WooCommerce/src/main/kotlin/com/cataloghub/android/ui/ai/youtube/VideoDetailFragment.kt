@@ -50,9 +50,13 @@ class VideoDetailFragment : Fragment(R.layout.fragment_video_detail) {
             binding.videoTitle.text = video.title
             
             // Format stats text (views and publish date)
-            val viewsText = video.viewCount?.let { formatViewCount(it) } ?: "No views"
-            val dateText = formatPublishDate(video.publishedAt)
-            binding.videoStats.text = "$viewsText • $dateText"
+            if (video.publishedAt.isNotEmpty() && video.viewCount != null) {
+                val viewsText = video.viewCount?.let { formatViewCount(it) } ?: "No views"
+                val dateText = formatPublishDate(video.publishedAt)
+                binding.videoStats.text = "$viewsText • $dateText"
+            } else {
+                binding.videoStats.visibility = View.GONE
+            }
             
             // Load YouTube video in WebView
             setupYouTubePlayer(video.videoId)
@@ -67,6 +71,11 @@ class VideoDetailFragment : Fragment(R.layout.fragment_video_detail) {
             errorMessage?.let {
                 uiMessageResolver.showSnack(it)
                 viewModel.errorMessageShown()
+                
+                // If we had an error loading the video details, still show the video using the videoId
+                if (viewModel.videoDetails.value == null) {
+                    viewModel.setupFallbackVideoPlayer(args.videoId)
+                }
             }
         }
         
@@ -100,19 +109,60 @@ class VideoDetailFragment : Fragment(R.layout.fragment_video_detail) {
     }
     
     private fun setupYouTubePlayer(videoId: String) {
+        binding.videoProgressBar.visibility = View.VISIBLE
+        
         binding.youtubeWebView.apply {
             settings.javaScriptEnabled = true
+            settings.domStorageEnabled = true
             settings.cacheMode = WebSettings.LOAD_DEFAULT
+            settings.mediaPlaybackRequiresUserGesture = false
             webChromeClient = WebChromeClient()
             webViewClient = object : WebViewClient() {
                 override fun onPageFinished(view: WebView?, url: String?) {
                     super.onPageFinished(view, url)
                     binding.videoProgressBar.visibility = View.GONE
                 }
+                
+                override fun onReceivedError(
+                    view: WebView?,
+                    errorCode: Int,
+                    description: String?,
+                    failingUrl: String?
+                ) {
+                    super.onReceivedError(view, errorCode, description, failingUrl)
+                    binding.videoProgressBar.visibility = View.GONE
+                    // Show error message
+                    if (errorCode != -1) { // Filter out generic errors
+                        uiMessageResolver.showSnack("Video player error: $description")
+                    }
+                }
             }
             
-            val embedUrl = "https://www.youtube.com/embed/$videoId"
-            loadUrl(embedUrl)
+            // Use iframe embed for better compatibility
+            val iframeHtml = """
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body { margin: 0; padding: 0; overflow: hidden; background-color: #000; }
+                        iframe { width: 100%; height: 100%; border: none; }
+                    </style>
+                </head>
+                <body>
+                    <iframe 
+                        width="100%" 
+                        height="100%" 
+                        src="https://www.youtube.com/embed/$videoId?autoplay=1&rel=0" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </body>
+                </html>
+            """.trimIndent()
+            
+            loadDataWithBaseURL("https://www.youtube.com", iframeHtml, "text/html", "UTF-8", null)
         }
     }
     

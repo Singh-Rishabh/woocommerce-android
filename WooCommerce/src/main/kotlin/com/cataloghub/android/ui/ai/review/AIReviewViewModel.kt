@@ -39,7 +39,9 @@ class AIReviewViewModel @Inject constructor(
             _viewState.value = ViewState(isLoading = true)
 
             try {
-                val products = repository.getProducts(currentYoutubeUrl ?: "")
+                val storeUrl = selectedSite.get().url
+                val youtubeUrl = currentYoutubeUrl ?: ""
+                val products = repository.getProducts(youtubeUrl, storeUrl)
                 _viewState.value = ViewState(
                     products = products,
                     isLoading = false,

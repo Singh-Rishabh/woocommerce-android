@@ -9,8 +9,12 @@ import retrofit2.http.Path
 import com.google.gson.annotations.SerializedName
 
 interface AIService {
-    @POST("process-video/")
-    suspend fun processVideo(@Body request: ProcessVideoRequest): ProcessingResult
+    /**
+     * Process a YouTube video to extract products
+     * OpenAPI path: /api/v1/youtube-videos/process
+     */
+    @POST("api/v1/youtube-videos/process")
+    suspend fun processVideo(@Body request: YouTubeProcessVideoRequest): ProcessingResult
 
     @GET("api/v1/collections/by-youtube-url")
     suspend fun getProducts(
@@ -18,8 +22,19 @@ interface AIService {
         @Query("store_url") storeUrl: String
     ): List<ProductReviewResponse>
 
-    @POST("api/v1/collections/edit-product")
+    /**
+     * Edit product details (No Auth)
+     * OpenAPI path: /api/v1/youtube-videos/edit-product
+     */
+    @POST("api/v1/youtube-videos/edit-product")
     suspend fun editProducts(@Body request: ProductEditRequest): List<ProductReviewResponse>
+
+    // Previous version - keeping for reference but marking as deprecated
+    /**
+     * @deprecated Use the No Auth version instead
+     */
+    @POST("api/v1/collections/edit-product")
+    suspend fun editProductsWithAuth(@Body request: ProductEditRequest): List<ProductReviewResponse>
 
     // YouTube OAuth endpoints - Update to match OpenAPI spec exactly
 
@@ -88,11 +103,6 @@ interface AIService {
         @Query("video_id") videoId: String
     ): YouTubeVideo
 
-    @POST("api/v1/youtube-videos/process")
-    suspend fun processYouTubeVideo(
-        @Body request: YouTubeProcessVideoRequest
-    ): ProcessingResult
-
     // Social Media Connection Endpoints
     @GET("ai/youtube/auth-url")
     suspend fun getYouTubeAuthUrl(): AuthUrlResponse
@@ -147,21 +157,18 @@ interface AIService {
         @Body request: UpdateProductStatusRequest
     )
 
-    @POST("ai/products/generate")
-    suspend fun generateProductFromVideo(@Body request: GenerateProductRequest): APIProductResponse
-
     /**
      * Check YouTube connection status
      */
     @GET("ai/youtube/connection")
     suspend fun checkYouTubeConnection(@Query("store_url") storeUrl: String): YouTubeConnectionResponse
-    
+
     /**
      * Complete YouTube authorization with auth code
      */
     @POST("ai/youtube/complete-auth")
     suspend fun completeYouTubeAuth(@Body request: CompleteYouTubeAuthRequest): YouTubeAuthResponse
-    
+
     /**
      * Disconnect YouTube
      */

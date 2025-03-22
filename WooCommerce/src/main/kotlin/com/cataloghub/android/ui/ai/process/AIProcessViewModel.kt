@@ -115,7 +115,8 @@ class AIProcessViewModel @Inject constructor(
                 AINetworkLogger.logRequest("Processing State", "LOADING")
                 WooLog.d(WooLog.T.AI, "Processing state changed to LOADING")
 
-                val products = aiRepository.getProducts(youtubeUrl)
+                val storeUrl = selectedSite.get().url
+                val products = aiRepository.getProducts(youtubeUrl, storeUrl)
 
                 AINetworkLogger.logResponse(
                     "Get Products Response",

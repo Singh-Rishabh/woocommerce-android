@@ -21,25 +21,75 @@ class AIRepository @Inject constructor(
 ) {
     private val TAG = "AIRepository"
 
+    /**
+     * Process a YouTube video to extract products
+     */
     suspend fun processVideo(
         youtubeUrl: String,
         storeUrl: String,
-        autoApprove: Boolean
+        autoApprove: Boolean = false
     ): ProcessingResult = withContext(Dispatchers.IO) {
-        aiService.processVideo(
-            ProcessVideoRequest(
-                youtubeUrl = youtubeUrl,
+        try {
+            Log.d(TAG, "Processing video with URL: $youtubeUrl, Store URL: $storeUrl, Auto-approve: $autoApprove")
+
+            // Extract video ID from YouTube URL
+            val videoId = extractVideoId(youtubeUrl)
+            if (videoId.isNullOrEmpty()) {
+                throw IllegalArgumentException("Invalid YouTube URL: $youtubeUrl")
+            }
+
+            // Create request object using the updated schema with video_id
+            val request = YouTubeProcessVideoRequest(
+                videoId = videoId,
                 storeUrl = storeUrl,
                 autoApprove = autoApprove
             )
-        )
+            Log.d(TAG, "Video processing successful. CollectionId: ${it.collectionId}, Products: ${it.products.size}")
+
+            aiService.processVideo(request).also {
+                Log.d(TAG, "Video processing successful. CollectionId: ${it.collectionId}, Products: ${it.products.size}")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error processing video: ${e.message}", e)
+            throw e
+        }
     }
 
-    suspend fun getProducts(youtubeUrl: String): List<ProductReviewResponse> = withContext(Dispatchers.IO) {
-        aiService.getProducts(
-            youtubeUrl = youtubeUrl,
-            storeUrl = selectedSite.get().url
-        )
+    /**
+     * Extract video ID from YouTube URL
+     */
+    private fun extractVideoId(youtubeUrl: String): String? {
+        val regex = Regex("(?:youtube\\.com\\/watch\\?v=|youtu\\.be\\/)([\\w-]+)")
+        val matchResult = regex.find(youtubeUrl)
+        return matchResult?.groupValues?.getOrNull(1)
+    }
+
+    /**
+     * Get products generated from a YouTube video
+     */
+    suspend fun getProducts(
+        youtubeUrl: String,
+        storeUrl: String
+    ): List<ProductReviewResponse> = withContext(Dispatchers.IO) {
+        try {
+            Log.d(TAG, "Getting products for youtubeUrl: $youtubeUrl, storeUrl: $storeUrl")
+            aiService.getProducts(
+                youtubeUrl = youtubeUrl,
+                storeUrl = storeUrl
+            )
+        } catch (e: Exception) {
+            // Log the error for debugging
+            Log.e(TAG, "Error getting products: ${e.message}", e)
+
+            // If it's a 404, just return an empty list
+            if (e.message?.contains("HTTP 404") == true) {
+                Log.d(TAG, "No products found (404), returning empty list")
+                emptyList()
+            } else {
+                // For other errors, re-throw
+                throw e
+            }
+        }
     }
 
     suspend fun editProducts(request: ProductEditRequest): List<ProductReviewResponse> = withContext(Dispatchers.IO) {
@@ -55,12 +105,12 @@ class AIRepository @Inject constructor(
             val response = aiService.getYouTubeAuthUrl(storeUrl)
             val authUrl = response.authUrl
             Log.d(TAG, "Raw response received: $response")
-            
+
             if (authUrl.isNullOrEmpty()) {
                 Log.e(TAG, "Received null or empty auth URL from API")
                 throw Exception("Failed to get authorization URL from server")
             }
-            
+
             Log.d(TAG, "Received YouTube auth URL: $authUrl")
             AINetworkLogger.logResponse(TAG, "Received YouTube auth URL: $authUrl")
             return authUrl
@@ -92,7 +142,7 @@ class AIRepository @Inject constructor(
      */
     suspend fun saveYouTubeToken(authCode: String, storeUrl: String): YouTubeTokenResponse {
         Log.d(TAG, "Saving YouTube token with auth code for store: $storeUrl")
-        
+
         if (authCode.isBlank() || storeUrl.isBlank()) {
             Log.e(TAG, "Invalid parameters for token exchange: authCode=${authCode.isBlank()}, storeUrl=${storeUrl.isBlank()}")
             return YouTubeTokenResponse(
@@ -101,7 +151,7 @@ class AIRepository @Inject constructor(
                 storeUrl = storeUrl
             )
         }
-        
+
         try {
             // Make the API call to exchange the auth code for tokens
             val response = aiService.saveYouTubeToken(authCode, storeUrl)
@@ -158,14 +208,26 @@ class AIRepository @Inject constructor(
         )
     }
 
+    /**
+     * Get YouTube video details by video ID
+     */
     suspend fun getYouTubeVideoDetails(
         storeUrl: String,
         videoId: String
     ): YouTubeVideo = withContext(Dispatchers.IO) {
-        aiService.getYouTubeVideoDetails(
-            storeUrl = storeUrl,
-            videoId = videoId
-        )
+        try {
+            Log.d(TAG, "Getting video details for videoId: $videoId, storeUrl: $storeUrl")
+            aiService.getYouTubeVideoDetails(
+                storeUrl = storeUrl,
+                videoId = videoId
+            )
+        } catch (e: Exception) {
+            // Log the error for debugging
+            Log.e(TAG, "Error getting video details: ${e.message}", e)
+
+            // Re-throw to let the ViewModel handle it appropriately
+            throw e
+        }
     }
 
     suspend fun processYouTubeVideo(
@@ -173,13 +235,22 @@ class AIRepository @Inject constructor(
         storeUrl: String,
         autoApprove: Boolean = false
     ): ProcessingResult = withContext(Dispatchers.IO) {
-        aiService.processYouTubeVideo(
-            YouTubeProcessVideoRequest(
-                videoId = videoId,
+        try {
+            Log.d(TAG, "Processing YouTube video: ID=$videoId, storeUrl=$storeUrl, autoApprove=$autoApprove")
+
+            // Convert videoId to full YouTube URL
+            val youtubeUrl = "https://www.youtube.com/watch?v=$videoId"
+
+            // Call the processVideo method which uses the correct API endpoint
+            processVideo(
+                youtubeUrl = youtubeUrl,
                 storeUrl = storeUrl,
                 autoApprove = autoApprove
             )
-        )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error processing YouTube video: ${e.message}", e)
+            throw e
+        }
     }
 
     // Social Media Connection Methods
@@ -246,21 +317,6 @@ class AIRepository @Inject constructor(
         }
     }
 
-    suspend fun getYouTubeVideoDetails(videoId: String): YouTubeVideo = withContext(Dispatchers.IO) {
-        val response = aiService.getYouTubeVideoDetails(videoId)
-        YouTubeVideo(
-            videoId = response.videoId,
-            title = response.title,
-            description = response.description,
-            publishedAt = response.publishedAt.toString(),
-            channelTitle = response.channelTitle,
-            thumbnails = mapOf("default" to VideoThumbnail(response.thumbnailUrl, 120, 90)),
-            viewCount = response.viewCount?.toInt(),
-            likeCount = response.likeCount?.toInt(),
-            duration = response.duration
-        )
-    }
-
     // Product Methods
     suspend fun getProducts(): List<AIProduct> = withContext(Dispatchers.IO) {
         aiService.getProducts().products.map {
@@ -286,21 +342,53 @@ class AIRepository @Inject constructor(
     }
 
     suspend fun generateProductFromVideo(videoId: String): AIProduct = withContext(Dispatchers.IO) {
-        val response = aiService.generateProductFromVideo(GenerateProductRequest(videoId))
-        AIProduct(
-            id = response.id,
-            title = response.title,
-            description = response.description,
-            price = response.price,
-            imageUrl = response.imageUrl,
-            videoId = response.videoId,
-            videoTitle = response.videoTitle,
-            videoThumbnailUrl = response.videoThumbnailUrl,
-            createdAt = Date(response.createdAt),
-            status = AIProductStatus.valueOf(response.status),
-            categories = response.categories,
-            tags = response.tags
-        )
+        // This functionality has been removed from the new API
+        // Instead, we should process the video and return the first product
+        Log.d(TAG, "Generating product from video ID: $videoId using video processing")
+
+        try {
+            val storeUrl = selectedSite.get().url
+            val youtubeUrl = "https://www.youtube.com/watch?v=$videoId"
+
+            // Process the video to get products
+            val result = processVideo(youtubeUrl, storeUrl, false)
+
+            // Return the first product or throw an exception if none available
+            if (result.products.isNotEmpty()) {
+                // Convert to AIProduct
+                val product = result.products.first()
+                return@withContext AIProduct(
+                    id = product.id,
+                    title = product.name,
+                    description = product.description ?: "",
+                    price = product.price ?: 0.0,
+                    imageUrl = product.thumbnailUrl ?: "",
+                    videoId = videoId,
+                    videoTitle = "", // Not available in the API response
+                    videoThumbnailUrl = product.thumbnailUrl ?: "",
+                    createdAt = try {
+                        product.createdAt?.let { createdAtStr ->
+                            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+                                .parse(createdAtStr)
+                        } ?: Date()
+                    } catch (e: Exception) {
+                        Date()
+                    },
+                    status = when {
+                        product.status.equals("approved", ignoreCase = true) -> AIProductStatus.APPROVED
+                        product.status.equals("rejected", ignoreCase = true) -> AIProductStatus.REJECTED
+                        else -> AIProductStatus.PENDING
+                    },
+                    categories = emptyList(), // Not available in the API response
+                    tags = emptyList() // Not available in the API response
+                )
+            } else {
+                throw Exception("No products generated from video processing")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error generating product from video: ${e.message}", e)
+            throw e
+        }
     }
 
     /**
