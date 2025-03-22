@@ -63,13 +63,14 @@ import com.woocommerce.android.apifaker.ui.Screen
 internal fun HomeScreen(
     viewModel: HomeViewModel,
     navController: NavController,
+    snackbarHostState: SnackbarHostState,
     onExit: () -> Unit
 ) {
     HomeScreen(
         endpoints = viewModel.endpoints.collectAsStateWithLifecycle().value,
         isEnabled = viewModel.isEnabled.collectAsState(initial = false).value,
         navController = navController,
-        snackbarHostState = viewModel.snackbarHostState,
+        snackbarHostState = snackbarHostState,
         onRemoveRequest = viewModel::onRemoveRequest,
         onMockingToggleChanged = viewModel::onMockingToggleChanged,
         onExportEndpoints = viewModel::onExportEndpoints,
