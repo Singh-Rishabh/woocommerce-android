@@ -1,12 +1,12 @@
 package com.woocommerce.android.apifaker.ui.home
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.material.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.apifaker.ApiFakerConfig
 import com.woocommerce.android.apifaker.EndpointExportManager
+import com.woocommerce.android.apifaker.ExportImportDestination
 import com.woocommerce.android.apifaker.LOG_TAG
 import com.woocommerce.android.apifaker.db.EndpointDao
 import com.woocommerce.android.apifaker.models.Request
@@ -41,9 +41,9 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onExportEndpoints(uri: Uri) {
+    fun onExportEndpoints(destination: ExportImportDestination) {
         viewModelScope.launch {
-            endpointExportManager.exportEndpointsToFile(endpoints.value, uri).fold(
+            endpointExportManager.exportEndpoints(endpoints.value, destination).fold(
                 onSuccess = {
                     snackbarHostState.showSnackbar("Endpoints exported successfully")
                 },
@@ -55,16 +55,20 @@ internal class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onImportEndpoints(uri: Uri) {
+    fun onImportEndpoints(destination: ExportImportDestination) {
         viewModelScope.launch {
-            endpointExportManager.importEndpointsFromFile(uri).fold(
+            endpointExportManager.importEndpoints(destination).fold(
                 onSuccess = {
                     snackbarHostState.showSnackbar("Endpoints imported successfully")
                 },
                 onFailure = {
-                    snackbarHostState.showSnackbar(
-                        "Failed to import endpoints, please ensure the file was exported from the same app version"
-                    )
+                    val message = when (destination) {
+                        is ExportImportDestination.File ->
+                            "Failed to import endpoints, please ensure the file was exported from the same app version"
+                        ExportImportDestination.Clipboard ->
+                            "Failed to import endpoints, please ensure the clipboard contains valid JSON"
+                    }
+                    snackbarHostState.showSnackbar(message)
                     Log.e(LOG_TAG, "Failed to import endpoints", it)
                 }
             )
