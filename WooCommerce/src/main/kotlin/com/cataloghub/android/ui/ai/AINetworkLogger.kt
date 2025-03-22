@@ -1,41 +1,119 @@
 package com.cataloghub.android.ui.ai
 
-import com.cataloghub.android.util.WooLog
-import com.cataloghub.android.util.WooLog.T
+import android.util.Log
+import java.io.PrintWriter
+import java.io.StringWriter
 
+/**
+ * Utility class for logging network requests, responses, and errors related to AI features.
+ * Helps with debugging API interactions.
+ */
 object AINetworkLogger {
-    fun logRequest(endpoint: String, payload: Any?) {
-        WooLog.d(T.AI, "🌐 API Request - Endpoint: $endpoint")
-        WooLog.d(T.AI, "📤 Request Payload: $payload")
+    private const val TAG = "WooCommerce-AI"
+    private const val MAX_LOG_LENGTH = 4000
+    private val requestResponseLog = mutableListOf<LogEntry>()
+    private const val MAX_LOG_ENTRIES = 50
+
+    /**
+     * Log a request being made to an API endpoint
+     */
+    fun logRequest(endpoint: String, details: String) {
+        val message = "📤 Request: $endpoint | $details"
+        Log.d(TAG, message)
+        addToLog(LogEntryType.REQUEST, endpoint, details)
     }
 
-    fun logResponse(endpoint: String, response: Any?, error: Any? = null) {
-        WooLog.d(T.AI, "🌐 API Response - Endpoint: $endpoint")
-        if (error != null) {
-            WooLog.e(T.AI, "❌ Error Response: $error")
+    /**
+     * Log a successful response from an API endpoint
+     */
+    fun logResponse(endpoint: String, details: String) {
+        val message = "📥 Response: $endpoint | $details"
+        Log.d(TAG, message)
+        addToLog(LogEntryType.RESPONSE, endpoint, details)
+    }
+
+    /**
+     * Log an error that occurred during an API call
+     */
+    fun logError(endpoint: String, error: Throwable) {
+        val stackTrace = StringWriter().apply {
+            error.printStackTrace(PrintWriter(this))
+        }.toString()
+        
+        // Break up long stack traces for Android logging
+        val message = "❌ Error: $endpoint (${error.javaClass.simpleName})\n${error.message}"
+        Log.e(TAG, message)
+        
+        // Log stack trace in chunks if needed
+        if (stackTrace.length > MAX_LOG_LENGTH) {
+            var i = 0
+            while (i < stackTrace.length) {
+                val end = (i + MAX_LOG_LENGTH).coerceAtMost(stackTrace.length)
+                Log.e(TAG, "Stack trace (${i/MAX_LOG_LENGTH + 1}): ${stackTrace.substring(i, end)}")
+                i += MAX_LOG_LENGTH
+            }
         } else {
-            WooLog.d(T.AI, "📥 Response Data: $response")
+            Log.e(TAG, "Stack trace: $stackTrace")
+        }
+        
+        addToLog(LogEntryType.ERROR, endpoint, "${error.javaClass.simpleName}: ${error.message}")
+    }
+
+    /**
+     * Get the recent log entries for diagnostics or reporting
+     */
+    fun getRecentLogs(): List<LogEntry> {
+        return requestResponseLog.toList()
+    }
+
+    /**
+     * Clear the log entries
+     */
+    fun clearLogs() {
+        requestResponseLog.clear()
+    }
+
+    /**
+     * Add a new entry to the log, maintaining the maximum size limit
+     */
+    private fun addToLog(type: LogEntryType, endpoint: String, details: String) {
+        synchronized(requestResponseLog) {
+            val entry = LogEntry(
+                timestamp = System.currentTimeMillis(),
+                type = type,
+                endpoint = endpoint,
+                details = details
+            )
+            
+            requestResponseLog.add(entry)
+            
+            // Trim log if it exceeds maximum size
+            if (requestResponseLog.size > MAX_LOG_ENTRIES) {
+                requestResponseLog.removeAt(0)
+            }
         }
     }
 
-    fun logFeatureCheck(isAtomic: Boolean, features: String, hasFeature: Boolean) {
-        WooLog.d(T.AI, """
-            🔍 AI Feature Check:
-            - Is Atomic Site: $isAtomic
-            - Plan Features: $features
-            - Has AI Feature: $hasFeature
-        """.trimIndent())
+    /**
+     * Log entry type (request, response, or error)
+     */
+    enum class LogEntryType {
+        REQUEST, RESPONSE, ERROR
     }
 
-    fun logNavigation(from: String, to: String) {
-        WooLog.d(T.AI, "🔄 Navigation: $from -> $to")
-    }
-
-    fun logError(message: String, error: Throwable? = null) {
-        if (error != null) {
-            WooLog.e(T.AI, "❌ Error: $message", error)
-        } else {
-            WooLog.e(T.AI, "❌ Error: $message")
+    /**
+     * Log entry data structure
+     */
+    data class LogEntry(
+        val timestamp: Long,
+        val type: LogEntryType,
+        val endpoint: String,
+        val details: String
+    ) {
+        fun getFormattedTimestamp(): String {
+            val date = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", java.util.Locale.US)
+                .format(java.util.Date(timestamp))
+            return date
         }
     }
 }

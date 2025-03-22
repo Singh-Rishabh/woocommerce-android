@@ -125,6 +125,9 @@ class VideoDetailViewModel @Inject constructor(
             _isLoading.value = true
 
             try {
+                AINetworkLogger.logRequest("Process Video", "Starting video processing for videoId=$videoId, storeUrl=$storeUrl")
+                WooLog.d(WooLog.T.AI, "Starting video processing for videoId=$videoId, storeUrl=$storeUrl")
+                
                 val result = repository.processYouTubeVideo(videoId, storeUrl, false)
                 
                 // Convert ProductReviewResponse objects to AIProduct objects
@@ -167,10 +170,28 @@ class VideoDetailViewModel @Inject constructor(
                     WooLog.T.AI,
                     "Successfully processed video $videoId, generated ${products.size} products"
                 )
+            } catch (e: retrofit2.HttpException) {
+                val errorCode = e.code()
+                val errorBody = e.response()?.errorBody()?.string() ?: "Unknown error"
+                
+                AINetworkLogger.logError("Process Video Error (HTTP $errorCode)", e)
+                WooLog.e(WooLog.T.AI, "Error processing video: HTTP $errorCode - $errorBody", e)
+                
+                val errorMessage = when (errorCode) {
+                    400 -> "Invalid request. Please check video URL and try again."
+                    401 -> "Authentication error. Please log in again."
+                    403 -> "You don't have permission to process this video."
+                    404 -> "Video not found. Please check the URL and try again."
+                    429 -> "Too many requests. Please try again later."
+                    500, 502, 503, 504 -> "Server error (HTTP $errorCode). Our team has been notified."
+                    else -> "Error processing video (HTTP $errorCode). Please try again later."
+                }
+                
+                _processingError.value = "$errorMessage\n\nDetails: $errorBody"
             } catch (e: Exception) {
                 AINetworkLogger.logError("Process Video Error", e)
                 WooLog.e(WooLog.T.AI, "Error processing video", e)
-                _processingError.value = e.message ?: "Unknown error"
+                _processingError.value = "Error: ${e.message ?: "Unknown error"}"
             } finally {
                 _isLoading.value = false
             }

@@ -35,8 +35,11 @@ class AIRepository @Inject constructor(
             // Extract video ID from YouTube URL
             val videoId = extractVideoId(youtubeUrl)
             if (videoId.isNullOrEmpty()) {
+                Log.e(TAG, "Failed to extract video ID from URL: $youtubeUrl")
                 throw IllegalArgumentException("Invalid YouTube URL: $youtubeUrl")
             }
+            
+            Log.d(TAG, "Extracted video ID: $videoId, creating request with storeUrl: $storeUrl")
 
             // Create request object using the updated schema with video_id
             val request = YouTubeProcessVideoRequest(
@@ -44,13 +47,42 @@ class AIRepository @Inject constructor(
                 storeUrl = storeUrl,
                 autoApprove = autoApprove
             )
-            Log.d(TAG, "Video processing successful. CollectionId: ${it.collectionId}, Products: ${it.products.size}")
-
-            aiService.processVideo(request).also {
-                Log.d(TAG, "Video processing successful. CollectionId: ${it.collectionId}, Products: ${it.products.size}")
+            
+            // Log the exact request payload that will be sent
+            Log.d(TAG, "Sending request to API endpoint: /api/v1/youtube-videos/process")
+            Log.d(TAG, "Request payload: { \"video_id\": \"$videoId\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
+            
+            try {
+                val result = aiService.processVideo(request)
+                Log.d(TAG, "Video processing successful. CollectionId: ${result.collectionId}, Products: ${result.products.size}")
+                
+                // Log details about the response
+                Log.d(TAG, "Processing result: success=${result.success}, status=${result.status}, totalProducts=${result.totalProducts}")
+                
+                if (result.products.isNotEmpty()) {
+                    Log.d(TAG, "First product: id=${result.products.first().id}, name=${result.products.first().name}")
+                }
+                
+                return@withContext result
+            } catch (e: retrofit2.HttpException) {
+                val responseCode = e.code()
+                val responseMessage = e.message()
+                val errorBody = e.response()?.errorBody()?.string() ?: "No error body"
+                
+                Log.e(TAG, "HTTP error during video processing: code=$responseCode, message=$responseMessage")
+                Log.e(TAG, "HTTP error details: $errorBody")
+                
+                // Log more details about the request that failed
+                Log.e(TAG, "Failed request details: endpoint=/api/v1/youtube-videos/process, method=POST")
+                Log.e(TAG, "Failed request payload: { \"video_id\": \"$videoId\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
+                
+                AINetworkLogger.logError("HTTP $responseCode Error", Exception("API error: $errorBody"))
+                throw e
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error processing video: ${e.message}", e)
+            Log.e(TAG, "Error details: ${e.stackTraceToString()}")
+            AINetworkLogger.logError("Video Processing Error", e)
             throw e
         }
     }
