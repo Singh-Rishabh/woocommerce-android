@@ -15,7 +15,8 @@ import javax.inject.Inject
 internal class EndpointExportManager @Inject constructor(
     private val gson: Gson,
     private val endpointDao: EndpointDao,
-    private val context: Context
+    private val context: Context,
+    private val clipDataFactory: ClipDataFactory
 ) {
     suspend fun exportEndpoints(endpoints: List<MockedEndpoint>, destination: ExportImportDestination): Result<Unit> {
         return when (destination) {
@@ -47,7 +48,7 @@ internal class EndpointExportManager @Inject constructor(
 
             runCatching {
                 val json = gson.toJson(endpoints.copyWithoutIds())
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("API Faker Endpoints", json))
+                clipboardManager.setPrimaryClip(clipDataFactory.createClipData(json))
             }
         }
     }
@@ -97,6 +98,12 @@ internal class EndpointExportManager @Inject constructor(
                 response = it.response.copy(endpointId = 0)
             )
         }
+    }
+}
+
+internal class ClipDataFactory @Inject constructor() {
+    fun createClipData(text: String): ClipData {
+        return ClipData.newPlainText("API Faker Endpoints", text)
     }
 }
 
