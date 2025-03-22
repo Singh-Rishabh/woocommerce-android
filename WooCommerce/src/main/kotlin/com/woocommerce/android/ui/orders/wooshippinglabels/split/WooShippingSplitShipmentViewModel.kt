@@ -25,6 +25,7 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
 
     private val shipments = MutableStateFlow(navArgs.shipmentArgs.shipments)
     private val currentShipments = MutableStateFlow(navArgs.shipmentArgs.shipments)
+    private val splitMessage: MutableStateFlow<SplitShipmentMessage?> = MutableStateFlow(null)
 
     val selectableItems = shipments.map { shipment ->
         shipment.mapValues {
@@ -39,11 +40,13 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     val viewState = combine(
         shipments,
         currentShipments,
-        selectableItems
-    ) { shipments, currentShipments, selectableItems ->
+        selectableItems,
+        splitMessage
+    ) { shipments, currentShipments, selectableItems, message ->
         SplitShipmentViewState(
             selectableItems = selectableItems,
-            hasChanges = shipments != currentShipments
+            hasChanges = shipments != currentShipments,
+            splitMessage = message
         )
     }.asLiveData()
 
@@ -51,9 +54,14 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
         triggerEvent(MultiLiveEvent.Event.Exit)
     }
 
+    fun onDismissInstructions() {
+        splitMessage.value = null
+    }
+
     data class SplitShipmentViewState(
         val selectableItems: Map<Int, SelectableShippableItemsUI>,
-        val hasChanges: Boolean = false
+        val hasChanges: Boolean = false,
+        val splitMessage: SplitShipmentMessage? = null
     )
 }
 
@@ -78,4 +86,12 @@ sealed class SelectableShippableItemUI {
         val isSelected: Boolean
             get() = selectedIndexes.size == shippableItem.quantity.toInt()
     }
+}
+
+sealed class SplitShipmentMessage {
+    data object Instructions : SplitShipmentMessage()
+    data class Success(
+        val message: String,
+        val action: () -> Unit
+    ) : SplitShipmentMessage()
 }
