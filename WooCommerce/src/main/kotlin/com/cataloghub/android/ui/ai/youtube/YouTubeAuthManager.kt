@@ -3,8 +3,12 @@ package com.cataloghub.android.ui.ai.youtube
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
+import androidx.browser.customtabs.CustomTabsIntent
 import com.cataloghub.android.R
 import com.cataloghub.android.ui.ai.AINetworkLogger
 import com.cataloghub.android.ui.ai.AIViewModel
@@ -15,27 +19,28 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.android.gms.common.api.Scope
+import com.google.android.gms.tasks.Task
 
 /**
  * Manager class for handling YouTube authorization using Google Sign-In
- * 
+ *
  * IMPORTANT IMPLEMENTATION NOTE:
  * This class uses deprecated GoogleSignIn APIs. Google has been transitioning between
  * authentication systems:
  * 1. The original GoogleSignIn API (deprecated but stable for YouTube scopes)
  * 2. The Identity Services API (which has also been marked as deprecated)
  * 3. The Google Identity API/AuthAPI (still evolving)
- * 
+ *
  * As of 2023, we've opted to use the original GoogleSignIn APIs with suppression
  * annotations because:
  * - It provides stable support for YouTube scopes which we need for this feature
  * - The newer APIs don't fully support all the YouTube scopes we need yet
  * - It has the most reliable implementation for our current use case
- * 
+ *
  * We suppress deprecation warnings via:
  * 1. Class-level @Suppress annotation
  * 2. Kotlin compiler options in build.gradle
- * 
+ *
  * FUTURE ENHANCEMENTS:
  * 1. When the Google Identity API stabilizes, migrate to the newer APIs
  * 2. Implement Cross-Account Protection (https://developers.google.com/identity/protocols/risc)
@@ -48,148 +53,170 @@ import com.google.android.gms.common.api.Scope
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION", "DEPRECATION_ERROR")
 class YouTubeAuthManager(
     private val context: Context,
-    private val authResultLauncher: ActivityResultLauncher<Intent>
+    private val authLauncher: ActivityResultLauncher<Intent>
 ) {
-    
-    private val TAG = "YouTubeAuth"
-    
-    // Constants for YouTube authorization scopes
-    companion object {
-        private const val YOUTUBE_SCOPE = "https://www.googleapis.com/auth/youtube.readonly"
-        private const val YOUTUBE_MANAGE_SCOPE = "https://www.googleapis.com/auth/youtube"
-        private const val PROFILE_SCOPE = "https://www.googleapis.com/auth/userinfo.profile"
-    }
-    
-    // Google Sign-In client
-    private val googleSignInClient: GoogleSignInClient by lazy {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.google_web_client_id))
-            .requestServerAuthCode(context.getString(R.string.google_web_client_id), true)
-            .requestEmail()
-            .requestScopes(
-                Scope(YOUTUBE_SCOPE),
-                Scope(YOUTUBE_MANAGE_SCOPE),
-                Scope(PROFILE_SCOPE)
-            )
-            .build()
-            
-        GoogleSignIn.getClient(context, gso)
-    }
-    
+    private val TAG = "YouTubeAuthManager"
+    private var currentStoreUrl: String? = null
+    private var googleSignInClient: GoogleSignInClient? = null
+
     /**
-     * Begins the YouTube authorization process
-     * @param activity The activity that will handle the result
+     * Start the Google Sign-In flow
+     * @param storeUrl The store URL to associate with this auth session
      */
-    fun beginAuthorization(activity: Activity) {
-        Log.d(TAG, "Beginning YouTube authorization")
-        AINetworkLogger.logRequest(TAG, "Starting YouTube authorization flow")
-        
-        // Log the client ID being used
-        Log.d(TAG, "Using client ID: ${activity.getString(R.string.google_web_client_id)}")
-        
+    fun startGoogleSignIn(storeUrl: String) {
+        Log.d(TAG, "Starting Google Sign-In flow for store: $storeUrl")
+        AINetworkLogger.logNavigation("YouTube Auth", "Starting Google Sign-In")
+
+        currentStoreUrl = storeUrl
+
         try {
-            // Launch the Google Sign-In intent via the activity result launcher
-            val signInIntent = googleSignInClient.signInIntent
-            authResultLauncher.launch(signInIntent)
+            // Configure Google Sign-In with client ID from string resources
+            val clientId = context.getString(R.string.google_web_client_id)
+            Log.d(TAG, "Using client ID from resources: $clientId")
+
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(
+                    Scope("https://www.googleapis.com/auth/youtube.readonly"),
+                    Scope("https://www.googleapis.com/auth/youtube.force-ssl")
+                )
+                // Force OAuth screen to show every time
+                .requestServerAuthCode(clientId, true)
+                // Set the web client ID (needed for server-side API access)
+                .requestIdToken(clientId)
+                .build()
+
+            Log.d(TAG, "Created GSO with client ID: $clientId")
             
-            Log.d(TAG, "Launched sign-in intent via ActivityResultLauncher")
+            // Create the client first
+            googleSignInClient = GoogleSignIn.getClient(context, gso)
+            
+            // Log existing sign-in status
+            val lastAccount = GoogleSignIn.getLastSignedInAccount(context)
+            if (lastAccount != null) {
+                Log.d(TAG, "Found existing Google Sign-in: ${lastAccount.email}")
+                // Sign out to ensure we get a fresh token
+                googleSignInClient?.signOut()?.addOnSuccessListener {
+                    launchSignInIntent()
+                }?.addOnFailureListener { e ->
+                    Log.e(TAG, "Failed to sign out: ${e.message}")
+                    // Still try to launch sign-in
+                    launchSignInIntent()
+                }
+            } else {
+                // No existing sign-in, launch the intent directly
+                launchSignInIntent()
+            }
         } catch (e: Exception) {
-            Log.e(TAG, "Error launching sign-in intent: ${e.message}", e)
-            AINetworkLogger.logError(TAG, e)
+            Log.e(TAG, "Error starting Google Sign-In: ${e.message}", e)
+            Log.e(TAG, "Stack trace: ${e.stackTraceToString()}")
         }
     }
-    
+
     /**
-     * Handles the result from the authorization flow
-     * @param resultCode The result code from the activity result
-     * @param data The intent data from the activity result
-     * @param viewModel The AIViewModel to update with the authorization result
-     * @return true if the result was handled, false otherwise
+     * Launch the sign-in intent
+     */
+    private fun launchSignInIntent() {
+        try {
+            val signInIntent = googleSignInClient?.signInIntent
+            if (signInIntent != null) {
+                Log.d(TAG, "Launching sign-in intent")
+                // Ensure we're on the main thread
+                Handler(Looper.getMainLooper()).post {
+                    authLauncher.launch(signInIntent)
+                    Log.d(TAG, "Sign-in intent launched")
+                }
+            } else {
+                Log.e(TAG, "Sign-in intent is null")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error launching sign-in intent: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Handle the auth result from Google Sign-In
+     * @param resultCode The activity result code
+     * @param data The intent data
+     * @param callback Callback with the auth code or null if failed
      */
     fun handleAuthResult(
         resultCode: Int,
         data: Intent?,
-        viewModel: AIViewModel
-    ): Boolean {
+        callback: (String?) -> Unit
+    ) {
         Log.d(TAG, "Handling auth result: resultCode=$resultCode, data=${data != null}")
-        
-        try {
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                Log.d(TAG, "Auth result received: OK")
-                
-                // Try to get the sign-in result
-                try {
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                    val account = task.getResult(ApiException::class.java)
-                    
-                    return handleSignInAccount(account, viewModel)
-                } catch (e: ApiException) {
-                    // Handle the specific API exception with more details
-                    Log.e(TAG, "Sign-in failed: statusCode=${e.statusCode}, message=${e.message}", e)
-                    AINetworkLogger.logError(TAG, Exception("Sign-in ApiException (${e.statusCode}): ${e.message}"))
-                    
-                    // Show more detailed error message based on status code
-                    val errorMessage = when (e.statusCode) {
-                        CommonStatusCodes.NETWORK_ERROR -> 
-                            "Network error - please check your internet connection"
-                        CommonStatusCodes.DEVELOPER_ERROR -> 
-                            "Developer error - check OAuth configuration"
-                        CommonStatusCodes.CANCELED -> 
-                            "Sign-in was canceled"
-                        else -> "Sign-in failed with error code: ${e.statusCode}"
+
+        if (resultCode != Activity.RESULT_OK) {
+            Log.e(TAG, "Auth result not OK, resultCode=$resultCode")
+
+            // Try to extract error information if available
+            if (data != null) {
+                val extras = data.extras
+                if (extras != null) {
+                    Log.d(TAG, "Intent extras: ${extras.keySet().joinToString()}")
+                    extras.keySet().forEach { key ->
+                        Log.d(TAG, "Intent extra: $key = ${extras.get(key)}")
                     }
-                    Log.e(TAG, errorMessage)
                 }
-            } else {
-                Log.e(TAG, "Authorization failed or was cancelled: resultCode=$resultCode")
-                AINetworkLogger.logError(TAG, Exception("Authorization cancelled or failed with result code: $resultCode"))
+
+                // Check for GoogleSignIn specific errors
+                val status = data.getIntExtra("googleSignInStatus", 0)
+                if (status != 0) {
+                    Log.e(TAG, "Google Sign-In status code: $status")
+                }
             }
+
+            callback(null)
+            return
+        }
+
+        if (data == null) {
+            Log.e(TAG, "Auth result data is null")
+            callback(null)
+            return
+        }
+
+        try {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task, callback)
         } catch (e: Exception) {
-            Log.e(TAG, "Error handling auth result: ${e.message}", e)
-            AINetworkLogger.logError(TAG, e)
+            Log.e(TAG, "Error handling sign-in result: ${e.message}", e)
+            Log.e(TAG, "Error stack trace: ${e.stackTraceToString()}")
+            callback(null)
         }
-        
-        return false
     }
-    
+
     /**
-     * Handles a successful sign-in account
+     * Handle the sign-in result task
      */
-    private fun handleSignInAccount(account: GoogleSignInAccount, viewModel: AIViewModel): Boolean {
-        Log.d(TAG, "Sign-in successful: ${account.displayName}, Email: ${account.email}")
-        Log.d(TAG, "ID token: ${account.idToken?.take(20)}...")
-        
-        // Get the authorization code
-        val authCode = account.serverAuthCode
-        if (authCode != null) {
-            Log.d(TAG, "Auth code received: $authCode")
-            AINetworkLogger.logResponse(TAG, "Authorization successful, code received")
-            
-            // Complete the authorization with the ViewModel
-            viewModel.completeYouTubeAuth(authCode)
-            return true
-        } else {
-            Log.e(TAG, "Auth code is null - account info: ${account}")
-            AINetworkLogger.logError(TAG, Exception("Authorization code is null"))
+    private fun handleSignInResult(
+        completedTask: Task<GoogleSignInAccount>,
+        callback: (String?) -> Unit
+    ) {
+        try {
+            val account = completedTask.getResult(ApiException::class.java)
+            Log.d(TAG, "Sign-in successful: ${account.displayName}")
+
+            // Get the server auth code
+            val authCode = account.serverAuthCode
+            if (authCode != null) {
+                Log.d(TAG, "Got server auth code")
+                callback(authCode)
+            } else {
+                Log.e(TAG, "Server auth code is null")
+                callback(null)
+            }
+        } catch (e: ApiException) {
+            // The ApiException status code indicates the detailed failure reason
+            Log.e(TAG, "Sign-in failed with status code: ${e.statusCode}", e)
+            Log.e(TAG, "Error details: ${e.message}")
+            callback(null)
         }
-        
-        return false
     }
-    
-    /**
-     * Disconnects the user from YouTube
-     */
-    fun disconnectYouTube(onComplete: () -> Unit) {
-        googleSignInClient.signOut()
-            .addOnSuccessListener {
-                Log.d(TAG, "Sign out successful")
-                AINetworkLogger.logResponse(TAG, "Disconnected from YouTube")
-                onComplete()
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Sign out failed: ${e.message}", e)
-                AINetworkLogger.logError(TAG, e)
-                onComplete()
-            }
+
+    companion object {
+        // Client ID from Google API Console
+        private const val CLIENT_ID = "71251162222-lbefjggjc925osq9efm0fpufkamdrd80.apps.googleusercontent.com"
     }
 }

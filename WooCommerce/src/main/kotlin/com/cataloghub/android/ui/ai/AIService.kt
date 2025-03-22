@@ -20,37 +20,51 @@ interface AIService {
 
     @POST("api/v1/collections/edit-product")
     suspend fun editProducts(@Body request: ProductEditRequest): List<ProductReviewResponse>
-    
-    // YouTube OAuth endpoints
-    
+
+    // YouTube OAuth endpoints - Update to match OpenAPI spec exactly
+
+    /**
+     * Get YouTube OAuth authorization URL (No Auth)
+     * OpenAPI path: /api/v1/youtube-public/auth-url
+     */
     @GET("api/v1/youtube-public/auth-url")
     suspend fun getYouTubeAuthUrl(
-        @Query("store_url") storeUrl: String
-    ): YouTubeAuthResponse
-    
+        @Query("store_url") storeUrl: String,
+        @Query("platform") platform: String = "android"
+    ): YouTubeAuthUrlResponse
+
+    /**
+     * Save YouTube OAuth token (No Auth)
+     * OpenAPI path: /api/v1/youtube-public/save-token
+     */
     @POST("api/v1/youtube-public/save-token")
     suspend fun saveYouTubeToken(
         @Query("auth_code") authCode: String,
-        @Query("store_url") storeUrl: String
+        @Query("store_url") storeUrl: String,
+        @Query("platform") platform: String = "android"
     ): YouTubeTokenResponse
-    
+
+    /**
+     * Check YouTube OAuth token status (No Auth)
+     * OpenAPI path: /api/v1/youtube-public/token-status
+     */
     @GET("api/v1/youtube-public/token-status")
     suspend fun checkYouTubeTokenStatus(
         @Query("store_url") storeUrl: String
     ): YouTubeTokenStatusResponse
-    
+
     @DELETE("api/v1/youtube-public/revoke-token")
     suspend fun revokeYouTubeToken(
         @Query("store_url") storeUrl: String
     ): YouTubeTokenRevokeResponse
-    
+
     @POST("api/v1/youtube-public/refresh-token")
     suspend fun refreshYouTubeToken(
         @Query("store_url") storeUrl: String
     ): YouTubeTokenRefreshResponse
-    
+
     // YouTube Videos endpoints
-    
+
     @GET("api/v1/youtube-videos/list")
     suspend fun listYouTubeVideos(
         @Query("store_url") storeUrl: String,
@@ -59,7 +73,7 @@ interface AIService {
         @Query("sort_by") sortBy: String = "date",
         @Query("order") order: String = "desc"
     ): YouTubeVideosResponse
-    
+
     @GET("api/v1/youtube-videos/search")
     suspend fun searchYouTubeVideos(
         @Query("store_url") storeUrl: String,
@@ -67,13 +81,13 @@ interface AIService {
         @Query("page_token") pageToken: String? = null,
         @Query("max_results") maxResults: Int = 10
     ): YouTubeVideosResponse
-    
+
     @GET("api/v1/youtube-videos/video-details")
     suspend fun getYouTubeVideoDetails(
         @Query("store_url") storeUrl: String,
         @Query("video_id") videoId: String
     ): YouTubeVideo
-    
+
     @POST("api/v1/youtube-videos/process")
     suspend fun processYouTubeVideo(
         @Body request: YouTubeProcessVideoRequest
@@ -82,59 +96,77 @@ interface AIService {
     // Social Media Connection Endpoints
     @GET("ai/youtube/auth-url")
     suspend fun getYouTubeAuthUrl(): AuthUrlResponse
-    
+
     @GET("ai/facebook/auth-url")
     suspend fun getFacebookAuthUrl(): AuthUrlResponse
-    
+
     @GET("ai/instagram/auth-url")
     suspend fun getInstagramAuthUrl(): AuthUrlResponse
-    
+
     @POST("ai/youtube/complete-auth")
     suspend fun completeYouTubeAuth(@Body request: CompleteAuthRequest)
-    
+
     @POST("ai/facebook/complete-auth")
     suspend fun completeFacebookAuth(@Body request: CompleteAuthRequest)
-    
+
     @POST("ai/instagram/complete-auth")
     suspend fun completeInstagramAuth(@Body request: CompleteAuthRequest)
-    
+
     @POST("ai/youtube/disconnect")
     suspend fun disconnectYouTube()
-    
+
     @POST("ai/facebook/disconnect")
     suspend fun disconnectFacebook()
-    
+
     @POST("ai/instagram/disconnect")
     suspend fun disconnectInstagram()
-    
+
     @GET("ai/youtube/connection-status")
     suspend fun getYouTubeConnectionStatus(): ConnectionStatusResponse
-    
+
     @GET("ai/facebook/connection-status")
     suspend fun getFacebookConnectionStatus(): ConnectionStatusResponse
-    
+
     @GET("ai/instagram/connection-status")
     suspend fun getInstagramConnectionStatus(): ConnectionStatusResponse
-    
+
     // YouTube Videos Endpoints
     @GET("ai/youtube/videos")
     suspend fun getYouTubeVideos(): APIYouTubeVideosResponse
-    
+
     @GET("ai/youtube/videos/{videoId}")
     suspend fun getYouTubeVideoDetails(@Path("videoId") videoId: String): APIYouTubeVideoResponse
-    
+
     // Product Endpoints
     @GET("ai/products")
     suspend fun getProducts(): APIProductsResponse
-    
+
     @POST("ai/products/{productId}/status")
     suspend fun updateProductStatus(
         @Path("productId") productId: String,
         @Body request: UpdateProductStatusRequest
     )
-    
+
     @POST("ai/products/generate")
     suspend fun generateProductFromVideo(@Body request: GenerateProductRequest): APIProductResponse
+
+    /**
+     * Check YouTube connection status
+     */
+    @GET("ai/youtube/connection")
+    suspend fun checkYouTubeConnection(@Query("store_url") storeUrl: String): YouTubeConnectionResponse
+    
+    /**
+     * Complete YouTube authorization with auth code
+     */
+    @POST("ai/youtube/complete-auth")
+    suspend fun completeYouTubeAuth(@Body request: CompleteYouTubeAuthRequest): YouTubeAuthResponse
+    
+    /**
+     * Disconnect YouTube
+     */
+    @POST("ai/youtube/disconnect")
+    suspend fun disconnectYouTube(@Query("store_url") storeUrl: String): YouTubeDisconnectResponse
 }
 
 // Add these data classes for the new API endpoints
@@ -201,4 +233,51 @@ data class UpdateProductStatusRequest(
 
 data class GenerateProductRequest(
     val videoId: String
+)
+
+/**
+ * Models for YouTube connection responses
+ */
+data class YouTubeConnectionResponse(
+    val isConnected: Boolean,
+    val message: String
+)
+
+data class YouTubeAuthUrlResponse(
+    @SerializedName("auth_url")
+    val authUrl: String?,
+    val message: String?,
+    val success: Boolean = false
+) {
+    override fun toString(): String {
+        return "YouTubeAuthUrlResponse(authUrl=${if (authUrl?.length ?: 0 > 10) authUrl?.substring(0, 10) + "..." else authUrl}, " +
+               "message=$message, success=$success)"
+    }
+}
+
+data class CompleteYouTubeAuthRequest(
+    val authCode: String
+)
+
+data class YouTubeAuthResponse(
+    val isSuccess: Boolean,
+    val message: String
+)
+
+data class YouTubeDisconnectResponse(
+    val isSuccess: Boolean,
+    val message: String
+)
+
+data class YouTubeTokenStatusResponse(
+    @SerializedName("has_token")
+    val hasToken: Boolean,
+    val message: String?,
+    @SerializedName("expires_at")
+    val expiresAt: String?,
+    val scopes: List<String>?,
+    @SerializedName("valid_for_android")
+    val validForAndroid: Boolean?,
+    @SerializedName("connected")
+    val connected: Boolean?
 )

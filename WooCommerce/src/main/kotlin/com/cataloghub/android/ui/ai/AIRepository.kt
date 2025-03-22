@@ -11,12 +11,16 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import android.util.Log
+import retrofit2.Response
 
 @Singleton
 class AIRepository @Inject constructor(
     private val aiService: AIService,
     val selectedSite: SelectedSite
 ) {
+    private val TAG = "AIRepository"
+
     suspend fun processVideo(
         youtubeUrl: String,
         storeUrl: String,
@@ -44,16 +48,58 @@ class AIRepository @Inject constructor(
 
     // YouTube OAuth methods
 
-    suspend fun getYouTubeAuthUrl(storeUrl: String): YouTubeAuthResponse = withContext(Dispatchers.IO) {
-        aiService.getYouTubeAuthUrl(storeUrl)
+    suspend fun getYouTubeAuthUrl(storeUrl: String): String {
+        Log.d(TAG, "Getting YouTube auth URL for store: $storeUrl")
+        try {
+            Log.d(TAG, "Making API call to getYouTubeAuthUrl endpoint")
+            val response = aiService.getYouTubeAuthUrl(storeUrl)
+            val authUrl = response.authUrl
+            Log.d(TAG, "Raw response received: $response")
+            
+            if (authUrl.isNullOrEmpty()) {
+                Log.e(TAG, "Received null or empty auth URL from API")
+                throw Exception("Failed to get authorization URL from server")
+            }
+            
+            Log.d(TAG, "Received YouTube auth URL: $authUrl")
+            AINetworkLogger.logResponse(TAG, "Received YouTube auth URL: $authUrl")
+            return authUrl
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting YouTube auth URL: ${e.message}", e)
+            Log.e(TAG, "Error details: ${e.stackTraceToString()}")
+            AINetworkLogger.logError(TAG, e)
+            throw e
+        }
     }
 
-    suspend fun saveYouTubeToken(authCode: String, storeUrl: String): YouTubeTokenResponse = withContext(Dispatchers.IO) {
-        aiService.saveYouTubeToken(authCode, storeUrl)
+    /**
+     * Check if YouTube is connected via token-status API
+     */
+    suspend fun checkYouTubeTokenStatus(storeUrl: String): YouTubeTokenStatusResponse {
+        Log.d(TAG, "Checking YouTube token status for store: $storeUrl")
+        try {
+            val response = aiService.checkYouTubeTokenStatus(storeUrl)
+            Log.d(TAG, "YouTube token status: hasToken=${response.hasToken}, validForAndroid=${response.validForAndroid}")
+            return response
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking YouTube token status: ${e.message}", e)
+            throw e
+        }
     }
 
-    suspend fun checkYouTubeTokenStatus(storeUrl: String): YouTubeTokenStatusResponse = withContext(Dispatchers.IO) {
-        aiService.checkYouTubeTokenStatus(storeUrl)
+    /**
+     * Save YouTube token using auth code
+     */
+    suspend fun saveYouTubeToken(authCode: String, storeUrl: String): YouTubeTokenResponse {
+        Log.d(TAG, "Saving YouTube token with auth code for store: $storeUrl")
+        try {
+            val response = aiService.saveYouTubeToken(authCode, storeUrl)
+            Log.d(TAG, "YouTube token saved: ${response.success}")
+            return response
+        } catch (e: Exception) {
+            Log.e(TAG, "Error saving YouTube token: ${e.message}", e)
+            throw e
+        }
     }
 
     suspend fun revokeYouTubeToken(storeUrl: String): YouTubeTokenRevokeResponse = withContext(Dispatchers.IO) {
@@ -121,9 +167,6 @@ class AIRepository @Inject constructor(
     }
 
     // Social Media Connection Methods
-    suspend fun getYouTubeAuthUrl(): String = withContext(Dispatchers.IO) {
-        aiService.getYouTubeAuthUrl().url
-    }
 
     suspend fun getFacebookAuthUrl(): String = withContext(Dispatchers.IO) {
         aiService.getFacebookAuthUrl().url
@@ -133,8 +176,19 @@ class AIRepository @Inject constructor(
         aiService.getInstagramAuthUrl().url
     }
 
-    suspend fun completeYouTubeAuth(code: String) = withContext(Dispatchers.IO) {
-        aiService.completeYouTubeAuth(CompleteAuthRequest(code))
+    suspend fun completeYouTubeAuth(authCode: String): Boolean {
+        Log.d(TAG, "Completing YouTube authentication with auth code")
+        try {
+            val response = aiService.completeYouTubeAuth(CompleteYouTubeAuthRequest(authCode))
+            val success = response.isSuccess
+            Log.d(TAG, "YouTube auth completion ${if (success) "successful" else "failed"}")
+            AINetworkLogger.logResponse(TAG, "YouTube auth completion ${if (success) "successful" else "failed"}")
+            return success
+        } catch (e: Exception) {
+            Log.e(TAG, "Error completing YouTube auth: ${e.message}", e)
+            AINetworkLogger.logError(TAG, e)
+            throw e
+        }
     }
 
     suspend fun completeFacebookAuth(code: String) = withContext(Dispatchers.IO) {
@@ -157,19 +211,8 @@ class AIRepository @Inject constructor(
         aiService.disconnectInstagram()
     }
 
-    suspend fun isYouTubeConnected(): Boolean = withContext(Dispatchers.IO) {
-        aiService.getYouTubeConnectionStatus().connected
-    }
-
-    suspend fun isFacebookConnected(): Boolean = withContext(Dispatchers.IO) {
-        aiService.getFacebookConnectionStatus().connected
-    }
-
-    suspend fun isInstagramConnected(): Boolean = withContext(Dispatchers.IO) {
-        aiService.getInstagramConnectionStatus().connected
-    }
-
     // YouTube Videos Methods
+
     suspend fun getYouTubeVideos(): List<YouTubeVideo> = withContext(Dispatchers.IO) {
         val responses = aiService.getYouTubeVideos().videos
         responses.map { response ->
@@ -242,6 +285,53 @@ class AIRepository @Inject constructor(
             categories = response.categories,
             tags = response.tags
         )
+    }
+
+    /**
+     * Check if YouTube is connected for the store
+     * @param storeUrl The store URL
+     * @return true if YouTube is connected, false otherwise
+     */
+    suspend fun isYouTubeConnected(storeUrl: String): Boolean {
+        Log.d(TAG, "Checking YouTube connection status for store: $storeUrl")
+        try {
+            val response = aiService.checkYouTubeConnection(storeUrl)
+            Log.d(TAG, "YouTube connection status: ${response.isConnected}")
+            AINetworkLogger.logResponse(TAG, "YouTube connection status: ${response.isConnected}")
+            return response.isConnected
+        } catch (e: Exception) {
+            Log.e(TAG, "Error checking YouTube connection: ${e.message}", e)
+            AINetworkLogger.logError(TAG, e)
+            throw e
+        }
+    }
+
+    suspend fun isFacebookConnected(): Boolean = withContext(Dispatchers.IO) {
+        aiService.getFacebookConnectionStatus().connected
+    }
+
+    suspend fun isInstagramConnected(): Boolean = withContext(Dispatchers.IO) {
+        aiService.getInstagramConnectionStatus().connected
+    }
+
+    /**
+     * Disconnect YouTube from the store
+     * @param storeUrl The store URL
+     * @return true if successful, false otherwise
+     */
+    suspend fun disconnectYouTube(storeUrl: String): Boolean {
+        Log.d(TAG, "Disconnecting YouTube for store: $storeUrl")
+        try {
+            val response = aiService.disconnectYouTube(storeUrl)
+            val success = response.isSuccess
+            Log.d(TAG, "YouTube disconnect ${if (success) "successful" else "failed"}")
+            AINetworkLogger.logResponse(TAG, "YouTube disconnect ${if (success) "successful" else "failed"}")
+            return success
+        } catch (e: Exception) {
+            Log.e(TAG, "Error disconnecting YouTube: ${e.message}", e)
+            AINetworkLogger.logError(TAG, e)
+            throw e
+        }
     }
 }
 
@@ -320,7 +410,7 @@ data class ProductUpdate(
 
 // YouTube OAuth response models
 
-data class YouTubeAuthResponse(
+data class YouTubeAuthUrlResponseFromService(
     @SerializedName("auth_url")
     val authUrl: String,
     val message: String
@@ -331,13 +421,6 @@ data class YouTubeTokenResponse(
     val message: String,
     @SerializedName("store_url")
     val storeUrl: String
-)
-
-data class YouTubeTokenStatusResponse(
-    val hasToken: Boolean,
-    val isValid: Boolean,
-    val expiresAt: String? = null,
-    val message: String? = null
 )
 
 data class YouTubeTokenRevokeResponse(

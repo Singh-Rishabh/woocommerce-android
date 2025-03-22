@@ -11,27 +11,27 @@
     <string name="sort_oldest_first">Oldest First</string>
     <string name="sort_most_views">Most Views</string>
     <string name="sort_title">Title</string>
-    
+
     <!-- Status colors -->
     <string name="ai_product_status_pending">Pending</string>
     <string name="ai_product_status_approved">Approved</string>
     <string name="ai_product_status_rejected">Rejected</string>
-    
+
     <!-- Action messages -->
     <string name="product_approved">Product approved successfully</string>
     <string name="product_rejected">Product rejected successfully</string>
     <string name="product_edit_not_implemented">Edit functionality not implemented yet</string>
-    
+
     <!-- Button labels -->
     <string name="process_video">Process Video</string>
     <string name="reprocess_video">Reprocess Video</string>
     <string name="view_videos">View Videos</string>
     <string name="connect">Connect</string>
-    
+
     <!-- Status messages -->
     <string name="youtube_connected">YouTube Connected</string>
     <string name="youtube_not_connected">YouTube Not Connected</string>
-    
+
     <!-- Error messages -->
     <string name="ai_error_connection_check">Error checking connection status</string>
     <string name="ai_error_auth_url">Error generating authorization URL</string>
@@ -41,10 +41,16 @@
     <string name="ai_error_loading_products">Error loading products</string>
     <string name="ai_error_loading_videos">Error loading videos</string>
     <string name="ai_error_searching_videos">Error searching videos</string>
-    
+    <string name="ai_error_auth">Authentication failed. Please try again.</string>
+    <string name="ai_error_no_site_selected">No Site Selected</string>
+    <string name="error_youtube_connection_failed">Youtube connection failed</string>
     <!-- Google OAuth -->
     <string name="google_web_client_id" translatable="false">71251162222-lbefjggjc925osq9efm0fpufkamdrd80.apps.googleusercontent.com</string>
-    
+    <!-- This client ID needs to be registered in Google Cloud Console with:
+         1. OAuth consent screen configured with YouTube API scopes
+         2. OAuth credentials for Web application with redirect URI: woocommerce://youtube_callback
+         3. OAuth credentials for Android app with package name and SHA-1 certificate fingerprint -->
+
     <!-- Credential Manager (Passkey) support -->
     <string name="asset_statements" translatable="false">[{\"include\": \"https://cataloghub.com/.well-known/assetlinks.json\"}]</string>
-</resources> 
+</resources>

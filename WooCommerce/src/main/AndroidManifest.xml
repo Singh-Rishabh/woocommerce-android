@@ -45,6 +45,20 @@
         android:theme="@style/Theme.Woo.DayNight"
         tools:ignore="UnusedAttribute,DeprecatedClassUsage,DeprecatedApi,ObsoleteSdkInt">
 
+        <!-- YouTube OAuth Redirect Activity -->
+        <activity
+            android:name=".ui.ai.youtube.OAuthRedirectActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="woocommerce" android:host="youtube_callback" />
+            </intent-filter>
+        </activity>
+
         <!-- TODO: we eventually want to drop support for Apache, but for now it's used by FluxC -->
         <uses-library
             android:name="org.apache.http.legacy"

@@ -1,8 +1,11 @@
 package com.cataloghub.android.ui.ai
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
@@ -12,12 +15,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.cataloghub.android.R
 import com.cataloghub.android.databinding.FragmentAiBinding
+import com.cataloghub.android.ui.WebViewFragmentDirections
 import com.cataloghub.android.ui.base.TopLevelFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
 import com.cataloghub.android.tools.SelectedSite
 import com.cataloghub.android.ui.ai.youtube.YouTubeAuthManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
@@ -26,6 +33,8 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
 
     private val viewModel: AIViewModel by viewModels()
     private lateinit var youTubeAuthManager: YouTubeAuthManager
+    
+    private val TAG = "AIFragment"
     
     // Activity result launcher for YouTube authentication
     private lateinit var youTubeAuthLauncher: ActivityResultLauncher<Intent>
@@ -51,14 +60,32 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
         youTubeAuthLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            // Let the YouTubeAuthManager handle the auth result
-            if (youTubeAuthManager.handleAuthResult(
-                    result.resultCode,
-                    result.data,
-                    viewModel
-                )) {
-                // Auth was handled successfully
-                Log.d("OAuth", "YouTube auth completed successfully")
+            Log.d(TAG, "Received auth result: $result")
+            val data = result.data
+            
+            if (result.resultCode != Activity.RESULT_OK) {
+                Log.e(TAG, "Google Sign-In failed with result code: ${result.resultCode}")
+                // Show error to user
+                uiMessageResolver.showSnack("YouTube connection failed. Please try again later.")
+                
+                // Try to get error information from the intent
+                if (data != null && data.hasExtra("googleSignInStatus")) {
+                    val statusCode = data.getIntExtra("googleSignInStatus", 0)
+                    Log.e(TAG, "Google Sign-In error status code: $statusCode")
+                }
+                return@registerForActivityResult
+            }
+            
+            youTubeAuthManager.handleAuthResult(result.resultCode, data) { authCode ->
+                if (authCode != null) {
+                    Log.d(TAG, "Got auth code, saving token")
+                    selectedSite.get()?.let { site ->
+                        viewModel.saveYouTubeToken(authCode, site.url)
+                    }
+                } else {
+                    Log.e(TAG, "Failed to get auth code")
+                    uiMessageResolver.showSnack(R.string.error_youtube_connection_failed)
+                }
             }
         }
     }
@@ -71,18 +98,18 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
         // Initialize the YouTube Auth Manager
         youTubeAuthManager = YouTubeAuthManager(requireContext(), youTubeAuthLauncher)
         
+        // Set the current site URL in the view model
+        selectedSite.get()?.let { site ->
+            viewModel.setStoreUrl(site.url)
+        }
+        
         setupClickListeners()
         setupObservers()
         
-        // Debug: Long press on YouTube card to test OAuth functionality
-        binding.youtubeCard.setOnLongClickListener {
-            // Test opening a simple URL in Custom Tabs
-            com.cataloghub.android.util.OAuthDebugHelper.testCustomTabs(requireContext())
-            true
-        }
-        
         // Check if YouTube is already connected
-        viewModel.checkYouTubeConnectionStatus(selectedSite.get().url)
+        selectedSite.get()?.let { site ->
+            viewModel.checkYouTubeConnectionStatus(site.url)
+        }
     }
 
     private fun setupClickListeners() {
@@ -137,11 +164,23 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
                     uiMessageResolver.showSnack(event.message)
                 }
                 is AIViewModel.Event.NavigateToWebView -> {
-                    // Handle web view navigation if needed
+                    // Navigate to WebView fragment inside the app
+                    navigateToInAppBrowser(event.url)
                 }
                 is AIViewModel.Event.NavigateToVideoDetail -> {
                     // Handle video detail navigation if needed
                 }
+            }
+        }
+        
+        // Observe auth URL for web-based OAuth flow
+        viewModel.authUrl.observe(viewLifecycleOwner) { url ->
+            url?.let {
+                Log.d(TAG, "Received auth URL: $url")
+                // Navigate to the WebView fragment with the auth URL
+                navigateToInAppBrowser(url)
+                // Mark URL as opened to prevent repeated navigation
+                viewModel.authUrlOpened()
             }
         }
     }
@@ -156,12 +195,76 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
         }
     }
 
+    /**
+     * Connect to YouTube - Using direct WebView approach
+     */
     private fun connectYouTube() {
-        AINetworkLogger.logNavigation("AI Fragment", "YouTube Connect")
-        Log.d("OAuth", "Starting YouTube connection flow")
+        Log.d(TAG, "Starting YouTube connection flow")
         
-        // Use the YouTubeAuthManager to start the authorization process
-        youTubeAuthManager.beginAuthorization(requireActivity())
+        if (selectedSite.get() == null) {
+            uiMessageResolver.showSnack(R.string.ai_error_no_site_selected)
+            return
+        }
+        
+        // Use direct WebView flow
+        val storeUrl = selectedSite.get().url
+        Log.d(TAG, "Starting YouTube auth via WebView for store: $storeUrl")
+        
+        // Show a loading state
+        binding.youtubeConnectButton.isEnabled = false
+        viewModel.setLoading(true)
+        
+        // Instead of calling the suspend function directly, use the event system
+        viewModel.connectYouTube()
+    }
+
+    /**
+     * Navigate to in-app browser with the given URL
+     */
+    private fun navigateToInAppBrowser(url: String) {
+        Log.d(TAG, "Navigating to WebView with URL: $url")
+        
+        // Navigate to the WebView fragment with the OAuth URL
+        findNavController().navigate(
+            WebViewFragmentDirections.actionGlobalWebViewFragment(url)
+        )
+        
+        // Reset UI state
+        binding.youtubeConnectButton.isEnabled = true
+        viewModel.setLoading(false)
+    }
+    
+    /**
+     * Method to initiate direct OAuth flow using the in-app WebView
+     */
+    private fun tryDirectOAuthFlow() {
+        Log.d(TAG, "Trying direct OAuth flow with in-app WebView")
+        // Use proper coroutine scope and handle suspend function
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val url = viewModel.getYouTubeAuthUrl(selectedSite.get().url)
+                if (url.isNotEmpty()) {
+                    navigateToInAppBrowser(url)
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error in direct OAuth flow: ${e.message}", e)
+                uiMessageResolver.showSnack("Error: ${e.message}")
+            }
+        }
+    }
+    
+    /**
+     * Opens a URL in external browser as fallback
+     */
+    private fun openExternalBrowser(url: String) {
+        try {
+            Log.d(TAG, "Opening URL in external browser as fallback: $url")
+            val customTabsIntent = CustomTabsIntent.Builder().build()
+            customTabsIntent.launchUrl(requireContext(), Uri.parse(url))
+        } catch (e: Exception) {
+            Log.e(TAG, "Error opening URL in external browser: ${e.message}", e)
+            uiMessageResolver.showSnack("Error opening browser: ${e.message}")
+        }
     }
 
     override fun onResume() {
@@ -169,7 +272,9 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
         AINetworkLogger.logNavigation("Background", "AI Fragment")
         
         // Check connection status on resume (in case user completed OAuth flow)
-        viewModel.checkYouTubeConnectionStatus(selectedSite.get().url)
+        selectedSite.get()?.let { site ->
+            viewModel.checkYouTubeConnectionStatus(site.url)
+        }
     }
 
     override fun onDestroyView() {

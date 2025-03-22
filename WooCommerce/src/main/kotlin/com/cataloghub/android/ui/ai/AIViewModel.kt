@@ -26,11 +26,14 @@ class AIViewModel @Inject constructor(
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
-    private val _errorMessage = MutableLiveData<Int?>()
-    val errorMessage: LiveData<Int?> = _errorMessage
+    private val _errorMessage = MutableLiveData<String?>(null)
+    val errorMessage: LiveData<String?> = _errorMessage
 
-    private val _authUrl = MutableLiveData<String?>()
+    private val _authUrl = MutableLiveData<String?>(null)
     val authUrl: LiveData<String?> = _authUrl
+    
+    // Store URL for methods that need it
+    private var currentStoreUrl: String = ""
 
     // Social Media Connection States
     private val _youtubeConnectionState = MutableLiveData<ConnectionState>()
@@ -62,76 +65,108 @@ class AIViewModel @Inject constructor(
     private val _rejectedProducts = MutableLiveData<List<AIProduct>>()
     val rejectedProducts: LiveData<List<AIProduct>> = _rejectedProducts
 
-    private val _event = MultiLiveEvent<Event>()
+    private val _event = MutableLiveData<Event>()
     val event: LiveData<Event> = _event
+
+    private val _successMessage = MutableLiveData<String?>(null)
+    val successMessage: LiveData<String?> = _successMessage
+
+    private val TAG = "AIViewModel"
 
     init {
         AINetworkLogger.logRequest("AIViewModel", "Initialized")
         WooLog.d(WooLog.T.AI, "AIViewModel initialized")
-
-        // Check connection states
-        checkYouTubeConnection()
+    }
+    
+    // Set the current store URL
+    fun setStoreUrl(storeUrl: String) {
+        currentStoreUrl = storeUrl
+        // Check connection states with the updated URL
+        checkAllConnections(storeUrl)
+    }
+    
+    private fun checkAllConnections(storeUrl: String) {
+        checkYouTubeConnection(storeUrl)
         checkFacebookConnection()
         checkInstagramConnection()
     }
 
+    /**
+     * Get the YouTube authorization URL
+     * Returns the URL as a string
+     */
+    suspend fun getYouTubeAuthUrl(storeUrl: String): String {
+        Log.d(TAG, "Requesting YouTube auth URL for store: $storeUrl")
+        currentStoreUrl = storeUrl // Store this for future use
+        
+        try {
+            val url = repository.getYouTubeAuthUrl(storeUrl)
+            Log.d(TAG, "Received YouTube auth URL: $url")
+            return url
+        } catch (e: Exception) {
+            Log.e(TAG, "Error getting YouTube auth URL: ${e.message}", e)
+            throw e
+        }
+    }
+
+    /**
+     * Check YouTube connection status using the token-status API
+     */
     fun checkYouTubeConnectionStatus(storeUrl: String) {
+        _isLoading.value = true
+        
         viewModelScope.launch {
-            _isLoading.value = true
             try {
-                val status = repository.checkYouTubeTokenStatus(storeUrl)
-                _isYouTubeConnected.value = status.hasToken
-                AINetworkLogger.logResponse("YouTube Connection Status", "Connected: ${status.hasToken}")
-                WooLog.d(WooLog.T.AI, "YouTube connection status: ${status.hasToken}")
+                val tokenStatus = repository.checkYouTubeTokenStatus(storeUrl)
+                // Consider a channel connected if we have a token AND it's valid for Android
+                val isConnected = tokenStatus.hasToken && (tokenStatus.validForAndroid == true)
+                _isYouTubeConnected.postValue(isConnected)
+                Log.d(TAG, "YouTube connection status checked: hasToken=${tokenStatus.hasToken}, validForAndroid=${tokenStatus.validForAndroid}, isConnected=$isConnected")
             } catch (e: Exception) {
-                AINetworkLogger.logError("YouTube Connection Status Error", e)
-                WooLog.e(WooLog.T.AI, "Failed to check YouTube connection status", e)
-                _errorMessage.value = R.string.ai_error_connection_check
-                _isYouTubeConnected.value = false
+                Log.e(TAG, "Error checking YouTube connection: ${e.message}", e)
+                _errorMessage.postValue(e.message ?: "Error checking YouTube connection")
+                _isYouTubeConnected.postValue(false)
             } finally {
-                _isLoading.value = false
+                _isLoading.postValue(false)
             }
         }
     }
 
-    fun getYouTubeAuthUrl(storeUrl: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            try {
-                val response = repository.getYouTubeAuthUrl(storeUrl)
-                _authUrl.value = response.authUrl
-                AINetworkLogger.logResponse("YouTube Auth URL", "URL: ${response.authUrl}")
-                WooLog.d(WooLog.T.AI, "Got YouTube auth URL: ${response.authUrl}")
-            } catch (e: Exception) {
-                AINetworkLogger.logError("YouTube Auth URL Error", e)
-                WooLog.e(WooLog.T.AI, "Failed to get YouTube auth URL", e)
-                _errorMessage.value = R.string.ai_error_auth_url
-            } finally {
-                _isLoading.value = false
-            }
-        }
-    }
-
+    /**
+     * Save YouTube token directly with the auth code from the callback
+     * This uses the save-token API endpoint
+     */
     fun saveYouTubeToken(authCode: String, storeUrl: String) {
+        Log.d(TAG, "Saving YouTube token with auth code for store: $storeUrl")
+        currentStoreUrl = storeUrl // Store for future use
+        
+        _isLoading.value = true
+        
         viewModelScope.launch {
-            _isLoading.value = true
             try {
                 val response = repository.saveYouTubeToken(authCode, storeUrl)
+                Log.d(TAG, "YouTube token save response: $response")
+                
                 if (response.success) {
-                    _isYouTubeConnected.value = true
-                    AINetworkLogger.logResponse("YouTube Token Saved", "Success: ${response.success}")
-                    WooLog.d(WooLog.T.AI, "YouTube token saved successfully")
+                    _isYouTubeConnected.postValue(true)
+                    _successMessage.postValue("YouTube connected successfully!")
+                    _event.postValue(Event.ShowSnackbar("YouTube connected successfully!"))
                 } else {
-                    _errorMessage.value = R.string.ai_error_token_save
-                    AINetworkLogger.logError("YouTube Token Save Failed", Exception(response.message))
-                    WooLog.e(WooLog.T.AI, "Failed to save YouTube token: ${response.message}")
+                    Log.e(TAG, "Failed to save YouTube token: ${response.message}")
+                    _errorMessage.postValue(response.message)
+                    _isYouTubeConnected.postValue(false)
+                    _event.postValue(Event.ShowSnackbar("Failed to connect YouTube: ${response.message}"))
                 }
+                
+                // Refresh connection status
+                checkYouTubeConnectionStatus(storeUrl)
             } catch (e: Exception) {
-                AINetworkLogger.logError("YouTube Token Save Error", e)
-                WooLog.e(WooLog.T.AI, "Error saving YouTube token", e)
-                _errorMessage.value = R.string.ai_error_token_save
+                Log.e(TAG, "Error saving YouTube token: ${e.message}", e)
+                _errorMessage.postValue(e.message ?: "Error connecting to YouTube")
+                _isYouTubeConnected.postValue(false)
+                _event.postValue(Event.ShowSnackbar("Error connecting to YouTube: ${e.message}"))
             } finally {
-                _isLoading.value = false
+                _isLoading.postValue(false)
             }
         }
     }
@@ -147,7 +182,7 @@ class AIViewModel @Inject constructor(
             } catch (e: Exception) {
                 AINetworkLogger.logError("YouTube Token Revoke Error", e)
                 WooLog.e(WooLog.T.AI, "Error revoking YouTube token", e)
-                _errorMessage.value = R.string.ai_error_token_revoke
+                _errorMessage.value = "Error revoking YouTube token"
             } finally {
                 _isLoading.value = false
             }
@@ -163,15 +198,45 @@ class AIViewModel @Inject constructor(
     }
 
     // Social Media Connection Methods
+    /**
+     * Start the YouTube connection flow
+     * This will get the auth URL and post it to the LiveData
+     */
     fun connectYouTube() {
+        _isLoading.value = true
+        
+        if (currentStoreUrl.isNullOrEmpty()) {
+            _errorMessage.postValue("No store URL provided")
+            _isLoading.postValue(false)
+            return
+        }
+        
+        Log.d(TAG, "Starting YouTube connection with store URL: $currentStoreUrl")
+        
         viewModelScope.launch {
-            _youtubeConnectionState.value = ConnectionState.CONNECTING
             try {
-                val authUrl = repository.getYouTubeAuthUrl()
-                _event.value = Event.NavigateToWebView(authUrl)
+                // Get the auth URL and append the store URL as state parameter if not already included
+                var url = getYouTubeAuthUrl(currentStoreUrl!!)
+                
+                // Check if URL already has state parameter
+                if (!url.contains("state=")) {
+                    // Add state parameter with store URL
+                    val separator = if (url.contains("?")) "&" else "?"
+                    url = "${url}${separator}state=${Uri.encode(currentStoreUrl)}"
+                    Log.d(TAG, "Added state parameter to auth URL: $url")
+                }
+                
+                if (url.isNotEmpty()) {
+                    _authUrl.postValue(url)
+                    Log.d(TAG, "Posted auth URL to LiveData: $url")
+                } else {
+                    _errorMessage.postValue("Failed to get authorization URL")
+                    _isLoading.postValue(false)
+                }
             } catch (e: Exception) {
-                _youtubeConnectionState.value = ConnectionState.DISCONNECTED
-                _event.value = Event.ShowSnackbar(e.message ?: "Failed to connect to YouTube")
+                Log.e(TAG, "Error in connectYouTube: ${e.message}", e)
+                _errorMessage.postValue(e.message ?: "Error connecting to YouTube")
+                _isLoading.postValue(false)
             }
         }
     }
@@ -203,13 +268,26 @@ class AIViewModel @Inject constructor(
     }
     
     fun disconnectYouTube() {
+        if (currentStoreUrl.isEmpty()) {
+            _event.value = Event.ShowSnackbar("Store URL not set")
+            return
+        }
+        
+        _isLoading.value = true
         viewModelScope.launch {
             try {
-                repository.disconnectYouTube()
-                _youtubeConnectionState.value = ConnectionState.DISCONNECTED
-                _event.value = Event.ShowSnackbar("YouTube disconnected successfully")
+                val result = repository.disconnectYouTube(currentStoreUrl)
+                if (result) {
+                    _isYouTubeConnected.postValue(false)
+                    _event.postValue(Event.ShowSnackbar("YouTube disconnected successfully"))
+                } else {
+                    _event.postValue(Event.ShowSnackbar("Failed to disconnect YouTube"))
+                }
             } catch (e: Exception) {
-                _event.value = Event.ShowSnackbar(e.message ?: "Failed to disconnect YouTube")
+                Log.e(TAG, "Error disconnecting YouTube: ${e.message}", e)
+                _errorMessage.postValue(e.message ?: "Error disconnecting YouTube")
+            } finally {
+                _isLoading.postValue(false)
             }
         }
     }
@@ -238,10 +316,10 @@ class AIViewModel @Inject constructor(
         }
     }
     
-    private fun checkYouTubeConnection() {
+    private fun checkYouTubeConnection(storeUrl: String) {
         viewModelScope.launch {
             try {
-                val isConnected = repository.isYouTubeConnected()
+                val isConnected = repository.isYouTubeConnected(storeUrl)
                 _youtubeConnectionState.value = if (isConnected) ConnectionState.CONNECTED else ConnectionState.DISCONNECTED
             } catch (e: Exception) {
                 _youtubeConnectionState.value = ConnectionState.DISCONNECTED
@@ -272,56 +350,55 @@ class AIViewModel @Inject constructor(
     }
     
     // OAuth Callback Handling
-    fun handleOAuthCallback(url: String) {
-        viewModelScope.launch {
-            try {
-                when {
-                    url.contains("youtube_callback") -> {
-                        val code = extractCodeFromUrl(url)
-                        repository.completeYouTubeAuth(code)
-                        _youtubeConnectionState.value = ConnectionState.CONNECTED
-                        _event.value = Event.ShowSnackbar("YouTube connected successfully")
-                    }
-                    url.contains("facebook_callback") -> {
-                        val code = extractCodeFromUrl(url)
-                        repository.completeFacebookAuth(code)
-                        _facebookConnectionState.value = ConnectionState.CONNECTED
-                        _event.value = Event.ShowSnackbar("Facebook connected successfully")
-                    }
-                    url.contains("instagram_callback") -> {
-                        val code = extractCodeFromUrl(url)
-                        repository.completeInstagramAuth(code)
-                        _instagramConnectionState.value = ConnectionState.CONNECTED
-                        _event.value = Event.ShowSnackbar("Instagram connected successfully")
-                    }
-                }
-            } catch (e: Exception) {
-                _event.value = Event.ShowSnackbar(e.message ?: "Failed to complete authentication")
+    fun handleOAuthCallback(callbackUrl: String) {
+        Log.d(TAG, "Handling OAuth callback: $callbackUrl")
+        
+        try {
+            // Extract the authorization code from the callback URL
+            val uri = android.net.Uri.parse(callbackUrl)
+            val code = uri.getQueryParameter("code")
+            val error = uri.getQueryParameter("error")
+            
+            if (code != null) {
+                Log.d(TAG, "Authorization code extracted: $code")
+                completeYouTubeAuth(code)
+            } else if (error != null) {
+                Log.e(TAG, "OAuth error: $error")
+                _errorMessage.value = "YouTube authorization failed: $error"
+            } else {
+                Log.e(TAG, "No code or error in callback URL")
+                _errorMessage.value = "YouTube authorization failed"
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error handling OAuth callback: ${e.message}", e)
+            _errorMessage.value = "Error processing YouTube authorization"
         }
     }
     
     // Direct method for OAuth activity to use
-    fun completeYouTubeAuth(code: String) {
+    fun completeYouTubeAuth(authCode: String) {
+        _isLoading.value = true
+        
         viewModelScope.launch {
-            AINetworkLogger.logRequest("YouTube Auth", "Completing auth with code: $code")
             try {
-                _youtubeConnectionState.value = ConnectionState.CONNECTING
-                repository.completeYouTubeAuth(code)
-                _youtubeConnectionState.value = ConnectionState.CONNECTED
-                _isYouTubeConnected.value = true
-                _event.value = Event.ShowSnackbar("YouTube connected successfully")
-                AINetworkLogger.logResponse("YouTube Auth", "Connection successful")
+                val result = repository.completeYouTubeAuth(authCode)
+                if (result) {
+                    _isYouTubeConnected.postValue(true)
+                    _event.postValue(Event.ShowSnackbar("YouTube connected successfully"))
+                    Log.d(TAG, "YouTube connection successful")
+                } else {
+                    _isYouTubeConnected.postValue(false)
+                    _event.postValue(Event.ShowSnackbar("YouTube connection failed"))
+                    Log.e(TAG, "YouTube connection failed")
+                }
             } catch (e: Exception) {
-                AINetworkLogger.logError("YouTube Auth", e)
-                _youtubeConnectionState.value = ConnectionState.DISCONNECTED
-                _event.value = Event.ShowSnackbar(e.message ?: "Failed to complete YouTube authentication")
+                Log.e(TAG, "Error completing YouTube auth: ${e.message}", e)
+                _errorMessage.postValue(e.message ?: "Error connecting to YouTube")
+                _isYouTubeConnected.postValue(false)
+            } finally {
+                _isLoading.postValue(false)
             }
         }
-    }
-    
-    private fun extractCodeFromUrl(url: String): String {
-        return url.substringAfter("code=").substringBefore("&")
     }
     
     // YouTube Videos Methods
@@ -446,7 +523,7 @@ class AIViewModel @Inject constructor(
                     Log.e("OAuth-Debug", "OAuth Error: $error - $errorDesc")
                     AINetworkLogger.logError("OAuth Error", Exception("$error: $errorDesc"))
                     
-                    _errorMessage.value = R.string.ai_error_auth_url
+                    _errorMessage.value = "YouTube authorization failed: $error"
                 }
             } catch (e: Exception) {
                 Log.e("OAuth-Debug", "Error debugging OAuth URL", e)
@@ -455,5 +532,51 @@ class AIViewModel @Inject constructor(
                 _isLoading.value = false
             }
         }
+    }
+
+    /**
+     * Set loading state
+     */
+    fun setLoading(isLoading: Boolean) {
+        _isLoading.postValue(isLoading)
+    }
+
+    /**
+     * Get the current store URL
+     */
+    fun getCurrentStoreUrl(): String {
+        return currentStoreUrl
+    }
+
+    /**
+     * Handle YouTube auth callback with authorization code
+     */
+    fun handleYouTubeAuthCallback(authCode: String) {
+        Log.d(TAG, "Handling YouTube auth callback with code")
+        
+        if (currentStoreUrl.isNullOrEmpty()) {
+            Log.e(TAG, "Store URL is empty, attempting to get from selectedSite")
+            _errorMessage.postValue("Error: No store URL available")
+            return
+        }
+        
+        Log.d(TAG, "Using store URL: $currentStoreUrl")
+        saveYouTubeToken(authCode, currentStoreUrl)
+    }
+
+    /**
+     * Handle Facebook OAuth callback
+     */
+    fun handleFacebookAuthCallback(authCode: String) {
+        // Implement Facebook auth handling
+        Log.d(TAG, "Handling Facebook auth callback - not implemented yet")
+    }
+
+    /**
+     * Handle Instagram OAuth callback
+     */
+    fun handleInstagramAuthCallback(authCode: String) {
+        // Implement Instagram auth handling
+        Log.d(TAG, "Handling Instagram auth callback - not implemented yet")
     }
 }

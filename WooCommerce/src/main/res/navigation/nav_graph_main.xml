@@ -984,4 +984,10 @@
             android:name="url"
             app:argType="string" />
     </fragment>
+
+    <action
+        android:id="@+id/action_global_webViewFragment"
+        app:destination="@id/webViewFragment"
+        app:popUpTo="@id/nav_graph_main"
+        app:popUpToInclusive="false" />
 </navigation>
