@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -56,6 +56,7 @@ fun WooShippingSplitShipmentScreen(
             viewState = it,
             onBack = viewModel::onNavigateBack,
             onDismissInstructions = viewModel::onDismissInstructions,
+            onUpdateSelection = viewModel::onUpdateSelection,
             modifier = modifier
         )
     }
@@ -66,6 +67,7 @@ fun WooShippingSplitShipmentScreen(
     viewState: SplitShipmentViewState,
     onBack: () -> Unit,
     onDismissInstructions: () -> Unit,
+    onUpdateSelection: (shipmentKey: Int, index: Int, selectedIndexes: Set<Int>?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -110,10 +112,9 @@ fun WooShippingSplitShipmentScreen(
                     )
 
                     LazyColumn {
-                        items(
+                        itemsIndexed(
                             items = shipment.shippableItems,
-                        ) { shippableItem ->
-                            var selection by remember { mutableStateOf(false) }
+                        ) { index, shippableItem ->
                             when (shippableItem) {
                                 is SelectableShippableItemUI.SingleSelectableShippableItemUI -> {
                                     SelectableShippingProduct(
@@ -123,8 +124,14 @@ fun WooShippingSplitShipmentScreen(
                                         price = shippableItem.shippableItem.formattedPrice,
                                         quantity = shippableItem.shippableItem.quantity,
                                         imageUrl = shippableItem.shippableItem.imageUrl,
-                                        isSelected = selection,
-                                        onSelectionChange = { selection = !selection },
+                                        isSelected = shippableItem.isSelected,
+                                        onSelectionChange = {
+                                            onUpdateSelection(
+                                                viewState.shipmentSelected,
+                                                index,
+                                                null
+                                            )
+                                        },
                                         modifier = Modifier.padding(vertical = 8.dp)
                                     )
                                 }
@@ -138,14 +145,29 @@ fun WooShippingSplitShipmentScreen(
                                         price = shippableItem.shippableItem.formattedPrice,
                                         quantity = shippableItem.shippableItem.quantity,
                                         imageUrl = shippableItem.shippableItem.imageUrl,
-                                        isSelected = selection,
+                                        isSelected = shippableItem.isSelected,
                                         onSelectionChange = {
-                                            selection = !selection
+                                            onUpdateSelection(
+                                                viewState.shipmentSelected,
+                                                index,
+                                                null
+                                            )
                                         },
                                         isExpanded = expanded,
                                         onExpand = { expanded = !expanded },
                                         singleWeight = shippableItem.innerShippableItem.formattedWeight,
                                         singlePrice = shippableItem.innerShippableItem.formattedPrice,
+                                        selectedIndexes = shippableItem.selectedIndexes,
+                                        onInnerSelectionChange = { isSelected, innerIndex ->
+                                            val indexes = shippableItem.selectedIndexes.toMutableSet()
+                                            if (isSelected) indexes.remove(innerIndex) else indexes.add(innerIndex)
+
+                                            onUpdateSelection(
+                                                viewState.shipmentSelected,
+                                                index,
+                                                indexes
+                                            )
+                                        },
                                         modifier = Modifier.padding(vertical = 8.dp)
                                     )
                                 }
