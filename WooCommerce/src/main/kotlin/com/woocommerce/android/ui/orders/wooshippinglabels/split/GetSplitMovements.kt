@@ -85,7 +85,7 @@ data class SplitMovements(
     val updatedCurrentShipmentItems: List<ShippableItemModel>,
     val updatedShipment: Int,
     val updatedShipmentItems: List<ShippableItemModel>
-){
+) {
     val totalItemsToMove: Int
         get() = updatedShipmentItems.sumByFloat { it.quantity }.toInt()
 }

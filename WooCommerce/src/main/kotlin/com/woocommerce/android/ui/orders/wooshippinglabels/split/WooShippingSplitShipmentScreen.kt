@@ -177,7 +177,7 @@ fun WooShippingSplitShipmentScreen(
                             item {
                                 when {
                                     viewState.splitMessage != null && viewState.splitMovements.isNotEmpty()
-                                        -> Spacer(modifier = Modifier.padding(bottom = 240.dp))
+                                    -> Spacer(modifier = Modifier.padding(bottom = 240.dp))
                                     else -> Spacer(modifier = Modifier.padding(bottom = 120.dp))
                                 }
                             }
@@ -266,8 +266,8 @@ private fun InstructionsMessage(
 private fun SplitMovements(
     movements: List<SplitMovements>,
     modifier: Modifier = Modifier
-){
-    if (movements.isNotEmpty()){
+) {
+    if (movements.isNotEmpty()) {
         Card(
             backgroundColor = MaterialTheme.colors.surface,
             modifier = modifier,
@@ -292,5 +292,4 @@ private fun SplitMovements(
             }
         }
     }
-
 }
