@@ -19,7 +19,8 @@ import kotlin.getValue
 @HiltViewModel
 class WooShippingSplitShipmentViewModel @Inject constructor(
     savedState: SavedStateHandle,
-    private val currencyFormatter: CurrencyFormatter
+    private val currencyFormatter: CurrencyFormatter,
+    private val getSplitMovements: GetSplitMovements
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingSplitShipmentFragmentArgs by savedState.navArgs()
     private val storeOptions = navArgs.shipmentArgs.storeOptions
@@ -48,11 +49,15 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
         shipmentSelected,
         selectableItems,
         splitMessage
-    ) { shipments, currentShipments, selectableItems, message ->
+    ) { currentShipments, shipmentSelected, selectableItems, message ->
         SplitShipmentViewState(
             shipmentSelected = shipmentSelected,
             selectableItems = selectableItems,
-            hasChanges = shipments != currentShipments,
+            splitMovements = getSplitMovements(
+                currentShipment = shipmentSelected,
+                items = currentShipments,
+                selection = selectableItems
+            ),
             splitMessage = message
         )
     }.asLiveData()
@@ -94,8 +99,9 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     }
 
     data class SplitShipmentViewState(
+        val shipmentSelected: Int,
         val selectableItems: Map<Int, SelectableShippableItemsUI>,
-        val hasChanges: Boolean = false,
+        val splitMovements: List<SplitMovements> = emptyList(),
         val splitMessage: SplitShipmentMessage? = null
     )
 
