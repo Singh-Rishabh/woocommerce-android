@@ -23,6 +23,17 @@ interface AIService {
     ): List<ProductReviewResponse>
 
     /**
+     * Get products by YouTube URL (No Auth)
+     * OpenAPI path: /api/v1/youtube-videos/by-youtube-url
+     */
+    @GET("api/v1/youtube-videos/by-youtube-url")
+    suspend fun getProductsByYoutubeUrl(
+        @Query("youtube_url") youtubeUrl: String,
+        @Query("store_url") storeUrl: String,
+        @Query("status") status: String? = null
+    ): List<ProductReviewResponse>
+
+    /**
      * Edit product details (No Auth)
      * OpenAPI path: /api/v1/youtube-videos/edit-product
      */

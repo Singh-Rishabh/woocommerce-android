@@ -74,7 +74,7 @@ class VideoDetailViewModel @Inject constructor(
                 )
                 WooLog.d(WooLog.T.AI, "Loaded YouTube video details: ${video.title}")
             } catch (e: Exception) {
-                AINetworkLogger.logError("YouTube Video Details Error", e)
+                AINetworkLogger.logApiError("YouTube Video Details Error", e)
                 WooLog.e(WooLog.T.AI, "Failed to load YouTube video details", e)
                 _errorMessage.value = R.string.ai_error_loading_video
             } finally {
@@ -87,14 +87,17 @@ class VideoDetailViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val youtubeUrl = "https://www.youtube.com/watch?v=$videoId"
-                val products = repository.getProducts(youtubeUrl, storeUrl)
+                
+                // Use the new endpoint to fetch products by YouTube URL
+                val products = repository.getProductsByYoutubeUrl(youtubeUrl, storeUrl)
+                WooLog.d(WooLog.T.AI, "Retrieved ${products.size} products for video $videoId")
 
                 // Sort products by status
-                val pendingProducts = products.filter { it.status == AIProductStatus.PENDING.name }
+                val pendingProducts = products.filter { it.status.equals("draft", ignoreCase = true) || it.status.equals("pending", ignoreCase = true) }
                     .map { convertToAIProduct(it) }
-                val approvedProducts = products.filter { it.status == AIProductStatus.APPROVED.name }
+                val approvedProducts = products.filter { it.status.equals("approved", ignoreCase = true) }
                     .map { convertToAIProduct(it) }
-                val rejectedProducts = products.filter { it.status == AIProductStatus.REJECTED.name }
+                val rejectedProducts = products.filter { it.status.equals("rejected", ignoreCase = true) }
                     .map { convertToAIProduct(it) }
 
                 _pendingProducts.value = pendingProducts
@@ -106,13 +109,18 @@ class VideoDetailViewModel @Inject constructor(
                         approvedProducts.isNotEmpty() ||
                         rejectedProducts.isNotEmpty()
 
+                AINetworkLogger.logResponse(
+                    "Product Check",
+                    "Found ${products.size} products (${pendingProducts.size} pending, ${approvedProducts.size} approved, ${rejectedProducts.size} rejected)"
+                )
+
             } catch (e: Exception) {
                 // For 404 errors, just assume no products exist yet (normal case for new videos)
-                if (e.message?.contains("404") == true) {
+                if (e is retrofit2.HttpException && e.code() == 404) {
                     _productsExist.value = false
                     WooLog.d(WooLog.T.AI, "No existing products found for video $videoId")
                 } else {
-                    AINetworkLogger.logError("Check Existing Products Error", e)
+                    AINetworkLogger.logApiError("Check Existing Products Error", e)
                     WooLog.e(WooLog.T.AI, "Failed to check existing products", e)
                     // Don't show error to user as this is a background check
                 }
@@ -174,7 +182,7 @@ class VideoDetailViewModel @Inject constructor(
                 val errorCode = e.code()
                 val errorBody = e.response()?.errorBody()?.string() ?: "Unknown error"
                 
-                AINetworkLogger.logError("Process Video Error (HTTP $errorCode)", e)
+                AINetworkLogger.logApiError("Process Video Error (HTTP $errorCode)", e)
                 WooLog.e(WooLog.T.AI, "Error processing video: HTTP $errorCode - $errorBody", e)
                 
                 val errorMessage = when (errorCode) {
@@ -189,7 +197,7 @@ class VideoDetailViewModel @Inject constructor(
                 
                 _processingError.value = "$errorMessage\n\nDetails: $errorBody"
             } catch (e: Exception) {
-                AINetworkLogger.logError("Process Video Error", e)
+                AINetworkLogger.logApiError("Process Video Error", e)
                 WooLog.e(WooLog.T.AI, "Error processing video", e)
                 _processingError.value = "Error: ${e.message ?: "Unknown error"}"
             } finally {
@@ -211,7 +219,7 @@ class VideoDetailViewModel @Inject constructor(
                 )
                 WooLog.d(WooLog.T.AI, "Loaded ${videoProducts.size} products")
             } catch (e: Exception) {
-                AINetworkLogger.logError("Load Products Error", e)
+                AINetworkLogger.logApiError("Load Products Error", e)
                 WooLog.e(WooLog.T.AI, "Failed to load products", e)
                 _errorMessage.value = R.string.ai_error_loading_products
             }

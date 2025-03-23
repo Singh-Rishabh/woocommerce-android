@@ -76,13 +76,13 @@ class AIRepository @Inject constructor(
                 Log.e(TAG, "Failed request details: endpoint=/api/v1/youtube-videos/process, method=POST")
                 Log.e(TAG, "Failed request payload: { \"video_id\": \"$videoId\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
                 
-                AINetworkLogger.logError("HTTP $responseCode Error", Exception("API error: $errorBody"))
+                AINetworkLogger.logApiError("HTTP $responseCode Error", Exception("API error: $errorBody"))
                 throw e
             }
         } catch (e: Exception) {
             Log.e(TAG, "Error processing video: ${e.message}", e)
             Log.e(TAG, "Error details: ${e.stackTraceToString()}")
-            AINetworkLogger.logError("Video Processing Error", e)
+            AINetworkLogger.logApiError("Video Processing Error", e)
             throw e
         }
     }
@@ -124,6 +124,52 @@ class AIRepository @Inject constructor(
         }
     }
 
+    /**
+     * Get products for a YouTube video by its URL using the new /api/v1/youtube-videos/by-youtube-url endpoint
+     * This endpoint is recommended for getting products associated with a YouTube video
+     * 
+     * @param youtubeUrl The YouTube video URL
+     * @param storeUrl WooCommerce store URL
+     * @param status Optional filter by product status (draft/approved/rejected)
+     * @return List of products associated with the YouTube video
+     */
+    suspend fun getProductsByYoutubeUrl(
+        youtubeUrl: String,
+        storeUrl: String,
+        status: String? = null
+    ): List<ProductReviewResponse> = withContext(Dispatchers.IO) {
+        try {
+            Log.d(TAG, "Getting products by YouTube URL: $youtubeUrl, storeUrl: $storeUrl, status: $status")
+            AINetworkLogger.logRequest("Get Products by YouTube URL", 
+                "youtube_url=$youtubeUrl, store_url=$storeUrl, status=$status")
+            
+            val products = aiService.getProductsByYoutubeUrl(
+                youtubeUrl = youtubeUrl,
+                storeUrl = storeUrl,
+                status = status
+            )
+            
+            Log.d(TAG, "Retrieved ${products.size} products for video $youtubeUrl")
+            AINetworkLogger.logResponse("Get Products by YouTube URL", 
+                "Retrieved ${products.size} products for video $youtubeUrl")
+            
+            products
+        } catch (e: Exception) {
+            // Log the error for debugging
+            Log.e(TAG, "Error getting products by YouTube URL: ${e.message}", e)
+            AINetworkLogger.logApiError("Get Products by YouTube URL Error", e)
+
+            // If it's a 404, just return an empty list
+            if (e is retrofit2.HttpException && e.code() == 404) {
+                Log.d(TAG, "No products found (404), returning empty list")
+                emptyList()
+            } else {
+                // For other errors, re-throw
+                throw e
+            }
+        }
+    }
+
     suspend fun editProducts(request: ProductEditRequest): List<ProductReviewResponse> = withContext(Dispatchers.IO) {
         aiService.editProducts(request)
     }
@@ -144,12 +190,12 @@ class AIRepository @Inject constructor(
             }
 
             Log.d(TAG, "Received YouTube auth URL: $authUrl")
-            AINetworkLogger.logResponse(TAG, "Received YouTube auth URL: $authUrl")
+            AINetworkLogger.logResponse("YouTube Auth URL", "Received URL: $authUrl")
             return authUrl
         } catch (e: Exception) {
             Log.e(TAG, "Error getting YouTube auth URL: ${e.message}", e)
             Log.e(TAG, "Error details: ${e.stackTraceToString()}")
-            AINetworkLogger.logError(TAG, e)
+            AINetworkLogger.logApiError("Getting YouTube auth URL", e)
             throw e
         }
     }
@@ -262,27 +308,22 @@ class AIRepository @Inject constructor(
         }
     }
 
+    /**
+     * Process a YouTube video with URL input
+     * Extracts the video ID from the URL and calls the processVideo method
+     */
     suspend fun processYouTubeVideo(
         videoId: String,
         storeUrl: String,
         autoApprove: Boolean = false
-    ): ProcessingResult = withContext(Dispatchers.IO) {
-        try {
-            Log.d(TAG, "Processing YouTube video: ID=$videoId, storeUrl=$storeUrl, autoApprove=$autoApprove")
-
-            // Convert videoId to full YouTube URL
-            val youtubeUrl = "https://www.youtube.com/watch?v=$videoId"
-
-            // Call the processVideo method which uses the correct API endpoint
-            processVideo(
-                youtubeUrl = youtubeUrl,
-                storeUrl = storeUrl,
-                autoApprove = autoApprove
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Error processing YouTube video: ${e.message}", e)
-            throw e
-        }
+    ): ProcessingResult {
+        Log.d(TAG, "Processing YouTube video with ID: $videoId, storeUrl: $storeUrl")
+        
+        return processVideo(
+            youtubeUrl = "https://www.youtube.com/watch?v=$videoId",
+            storeUrl = storeUrl,
+            autoApprove = autoApprove
+        )
     }
 
     // Social Media Connection Methods
@@ -301,11 +342,11 @@ class AIRepository @Inject constructor(
             val response = aiService.completeYouTubeAuth(CompleteYouTubeAuthRequest(authCode))
             val success = response.isSuccess
             Log.d(TAG, "YouTube auth completion ${if (success) "successful" else "failed"}")
-            AINetworkLogger.logResponse(TAG, "YouTube auth completion ${if (success) "successful" else "failed"}")
+            AINetworkLogger.logResponse("YouTube Auth Completion", "Auth ${if (success) "successful" else "failed"}")
             return success
         } catch (e: Exception) {
             Log.e(TAG, "Error completing YouTube auth: ${e.message}", e)
-            AINetworkLogger.logError(TAG, e)
+            AINetworkLogger.logApiError("YouTube auth completion error", e)
             throw e
         }
     }
@@ -433,11 +474,11 @@ class AIRepository @Inject constructor(
         try {
             val response = aiService.checkYouTubeConnection(storeUrl)
             Log.d(TAG, "YouTube connection status: ${response.isConnected}")
-            AINetworkLogger.logResponse(TAG, "YouTube connection status: ${response.isConnected}")
+            AINetworkLogger.logResponse("YouTube Connection", "Connection status: ${response.isConnected}")
             return response.isConnected
         } catch (e: Exception) {
             Log.e(TAG, "Error checking YouTube connection: ${e.message}", e)
-            AINetworkLogger.logError(TAG, e)
+            AINetworkLogger.logApiError("YouTube connection check error", e)
             throw e
         }
     }
@@ -461,11 +502,11 @@ class AIRepository @Inject constructor(
             val response = aiService.disconnectYouTube(storeUrl)
             val success = response.isSuccess
             Log.d(TAG, "YouTube disconnect ${if (success) "successful" else "failed"}")
-            AINetworkLogger.logResponse(TAG, "YouTube disconnect ${if (success) "successful" else "failed"}")
+            AINetworkLogger.logResponse("YouTube Disconnect", "Operation ${if (success) "successful" else "failed"}")
             return success
         } catch (e: Exception) {
             Log.e(TAG, "Error disconnecting YouTube: ${e.message}", e)
-            AINetworkLogger.logError(TAG, e)
+            AINetworkLogger.logApiError("YouTube disconnect error", e)
             throw e
         }
     }

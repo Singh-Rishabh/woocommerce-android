@@ -1,6 +1,7 @@
 package com.cataloghub.android.ui.ai
 
 import android.util.Log
+import com.cataloghub.android.util.WooLog
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -20,6 +21,7 @@ object AINetworkLogger {
     fun logRequest(endpoint: String, details: String) {
         val message = "📤 Request: $endpoint | $details"
         Log.d(TAG, message)
+        WooLog.d(WooLog.T.AI, message)
         addToLog(LogEntryType.REQUEST, endpoint, details)
     }
 
@@ -29,13 +31,14 @@ object AINetworkLogger {
     fun logResponse(endpoint: String, details: String) {
         val message = "📥 Response: $endpoint | $details"
         Log.d(TAG, message)
+        WooLog.d(WooLog.T.AI, message)
         addToLog(LogEntryType.RESPONSE, endpoint, details)
     }
 
     /**
-     * Log an error that occurred during an API call
+     * Log an error that occurred during an API call with endpoint and throwable
      */
-    fun logError(endpoint: String, error: Throwable) {
+    fun logApiError(endpoint: String, error: Throwable) {
         val stackTrace = StringWriter().apply {
             error.printStackTrace(PrintWriter(this))
         }.toString()
@@ -43,6 +46,7 @@ object AINetworkLogger {
         // Break up long stack traces for Android logging
         val message = "❌ Error: $endpoint (${error.javaClass.simpleName})\n${error.message}"
         Log.e(TAG, message)
+        WooLog.e(WooLog.T.AI, message, error)
         
         // Log stack trace in chunks if needed
         if (stackTrace.length > MAX_LOG_LENGTH) {
@@ -57,6 +61,65 @@ object AINetworkLogger {
         }
         
         addToLog(LogEntryType.ERROR, endpoint, "${error.javaClass.simpleName}: ${error.message}")
+    }
+
+    /**
+     * Log feature check for AI features
+     * @param isAtomic Whether the site is Atomic
+     * @param features Plan features available
+     * @param hasFeature Whether the AI feature is available
+     */
+    fun logFeatureCheck(isAtomic: Boolean, features: String, hasFeature: Boolean) {
+        val message = """
+            🔍 AI Feature Check:
+            - Is Atomic Site: $isAtomic
+            - Plan Features: $features
+            - Has AI Feature: $hasFeature
+        """.trimIndent()
+        Log.d(TAG, message)
+        WooLog.d(WooLog.T.AI, message)
+    }
+
+    /**
+     * Log navigation between AI screens
+     * @param from Source screen
+     * @param to Destination screen
+     */
+    fun logNavigation(from: String, to: String) {
+        val message = "🔄 Navigation: $from -> $to"
+        Log.d(TAG, message)
+        WooLog.d(WooLog.T.AI, message)
+    }
+
+    /**
+     * General error logging method for backward compatibility
+     * @param message Error message
+     * @param error Optional throwable
+     */
+    fun logError(message: String, error: Throwable? = null) {
+        if (error != null) {
+            WooLog.e(WooLog.T.AI, "❌ Error: $message", error)
+            // Don't call the other logError method to avoid recursion
+            val stackTrace = StringWriter().apply {
+                error.printStackTrace(PrintWriter(this))
+            }.toString()
+            
+            Log.e(TAG, "❌ Error: $message (${error.javaClass.simpleName})\n${error.message}")
+            
+            // Log shorter stack trace
+            if (stackTrace.length > MAX_LOG_LENGTH) {
+                Log.e(TAG, "Stack trace: ${stackTrace.substring(0, MAX_LOG_LENGTH)}...")
+            } else {
+                Log.e(TAG, "Stack trace: $stackTrace")
+            }
+            
+            addToLog(LogEntryType.ERROR, message, "${error.javaClass.simpleName}: ${error.message}")
+        } else {
+            val errorMessage = "❌ Error: $message"
+            Log.e(TAG, errorMessage)
+            WooLog.e(WooLog.T.AI, errorMessage)
+            addToLog(LogEntryType.ERROR, "Error", message)
+        }
     }
 
     /**
