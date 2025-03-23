@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.split
 
+import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import javax.inject.Inject
 
@@ -84,4 +85,7 @@ data class SplitMovements(
     val updatedCurrentShipmentItems: List<ShippableItemModel>,
     val updatedShipment: Int,
     val updatedShipmentItems: List<ShippableItemModel>
-)
+){
+    val totalItemsToMove: Int
+        get() = updatedShipmentItems.sumByFloat { it.quantity }.toInt()
+}
