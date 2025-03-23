@@ -173,42 +173,57 @@ fun WooShippingSplitShipmentScreen(
                                 }
                             }
                         }
-                        if (viewState.splitMessage != null) {
+                        if (viewState.splitMessage != null || viewState.splitMovements.isNotEmpty()) {
                             item {
-                                Spacer(modifier = Modifier.padding(bottom = 120.dp))
+                                when {
+                                    viewState.splitMessage != null && viewState.splitMovements.isNotEmpty()
+                                        -> Spacer(modifier = Modifier.padding(bottom = 240.dp))
+                                    else -> Spacer(modifier = Modifier.padding(bottom = 120.dp))
+                                }
                             }
                         }
                     }
                 }
 
-                AnimatedVisibility(
-                    visible = viewState.splitMessage != null,
-                    label = "message_transition",
-                    enter = slideInVertically(initialOffsetY = { it }),
-                    exit = slideOutVertically(targetOffsetY = { it }),
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                ) {
-                    when (viewState.splitMessage) {
-                        is SplitShipmentMessage.Instructions -> {
-                            val annotatedString = buildAnnotatedString {
-                                append(stringResource(R.string.woo_shipping_split_shipment_instructions_1))
-                                append(" ")
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(stringResource(R.string.woo_shipping_split_shipment_instructions_2))
+                Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                    AnimatedVisibility(
+                        visible = viewState.splitMessage != null,
+                        label = "message_transition",
+                        enter = slideInVertically(initialOffsetY = { it }),
+                        exit = slideOutVertically(targetOffsetY = { it }),
+                    ) {
+                        when (viewState.splitMessage) {
+                            is SplitShipmentMessage.Instructions -> {
+                                val annotatedString = buildAnnotatedString {
+                                    append(stringResource(R.string.woo_shipping_split_shipment_instructions_1))
+                                    append(" ")
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append(stringResource(R.string.woo_shipping_split_shipment_instructions_2))
+                                    }
+                                    append(" ")
+                                    append(stringResource(R.string.woo_shipping_split_shipment_instructions_3))
                                 }
-                                append(" ")
-                                append(stringResource(R.string.woo_shipping_split_shipment_instructions_3))
+
+                                InstructionsMessage(
+                                    message = annotatedString,
+                                    onClose = onDismissInstructions
+                                )
                             }
 
-                            InstructionsMessage(
-                                message = annotatedString,
-                                onClose = onDismissInstructions,
-                                modifier = Modifier.align(Alignment.BottomCenter)
-                            )
+                            is SplitShipmentMessage.Success -> TODO()
+                            null -> {}
                         }
-
-                        is SplitShipmentMessage.Success -> TODO()
-                        null -> {}
+                    }
+                    AnimatedVisibility(
+                        visible = viewState.splitMovements.isNotEmpty(),
+                        label = "movements_transition",
+                        enter = slideInVertically(initialOffsetY = { it }),
+                        exit = slideOutVertically(targetOffsetY = { it }),
+                    ) {
+                        SplitMovements(
+                            movements = viewState.splitMovements,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
                     }
                 }
             }
@@ -245,4 +260,37 @@ private fun InstructionsMessage(
             }
         }
     }
+}
+
+@Composable
+private fun SplitMovements(
+    movements: List<SplitMovements>,
+    modifier: Modifier = Modifier
+){
+    if (movements.isNotEmpty()){
+        Card(
+            backgroundColor = MaterialTheme.colors.surface,
+            modifier = modifier,
+            shape = RoundedCornerShape(corner = CornerSize(8.dp)),
+            elevation = 4.dp
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.selection_count, movements.first().totalItemsToMove),
+                    color = MaterialTheme.colors.onSurface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+
+                WCTextButton(
+                    text = stringResource(R.string.woo_shipping_split_move_to_new),
+                    onClick = { }
+                )
+            }
+        }
+    }
+
 }

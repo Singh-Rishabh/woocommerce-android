@@ -4580,5 +4580,6 @@
     <string name="woo_shipping_split_shipment_instructions_1">To split, select the items, and tap</string>
     <string name="woo_shipping_split_shipment_instructions_2">move to new shipment</string>
     <string name="woo_shipping_split_shipment_instructions_3">when the toolbar appears.</string>
+    <string name="woo_shipping_split_move_to_new">Move to new shipment</string>
 
 </resources>
