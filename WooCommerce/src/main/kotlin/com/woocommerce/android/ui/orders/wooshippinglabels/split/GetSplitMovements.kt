@@ -26,8 +26,8 @@ class GetSplitMovements @Inject constructor() {
                     nextShipmentItems.add(items.getValue(currentShipment)[index])
                 }
 
-                item is SelectableShippableItemUI.ExpandableSelectableShippableItemUI
-                    && !item.isSelected &&
+                item is SelectableShippableItemUI.ExpandableSelectableShippableItemUI &&
+                    !item.isSelected &&
                     item.selectedIndexes.isNotEmpty() -> {
                     val selected = item.selectedIndexes.size
                     val currentItem = items.getValue(currentShipment)[index]
