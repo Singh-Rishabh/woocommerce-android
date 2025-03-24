@@ -79,7 +79,7 @@ fun WooShippingSplitShipmentScreen(
             Column(
                 modifier = Modifier
                     .padding(padding)
-                    .padding(16.dp)
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
             ) {
                 ProductsSummary(
                     totalItems = shipment.shippableItems.size,
