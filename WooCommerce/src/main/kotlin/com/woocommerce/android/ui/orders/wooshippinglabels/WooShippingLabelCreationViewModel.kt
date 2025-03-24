@@ -9,7 +9,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
-import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -58,13 +57,13 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 import java.util.Date
 import javax.inject.Inject
 
@@ -667,7 +666,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val totalShippingValue = map { it.shippingTotalValue }
             .takeIf { it.isNotEmpty() }
             ?.reduce { acc, current -> acc + current }
-            ?: 0f
+            ?: BigDecimal.ZERO
 
         val destinationCountryCode = shippingAddresses.value
             ?.shipTo?.address?.country?.code.orEmpty()

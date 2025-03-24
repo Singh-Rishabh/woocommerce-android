@@ -20,7 +20,7 @@ data class ShippableItemModel(
     override val weight: Float
 ) : IProduct, Parcelable {
     val shippingTotalValue
-        get() = price.toFloat() * quantity
+        get() = price * quantity.toBigDecimal()
 
     companion object {
         const val SINGLE_QUANTITY = 1f
