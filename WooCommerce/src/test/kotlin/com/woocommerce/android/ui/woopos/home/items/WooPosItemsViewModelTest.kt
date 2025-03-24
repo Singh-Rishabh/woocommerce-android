@@ -109,7 +109,7 @@ class WooPosItemsViewModelTest {
             val value = awaitItem() as WooPosItemsViewState.Content
 
             @Suppress("UNCHECKED_CAST")
-            val items = value.items as List<WooPosItem.SimpleProduct>
+            val items = value.items as List<WooPosItem.Product.Simple>
             assertThat(items).hasSize(2)
             assertThat(items[0].id).isEqualTo(1)
             assertThat(items[0].name).isEqualTo("Product 1")
@@ -196,7 +196,7 @@ class WooPosItemsViewModelTest {
     @Test
     fun `when item clicked, then send event to parent`() = runTest {
         // GIVEN
-        val product = WooPosItem.SimpleProduct(id = 1, name = "", price = "", imageUrl = "")
+        val product = WooPosItem.Product.Simple(id = 1, name = "", price = "", imageUrl = null)
         val viewModel = createViewModel()
 
         // WHEN
@@ -515,7 +515,7 @@ class WooPosItemsViewModelTest {
         // WHEN
         viewModel.onUIEvent(
             WooPosItemsUIEvent.ItemClicked(
-                WooPosItem.VariableProduct(
+                WooPosItem.Product.Variable(
                     id = 1L,
                     name = "Product 1",
                     numOfVariations = 10,
@@ -601,7 +601,7 @@ class WooPosItemsViewModelTest {
                 // THEN
                 val value = awaitItem() as WooPosItemsViewState.Content
 
-                assertThat(value.items.filterIsInstance<WooPosItem.VariableProduct>().size).isEqualTo(1)
+                assertThat(value.items.filterIsInstance<WooPosItem.Product.Variable>().size).isEqualTo(1)
             }
         }
 

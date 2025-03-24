@@ -72,7 +72,6 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
         viewModel.onSelectCategoryClick()
 
         // Then
-        assertThat(capturedEvent).isNotNull()
         assertThat(capturedEvent).isInstanceOf(WooShippingLabelHazmatFormViewModel.OnSelectCategoryClicked::class.java)
     }
 
