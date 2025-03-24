@@ -211,7 +211,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo.address,
                     weight = packageWeight?.totalWeight,
-                    currencyCode = order.value.currency
+                    currencyCode = order.value.currency,
+                    customsData = customsFormData.value
                 )
             } else {
                 null
@@ -758,7 +759,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val shipFrom: OriginShippingAddress,
         val shipTo: Address?,
         val weight: Float?,
-        val currencyCode: String?
+        val currencyCode: String?,
+        val customsData: CustomsData?
     )
 
     // This will be extended later introducing the state with data coming from the Customs form
