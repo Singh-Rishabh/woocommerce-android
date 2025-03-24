@@ -71,15 +71,6 @@ class WooPosItemsSearchHelper @Inject constructor(
         }
     }
 
-    fun onSearchAnimationCompleted() {
-        val currentState = getCurrentContentState() ?: return
-        val searchStateValue = getCurrentSearchOpenState() ?: return
-
-        if (searchStateValue.animationState == WooPosSearchInputState.Open.AnimationState.InProgress) {
-            updateToInitialOpenState(currentState)
-        }
-    }
-
     fun onSearchChanged(newQuery: String) {
         coroutineScope.launch {
             childToParentEventSender.sendToParent(
@@ -98,7 +89,6 @@ class WooPosItemsSearchHelper @Inject constructor(
                         state = WooPosSearchInputState.Open(
                             input = WooPosSearchInputState.Open.Input.Query(newQuery),
                             isLoading = false,
-                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
                         )
                     )
                 )
@@ -142,6 +132,7 @@ class WooPosItemsSearchHelper @Inject constructor(
             true -> WooPosItemsViewState.Content.SearchState.Visible(
                 state = WooPosSearchInputState.Closed
             )
+
             false -> WooPosItemsViewState.Content.SearchState.Hidden
         }
     }
