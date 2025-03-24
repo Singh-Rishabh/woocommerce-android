@@ -1,33 +1,37 @@
-package com.woocommerce.android.ui.orders.split
+package com.woocommerce.android.ui.orders.wooshippinglabels.split
 
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.SplitShipmentArgs
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
-import com.woocommerce.android.ui.orders.wooshippinglabels.split.SelectableShippableItemUI
-import com.woocommerce.android.ui.orders.wooshippinglabels.split.WooShippingSplitShipmentFragmentArgs
-import com.woocommerce.android.ui.orders.wooshippinglabels.split.WooShippingSplitShipmentViewModel
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.util.observeForTesting
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
-    private val currencyFormatter: CurrencyFormatter = mock()
+    private val currencyFormatter: CurrencyFormatter = org.mockito.kotlin.mock {
+        on { formatCurrency(amount = any(), any(), any()) }.doAnswer { it.getArgument<BigDecimal>(0).toString() }
+    }
+    private val getSplitMovements: GetSplitMovements = mock()
     lateinit var sut: WooShippingSplitShipmentViewModel
 
     private fun createViewModel(
         shipmentArgs: SplitShipmentArgs
     ) {
         val savedState = WooShippingSplitShipmentFragmentArgs(shipmentArgs).toSavedStateHandle()
-        sut = WooShippingSplitShipmentViewModel(savedState, currencyFormatter)
+        sut = WooShippingSplitShipmentViewModel(
+            savedState,
+            currencyFormatter,
+            getSplitMovements
+        )
     }
 
     @Test
@@ -37,14 +41,6 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
             storeOptions = StoreOptionsModel.EMPTY,
             shipments = defaultShipment
         )
-
-        whenever(
-            currencyFormatter.formatCurrency(
-                amount = any(),
-                currencyCode = any(),
-                applyDecimalFormatting = any()
-            )
-        ).thenReturn("$5.00")
 
         createViewModel(shipmentArgs)
 
@@ -59,30 +55,98 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when split shipments is opened, then display the correct number of single selectable products`() = testBlocking {
+    fun `when split shipments is opened, then display the correct number of single selectable products`() =
+        testBlocking {
+            val shipmentArgs = SplitShipmentArgs(
+                orderId = 1L,
+                storeOptions = StoreOptionsModel.EMPTY,
+                shipments = defaultShipment
+            )
+
+            createViewModel(shipmentArgs)
+
+            sut.viewState.observeForTesting { }
+
+            val state = sut.viewState.value!!
+
+            val selectableItems = state.selectableItems.getValue(1)
+            val expandableProducts = selectableItems.shippableItems
+                .filterIsInstance<SelectableShippableItemUI.SingleSelectableShippableItemUI>()
+            assertThat(expandableProducts.size).isEqualTo(1)
+        }
+
+    @Test
+    fun `when a expandable product inner selection changes, then the product is updated`() = testBlocking {
+        val shipmentIndex = 2
         val shipmentArgs = SplitShipmentArgs(
             orderId = 1L,
             storeOptions = StoreOptionsModel.EMPTY,
             shipments = defaultShipment
         )
 
-        whenever(
-            currencyFormatter.formatCurrency(
-                amount = any(),
-                currencyCode = any(),
-                applyDecimalFormatting = any()
-            )
-        ).thenReturn("$5.00")
-
         createViewModel(shipmentArgs)
+
+        sut.onUpdateSelection(1, shipmentIndex, List(3) { it }.toSet())
 
         sut.viewState.observeForTesting { }
 
         val state = sut.viewState.value!!
 
         val selectableItems = state.selectableItems.getValue(1)
-        val expandableProducts = selectableItems.shippableItems
-            .filterIsInstance<SelectableShippableItemUI.SingleSelectableShippableItemUI>()
+        val expandableProducts = selectableItems.shippableItems.filter {
+            it is SelectableShippableItemUI.ExpandableSelectableShippableItemUI &&
+                it.isSelected
+        }
+        assertThat(expandableProducts.size).isEqualTo(1)
+    }
+
+    @Test
+    fun `when a expandable product selection changes, then the product is updated`() = testBlocking {
+        val shipmentIndex = 2
+        val shipmentArgs = SplitShipmentArgs(
+            orderId = 1L,
+            storeOptions = StoreOptionsModel.EMPTY,
+            shipments = defaultShipment
+        )
+
+        createViewModel(shipmentArgs)
+
+        sut.onUpdateSelection(1, shipmentIndex, null)
+
+        sut.viewState.observeForTesting { }
+
+        val state = sut.viewState.value!!
+
+        val selectableItems = state.selectableItems.getValue(1)
+        val expandableProducts = selectableItems.shippableItems.filter {
+            it is SelectableShippableItemUI.ExpandableSelectableShippableItemUI &&
+                it.isSelected
+        }
+        assertThat(expandableProducts.size).isEqualTo(1)
+    }
+
+    @Test
+    fun `when a single product selection changes, then the product is updated`() = testBlocking {
+        val shipmentIndex = 0
+        val shipmentArgs = SplitShipmentArgs(
+            orderId = 1L,
+            storeOptions = StoreOptionsModel.EMPTY,
+            shipments = defaultShipment
+        )
+
+        createViewModel(shipmentArgs)
+
+        sut.onUpdateSelection(1, shipmentIndex, null)
+
+        sut.viewState.observeForTesting { }
+
+        val state = sut.viewState.value!!
+
+        val selectableItems = state.selectableItems.getValue(1)
+        val expandableProducts = selectableItems.shippableItems.filter {
+            it is SelectableShippableItemUI.SingleSelectableShippableItemUI &&
+                it.isSelected
+        }
         assertThat(expandableProducts.size).isEqualTo(1)
     }
 
