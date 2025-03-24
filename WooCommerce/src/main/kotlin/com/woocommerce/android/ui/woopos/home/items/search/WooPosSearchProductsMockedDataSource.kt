@@ -28,6 +28,7 @@ import javax.inject.Singleton
 import kotlin.random.Random
 
 @Singleton
+@Suppress("MagicNumber", "TooGenericExceptionCaught")
 class WooPosSearchProductsMockedDataSource @Inject constructor() {
     private var productCache: List<Product> = generateSampleProducts()
     private val filteredProductCache: MutableMap<String, List<Product>> = mutableMapOf()
@@ -140,7 +141,7 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
 
             val removeCount = Random.nextInt(0, 2)
             if (removeCount > 0 && fullList.size > removeCount) {
-                for (i in 0 until removeCount) {
+                repeat(removeCount) {
                     val indexToRemove = Random.nextInt(0, fullList.size)
                     fullList.removeAt(indexToRemove)
                 }
@@ -191,6 +192,7 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
+    @Suppress("LongMethod")
     private fun createSampleProduct(id: Long): Product {
         val productTypes = listOf(
             ProductType.SIMPLE.value,
@@ -284,12 +286,19 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
             isPurchasable = true,
             menuOrder = 0,
             categories = listOf(categories.random()),
-            tags = if (Random.nextBoolean()) listOf(tags.random()) else emptyList(),
+            tags = if (Random.nextBoolean()) {
+                listOf(tags.random())
+            } else {
+                emptyList()
+            },
             groupedProductIds = emptyList(),
             crossSellProductIds = emptyList(),
             upsellProductIds = emptyList(),
-            variationIds = if (productType == ProductType.VARIABLE.value)
-                List(Random.nextInt(1, 5)) { Random.nextLong(1000, 2000) } else emptyList(),
+            variationIds = if (productType == ProductType.VARIABLE.value) {
+                List(Random.nextInt(1, 5)) { Random.nextLong(1000, 2000) }
+            } else {
+                emptyList()
+            },
             length = Random.nextFloat() * 10,
             width = Random.nextFloat() * 10,
             height = Random.nextFloat() * 10,
@@ -329,8 +338,8 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
             "https://example.com/images/$productName.jpg"
         } else {
             "https://i0.wp.com/paymentwithoutaddress.wpcomstaging.com/wp-content/" +
-                    "uploads/2024/09/303c15ed-36ba-4cbb-b093-4b7b20c988ff-1128-0000008a1d4aec00_file." +
-                    "jpeg?fit=3000%2C2250&ssl=1"
+                "uploads/2024/09/303c15ed-36ba-4cbb-b093-4b7b20c988ff-1128-0000008a1d4aec00_file." +
+                "jpeg?fit=3000%2C2250&ssl=1"
         }
     }
 

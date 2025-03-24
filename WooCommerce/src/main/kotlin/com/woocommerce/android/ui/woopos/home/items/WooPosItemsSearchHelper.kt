@@ -117,10 +117,12 @@ class WooPosItemsSearchHelper @Inject constructor(
         }
     }
 
+    @Suppress("ReturnCount")
     private fun updateLoadingState(isLoading: Boolean) {
         val currentState = getCurrentContentState() ?: return
         val searchState = getCurrentSearchVisibleState() ?: return
         val searchStateValue = getCurrentSearchOpenState() ?: return
+
         updateSearchState(
             currentState.copy(
                 search = searchState.copy(
@@ -146,9 +148,7 @@ class WooPosItemsSearchHelper @Inject constructor(
     }
 
     private fun getCurrentSearchOpenState(): WooPosSearchInputState.Open? {
-        val currentState = getCurrentContentState() ?: return null
-        val searchState = currentState.search as? WooPosItemsViewState.Content.SearchState.Visible
-            ?: return null
+        val searchState = getCurrentSearchVisibleState() ?: return null
         return searchState.state as? WooPosSearchInputState.Open
     }
 }

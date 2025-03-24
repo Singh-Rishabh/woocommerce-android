@@ -103,7 +103,7 @@ class WooPosHomeViewModel @Inject constructor(
         }
     }
 
-    @Suppress("LongMethod")
+    @Suppress("LongMethod", "CyclomaticComplexMethod")
     private fun listenBottomEvents() {
         viewModelScope.launch {
             childrenToParentEventReceiver.events.collect { event ->
