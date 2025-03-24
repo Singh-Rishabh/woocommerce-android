@@ -278,7 +278,10 @@ class WooPosTotalsViewModel @Inject constructor(
                         showSuccessfulPaymentState(event.paymentMethod)
                     }
 
-                    is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
+                    is ParentToChildrenEvent.ItemClickedInProductSelector,
+                    is ParentToChildrenEvent.SearchEvent.ChangedQuery,
+                    ParentToChildrenEvent.SearchEvent.Finished,
+                    ParentToChildrenEvent.SearchEvent.Started -> Unit
                 }
             }
         }
