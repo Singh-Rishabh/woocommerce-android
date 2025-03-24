@@ -42,6 +42,14 @@ private fun WooPosItemsSearchScreen(
 
             WooPosItemsSearchViewState.Empty -> {
             }
+
+            WooPosItemsSearchViewState.Error -> {
+
+            }
+
+            WooPosItemsSearchViewState.Loading -> {
+
+            }
         }
     }
 }
