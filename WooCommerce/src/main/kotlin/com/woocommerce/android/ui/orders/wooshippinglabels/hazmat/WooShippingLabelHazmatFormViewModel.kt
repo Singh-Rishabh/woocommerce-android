@@ -25,8 +25,11 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     fun onContainsHazmatChanged(containsHazmatChecked: Boolean) {
-        _viewState.update {
-            _viewState.value.copy(containsHazmatChecked = containsHazmatChecked)
+        _viewState.update { viewState ->
+            viewState.copy(
+                containsHazmatChecked = containsHazmatChecked,
+                currentHazmatSelection = viewState.currentHazmatSelection.takeIf { containsHazmatChecked }
+            )
         }
     }
 
@@ -35,8 +38,10 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
-        _viewState.update {
-            _viewState.value.copy(currentHazmatSelection = selectedCategory)
+        if (_viewState.value.containsHazmatChecked.not()) return
+
+        _viewState.update { viewState ->
+            viewState.copy(currentHazmatSelection = selectedCategory)
         }
     }
 
