@@ -269,7 +269,7 @@ class WooShippingNetworkingMapper @Inject constructor(
     fun toCustomsPurchaseDTO(
         customsDataList: List<CustomsData>
     ): Map<String, CustomsPurchaseDTO> {
-        return customsDataList.mapIndexed { index, customsData ->
+        return customsDataList.map { customsData ->
             CustomsPurchaseDTO(
                 contentsType = customsData.contentType.name.toLowerCase(Locale.current),
                 contentExplanation = customsData.contentDescription,
@@ -288,8 +288,11 @@ class WooShippingNetworkingMapper @Inject constructor(
                         originCountry = it.originCountryCode
                     )
                 }
-            ).let { Pair("${CUSTOMS_PACKAGE_PREFIX}${index}", it) }
-        }.associate { it.first to it.second }
+            )
+        }.withIndex().associateBy(
+            keySelector = { "${CUSTOMS_PACKAGE_PREFIX}${it.index}" },
+            valueTransform = { it.value }
+        )
     }
 
     companion object {
