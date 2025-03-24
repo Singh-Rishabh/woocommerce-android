@@ -4577,8 +4577,6 @@
     <string name="default_web_client_id" a8c-src-lib="module:login">placeholder</string>
 
     <string name="woo_shipping_split_shipment">Split shipment</string>
-    <string name="woo_shipping_split_shipment_instructions_1">To split, select the items, and tap</string>
-    <string name="woo_shipping_split_shipment_instructions_2">move to new shipment</string>
-    <string name="woo_shipping_split_shipment_instructions_3">when the toolbar appears.</string>
+    <string name="woo_shipping_split_shipment_instructions"><![CDATA[To split, select the items, and tap <b>move to new shipment</b> when the toolbar appears.]]></string>
 
 </resources>

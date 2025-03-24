@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.annotatedStringRes
 import com.woocommerce.android.ui.compose.component.WCTextButton
 import com.woocommerce.android.ui.orders.wooshippinglabels.ExpandableSelectableShippingProduct
 import com.woocommerce.android.ui.orders.wooshippinglabels.ProductsSummary
@@ -167,18 +168,8 @@ fun WooShippingSplitShipmentScreen(
                 ) {
                     when (viewState.splitMessage) {
                         is SplitShipmentMessage.Instructions -> {
-                            val annotatedString = buildAnnotatedString {
-                                append(stringResource(R.string.woo_shipping_split_shipment_instructions_1))
-                                append(" ")
-                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(stringResource(R.string.woo_shipping_split_shipment_instructions_2))
-                                }
-                                append(" ")
-                                append(stringResource(R.string.woo_shipping_split_shipment_instructions_3))
-                            }
-
                             InstructionsMessage(
-                                message = annotatedString,
+                                message = annotatedStringRes(R.string.woo_shipping_split_shipment_instructions),
                                 onClose = onDismissInstructions,
                                 modifier = Modifier.align(Alignment.BottomCenter)
                             )
