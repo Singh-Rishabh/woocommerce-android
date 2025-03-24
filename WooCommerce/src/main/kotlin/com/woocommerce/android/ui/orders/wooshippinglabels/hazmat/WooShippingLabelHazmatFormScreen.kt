@@ -102,6 +102,7 @@ fun WooShippingLabelHazmatFormScreen(
 
         Text(
             style = MaterialTheme.typography.bodyMedium,
+            color = colorResource(id = R.color.color_on_surface),
             text = annotatedStringRes(
                 stringResId = R.string.woo_shipping_labels_hazmat_info_tooltip_1,
                 onUrlClick = { url ->
@@ -115,6 +116,7 @@ fun WooShippingLabelHazmatFormScreen(
 
         Text(
             style = MaterialTheme.typography.bodyMedium,
+            color = colorResource(id = R.color.color_on_surface),
             text = annotatedStringRes(
                 stringResId = R.string.woo_shipping_labels_hazmat_info_tooltip_2,
                 onUrlClick = { onUrlSelected(AppUrls.DHL_EXPRESS_HAZMAT_INSTRUCTIONS) }
