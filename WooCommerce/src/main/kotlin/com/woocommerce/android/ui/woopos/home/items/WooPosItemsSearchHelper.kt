@@ -2,22 +2,23 @@ package com.woocommerce.android.ui.woopos.home.items
 
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
+import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
+import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
+import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.viewmodel.ResourceProvider
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class WooPosItemsSearchHelper @Inject constructor(
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val childToParentEventSender: WooPosChildrenToParentEventSender,
+    private val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver
 ) {
-    private var coroutineScope: CoroutineScope? = null
-    private var viewStateFlow: MutableStateFlow<WooPosItemsViewState>? = null
-    private var searchJob: Job? = null
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var viewStateFlow: MutableStateFlow<WooPosItemsViewState>
 
     fun initialize(
         coroutineScope: CoroutineScope,
@@ -25,33 +26,84 @@ class WooPosItemsSearchHelper @Inject constructor(
     ) {
         this.coroutineScope = coroutineScope
         this.viewStateFlow = viewStateFlow
+
+        listenEventsFromParent()
     }
 
-    fun onSearchAnimationCompleted() {
-        val currentState = getCurrentContentState() ?: return
-        val currentSearch = currentState.search
-
-        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
-            val searchState = currentSearch.state
-            if (searchState is WooPosSearchInputState.Open &&
-                searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress
-            ) {
-                updateSearchState(
-                    currentState.copy(
-                        search = WooPosItemsViewState.Content.SearchState.Visible(
-                            state = searchState.copy(
-                                animationState = WooPosSearchInputState.Open.AnimationState.Complete
+    private fun listenEventsFromParent() {
+        coroutineScope.launch {
+            parentToChildrenEventReceiver.events.collect { event ->
+                when (event) {
+                    ParentToChildrenEvent.SearchEvent.Started -> {
+                        val currentState = getCurrentContentState() ?: return@collect
+                        val searchState = currentState.search as?
+                            WooPosItemsViewState.Content.SearchState.Visible ?: return@collect
+                        val searchStateValue = searchState.state as? WooPosSearchInputState.Open ?: return@collect
+                        updateSearchState(
+                            currentState.copy(
+                                search = WooPosItemsViewState.Content.SearchState.Visible(
+                                    state = searchStateValue.copy(
+                                        isLoading = true,
+                                    )
+                                )
                             )
                         )
-                    )
-                )
+                    }
+
+                    ParentToChildrenEvent.SearchEvent.Finished -> {
+                        val currentState = getCurrentContentState() ?: return@collect
+                        val searchState = currentState.search as?
+                            WooPosItemsViewState.Content.SearchState.Visible ?: return@collect
+                        val searchStateValue = searchState.state as? WooPosSearchInputState.Open ?: return@collect
+                        updateSearchState(
+                            currentState.copy(
+                                search = WooPosItemsViewState.Content.SearchState.Visible(
+                                    state = searchStateValue.copy(
+                                        isLoading = false,
+                                    )
+                                )
+                            )
+                        )
+                    }
+
+                    is ParentToChildrenEvent.BackFromCheckoutToCartClicked,
+                    is ParentToChildrenEvent.ItemClickedInProductSelector,
+                    is ParentToChildrenEvent.OrderSuccessfullyPaid,
+                    is ParentToChildrenEvent.CheckoutClicked,
+                    is ParentToChildrenEvent.SearchEvent.ChangedQuery -> Unit
+                }
             }
         }
     }
 
-    fun onSearchChanged(newQuery: String) {
+
+    fun onSearchAnimationCompleted() {
         val currentState = getCurrentContentState() ?: return
-        searchJob?.cancel()
+        val currentSearch = currentState.search as? WooPosItemsViewState.Content.SearchState.Visible
+            ?: return
+
+        val searchState = currentSearch.state as? WooPosSearchInputState.Open ?: return
+        if (searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress) {
+            updateSearchState(
+                currentState.copy(
+                    search = currentSearch.copy(
+                        state = searchState.copy(
+                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
+                        )
+                    )
+                )
+            )
+        }
+    }
+
+    fun onSearchChanged(newQuery: String) {
+        coroutineScope.launch {
+            childToParentEventSender.sendToParent(
+                ChildToParentEvent.SearchEvent.ChangedQuery(query = newQuery)
+            )
+        }
+
+        val currentState = getCurrentContentState() ?: return
 
         if (newQuery.isEmpty()) {
             updateSearchState(
@@ -62,7 +114,6 @@ class WooPosItemsSearchHelper @Inject constructor(
                                 resourceProvider.getString(R.string.woopos_search_products)
                             ),
                             isLoading = false,
-                            animationState = WooPosSearchInputState.Open.AnimationState.InProgress
                         )
                     )
                 )
@@ -81,47 +132,6 @@ class WooPosItemsSearchHelper @Inject constructor(
                 )
             )
         )
-
-        val scope = coroutineScope ?: return
-
-        @Suppress("MagicNumber")
-        searchJob = scope.launch {
-            try {
-                delay(500)
-
-                val updatedState = getCurrentContentState() ?: return@launch
-                updateSearchState(
-                    updatedState.copy(
-                        search = WooPosItemsViewState.Content.SearchState.Visible(
-                            state = WooPosSearchInputState.Open(
-                                input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                                isLoading = true,
-                                animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                            )
-                        )
-                    )
-                )
-
-                delay(2000)
-
-                if (!isActive) return@launch
-
-                val finalState = getCurrentContentState() ?: return@launch
-                updateSearchState(
-                    finalState.copy(
-                        search = WooPosItemsViewState.Content.SearchState.Visible(
-                            state = WooPosSearchInputState.Open(
-                                input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                                isLoading = false,
-                                animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                            )
-                        )
-                    )
-                )
-            } catch (_: CancellationException) {
-                // Search was cancelled
-            }
-        }
     }
 
     fun onCloseSearchClicked() {
@@ -137,15 +147,6 @@ class WooPosItemsSearchHelper @Inject constructor(
 
     fun onClearSearchClicked() {
         val currentState = getCurrentContentState() ?: return
-        val currentSearch = currentState.search
-        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
-            val currentInput = currentSearch.state
-            if (currentInput is WooPosSearchInputState.Open &&
-                currentInput.input is WooPosSearchInputState.Open.Input.Hint
-            ) {
-                return
-            }
-        }
 
         updateSearchState(
             currentState.copy(
@@ -167,20 +168,16 @@ class WooPosItemsSearchHelper @Inject constructor(
             true -> WooPosItemsViewState.Content.SearchState.Visible(
                 state = WooPosSearchInputState.Closed
             )
+
             false -> WooPosItemsViewState.Content.SearchState.Hidden
         }
     }
 
-    fun cancelSearch() {
-        searchJob?.cancel()
-        searchJob = null
-    }
-
     private fun updateSearchState(newState: WooPosItemsViewState.Content) {
-        viewStateFlow?.value = newState
+        viewStateFlow.value = newState
     }
 
     private fun getCurrentContentState(): WooPosItemsViewState.Content? {
-        return viewStateFlow?.value as? WooPosItemsViewState.Content
+        return viewStateFlow.value as? WooPosItemsViewState.Content
     }
 }

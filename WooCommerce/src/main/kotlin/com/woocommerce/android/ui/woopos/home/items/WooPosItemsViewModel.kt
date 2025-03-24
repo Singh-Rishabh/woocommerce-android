@@ -331,11 +331,6 @@ class WooPosItemsViewModel @Inject constructor(
         productType == ProductType.VARIABLE ||
             productType == ProductType.VARIATION
 
-    override fun onCleared() {
-        super.onCleared()
-        searchHelper.cancelSearch()
-    }
-
     @Parcelize
     sealed class ItemClickedData(open val id: Long) : Parcelable {
         data class SimpleProduct(override val id: Long) : ItemClickedData(id)
