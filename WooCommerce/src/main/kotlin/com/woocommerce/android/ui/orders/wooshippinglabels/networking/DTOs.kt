@@ -114,8 +114,6 @@ data class VerifyDestinationAddressResponseDTO(
     val isVerified: Boolean
 )
 
-
-
 data class CustomsDTO(
     @SerializedName("contents_type") val contentsType: String,
     @SerializedName("contents_explanation") val contentExplanation: String,
