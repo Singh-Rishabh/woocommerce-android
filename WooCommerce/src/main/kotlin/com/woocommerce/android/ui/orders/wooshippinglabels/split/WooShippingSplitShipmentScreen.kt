@@ -207,7 +207,7 @@ private fun InstructionsMessage(
         Row {
             Text(
                 text = message,
-                color = MaterialTheme.colors.onPrimary.copy(alpha = .9f),
+                color = MaterialTheme.colors.onPrimary,
                 modifier = Modifier
                     .weight(1f, true)
                     .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
