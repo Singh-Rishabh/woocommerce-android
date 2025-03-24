@@ -56,7 +56,7 @@ fun WooShippingLabelHazmatFormScreen(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = colorResource(id = R.color.color_on_surface_medium)
+            color = colorResource(id = R.color.color_on_surface)
         )
         Row(
             horizontalArrangement = Arrangement.Absolute.SpaceBetween,
@@ -67,7 +67,7 @@ fun WooShippingLabelHazmatFormScreen(
             Text(
                 text = stringResource(R.string.woo_shipping_labels_hazmat_info_contains_hazmat),
                 style = MaterialTheme.typography.bodyLarge,
-                color = colorResource(id = R.color.color_on_surface_medium),
+                color = colorResource(id = R.color.color_on_surface),
                 modifier = modifier
                     .align(Alignment.CenterVertically)
                     .weight(1f)
@@ -93,7 +93,7 @@ fun WooShippingLabelHazmatFormScreen(
         Text(
             text = stringResource(R.string.woo_shipping_labels_hazmat_info_full_description),
             style = MaterialTheme.typography.bodyMedium,
-            color = colorResource(id = R.color.color_on_surface_medium),
+            color = colorResource(id = R.color.color_on_surface),
         )
     }
 }
