@@ -28,7 +28,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.origin.Observ
 import com.woocommerce.android.ui.orders.wooshippinglabels.components.NoticeBannerUiState
 import com.woocommerce.android.ui.orders.wooshippinglabels.components.NoticeType
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
-import com.woocommerce.android.ui.orders.wooshippinglabels.customs.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireCustomsForm
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireITN
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
@@ -82,7 +83,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val addressValidationHelper: AddressValidationHelper,
     private val verifyDestinationAddress: VerifyDestinationAddress,
-    private val observeShippingLabelNotice: ObserveShippingLabelNotice
+    private val observeShippingLabelNotice: ObserveShippingLabelNotice,
+    private val shouldRequireITN: ShouldRequireITN
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
 
@@ -298,15 +300,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         combine(
             shippingAddresses,
             customsFormData,
-            shippableItems.map { it.isItnRequired() }
-        ) { addresses, customsData, isItnRequired ->
-            val customsRequired by lazy {
-                addresses != null && shouldRequireCustoms(addresses)
-            }
+            shippableItems
+        ) { addresses, customsData, shippableItems ->
+            val customsRequired = addresses != null && shouldRequireCustoms(addresses)
+            val itnMissing = customsFormData.value?.itn.isNullOrEmpty() && shippableItems.isItnRequired()
 
             when {
+                customsRequired && itnMissing -> ItnMissing
                 customsData != null -> CustomsState.DataAvailable(customsData)
-                customsRequired && isItnRequired -> ItnMissing
                 customsRequired -> Unavailable
                 else -> NotRequired
             }
@@ -619,7 +620,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onEditCustomsClick() {
-        val event = StartCustomsFormEdit(shippableItems.value, customsFormData.value)
+        val destinationCountryCode = shippingAddresses.value
+            ?.shipTo?.address?.country?.code.orEmpty()
+
+        val event = StartCustomsFormEdit(
+            shippableItems = shippableItems.value,
+            destinationCountryCode = destinationCountryCode,
+            customData = customsFormData.value
+        )
         triggerEvent(event)
     }
 
@@ -664,11 +672,15 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     private fun List<ShippableItemModel>.isItnRequired(): Boolean {
-        return map { it.shippingTotalValue }
+        val totalShippingValue = map { it.shippingTotalValue }
             .takeIf { it.isNotEmpty() }
             ?.reduce { acc, current -> acc + current }
-            ?.let { it >= MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS }
-            ?: false
+            ?: 0f
+
+        val destinationCountryCode = shippingAddresses.value
+            ?.shipTo?.address?.country?.code.orEmpty()
+
+        return shouldRequireITN(destinationCountryCode, totalShippingValue)
     }
 
     data object StartPackageSelection : Event()
@@ -683,6 +695,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
+        val destinationCountryCode: String,
         val customData: CustomsData?
     ) : Event()
 
@@ -783,7 +796,6 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         private const val NOTIFICATIONS_DELAY = 2_000L
         private const val TYPING_DELAY = 800L
         private const val MULTIPLE_CALLS_DELAY = 50L
-        private val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500.toBigDecimal()
     }
 }
 

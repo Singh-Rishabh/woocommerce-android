@@ -623,18 +623,22 @@ class OrderListViewModel @Inject constructor(
             return
         }
 
-        launch {
-            val totalDurationInSeconds = event.duration.toDouble() / 1_000
-            val totalCompletedOrders = orderListRepository
-                .getCachedOrderStatusOptions()[CoreOrderStatus.COMPLETED.value]?.statusCount
-            AnalyticsTracker.track(
-                AnalyticsEvent.ORDERS_LIST_LOADED,
-                mapOf(
-                    AnalyticsTracker.KEY_TOTAL_DURATION to totalDurationInSeconds,
-                    AnalyticsTracker.KEY_STATUS to event.listDescriptor.statusFilter,
-                    AnalyticsTracker.KEY_TOTAL_COMPLETED_ORDERS to totalCompletedOrders
+        if (event.isError) {
+            AnalyticsTracker.track(AnalyticsEvent.ORDER_LIST_LOAD_ERROR)
+        } else {
+            launch {
+                val totalDurationInSeconds = event.duration.toDouble() / 1_000
+                val totalCompletedOrders = orderListRepository
+                    .getCachedOrderStatusOptions()[CoreOrderStatus.COMPLETED.value]?.statusCount
+                AnalyticsTracker.track(
+                    AnalyticsEvent.ORDERS_LIST_LOADED,
+                    mapOf(
+                        AnalyticsTracker.KEY_TOTAL_DURATION to totalDurationInSeconds,
+                        AnalyticsTracker.KEY_STATUS to event.listDescriptor.statusFilter,
+                        AnalyticsTracker.KEY_TOTAL_COMPLETED_ORDERS to totalCompletedOrders
+                    )
                 )
-            )
+            }
         }
     }
 
