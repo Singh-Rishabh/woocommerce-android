@@ -76,7 +76,7 @@ fun WooShippingLabelHazmatFormScreen(
                 checked = containsHazmatChecked,
                 onCheckedChange = onContainsHazmatChanged,
                 colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colorScheme.onPrimary,
+                    checkedColor = MaterialTheme.colorScheme.primary,
                     uncheckedColor = colorResource(id = R.color.color_on_surface_disabled),
                 )
             )
