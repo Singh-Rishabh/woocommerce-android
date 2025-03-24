@@ -163,7 +163,6 @@ fun WooShippingSplitShipmentScreen(
                     visible = viewState.splitMessage != null,
                     label = "message_transition",
                     enter = slideInVertically(initialOffsetY = { it }),
-                    exit = slideOutVertically(targetOffsetY = { it }),
                     modifier = Modifier.align(Alignment.BottomCenter)
                 ) {
                     when (viewState.splitMessage) {
