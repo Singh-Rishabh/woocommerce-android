@@ -84,7 +84,7 @@ class WooShippingLabelRestClient @Inject constructor(
         selectedRate: RateDTO,
         markOrderComplete: Boolean,
         hazmat: HazmatDTO = HazmatDTO(),
-        customs: Map<String, CustomsPurchaseDTO>,
+        customs: Map<String, CustomsDTO>,
     ): WooPayload<PurchasedShippingLabelResponseDTO> {
         val url = "/wcshipping/v1/label/purchase/$orderId/"
         return wooNetwork.executePostGsonRequest(

@@ -266,11 +266,11 @@ class WooShippingNetworkingMapper @Inject constructor(
         )
     }
 
-    fun toCustomsPurchaseDTO(
+    fun toCustomsDTO(
         customsDataList: List<CustomsData>
-    ): Map<String, CustomsPurchaseDTO> {
+    ): Map<String, CustomsDTO> {
         return customsDataList.map { customsData ->
-            CustomsPurchaseDTO(
+            CustomsDTO(
                 contentsType = customsData.contentType.name.toLowerCase(Locale.current),
                 contentExplanation = customsData.contentDescription,
                 restrictionType = customsData.restrictionType.name.toLowerCase(Locale.current),
@@ -278,7 +278,7 @@ class WooShippingNetworkingMapper @Inject constructor(
                 isReturnToSender = customsData.isReturnToSender,
                 itn = customsData.itn,
                 items = customsData.items.map {
-                    CustomsItemPurchaseDTO(
+                    CustomsItemDTO(
                         productId = it.productID,
                         description = it.description,
                         quantity = it.quantity,

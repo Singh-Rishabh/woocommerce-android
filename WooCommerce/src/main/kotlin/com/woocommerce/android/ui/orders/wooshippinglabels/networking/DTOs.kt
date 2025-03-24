@@ -113,3 +113,25 @@ data class VerifyDestinationAddressResponseDTO(
     val normalizedAddress: AddressDTO,
     val isVerified: Boolean
 )
+
+
+
+data class CustomsDTO(
+    @SerializedName("contents_type") val contentsType: String,
+    @SerializedName("contents_explanation") val contentExplanation: String,
+    @SerializedName("restriction_type") val restrictionType: String,
+    @SerializedName("restriction_comments") val restrictionComments: String,
+    @SerializedName("non_delivery_option") val isReturnToSender: Boolean,
+    val itn: String,
+    val items: List<CustomsItemDTO>
+)
+
+data class CustomsItemDTO(
+    val description: String,
+    val quantity: Float,
+    val price: Double,
+    val weight: Double,
+    @SerializedName("hs_tariff_number") val hsTariffNumber: String,
+    @SerializedName("origin_country") val originCountry: String,
+    @SerializedName("product_id") val productId: Long
+)
