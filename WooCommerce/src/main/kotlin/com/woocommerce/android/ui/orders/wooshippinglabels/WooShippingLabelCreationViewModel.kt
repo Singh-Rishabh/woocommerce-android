@@ -345,7 +345,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shippingRatesInfo.shipTo,
                     shippingRatesInfo.shipFrom,
                     shippingRatesInfo.weight,
-                    shippingRatesInfo.currencyCode
+                    shippingRatesInfo.currencyCode,
+                    shippingRatesInfo.customsData
                 )
 
                 if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {

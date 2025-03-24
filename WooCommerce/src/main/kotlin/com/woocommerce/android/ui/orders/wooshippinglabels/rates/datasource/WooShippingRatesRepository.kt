@@ -1,8 +1,13 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.rates.datasource
 
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsDTO
+import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsItemDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.DestinationAddressDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.OriginAddressDTO
@@ -20,7 +25,8 @@ class WooShippingRatesRepository @Inject constructor(
         selectedPackage: PackageData,
         shipTo: Address,
         shipFrom: OriginShippingAddress,
-        weight: Float
+        weight: Float,
+        customsData: CustomsData?
     ): Result<List<WooShippingRateOptionsModel>> {
         val origin = OriginAddressDTO(
             address = shipFrom.address1,
@@ -48,7 +54,8 @@ class WooShippingRatesRepository @Inject constructor(
             width = selectedPackage.width.toDouble(),
             height = selectedPackage.height.toDouble(),
             weight = weight.toDouble(),
-            isLetter = selectedPackage.isLetter
+            isLetter = selectedPackage.isLetter,
+            customsDTO = customsData?.toCustomDTO()
         )
         val result = restClient.getShippingRates(
             site = selectedSite.get(),
@@ -65,4 +72,24 @@ class WooShippingRatesRepository @Inject constructor(
             Result.success(rates)
         }
     }
+
+    private fun CustomsData.toCustomDTO() = CustomsDTO(
+        contentsType = contentType.name.toLowerCase(Locale.current),
+        contentExplanation = contentDescription,
+        restrictionType = restrictionType.name.toLowerCase(Locale.current),
+        restrictionComments = restrictionDescription,
+        isReturnToSender = isReturnToSender,
+        itn = itn,
+        items = items.map {
+            CustomsItemDTO(
+                productId = it.productID,
+                description = it.description,
+                quantity = it.quantity,
+                price = it.value.toDouble(),
+                weight = it.weight.toDouble(),
+                hsTariffNumber = it.hsTariffNumber,
+                originCountry = it.originCountryCode
+            )
+        }
+    )
 }

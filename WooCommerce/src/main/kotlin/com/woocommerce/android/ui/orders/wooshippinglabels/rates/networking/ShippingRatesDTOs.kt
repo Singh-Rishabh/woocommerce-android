@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking
 
 import com.google.gson.annotations.SerializedName
+import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsDTO
 import java.math.BigDecimal
 
 data class PackageDTO(
@@ -11,6 +12,7 @@ data class PackageDTO(
     val height: Double,
     @SerializedName("is_letter") val isLetter: Boolean,
     val weight: Double,
+    val customsDTO: CustomsDTO? = null
 )
 
 data class DestinationAddressDTO(
