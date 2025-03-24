@@ -58,11 +58,11 @@ data class HazmatDTO(
 )
 
 data class CustomsPurchaseDTO(
-    val contentsType: String,
-    val contentExplanation: String,
-    val restrictionType: String,
-    val restrictionComments: String,
-    val isReturnToSender: Boolean,
+    @SerializedName("contents_type") val contentsType: String,
+    @SerializedName("contents_explanation") val contentExplanation: String,
+    @SerializedName("restriction_type") val restrictionType: String,
+    @SerializedName("restriction_comments") val restrictionComments: String,
+    @SerializedName("non_delivery_option") val isReturnToSender: Boolean,
     val itn: String,
     val items: List<CustomsItemPurchaseDTO>
 )
@@ -72,7 +72,7 @@ data class CustomsItemPurchaseDTO(
     val quantity: Float,
     val price: Double,
     val weight: Double,
-    val hsTariffNumber: String,
-    val originCountry: String,
+    @SerializedName("hs_tariff_number") val hsTariffNumber: String,
+    @SerializedName("origin_country") val originCountry: String,
     @SerializedName("product_id") val productId: Long
 )
