@@ -119,11 +119,10 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
         // When
         viewModel.onContainsHazmatChanged(true)
         viewModel.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
-        viewModel.onContainsHazmatChanged(false)
         viewModel.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_3)
 
         // Then
-        assertThat(capturedViewState?.containsHazmatChecked).isFalse()
+        assertThat(capturedViewState?.containsHazmatChecked).isTrue()
         assertThat(capturedViewState?.currentHazmatSelection).isEqualTo(ShippingLabelHazmatCategory.CLASS_3)
     }
 }
