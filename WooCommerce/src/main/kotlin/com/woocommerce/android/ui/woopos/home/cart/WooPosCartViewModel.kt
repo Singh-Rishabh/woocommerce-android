@@ -66,7 +66,8 @@ class WooPosCartViewModel @Inject constructor(
     private val itemNumberProvider =
         AtomicInteger(
             (_state.value.body as? WooPosCartState.Body.WithItems)
-                ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1)
+                ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
+        )
 
     init {
         listenEventsFromParent()
@@ -203,7 +204,7 @@ class WooPosCartViewModel @Inject constructor(
     private fun getItemNumber(): Int {
         return when (_state.value.body) {
             is WooPosCartState.Body.Empty -> 1
-            is WooPosCartState.Body.WithItems ->  itemNumberProvider.incrementAndGet()
+            is WooPosCartState.Body.WithItems -> itemNumberProvider.incrementAndGet()
         }
     }
 
