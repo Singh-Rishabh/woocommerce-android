@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.split
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,12 +33,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
+import com.woocommerce.android.ui.compose.annotatedStringRes
 import com.woocommerce.android.ui.compose.component.WCTextButton
 import com.woocommerce.android.ui.orders.wooshippinglabels.ExpandableSelectableShippingProduct
 import com.woocommerce.android.ui.orders.wooshippinglabels.ProductsSummary
@@ -101,7 +97,7 @@ fun WooShippingSplitShipmentScreen(
             Box(
                 modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
             ) {
                 Column {
                     ProductsSummary(
@@ -189,23 +185,12 @@ fun WooShippingSplitShipmentScreen(
                     AnimatedVisibility(
                         visible = viewState.splitMessage != null,
                         label = "message_transition",
-                        enter = slideInVertically(initialOffsetY = { it }),
-                        exit = slideOutVertically(targetOffsetY = { it }),
+                        enter = slideInVertically(initialOffsetY = { it })
                     ) {
                         when (viewState.splitMessage) {
                             is SplitShipmentMessage.Instructions -> {
-                                val annotatedString = buildAnnotatedString {
-                                    append(stringResource(R.string.woo_shipping_split_shipment_instructions_1))
-                                    append(" ")
-                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(stringResource(R.string.woo_shipping_split_shipment_instructions_2))
-                                    }
-                                    append(" ")
-                                    append(stringResource(R.string.woo_shipping_split_shipment_instructions_3))
-                                }
-
                                 InstructionsMessage(
-                                    message = annotatedString,
+                                    message = annotatedStringRes(R.string.woo_shipping_split_shipment_instructions),
                                     onClose = onDismissInstructions
                                 )
                             }
@@ -217,8 +202,7 @@ fun WooShippingSplitShipmentScreen(
                     AnimatedVisibility(
                         visible = viewState.splitMovements.isNotEmpty(),
                         label = "movements_transition",
-                        enter = slideInVertically(initialOffsetY = { it }),
-                        exit = slideOutVertically(targetOffsetY = { it }),
+                        enter = slideInVertically(initialOffsetY = { it })
                     ) {
                         SplitMovements(
                             movements = viewState.splitMovements,
@@ -245,7 +229,7 @@ private fun InstructionsMessage(
         Row {
             Text(
                 text = message,
-                color = MaterialTheme.colors.onPrimary.copy(alpha = .9f),
+                color = MaterialTheme.colors.onPrimary,
                 modifier = Modifier
                     .weight(1f, true)
                     .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)

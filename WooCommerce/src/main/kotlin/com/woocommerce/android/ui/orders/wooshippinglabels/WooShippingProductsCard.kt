@@ -259,7 +259,7 @@ private fun ShippingProductDetails(
     quantity: Float,
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
-    imageSize: Dp = dimensionResource(R.dimen.image_major_50),
+    imageSize: Dp = dimensionResource(R.dimen.image_major_56),
     displayQuantity: Boolean = true
 ) {
     Row(modifier = modifier) {
@@ -582,7 +582,7 @@ fun ExpandableSelectableShippingProduct(
                         imageUrl = imageUrl,
                         modifier = Modifier
                             .clickable { onInnerSelectionChange(isInnerItemSelected, index) }
-                            .padding(start = 32.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+                            .padding(start = 24.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
                         imageSize = dimensionResource(R.dimen.image_minor_100),
                         displayQuantity = false
                     )
