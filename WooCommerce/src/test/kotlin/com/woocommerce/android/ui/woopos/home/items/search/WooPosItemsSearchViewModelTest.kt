@@ -136,9 +136,7 @@ class WooPosItemsSearchViewModelTest {
             assertThat(value).isInstanceOf(WooPosItemsSearchViewState.EmptySearchQuery::class.java)
             val emptySearchQuery = value as WooPosItemsSearchViewState.EmptySearchQuery
             assertThat(emptySearchQuery.popularItems).hasSize(3)
-            assertThat(emptySearchQuery.popularItems.map { it.id }).containsExactly(
-                1, 2, 3
-            )
+            assertThat(emptySearchQuery.popularItems.map { it.id }).containsExactly(1, 2, 3)
             assertThat(emptySearchQuery.recentSearches).hasSize(3)
             assertThat(emptySearchQuery.recentSearches).containsExactly(
                 "Recent Search 1",
@@ -394,6 +392,4 @@ class WooPosItemsSearchViewModelTest {
         childToParentEventSender = mockChildToParentEventSender,
         parentToChildrenEventReceiver = mockParentToChildrenEventReceiver
     )
-
-    private fun any(): BigDecimal = BigDecimal.TEN
 }
