@@ -3,7 +3,7 @@
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
 22.1
 -----
-
+- [*] The order count badge is now fully visible for counts higher than 99 [https://github.com/woocommerce/woocommerce-android/pull/13825]
 
 22.0
 -----

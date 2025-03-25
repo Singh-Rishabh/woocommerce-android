@@ -2,7 +2,6 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.split
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,10 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringRes
@@ -100,7 +95,7 @@ fun WooShippingSplitShipmentScreen(
             Box(
                 modifier
                     .fillMaxSize()
-                    .padding(16.dp)
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
             ) {
                 Column {
                     ProductsSummary(
