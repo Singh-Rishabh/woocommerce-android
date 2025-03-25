@@ -1,15 +1,20 @@
 package com.woocommerce.android.ui.woopos.home.items.search
 
 import app.cash.turbine.test
+import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
+import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.math.BigDecimal
 
 @ExperimentalCoroutinesApi
 class WooPosItemsSearchViewModelTest {
@@ -18,12 +23,16 @@ class WooPosItemsSearchViewModelTest {
     @JvmField
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
+    private val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
+    private val mockPriceFormat: WooPosFormatPrice = mock()
+    private val mockDataSource: WooPosSearchProductsMockedDataSource = mock()
+    private val mockChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
+    private val mockParentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock()
+
     @Test
     fun `given less than max popular items and recent searches, when view model created, then all items are shown`() =
         runTest {
             // GIVEN
-            val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
-
             val popularItems = listOf(
                 WooPosItem.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
                 WooPosItem.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
@@ -34,9 +43,11 @@ class WooPosItemsSearchViewModelTest {
 
             whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(popularItems)
             whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(recentSearches)
+            whenever(mockParentToChildrenEventReceiver.events).thenReturn(emptyFlow())
+            whenever(mockPriceFormat.invoke(any())).thenReturn("$10.0")
 
             // WHEN
-            val viewModel = WooPosItemsSearchViewModel(mockEmptyStateProvider)
+            val viewModel = createViewModel()
 
             // THEN
             viewModel.viewState.test {
@@ -53,12 +64,12 @@ class WooPosItemsSearchViewModelTest {
     fun `given empty popular items and recent searches, when view model created, then empty lists are shown`() =
         runTest {
             // GIVEN
-            val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
             whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(emptyList())
             whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(emptyList())
+            whenever(mockParentToChildrenEventReceiver.events).thenReturn(emptyFlow())
 
             // WHEN
-            val viewModel = WooPosItemsSearchViewModel(mockEmptyStateProvider)
+            val viewModel = createViewModel()
 
             // THEN
             viewModel.viewState.test {
@@ -74,16 +85,16 @@ class WooPosItemsSearchViewModelTest {
     @Test
     fun `when view model created, then initial state is Empty`() = runTest {
         // GIVEN
-        val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
         whenever(mockEmptyStateProvider.getPopularItems()).thenAnswer {
             emptyList<WooPosItem>()
         }
         whenever(mockEmptyStateProvider.getLastSearches()).thenAnswer {
             emptyList<String>()
         }
+        whenever(mockParentToChildrenEventReceiver.events).thenReturn(emptyFlow())
 
         // WHEN
-        val viewModel = WooPosItemsSearchViewModel(mockEmptyStateProvider)
+        val viewModel = createViewModel()
 
         // THEN
         assertThat(viewModel.viewState.value).isEqualTo(WooPosItemsSearchViewState.Empty)
@@ -92,7 +103,6 @@ class WooPosItemsSearchViewModelTest {
     @Test
     fun `given more than max items count, when view model created, then only max items are shown`() = runTest {
         // GIVEN
-        val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
         val popularItems = listOf(
             WooPosItem.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
             WooPosItem.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
@@ -107,9 +117,10 @@ class WooPosItemsSearchViewModelTest {
         )
         whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(popularItems)
         whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(recentSearches)
+        whenever(mockParentToChildrenEventReceiver.events).thenReturn(emptyFlow())
 
         // WHEN
-        val viewModel = WooPosItemsSearchViewModel(mockEmptyStateProvider)
+        val viewModel = createViewModel()
 
         // THEN
         viewModel.viewState.test {
@@ -121,7 +132,7 @@ class WooPosItemsSearchViewModelTest {
                 1,
                 2,
                 3
-            ) // Should be the first 3 items
+            )
             assertThat(emptySearchQuery.recentSearches).hasSize(3)
             assertThat(emptySearchQuery.recentSearches).containsExactly(
                 "Recent Search 1",
@@ -130,4 +141,14 @@ class WooPosItemsSearchViewModelTest {
             )
         }
     }
+
+    private fun createViewModel() = WooPosItemsSearchViewModel(
+        emptyStateProvider = mockEmptyStateProvider,
+        priceFormat = mockPriceFormat,
+        dataSource = mockDataSource,
+        childToParentEventSender = mockChildToParentEventSender,
+        parentToChildrenEventReceiver = mockParentToChildrenEventReceiver
+    )
+
+    private fun any(): BigDecimal = BigDecimal.TEN
 }
