@@ -8,6 +8,7 @@ import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -31,7 +32,7 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
-class WooPosItemsViewModelTest {
+class WooPosItemsViewModelTestSelectionViewState {
 
     @Rule
     @JvmField
@@ -109,7 +110,7 @@ class WooPosItemsViewModelTest {
             val value = awaitItem() as WooPosItemsViewState.Content
 
             @Suppress("UNCHECKED_CAST")
-            val items = value.items as List<WooPosItem.Product.Simple>
+            val items = value.items as List<Product.Simple>
             assertThat(items).hasSize(2)
             assertThat(items[0].id).isEqualTo(1)
             assertThat(items[0].name).isEqualTo("Product 1")
@@ -196,7 +197,7 @@ class WooPosItemsViewModelTest {
     @Test
     fun `when item clicked, then send event to parent`() = runTest {
         // GIVEN
-        val product = WooPosItem.Product.Simple(id = 1, name = "", price = "", imageUrl = null)
+        val product = Product.Simple(id = 1, name = "", price = "", imageUrl = null)
         val viewModel = createViewModel()
 
         // WHEN
@@ -515,7 +516,7 @@ class WooPosItemsViewModelTest {
         // WHEN
         viewModel.onUIEvent(
             WooPosItemsUIEvent.ItemClicked(
-                WooPosItem.Product.Variable(
+                Product.Variable(
                     id = 1L,
                     name = "Product 1",
                     numOfVariations = 10,
@@ -601,7 +602,7 @@ class WooPosItemsViewModelTest {
                 // THEN
                 val value = awaitItem() as WooPosItemsViewState.Content
 
-                assertThat(value.items.filterIsInstance<WooPosItem.Product.Variable>().size).isEqualTo(1)
+                assertThat(value.items.filterIsInstance<Product.Variable>().size).isEqualTo(1)
             }
         }
 
