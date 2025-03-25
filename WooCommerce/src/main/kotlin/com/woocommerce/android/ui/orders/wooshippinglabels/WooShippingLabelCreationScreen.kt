@@ -431,6 +431,9 @@ private fun LabelCreationScreenWithBottomSheet(
                 )
                 HazmatCard(
                     onClick = onHazmatNoticeClick,
+                    selectedCategory = hazmatState
+                        .run { this as? Informed }
+                        ?.hazmatCategory,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)
