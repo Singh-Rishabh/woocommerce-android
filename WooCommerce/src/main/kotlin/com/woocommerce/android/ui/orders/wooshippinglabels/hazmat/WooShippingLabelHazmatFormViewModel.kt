@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.getStateFlow
@@ -24,8 +25,11 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     val viewState = _viewState.asLiveData()
 
     fun onContainsHazmatChanged(containsHazmatChecked: Boolean) {
-        _viewState.update {
-            _viewState.value.copy(containsHazmatChecked = containsHazmatChecked)
+        _viewState.update { viewState ->
+            viewState.copy(
+                containsHazmatChecked = containsHazmatChecked,
+                currentHazmatSelection = viewState.currentHazmatSelection.takeIf { containsHazmatChecked }
+            )
         }
     }
 
@@ -33,10 +37,29 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         triggerEvent(OnSelectCategoryClicked)
     }
 
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
+        if (_viewState.value.containsHazmatChecked.not()) return
+
+        _viewState.update { viewState ->
+            viewState.copy(currentHazmatSelection = selectedCategory)
+        }
+    }
+
+    fun onUrlSelected(url: String) {
+        triggerEvent(OnUrlSelected(url))
+    }
+
     @Parcelize
     data class ViewState(
-        val containsHazmatChecked: Boolean = false
+        val containsHazmatChecked: Boolean = false,
+        val currentHazmatSelection: ShippingLabelHazmatCategory? = null
     ) : Parcelable
 
     data object OnSelectCategoryClicked : Event()
+
+    data class OnUrlSelected(val url: String) : Event()
+
+    companion object {
+        const val KEY_HAZMAT_CATEGORY_SELECTOR_RESULT = "hazmat_category_selector_result"
+    }
 }

@@ -4520,7 +4520,10 @@
     <string name="woo_shipping_labels_hazmat_info_title">Are you shipping dangerous goods or hazardous materials?</string>
     <string name="woo_shipping_labels_hazmat_info_contains_hazmat">Contains hazardous materials</string>
     <string name="woo_shipping_labels_hazmat_info_full_description">Potentially hazardous material includes items such as batteries, dry ice, flammable liquids, aerosols, ammunition, fireworks, nail polish, perfume, paint, solvents, and more. Hazardous items must ship in separate packages.</string>
+    <string name="woo_shipping_labels_hazmat_info_tooltip_1">Learn how to securely package, label, and ship HAZMAT through USPS® at &lt;a href=\'usps-hazmat\'&gt;&lt;u&gt;www.usps.com/hazmat&lt;/u&gt;&lt;/a&gt;. Determine your product\'s mailability using the &lt;a href=\'hazmat-tool\'&gt;&lt;u&gt;USPS HAZMAT Search Tool&lt;/u&gt;&lt;/a&gt;.</string>
+    <string name="woo_shipping_labels_hazmat_info_tooltip_2">WooCommerce Shipping does not currently support HAZMAT shipments through &lt;a href=\'dhl-hazmat\'&gt;&lt;u&gt;DHL Express&lt;/u&gt;&lt;/a&gt;.</string>
     <string name="woo_shipping_labels_hazmat_info_select_category">Select Category</string>
+    <string name="woo_shipping_labels_hazmat_search_hint">Search a Category</string>
 
 
     <string name="email_not_registered_wpcom">Hmm, we can\'t find a WordPress.com account connected to this email address.</string>
