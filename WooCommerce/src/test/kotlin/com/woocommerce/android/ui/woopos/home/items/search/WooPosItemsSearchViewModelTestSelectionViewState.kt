@@ -1,7 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.items.search
 
 import app.cash.turbine.test
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -12,7 +12,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
-class WooPosItemsSearchViewModelTest {
+class WooPosItemsSearchViewModelTestSelectionViewState {
 
     @Rule
     @JvmField
@@ -25,8 +25,8 @@ class WooPosItemsSearchViewModelTest {
             val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
 
             val popularItems = listOf(
-                WooPosItem.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
-                WooPosItem.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
+                WooPosItemSelectionViewState.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
+                WooPosItemSelectionViewState.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
             )
             val recentSearches = listOf(
                 "Recent Search 1"
@@ -76,7 +76,7 @@ class WooPosItemsSearchViewModelTest {
         // GIVEN
         val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
         whenever(mockEmptyStateProvider.getPopularItems()).thenAnswer {
-            emptyList<WooPosItem>()
+            emptyList<WooPosItemSelectionViewState>()
         }
         whenever(mockEmptyStateProvider.getLastSearches()).thenAnswer {
             emptyList<String>()
@@ -94,10 +94,10 @@ class WooPosItemsSearchViewModelTest {
         // GIVEN
         val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
         val popularItems = listOf(
-            WooPosItem.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
-            WooPosItem.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
-            WooPosItem.Product.Simple(id = 3, name = "Popular Item 3", price = "$20.0", imageUrl = null),
-            WooPosItem.Product.Simple(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
+            WooPosItemSelectionViewState.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
+            WooPosItemSelectionViewState.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
+            WooPosItemSelectionViewState.Product.Simple(id = 3, name = "Popular Item 3", price = "$20.0", imageUrl = null),
+            WooPosItemSelectionViewState.Product.Simple(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
         )
         val recentSearches = listOf(
             "Recent Search 1",
