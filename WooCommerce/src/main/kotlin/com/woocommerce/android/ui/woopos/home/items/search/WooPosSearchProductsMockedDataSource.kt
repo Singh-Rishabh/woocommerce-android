@@ -58,34 +58,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }.flowOn(Dispatchers.IO).take(2)
 
-    fun loadSimpleProducts(forceRefreshProducts: Boolean): Flow<ProductsResult> = flow {
-        if (forceRefreshProducts) {
-            updateProductCache(emptyList())
-        }
-
-        emit(ProductsResult.Cached(productCache))
-
-        delay(1000)
-
-        try {
-            val remoteProducts = if (forceRefreshProducts) {
-                generateSampleProducts()
-            } else {
-                productCache
-            }
-            updateProductCache(remoteProducts)
-            canLoadMore.set(remoteProducts.size >= PAGE_SIZE)
-            emit(ProductsResult.Remote(Result.success(productCache)))
-        } catch (e: Exception) {
-            WooLog.e(WooLog.T.POS, "Loading products failed - ${e.message}", e)
-            emit(
-                ProductsResult.Remote(
-                    Result.failure(e)
-                )
-            )
-        }
-    }.flowOn(Dispatchers.IO).take(2)
-
     suspend fun loadMore(query: String? = null): Result<List<Product>> = withContext(Dispatchers.IO) {
         try {
             delay(1500)
