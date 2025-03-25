@@ -168,6 +168,7 @@ class WooPosCartViewModelTest {
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
                 WooPosCartItemViewState.Product.Simple(
+                    itemNumber = 1,
                     id = product.remoteId,
                     name = product.name,
                     price = "10.0$",
@@ -209,6 +210,7 @@ class WooPosCartViewModelTest {
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
                 WooPosCartItemViewState.Product.Simple(
+                    itemNumber = 1,
                     id = product.remoteId,
                     name = product.name,
                     price = "10.0$",
@@ -316,6 +318,80 @@ class WooPosCartViewModelTest {
             assertThat(toolbar.isClearAllButtonVisible).isFalse()
         }
 
+    @Suppress("LongMethod")
+    @Test
+    fun `given non empty cart in process, when 2 items added and the first removed and third item added, then third will have item number 2`() =
+        runTest {
+            // GIVEN
+            val product1 = ProductTestUtils.generateProduct(
+                productId = 1L,
+                productName = "title",
+                amount = "10.0"
+            ).copy(firstImageUrl = "url")
+            val product2 = ProductTestUtils.generateProduct(
+                productId = 2L,
+                productName = "title",
+                amount = "10.0"
+            ).copy(firstImageUrl = "url")
+            val product3 = ProductTestUtils.generateProduct(
+                productId = 3L,
+                productName = "title",
+                amount = "10.0"
+            ).copy(firstImageUrl = "url")
+
+            val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+            whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+            whenever(getProductById(eq(product1.remoteId))).thenReturn(product1)
+            whenever(getProductById(eq(product2.remoteId))).thenReturn(product2)
+            whenever(getProductById(eq(product3.remoteId))).thenReturn(product3)
+
+            val sut = createSut()
+            val states = sut.state.captureValues()
+
+            // WHEN
+            parentToChildrenEventsMutableFlow.emit(
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        id = product1.remoteId
+                    )
+                )
+            )
+            parentToChildrenEventsMutableFlow.emit(
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        id = product2.remoteId
+                    )
+                )
+            )
+
+            sut.onUIEvent(
+                WooPosCartUIEvent.ItemRemovedFromCart(
+                    WooPosCartItemViewState.Product.Simple(
+                        itemNumber = 1,
+                        id = product1.remoteId,
+                        name = product1.name,
+                        price = "10.0$",
+                        imageUrl = product1.firstImageUrl,
+                        description = null,
+                    )
+                )
+            )
+
+            parentToChildrenEventsMutableFlow.emit(
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        id = product3.remoteId
+                    )
+                )
+            )
+
+            // THEN
+            val itemsInCart = (states.last().body as WooPosCartState.Body.WithItems).itemsInCart
+            assertThat(itemsInCart).hasSize(2)
+            assertThat(itemsInCart[0].itemNumber).isEqualTo(3)
+            assertThat(itemsInCart[1].itemNumber).isEqualTo(2)
+        }
+
     @Test
     fun `given empty cart, when created, then state should be empty`() = runTest {
         // WHEN
@@ -409,6 +485,7 @@ class WooPosCartViewModelTest {
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
                 WooPosCartItemViewState.Product.Simple(
+                    itemNumber = 1,
                     id = product.remoteId,
                     name = product.name,
                     price = "10.0$",

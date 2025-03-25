@@ -23,7 +23,6 @@ data class WooPosCartState(
 
         @Parcelize
         data class WithItems(val itemsInCart: List<WooPosCartItemViewState>) : Body(), Parcelable {
-
             override val amountOfItems: Int
                 get() = itemsInCart.size
         }
@@ -41,32 +40,35 @@ enum class WooPosCartStatus {
     EDITABLE, CHECKOUT, EMPTY,
 }
 
-sealed class WooPosCartItemViewState(open val name: String) : Parcelable {
+sealed class WooPosCartItemViewState(open val itemNumber: Int, open val name: String) : Parcelable {
     @Parcelize
     sealed class Product(
+        override val itemNumber: Int,
         open val id: Long,
         override val name: String,
         open val price: String,
         open val description: String?,
         open val imageUrl: String?,
-    ) : WooPosCartItemViewState(name), Parcelable {
+    ) : WooPosCartItemViewState(itemNumber, name), Parcelable {
         @Parcelize
         data class Simple(
+            override val itemNumber: Int,
             override val id: Long,
             override val name: String,
             override val price: String,
             override val description: String?,
             override val imageUrl: String?,
-        ) : Product(id, name, price, description, imageUrl), Parcelable
+        ) : Product(itemNumber, id, name, price, description, imageUrl), Parcelable
 
         @Parcelize
         data class Variation(
+            override val itemNumber: Int,
             override val id: Long,
             val variationId: Long,
             override val name: String,
             override val price: String,
             override val description: String?,
             override val imageUrl: String?,
-        ) : Product(id, name, price, description, imageUrl), Parcelable
+        ) : Product(itemNumber, id, name, price, description, imageUrl), Parcelable
     }
 }

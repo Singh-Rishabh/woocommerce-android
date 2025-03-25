@@ -227,6 +227,7 @@ private fun CartBodyWithItems(
     ) {
         items(
             items,
+            key = { item -> item.itemNumber }
         ) { item ->
             when (item) {
                 is WooPosCartItemViewState.Product -> ProductItem(
@@ -487,6 +488,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
                         WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 1,
                             id = 1L,
                             imageUrl = "",
                             name = "VW California, VW California VW California, VW California VW California, " +
@@ -495,6 +497,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             price = "€50,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 2,
                             id = 2L,
                             imageUrl = "",
                             name = "VW California",
@@ -503,6 +506,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             price = "$150,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 3,
                             id = 3L,
                             imageUrl = "",
                             name = "VW California",
@@ -533,6 +537,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
                         WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 1,
                             id = 1L,
                             imageUrl = "",
                             name = "VW California",
@@ -540,6 +545,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             price = "€50,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 2,
                             id = 2L,
                             imageUrl = "",
                             name = "VW California",
@@ -547,6 +553,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             price = "$150,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 3,
                             id = 3L,
                             imageUrl = "",
                             name = "VW California",

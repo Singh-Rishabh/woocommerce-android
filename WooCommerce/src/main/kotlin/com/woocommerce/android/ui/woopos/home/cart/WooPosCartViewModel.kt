@@ -166,11 +166,12 @@ class WooPosCartViewModel @Inject constructor(
                 )!!
                 when (event.itemData) {
                     is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> {
-                        product.toCartListItem()
-                    }
+                        val itemNumber = getItemNumber()
+                        product.toCartListItem(itemNumber)                    }
                     is WooPosItemsViewModel.ItemClickedData.Variation -> {
+                        val itemNumber = getItemNumber()
                         val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
-                        productVariation.toCartListItem(product)
+                        productVariation.toCartListItem(itemNumber, product)
                     }
                     is WooPosItemsViewModel.ItemClickedData.Coupon ->
                         throw NotImplementedError("Coupons are not supported yet")
@@ -191,6 +192,13 @@ class WooPosCartViewModel @Inject constructor(
 
     private fun clearCart() {
         _state.value = WooPosCartState()
+    }
+
+    private fun getItemNumber(): Int {
+        return when (val currentState = _state.value.body) {
+            is WooPosCartState.Body.Empty -> 1
+            is WooPosCartState.Body.WithItems -> (currentState.itemsInCart.maxOfOrNull { it.itemNumber } ?: 0) + 1
+        }
     }
 
     private fun updateStateWithNewItem(newItem: WooPosCartItemViewState): WooPosCartState {
@@ -273,8 +281,9 @@ class WooPosCartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun Product.toCartListItem(): WooPosCartItemViewState.Product.Simple =
+    private suspend fun Product.toCartListItem(itemNumber: Int): WooPosCartItemViewState.Product.Simple =
         WooPosCartItemViewState.Product.Simple(
+            itemNumber = itemNumber,
             id = this.remoteId,
             name = name,
             description = null,
@@ -283,9 +292,11 @@ class WooPosCartViewModel @Inject constructor(
         )
 
     private suspend fun ProductVariation.toCartListItem(
+        itemNumber: Int,
         product: Product
     ): WooPosCartItemViewState.Product.Variation =
         WooPosCartItemViewState.Product.Variation(
+            itemNumber = itemNumber,
             id = product.remoteId,
             variationId = this.remoteVariationId,
             name = product.name,
