@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -32,7 +30,6 @@ import kotlin.random.Random
 class WooPosSearchProductsMockedDataSource @Inject constructor() {
     private var productCache: List<Product> = generateSampleProducts()
     private val filteredProductCache: MutableMap<String, List<Product>> = mutableMapOf()
-    private val cacheMutex = Mutex()
     private val canLoadMore = AtomicBoolean(true)
 
     val hasMorePages: Boolean
@@ -117,13 +114,11 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
-    private suspend fun getCachedSearchResults(query: String): List<Product> {
-        return cacheMutex.withLock {
-            filteredProductCache[query.lowercase()] ?: run {
-                val results = performSearch(query, false)
-                updateFilteredProductCache(query, results)
-                results
-            }
+    private fun getCachedSearchResults(query: String): List<Product> {
+        return filteredProductCache[query.lowercase()] ?: run {
+            val results = performSearch(query, false)
+            updateFilteredProductCache(query, results)
+            results
         }
     }
 
@@ -172,14 +167,12 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
-    private suspend fun updateProductCache(newList: List<Product>) {
-        cacheMutex.withLock { productCache = newList }
+    private fun updateProductCache(newList: List<Product>) {
+        productCache = newList
     }
 
-    private suspend fun updateFilteredProductCache(query: String, results: List<Product>) {
-        cacheMutex.withLock {
-            filteredProductCache[query.lowercase()] = results
-        }
+    private fun updateFilteredProductCache(query: String, results: List<Product>) {
+        filteredProductCache[query.lowercase()] = results
     }
 
     private fun generateSampleProducts(): List<Product> {

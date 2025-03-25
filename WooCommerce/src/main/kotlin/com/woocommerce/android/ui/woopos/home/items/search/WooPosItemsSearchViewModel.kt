@@ -67,30 +67,33 @@ class WooPosItemsSearchViewModel @Inject constructor(
         if (event.query.isEmpty()) {
             setEmptySearchQueryState()
         } else {
-            childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
+            viewModelScope.launch {
+                childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
+            }
 
-            dataSource.searchProducts(event.query).collect { result ->
-                when (result) {
-                    is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
-                        if (result.products.isEmpty()) {
-                            _viewState.value = WooPosItemsSearchViewState.Empty
-                        } else {
-                            _viewState.value = result.products.toContentState()
-                        }
-                    }
-
-                    is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
-                        childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
-
-                        if (result.productsResult.isSuccess) {
-                            val products = result.productsResult.getOrThrow()
-                            if (products.isEmpty()) {
+            viewModelScope.launch {
+                dataSource.searchProducts(event.query).collect { result ->
+                    when (result) {
+                        is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
+                            if (result.products.isEmpty()) {
                                 _viewState.value = WooPosItemsSearchViewState.Empty
                             } else {
-                                _viewState.value = products.toContentState()
+                                _viewState.value = result.products.toContentState()
                             }
-                        } else {
-                            _viewState.value = WooPosItemsSearchViewState.Error
+                        }
+
+                        is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
+                            if (result.productsResult.isSuccess) {
+                                val products = result.productsResult.getOrThrow()
+                                if (products.isEmpty()) {
+                                    _viewState.value = WooPosItemsSearchViewState.Empty
+                                } else {
+                                    _viewState.value = products.toContentState()
+                                }
+                            } else {
+                                _viewState.value = WooPosItemsSearchViewState.Error
+                            }
+                            childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
                         }
                     }
                 }
