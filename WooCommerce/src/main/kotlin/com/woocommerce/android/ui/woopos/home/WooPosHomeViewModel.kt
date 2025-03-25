@@ -107,7 +107,6 @@ class WooPosHomeViewModel @Inject constructor(
     private fun listenBottomEvents() {
         viewModelScope.launch {
             childrenToParentEventReceiver.events.collect { event ->
-                println("println childrenToParentEventReceiver event: $event")
                 when (event) {
                     is ChildToParentEvent.CheckoutClicked -> {
                         _state.value = _state.value.copy(
