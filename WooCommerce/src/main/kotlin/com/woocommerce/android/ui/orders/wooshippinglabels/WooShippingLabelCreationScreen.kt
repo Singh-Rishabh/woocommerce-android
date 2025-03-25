@@ -75,6 +75,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Informed
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NotInformed
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
@@ -109,6 +110,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 shippingRatesState = viewState.shippingRates,
                 packageSelectionState = viewState.packageSelection,
                 customsState = viewState.customsState,
+                hazmatState = viewState.hazmatState,
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
                 onEditOriginAddress = viewModel::onEditOriginAddress,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
@@ -150,6 +152,7 @@ fun WooShippingLabelCreationScreen(
     packageSelectionState: PackageSelectionState,
     shippingAddresses: WooShippingAddresses,
     customsState: CustomsState,
+    hazmatState: HazmatState,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
     onSelectPackageClick: () -> Unit,
@@ -217,6 +220,7 @@ fun WooShippingLabelCreationScreen(
             shippingLines = shippingLines,
             shippingAddresses = shippingAddresses,
             customsState = customsState,
+            hazmatState = hazmatState,
             shippingRatesState = shippingRatesState,
             packageSelectionState = packageSelectionState,
             onShippingFromAddressChange = onShippingFromAddressChange,
@@ -295,6 +299,7 @@ private fun LabelCreationScreenWithBottomSheet(
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     packageSelectionState: PackageSelectionState,
     customsState: CustomsState,
+    hazmatState: HazmatState,
     onSelectPackageClick: () -> Unit,
     shippingAddresses: WooShippingAddresses,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
@@ -489,7 +494,6 @@ private fun TopBar(onNavigateBack: () -> Unit) = TopAppBar(
 @Composable
 internal fun HazmatCard(
     modifier: Modifier = Modifier,
-    hazmatIsSelected: Boolean = false,
     selectedCategory: ShippingLabelHazmatCategory? = null,
     onClick: () -> Unit = {}
 ) {
@@ -505,7 +509,7 @@ internal fun HazmatCard(
         )
 
         Text(
-            text = if (hazmatIsSelected) stringResource(R.string.no) else stringResource(R.string.yes),
+            text = if (selectedCategory == null) stringResource(R.string.no) else stringResource(R.string.yes),
             style = MaterialTheme.typography.subtitle1,
             color = colorResource(id = R.color.color_on_surface_medium),
             modifier = Modifier
@@ -524,7 +528,7 @@ internal fun HazmatCard(
         )
     }
 
-    if (hazmatIsSelected && selectedCategory != null) {
+    if (selectedCategory != null) {
         // Display selected Hazmat area
     }
 }
@@ -872,6 +876,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             packageSelectionState = NotSelected,
             customsState = Unavailable,
+            hazmatState = Informed(ShippingLabelHazmatCategory.CLASS_1),
             onShippingFromAddressChange = {},
             onRefreshShippingRates = {},
             onSelectedRateSortOrderChanged = {},
