@@ -182,7 +182,7 @@ fun WooShippingSplitShipmentScreen(
                     }
                 }
 
-                Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                Column(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)) {
                     AnimatedVisibility(
                         visible = viewState.splitMessage != null,
                         label = "message_transition",
