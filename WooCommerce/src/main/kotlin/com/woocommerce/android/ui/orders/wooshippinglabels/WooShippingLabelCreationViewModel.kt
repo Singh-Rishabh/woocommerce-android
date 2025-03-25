@@ -631,6 +631,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(event)
     }
 
+    fun onHazmatNoticeClick() {
+        triggerEvent(StartHazmatFormEdit)
+    }
+
     fun allowBackNavigation(): Boolean {
         val state = uiState.value
         return when {
@@ -698,6 +702,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val destinationCountryCode: String,
         val customData: CustomsData?
     ) : Event()
+
+    data object StartHazmatFormEdit : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
