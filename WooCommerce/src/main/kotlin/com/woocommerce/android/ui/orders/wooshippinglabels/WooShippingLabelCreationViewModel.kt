@@ -107,7 +107,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
-    private val hazmatCategory = MutableStateFlow<HazmatState>(NotInformed)
+    private val hazmatState = MutableStateFlow<HazmatState>(NotInformed)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -401,8 +401,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             uiState,
             purchaseState,
             customsState,
-            loadTrigger.onStart { emit(Unit) }
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, _ ->
+            hazmatState
+        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, hazmatState ->
             if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -439,8 +439,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 uiState = uiState,
                 purchaseState = purchaseState,
                 customsState = customsState,
+                hazmatState = hazmatState,
                 destinationStatus = destinationStatus
             )
+        }.combine(loadTrigger.onStart { emit(Unit) }) { viewState, _ ->
+            viewState
         }.collectLatest {
             viewState.value = it
         }
@@ -640,7 +643,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
-        hazmatCategory.value = Informed(selectedCategory)
+        hazmatState.value = Informed(selectedCategory)
     }
 
     fun allowBackNavigation(): Boolean {
@@ -725,6 +728,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val uiState: UIControlsState,
             val purchaseState: PurchaseState,
             val customsState: CustomsState,
+            val hazmatState: HazmatState,
             val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
