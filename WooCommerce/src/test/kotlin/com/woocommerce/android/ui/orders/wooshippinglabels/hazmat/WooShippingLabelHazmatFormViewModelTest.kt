@@ -72,7 +72,6 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
         viewModel.onSelectCategoryClick()
 
         // Then
-        assertThat(capturedEvent).isNotNull()
         assertThat(capturedEvent).isInstanceOf(WooShippingLabelHazmatFormViewModel.OnSelectCategoryClicked::class.java)
     }
 
@@ -103,6 +102,7 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
         }
 
         // When
+        viewModel.onContainsHazmatChanged(true)
         viewModel.onHazmatCategorySelected(selectedCategory)
 
         // Then
@@ -120,11 +120,28 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
         // When
         viewModel.onContainsHazmatChanged(true)
         viewModel.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
-        viewModel.onContainsHazmatChanged(false)
         viewModel.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_3)
 
         // Then
-        assertThat(capturedViewState?.containsHazmatChecked).isFalse()
+        assertThat(capturedViewState?.containsHazmatChecked).isTrue()
         assertThat(capturedViewState?.currentHazmatSelection).isEqualTo(ShippingLabelHazmatCategory.CLASS_3)
+    }
+
+    @Test
+    fun `when onContainsHazmatChanged is set as false, then currentHazmatSelection is null`() = testBlocking {
+        // Given
+        var capturedViewState: WooShippingLabelHazmatFormViewModel.ViewState? = null
+        viewModel.viewState.observeForever {
+            capturedViewState = it
+        }
+
+        // When
+        viewModel.onContainsHazmatChanged(true)
+        viewModel.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
+        viewModel.onContainsHazmatChanged(false)
+
+        // Then
+        assertThat(capturedViewState?.containsHazmatChecked).isFalse()
+        assertThat(capturedViewState?.currentHazmatSelection).isNull()
     }
 }
