@@ -22,24 +22,7 @@ data class WooPosCartState(
         }
 
         @Parcelize
-        data class WithItems(val itemsInCart: List<Item>) : Body() {
-            // CouponsProject: Needs to be refactored in order to support non-product items
-            @Parcelize
-            data class Item(
-                val id: Id,
-                val name: String,
-                val price: String,
-                val description: String?,
-                val imageUrl: String?,
-                val productType: ProductType,
-            ) : Parcelable {
-                @Parcelize
-                data class Id(
-                    val productId: Long,
-                    val variationId: Long,
-                    val itemNumber: Int
-                ) : Parcelable
-            }
+        data class WithItems(val itemsInCart: List<WooPosCartItemViewState>) : Body(), Parcelable {
 
             override val amountOfItems: Int
                 get() = itemsInCart.size
@@ -58,7 +41,32 @@ enum class WooPosCartStatus {
     EDITABLE, CHECKOUT, EMPTY,
 }
 
-// CouponsProject: Needs to be renamed or Item needs to be a sealed class
-enum class ProductType {
-    Simple, Variation, Coupon
+sealed class WooPosCartItemViewState(open val name: String) : Parcelable {
+    @Parcelize
+    sealed class Product(
+        open val id: Long,
+        override val name: String,
+        open val price: String,
+        open val description: String?,
+        open val imageUrl: String?,
+    ) : WooPosCartItemViewState(name), Parcelable {
+        @Parcelize
+        data class Simple(
+            override val id: Long,
+            override val name: String,
+            override val price: String,
+            override val description: String?,
+            override val imageUrl: String?,
+        ) : Product(id, name, price, description, imageUrl), Parcelable
+
+        @Parcelize
+        data class Variation(
+            override val id: Long,
+            val parentProductId: Long,
+            override val name: String,
+            override val price: String,
+            override val description: String?,
+            override val imageUrl: String?,
+        ) : Product(id, name, price, description, imageUrl), Parcelable
+    }
 }
