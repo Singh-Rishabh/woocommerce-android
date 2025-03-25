@@ -13,7 +13,9 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,6 +39,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(),
             initialValue = _viewState.value,
         )
+
+    private var searchJob: Job? = null
 
     init {
         viewModelScope.launch { setEmptySearchQueryState() }
@@ -64,14 +68,16 @@ class WooPosItemsSearchViewModel @Inject constructor(
     private suspend fun CoroutineScope.handleChangedSearchQuery(
         event: ParentToChildrenEvent.SearchEvent.ChangedQuery
     ) {
+        searchJob?.cancel()
+
         if (event.query.isEmpty()) {
             setEmptySearchQueryState()
         } else {
-            viewModelScope.launch {
-                childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
-            }
+            searchJob = viewModelScope.launch {
+                delay(SEARCH_DEBOUNCING_TIME)
 
-            viewModelScope.launch {
+                childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
+
                 dataSource.searchProducts(event.query).collect { result ->
                     when (result) {
                         is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
@@ -139,5 +145,6 @@ class WooPosItemsSearchViewModel @Inject constructor(
 
     private companion object {
         const val MAX_ITEMS_COUNT = 3
+        const val SEARCH_DEBOUNCING_TIME = 500L
     }
 }
