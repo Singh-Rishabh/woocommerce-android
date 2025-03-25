@@ -3,14 +3,20 @@ package com.woocommerce.android.ui.woopos.home.items.search
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
+import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
 
 @Composable
 fun WooPosItemsSearchScreen(
@@ -28,6 +34,7 @@ fun WooPosItemsSearchScreen(
 private fun WooPosItemsSearchScreen(
     modifier: Modifier = Modifier,
     state: WooPosItemsSearchViewState,
+    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit = {},
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -38,6 +45,22 @@ private fun WooPosItemsSearchScreen(
             }
 
             is WooPosItemsSearchViewState.Content -> {
+                val listState = rememberLazyListState()
+                WooPosItemList(
+                    state,
+                    listState,
+                    { onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(it)) },
+                    { onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached) },
+                ) {
+                    WooPosPaginationErrorIndicator(
+                        message = stringResource(id = R.string.woopos_items_pagination_error_title),
+                        description = stringResource(id = R.string.woopos_items_pagination_error_description),
+                        primaryButton = Button(
+                            text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
+                            click = { onUIEvent(WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked) }
+                        ),
+                    )
+                }
             }
 
             WooPosItemsSearchViewState.Empty -> {
