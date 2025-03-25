@@ -101,16 +101,25 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         val sourceList = if (isRemote) {
             val fullList = productCache.toMutableList()
 
-            if (Random.nextBoolean()) {
-                val newProducts = generateMoreSampleProducts(fullList.size, 3)
-                fullList.addAll(0, newProducts)
+            val batchSize = Random.nextInt(10, 20)
+            repeat(3) {
+                val newProducts = generateMoreSampleProducts(fullList.size + (it * batchSize), batchSize)
+                newProducts.forEach { product ->
+                    val insertPosition = Random.nextInt(0, fullList.size + 1)
+                    fullList.add(insertPosition, product)
+                }
             }
 
-            val removeCount = Random.nextInt(0, 2)
-            if (removeCount > 0 && fullList.size > removeCount) {
-                repeat(removeCount) {
-                    val indexToRemove = Random.nextInt(0, fullList.size)
-                    fullList.removeAt(indexToRemove)
+            fullList.take(3).forEach { product ->
+                product.copy(
+                    name = "Updated ${product.name}",
+                    price = product.price?.multiply(BigDecimal(1.1))
+                )
+            }
+
+            repeat(Random.nextInt(1, 4)) {
+                if (fullList.isNotEmpty()) {
+                    fullList.removeAt(Random.nextInt(fullList.size))
                 }
             }
 
@@ -119,14 +128,12 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
             productCache
         }
 
-        // Apply the same search logic for both local and remote
         val results = sourceList.filter { product ->
             product.name.lowercase().contains(searchTerm) ||
                 product.sku.lowercase().contains(searchTerm) ||
                 product.description.lowercase().contains(searchTerm)
         }
 
-        // Apply pagination for remote search
         return if (isRemote && offset > 0) {
             val endIndex = minOf(offset + PAGE_SIZE, results.size)
             if (offset < results.size) {
@@ -148,10 +155,10 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
     }
 
     private fun generateSampleProducts(): List<Product> {
-        return List(20) { index -> createSampleProduct(index.toLong() + 1) }
+        return List(50) { index -> createSampleProduct(index.toLong() + 1) }
     }
 
-    private fun generateMoreSampleProducts(offset: Int, count: Int = 10): List<Product> {
+    private fun generateMoreSampleProducts(offset: Int, count: Int = 15): List<Product> {
         return List(count) { index ->
             createSampleProduct((offset + index + 1).toLong())
         }
@@ -314,6 +321,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
     }
 
     companion object {
-        private const val PAGE_SIZE = 10
+        private const val PAGE_SIZE = 20
     }
 }
