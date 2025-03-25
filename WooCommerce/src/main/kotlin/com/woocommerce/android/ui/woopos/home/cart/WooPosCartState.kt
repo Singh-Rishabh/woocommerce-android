@@ -16,7 +16,7 @@ data class WooPosCartState(
         abstract val amountOfItems: Int
 
         @Parcelize
-        data object Empty : Body() {
+        data object Empty : Body(), Parcelable {
             override val amountOfItems: Int
                 get() = 0
         }
@@ -40,6 +40,7 @@ enum class WooPosCartStatus {
     EDITABLE, CHECKOUT, EMPTY,
 }
 
+@Parcelize
 sealed class WooPosCartItemViewState(open val itemNumber: Int, open val name: String) : Parcelable {
     @Parcelize
     sealed class Product(
