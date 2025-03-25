@@ -18,6 +18,8 @@ import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHa
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Informed
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NotInformed
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
@@ -105,7 +107,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
-    private val hazmatCategory = MutableStateFlow<ShippingLabelHazmatCategory?>(null)
+    private val hazmatCategory = MutableStateFlow<HazmatState>(NotInformed)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -638,7 +640,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
-        hazmatCategory.value = selectedCategory
+        hazmatCategory.value = Informed(selectedCategory)
     }
 
     fun allowBackNavigation(): Boolean {
@@ -796,12 +798,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val currencyCode: String?
     )
 
-    // This will be extended later introducing the state with data coming from the Customs form
     sealed class CustomsState {
         data object NotRequired : CustomsState()
         data object ItnMissing : CustomsState()
         data object Unavailable : CustomsState()
         data class DataAvailable(val customsData: CustomsData) : CustomsState()
+    }
+
+    sealed class HazmatState {
+        data object NotInformed: HazmatState()
+        data class Informed(val hazmatCategory: ShippingLabelHazmatCategory): HazmatState()
     }
 
     companion object {
