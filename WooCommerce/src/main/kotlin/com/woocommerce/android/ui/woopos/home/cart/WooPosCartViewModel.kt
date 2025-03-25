@@ -35,6 +35,7 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,6 +61,12 @@ class WooPosCartViewModel @Inject constructor(
         .map { updateCartStatusDependingOnItems(it).also { newState -> updateAnalyticsData(newState) } }
         .map { updateToolbarState(it) }
         .map { updateStateDependingOnCartStatus(it) }
+
+    // Set initial value to 1 or the biggest used number when VM is restored after a process death.
+    private val itemNumberProvider =
+        AtomicInteger(
+            (_state.value.body as? WooPosCartState.Body.WithItems)
+                ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1)
 
     init {
         listenEventsFromParent()
@@ -193,9 +200,9 @@ class WooPosCartViewModel @Inject constructor(
     }
 
     private fun getItemNumber(): Int {
-        return when (val currentState = _state.value.body) {
+        return when (_state.value.body) {
             is WooPosCartState.Body.Empty -> 1
-            is WooPosCartState.Body.WithItems -> (currentState.itemsInCart.maxOfOrNull { it.itemNumber } ?: 0) + 1
+            is WooPosCartState.Body.WithItems ->  itemNumberProvider.incrementAndGet()
         }
     }
 
