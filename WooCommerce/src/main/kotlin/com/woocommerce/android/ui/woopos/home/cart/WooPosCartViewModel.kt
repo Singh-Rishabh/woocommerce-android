@@ -118,7 +118,7 @@ class WooPosCartViewModel @Inject constructor(
                 is Simple -> WooPosItemsViewModel.ItemClickedData.SimpleProduct(it.id)
                 is Variation -> WooPosItemsViewModel.ItemClickedData.Variation(
                     productId = it.id,
-                    id = it.parentProductId
+                    id = it.variationId
                 )
             }
         }
@@ -287,7 +287,7 @@ class WooPosCartViewModel @Inject constructor(
     ): WooPosCartItemViewState.Product.Variation =
         WooPosCartItemViewState.Product.Variation(
             id = product.remoteId,
-            parentProductId = this.remoteVariationId,
+            variationId = this.remoteVariationId,
             name = product.name,
             description = getNameForPOS(product, resourceProvider),
             price = formatPrice(price),

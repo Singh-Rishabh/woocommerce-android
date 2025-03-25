@@ -62,7 +62,7 @@ sealed class WooPosCartItemViewState(open val name: String) : Parcelable {
         @Parcelize
         data class Variation(
             override val id: Long,
-            val parentProductId: Long,
+            val variationId: Long,
             override val name: String,
             override val price: String,
             override val description: String?,

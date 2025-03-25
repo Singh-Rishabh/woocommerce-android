@@ -137,7 +137,7 @@ class WooPosCartViewModelTest {
         // THEN
         val itemsInCart = (states.last().body as WooPosCartState.Body.WithItems).itemsInCart
         assertThat(itemsInCart).hasSize(1)
-        assertThat((itemsInCart.first() as WooPosCartItemViewState.Product.Variation).parentProductId)
+        assertThat((itemsInCart.first() as WooPosCartItemViewState.Product.Variation).variationId)
             .isEqualTo(variation.remoteVariationId)
     }
 
