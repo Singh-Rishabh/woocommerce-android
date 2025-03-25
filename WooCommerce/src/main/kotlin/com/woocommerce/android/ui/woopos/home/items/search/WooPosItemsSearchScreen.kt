@@ -45,22 +45,7 @@ private fun WooPosItemsSearchScreen(
             }
 
             is WooPosItemsSearchViewState.Content -> {
-                val listState = rememberLazyListState()
-                WooPosItemList(
-                    state,
-                    listState,
-                    { onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(it)) },
-                    { onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached) },
-                ) {
-                    WooPosPaginationErrorIndicator(
-                        message = stringResource(id = R.string.woopos_items_pagination_error_title),
-                        description = stringResource(id = R.string.woopos_items_pagination_error_description),
-                        primaryButton = Button(
-                            text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
-                            click = { onUIEvent(WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked) }
-                        ),
-                    )
-                }
+                WooPosItemsSearchContent(state, onUIEvent)
             }
 
             WooPosItemsSearchViewState.Empty -> {
@@ -72,6 +57,29 @@ private fun WooPosItemsSearchScreen(
             WooPosItemsSearchViewState.Loading -> {
             }
         }
+    }
+}
+
+@Composable
+private fun WooPosItemsSearchContent(
+    state: WooPosItemsSearchViewState.Content,
+    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit
+) {
+    val listState = rememberLazyListState()
+    WooPosItemList(
+        state,
+        listState,
+        { onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(it)) },
+        { onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached) },
+    ) {
+        WooPosPaginationErrorIndicator(
+            message = stringResource(id = R.string.woopos_items_pagination_error_title),
+            description = stringResource(id = R.string.woopos_items_pagination_error_description),
+            primaryButton = Button(
+                text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
+                click = { onUIEvent(WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked) }
+            ),
+        )
     }
 }
 
