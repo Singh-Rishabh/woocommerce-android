@@ -68,11 +68,14 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.ActionSnackbar
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NotInformed
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
@@ -486,6 +489,8 @@ private fun TopBar(onNavigateBack: () -> Unit) = TopAppBar(
 @Composable
 internal fun HazmatCard(
     modifier: Modifier = Modifier,
+    hazmatIsSelected: Boolean = false,
+    selectedCategory: ShippingLabelHazmatCategory? = null,
     onClick: () -> Unit = {}
 ) {
     Row(modifier = modifier.clickable { onClick() }) {
@@ -500,7 +505,7 @@ internal fun HazmatCard(
         )
 
         Text(
-            text = stringResource(R.string.no),
+            text = if (hazmatIsSelected) stringResource(R.string.no) else stringResource(R.string.yes),
             style = MaterialTheme.typography.subtitle1,
             color = colorResource(id = R.color.color_on_surface_medium),
             modifier = Modifier
@@ -517,6 +522,10 @@ internal fun HazmatCard(
                 .align(Alignment.CenterVertically)
                 .padding(end = dimensionResource(R.dimen.minor_50))
         )
+    }
+
+    if (hazmatIsSelected && selectedCategory != null) {
+        // Display selected Hazmat area
     }
 }
 
