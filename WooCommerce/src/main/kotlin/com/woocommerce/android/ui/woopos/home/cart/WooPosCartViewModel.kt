@@ -165,7 +165,8 @@ class WooPosCartViewModel @Inject constructor(
                 when (event.itemData) {
                     is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> {
                         val itemNumber = getItemNumber()
-                        product.toCartListItem(itemNumber)                    }
+                        product.toCartListItem(itemNumber)
+                    }
                     is WooPosItemsViewModel.ItemClickedData.Variation -> {
                         val itemNumber = getItemNumber()
                         val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
