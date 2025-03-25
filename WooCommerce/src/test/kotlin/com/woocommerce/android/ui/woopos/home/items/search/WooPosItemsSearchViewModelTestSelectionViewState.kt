@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.woopos.home.items.search
 
 import app.cash.turbine.test
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,8 +26,8 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
 
             val popularItems = listOf(
-                WooPosItemSelectionViewState.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
-                WooPosItemSelectionViewState.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
+                Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
+                Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null)
             )
             val recentSearches = listOf(
                 "Recent Search 1"
@@ -94,10 +95,10 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         // GIVEN
         val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
         val popularItems = listOf(
-            WooPosItemSelectionViewState.Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
-            WooPosItemSelectionViewState.Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
-            WooPosItemSelectionViewState.Product.Simple(id = 3, name = "Popular Item 3", price = "$20.0", imageUrl = null),
-            WooPosItemSelectionViewState.Product.Simple(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
+            Product.Simple(id = 1, name = "Popular Item 1", price = "$10.0", imageUrl = null),
+            Product.Simple(id = 2, name = "Popular Item 2", price = "$15.0", imageUrl = null),
+            Product.Simple(id = 3, name = "Popular Item 3", price = "$20.0", imageUrl = null),
+            Product.Simple(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
         )
         val recentSearches = listOf(
             "Recent Search 1",

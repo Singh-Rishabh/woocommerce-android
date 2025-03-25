@@ -8,6 +8,7 @@ import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.products.WooPosProductsDataSource
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -109,7 +110,7 @@ class WooPosItemsViewModelTestSelectionViewState {
             val value = awaitItem() as WooPosItemsViewState.Content
 
             @Suppress("UNCHECKED_CAST")
-            val items = value.items as List<WooPosItemSelectionViewState.Product.Simple>
+            val items = value.items as List<Product.Simple>
             assertThat(items).hasSize(2)
             assertThat(items[0].id).isEqualTo(1)
             assertThat(items[0].name).isEqualTo("Product 1")
@@ -196,7 +197,7 @@ class WooPosItemsViewModelTestSelectionViewState {
     @Test
     fun `when item clicked, then send event to parent`() = runTest {
         // GIVEN
-        val product = WooPosItemSelectionViewState.Product.Simple(id = 1, name = "", price = "", imageUrl = null)
+        val product = Product.Simple(id = 1, name = "", price = "", imageUrl = null)
         val viewModel = createViewModel()
 
         // WHEN
@@ -515,7 +516,7 @@ class WooPosItemsViewModelTestSelectionViewState {
         // WHEN
         viewModel.onUIEvent(
             WooPosItemsUIEvent.ItemClicked(
-                WooPosItemSelectionViewState.Product.Variable(
+                Product.Variable(
                     id = 1L,
                     name = "Product 1",
                     numOfVariations = 10,
@@ -601,7 +602,7 @@ class WooPosItemsViewModelTestSelectionViewState {
                 // THEN
                 val value = awaitItem() as WooPosItemsViewState.Content
 
-                assertThat(value.items.filterIsInstance<WooPosItemSelectionViewState.Product.Variable>().size).isEqualTo(1)
+                assertThat(value.items.filterIsInstance<Product.Variable>().size).isEqualTo(1)
             }
         }
 
