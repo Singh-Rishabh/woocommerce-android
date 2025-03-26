@@ -58,6 +58,14 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }.flowOn(Dispatchers.IO).take(2)
 
+    private fun getCachedSearchResults(query: String): List<Product> {
+        return filteredProductCache[query.lowercase()] ?: run {
+            val results = performSearch(query, false)
+            updateFilteredProductCache(query, results)
+            results
+        }
+    }
+
     suspend fun loadMore(query: String? = null): Result<List<Product>> = withContext(Dispatchers.IO) {
         try {
             delay(1500)
@@ -83,14 +91,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         } catch (e: Exception) {
             WooLog.e(WooLog.T.POS, "Loading more products failed - ${e.message}", e)
             Result.failure(e)
-        }
-    }
-
-    private fun getCachedSearchResults(query: String): List<Product> {
-        return filteredProductCache[query.lowercase()] ?: run {
-            val results = performSearch(query, false)
-            updateFilteredProductCache(query, results)
-            results
         }
     }
 
@@ -128,21 +128,27 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
             productCache
         }
 
-        val results = sourceList.filter { product ->
+        val filteredResults = sourceList.filter { product ->
             product.name.lowercase().contains(searchTerm) ||
                 product.sku.lowercase().contains(searchTerm) ||
                 product.description.lowercase().contains(searchTerm)
         }
 
-        return if (isRemote && offset > 0) {
-            val endIndex = minOf(offset + PAGE_SIZE, results.size)
-            if (offset < results.size) {
-                results.subList(offset, endIndex)
+        return if (isRemote) {
+            if (offset == 0) {
+                filteredResults.take(PAGE_SIZE)
             } else {
-                emptyList()
+                val startIndex = offset
+                val endIndex = minOf(startIndex + PAGE_SIZE, filteredResults.size)
+
+                if (startIndex < filteredResults.size) {
+                    filteredResults.subList(startIndex, endIndex)
+                } else {
+                    emptyList()
+                }
             }
         } else {
-            results
+            filteredResults
         }
     }
 
