@@ -66,28 +66,18 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
-    suspend fun loadMore(query: String? = null): Result<List<Product>> = withContext(Dispatchers.IO) {
+    suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
         try {
             delay(1500)
 
-            if (query != null) {
-                val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
-                val moreResults = performSearch(query, true, currentResults.size)
-                val combinedResults = currentResults + moreResults
-                updateFilteredProductCache(query, combinedResults)
+            val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
+            val moreResults = performSearch(query, true, currentResults.size)
+            val combinedResults = currentResults + moreResults
+            updateFilteredProductCache(query, combinedResults)
 
-                canLoadMore.set(moreResults.size >= PAGE_SIZE)
+            canLoadMore.set(moreResults.size >= PAGE_SIZE)
 
-                Result.success(combinedResults)
-            } else {
-                val moreProducts = generateMoreSampleProducts(productCache.size)
-                val updatedList = productCache + moreProducts
-                updateProductCache(updatedList)
-
-                canLoadMore.set(moreProducts.size >= PAGE_SIZE)
-
-                Result.success(productCache)
-            }
+            Result.success(combinedResults)
         } catch (e: Exception) {
             WooLog.e(WooLog.T.POS, "Loading more products failed - ${e.message}", e)
             Result.failure(e)
@@ -98,35 +88,7 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         val searchTerm = query.trim().lowercase()
         if (searchTerm.isEmpty()) return productCache
 
-        val sourceList = if (isRemote) {
-            val fullList = productCache.toMutableList()
-
-            val batchSize = Random.nextInt(10, 20)
-            repeat(3) {
-                val newProducts = generateMoreSampleProducts(fullList.size + (it * batchSize), batchSize)
-                newProducts.forEach { product ->
-                    val insertPosition = Random.nextInt(0, fullList.size + 1)
-                    fullList.add(insertPosition, product)
-                }
-            }
-
-            fullList.take(3).forEach { product ->
-                product.copy(
-                    name = "Updated ${product.name}",
-                    price = product.price?.multiply(BigDecimal(1.1))
-                )
-            }
-
-            repeat(Random.nextInt(1, 4)) {
-                if (fullList.isNotEmpty()) {
-                    fullList.removeAt(Random.nextInt(fullList.size))
-                }
-            }
-
-            fullList
-        } else {
-            productCache
-        }
+        val sourceList = productCache
 
         val filteredResults = sourceList.filter { product ->
             product.name.lowercase().contains(searchTerm) ||
@@ -152,22 +114,12 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
-    private fun updateProductCache(newList: List<Product>) {
-        productCache = newList
-    }
-
     private fun updateFilteredProductCache(query: String, results: List<Product>) {
         filteredProductCache[query.lowercase()] = results
     }
 
     private fun generateSampleProducts(): List<Product> {
         return List(1000) { index -> createSampleProduct(index.toLong() + 1) }
-    }
-
-    private fun generateMoreSampleProducts(offset: Int, count: Int = 15): List<Product> {
-        return List(count) { index ->
-            createSampleProduct((offset + index + 1).toLong())
-        }
     }
 
     @Suppress("LongMethod")
