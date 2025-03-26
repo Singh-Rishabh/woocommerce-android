@@ -98,6 +98,22 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
         selectableItems.value = shipmentsMap
     }
 
+    fun onUpdateShipment(splitMovement: SplitMovement) {
+        currentShipments.update {
+            val shipments = it.toMutableMap()
+            if (splitMovement.updatedCurrentShipmentItems.isEmpty()) {
+                shipments.remove(splitMovement.currentShipment)
+            } else {
+                shipments[splitMovement.currentShipment] = splitMovement.updatedCurrentShipmentItems
+            }
+            shipments[splitMovement.updatedShipment] = shipments[splitMovement.updatedShipment]
+                ?.takeIf { it.isNotEmpty() }
+                ?.combine(splitMovement.updatedShipmentItems)
+                ?: splitMovement.updatedShipmentItems
+            shipments
+        }
+    }
+
     data class SplitShipmentViewState(
         val shipmentSelected: Int,
         val selectableItems: Map<Int, SelectableShippableItemsUI>,
