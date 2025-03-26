@@ -55,7 +55,6 @@ class WooPosItemsSearchViewModel @Inject constructor(
             is WooPosItemsSearchUiEvent.ItemClicked -> TODO()
             WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> TODO()
         }
-
     }
 
     private fun listenEventsFromParent() {
