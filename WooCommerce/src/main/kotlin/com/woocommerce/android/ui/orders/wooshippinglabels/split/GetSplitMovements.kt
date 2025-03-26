@@ -9,7 +9,7 @@ class GetSplitMovements @Inject constructor() {
         currentShipment: Int,
         items: Map<Int, List<ShippableItemModel>>,
         selection: Map<Int, SelectableShippableItemsUI>
-    ): List<SplitMovements> {
+    ): List<SplitMovement> {
         val currentShipmentItems = mutableListOf<ShippableItemModel>()
         val nextShipmentItems = mutableListOf<ShippableItemModel>()
 
@@ -48,7 +48,7 @@ class GetSplitMovements @Inject constructor() {
                 currentShipment = currentShipment,
                 items = items
             ).map { key ->
-                SplitMovements(
+                SplitMovement(
                     currentShipment = currentShipment,
                     updatedCurrentShipmentItems = currentShipmentItems,
                     updatedShipment = key,
@@ -80,7 +80,7 @@ class GetSplitMovements @Inject constructor() {
     }
 }
 
-data class SplitMovements(
+data class SplitMovement(
     val currentShipment: Int,
     val updatedCurrentShipmentItems: List<ShippableItemModel>,
     val updatedShipment: Int,
