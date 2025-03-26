@@ -82,7 +82,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
                     when (result) {
                         is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
                             if (result.products.isEmpty()) {
-                                _viewState.value = WooPosItemsSearchViewState.Empty
+                                _viewState.value = WooPosItemsSearchViewState.Loading
                             } else {
                                 _viewState.value = result.products.toContentState()
                             }
