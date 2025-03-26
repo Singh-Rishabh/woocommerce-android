@@ -52,7 +52,7 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         triggerEvent(OnSelectCategoryClicked)
     }
 
-    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
         if (_viewState.value.containsHazmatChecked.not()) return
 
         _viewState.update { viewState ->
@@ -65,6 +65,12 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         triggerEvent(OnUrlSelected(url))
     }
 
+    fun onBackPressed() {
+        _viewState.value.currentHazmatSelection
+            .let { OnHazmatCategorySelected(it) }
+            .let { triggerEvent(it) }
+    }
+
     @Parcelize
     data class ViewState(
         val containsHazmatChecked: Boolean = false,
@@ -74,7 +80,7 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     data object OnSelectCategoryClicked : Event()
 
     data class OnUrlSelected(val url: String) : Event()
-    data class OnHazmatCategorySelected(val selectedCategory: ShippingLabelHazmatCategory) : Event()
+    data class OnHazmatCategorySelected(val selectedCategory: ShippingLabelHazmatCategory?) : Event()
 
     companion object {
         const val KEY_HAZMAT_CATEGORY_SELECTOR_RESULT = "hazmat_category_selector_result"
