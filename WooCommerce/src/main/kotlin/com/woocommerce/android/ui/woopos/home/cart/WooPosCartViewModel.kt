@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.cart.WooPosCartState.Body.WithItems
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.CHECKOUT
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
@@ -62,12 +63,7 @@ class WooPosCartViewModel @Inject constructor(
         .map { updateToolbarState(it) }
         .map { updateStateDependingOnCartStatus(it) }
 
-    // Set initial value to 1 or the biggest used number when VM is restored after a process death.
-    private val itemNumberProvider =
-        AtomicInteger(
-            (_state.value.body as? WooPosCartState.Body.WithItems)
-                ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
-        )
+    private val itemNumberProvider = AtomicInteger(getInitialValueOrHighestUsedItemNumberAfterProcessDeath())
 
     init {
         listenEventsFromParent()
@@ -311,6 +307,9 @@ class WooPosCartViewModel @Inject constructor(
             price = formatPrice(price),
             imageUrl = image?.source,
         )
+
+    private fun getInitialValueOrHighestUsedItemNumberAfterProcessDeath() = (_state.value.body as? WithItems)
+        ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
 }
 
 private fun WooPosItemsViewModel.ItemClickedData.posItemNameForAnalytics(): String {
