@@ -532,7 +532,21 @@ internal fun HazmatCard(
     }
 
     if (selectedCategory != null) {
-        // Display selected Hazmat area
+        Box(modifier = Modifier.padding(16.dp)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = colorResource(id = R.color.woo_gray_5),
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                    )
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = stringResource(selectedCategory.stringResourceID)
+                )
+            }
+        }
     }
 }
 
