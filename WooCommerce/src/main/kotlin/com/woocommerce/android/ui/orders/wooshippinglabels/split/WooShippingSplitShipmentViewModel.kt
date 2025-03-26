@@ -55,7 +55,7 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
             selectableItems = selectableItems,
             splitMovements = getSplitMovements(
                 currentShipment = shipmentSelected,
-                items = currentShipments,
+                shipments = currentShipments,
                 selection = selectableItems
             ),
             splitMessage = message
