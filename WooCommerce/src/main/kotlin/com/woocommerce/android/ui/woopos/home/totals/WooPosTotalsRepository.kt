@@ -48,17 +48,20 @@ class WooPosTotalsRepository @Inject constructor(
     }
 
     private suspend fun createOrder(itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>): Order {
+        val products = itemClickedDataList.filterIsInstance<WooPosItemsViewModel.ItemClickedData.Product>()
+        val coupons = itemClickedDataList.filterIsInstance<WooPosItemsViewModel.ItemClickedData.Coupon>()
         return Order.getEmptyOrder(
             dateCreated = dateUtils.getCurrentDateInSiteTimeZone() ?: Date(),
             dateModified = dateUtils.getCurrentDateInSiteTimeZone() ?: Date()
         ).copy(
             status = Order.Status.Custom(Order.Status.AUTO_DRAFT),
-            items = createOrderItems(itemClickedDataList)
+            items = createProductItems(products),
+            couponLines = createCouponLines(coupons),
         )
     }
 
-    private suspend fun createOrderItems(
-        itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
+    private suspend fun createProductItems(
+        itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData.Product>
     ): List<Order.Item> {
         return itemClickedDataList
             .groupingBy { it.id }
@@ -74,11 +77,17 @@ class WooPosTotalsRepository @Inject constructor(
                         quantity,
                         itemData
                     )
-                    is WooPosItemsViewModel.ItemClickedData.Coupon -> throw IllegalArgumentException(
-                        "Coupons are not supported"
-                    )
                 }
             }
+    }
+
+    private fun createCouponLines(coupons: List<WooPosItemsViewModel.ItemClickedData.Coupon>): List<Order.CouponLine> {
+        return coupons.map {
+            Order.CouponLine(
+                code = it.couponCode,
+                id = it.id,
+            )
+        }
     }
 
     private suspend fun createSimpleProductOrderItem(
