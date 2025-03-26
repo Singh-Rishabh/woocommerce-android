@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.hazmat
 
-import androidx.lifecycle.SavedStateHandle
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,7 +13,11 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
 
     @Before
     fun setup() {
-        viewModel = WooShippingLabelHazmatFormViewModel(SavedStateHandle())
+        viewModel = WooShippingLabelHazmatFormViewModel(
+            WooShippingLabelHazmatFormFragmentArgs(
+                selectedCategoryName = null
+            ).toSavedStateHandle()
+        )
     }
 
     @Test
