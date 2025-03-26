@@ -15,8 +15,6 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
-
-import com.woocommerce.android.ui.woopos.home.cart.WooPosCartState.Body.WithItems
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.CHECKOUT
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
@@ -123,6 +121,7 @@ class WooPosCartViewModel @Inject constructor(
                     productId = it.id,
                     id = it.variationId
                 )
+                is WooPosCartItemViewState.Coupon -> WooPosItemsViewModel.ItemClickedData.Coupon(it.id, it.name)
             }
         }
         sendEventToParent(ChildToParentEvent.CheckoutClicked(itemClickedDataList))
@@ -195,8 +194,12 @@ class WooPosCartViewModel @Inject constructor(
         return productVariation.toCartListItem(itemNumber, product)
     }
 
-    private suspend fun handleCouponClicked(couponId: Long, couponCode: String): WooPosCartItemViewState {
-        TODO("Not yet implemented")
+    private fun handleCouponClicked(couponId: Long, couponCode: String): WooPosCartItemViewState {
+        return WooPosCartItemViewState.Coupon(
+            itemNumber = getItemNumber(),
+            id = couponId,
+            name = couponCode
+        )
     }
 
     private fun clearCart() {
@@ -314,8 +317,8 @@ class WooPosCartViewModel @Inject constructor(
             imageUrl = image?.source,
         )
 
-    private fun getInitialValueOrHighestUsedItemNumberAfterProcessDeath() = (_state.value.body as? WithItems)
-        ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
+    private fun getInitialValueOrHighestUsedItemNumberAfterProcessDeath() =
+        (_state.value.body as? WooPosCartState.Body.WithItems)?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
 }
 
 private fun WooPosItemsViewModel.ItemClickedData.posItemNameForAnalytics(): String {
