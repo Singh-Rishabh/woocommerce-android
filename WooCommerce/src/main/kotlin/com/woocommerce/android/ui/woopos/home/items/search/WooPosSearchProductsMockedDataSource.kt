@@ -155,7 +155,7 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
     }
 
     private fun generateSampleProducts(): List<Product> {
-        return List(50) { index -> createSampleProduct(index.toLong() + 1) }
+        return List(1000) { index -> createSampleProduct(index.toLong() + 1) }
     }
 
     private fun generateMoreSampleProducts(offset: Int, count: Int = 15): List<Product> {
