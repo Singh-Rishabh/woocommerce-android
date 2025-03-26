@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.split
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asLiveData
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShippableItemUI
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.toSelectableUIModel
 import com.woocommerce.android.util.CurrencyFormatter
 import com.woocommerce.android.viewmodel.MultiLiveEvent
@@ -11,9 +12,13 @@ import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.mapValues
 import kotlin.getValue
 
 @HiltViewModel
@@ -26,36 +31,40 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     private val storeOptions = navArgs.shipmentArgs.storeOptions
 
     private val currentShipments = MutableStateFlow(navArgs.shipmentArgs.shipments)
+    val selectableItems: MutableStateFlow<Map<Int, SelectableShippableItemsUI>?> = MutableStateFlow(null)
+
     private val shipmentSelected = MutableStateFlow(navArgs.shipmentArgs.shipments.keys.first())
     private val splitMessage: MutableStateFlow<SplitShipmentMessage?> = MutableStateFlow(null)
-
-    val selectableItems = navArgs.shipmentArgs.shipments.mapValues {
-        it.value.toSelectableUIModel(
-            currencyFormatter = currencyFormatter,
-            dimensionUnit = storeOptions.dimensionUnit,
-            weightUnit = storeOptions.weightUnit
-        )
-    }.let { MutableStateFlow(it) }
 
     init {
         launch {
             delay(NOTIFICATIONS_DELAY)
             splitMessage.value = SplitShipmentMessage.Instructions
         }
+        launch {
+            currentShipments.collectLatest { shipments ->
+                selectableItems.value = shipments.mapValues {
+                    it.value.toSelectableUIModel(
+                        currencyFormatter = currencyFormatter,
+                        dimensionUnit = storeOptions.dimensionUnit,
+                        weightUnit = storeOptions.weightUnit
+                    )
+                }
+            }
+        }
     }
 
     val viewState = combine(
-        currentShipments,
         shipmentSelected,
-        selectableItems,
+        selectableItems.filterNotNull(),
         splitMessage
-    ) { currentShipments, shipmentSelected, selectableItems, message ->
+    ) { shipmentSelected, selectableItems, message ->
         SplitShipmentViewState(
             shipmentSelected = shipmentSelected,
             selectableItems = selectableItems,
             splitMovements = getSplitMovements(
                 currentShipment = shipmentSelected,
-                items = currentShipments,
+                items = currentShipments.value,
                 selection = selectableItems
             ),
             splitMessage = message
@@ -75,7 +84,7 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
         index: Int,
         selectedIndexes: Set<Int>? = null
     ) {
-        val shipmentsMap = selectableItems.value.toMutableMap()
+        val shipmentsMap = selectableItems.value?.toMutableMap() ?: return
         val items = shipmentsMap.getValue(shipmentKey)
         val item = items.shippableItems[index]
         val updatedItem = when (item) {
