@@ -6,6 +6,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -385,6 +386,211 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             assertThat(variableProduct.name).isEqualTo("Variable Product")
             assertThat(variableProduct.numOfVariations).isEqualTo(3)
             assertThat(variableProduct.variationIds).containsExactly(101L, 102L, 103L)
+        }
+    }
+
+    @Test
+    fun `given content state and more pages available, when end of list reached, then load more data`() = runTest {
+        // GIVEN
+        val query = "test query"
+        val initialProducts = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Test Product 1",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+        val additionalProducts = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 2,
+                productName = "Test Product 2",
+                amount = "20.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(emptyList())
+        whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(emptyList())
+        whenever(mockDataSource.searchProducts(query)).thenReturn(
+            flowOf(
+                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                    Result.success(initialProducts)
+                )
+            )
+        )
+        whenever(mockDataSource.hasMorePages).thenReturn(true)
+        whenever(mockDataSource.loadMore()).thenReturn(Result.success(additionalProducts))
+        whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
+        whenever(mockPriceFormat(BigDecimal("20.0"))).thenReturn("$20.0")
+        whenever(mockParentToChildrenEventReceiver.events).thenReturn(
+            flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        advanceTimeBy(600)
+
+        // THEN
+        viewModel.viewState.test {
+            skipItems(1)
+            val initialState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(initialState.items).hasSize(1)
+
+            viewModel.onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached)
+
+            val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
+
+            val finalState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(finalState.items).hasSize(2)
+            assertThat(finalState.paginationState).isEqualTo(PaginationState.None)
+        }
+    }
+
+    @Test
+    fun `given content state when load more fails, then pagination state is error`() = runTest {
+        // GIVEN
+        val query = "test query"
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Test Product",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(emptyList())
+        whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(emptyList())
+        whenever(mockDataSource.searchProducts(query)).thenReturn(
+            flowOf(
+                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        whenever(mockDataSource.hasMorePages).thenReturn(true)
+        whenever(mockDataSource.loadMore()).thenReturn(Result.failure(Exception("Failed to load more")))
+        whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
+        whenever(mockParentToChildrenEventReceiver.events).thenReturn(
+            flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        advanceTimeBy(600)
+
+        // THEN
+        viewModel.viewState.test {
+            skipItems(1)
+            awaitItem() as WooPosItemsSearchViewState.Content
+
+            viewModel.onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached)
+
+            val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
+
+            val errorState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(errorState.paginationState).isEqualTo(PaginationState.Error)
+        }
+    }
+
+    @Test
+    fun `given cached products, when search performed, then cached results shown while loading`() = runTest {
+        // GIVEN
+        val query = "test query"
+        val cachedProducts = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Cached Product",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+        val remoteProducts = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 2,
+                productName = "Remote Product",
+                amount = "20.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(emptyList())
+        whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(emptyList())
+        whenever(mockDataSource.searchProducts(query)).thenReturn(
+            flowOf(
+                WooPosSearchProductsMockedDataSource.ProductsResult.Cached(cachedProducts),
+                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(Result.success(remoteProducts))
+            )
+        )
+        whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
+        whenever(mockPriceFormat(BigDecimal("20.0"))).thenReturn("$20.0")
+        whenever(mockParentToChildrenEventReceiver.events).thenReturn(
+            flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        advanceTimeBy(600)
+
+        // THEN
+        viewModel.viewState.test {
+            awaitItem() as WooPosItemsSearchViewState.EmptySearchQuery
+
+            val cachedState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(cachedState.items).hasSize(1)
+            assertThat((cachedState.items[0] as Product.Simple).name).isEqualTo("Cached Product")
+
+            val remoteState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(remoteState.items).hasSize(1)
+            assertThat((remoteState.items[0] as Product.Simple).name).isEqualTo("Remote Product")
+        }
+
+        verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Started)
+        verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Finished)
+    }
+
+    @Test
+    fun `given empty cached products, when search performed, then loading state shown`() = runTest {
+        // GIVEN
+        val query = "test query"
+        val remoteProducts = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Remote Product",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(emptyList())
+        whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(emptyList())
+        whenever(mockDataSource.searchProducts(query)).thenReturn(
+            flowOf(
+                WooPosSearchProductsMockedDataSource.ProductsResult.Cached(emptyList()),
+                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(Result.success(remoteProducts))
+            )
+        )
+        whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
+        whenever(mockParentToChildrenEventReceiver.events).thenReturn(
+            flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        advanceTimeBy(600)
+
+        // THEN
+        viewModel.viewState.test {
+            awaitItem() as WooPosItemsSearchViewState.EmptySearchQuery
+
+            val loadingState = awaitItem()
+            assertThat(loadingState).isEqualTo(WooPosItemsSearchViewState.Loading)
+
+            val remoteState = awaitItem() as WooPosItemsSearchViewState.Content
+            assertThat(remoteState.items).hasSize(1)
         }
     }
 
