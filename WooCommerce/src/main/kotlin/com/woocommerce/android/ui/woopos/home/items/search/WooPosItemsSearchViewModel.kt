@@ -41,11 +41,21 @@ class WooPosItemsSearchViewModel @Inject constructor(
         )
 
     private var searchJob: Job? = null
+    private var loadMoreJob: Job? = null
 
     init {
         viewModelScope.launch { setEmptySearchQueryState() }
 
         listenEventsFromParent()
+    }
+
+    fun onUIEvent(event: WooPosItemsSearchUiEvent) {
+        when (event) {
+            WooPosItemsSearchUiEvent.EndOfItemsListReached -> onEndOfListReached()
+            is WooPosItemsSearchUiEvent.ItemClicked -> TODO()
+            WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> TODO()
+        }
+
     }
 
     private fun listenEventsFromParent() {
@@ -107,6 +117,29 @@ class WooPosItemsSearchViewModel @Inject constructor(
         }
     }
 
+    private fun onEndOfListReached() {
+        val currentState = _viewState.value
+        if (currentState !is WooPosItemsSearchViewState.Content) {
+            return
+        }
+
+        if (!dataSource.hasMorePages) {
+            return
+        }
+
+        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
+
+        loadMoreJob?.cancel()
+        loadMoreJob = viewModelScope.launch {
+            val result = dataSource.loadMore()
+            _viewState.value = if (result.isSuccess) {
+                result.getOrThrow().toContentState()
+            } else {
+                currentState.copy(paginationState = PaginationState.Error)
+            }
+        }
+    }
+
     private suspend fun List<Product>.toContentState(
         paginationState: PaginationState = PaginationState.None
     ) = WooPosItemsSearchViewState.Content(
@@ -130,7 +163,6 @@ class WooPosItemsSearchViewModel @Inject constructor(
             }
         },
         paginationState = paginationState,
-        reloadingProductsWithPullToRefresh = false
     )
 
     private suspend fun CoroutineScope.setEmptySearchQueryState() {
