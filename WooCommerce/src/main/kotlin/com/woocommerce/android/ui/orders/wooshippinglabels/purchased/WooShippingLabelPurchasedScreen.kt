@@ -188,6 +188,7 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
             }
             Spacer(modifier = Modifier.padding(top = 16.dp))
             HazmatCard(
+                selectedCategory = shippingData?.hazmatSelection,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
