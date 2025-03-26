@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetSplitMovements @Inject constructor() {
     operator fun invoke(
         currentShipment: Int,
-        items: Map<Int, List<ShippableItemModel>>,
+        shipments: Map<Int, List<ShippableItemModel>>,
         selection: Map<Int, SelectableShippableItemsUI>
     ): List<SplitMovements> {
         val currentShipmentItems = mutableListOf<ShippableItemModel>()
@@ -16,29 +16,29 @@ class GetSplitMovements @Inject constructor() {
         selection.getValue(currentShipment).shippableItems.forEachIndexed { index, item ->
             when {
                 item is SelectableShippableItemUI.SingleSelectableShippableItemUI && item.isSelected -> {
-                    nextShipmentItems.add(items.getValue(currentShipment)[index])
+                    nextShipmentItems.add(shipments.getValue(currentShipment)[index])
                 }
 
                 item is SelectableShippableItemUI.SingleSelectableShippableItemUI && !item.isSelected -> {
-                    currentShipmentItems.add(items.getValue(currentShipment)[index])
+                    currentShipmentItems.add(shipments.getValue(currentShipment)[index])
                 }
 
                 item is SelectableShippableItemUI.ExpandableSelectableShippableItemUI && item.isSelected -> {
-                    nextShipmentItems.add(items.getValue(currentShipment)[index])
+                    nextShipmentItems.add(shipments.getValue(currentShipment)[index])
                 }
 
                 item is SelectableShippableItemUI.ExpandableSelectableShippableItemUI &&
                     !item.isSelected &&
                     item.selectedIndexes.isNotEmpty() -> {
                     val selected = item.selectedIndexes.size
-                    val currentItem = items.getValue(currentShipment)[index]
+                    val currentItem = shipments.getValue(currentShipment)[index]
 
                     currentShipmentItems.add(currentItem.copy(quantity = currentItem.quantity - selected))
                     nextShipmentItems.add(currentItem.copy(quantity = selected.toFloat()))
                 }
 
                 else -> {
-                    currentShipmentItems.add(items.getValue(currentShipment)[index])
+                    currentShipmentItems.add(shipments.getValue(currentShipment)[index])
                 }
             }
         }
@@ -46,7 +46,7 @@ class GetSplitMovements @Inject constructor() {
         return if (nextShipmentItems.isNotEmpty()) {
             getPossibleKeys(
                 currentShipment = currentShipment,
-                items = items
+                items = shipments
             ).map { key ->
                 SplitMovements(
                     currentShipment = currentShipment,
