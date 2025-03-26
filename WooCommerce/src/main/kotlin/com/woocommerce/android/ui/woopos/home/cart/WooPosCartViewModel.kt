@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.cart.WooPosCartState.Body.WithItems
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.CHECKOUT
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
@@ -35,6 +36,7 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,6 +62,8 @@ class WooPosCartViewModel @Inject constructor(
         .map { updateCartStatusDependingOnItems(it).also { newState -> updateAnalyticsData(newState) } }
         .map { updateToolbarState(it) }
         .map { updateStateDependingOnCartStatus(it) }
+
+    private val itemNumberProvider = AtomicInteger(getInitialValueOrHighestUsedItemNumberAfterProcessDeath())
 
     init {
         listenEventsFromParent()
@@ -194,9 +198,9 @@ class WooPosCartViewModel @Inject constructor(
     }
 
     private fun getItemNumber(): Int {
-        return when (val currentState = _state.value.body) {
+        return when (_state.value.body) {
             is WooPosCartState.Body.Empty -> 1
-            is WooPosCartState.Body.WithItems -> (currentState.itemsInCart.maxOfOrNull { it.itemNumber } ?: 0) + 1
+            is WooPosCartState.Body.WithItems -> itemNumberProvider.incrementAndGet()
         }
     }
 
@@ -303,6 +307,9 @@ class WooPosCartViewModel @Inject constructor(
             price = formatPrice(price),
             imageUrl = image?.source,
         )
+
+    private fun getInitialValueOrHighestUsedItemNumberAfterProcessDeath() = (_state.value.body as? WithItems)
+        ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
 }
 
 private fun WooPosItemsViewModel.ItemClickedData.posItemNameForAnalytics(): String {
