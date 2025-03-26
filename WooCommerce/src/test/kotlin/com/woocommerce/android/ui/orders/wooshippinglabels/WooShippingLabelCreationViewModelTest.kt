@@ -411,6 +411,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(addressValidationHelper.canFetchShippingRates(any())) doReturn false
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData)
@@ -436,6 +437,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(weight = 0f) }
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData.copy(weight = "0"))
@@ -534,7 +536,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         verify(getShippingRates, times(1))
-            .invoke(any(), any(), any(), any(), any(), any(), any())
+            .invoke(any(), any(), any(), any(), any(), any(), isNull())
     }
 
     @Test
@@ -564,7 +566,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         verify(getShippingRates, times(1))
-            .invoke(any(), any(), any(), any(), any(), any(), any())
+            .invoke(any(), any(), any(), any(), any(), any(), isNull())
     }
 
     @Test
