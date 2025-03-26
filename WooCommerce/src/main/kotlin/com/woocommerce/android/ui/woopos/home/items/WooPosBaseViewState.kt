@@ -1,7 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.items
 
 sealed class WooPosBaseViewState(
-    open val reloadingProductsWithPullToRefresh: Boolean
+    open val reloadingWithPullToRefresh: Boolean
 )
 
 interface ContentViewState {

@@ -233,9 +233,9 @@ class WooPosItemsViewModel @Inject constructor(
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
             is WooPosItemsViewState.Content -> state.copy(reloadingWithPullToRefresh = true)
-            is WooPosItemsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosItemsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosItemsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Loading -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosItemsViewState.Error -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosItemsViewState.Empty -> state.copy(reloadingWithPullToRefresh = true)
         }
 
     private suspend fun List<Product>.toContentState(

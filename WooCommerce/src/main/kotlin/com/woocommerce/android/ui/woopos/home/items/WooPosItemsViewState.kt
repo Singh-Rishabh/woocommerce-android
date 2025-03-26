@@ -5,8 +5,8 @@ import androidx.annotation.StringRes
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
 
 sealed class WooPosItemsViewState(
-    override val reloadingProductsWithPullToRefresh: Boolean,
-) : WooPosBaseViewState(reloadingProductsWithPullToRefresh) {
+    override val reloadingWithPullToRefresh: Boolean,
+) : WooPosBaseViewState(reloadingWithPullToRefresh) {
     data class Content(
         val search: SearchState,
         override val items: List<WooPosItemSelectionViewState>,
@@ -29,15 +29,15 @@ sealed class WooPosItemsViewState(
     }
 
     data class Loading(
-        override val reloadingProductsWithPullToRefresh: Boolean = false,
+        override val reloadingWithPullToRefresh: Boolean = false,
         val withCart: Boolean
-    ) : WooPosItemsViewState(reloadingProductsWithPullToRefresh)
+    ) : WooPosItemsViewState(reloadingWithPullToRefresh)
 
     data class Error(
-        override val reloadingProductsWithPullToRefresh: Boolean = false
-    ) : WooPosItemsViewState(reloadingProductsWithPullToRefresh)
+        override val reloadingWithPullToRefresh: Boolean = false
+    ) : WooPosItemsViewState(reloadingWithPullToRefresh)
 
     data class Empty(
-        override val reloadingProductsWithPullToRefresh: Boolean = false
-    ) : WooPosItemsViewState(reloadingProductsWithPullToRefresh)
+        override val reloadingWithPullToRefresh: Boolean = false
+    ) : WooPosItemsViewState(reloadingWithPullToRefresh)
 }

@@ -82,7 +82,7 @@ private fun WooPosItemsScreen(
 ) {
     val state = itemsStateFlow.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(
-        state.value.reloadingProductsWithPullToRefresh,
+        state.value.reloadingWithPullToRefresh,
         onRefresh = { onUIEvent(PullToRefreshTriggered) },
     )
 
@@ -222,7 +222,7 @@ private fun MainItemsList(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = state.value.reloadingProductsWithPullToRefresh,
+            refreshing = state.value.reloadingWithPullToRefresh,
             state = pullToRefreshState
         )
     }
@@ -462,7 +462,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
 fun WooPosItemsScreenLoadingPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Loading(
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             withCart = false
         )
     )
