@@ -28,7 +28,10 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
 
     init {
         _viewState.update { viewState ->
-            viewState.copy(currentHazmatSelection = navArgs.selectedCategory)
+            viewState.copy(
+                containsHazmatChecked = navArgs.selectedCategory != null,
+                currentHazmatSelection = navArgs.selectedCategory
+            )
         }
     }
 
