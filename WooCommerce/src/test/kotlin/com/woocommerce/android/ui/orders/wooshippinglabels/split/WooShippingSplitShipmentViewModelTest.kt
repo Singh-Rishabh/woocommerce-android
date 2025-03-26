@@ -76,7 +76,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
         }
 
     @Test
-    fun `when a expandable product inner selection changes, then the product is updated`() = testBlocking {
+    fun `when an expandable product inner selection changes, then the product is updated`() = testBlocking {
         val shippableItemIndex = 2
         val shipmentArgs = SplitShipmentArgs(
             orderId = 1L,
@@ -101,7 +101,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
     }
 
     @Test
-    fun `when a expandable product selection changes, then the product is updated`() = testBlocking {
+    fun `when an expandable product selection changes, then the product is updated`() = testBlocking {
         val shippableItemIndex = 2
         val shipmentArgs = SplitShipmentArgs(
             orderId = 1L,
