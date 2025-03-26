@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -90,7 +94,29 @@ fun WooShippingLabelHazmatFormScreen(
         }
 
         if (selectedHazmatCategory != null) {
-            HazmatSelectionCard(selectedHazmatCategory)
+            Column {
+                Row {
+                    Text(
+                        text = stringResource(R.string.product_category),
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    IconButton(
+                        onClick = onSelectCategoryClick,
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            tint = colorResource(id = R.color.color_icon_menu),
+                            contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
+                        )
+                    }
+                }
+                HazmatSelectionCard(selectedHazmatCategory)
+            }
         } else {
             WCColoredButton(
                 text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
