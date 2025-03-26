@@ -6,12 +6,13 @@ import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.CustomsData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
-import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsItemDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.DestinationAddressDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.OriginAddressDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.PackageDTO
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.PackageDTO.CommonPackageDTO
+import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.PackageDTO.PackageWithCustomsDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking.WooShippingRatesRestClient
 import javax.inject.Inject
 
@@ -47,16 +48,12 @@ class WooShippingRatesRepository @Inject constructor(
             country = shipTo.country.code,
             name = "${shipTo.firstName} ${shipTo.lastName}"
         )
-        val packageDTO = PackageDTO(
-            id = selectedPackage.id,
-            boxId = "default_package",
-            length = selectedPackage.length.toDouble(),
-            width = selectedPackage.width.toDouble(),
-            height = selectedPackage.height.toDouble(),
-            weight = weight.toDouble(),
-            isLetter = selectedPackage.isLetter,
-            customsDTO = customsData?.toCustomDTO()
+        val packageDTO = createPackageDTO(
+            selectedPackage = selectedPackage,
+            weight = weight,
+            customsData = customsData
         )
+
         val result = restClient.getShippingRates(
             site = selectedSite.get(),
             orderId = orderId.toString(),
@@ -73,23 +70,48 @@ class WooShippingRatesRepository @Inject constructor(
         }
     }
 
-    private fun CustomsData.toCustomDTO() = CustomsDTO(
-        contentsType = contentType.name.toLowerCase(Locale.current),
-        contentExplanation = contentDescription,
-        restrictionType = restrictionType.name.toLowerCase(Locale.current),
-        restrictionComments = restrictionDescription,
-        isReturnToSender = isReturnToSender,
-        itn = itn,
-        items = items.map {
-            CustomsItemDTO(
-                productId = it.productID,
-                description = it.description,
-                quantity = it.quantity,
-                price = it.value.toDouble(),
-                weight = it.weight.toDouble(),
-                hsTariffNumber = it.hsTariffNumber,
-                originCountry = it.originCountryCode
+    private fun createPackageDTO(
+        selectedPackage: PackageData,
+        weight: Float,
+        customsData: CustomsData?
+    ): PackageDTO {
+        return if (customsData != null) {
+            PackageWithCustomsDTO(
+                id = selectedPackage.id,
+                boxId = "default_package",
+                length = selectedPackage.length.toDouble(),
+                width = selectedPackage.width.toDouble(),
+                height = selectedPackage.height.toDouble(),
+                weight = weight.toDouble(),
+                isLetter = selectedPackage.isLetter,
+                contentsType = customsData.contentType.name.toLowerCase(Locale.current),
+                contentExplanation = customsData.contentDescription,
+                restrictionType = customsData.restrictionType.name.toLowerCase(Locale.current),
+                restrictionComments = customsData.restrictionDescription,
+                isReturnToSender = if (customsData.isReturnToSender) "return" else "abandon",
+                itn = customsData.itn,
+                items = customsData.items.map {
+                    CustomsItemDTO(
+                        productId = it.productID,
+                        description = it.description,
+                        quantity = it.quantity,
+                        price = it.value.toDouble(),
+                        weight = it.weight.toDouble(),
+                        hsTariffNumber = it.hsTariffNumber,
+                        originCountry = it.originCountryCode
+                    )
+                }
+            )
+        } else {
+            CommonPackageDTO(
+                id = selectedPackage.id,
+                boxId = "default_package",
+                length = selectedPackage.length.toDouble(),
+                width = selectedPackage.width.toDouble(),
+                height = selectedPackage.height.toDouble(),
+                weight = weight.toDouble(),
+                isLetter = selectedPackage.isLetter
             )
         }
-    )
+    }
 }
