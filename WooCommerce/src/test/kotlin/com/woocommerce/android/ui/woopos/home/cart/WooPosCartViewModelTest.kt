@@ -167,46 +167,46 @@ class WooPosCartViewModelTest {
     @Test
     fun `given product in cart, when product remove button clicked in cart, then should remove product from cart`() =
         runTest {
-        // GIVEN
-        val product = ProductTestUtils.generateProduct(
-            productId = 23L,
-            productName = "title",
-            amount = "10.0"
-        ).copy(firstImageUrl = "url")
+            // GIVEN
+            val product = ProductTestUtils.generateProduct(
+                productId = 23L,
+                productName = "title",
+                amount = "10.0"
+            ).copy(firstImageUrl = "url")
 
-        val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
-        whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
-        whenever(getProductById(eq(product.remoteId))).thenReturn(product)
-        val sut = createSut()
-        val states = sut.state.captureValues()
+            val parentToChildrenEventsMutableFlow = MutableSharedFlow<ParentToChildrenEvent>()
+            whenever(parentToChildrenEventReceiver.events).thenReturn(parentToChildrenEventsMutableFlow)
+            whenever(getProductById(eq(product.remoteId))).thenReturn(product)
+            val sut = createSut()
+            val states = sut.state.captureValues()
 
-        parentToChildrenEventsMutableFlow.emit(
-            ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.Product.Simple(
-                    id = product.remoteId
+            parentToChildrenEventsMutableFlow.emit(
+                ParentToChildrenEvent.ItemClickedInProductSelector(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
+                        id = product.remoteId
+                    )
                 )
             )
-        )
 
-        // WHEN
-        sut.onUIEvent(
-            WooPosCartUIEvent.ItemRemovedFromCart(
-                WooPosCartItemViewState.Product.Simple(
-                    itemNumber = 1,
-                    id = product.remoteId,
-                    name = product.name,
-                    price = "10.0$",
-                    imageUrl = product.firstImageUrl,
-                    description = null,
+            // WHEN
+            sut.onUIEvent(
+                WooPosCartUIEvent.ItemRemovedFromCart(
+                    WooPosCartItemViewState.Product.Simple(
+                        itemNumber = 1,
+                        id = product.remoteId,
+                        name = product.name,
+                        price = "10.0$",
+                        imageUrl = product.firstImageUrl,
+                        description = null,
+                    )
                 )
             )
-        )
 
-        // THEN
-        val itemsInCartAfterRemoveClicked =
-            (states.last().body as? WooPosCartState.Body.WithItems)?.itemsInCart ?: emptyList()
-        assertThat(itemsInCartAfterRemoveClicked).isEmpty()
-    }
+            // THEN
+            val itemsInCartAfterRemoveClicked =
+                (states.last().body as? WooPosCartState.Body.WithItems)?.itemsInCart ?: emptyList()
+            assertThat(itemsInCartAfterRemoveClicked).isEmpty()
+        }
 
     @Test
     fun `given coupon in cart, when coupon remove button clicked in cart, then should remove coupon from cart`() =
