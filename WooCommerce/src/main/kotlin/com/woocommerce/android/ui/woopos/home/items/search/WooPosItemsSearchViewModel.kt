@@ -9,7 +9,7 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -111,8 +111,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
         paginationState: PaginationState = PaginationState.None
     ) = WooPosItemsSearchViewState.Content(
         items = map { product ->
-            if (product.productType == ProductType.VARIATION) {
-                WooPosItem.Product.Variable(
+            if (product.productType == ProductType.VARIABLE) {
+                WooPosItemSelectionViewState.Product.Variable(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),
@@ -121,7 +121,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
                     variationIds = product.variationIds
                 )
             } else {
-                WooPosItem.Product.Simple(
+                WooPosItemSelectionViewState.Product.Simple(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),

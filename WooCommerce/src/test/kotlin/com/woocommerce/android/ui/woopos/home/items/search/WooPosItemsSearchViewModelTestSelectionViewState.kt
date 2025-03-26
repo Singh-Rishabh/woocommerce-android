@@ -187,7 +187,9 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
             val content = contentState as WooPosItemsSearchViewState.Content
             assertThat(content.items).hasSize(1)
-            assertThat((content.items[0] as WooPosItem.Product.Simple).name).isEqualTo("Test Product")
+            assertThat((content.items[0] as Product.Simple).name).isEqualTo(
+                "Test Product"
+            )
         }
 
         verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Started)
@@ -252,7 +254,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
             val content = awaitItem() as WooPosItemsSearchViewState.Content
             assertThat(content.items).hasSize(1)
-            assertThat((content.items[0] as WooPosItem.Product.Simple).name).isEqualTo("Test Product")
+            assertThat((content.items[0] as Product.Simple).name).isEqualTo("Test Product")
         }
 
         verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Started)
@@ -348,7 +350,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                 productId = 1,
                 productName = "Variable Product",
                 amount = "10.0",
-                productType = "variation",
+                productType = "variable",
                 isVariable = true,
                 variationIds = "[101,102,103]"
             )
@@ -377,9 +379,9 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             skipItems(0)
 
             val value = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(value.items[0]).isInstanceOf(WooPosItem.Product.Variable::class.java)
+            assertThat(value.items[0]).isInstanceOf(Product.Variable::class.java)
 
-            val variableProduct = value.items[0] as WooPosItem.Product.Variable
+            val variableProduct = value.items[0] as Product.Variable
             assertThat(variableProduct.name).isEqualTo("Variable Product")
             assertThat(variableProduct.numOfVariations).isEqualTo(3)
             assertThat(variableProduct.variationIds).containsExactly(101L, 102L, 103L)
