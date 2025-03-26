@@ -22,7 +22,7 @@ class GetSplitMovementsTest : BaseUnitTest() {
     fun `when there is no items selection, then movements is empty`() {
         val result = sut.invoke(
             currentShipment = defaultShipments.keys.first(),
-            items = defaultShipments,
+            shipments = defaultShipments,
             selection = defaultSelection
         )
         assert(result.isEmpty())
@@ -39,7 +39,7 @@ class GetSplitMovementsTest : BaseUnitTest() {
 
         val result = sut.invoke(
             currentShipment = defaultShipments.keys.first(),
-            items = defaultShipments,
+            shipments = defaultShipments,
             selection = selection
         )
         assertThat(result.size).isEqualTo(1)
@@ -57,7 +57,7 @@ class GetSplitMovementsTest : BaseUnitTest() {
 
         val result = sut.invoke(
             currentShipment = defaultShipments.keys.first(),
-            items = defaultShipments,
+            shipments = defaultShipments,
             selection = selection
         )
         assertThat(result.size).isEqualTo(1)
@@ -75,7 +75,7 @@ class GetSplitMovementsTest : BaseUnitTest() {
 
         val result = sut.invoke(
             currentShipment = defaultShipments.keys.first(),
-            items = defaultShipments,
+            shipments = defaultShipments,
             selection = selection
         )
         assertThat(result.size).isEqualTo(1)
