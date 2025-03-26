@@ -195,7 +195,7 @@ class WooPosItemsViewModelTestSelectionViewState {
     }
 
     @Test
-    fun `when item clicked, then send event to parent`() = runTest {
+    fun `when product clicked, then send event to parent`() = runTest {
         // GIVEN
         val product = Product.Simple(id = 1, name = "", price = "", imageUrl = null)
         val viewModel = createViewModel()
