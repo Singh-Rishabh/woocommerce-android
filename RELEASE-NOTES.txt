@@ -4,6 +4,9 @@
 22.1
 -----
 
+22.0.2
+-----
+- [**] Fixed crash during order creation when currency symbol instead of currency code provided in an order [https://github.com/woocommerce/woocommerce-android/pull/13844]
 
 22.0.1
 -----
