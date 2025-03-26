@@ -96,7 +96,7 @@ class WooShippingRatesRepository @Inject constructor(
                         productId = it.productID,
                         description = it.description,
                         quantity = it.quantity,
-                        price = it.value.toDouble(),
+                        value = it.value.toDouble(),
                         weight = it.weight.toDouble(),
                         hsTariffNumber = it.hsTariffNumber,
                         originCountry = it.originCountryCode

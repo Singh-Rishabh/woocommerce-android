@@ -127,7 +127,7 @@ data class CustomsDTO(
 data class CustomsItemDTO(
     val description: String,
     val quantity: Float,
-    val price: Double,
+    val value: Double,
     val weight: Double,
     @SerializedName("hs_tariff_number") val hsTariffNumber: String,
     @SerializedName("origin_country") val originCountry: String,
