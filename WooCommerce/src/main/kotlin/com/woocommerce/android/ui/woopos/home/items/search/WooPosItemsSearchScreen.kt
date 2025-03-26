@@ -27,6 +27,7 @@ fun WooPosItemsSearchScreen(
     WooPosItemsSearchScreen(
         modifier = modifier,
         state = state,
+        onUIEvent = viewModel::onUIEvent,
     )
 }
 
