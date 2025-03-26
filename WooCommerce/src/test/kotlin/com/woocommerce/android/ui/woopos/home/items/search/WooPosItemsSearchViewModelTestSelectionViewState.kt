@@ -420,7 +420,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             )
         )
         whenever(mockDataSource.hasMorePages).thenReturn(true)
-        whenever(mockDataSource.loadMore()).thenReturn(Result.success(additionalProducts))
+        whenever(mockDataSource.loadMore(query)).thenReturn(Result.success(additionalProducts))
         whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
         whenever(mockPriceFormat(BigDecimal("20.0"))).thenReturn("$20.0")
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
@@ -471,7 +471,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             )
         )
         whenever(mockDataSource.hasMorePages).thenReturn(true)
-        whenever(mockDataSource.loadMore()).thenReturn(Result.failure(Exception("Failed to load more")))
+        whenever(mockDataSource.loadMore(query)).thenReturn(Result.failure(Exception("Failed to load more")))
         whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
             flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
