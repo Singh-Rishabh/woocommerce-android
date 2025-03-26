@@ -64,19 +64,10 @@ class GetSplitMovements @Inject constructor() {
         currentShipment: Int,
         items: Map<Int, List<ShippableItemModel>>,
     ): List<Int> {
-        val possibleKeys = items.keys.filter { it != currentShipment }.toMutableList()
-        if (possibleKeys.isEmpty()) {
-            possibleKeys.add(currentShipment + 1)
-        } else {
-            possibleKeys.max().let { maxKey ->
-                if (currentShipment != maxKey + 1) {
-                    maxKey + 1
-                } else {
-                    maxKey + 2
-                }
-            }.let { possibleKeys.add(it) }
-        }
-        return possibleKeys
+        val otherKeys = items.keys.filter { it != currentShipment }
+        var nextKey = (otherKeys.maxOrNull() ?: currentShipment) + 1
+        if (nextKey == currentShipment) nextKey++
+        return otherKeys + nextKey
     }
 }
 
