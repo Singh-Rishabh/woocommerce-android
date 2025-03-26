@@ -380,7 +380,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                 ),
             ),
             paginationState = PaginationState.Loading,
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -436,7 +436,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                 ),
             ),
             paginationState = PaginationState.Error,
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -531,7 +531,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = false,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -583,7 +583,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingProductsWithPullToRefresh = false,
+            reloadingWithPullToRefresh = false,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,

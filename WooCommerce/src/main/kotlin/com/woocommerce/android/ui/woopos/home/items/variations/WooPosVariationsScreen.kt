@@ -278,7 +278,7 @@ fun WooPosVariationsScreenPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
         )
     )
     WooPosTheme {

@@ -232,7 +232,7 @@ class WooPosItemsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosItemsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Content -> state.copy(reloadingWithPullToRefresh = true)
             is WooPosItemsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
             is WooPosItemsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
             is WooPosItemsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
@@ -261,7 +261,7 @@ class WooPosItemsViewModel @Inject constructor(
             }
         },
         paginationState = paginationState,
-        reloadingProductsWithPullToRefresh = false,
+        reloadingWithPullToRefresh = false,
         couponsEnabled = isCouponsEnabled.invoke(),
         bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
