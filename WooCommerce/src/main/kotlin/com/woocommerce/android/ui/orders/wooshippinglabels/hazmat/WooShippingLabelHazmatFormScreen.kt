@@ -95,11 +95,12 @@ fun WooShippingLabelHazmatFormScreen(
 
         if (selectedHazmatCategory != null) {
             Column {
-                Row {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = stringResource(R.string.product_category),
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = colorResource(id = R.color.color_on_surface),
                         modifier = Modifier.weight(1f)
                     )
 
@@ -167,6 +168,21 @@ fun WooShippingLabelHazmatFormScreenPreview() {
         WooShippingLabelHazmatFormScreen(
             containsHazmatChecked = false,
             selectedHazmatCategory = null,
+            onContainsHazmatChanged = {},
+            onSelectCategoryClick = {},
+            onUrlSelected = {}
+        )
+    }
+}
+
+@Preview
+@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun WooShippingLabelHazmatFormScreenWithSelectionPreview() {
+    WooThemeWithBackground {
+        WooShippingLabelHazmatFormScreen(
+            containsHazmatChecked = true,
+            selectedHazmatCategory = ShippingLabelHazmatCategory.CLASS_1,
             onContainsHazmatChanged = {},
             onSelectCategoryClick = {},
             onUrlSelected = {}
