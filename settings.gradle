@@ -1,18 +1,14 @@
 pluginManagement {
     repositories {
         google()
-        exclusiveContent {
-            forRepository {
-                maven {
-                    url = uri("https://a8c-libs.s3.amazonaws.com/android")
-                }
-            }
-            filter {
+        gradlePluginPortal()
+        maven {
+            url = uri("https://a8c-libs.s3.amazonaws.com/android")
+            content {
                 includeGroup "com.automattic.android"
                 includeGroup "com.automattic.android.measure-builds"
             }
         }
-        gradlePluginPortal()
     }
 }
 
@@ -61,6 +57,7 @@ static def readPropertiesFromFile(File file) {
 }
 
 buildCache {
+    local.directory = file("${System.getProperty("user.home")}/build-cache-test")
     if (gradle.ext.isCi) {
         remote(HttpBuildCache) {
             url = "http://10.0.2.214:5071/cache/"
@@ -182,6 +179,8 @@ include ':libs:login'
 include ':WooCommerce', ':WooCommerce-Wear'
 include ':libs:detektrules'
 
+//includeBuild("..//measure-builds-gradle-plugin/measure-builds")
+
 gradle.ext.fluxCBinaryPath = "org.wordpress:fluxc"
 gradle.ext.fluxCWooCommercePluginBinaryPath = "org.wordpress.fluxc.plugins:woocommerce"
 gradle.ext.loginFlowBinaryPath = "org.wordpress:login"
@@ -199,4 +198,23 @@ gradle.ext {
 }
 
 apply from: './config/gradle/include_builds.gradle'
-apply from: './config/gradle/gradle_build_scan.gradle'
+//apply from: './config/gradle/gradle_build_scan.gradle'
+
+// Only run build scan on CI builds.
+develocity {
+    buildScan {
+        termsOfUseUrl = 'https://gradle.com/terms-of-service'
+        termsOfUseAgree = 'yes'
+        if (gradle.ext.isCi) {
+            tag 'CI'
+            uploadInBackground = false
+        } else {
+            obfuscation {
+                username { username -> username.digest('SHA-1') }
+                hostname { _ -> "" }
+                ipAddresses { addresses -> addresses.collect { address -> "0.0.0.0" } }
+            }
+        }
+    }
+}
+

@@ -31,13 +31,13 @@ ext {
 measureBuilds {
     enable = secretProperties.getProperty("measureBuildsEnabled", "false").toBoolean()
     onBuildMetricsReadyListener { report ->
-//        SlowSlowTasksMetricsReporter.report(report)
+        SlowSlowTasksMetricsReporter.report(report)
         RemoteBuildCacheMetricsReporter.report(report)
-//        InternalA8cCiReporter.reportBlocking(
-//                report,
-//                "woocommerce",
-//                secretProperties.getProperty("appsMetricsToken")
-//        )
+        InternalA8cCiReporter.reportBlocking(
+                report,
+                "woocommerce",
+                secretProperties.getProperty("appsMetricsToken")
+        )
     }
     attachGradleScanId = false
 }
