@@ -13,7 +13,7 @@ class GetSplitMovements @Inject constructor() {
         val currentShipmentItems = mutableListOf<ShippableItemModel>()
         val nextShipmentItems = mutableListOf<ShippableItemModel>()
 
-        selection.getValue(currentShipment).shippableItems.forEachIndexed { index, item ->
+        selection[currentShipment]?.shippableItems?.forEachIndexed { index, item ->
             when {
                 item is SelectableShippableItemUI.SingleSelectableShippableItemUI && item.isSelected -> {
                     nextShipmentItems.add(items.getValue(currentShipment)[index])
