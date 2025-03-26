@@ -336,9 +336,7 @@ class SitePickerFragment :
     }
 
     private fun showWooUpgradeDialog() {
-        WooUpgradeRequiredDialog.show().also {
-            it.show(parentFragmentManager, WooUpgradeRequiredDialog.TAG)
-        }
+        WooUpgradeRequiredDialogFragment().show(parentFragmentManager, WooUpgradeRequiredDialogFragment.TAG)
     }
 
     private fun navigateToNewToWooScreen() {
