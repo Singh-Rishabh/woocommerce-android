@@ -88,6 +88,11 @@ class WooPosItemsSearchHelper @Inject constructor(
     }
 
     fun onClearSearchClicked() {
+        coroutineScope.launch {
+            childToParentEventSender.sendToParent(
+                ChildToParentEvent.SearchEvent.ChangedQuery(query = "")
+            )
+        }
         updateToInitialOpenState()
     }
 
