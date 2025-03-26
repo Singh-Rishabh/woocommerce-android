@@ -85,6 +85,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelect
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatSelectionCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.ErrorMessageWithButton
@@ -533,27 +534,7 @@ internal fun HazmatCard(
     }
 
     if (selectedCategory != null) {
-        val backgroundColor = if (isSystemInDarkTheme()) {
-            colorResource(id = R.color.woo_gray_50)
-        } else {
-            colorResource(id = R.color.woo_gray_5)
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = backgroundColor,
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                    )
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(selectedCategory.stringResourceID)
-                )
-            }
-        }
+        HazmatSelectionCard(selectedCategory = selectedCategory)
     }
 }
 

@@ -29,12 +29,14 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringRes
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 
 @Composable
 fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingLabelHazmatFormScreen(
         containsHazmatChecked = viewState?.containsHazmatChecked == true,
+        selectedHazmatCategory = viewState?.currentHazmatSelection,
         onContainsHazmatChanged = viewModel::onContainsHazmatChanged,
         onSelectCategoryClick = viewModel::onSelectCategoryClick,
         onUrlSelected = viewModel::onUrlSelected
@@ -44,6 +46,7 @@ fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewMo
 @Composable
 fun WooShippingLabelHazmatFormScreen(
     containsHazmatChecked: Boolean,
+    selectedHazmatCategory: ShippingLabelHazmatCategory?,
     onContainsHazmatChanged: (Boolean) -> Unit,
     onSelectCategoryClick: () -> Unit,
     onUrlSelected: (url: String) -> Unit,
@@ -85,12 +88,17 @@ fun WooShippingLabelHazmatFormScreen(
                 )
             )
         }
-        WCColoredButton(
-            text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
-            onClick = onSelectCategoryClick,
-            enabled = containsHazmatChecked,
-            modifier = modifier.fillMaxWidth()
-        )
+
+        if (selectedHazmatCategory != null) {
+            HazmatSelectionCard(selectedHazmatCategory)
+        } else {
+            WCColoredButton(
+                text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
+                onClick = onSelectCategoryClick,
+                enabled = containsHazmatChecked,
+                modifier = modifier.fillMaxWidth()
+            )
+        }
 
         HorizontalDivider(modifier = modifier.padding(vertical = 8.dp))
 
@@ -132,6 +140,7 @@ fun WooShippingLabelHazmatFormScreenPreview() {
     WooThemeWithBackground {
         WooShippingLabelHazmatFormScreen(
             containsHazmatChecked = false,
+            selectedHazmatCategory = null,
             onContainsHazmatChanged = {},
             onSelectCategoryClick = {},
             onUrlSelected = {}
