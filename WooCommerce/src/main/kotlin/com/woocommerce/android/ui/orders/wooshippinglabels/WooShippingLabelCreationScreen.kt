@@ -75,8 +75,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState
-import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Informed
-import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NotInformed
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Declared
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
@@ -432,7 +431,7 @@ private fun LabelCreationScreenWithBottomSheet(
                 HazmatCard(
                     onClick = onHazmatNoticeClick,
                     selectedCategory = hazmatState
-                        .run { this as? Informed }
+                        .run { this as? Declared }
                         ?.hazmatCategory,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -899,7 +898,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             packageSelectionState = NotSelected,
             customsState = Unavailable,
-            hazmatState = Informed(ShippingLabelHazmatCategory.CLASS_1),
+            hazmatState = Declared(ShippingLabelHazmatCategory.CLASS_1),
             onShippingFromAddressChange = {},
             onRefreshShippingRates = {},
             onSelectedRateSortOrderChanged = {},

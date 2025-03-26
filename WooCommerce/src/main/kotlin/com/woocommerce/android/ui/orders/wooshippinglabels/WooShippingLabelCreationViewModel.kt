@@ -18,8 +18,8 @@ import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHa
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
-import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Informed
-import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NotInformed
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Declared
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NoSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
@@ -61,7 +61,6 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -107,7 +106,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
-    private val hazmatState = MutableStateFlow<HazmatState>(NotInformed)
+    private val hazmatState = MutableStateFlow<HazmatState>(NoSelection)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -643,7 +642,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
-        hazmatState.value = Informed(selectedCategory)
+        hazmatState.value = Declared(selectedCategory)
     }
 
     fun allowBackNavigation(): Boolean {
@@ -810,8 +809,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     sealed class HazmatState {
-        data object NotInformed: HazmatState()
-        data class Informed(val hazmatCategory: ShippingLabelHazmatCategory): HazmatState()
+        data object NoSelection: HazmatState()
+        data class Declared(val hazmatCategory: ShippingLabelHazmatCategory): HazmatState()
     }
 
     companion object {
