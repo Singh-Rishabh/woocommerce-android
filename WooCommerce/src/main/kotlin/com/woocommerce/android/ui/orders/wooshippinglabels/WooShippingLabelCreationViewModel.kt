@@ -645,8 +645,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartHazmatFormEdit(selectedCategory))
     }
 
-    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
-        hazmatState.value = Declared(selectedCategory)
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
+        when {
+            selectedCategory != null -> Declared(selectedCategory)
+            else -> NoSelection
+        }.let { hazmatState.value = it }
     }
 
     fun allowBackNavigation(): Boolean {
