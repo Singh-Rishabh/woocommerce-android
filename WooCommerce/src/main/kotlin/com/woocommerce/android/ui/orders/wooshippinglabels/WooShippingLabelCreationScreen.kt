@@ -532,12 +532,18 @@ internal fun HazmatCard(
     }
 
     if (selectedCategory != null) {
-        Box(modifier = Modifier.padding(16.dp)) {
+        val backgroundColor = if (isSystemInDarkTheme()) {
+            colorResource(id = R.color.woo_gray_50)
+        } else {
+            colorResource(id = R.color.woo_gray_5)
+        }
+
+        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = colorResource(id = R.color.woo_gray_5),
+                        color = backgroundColor,
                         shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
                     )
                     .padding(16.dp)
