@@ -34,6 +34,27 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
     }
 
     @Test
+    fun `when initialized with a selectedCategory, then viewState follows the navArgs`() = testBlocking {
+        // Given
+        val selectedCategory = ShippingLabelHazmatCategory.CLASS_1
+        viewModel = WooShippingLabelHazmatFormViewModel(
+            WooShippingLabelHazmatFormFragmentArgs(
+                selectedCategoryName = selectedCategory.name
+            ).toSavedStateHandle()
+        )
+
+        // When
+        var capturedViewState: WooShippingLabelHazmatFormViewModel.ViewState? = null
+        viewModel.viewState.observeForever {
+            capturedViewState = it
+        }
+
+        // Then
+        assertThat(capturedViewState?.containsHazmatChecked).isTrue()
+        assertThat(capturedViewState?.currentHazmatSelection).isEqualTo(selectedCategory)
+    }
+
+    @Test
     fun `when onContainsHazmatChanged is called with true, then viewState is updated`() = testBlocking {
         // Given
         var capturedViewState: WooShippingLabelHazmatFormViewModel.ViewState? = null
