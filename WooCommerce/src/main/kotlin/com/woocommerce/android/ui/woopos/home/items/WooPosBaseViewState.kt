@@ -5,7 +5,7 @@ sealed class WooPosBaseViewState(
 )
 
 interface ContentViewState {
-    val items: List<WooPosItem>
+    val items: List<WooPosItemSelectionViewState>
     val reloadingProductsWithPullToRefresh: Boolean
     val paginationState: PaginationState
 }

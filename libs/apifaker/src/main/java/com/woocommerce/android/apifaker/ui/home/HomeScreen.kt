@@ -1,6 +1,5 @@
 package com.woocommerce.android.apifaker.ui.home
 
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +29,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -49,9 +50,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.woocommerce.android.apifaker.ExportImportDestination
 import com.woocommerce.android.apifaker.models.ApiType
 import com.woocommerce.android.apifaker.models.HttpMethod
 import com.woocommerce.android.apifaker.models.MockedEndpoint
@@ -87,8 +90,8 @@ private fun HomeScreen(
     snackbarHostState: SnackbarHostState,
     onRemoveRequest: (Request) -> Unit,
     onMockingToggleChanged: (Boolean) -> Unit,
-    onExportEndpoints: (Uri) -> Unit,
-    onImportEndpoints: (Uri) -> Unit,
+    onExportEndpoints: (ExportImportDestination) -> Unit,
+    onImportEndpoints: (ExportImportDestination) -> Unit,
     onExit: () -> Unit
 ) {
     Scaffold(
@@ -156,34 +159,10 @@ private fun HomeScreen(
 @Composable
 private fun TopMenu(
     hasEndpoints: Boolean,
-    onExportEndpoints: (Uri) -> Unit,
-    onImportEndpoints: (Uri) -> Unit
+    onExportEndpoints: (ExportImportDestination) -> Unit,
+    onImportEndpoints: (ExportImportDestination) -> Unit
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
-
-    @Composable
-    fun ExportButton() {
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) {
-            expanded = false
-            it?.let { onExportEndpoints(it) }
-        }
-
-        DropdownMenuItem(onClick = { launcher.launch("endpoints.json") }) {
-            Text("Export")
-        }
-    }
-
-    @Composable
-    fun ImportButton() {
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-            expanded = false
-            it?.let { onImportEndpoints(it) }
-        }
-
-        DropdownMenuItem(onClick = { launcher.launch(arrayOf("application/json")) }) {
-            Text("Import")
-        }
-    }
 
     IconButton(onClick = { expanded = !expanded }) {
         Icon(
@@ -197,9 +176,111 @@ private fun TopMenu(
         onDismissRequest = { expanded = false }
     ) {
         if (hasEndpoints) {
-            ExportButton()
+            ExportMenuButton(
+                onDismiss = { expanded = false },
+                onExportEndpoints = {
+                    expanded = false
+                    onExportEndpoints(it)
+                }
+            )
         }
-        ImportButton()
+        ImportMenuButton(
+            onDismiss = { expanded = false },
+            onImportEndpoints = {
+                expanded = false
+                onImportEndpoints(it)
+            }
+        )
+    }
+}
+
+@Composable
+fun ExportMenuButton(
+    onDismiss: () -> Unit,
+    onExportEndpoints: (ExportImportDestination) -> Unit
+) {
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) {
+        it?.let { onExportEndpoints(ExportImportDestination.File(it)) }
+    }
+
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    DropdownMenuItem(onClick = { showDialog = true }) {
+        Text("Export")
+    }
+
+    if (showDialog) {
+        Dialog({
+            showDialog = false
+            onDismiss()
+        }) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface, MaterialTheme.shapes.medium)
+                    .padding(16.dp)
+                    .defaultMinSize(minWidth = 200.dp)
+            ) {
+                Text("Export to:", Modifier.align(Alignment.Start))
+                TextButton(onClick = {
+                    showDialog = false
+                    launcher.launch("endpoints.json")
+                }) {
+                    Text("File")
+                }
+                TextButton(onClick = {
+                    showDialog = false
+                    onExportEndpoints(ExportImportDestination.Clipboard)
+                }) {
+                    Text("Clipboard")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ImportMenuButton(
+    onDismiss: () -> Unit,
+    onImportEndpoints: (ExportImportDestination) -> Unit
+) {
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
+        it?.let { onImportEndpoints(ExportImportDestination.File(it)) }
+    }
+
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    DropdownMenuItem(onClick = { showDialog = true }) {
+        Text("Import")
+    }
+
+    if (showDialog) {
+        Dialog({
+            showDialog = false
+            onDismiss()
+        }) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .background(MaterialTheme.colors.surface, MaterialTheme.shapes.medium)
+                    .padding(16.dp)
+                    .defaultMinSize(minWidth = 200.dp)
+            ) {
+                Text("Import from:", Modifier.align(Alignment.Start))
+                TextButton(onClick = {
+                    showDialog = false
+                    launcher.launch(arrayOf("application/json"))
+                }) {
+                    Text("File")
+                }
+                TextButton(onClick = {
+                    showDialog = false
+                    onImportEndpoints(ExportImportDestination.Clipboard)
+                }) {
+                    Text("Clipboard")
+                }
+            }
+        }
     }
 }
 

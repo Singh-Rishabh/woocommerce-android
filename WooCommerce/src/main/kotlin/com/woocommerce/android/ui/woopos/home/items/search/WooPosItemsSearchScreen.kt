@@ -15,8 +15,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.component.Button
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 
 @Composable
 fun WooPosItemsSearchScreen(
@@ -94,8 +93,8 @@ fun WooPosItemsSearchScreenPreview() {
         ) {
             WooPosItemsEmptySearchQueryState(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
-                    popularItems = listOf<WooPosItem.Product>(
-                        WooPosItem.Product.Simple(
+                    popularItems = listOf<WooPosItemSelectionViewState.Product>(
+                        WooPosItemSelectionViewState.Product.Simple(
                             id = 1,
                             name = "Popular Item 1",
                             price = "10.0$",

@@ -136,7 +136,7 @@ class WooPosItemsViewModel @Inject constructor(
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
         when (event.item) {
-            is WooPosItem.Product.Simple -> {
+            is WooPosItemSelectionViewState.Product.Simple -> {
                 onItemClicked(
                     ItemClickedData.SimpleProduct(
                         id = event.item.id
@@ -144,7 +144,7 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
 
-            is WooPosItem.Product.Variable -> {
+            is WooPosItemSelectionViewState.Product.Variable -> {
                 viewModelScope.launch {
                     navigator.sendNavigationEvent(
                         NavigateToVariationsScreen(
@@ -158,7 +158,7 @@ class WooPosItemsViewModel @Inject constructor(
                 }
             }
 
-            is WooPosItem.Variation -> {
+            is WooPosItemSelectionViewState.Variation -> {
             }
         }
     }
@@ -243,7 +243,7 @@ class WooPosItemsViewModel @Inject constructor(
     ) = WooPosItemsViewState.Content(
         items = map { product ->
             if (product.isVariable()) {
-                WooPosItem.Product.Variable(
+                WooPosItemSelectionViewState.Product.Variable(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),
@@ -252,7 +252,7 @@ class WooPosItemsViewModel @Inject constructor(
                     variationIds = product.variationIds
                 )
             } else {
-                WooPosItem.Product.Simple(
+                WooPosItemSelectionViewState.Product.Simple(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),
