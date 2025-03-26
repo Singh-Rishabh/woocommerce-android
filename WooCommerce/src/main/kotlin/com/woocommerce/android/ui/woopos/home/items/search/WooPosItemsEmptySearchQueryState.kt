@@ -40,8 +40,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpa
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemCard
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 
 @Composable
 fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySearchQuery) {
@@ -89,7 +89,7 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
 }
 
 @Composable
-private fun PopularItemsSection(popularItems: List<WooPosItem.Product>) {
+private fun PopularItemsSection(popularItems: List<WooPosItemSelectionViewState.Product>) {
     SectionHeader(
         icon = Icons.AutoMirrored.Outlined.TrendingUp,
         title = stringResource(R.string.woopos_search_popular_items_title)
@@ -209,20 +209,20 @@ fun WooPosItemsEmptySearchQueryStatePreview() {
         ) {
             WooPosItemsEmptySearchQueryState(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
-                    popularItems = listOf<WooPosItem.Product>(
-                        WooPosItem.Product.Simple(
+                    popularItems = listOf(
+                        WooPosItemSelectionViewState.Product.Simple(
                             id = 1,
                             name = "Popular Item 1",
                             price = "10.0$",
                             imageUrl = "https://example.com/image1.jpg",
                         ),
-                        WooPosItem.Product.Simple(
+                        WooPosItemSelectionViewState.Product.Simple(
                             id = 2,
                             name = "Popular Item 2",
                             price = "20.0$",
                             imageUrl = "https://example.com/image2.jpg",
                         ),
-                        WooPosItem.Product.Variable(
+                        WooPosItemSelectionViewState.Product.Variable(
                             id = 3,
                             name = "Popular Item 3",
                             price = "30.0$",
@@ -249,20 +249,20 @@ fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
         ) {
             WooPosItemsEmptySearchQueryState(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
-                    popularItems = listOf<WooPosItem.Product>(
-                        WooPosItem.Product.Simple(
+                    popularItems = listOf(
+                        WooPosItemSelectionViewState.Product.Simple(
                             id = 1,
                             name = "Popular Item 1",
                             price = "10.0$",
                             imageUrl = "https://example.com/image1.jpg",
                         ),
-                        WooPosItem.Product.Simple(
+                        WooPosItemSelectionViewState.Product.Simple(
                             id = 2,
                             name = "Popular Item 2",
                             price = "20.0$",
                             imageUrl = "https://example.com/image2.jpg",
                         ),
-                        WooPosItem.Product.Variable(
+                        WooPosItemSelectionViewState.Product.Variable(
                             id = 3,
                             name = "Popular Item 3",
                             price = "30.0$",

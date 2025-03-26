@@ -1,5 +1,6 @@
 package com.woocommerce.android.apifaker
 
+import android.content.ClipboardManager
 import android.content.ContentResolver
 import android.content.Context
 import com.google.gson.Gson
@@ -40,39 +41,79 @@ class EndpointExportManagerTest {
         on { contentResolver } doReturn contentResolver
     }
     private val endpointDao = mock<EndpointDao>()
+    private val clipDataFactory = mock<ClipDataFactory> {
+        on { createClipData(any()) } doReturn mock()
+    }
 
     private val sut = EndpointExportManager(
         gson = gson,
         endpointDao = endpointDao,
-        context = context
+        context = context,
+        clipDataFactory = clipDataFactory
     )
 
     @Test
-    fun `when exportEndpoints is called, it should export the endpoints to the given uri`() = runTest {
-        val stream = ByteArrayOutputStream()
-        given(contentResolver.openOutputStream(any())).willReturn(stream)
+    fun `when exportEndpoints is called with file destination, it should export the endpoints to the given uri`() =
+        runTest {
+            val stream = ByteArrayOutputStream()
+            given(contentResolver.openOutputStream(any())).willReturn(stream)
 
-        val result = sut.exportEndpoints(mockedEndpoints, mock())
-        val exportedEndpoints = gson.fromJson(stream.toString(), Array<MockedEndpoint>::class.java).toList()
+            val result = sut.exportEndpoints(mockedEndpoints, ExportImportDestination.File(mock()))
+            val exportedEndpoints = gson.fromJson(stream.toString(), Array<MockedEndpoint>::class.java).toList()
 
-        assertTrue(result.isSuccess)
-        val expectedEndpoints = mockedEndpoints.map {
-            it.copy(
-                request = it.request.copy(id = 0),
-                response = it.response.copy(endpointId = 0)
-            )
+            assertTrue(result.isSuccess)
+            val expectedEndpoints = mockedEndpoints.map {
+                it.copy(
+                    request = it.request.copy(id = 0),
+                    response = it.response.copy(endpointId = 0)
+                )
+            }
+            assertEquals(expectedEndpoints, exportedEndpoints)
         }
-        assertEquals(expectedEndpoints, exportedEndpoints)
-    }
 
     @Test
-    fun `when importEndpoints is called, it should import the endpoints from the given uri`() = runTest {
-        val stream = gson.toJson(mockedEndpoints).byteInputStream()
-        given(contentResolver.openInputStream(any())).willReturn(stream)
+    fun `when importEndpoints is called with file destination, it should import the endpoints from the given uri`() =
+        runTest {
+            val stream = gson.toJson(mockedEndpoints).byteInputStream()
+            given(contentResolver.openInputStream(any())).willReturn(stream)
 
-        val result = sut.importEndpoints(mock())
+            val result = sut.importEndpoints(ExportImportDestination.File(mock()))
 
-        assertTrue(result.isSuccess)
-        verify(endpointDao).insertEndpoints(mockedEndpoints)
-    }
+            assertTrue(result.isSuccess)
+            verify(endpointDao).insertEndpoints(mockedEndpoints)
+        }
+
+    @Test
+    fun `when exportEndpoints is called with clipboard destination, it should export the endpoints to the clipboard`() =
+        runTest {
+            val clipboardManager = mock<ClipboardManager>()
+            given(context.getSystemService(Context.CLIPBOARD_SERVICE)).willReturn(clipboardManager)
+
+            val result = sut.exportEndpoints(mockedEndpoints, ExportImportDestination.Clipboard)
+
+            assertTrue(result.isSuccess)
+            verify(clipboardManager).setPrimaryClip(any())
+        }
+
+    @Test
+    fun `when importEndpoints is called with clipboard destination, it should import the endpoints from the clipboard`() =
+        runTest {
+            val json = gson.toJson(mockedEndpoints)
+            val clipItem = mock<android.content.ClipData.Item> {
+                on { text } doReturn json
+            }
+            val clipData = mock<android.content.ClipData> {
+                on { itemCount } doReturn 1
+                on { getItemAt(0) } doReturn clipItem
+            }
+            val clipboardManager = mock<ClipboardManager> {
+                on { primaryClip } doReturn clipData
+            }
+            given(context.getSystemService(Context.CLIPBOARD_SERVICE)).willReturn(clipboardManager)
+
+            val result = sut.importEndpoints(ExportImportDestination.Clipboard)
+
+            assertTrue(result.isSuccess)
+            verify(endpointDao).insertEndpoints(mockedEndpoints)
+        }
 }

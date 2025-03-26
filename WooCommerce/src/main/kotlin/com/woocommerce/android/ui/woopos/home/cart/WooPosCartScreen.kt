@@ -200,7 +200,7 @@ fun CartBodyEmpty(modifier: Modifier = Modifier) {
 @Composable
 private fun CartBodyWithItems(
     modifier: Modifier = Modifier,
-    items: List<WooPosCartState.Body.WithItems.Item>,
+    items: List<WooPosCartItemViewState>,
     areItemsRemovable: Boolean,
     isCheckoutButtonVisible: Boolean,
     onUIEvent: (WooPosCartUIEvent) -> Unit,
@@ -227,14 +227,16 @@ private fun CartBodyWithItems(
     ) {
         items(
             items,
-            key = { item -> item.id.itemNumber }
+            key = { item -> item.itemNumber }
         ) { item ->
-            ProductItem(
-                modifier = Modifier.animateItem(),
-                item = item,
-                canRemoveItems = areItemsRemovable,
-                onUIEvent = onUIEvent,
-            )
+            when (item) {
+                is WooPosCartItemViewState.Product -> ProductItem(
+                    modifier = Modifier.animateItem(),
+                    item = item,
+                    canRemoveItems = areItemsRemovable,
+                    onUIEvent = onUIEvent,
+                )
+            }
         }
         item {
             Spacer(modifier = Modifier.height(spacerHeight))
@@ -244,7 +246,7 @@ private fun CartBodyWithItems(
 
 @Composable
 private fun ScrollToTopHandler(
-    items: List<WooPosCartState.Body.WithItems.Item>,
+    items: List<WooPosCartItemViewState>,
     listState: LazyListState
 ) {
     val previousItemsCount = remember { mutableIntStateOf(0) }
@@ -368,7 +370,7 @@ private fun CartToolbar(
 @Composable
 private fun ProductItem(
     modifier: Modifier = Modifier,
-    item: WooPosCartState.Body.WithItems.Item,
+    item: WooPosCartItemViewState.Product,
     canRemoveItems: Boolean,
     onUIEvent: (WooPosCartUIEvent) -> Unit,
 ) {
@@ -429,7 +431,7 @@ private fun ProductItem(
                 Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
                 if (item.description.isNotNullOrEmpty()) {
                     WooPosText(
-                        text = item.description,
+                        text = item.description ?: "",
                         style = WooPosTypography.BodySmall,
                         color = WooPosTheme.colors.onSurfaceVariantHighest,
                         maxLines = 1,
@@ -485,43 +487,31 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                 ),
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
-                        WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(
-                                productId = 1L,
-                                variationId = 0L,
-                                itemNumber = 1
-                            ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 1,
+                            id = 1L,
                             imageUrl = "",
                             name = "VW California, VW California VW California, VW California VW California, " +
                                 "VW California VW California, VW California,VW California",
                             description = "test description",
                             price = "€50,000",
-                            productType = ProductType.Simple,
                         ),
-                        WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(
-                                productId = 2L,
-                                variationId = 0L,
-                                itemNumber = 2
-                            ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 2,
+                            id = 2L,
                             imageUrl = "",
                             name = "VW California",
                             description = "test description test description test description test description" +
                                 " test description test description test description test description test description",
                             price = "$150,000",
-                            productType = ProductType.Simple,
                         ),
-                        WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(
-                                productId = 3L,
-                                variationId = 0L,
-                                itemNumber = 3
-                            ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 3,
+                            id = 3L,
                             imageUrl = "",
                             name = "VW California",
                             description = "",
                             price = "€250,000",
-                            productType = ProductType.Simple,
                         )
                     )
                 ),
@@ -546,41 +536,29 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                 ),
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
-                        WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(
-                                productId = 1L,
-                                variationId = 0L,
-                                itemNumber = 1
-                            ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 1,
+                            id = 1L,
                             imageUrl = "",
                             name = "VW California",
                             description = null,
                             price = "€50,000",
-                            productType = ProductType.Simple,
                         ),
-                        WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(
-                                productId = 2L,
-                                variationId = 0L,
-                                itemNumber = 2
-                            ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 2,
+                            id = 2L,
                             imageUrl = "",
                             name = "VW California",
                             description = null,
                             price = "$150,000",
-                            productType = ProductType.Simple,
                         ),
-                        WooPosCartState.Body.WithItems.Item(
-                            id = WooPosCartState.Body.WithItems.Item.Id(
-                                productId = 3L,
-                                variationId = 0L,
-                                itemNumber = 3
-                            ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 3,
+                            id = 3L,
                             imageUrl = "",
                             name = "VW California",
                             description = null,
                             price = "€250,000",
-                            productType = ProductType.Simple,
                         )
                     )
                 ),
