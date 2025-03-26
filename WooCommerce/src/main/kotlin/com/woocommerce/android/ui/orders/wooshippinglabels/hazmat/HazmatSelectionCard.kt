@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -20,7 +20,8 @@ import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHa
 
 @Composable
 fun HazmatSelectionCard(
-    selectedCategory: ShippingLabelHazmatCategory
+    selectedCategory: ShippingLabelHazmatCategory,
+    modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (isSystemInDarkTheme()) {
         colorResource(id = R.color.woo_gray_50)
@@ -28,7 +29,7 @@ fun HazmatSelectionCard(
         colorResource(id = R.color.woo_gray_5)
     }
     Spacer(modifier = Modifier.height(4.dp))
-    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+    Box(modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
