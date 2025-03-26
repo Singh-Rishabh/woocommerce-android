@@ -21,6 +21,7 @@ class WooShippingRatesRepository @Inject constructor(
     private val shippingRatesMapper: WooShippingRatesDatasourceMapper,
     private val restClient: WooShippingRatesRestClient
 ) {
+    @Suppress("LongParameterList")
     suspend fun getShippingRates(
         orderId: Long,
         selectedPackage: PackageData,
