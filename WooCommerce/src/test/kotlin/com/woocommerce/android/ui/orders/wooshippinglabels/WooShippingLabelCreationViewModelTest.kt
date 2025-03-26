@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreat
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.LabelPurchased
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PurchaseState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartHazmatFormEdit
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
@@ -1077,7 +1078,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         createViewModel()
         sut.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
-        advanceUntilIdle()
 
         sut.viewState.asLiveData().observeForever {
             currentViewState = it
@@ -1087,5 +1087,23 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         val dataState = currentViewState as DataState
 
         assertThat(dataState.hazmatState).isEqualTo(HazmatState.Declared(ShippingLabelHazmatCategory.CLASS_1))
+    }
+
+    @Test
+    fun `when StartHazmatFormEdit is triggered with a selected category, the event contains the expected category value`() = testBlocking {
+        var event: MultiLiveEvent.Event? = null
+        whenever(orderDetailRepository.getOrderById(any())) doReturn null
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+
+        createViewModel()
+
+        sut.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
+        sut.onHazmatNoticeClick()
+
+
+        sut.event.observeForever { event = it }
+
+        assertThat(event).isEqualTo(StartHazmatFormEdit(ShippingLabelHazmatCategory.CLASS_1))
     }
 }
