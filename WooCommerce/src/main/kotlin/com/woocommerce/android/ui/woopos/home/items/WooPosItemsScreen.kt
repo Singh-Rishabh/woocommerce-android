@@ -51,7 +51,6 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchAnimationCompleted
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchChanged
 import com.woocommerce.android.ui.woopos.home.items.search.WooPosItemsSearchScreen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -111,7 +110,6 @@ private fun WooPosItemsScreen(
                 WooPosSearchUIEvent.Clear -> onUIEvent(WooPosItemsUIEvent.ClearSearchClicked)
                 WooPosSearchUIEvent.Close -> onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
                 is WooPosSearchUIEvent.Search -> onUIEvent(SearchChanged(it.query))
-                WooPosSearchUIEvent.AnimationComplete -> onUIEvent(SearchAnimationCompleted)
             }
         },
         onCouponsButtonClicked = { onUIEvent(WooPosItemsUIEvent.CouponsButtonClicked) },
