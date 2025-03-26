@@ -30,7 +30,7 @@ class WooPosTotalsRepository @Inject constructor(
 ) {
     private var orderCreationJob: Deferred<Result<Order>>? = null
 
-    suspend fun createOrderWithProducts(
+    suspend fun createOrderFromCartItems(
         itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>
     ): Result<Order> {
         check(itemClickedDataList.map { it.id }.isNotEmpty()) { "List of IDs is empty" }

@@ -223,7 +223,7 @@ class WooPosTotalsViewModelTest {
         )
 
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(Result.success(order))
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(Result.success(order))
         }
 
         val priceFormat: WooPosFormatPrice = mock {
@@ -247,7 +247,7 @@ class WooPosTotalsViewModelTest {
         assertThat(castedTotals.orderTotalText).isEqualTo("$5.00")
         assertThat(castedTotals.orderTaxText).isEqualTo("$2.00")
         assertThat(castedTotals.orderSubtotalText).isEqualTo("$3.00")
-        verify(totalsRepository).createOrderWithProducts(itemClickedData)
+        verify(totalsRepository).createOrderFromCartItems(itemClickedData)
     }
 
     @Test
@@ -287,7 +287,7 @@ class WooPosTotalsViewModelTest {
                 productsTotal = BigDecimal("3.00"),
             )
             val totalsRepository: WooPosTotalsRepository = mock {
-                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                     Result.success(order)
                 )
             }
@@ -373,7 +373,7 @@ class WooPosTotalsViewModelTest {
         }
         val errorMessage = "Order creation failed"
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.failure(Exception(errorMessage))
             )
         }
@@ -411,7 +411,7 @@ class WooPosTotalsViewModelTest {
         }
         val errorMessage = "Order creation failed"
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.failure(Exception(errorMessage))
             )
         }
@@ -457,7 +457,7 @@ class WooPosTotalsViewModelTest {
             productsTotal = BigDecimal("3.00"),
         )
 
-        whenever(totalsRepository.createOrderWithProducts(itemClickedData)).thenReturn(
+        whenever(totalsRepository.createOrderFromCartItems(itemClickedData)).thenReturn(
             Result.success(order)
         )
 
@@ -511,7 +511,7 @@ class WooPosTotalsViewModelTest {
         )
 
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(Result.success(order))
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(Result.success(order))
         }
 
         val priceFormat: WooPosFormatPrice = mock {
@@ -533,7 +533,7 @@ class WooPosTotalsViewModelTest {
         assertThat(castedTotals.orderSubtotalText).isEqualTo("3.00$")
         assertThat(castedTotals.orderTaxText).isEqualTo("2.00$")
         assertThat(castedTotals.orderTotalText).isEqualTo("5.00$")
-        verify(totalsRepository).createOrderWithProducts(itemClickedData)
+        verify(totalsRepository).createOrderFromCartItems(itemClickedData)
     }
 
     @Test
@@ -547,7 +547,7 @@ class WooPosTotalsViewModelTest {
         }
         val errorMessage = "Order creation failed"
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.failure(Exception(errorMessage))
             )
         }
@@ -627,7 +627,7 @@ class WooPosTotalsViewModelTest {
         }
         val order = createNonEmptyOrder()
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.success(order)
             )
         }
@@ -1161,7 +1161,7 @@ class WooPosTotalsViewModelTest {
                 productsTotal = BigDecimal("0.00"),
             )
             val totalsRepository: WooPosTotalsRepository = mock {
-                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                     Result.success(order)
                 )
             }
@@ -1220,7 +1220,7 @@ class WooPosTotalsViewModelTest {
                 productsTotal = BigDecimal("3.00"),
             )
             val totalsRepository: WooPosTotalsRepository = mock {
-                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                     Result.success(order)
                 )
             }
@@ -1448,7 +1448,7 @@ class WooPosTotalsViewModelTest {
         )
         val totalsRepository: WooPosTotalsRepository = mock {
             onBlocking {
-                createOrderWithProducts(itemClickedData)
+                createOrderFromCartItems(itemClickedData)
             }.thenReturn(Result.success(order))
         }
         val priceFormat: WooPosFormatPrice = mock {

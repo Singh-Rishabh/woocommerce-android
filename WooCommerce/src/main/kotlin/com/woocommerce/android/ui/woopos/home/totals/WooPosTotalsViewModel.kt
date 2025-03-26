@@ -409,7 +409,7 @@ class WooPosTotalsViewModel @Inject constructor(
         viewModelScope.launch {
             uiState.value = WooPosTotalsViewState.Loading
 
-            totalsRepository.createOrderWithProducts(itemClickedDataList = itemClickedDataList)
+            totalsRepository.createOrderFromCartItems(itemClickedDataList = itemClickedDataList)
                 .fold(
                     onSuccess = { order ->
                         dataState.value = dataState.value.copy(

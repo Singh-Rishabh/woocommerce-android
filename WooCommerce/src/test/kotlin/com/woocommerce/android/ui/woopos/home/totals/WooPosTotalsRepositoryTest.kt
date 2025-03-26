@@ -41,20 +41,20 @@ class WooPosTotalsRepositoryTest {
     ).copy(remoteId = 1L)
 
     @Test
-    fun `given empty product list, when createOrderWithProducts called, then return error`() = runTest {
+    fun `given empty product list, when createOrderFromCartItems called, then return error`() = runTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = emptyList<WooPosItemsViewModel.ItemClickedData>()
 
         // WHEN
-        val result = runCatching { repository.createOrderWithProducts(itemClickedData) }
+        val result = runCatching { repository.createOrderFromCartItems(itemClickedData) }
 
         // THEN
         assertThat(result.exceptionOrNull()).isInstanceOf(IllegalStateException::class.java)
     }
 
     @Test
-    fun `given product ids without duplicates, when createOrderWithProducts, then items all quantity one`() = runTest {
+    fun `given product ids without duplicates, when createOrderFromCartItems, then items all quantity one`() = runTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
@@ -74,7 +74,7 @@ class WooPosTotalsRepositoryTest {
         whenever(getProductById(3L)).thenReturn(product1)
 
         // WHEN
-        repository.createOrderWithProducts(itemClickedData)
+        repository.createOrderFromCartItems(itemClickedData)
 
         // THEN
         val orderCapture = argumentCaptor<Order>()
@@ -89,7 +89,7 @@ class WooPosTotalsRepositoryTest {
     }
 
     @Test
-    fun `given product id, when createOrderWithProducts, then item name matches original product`() = runTest {
+    fun `given product id, when createOrderFromCartItems, then item name matches original product`() = runTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
@@ -101,7 +101,7 @@ class WooPosTotalsRepositoryTest {
         whenever(getProductById(1L)).thenReturn(product1)
 
         // WHEN
-        repository.createOrderWithProducts(itemClickedData)
+        repository.createOrderFromCartItems(itemClickedData)
 
         // THEN
         val orderCapture = argumentCaptor<Order>()
@@ -115,7 +115,7 @@ class WooPosTotalsRepositoryTest {
     }
 
     @Test
-    fun `given product ids with duplicates, when createOrderWithProducts, then items quantity is correct`() = runTest {
+    fun `given product ids with duplicates, when createOrderFromCartItems, then items quantity is correct`() = runTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
@@ -144,7 +144,7 @@ class WooPosTotalsRepositoryTest {
         whenever(getProductById(3L)).thenReturn(product1)
 
         // WHEN
-        repository.createOrderWithProducts(itemClickedData)
+        repository.createOrderFromCartItems(itemClickedData)
 
         // THEN
         val orderCapture = argumentCaptor<Order>()
@@ -176,7 +176,7 @@ class WooPosTotalsRepositoryTest {
         whenever(orderCreateEditRepository.createOrUpdateOrder(any(), eq(""))).thenReturn(Result.success(mockOrder))
 
         // WHEN
-        val result = runCatching { repository.createOrderWithProducts(itemClickedData) }
+        val result = runCatching { repository.createOrderFromCartItems(itemClickedData) }
 
         // THEN
         assertThat(result.isFailure).isTrue()
