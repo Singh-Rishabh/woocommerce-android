@@ -201,7 +201,7 @@ class WooPosVariationsViewModel @Inject constructor(
     private fun onVariationClicked(productId: Long, variationId: Long) {
         sendEventToParent(
             ChildToParentEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.Variation(productId, variationId)
+                WooPosItemsViewModel.ItemClickedData.Product.Variation(productId, variationId)
             )
         )
     }

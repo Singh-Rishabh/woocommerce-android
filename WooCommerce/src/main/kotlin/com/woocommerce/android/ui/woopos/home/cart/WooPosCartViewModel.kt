@@ -116,8 +116,8 @@ class WooPosCartViewModel @Inject constructor(
     private fun goToTotals() {
         val itemClickedDataList = (_state.value.body as WooPosCartState.Body.WithItems).itemsInCart.map {
             when (it) {
-                is WooPosCartItemViewState.Product.Simple -> WooPosItemsViewModel.ItemClickedData.SimpleProduct(it.id)
-                is WooPosCartItemViewState.Product.Variation -> WooPosItemsViewModel.ItemClickedData.Variation(
+                is WooPosCartItemViewState.Product.Simple -> WooPosItemsViewModel.ItemClickedData.Product.Simple(it.id)
+                is WooPosCartItemViewState.Product.Variation -> WooPosItemsViewModel.ItemClickedData.Product.Variation(
                     productId = it.id,
                     id = it.variationId
                 )
@@ -159,9 +159,9 @@ class WooPosCartViewModel @Inject constructor(
         viewModelScope.launch {
             val itemClicked = async {
                 when (event.itemData) {
-                    is WooPosItemsViewModel.ItemClickedData.SimpleProduct ->
+                    is WooPosItemsViewModel.ItemClickedData.Product.Simple ->
                         handleSimpleProductClicked(event.itemData.id)
-                    is WooPosItemsViewModel.ItemClickedData.Variation ->
+                    is WooPosItemsViewModel.ItemClickedData.Product.Variation ->
                         handleVariationClicked(event.itemData.productId, event.itemData.id)
                     is WooPosItemsViewModel.ItemClickedData.Coupon ->
                         handleCouponClicked(event.itemData.id, event.itemData.couponCode)
@@ -323,8 +323,8 @@ class WooPosCartViewModel @Inject constructor(
 
 private fun WooPosItemsViewModel.ItemClickedData.posItemNameForAnalytics(): String {
     return when (this) {
-        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
-        is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
+        is WooPosItemsViewModel.ItemClickedData.Product.Simple -> "simple"
+        is WooPosItemsViewModel.ItemClickedData.Product.Variation -> "variation"
         is WooPosItemsViewModel.ItemClickedData.Coupon -> "coupon"
     }
 }

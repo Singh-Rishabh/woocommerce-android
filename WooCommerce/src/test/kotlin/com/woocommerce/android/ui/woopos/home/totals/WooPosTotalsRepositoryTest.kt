@@ -58,13 +58,13 @@ class WooPosTotalsRepositoryTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 2L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 3L
             )
         )
@@ -93,7 +93,7 @@ class WooPosTotalsRepositoryTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             )
         )
@@ -119,22 +119,22 @@ class WooPosTotalsRepositoryTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 2L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 3L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 3L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 3L
             )
         )
@@ -162,13 +162,13 @@ class WooPosTotalsRepositoryTest {
         // GIVEN
         repository = createRepository()
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = -1L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 3L
             )
         )

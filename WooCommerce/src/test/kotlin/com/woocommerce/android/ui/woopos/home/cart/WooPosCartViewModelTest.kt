@@ -89,7 +89,7 @@ class WooPosCartViewModelTest {
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -127,7 +127,7 @@ class WooPosCartViewModelTest {
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.Variation(
+                WooPosItemsViewModel.ItemClickedData.Product.Variation(
                     id = variation.remoteVariationId,
                     productId = variation.remoteProductId
                 )
@@ -158,7 +158,7 @@ class WooPosCartViewModelTest {
 
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -200,7 +200,7 @@ class WooPosCartViewModelTest {
 
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -290,7 +290,7 @@ class WooPosCartViewModelTest {
 
             parentToChildrenEventsMutableFlow.emit(
                 ParentToChildrenEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
                         id = product.remoteId
                     )
                 )
@@ -351,14 +351,14 @@ class WooPosCartViewModelTest {
             // WHEN
             parentToChildrenEventsMutableFlow.emit(
                 ParentToChildrenEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
                         id = product1.remoteId
                     )
                 )
             )
             parentToChildrenEventsMutableFlow.emit(
                 ParentToChildrenEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
                         id = product2.remoteId
                     )
                 )
@@ -379,7 +379,7 @@ class WooPosCartViewModelTest {
 
             parentToChildrenEventsMutableFlow.emit(
                 ParentToChildrenEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
                         id = product3.remoteId
                     )
                 )
@@ -421,7 +421,7 @@ class WooPosCartViewModelTest {
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -475,7 +475,7 @@ class WooPosCartViewModelTest {
 
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -536,7 +536,7 @@ class WooPosCartViewModelTest {
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -564,7 +564,7 @@ class WooPosCartViewModelTest {
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )
@@ -606,7 +606,7 @@ class WooPosCartViewModelTest {
         // WHEN
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.Variation(
+                WooPosItemsViewModel.ItemClickedData.Product.Variation(
                     id = variation.remoteProductId,
                     productId = variation.remoteProductId
                 )
@@ -638,7 +638,7 @@ class WooPosCartViewModelTest {
         val states = sut.state.captureValues()
         parentToChildrenEventsMutableFlow.emit(
             ParentToChildrenEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(
                     id = product.remoteId
                 )
             )

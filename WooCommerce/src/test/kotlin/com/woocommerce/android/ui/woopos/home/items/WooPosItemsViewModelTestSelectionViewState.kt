@@ -207,7 +207,7 @@ class WooPosItemsViewModelTestSelectionViewState {
         viewModel.viewState.test {
             verify(fromChildToParentEventSender).sendToParent(
                 ChildToParentEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
                         id = product.id
                     )
                 )

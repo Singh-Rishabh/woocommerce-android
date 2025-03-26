@@ -66,11 +66,11 @@ class WooPosTotalsRepository @Inject constructor(
             .map { (id, quantity) ->
                 val itemData = itemClickedDataList.find { it.id == id }!!
                 when (itemData) {
-                    is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> createSimpleProductOrderItem(
+                    is WooPosItemsViewModel.ItemClickedData.Product.Simple -> createSimpleProductOrderItem(
                         quantity,
                         itemData
                     )
-                    is WooPosItemsViewModel.ItemClickedData.Variation -> createVariationOrderItem(
+                    is WooPosItemsViewModel.ItemClickedData.Product.Variation -> createVariationOrderItem(
                         quantity,
                         itemData
                     )
@@ -83,7 +83,7 @@ class WooPosTotalsRepository @Inject constructor(
 
     private suspend fun createSimpleProductOrderItem(
         quantity: Int,
-        itemData: WooPosItemsViewModel.ItemClickedData.SimpleProduct
+        itemData: WooPosItemsViewModel.ItemClickedData.Product.Simple
     ): Order.Item {
         val productResult = getProductById(itemData.id)!!
         return Order.Item.EMPTY.copy(
@@ -100,7 +100,7 @@ class WooPosTotalsRepository @Inject constructor(
 
     private suspend fun createVariationOrderItem(
         quantity: Int,
-        itemData: WooPosItemsViewModel.ItemClickedData.Variation
+        itemData: WooPosItemsViewModel.ItemClickedData.Product.Variation
     ): Order.Item {
         val productResult = getProductById(itemData.productId)!!
         val variationResult = getVariationById(
