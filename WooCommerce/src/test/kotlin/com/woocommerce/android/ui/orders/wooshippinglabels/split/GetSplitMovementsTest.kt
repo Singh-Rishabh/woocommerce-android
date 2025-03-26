@@ -82,6 +82,19 @@ class GetSplitMovementsTest : BaseUnitTest() {
         assertThat(result.first().totalItemsToMove).isEqualTo(item.shippableItem.quantity.toInt())
     }
 
+    @Test
+    fun `when key is not in the selection, then movements is empty`() {
+        val keyNotInSelection = -1
+        val selection = defaultSelection
+
+        val result = sut.invoke(
+            currentShipment = keyNotInSelection,
+            shipments = defaultShipments,
+            selection = selection
+        )
+        assertThat(result).isEmpty()
+    }
+
     private val defaultShippableItems = List(3) {
         ShippableItemModel(
             itemId = it.toLong(),
