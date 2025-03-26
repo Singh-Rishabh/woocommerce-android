@@ -185,6 +185,30 @@ class WooPosTotalsRepositoryTest {
         verify(orderCreateEditRepository, never()).createOrUpdateOrder(any(), eq(""))
     }
 
+    @Test
+    fun `given item list contains coupon, when createOrderFromCartItems, then coupon lines present`() = runTest {
+        // GIVEN
+        repository = createRepository()
+        val itemClickedData = listOf(
+            WooPosItemsViewModel.ItemClickedData.Coupon(
+                id = 1L,
+                couponCode = "coupon"
+            )
+        )
+
+        // WHEN
+        repository.createOrderFromCartItems(itemClickedData)
+
+        // THEN
+        val orderCapture = argumentCaptor<Order>()
+        verify(orderCreateEditRepository).createOrUpdateOrder(
+            orderCapture.capture(),
+            eq("")
+        )
+
+        assertThat(orderCapture.lastValue.couponLines.size).isEqualTo(1)
+    }
+
     private fun createRepository() = WooPosTotalsRepository(
         orderCreateEditRepository,
         dateUtils,
