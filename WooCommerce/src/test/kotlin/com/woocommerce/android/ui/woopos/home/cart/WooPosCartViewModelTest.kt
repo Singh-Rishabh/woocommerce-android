@@ -98,7 +98,7 @@ class WooPosCartViewModelTest {
         // THEN
         val itemsInCart = (states.last().body as WooPosCartState.Body.WithItems).itemsInCart
         assertThat(itemsInCart).hasSize(1)
-        assertThat(itemsInCart.first().id.productId).isEqualTo(product.remoteId)
+        assertThat((itemsInCart.first() as WooPosCartItemViewState.Product.Simple).id).isEqualTo(product.remoteId)
     }
 
     @Test
@@ -137,7 +137,8 @@ class WooPosCartViewModelTest {
         // THEN
         val itemsInCart = (states.last().body as WooPosCartState.Body.WithItems).itemsInCart
         assertThat(itemsInCart).hasSize(1)
-        assertThat(itemsInCart.first().id.variationId).isEqualTo(variation.remoteVariationId)
+        assertThat((itemsInCart.first() as WooPosCartItemViewState.Product.Variation).variationId)
+            .isEqualTo(variation.remoteVariationId)
     }
 
     @Test
@@ -166,16 +167,12 @@ class WooPosCartViewModelTest {
         // WHEN
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
-                WooPosCartState.Body.WithItems.Item(
-                    id = WooPosCartState.Body.WithItems.Item.Id(
-                        productId = product.remoteId,
-                        variationId = 0,
-                        itemNumber = 1
-                    ),
+                WooPosCartItemViewState.Product.Simple(
+                    itemNumber = 1,
+                    id = product.remoteId,
                     name = product.name,
                     price = "10.0$",
                     imageUrl = product.firstImageUrl,
-                    productType = ProductType.Simple,
                     description = null,
                 )
             )
@@ -212,16 +209,12 @@ class WooPosCartViewModelTest {
         // WHEN
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
-                WooPosCartState.Body.WithItems.Item(
-                    id = WooPosCartState.Body.WithItems.Item.Id(
-                        productId = product.remoteId,
-                        variationId = 0,
-                        itemNumber = 1
-                    ),
+                WooPosCartItemViewState.Product.Simple(
+                    itemNumber = 1,
+                    id = product.remoteId,
                     name = product.name,
                     price = "10.0$",
                     imageUrl = product.firstImageUrl,
-                    productType = ProductType.Simple,
                     description = null,
                 )
             )
@@ -373,16 +366,12 @@ class WooPosCartViewModelTest {
 
             sut.onUIEvent(
                 WooPosCartUIEvent.ItemRemovedFromCart(
-                    WooPosCartState.Body.WithItems.Item(
-                        id = WooPosCartState.Body.WithItems.Item.Id(
-                            productId = product1.remoteId,
-                            variationId = 0,
-                            itemNumber = 1
-                        ),
+                    WooPosCartItemViewState.Product.Simple(
+                        itemNumber = 1,
+                        id = product1.remoteId,
                         name = product1.name,
                         price = "10.0$",
                         imageUrl = product1.firstImageUrl,
-                        productType = ProductType.Simple,
                         description = null,
                     )
                 )
@@ -399,8 +388,8 @@ class WooPosCartViewModelTest {
             // THEN
             val itemsInCart = (states.last().body as WooPosCartState.Body.WithItems).itemsInCart
             assertThat(itemsInCart).hasSize(2)
-            assertThat(itemsInCart[0].id.itemNumber).isEqualTo(3)
-            assertThat(itemsInCart[1].id.itemNumber).isEqualTo(2)
+            assertThat(itemsInCart[0].itemNumber).isEqualTo(3)
+            assertThat(itemsInCart[1].itemNumber).isEqualTo(2)
         }
 
     @Test
@@ -495,16 +484,12 @@ class WooPosCartViewModelTest {
         // WHEN
         sut.onUIEvent(
             WooPosCartUIEvent.ItemRemovedFromCart(
-                WooPosCartState.Body.WithItems.Item(
-                    id = WooPosCartState.Body.WithItems.Item.Id(
-                        productId = product.remoteId,
-                        variationId = 0,
-                        itemNumber = 1
-                    ),
+                WooPosCartItemViewState.Product.Simple(
+                    itemNumber = 1,
+                    id = product.remoteId,
                     name = product.name,
                     price = "10.0$",
                     imageUrl = product.firstImageUrl,
-                    productType = ProductType.Simple,
                     description = null,
                 )
             )
