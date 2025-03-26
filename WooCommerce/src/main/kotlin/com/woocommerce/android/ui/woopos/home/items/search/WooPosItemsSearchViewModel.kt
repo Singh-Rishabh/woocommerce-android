@@ -138,7 +138,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
 
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
-            val result = dataSource.loadMore()
+            val result = dataSource.loadMore(query = currentState.searchQuery)
             _viewState.value = if (result.isSuccess) {
                 result.getOrThrow().toContentState(
                     searchQuery = currentState.searchQuery,
