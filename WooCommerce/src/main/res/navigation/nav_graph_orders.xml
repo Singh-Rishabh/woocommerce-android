@@ -787,8 +787,8 @@
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormFragment"
         android:label="WooShippingLabelHazmatFormFragment" >
         <argument
-            android:name="selectedCategory"
-            app:argType="com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory"
+            android:name="selectedCategoryName"
+            app:argType="string"
             app:nullable="true" />
 
         <action

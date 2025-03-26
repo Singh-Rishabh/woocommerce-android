@@ -116,7 +116,7 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                 is StartHazmatFormEdit -> {
                     WooShippingLabelCreationFragmentDirections
                         .actionWooShippingLabelCreationFragmentToWooShippingLabelHazmatFormFragment(
-                            event.selectedCategory
+                            event.selectedCategory?.name
                         ).let { findNavController().navigateSafely(it) }
                 }
             }
