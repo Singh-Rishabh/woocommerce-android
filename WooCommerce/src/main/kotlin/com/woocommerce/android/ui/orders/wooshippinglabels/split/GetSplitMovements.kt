@@ -88,4 +88,6 @@ data class SplitMovement(
 ) {
     val totalItemsToMove: Int
         get() = updatedShipmentItems.sumByFloat { it.quantity }.toInt()
+    val isRemoveMovement: Boolean
+        get() = updatedCurrentShipmentItems.isEmpty()
 }
