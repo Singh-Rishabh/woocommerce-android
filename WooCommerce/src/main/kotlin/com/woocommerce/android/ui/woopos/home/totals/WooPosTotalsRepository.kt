@@ -38,18 +38,12 @@ class WooPosTotalsRepository @Inject constructor(
         orderCreationJob?.cancel()
 
         return withContext(IO) {
-            validateProductIds(itemClickedDataList)
+            check(itemClickedDataList.all { it.id >= 0 }) { "Invalid item ID" }
             orderCreationJob = async {
                 val order = createOrder(itemClickedDataList)
                 orderCreateEditRepository.createOrUpdateOrder(order)
             }
             orderCreationJob!!.await()
-        }
-    }
-
-    private fun validateProductIds(itemClickedDataList: List<WooPosItemsViewModel.ItemClickedData>) {
-        itemClickedDataList.map { it.id }.forEach { productId ->
-            require(productId >= 0) { "Invalid product ID: $productId" }
         }
     }
 
