@@ -94,30 +94,10 @@ fun WooShippingLabelHazmatFormScreen(
         }
 
         if (selectedHazmatCategory != null) {
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = stringResource(R.string.product_category),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = colorResource(id = R.color.color_on_surface),
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    IconButton(
-                        onClick = onSelectCategoryClick,
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Edit,
-                            tint = colorResource(id = R.color.color_icon_menu),
-                            contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
-                        )
-                    }
-                }
-                HazmatSelectionCard(selectedHazmatCategory)
-            }
+            HazmatCategoryEditingSection(
+                selectedHazmatCategory = selectedHazmatCategory,
+                onSelectCategoryClick = onSelectCategoryClick
+            )
         } else {
             WCColoredButton(
                 text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
@@ -157,6 +137,37 @@ fun WooShippingLabelHazmatFormScreen(
                 onUrlClick = { onUrlSelected(AppUrls.DHL_EXPRESS_HAZMAT_INSTRUCTIONS) }
             )
         )
+    }
+}
+
+@Composable
+fun HazmatCategoryEditingSection(
+    selectedHazmatCategory: ShippingLabelHazmatCategory,
+    onSelectCategoryClick: () -> Unit
+) {
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.product_category),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyLarge,
+                color = colorResource(id = R.color.color_on_surface),
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(
+                onClick = onSelectCategoryClick,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    tint = colorResource(id = R.color.color_icon_menu),
+                    contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
+                )
+            }
+        }
+        HazmatSelectionCard(selectedHazmatCategory)
     }
 }
 
