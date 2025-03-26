@@ -401,7 +401,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             purchaseState,
             customsState,
             hazmatState
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, hazmatState ->
+        ) { storeOptions, order, addresses, shippingRates,
+            packageSelection, uiState, purchaseState, customsState, hazmatState ->
             if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -809,8 +810,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     sealed class HazmatState {
-        data object NoSelection: HazmatState()
-        data class Declared(val hazmatCategory: ShippingLabelHazmatCategory): HazmatState()
+        data object NoSelection : HazmatState()
+        data class Declared(val hazmatCategory: ShippingLabelHazmatCategory) : HazmatState()
     }
 
     companion object {
