@@ -538,6 +538,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId = navArgs.orderId
         val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
+        val hazmatSelection = hazmatState.value
+            .run { this as? Declared }?.hazmatCategory
 
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
@@ -570,7 +572,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                                 addresses = currentViewState.shippingAddresses,
                                 items = currentViewState.shippableItems,
                                 rateSummary = selectedRate.summary,
-                                shippingLines = currentViewState.shippingLines
+                                shippingLines = currentViewState.shippingLines,
+                                hazmatSelection = hazmatSelection
                             )
                         } else {
                             null
