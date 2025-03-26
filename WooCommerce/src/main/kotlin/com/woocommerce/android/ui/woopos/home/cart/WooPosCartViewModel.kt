@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartState.Body.WithItems
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.CHECKOUT
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
@@ -158,28 +159,16 @@ class WooPosCartViewModel @Inject constructor(
     private fun handleItemClickedInItemsSelector(event: ParentToChildrenEvent.ItemClickedInProductSelector) {
         viewModelScope.launch {
             val itemClicked = async {
-                val product = getProductById(
-                    when (event.itemData) {
-                        is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> event.itemData.id
-                        is WooPosItemsViewModel.ItemClickedData.Variation -> event.itemData.productId
-                        is WooPosItemsViewModel.ItemClickedData.Coupon ->
-                            throw NotImplementedError("Coupons are not supported yet")
-                    }
-                )!!
                 when (event.itemData) {
-                    is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> {
-                        val itemNumber = getItemNumber()
-                        product.toCartListItem(itemNumber)
-                    }
-                    is WooPosItemsViewModel.ItemClickedData.Variation -> {
-                        val itemNumber = getItemNumber()
-                        val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
-                        productVariation.toCartListItem(itemNumber, product)
-                    }
+                    is WooPosItemsViewModel.ItemClickedData.SimpleProduct ->
+                        handleSimpleProductClicked(event.itemData.id)
+                    is WooPosItemsViewModel.ItemClickedData.Variation ->
+                        handleVariationClicked(event.itemData.productId, event.itemData.id)
                     is WooPosItemsViewModel.ItemClickedData.Coupon ->
-                        throw NotImplementedError("Coupons are not supported yet")
+                        handleCouponClicked(event.itemData.id, event.itemData.couponCode)
                 }
             }
+
             if (_state.value.body == WooPosCartState.Body.Empty) {
                 analyticsTracker.track(InteractionWithCustomerStarted)
             }
@@ -191,6 +180,23 @@ class WooPosCartViewModel @Inject constructor(
             )
             analyticsTracker.track(WooPosAnalyticsEvent.Event.ItemAddedToCart)
         }
+    }
+
+    private suspend fun handleSimpleProductClicked(productId: Long): WooPosCartItemViewState {
+        val product = getProductById(productId)!!
+        val itemNumber = getItemNumber()
+        return product.toCartListItem(itemNumber)
+    }
+
+    private suspend fun handleVariationClicked(productId: Long, variationId: Long): WooPosCartItemViewState {
+        val product = getProductById(productId)!!
+        val itemNumber = getItemNumber()
+        val productVariation = getVariationsById(productId, variationId)!!
+        return productVariation.toCartListItem(itemNumber, product)
+    }
+
+    private suspend fun handleCouponClicked(couponId: Long, couponCode: String): WooPosCartItemViewState {
+        TODO("Not yet implemented")
     }
 
     private fun clearCart() {
