@@ -1101,7 +1101,6 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         sut.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
         sut.onHazmatNoticeClick()
 
-
         sut.event.observeForever { event = it }
 
         assertThat(event).isEqualTo(StartHazmatFormEdit(ShippingLabelHazmatCategory.CLASS_1))
