@@ -11,6 +11,7 @@ sealed class WooPosItemsSearchViewState {
     ) : WooPosItemsSearchViewState()
 
     data class Content(
+        val searchQuery: String,
         override val items: List<WooPosItemSelectionViewState>,
         override val reloadingProductsWithPullToRefresh: Boolean = false,
         override val paginationState: PaginationState = PaginationState.None,

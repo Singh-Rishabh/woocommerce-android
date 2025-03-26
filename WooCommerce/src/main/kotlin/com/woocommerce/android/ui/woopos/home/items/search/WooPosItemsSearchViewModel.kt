@@ -86,32 +86,40 @@ class WooPosItemsSearchViewModel @Inject constructor(
             searchJob = viewModelScope.launch {
                 delay(SEARCH_DEBOUNCING_TIME)
 
-                childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
+                loadContent(event.query)
+            }
+        }
+    }
 
-                dataSource.searchProducts(event.query).collect { result ->
-                    when (result) {
-                        is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
-                            if (result.products.isEmpty()) {
-                                _viewState.value = WooPosItemsSearchViewState.Loading
-                            } else {
-                                _viewState.value = result.products.toContentState()
-                            }
-                        }
+    private suspend fun loadContent(searchQuery: String) {
+        childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
 
-                        is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
-                            if (result.productsResult.isSuccess) {
-                                val products = result.productsResult.getOrThrow()
-                                if (products.isEmpty()) {
-                                    _viewState.value = WooPosItemsSearchViewState.Empty
-                                } else {
-                                    _viewState.value = products.toContentState()
-                                }
-                            } else {
-                                _viewState.value = WooPosItemsSearchViewState.Error
-                            }
-                            childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
-                        }
+        dataSource.searchProducts(searchQuery).collect { result ->
+            when (result) {
+                is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
+                    if (result.products.isEmpty()) {
+                        _viewState.value = WooPosItemsSearchViewState.Loading
+                    } else {
+                        _viewState.value = result.products.toContentState(
+                            searchQuery = searchQuery,
+                        )
                     }
+                }
+
+                is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
+                    if (result.productsResult.isSuccess) {
+                        val products = result.productsResult.getOrThrow()
+                        if (products.isEmpty()) {
+                            _viewState.value = WooPosItemsSearchViewState.Empty
+                        } else {
+                            _viewState.value = products.toContentState(
+                                searchQuery = searchQuery,
+                            )
+                        }
+                    } else {
+                        _viewState.value = WooPosItemsSearchViewState.Error
+                    }
+                    childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
                 }
             }
         }
@@ -133,7 +141,9 @@ class WooPosItemsSearchViewModel @Inject constructor(
         loadMoreJob = viewModelScope.launch {
             val result = dataSource.loadMore()
             _viewState.value = if (result.isSuccess) {
-                result.getOrThrow().toContentState()
+                result.getOrThrow().toContentState(
+                    searchQuery = currentState.searchQuery,
+                )
             } else {
                 currentState.copy(paginationState = PaginationState.Error)
             }
@@ -141,7 +151,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
     }
 
     private suspend fun List<Product>.toContentState(
-        paginationState: PaginationState = PaginationState.None
+        searchQuery: String,
+        paginationState: PaginationState = PaginationState.None,
     ) = WooPosItemsSearchViewState.Content(
         items = map { product ->
             if (product.productType == ProductType.VARIABLE) {
@@ -162,6 +173,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
                 )
             }
         },
+        searchQuery = searchQuery,
         paginationState = paginationState,
     )
 
