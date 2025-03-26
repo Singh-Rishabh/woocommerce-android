@@ -77,7 +77,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
     @Test
     fun `when a expandable product inner selection changes, then the product is updated`() = testBlocking {
-        val shipmentIndex = 2
+        val shippableItemIndex = 2
         val shipmentArgs = SplitShipmentArgs(
             orderId = 1L,
             storeOptions = StoreOptionsModel.EMPTY,
@@ -86,7 +86,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
         createViewModel(shipmentArgs)
 
-        sut.onUpdateSelection(1, shipmentIndex, List(3) { it }.toSet())
+        sut.onUpdateSelection(1, shippableItemIndex, List(3) { it }.toSet())
 
         sut.viewState.observeForTesting { }
 
@@ -102,7 +102,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
     @Test
     fun `when a expandable product selection changes, then the product is updated`() = testBlocking {
-        val shipmentIndex = 2
+        val shippableItemIndex = 2
         val shipmentArgs = SplitShipmentArgs(
             orderId = 1L,
             storeOptions = StoreOptionsModel.EMPTY,
@@ -111,7 +111,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
         createViewModel(shipmentArgs)
 
-        sut.onUpdateSelection(1, shipmentIndex, null)
+        sut.onUpdateSelection(1, shippableItemIndex, null)
 
         sut.viewState.observeForTesting { }
 
@@ -127,7 +127,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
     @Test
     fun `when a single product selection changes, then the product is updated`() = testBlocking {
-        val shipmentIndex = 0
+        val shippableItemIndex = 0
         val shipmentArgs = SplitShipmentArgs(
             orderId = 1L,
             storeOptions = StoreOptionsModel.EMPTY,
@@ -136,7 +136,7 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
 
         createViewModel(shipmentArgs)
 
-        sut.onUpdateSelection(1, shipmentIndex, null)
+        sut.onUpdateSelection(1, shippableItemIndex, null)
 
         sut.viewState.observeForTesting { }
 
