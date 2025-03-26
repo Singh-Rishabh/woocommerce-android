@@ -79,6 +79,10 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
         splitMessage.value = null
     }
 
+    fun onUpdateSelectedShipment(shipmentKey: Int) {
+        shipmentSelected.value = shipmentKey
+    }
+
     fun onUpdateSelection(
         shipmentKey: Int,
         index: Int,
@@ -126,7 +130,7 @@ class WooShippingSplitShipmentViewModel @Inject constructor(
     data class SplitShipmentViewState(
         val shipmentSelected: Int,
         val selectableItems: Map<Int, SelectableShippableItemsUI>,
-        val splitMovements: List<SplitMovements> = emptyList(),
+        val splitMovements: List<SplitMovement> = emptyList(),
         val splitMessage: SplitShipmentMessage? = null
     )
 
