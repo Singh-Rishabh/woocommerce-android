@@ -1,0 +1,46 @@
+package com.woocommerce.android.ui.orders.wooshippinglabels.hazmat
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.woocommerce.android.R
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
+
+@Composable
+fun HazmatSelectionCard(
+    selectedCategory: ShippingLabelHazmatCategory
+) {
+    val backgroundColor = if (isSystemInDarkTheme()) {
+        colorResource(id = R.color.woo_gray_50)
+    } else {
+        colorResource(id = R.color.woo_gray_5)
+    }
+    Spacer(modifier = Modifier.height(4.dp))
+    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
+                )
+                .padding(16.dp)
+        ) {
+            Text(
+                text = stringResource(selectedCategory.stringResourceID)
+            )
+        }
+    }
+}
