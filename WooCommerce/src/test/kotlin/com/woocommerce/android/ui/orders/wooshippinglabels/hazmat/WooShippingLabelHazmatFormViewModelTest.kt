@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.hazmat
 
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnHazmatCategorySelected
 import com.woocommerce.android.viewmodel.BaseUnitTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
@@ -167,5 +168,45 @@ class WooShippingLabelHazmatFormViewModelTest : BaseUnitTest() {
         // Then
         assertThat(capturedViewState?.containsHazmatChecked).isFalse()
         assertThat(capturedViewState?.currentHazmatSelection).isNull()
+    }
+
+    @Test
+    fun `when onBackPressed is called with no selection, then trigger OnHazmatCategorySelected with null`() = testBlocking {
+        // Given
+        var capturedEvent: OnHazmatCategorySelected? = null
+        viewModel.event.observeForever {
+            capturedEvent = it as? OnHazmatCategorySelected
+        }
+
+        // When
+        viewModel.onBackPressed()
+
+        // Then
+        assertThat(capturedEvent).isNotNull()
+        assertThat(capturedEvent?.selectedCategory).isNull()
+    }
+
+    @Test
+    fun `when onBackPressed is called with selection available, then trigger OnHazmatCategorySelected with selected category`() = testBlocking {
+        // Given
+        val selectedCategory = ShippingLabelHazmatCategory.CLASS_1
+
+        viewModel = WooShippingLabelHazmatFormViewModel(
+            WooShippingLabelHazmatFormFragmentArgs(
+                selectedCategoryName = selectedCategory.name
+            ).toSavedStateHandle()
+        )
+
+        var capturedEvent: OnHazmatCategorySelected? = null
+        viewModel.event.observeForever {
+            capturedEvent = it as? OnHazmatCategorySelected
+        }
+
+        // When
+        viewModel.onBackPressed()
+
+        // Then
+        assertThat(capturedEvent).isNotNull()
+        assertThat(capturedEvent?.selectedCategory).isEqualTo(selectedCategory)
     }
 }
