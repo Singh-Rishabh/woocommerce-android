@@ -39,6 +39,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsUIEvent.OnBackClicked
+import com.woocommerce.android.ui.woopos.home.totals.WooPosTotalsViewState.Totals.Visible
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.WooPosNetworkStatus
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent
@@ -888,6 +889,19 @@ class WooPosTotalsViewModelTest {
         }
 
     @Test
+    fun `given order contains discount, when order draft created, should propagate discount to UI`() =
+        runTest {
+            // GIVEN
+            val discountTotal = BigDecimal("1.00")
+
+            // WHEN
+            val vm = createViewModelAndSetupForSuccessfulOrderCreation(discountTotal = discountTotal)
+
+            // THEN
+            assertThat(((vm.state.value as WooPosTotalsViewState.Checkout).totals as Visible).orderDiscountText).isNotNull()
+        }
+
+    @Test
     fun `given payment failed with retry action, when retry clicked, then should retry previous payment action`() =
         runTest {
             // GIVEN
@@ -1369,6 +1383,7 @@ class WooPosTotalsViewModelTest {
         dateModified = Date()
     ).copy(
         totalTax = BigDecimal("2.00"),
+        discountTotal = BigDecimal("1.00"),
         items = listOf(
             Order.Item.EMPTY.copy(
                 subtotal = BigDecimal("1.00"),
@@ -1400,6 +1415,7 @@ class WooPosTotalsViewModelTest {
         ),
         parentToChildrenEventFlow: MutableStateFlow<ParentToChildrenEvent> =
             MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData)),
+        discountTotal: BigDecimal = BigDecimal.ZERO,
     ): WooPosTotalsViewModel {
         whenever(resourceProvider.getString(R.string.woopos_success_totals_error_reader_not_connected_title))
             .thenReturn("Reader not connected")
@@ -1444,6 +1460,7 @@ class WooPosTotalsViewModelTest {
                 )
             ),
             productsTotal = BigDecimal("3.00"),
+            discountTotal = discountTotal,
             total = BigDecimal("5.00"),
         )
         val totalsRepository: WooPosTotalsRepository = mock {
@@ -1452,6 +1469,7 @@ class WooPosTotalsViewModelTest {
             }.thenReturn(Result.success(order))
         }
         val priceFormat: WooPosFormatPrice = mock {
+            onBlocking { invoke(BigDecimal("1.00")) }.thenReturn("1.00$")
             onBlocking { invoke(BigDecimal("2.00")) }.thenReturn("2.00$")
             onBlocking { invoke(BigDecimal("3.00")) }.thenReturn("3.00$")
             onBlocking { invoke(BigDecimal("5.00")) }.thenReturn("5.00$")
