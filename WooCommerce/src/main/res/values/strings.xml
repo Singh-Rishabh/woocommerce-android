@@ -4403,7 +4403,8 @@
     <string name="woopos_search_items_empty_title">Nothing found</string>
     <string name="woopos_search_empty_description">We couldn\'t find anything matching your search.</string>
     <string name="woopos_search_empty_image_content_description">No items found</string>
-
+    <string name="woopos_search_items_error_title">We couldn\'t load your items</string>
+    <string name="woopos_search_items_error_description">Give it another go?</string>
 
     <string name="customers_details_customer_section">Customer</string>
     <string name="customers_details_orders_section">Orders</string>

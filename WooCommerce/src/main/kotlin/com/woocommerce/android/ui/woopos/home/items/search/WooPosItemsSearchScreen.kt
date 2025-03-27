@@ -12,6 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
@@ -60,6 +61,14 @@ private fun WooPosItemsSearchScreen(
             }
 
             WooPosItemsSearchViewState.Error -> {
+                WooPosErrorScreen(
+                    message = stringResource(id = R.string.woopos_search_items_error_title),
+                    reason = stringResource(id = R.string.woopos_search_items_error_description),
+                    primaryButton = Button(
+                        text = stringResource(id = R.string.woopos_products_loading_error_retry_button),
+                        click = { onUIEvent(WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked) }
+                    )
+                )
             }
 
             WooPosItemsSearchViewState.Loading -> {
