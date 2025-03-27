@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringRes
@@ -52,6 +53,7 @@ fun WooShippingSplitShipmentScreen(
             viewState = it,
             onBack = viewModel::onNavigateBack,
             onDismissInstructions = viewModel::onDismissInstructions,
+            onUpdateSelection = viewModel::onUpdateSelection,
             modifier = modifier
         )
     }
@@ -62,6 +64,7 @@ fun WooShippingSplitShipmentScreen(
     viewState: SplitShipmentViewState,
     onBack: () -> Unit,
     onDismissInstructions: () -> Unit,
+    onUpdateSelection: (shipmentKey: Int, index: Int, selectedIndexes: Set<Int>?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -106,10 +109,9 @@ fun WooShippingSplitShipmentScreen(
                     )
 
                     LazyColumn {
-                        items(
+                        itemsIndexed(
                             items = shipment.shippableItems,
-                        ) { shippableItem ->
-                            var selection by remember { mutableStateOf(false) }
+                        ) { index, shippableItem ->
                             when (shippableItem) {
                                 is SelectableShippableItemUI.SingleSelectableShippableItemUI -> {
                                     SelectableShippingProduct(
@@ -119,8 +121,14 @@ fun WooShippingSplitShipmentScreen(
                                         price = shippableItem.shippableItem.formattedPrice,
                                         quantity = shippableItem.shippableItem.quantity,
                                         imageUrl = shippableItem.shippableItem.imageUrl,
-                                        isSelected = selection,
-                                        onSelectionChange = { selection = !selection },
+                                        isSelected = shippableItem.isSelected,
+                                        onSelectionChange = {
+                                            onUpdateSelection(
+                                                viewState.shipmentSelected,
+                                                index,
+                                                null
+                                            )
+                                        },
                                         modifier = Modifier.padding(vertical = 8.dp)
                                     )
                                 }
@@ -134,44 +142,73 @@ fun WooShippingSplitShipmentScreen(
                                         price = shippableItem.shippableItem.formattedPrice,
                                         quantity = shippableItem.shippableItem.quantity,
                                         imageUrl = shippableItem.shippableItem.imageUrl,
-                                        isSelected = selection,
+                                        isSelected = shippableItem.isSelected,
                                         onSelectionChange = {
-                                            selection = !selection
+                                            onUpdateSelection(
+                                                viewState.shipmentSelected,
+                                                index,
+                                                null
+                                            )
                                         },
                                         isExpanded = expanded,
                                         onExpand = { expanded = !expanded },
                                         singleWeight = shippableItem.innerShippableItem.formattedWeight,
                                         singlePrice = shippableItem.innerShippableItem.formattedPrice,
+                                        selectedIndexes = shippableItem.selectedIndexes,
+                                        onInnerSelectionChange = { isSelected, innerIndex ->
+                                            val indexes = shippableItem.selectedIndexes.toMutableSet()
+                                            if (isSelected) indexes.remove(innerIndex) else indexes.add(innerIndex)
+
+                                            onUpdateSelection(
+                                                viewState.shipmentSelected,
+                                                index,
+                                                indexes
+                                            )
+                                        },
                                         modifier = Modifier.padding(vertical = 8.dp)
                                     )
                                 }
                             }
                         }
-                        if (viewState.splitMessage != null) {
+                        if (viewState.splitMessage != null || viewState.splitMovements.isNotEmpty()) {
                             item {
-                                Spacer(modifier = Modifier.padding(bottom = 120.dp))
+                                when {
+                                    viewState.splitMessage != null && viewState.splitMovements.isNotEmpty()
+                                    -> Spacer(modifier = Modifier.padding(bottom = 240.dp))
+                                    else -> Spacer(modifier = Modifier.padding(bottom = 120.dp))
+                                }
                             }
                         }
                     }
                 }
 
-                AnimatedVisibility(
-                    visible = viewState.splitMessage != null,
-                    label = "message_transition",
-                    enter = slideInVertically(initialOffsetY = { it }),
-                    modifier = Modifier.align(Alignment.BottomCenter)
-                ) {
-                    when (viewState.splitMessage) {
-                        is SplitShipmentMessage.Instructions -> {
-                            InstructionsMessage(
-                                message = annotatedStringRes(R.string.woo_shipping_split_shipment_instructions),
-                                onClose = onDismissInstructions,
-                                modifier = Modifier.align(Alignment.BottomCenter)
-                            )
-                        }
+                Column(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)) {
+                    AnimatedVisibility(
+                        visible = viewState.splitMessage != null,
+                        label = "message_transition",
+                        enter = slideInVertically(initialOffsetY = { it })
+                    ) {
+                        when (viewState.splitMessage) {
+                            is SplitShipmentMessage.Instructions -> {
+                                InstructionsMessage(
+                                    message = annotatedStringRes(R.string.woo_shipping_split_shipment_instructions),
+                                    onClose = onDismissInstructions
+                                )
+                            }
 
-                        is SplitShipmentMessage.Success -> TODO()
-                        null -> {}
+                            is SplitShipmentMessage.Success -> TODO()
+                            null -> {}
+                        }
+                    }
+                    AnimatedVisibility(
+                        visible = viewState.splitMovements.isNotEmpty(),
+                        label = "movements_transition",
+                        enter = slideInVertically(initialOffsetY = { it })
+                    ) {
+                        SplitMovements(
+                            movements = viewState.splitMovements,
+                            modifier = Modifier.padding(vertical = 16.dp)
+                        )
                     }
                 }
             }
@@ -204,6 +241,38 @@ private fun InstructionsMessage(
                     tint = MaterialTheme.colors.onPrimary.copy(alpha = .60f),
                     contentDescription = stringResource(id = R.string.close),
                     modifier = Modifier.padding(14.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SplitMovements(
+    movements: List<SplitMovements>,
+    modifier: Modifier = Modifier
+) {
+    if (movements.isNotEmpty()) {
+        Card(
+            backgroundColor = MaterialTheme.colors.surface,
+            modifier = modifier,
+            shape = RoundedCornerShape(corner = CornerSize(8.dp)),
+            elevation = 4.dp
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.selection_count, movements.first().totalItemsToMove),
+                    color = MaterialTheme.colors.onSurface,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+
+                WCTextButton(
+                    text = stringResource(R.string.woo_shipping_split_move_to_new),
+                    onClick = { }
                 )
             }
         }
