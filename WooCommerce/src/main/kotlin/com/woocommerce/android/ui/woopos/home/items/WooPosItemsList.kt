@@ -313,7 +313,7 @@ fun WooPosItemsLoadingIndicator(itemsCount: Int = 10) {
 }
 
 @Composable
-fun ItemsLoadingItem() {
+private fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
