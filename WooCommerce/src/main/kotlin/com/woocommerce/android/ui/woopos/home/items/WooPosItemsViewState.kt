@@ -9,7 +9,7 @@ sealed class WooPosItemsViewState(
 ) : WooPosBaseViewState(reloadingProductsWithPullToRefresh) {
     data class Content(
         val search: SearchState,
-        override val items: List<WooPosItem>,
+        override val items: List<WooPosItemSelectionViewState>,
         val bannerState: BannerState,
         override val paginationState: PaginationState = PaginationState.None,
         override val reloadingProductsWithPullToRefresh: Boolean = false,
