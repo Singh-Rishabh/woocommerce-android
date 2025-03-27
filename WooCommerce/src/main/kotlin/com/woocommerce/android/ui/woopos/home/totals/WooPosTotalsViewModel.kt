@@ -453,6 +453,7 @@ class WooPosTotalsViewModel @Inject constructor(
     }
 
     private suspend fun buildWooPosTotalsViewState(order: Order): WooPosTotalsViewState.Checkout {
+        val discountAmount = order.discountTotal
         val subtotalAmount = order.productsTotal
         val taxAmount = order.totalTax
         val totalAmount = order.total
@@ -466,6 +467,7 @@ class WooPosTotalsViewModel @Inject constructor(
         }
         return WooPosTotalsViewState.Checkout(
             totals = Totals.Visible(
+                orderDiscountText = if(discountAmount > BigDecimal.ZERO) priceFormat(discountAmount) else null,
                 orderSubtotalText = priceFormat(subtotalAmount),
                 orderTaxText = priceFormat(taxAmount),
                 orderTotalText = priceFormat(totalAmount),
