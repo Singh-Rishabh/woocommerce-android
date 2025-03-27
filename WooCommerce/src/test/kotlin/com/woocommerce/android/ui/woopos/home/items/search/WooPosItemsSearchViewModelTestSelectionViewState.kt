@@ -440,7 +440,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             val initialState = awaitItem() as WooPosItemsSearchViewState.Content
             assertThat(initialState.items).hasSize(1)
 
-            viewModel.onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached)
+            viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
             val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
             assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
@@ -488,7 +488,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         viewModel.viewState.test {
             awaitItem() as WooPosItemsSearchViewState.Content
 
-            viewModel.onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached)
+            viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
             val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
             assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
