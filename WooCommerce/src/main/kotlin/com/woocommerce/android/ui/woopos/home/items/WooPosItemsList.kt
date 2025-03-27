@@ -297,7 +297,7 @@ fun VariationProductDetails(item: Variation) {
 }
 
 @Composable
-fun ItemsLoadingIndicator(itemsCount: Int = 10) {
+fun WooPosItemsLoadingIndicator(itemsCount: Int = 10) {
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value),
         contentPadding = PaddingValues(2.dp),
@@ -477,6 +477,6 @@ fun EmptyListPreview() {
 @Composable
 fun LoadingListPreview() {
     WooPosTheme {
-        ItemsLoadingIndicator(10)
+        WooPosItemsLoadingIndicator(10)
     }
 }

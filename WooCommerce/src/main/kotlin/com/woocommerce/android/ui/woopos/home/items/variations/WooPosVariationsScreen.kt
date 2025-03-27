@@ -42,7 +42,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosThe
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsEmptyList
-import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsLoadingIndicator
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
@@ -151,7 +151,7 @@ private fun WooPosVariationsScreens(
 
                 is WooPosVariationsViewState.Loading -> {
                     Spacer(modifier = Modifier.height(WooPosSpacing.Medium.value))
-                    ItemsLoadingIndicator()
+                    WooPosItemsLoadingIndicator()
                 }
 
                 is WooPosVariationsViewState.Error -> {

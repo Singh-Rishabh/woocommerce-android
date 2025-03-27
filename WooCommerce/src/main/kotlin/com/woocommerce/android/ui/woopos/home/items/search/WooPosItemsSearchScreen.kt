@@ -18,6 +18,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosThe
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsEmptyList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsLoadingIndicator
 
 @Composable
 fun WooPosItemsSearchScreen(
@@ -62,6 +63,7 @@ private fun WooPosItemsSearchScreen(
             }
 
             WooPosItemsSearchViewState.Loading -> {
+                WooPosItemsLoadingIndicator(itemsCount = 5)
             }
         }
     }

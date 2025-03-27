@@ -209,7 +209,7 @@ private fun MainItemsList(
                     }
                 }
 
-                is WooPosItemsViewState.Loading -> ItemsLoadingIndicator()
+                is WooPosItemsViewState.Loading -> WooPosItemsLoadingIndicator()
 
                 is WooPosItemsViewState.Empty -> WooPosItemsEmptyList(
                     title = stringResource(id = R.string.woopos_products_empty_list_title),
