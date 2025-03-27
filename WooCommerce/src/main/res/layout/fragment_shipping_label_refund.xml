@@ -26,7 +26,7 @@
         style="@style/Woo.Divider" />
 
 
-    <com.woocommerce.android.widgets.WCWarningBanner
+    <com.cataloghub.android.widgets.WCWarningBanner
         android:id="@+id/expiration_warning_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

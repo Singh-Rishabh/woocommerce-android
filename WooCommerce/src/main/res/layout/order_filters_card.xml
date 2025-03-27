@@ -25,7 +25,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.woocommerce.android.widgets.WCToggleOutlinedButton
+        <com.cataloghub.android.widgets.WCToggleOutlinedButton
             android:id="@+id/btn_order_filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

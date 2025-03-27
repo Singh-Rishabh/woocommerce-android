@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_surface"
     android:paddingVertical="@dimen/major_100"
-    tools:context="com.woocommerce.android.ui.payments.simplepayments.SimplePaymentsDialog">
+    tools:context="com.cataloghub.android.ui.payments.simplepayments.SimplePaymentsDialog">
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -67,7 +67,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedCurrencyEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedCurrencyEditTextView
                     android:id="@+id/editPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

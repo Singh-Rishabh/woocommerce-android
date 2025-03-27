@@ -8,7 +8,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:123:android:abc",
         "android_client_info": {
-          "package_name": "com.woocommerce.android"
+          "package_name": "com.cataloghub.android"
         }
       },
       "oauth_client": [
@@ -20,7 +20,7 @@
           "client_id": "",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.woocommerce.android",
+            "package_name": "com.cataloghub.android",
             "certificate_hash": ""
           }
         }
@@ -50,7 +50,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:123:android:abc",
         "android_client_info": {
-          "package_name": "com.woocommerce.android.dev"
+          "package_name": "com.cataloghub.android.dev"
         }
       },
       "oauth_client": [
@@ -62,7 +62,7 @@
           "client_id": "",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.woocommerce.android.dev",
+            "package_name": "com.cataloghub.android.dev",
             "certificate_hash": ""
           }
         }
@@ -92,7 +92,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:123:android:abc",
         "android_client_info": {
-          "package_name": "com.woocommerce.android.prealpha"
+          "package_name": "com.cataloghub.android.prealpha"
         }
       },
       "oauth_client": [
@@ -104,7 +104,7 @@
           "client_id": "",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.woocommerce.android.prealpha",
+            "package_name": "com.cataloghub.android.prealpha",
             "certificate_hash": ""
           }
         }

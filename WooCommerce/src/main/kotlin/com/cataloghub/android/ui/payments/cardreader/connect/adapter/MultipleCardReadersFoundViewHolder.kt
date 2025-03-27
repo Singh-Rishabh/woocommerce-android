@@ -1,0 +1,59 @@
+package com.cataloghub.android.ui.payments.cardreader.connect.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.annotation.LayoutRes
+import androidx.recyclerview.widget.RecyclerView
+import com.cataloghub.android.R
+import com.cataloghub.android.databinding.CardReaderConnectReaderItemBinding
+import com.cataloghub.android.databinding.CardReaderConnectScanningItemBinding
+import com.cataloghub.android.ui.payments.cardreader.connect.CardReaderConnectViewModel.ListItemViewState
+import com.cataloghub.android.ui.payments.cardreader.connect.CardReaderConnectViewModel.ListItemViewState.CardReaderListItem
+import com.cataloghub.android.ui.payments.cardreader.connect.CardReaderConnectViewModel.ListItemViewState.ScanningInProgressListItem
+import com.cataloghub.android.util.UiHelpers
+import com.cataloghub.android.util.WooAnimUtils
+
+sealed class MultipleCardReadersFoundViewHolder(
+    val parent: ViewGroup,
+    @LayoutRes layout: Int
+) : RecyclerView.ViewHolder(LayoutInflater.from(parent.context).inflate(layout, parent, false)) {
+    abstract fun onBind(uiState: ListItemViewState)
+
+    class CardReaderViewHolder(
+        parent: ViewGroup
+    ) : MultipleCardReadersFoundViewHolder(parent, R.layout.card_reader_connect_reader_item) {
+        var binding: CardReaderConnectReaderItemBinding = CardReaderConnectReaderItemBinding.bind(itemView)
+
+        override fun onBind(uiState: ListItemViewState) {
+            uiState as CardReaderListItem
+            UiHelpers.setTextOrHide(binding.readersFoundReaderConnectButton, uiState.connectLabel)
+            binding.readersFoundContainer.setOnClickListener {
+                uiState.onConnectClicked()
+            }
+            UiHelpers.setTextOrHide(binding.readersFoundReaderId, uiState.readerId)
+            UiHelpers.setTextOrHide(binding.readersFoundReaderType, uiState.readerType)
+        }
+    }
+
+    class ScanningInProgressViewHolder(
+        parent: ViewGroup
+    ) : MultipleCardReadersFoundViewHolder(parent, R.layout.card_reader_connect_scanning_item) {
+        var binding: CardReaderConnectScanningItemBinding = CardReaderConnectScanningItemBinding.bind(itemView)
+
+        init {
+            WooAnimUtils.rotate(
+                binding.cardReaderConnectProgressIndicator,
+                rotationDirection = WooAnimUtils.RotationDirection.ANTICLOCKWISE
+            )
+        }
+
+        override fun onBind(uiState: ListItemViewState) {
+            uiState as ScanningInProgressListItem
+            UiHelpers.setTextOrHide(binding.cardReaderConnectProgressLabel, uiState.label)
+            UiHelpers.setImageOrHideInLandscapeOnCompactScreenHeightSizeClass(
+                binding.cardReaderConnectProgressIndicator,
+                uiState.scanningIcon
+            )
+        }
+    }
+}

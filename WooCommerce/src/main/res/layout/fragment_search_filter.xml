@@ -25,7 +25,7 @@
 
     </FrameLayout>
 
-    <com.woocommerce.android.widgets.WCEmptyView
+    <com.cataloghub.android.widgets.WCEmptyView
         android:id="@+id/emptyView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

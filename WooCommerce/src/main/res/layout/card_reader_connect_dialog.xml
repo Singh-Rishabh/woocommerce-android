@@ -13,7 +13,7 @@
     android:paddingTop="@dimen/major_200"
     android:paddingEnd="@dimen/major_75"
     android:paddingBottom="@dimen/payments_dialog_bottom_padding"
-    tools:context="com.woocommerce.android.ui.payments.cardreader.connect.CardReaderConnectDialogFragment">
+    tools:context="com.cataloghub.android.ui.payments.cardreader.connect.CardReaderConnectDialogFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/header_label"

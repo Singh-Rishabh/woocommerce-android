@@ -59,7 +59,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <com.woocommerce.android.ui.common.ExpandableMessageView
+            <com.cataloghub.android.ui.common.ExpandableMessageView
                 android:id="@+id/message_no_editable_fields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -67,13 +67,13 @@
                 app:message="@string/order_editing_non_editable_message"
                 app:title="@string/order_editing_non_editable_title" />
 
-            <com.woocommerce.android.ui.orders.details.views.OrderDetailOrderStatusView
+            <com.cataloghub.android.ui.orders.details.views.OrderDetailOrderStatusView
                 android:id="@+id/order_status_view"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.woocommerce.android.ui.orders.creation.views.OrderCreateEditSectionView
+            <com.cataloghub.android.ui.orders.creation.views.OrderCreateEditSectionView
                 android:id="@+id/products_section"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
@@ -82,7 +82,7 @@
                 app:header="@string/products"
                 app:keepAddButtons="true" />
 
-            <com.woocommerce.android.ui.orders.creation.views.OrderCreateEditSectionView
+            <com.cataloghub.android.ui.orders.creation.views.OrderCreateEditSectionView
                 android:id="@+id/custom_amounts_section"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
@@ -126,13 +126,13 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </com.google.android.material.card.MaterialCardView>
 
-            <com.woocommerce.android.ui.orders.creation.views.OrderCreateEditSectionView
+            <com.cataloghub.android.ui.orders.creation.views.OrderCreateEditSectionView
                 android:id="@+id/customer_section"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.woocommerce.android.ui.orders.creation.views.OrderCreateEditSectionView
+            <com.cataloghub.android.ui.orders.creation.views.OrderCreateEditSectionView
                 android:id="@+id/notes_section"
                 style="@style/Woo.Card"
                 android:visibility="gone"
@@ -150,7 +150,7 @@
         app:layout_constraintBottom_toTopOf="@+id/totals_section"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/two_pane_layout_guideline"
-        tools:composableName="com.woocommerce.android.ui.compose.component.FeedbackDialogKt"
+        tools:composableName="com.cataloghub.android.ui.compose.component.FeedbackDialogKt"
         android:layout_marginBottom="-8dp"/>
 
     <androidx.compose.ui.platform.ComposeView
@@ -160,7 +160,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/scrollView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/two_pane_layout_guideline"
-        tools:composableName="com.woocommerce.android.ui.orders.creation.totals.OrderCreateEditTotalsFullViewKt" />
+        tools:composableName="com.cataloghub.android.ui.orders.creation.totals.OrderCreateEditTotalsFullViewKt" />
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/loadingProgress"

@@ -5,7 +5,7 @@
     app:startDestination="@id/themePickerFragment">
     <fragment
         android:id="@+id/themePickerFragment"
-        android:name="com.woocommerce.android.ui.themes.ThemePickerFragment"
+        android:name="com.cataloghub.android.ui.themes.ThemePickerFragment"
         android:label="ThemePickerFragment">
         <action
             android:id="@+id/action_themePickerFragment_to_themePreviewFragment"
@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/themePreviewFragment"
-        android:name="com.woocommerce.android.ui.themes.ThemePreviewFragment"
+        android:name="com.cataloghub.android.ui.themes.ThemePreviewFragment"
         android:label="ThemePreviewFragment">
         <argument
             android:name="themeId"

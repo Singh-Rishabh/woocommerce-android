@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+    <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
         android:id="@+id/attribute_options_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

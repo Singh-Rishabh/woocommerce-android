@@ -47,7 +47,7 @@ steps:
           - "**/build/reports/lint-results*.*"
 
       - label: "Dependency Tree Diff"
-        command: comment_with_dependency_diff 'woocommerce' 'vanillaReleaseRuntimeClasspath'
+        command: comment_with_dependency_diff 'cataloghub' 'vanillaReleaseRuntimeClasspath'
         if: build.pull_request.id != null
         plugins: [$CI_TOOLKIT]
         artifact_paths:

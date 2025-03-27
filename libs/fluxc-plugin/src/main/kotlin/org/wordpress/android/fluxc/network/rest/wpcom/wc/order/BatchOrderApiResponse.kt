@@ -9,7 +9,7 @@ import org.wordpress.android.fluxc.network.Response
 
 /**
  * Represents the response from WooCommerce's Batch Order Update API endpoint.
- * https://woocommerce.github.io/woocommerce-rest-api-docs/?shell#batch-update-orders
+ * https://cataloghub.github.io/cataloghub-rest-api-docs/?shell#batch-update-orders
  *
  * While the WooCommerce REST API orders batch endpoint supports three operations at once
  * (create, update, delete), this class specifically handles only the "update" operation

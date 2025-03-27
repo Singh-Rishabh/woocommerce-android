@@ -20,9 +20,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/color_surface"
-        tools:context="com.woocommerce.android.ui.products.images.ProductImagesFragment">
+        tools:context="com.cataloghub.android.ui.products.images.ProductImagesFragment">
 
-        <com.woocommerce.android.widgets.WCElevatedLinearLayout
+        <com.cataloghub.android.widgets.WCElevatedLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -83,13 +83,13 @@
                 android:gravity="center"
                 android:text="@string/product_images_image_limit_warning" />
 
-            <com.woocommerce.android.widgets.WCProductImageGalleryView
+            <com.cataloghub.android.widgets.WCProductImageGalleryView
                 android:id="@+id/imageGallery"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:isDraggingEnabled="true"
                 app:isGridView="true"
                 app:showAddImageIcon="false" />
-        </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+        </com.cataloghub.android.widgets.WCElevatedLinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

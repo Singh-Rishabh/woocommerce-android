@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace 'com.woocommerce.android.apifaker'
+    namespace 'com.cataloghub.android.apifaker'
 
     defaultConfig {
         minSdkVersion gradle.ext.minSdkVersion

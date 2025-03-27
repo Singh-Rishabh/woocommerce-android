@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.orders.notes.AddOrderNoteFragment">
+    tools:context="com.cataloghub.android.ui.orders.notes.AddOrderNoteFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.woocommerce.android.widgets.WCToggleSingleOptionView
+        <com.cataloghub.android.widgets.WCToggleSingleOptionView
             android:id="@+id/addNote_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

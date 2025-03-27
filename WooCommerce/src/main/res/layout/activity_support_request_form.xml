@@ -140,7 +140,7 @@
                         android:layout_marginHorizontal="@dimen/major_100"
                         android:text="@string/support_request_description" />
 
-                    <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                    <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                         android:id="@+id/request_subject"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -153,7 +153,7 @@
                         android:saveEnabled="false"
                         app:errorEnabled="true" />
 
-                    <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                    <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                         android:id="@+id/request_site_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

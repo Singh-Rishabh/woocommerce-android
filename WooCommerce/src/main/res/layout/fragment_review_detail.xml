@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="false"
-    tools:context="com.woocommerce.android.ui.reviews.ReviewDetailFragment">
+    tools:context="com.cataloghub.android.ui.reviews.ReviewDetailFragment">
 
     <com.google.android.material.card.MaterialCardView
         style="@style/Woo.Card"
@@ -30,7 +30,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.woocommerce.android.widgets.BorderedImageView
+                <com.cataloghub.android.widgets.BorderedImageView
                     android:id="@+id/review_product_icon"
                     android:layout_width="@dimen/image_minor_100"
                     android:layout_height="@dimen/image_minor_100"

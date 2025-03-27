@@ -17,7 +17,7 @@
         android:paddingBottom="@dimen/minor_100"
         tools:text="@string/support_identity_input_dialog_enter_email_and_name"/>
 
-    <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+    <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
         android:id="@+id/support_identity_input_dialog_email_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         android:hint="@string/support_identity_input_dialog_email_label"
         android:inputType="textEmailAddress" />
 
-    <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+    <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
         android:id="@+id/support_identity_input_dialog_name_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

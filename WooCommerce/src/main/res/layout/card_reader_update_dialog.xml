@@ -9,7 +9,7 @@
     android:minWidth="@dimen/payments_dialog_width"
     android:minHeight="@dimen/payments_dialog_height"
     android:paddingVertical="@dimen/major_175"
-    tools:context="com.woocommerce.android.ui.payments.cardreader.update.CardReaderUpdateDialogFragment">
+    tools:context="com.cataloghub.android.ui.payments.cardreader.update.CardReaderUpdateDialogFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/titleTextView"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/card_reader_software_update_title" />
 
-    <com.woocommerce.android.widgets.CircleProgressOverlayView
+    <com.cataloghub.android.widgets.CircleProgressOverlayView
         android:id="@+id/progressCircleProgressOverlayView"
         android:layout_width="0dp"
         android:layout_height="0dp"

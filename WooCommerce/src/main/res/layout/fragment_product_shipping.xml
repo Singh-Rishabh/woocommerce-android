@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_weight"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                     android:inputType="numberDecimal"
                     android:maxLength="@integer/maxlength_product_shipping_properties" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_length"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                     android:inputType="numberDecimal"
                     android:maxLength="@integer/maxlength_product_shipping_properties" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_width"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                     android:inputType="numberDecimal"
                     android:maxLength="@integer/maxlength_product_shipping_properties" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                     android:id="@+id/product_height"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                     android:inputType="numberDecimal"
                     android:maxLength="@integer/maxlength_product_shipping_properties" />
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                     android:id="@+id/product_shipping_class_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                     android:hint="@string/product_shipping_class"
                     android:inputType="text" />
 
-                <com.woocommerce.android.widgets.WCToggleSingleOptionView
+                <com.cataloghub.android.widgets.WCToggleSingleOptionView
                     android:id="@+id/product_one_time_shipping"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

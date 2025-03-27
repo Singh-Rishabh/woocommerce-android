@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/analyticsRefreshLayout"
@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.woocommerce.android.ui.feedback.FeedbackBanner
+            <com.cataloghub.android.ui.feedback.FeedbackBanner
                 android:id="@+id/analyticsHubFeedbackBanner"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
@@ -39,7 +39,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/analyticsHubFeedbackBanner" />
 
-            <com.woocommerce.android.ui.analytics.hub.daterangeselector.AnalyticsHubDateRangeCardView
+            <com.cataloghub.android.ui.analytics.hub.daterangeselector.AnalyticsHubDateRangeCardView
                 android:id="@+id/analyticsDateSelectorCard"
                 style="@style/Woo.Card.WithoutPadding"
                 android:layout_width="0dp"
@@ -63,4 +63,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-</com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout>
+</com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout>

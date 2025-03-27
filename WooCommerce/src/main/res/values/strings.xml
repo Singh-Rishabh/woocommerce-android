@@ -13,6 +13,24 @@
     <!-- Required by the login library - overwrites the placeholder value with a real channel -->
     <string name="login_notification_channel_id" content_override="true" translatable="false">@string/notification_channel_general_id</string>
     <!--
+        AI custom variables
+    -->
+    <string name="ai_process_title">Process Video</string>
+    <string name="ai_review_title">AI Review</string>
+    <string name="ai_screen_title">AI</string>
+    <string name="ai_review_reject">Reject</string>
+    <string name="ai_review_edit">Edit</string>
+    <string name="ai_review_approve">Approve</string>
+    <string name="ai_review_submit">ReviewSubmit</string>
+    <string name="ai_process_button">Process</string>
+    <string name="ai_auto_approve">AutoApprove</string>
+    <string name="ai_no_products">NoProducts</string>
+    <string name="ai_process_hint">ProcessHint</string>
+    <string name="ai_error_processing">AIProcessingError</string>
+    <string name="ai_error_invalid_url">AIInvalidURL</string>
+    <string name="ai_success_processing">AISuccessProcessing</string>
+    <string name="ai_not_eligible">AI Not Eligible</string>
+    <!--
         General Strings
     -->
     <string name="all">All</string>

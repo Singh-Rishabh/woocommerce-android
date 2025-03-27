@@ -1,0 +1,71 @@
+package com.cataloghub.android.ui.products.variations.selector
+
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import org.wordpress.android.fluxc.store.WCProductStore
+import javax.inject.Inject
+
+class VariationListHandler @Inject constructor(private val repository: VariationSelectorRepository) {
+    companion object {
+        private const val PAGE_SIZE = 25
+    }
+
+    private val mutex = Mutex()
+    private var offset = 0
+    private var canLoadMore = false
+
+    fun getVariationsFlow(productId: Long) = repository.observeVariations(productId)
+
+    suspend fun resetState() {
+        mutex.withLock {
+            offset = 0
+            canLoadMore = false
+        }
+    }
+
+    fun canLoadMore(numOfVariations: Int): Boolean {
+        return canLoadMore || (offset + PAGE_SIZE < numOfVariations)
+    }
+
+    suspend fun fetchVariations(
+        productId: Long,
+        forceRefresh: Boolean = false,
+        filterOptions: Map<WCProductStore.VariationFilterOption, String>? = null,
+        orderCurrency: String? = null,
+    ): Result<Unit> = mutex.withLock {
+        // Reset the offset
+        offset = 0
+
+        if (forceRefresh) {
+            loadVariations(productId, filterOptions, orderCurrency)
+        } else {
+            Result.success(Unit)
+        }
+    }
+
+    suspend fun loadMore(
+        productId: Long,
+        filterOptions: Map<WCProductStore.VariationFilterOption, String>? = null,
+        orderCurrency: String? = null,
+    ): Result<Unit> = mutex.withLock {
+        if (!canLoadMore) return@withLock Result.success(Unit)
+        loadVariations(productId, filterOptions, orderCurrency)
+    }
+
+    private suspend fun loadVariations(
+        productId: Long,
+        filterOptions: Map<WCProductStore.VariationFilterOption, String>? = null,
+        orderCurrency: String? = null,
+    ): Result<Unit> {
+        return repository.fetchVariations(
+            productId,
+            offset,
+            PAGE_SIZE,
+            filterOptions,
+            orderCurrency = orderCurrency
+        ).onSuccess {
+            canLoadMore = it
+            offset += PAGE_SIZE
+        }.map { }
+    }
+}

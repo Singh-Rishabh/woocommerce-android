@@ -12,7 +12,7 @@
 
     <fragment
         android:id="@+id/customFieldsFragment"
-        android:name="com.woocommerce.android.ui.customfields.list.CustomFieldsFragment">
+        android:name="com.cataloghub.android.ui.customfields.list.CustomFieldsFragment">
         <argument
             android:name="parentItemId"
             app:argType="long" />
@@ -26,13 +26,13 @@
 
     <fragment
         android:id="@+id/customFieldsEditorFragment"
-        android:name="com.woocommerce.android.ui.customfields.editor.CustomFieldsEditorFragment">
+        android:name="com.cataloghub.android.ui.customfields.editor.CustomFieldsEditorFragment">
         <argument
             android:name="parentItemId"
             app:argType="long" />
         <argument
             android:name="customField"
-            app:argType="com.woocommerce.android.ui.customfields.CustomFieldUiModel"
+            app:argType="com.cataloghub.android.ui.customfields.CustomFieldUiModel"
             app:nullable="true" />
     </fragment>
 </navigation>

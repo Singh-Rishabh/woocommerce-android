@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.woocommerce.android.widgets.WCElevatedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.cataloghub.android.widgets.WCElevatedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             android:layout_marginTop="@dimen/minor_100"
             android:text="@string/shipping_label_customs_return_to_sender" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
             android:id="@+id/contents_type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             android:layout_marginTop="@dimen/major_100"
             android:hint="@string/shipping_label_customs_contents_type_hint" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/contents_type_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -86,7 +86,7 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
             android:id="@+id/restriction_type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
             android:layout_marginTop="@dimen/major_100"
             android:hint="@string/shipping_label_customs_restriction_type_hint" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/restriction_type_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -105,7 +105,7 @@
             android:visibility="gone"
             tools:visibility="visible" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/itn_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -152,4 +152,4 @@
             android:id="@+id/bottom_divider"
             style="@style/Woo.Divider" />
     </LinearLayout>
-</com.woocommerce.android.widgets.WCElevatedLinearLayout>
+</com.cataloghub.android.widgets.WCElevatedLinearLayout>

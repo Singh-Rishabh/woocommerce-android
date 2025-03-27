@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.woocommerce.android">
+    package="com.cataloghub.android">
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -9,7 +9,7 @@
         tools:node="remove" />
 
     <application
-        android:name=".WooCommerceRelease"
+        android:name="com.cataloghub.android.WooCommerceRelease"
         tools:replace="android:name">
 
         <meta-data

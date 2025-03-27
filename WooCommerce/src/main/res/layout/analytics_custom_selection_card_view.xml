@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     tools:context=".ui.analytics.hub.customlistcard.AnalyticsHubCustomSelectionCardView">
 
-    <com.woocommerce.android.ui.analytics.hub.cta.AnalyticsHubUserCallToActionView
+    <com.cataloghub.android.ui.analytics.hub.cta.AnalyticsHubUserCallToActionView
         android:id="@+id/analyticsCallToActionCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -109,7 +109,7 @@
                 app:lineHeight="@dimen/text_major_25"
                 tools:text="32" />
 
-            <com.woocommerce.android.widgets.tags.TagView
+            <com.cataloghub.android.widgets.tags.TagView
                 android:id="@+id/analyticsItemsTag"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/major_150"

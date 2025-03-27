@@ -18,7 +18,7 @@
         android:layout_marginEnd="@dimen/major_150"
         tools:text="Headline 6" />
 
-    <com.woocommerce.android.widgets.WCMaterialOutlinedCurrencyEditTextView
+    <com.cataloghub.android.widgets.WCMaterialOutlinedCurrencyEditTextView
         android:id="@+id/currencyAmount_refundAmountInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

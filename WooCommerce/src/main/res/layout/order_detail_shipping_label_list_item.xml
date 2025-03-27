@@ -111,7 +111,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Package Tracking number -->
-        <com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelItemView
+        <com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelItemView
             android:id="@+id/shippingLabelItem_trackingNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
             <View style="@style/Woo.Divider.TitleAligned" />
 
             <!-- Package ship from address -->
-            <com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelItemView
+            <com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelItemView
                 android:id="@+id/shippingLabelItem_shipFrom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -146,7 +146,7 @@
                 android:layout_marginTop="@dimen/major_100" />
 
             <!-- Package ship to address -->
-            <com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelItemView
+            <com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelItemView
                 android:id="@+id/shippingLabelItem_shipTo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
                 android:layout_marginTop="@dimen/major_100" />
 
             <!-- Package info (name etc) -->
-            <com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelItemView
+            <com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelItemView
                 android:id="@+id/shippingLabelItem_packageInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
                 android:layout_marginTop="@dimen/major_100" />
 
             <!-- Package carrier and rates info -->
-            <com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelItemView
+            <com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelItemView
                 android:id="@+id/shippingLabelItem_carrierInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -185,7 +185,7 @@
                 android:layout_marginTop="@dimen/major_100" />
 
             <!-- Package payment method -->
-            <com.woocommerce.android.ui.orders.shippinglabels.ShippingLabelItemView
+            <com.cataloghub.android.ui.orders.shippinglabels.ShippingLabelItemView
                 android:id="@+id/shippingLabelItem_paymentInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

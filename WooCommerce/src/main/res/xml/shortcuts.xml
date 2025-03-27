@@ -8,9 +8,9 @@
         android:shortcutLongLabel="@string/more_menu_button_payments"
         android:shortcutDisabledMessage="@string/more_menu_button_payments">
         <intent
-            android:action="com.woocommerce.android.payments"
-            android:targetPackage="com.woocommerce.android"
-            android:targetClass="com.woocommerce.android.ui.main.MainActivity" />
+            android:action="com.cataloghub.android.payments"
+            android:targetPackage="com.cataloghub.android"
+            android:targetClass="com.cataloghub.android.ui.main.MainActivity" />
     </shortcut>
 
     <shortcut
@@ -21,8 +21,8 @@
         android:shortcutLongLabel="@string/orderlist_create_order_button_description"
         android:shortcutDisabledMessage="@string/orderlist_create_order_button_description">
         <intent
-            android:action="com.woocommerce.android.ordercreation"
-            android:targetPackage="com.woocommerce.android"
-            android:targetClass="com.woocommerce.android.ui.main.MainActivity" />
+            android:action="com.cataloghub.android.ordercreation"
+            android:targetPackage="com.cataloghub.android"
+            android:targetClass="com.cataloghub.android.ui.main.MainActivity" />
     </shortcut>
 </shortcuts>

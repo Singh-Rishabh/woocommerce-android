@@ -23,7 +23,7 @@ import org.wordpress.android.fluxc.network.rest.wpcom.wc.leaderboards.Leaderboar
         "value": 2000
     },
     {
-        "display": "<span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">&#82;&#36;<\/span>36.000,00<\/span>",
+        "display": "<span class=\"cataloghub-Price-amount amount\"><span class=\"cataloghub-Price-currencySymbol\">&#82;&#36;<\/span>36.000,00<\/span>",
         "value": 36000
     }
 ]
@@ -48,12 +48,12 @@ class LeaderboardProductItem(
      * This property will operate and transform a HTML tag in order to retrieve the currency symbol out of it.
      *
      * Example:
-     *  HTML tag -> <span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">&#82;&#36;<\/span>36.000,00<\/span>
+     *  HTML tag -> <span class=\"cataloghub-Price-amount amount\"><span class=\"cataloghub-Price-currencySymbol\">&#82;&#36;<\/span>36.000,00<\/span>
      *
      *  split from ">" delimiter
      *      Output: string list containing
-     *              <span class=\"woocommerce-Price-amount amount\"
-     *              <span class=\"woocommerce-Price-currencySymbol\"
+     *              <span class=\"cataloghub-Price-amount amount\"
+     *              <span class=\"cataloghub-Price-currencySymbol\"
      *              &#82;&#36;<\/span
      *              36.000,00<\/span
      *
@@ -96,7 +96,7 @@ class LeaderboardProductItem(
      *
      * Example:
      *
-     *  HTML tag -> <span class=\"woocommerce-Price-amount amount\"><span class=\"woocommerce-Price-currencySymbol\">DKK<\/span>36.000,00<\/span>
+     *  HTML tag -> <span class=\"cataloghub-Price-amount amount\"><span class=\"cataloghub-Price-currencySymbol\">DKK<\/span>36.000,00<\/span>
      *
      *  parse HTML tag to string
      *      Output: DKK36.000,00

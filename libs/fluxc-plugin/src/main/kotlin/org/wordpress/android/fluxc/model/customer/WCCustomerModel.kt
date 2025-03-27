@@ -7,7 +7,7 @@ import com.yarolegovich.wellsql.core.annotation.Table
 import org.wordpress.android.fluxc.persistence.WellSqlConfig
 
 /**
- * Single Woo customer - see https://woocommerce.github.io/woocommerce-rest-api-docs/#customer-properties
+ * Single Woo customer - see https://cataloghub.github.io/cataloghub-rest-api-docs/#customer-properties
  */
 @Table(addOn = WellSqlConfig.ADDON_WOOCOMMERCE)
 data class WCCustomerModel(@PrimaryKey @Column private var id: Int = 0) : Identifiable {

@@ -39,7 +39,7 @@
             tools:text="$359,687.50"
             android:focusable="false"/>
 
-        <com.woocommerce.android.widgets.tags.TagView
+        <com.cataloghub.android.widgets.tags.TagView
             android:id="@+id/cardInformationSectionDeltaTag"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/text_major_50"

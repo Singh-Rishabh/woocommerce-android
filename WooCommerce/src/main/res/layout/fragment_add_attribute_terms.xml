@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/default_window_background"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.products.variations.attributes.AddAttributeFragment">
+    tools:context="com.cataloghub.android.ui.products.variations.attributes.AddAttributeFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -23,7 +23,7 @@
         android:orientation="vertical">
 
         <!-- Option EditText -->
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/termEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

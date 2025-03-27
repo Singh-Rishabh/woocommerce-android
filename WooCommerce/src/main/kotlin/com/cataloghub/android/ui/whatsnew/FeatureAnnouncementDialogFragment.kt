@@ -1,0 +1,71 @@
+package com.cataloghub.android.ui.whatsnew
+
+import android.content.DialogInterface
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.cataloghub.android.R
+import com.cataloghub.android.databinding.FeatureAnnouncementDialogFragmentBinding
+import com.cataloghub.android.extensions.takeIfNotEqualTo
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+
+@AndroidEntryPoint
+class FeatureAnnouncementDialogFragment : DialogFragment() {
+    @Inject lateinit var sizeSetup: FeatureAnnouncementSizeSetupHelper
+
+    private val viewModel: FeatureAnnouncementViewModel by viewModels()
+    private val navArgs: FeatureAnnouncementDialogFragmentArgs by navArgs()
+    private lateinit var listAdapter: FeatureAnnouncementListAdapter
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.feature_announcement_dialog_fragment, container, false)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        lifecycle.addObserver(sizeSetup)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val binding = FeatureAnnouncementDialogFragmentBinding.bind(view)
+
+        viewModel.setAnnouncementData(navArgs.announcement)
+        setupView(binding)
+        setupObservers()
+    }
+
+    private fun setupView(binding: FeatureAnnouncementDialogFragmentBinding) {
+        binding.closeFeatureAnnouncementButton.setOnClickListener {
+            viewModel.handleAnnouncementIsViewed()
+            findNavController().popBackStack()
+        }
+
+        listAdapter = FeatureAnnouncementListAdapter()
+        binding.featureList.adapter = listAdapter
+        binding.featureList.layoutManager = LinearLayoutManager(activity)
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        viewModel.handleAnnouncementIsViewed()
+
+        super.onDismiss(dialog)
+    }
+
+    private fun setupObservers() {
+        viewModel.viewStateData.observe(viewLifecycleOwner) { old, new ->
+            new.announcement.takeIfNotEqualTo(old?.announcement) {
+                it?.let {
+                    listAdapter.submitList(it.features)
+                }
+            }
+        }
+    }
+}

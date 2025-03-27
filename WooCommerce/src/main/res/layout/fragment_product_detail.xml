@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productDetailToolbar"
-        tools:context="com.woocommerce.android.ui.products.details.ProductDetailFragment">
+        tools:context="com.cataloghub.android.ui.products.details.ProductDetailFragment">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/app_bar_layout"
@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     app:layout_collapseMode="parallax">
 
-                    <com.woocommerce.android.widgets.WCProductImageGalleryView
+                    <com.cataloghub.android.widgets.WCProductImageGalleryView
                         android:id="@+id/imageGallery"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/image_major_120"
@@ -193,7 +193,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.woocommerce.android.widgets.WCElevatedLinearLayout
+        <com.cataloghub.android.widgets.WCElevatedLinearLayout
             style="@style/Woo.Card.WithoutPadding"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -212,7 +212,7 @@
                 android:text="@string/product_detail_add_more"
                 app:icon="@drawable/ic_add"
                 app:iconPadding="@dimen/major_100" />
-        </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+        </com.cataloghub.android.widgets.WCElevatedLinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -227,7 +227,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/productDetailToolbar"
-        tools:context="com.woocommerce.android.ui.products.details.ProductDetailFragment">
+        tools:context="com.cataloghub.android.ui.products.details.ProductDetailFragment">
 
         <ImageView
             android:id="@+id/productDetailsErrorImage"

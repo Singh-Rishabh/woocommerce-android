@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace "org.wordpress.android.fluxc.plugins.woocommerce"
+    namespace "org.wordpress.android.fluxc.plugins.cataloghub"
 
     defaultConfig {
         minSdkVersion gradle.ext.minSdkVersion

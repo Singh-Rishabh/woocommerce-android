@@ -38,12 +38,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.woocommerce.android.ui.prefs.WCSettingsCategoryHeaderView
+            <com.cataloghub.android.ui.prefs.WCSettingsCategoryHeaderView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/support_subtitle"/>
 
-            <com.woocommerce.android.ui.prefs.WCSettingsOptionValueView
+            <com.cataloghub.android.ui.prefs.WCSettingsOptionValueView
                 android:id="@+id/faqContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -52,14 +52,14 @@
 
             <View style="@style/Woo.Divider"/>
 
-            <com.woocommerce.android.ui.prefs.WCSettingsOptionValueView
+            <com.cataloghub.android.ui.prefs.WCSettingsOptionValueView
                 android:id="@+id/contactContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:optionTitle="@string/support_contact"
                 app:optionValue="@string/support_contact_detail"/>
 
-            <com.woocommerce.android.ui.prefs.WCSettingsOptionValueView
+            <com.cataloghub.android.ui.prefs.WCSettingsOptionValueView
                 android:id="@+id/identityContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -68,14 +68,14 @@
 
             <View style="@style/Woo.Divider"/>
 
-            <com.woocommerce.android.ui.prefs.WCSettingsOptionValueView
+            <com.cataloghub.android.ui.prefs.WCSettingsOptionValueView
                 android:id="@+id/appLogContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:optionTitle="@string/support_application_log"
                 app:optionValue="@string/support_application_log_detail"/>
 
-            <com.woocommerce.android.ui.prefs.WCSettingsOptionValueView
+            <com.cataloghub.android.ui.prefs.WCSettingsOptionValueView
                 android:id="@+id/ssrContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

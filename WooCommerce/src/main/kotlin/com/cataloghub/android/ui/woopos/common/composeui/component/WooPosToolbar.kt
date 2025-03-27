@@ -1,0 +1,87 @@
+package com.cataloghub.android.ui.woopos.common.composeui.component
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import com.cataloghub.android.R
+import com.cataloghub.android.ui.woopos.common.composeui.WooPosPreview
+import com.cataloghub.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
+import com.cataloghub.android.ui.woopos.common.composeui.designsystem.WooPosTheme
+import com.cataloghub.android.ui.woopos.common.composeui.designsystem.WooPosTypography
+import com.cataloghub.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
+
+@Composable
+fun WooPosToolbar(
+    titleText: String,
+    onBackClicked: () -> Unit
+) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = WooPosSpacing.XLarge.value.toAdaptivePadding())
+            .height(40.dp)
+    ) {
+        val (backButton, title) = createRefs()
+        IconButton(
+            onClick = { onBackClicked() },
+            modifier = Modifier
+                .constrainAs(backButton) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top)
+                    centerVerticallyTo(parent)
+                }
+                .padding(start = WooPosSpacing.Small.value.toAdaptivePadding())
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_back_24dp),
+                contentDescription = stringResource(R.string.woopos_toolbar_icon_content_description),
+                tint = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.size(28.dp)
+            )
+        }
+
+        val iconTitlePadding = WooPosSpacing.Small.value.toAdaptivePadding()
+        WooPosText(
+            text = titleText,
+            style = WooPosTypography.Heading,
+            color = MaterialTheme.colorScheme.onBackground,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            modifier = Modifier
+                .constrainAs(title) {
+                    top.linkTo(backButton.top)
+                    start.linkTo(backButton.end, margin = iconTitlePadding)
+                    centerVerticallyTo(parent)
+                }
+        )
+    }
+}
+
+@WooPosPreview
+@Composable
+fun WooPosToolbarPreview() {
+    WooPosTheme {
+        Column {
+            WooPosToolbar(
+                titleText = "Title",
+                onBackClicked = { }
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+        }
+    }
+}

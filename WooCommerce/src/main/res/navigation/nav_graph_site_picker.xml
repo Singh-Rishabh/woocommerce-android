@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/sitePickerFragment"
-        android:name="com.woocommerce.android.ui.sitepicker.SitePickerFragment"
+        android:name="com.cataloghub.android.ui.sitepicker.SitePickerFragment"
         android:label="fragment_site_picker"
         tools:layout="@layout/fragment_site_picker">
         <argument
@@ -34,7 +34,7 @@
     </fragment>
     <fragment
         android:id="@+id/sitePickerSiteDiscoveryFragment"
-        android:name="com.woocommerce.android.ui.sitepicker.sitediscovery.SitePickerSiteDiscoveryFragment"
+        android:name="com.cataloghub.android.ui.sitepicker.sitediscovery.SitePickerSiteDiscoveryFragment"
         android:label="SitePickerSiteDiscoveryFragment">
         <action
             android:id="@+id/action_sitePickerSiteDiscoveryFragment_to_jetpackActivation"
@@ -44,12 +44,12 @@
                 app:argType="string" />
             <argument
                 android:name="jetpackStatus"
-                app:argType="com.woocommerce.android.model.JetpackStatus" />
+                app:argType="com.cataloghub.android.model.JetpackStatus" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/accountMismatchErrorFragment"
-        android:name="com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorFragment"
+        android:name="com.cataloghub.android.ui.login.accountmismatch.AccountMismatchErrorFragment"
         android:label="AccountMismatchErrorFragment">
         <argument
             android:name="siteUrl"
@@ -57,17 +57,17 @@
         <argument
             android:name="primaryButton"
             android:defaultValue="NONE"
-            app:argType="com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorViewModel$AccountMismatchPrimaryButton" />
+            app:argType="com.cataloghub.android.ui.login.accountmismatch.AccountMismatchErrorViewModel$AccountMismatchPrimaryButton" />
         <argument
             android:name="errorType"
-            app:argType="com.woocommerce.android.ui.login.accountmismatch.AccountMismatchErrorViewModel$AccountMismatchErrorType" />
+            app:argType="com.cataloghub.android.ui.login.accountmismatch.AccountMismatchErrorViewModel$AccountMismatchErrorType" />
     </fragment>
     <dialog
         android:id="@+id/closeAccountDialogFragment"
-        android:name="com.woocommerce.android.ui.prefs.account.CloseAccountDialogFragment"
+        android:name="com.cataloghub.android.ui.prefs.account.CloseAccountDialogFragment"
         android:label="CloseAccountDialogFragment" />
     <fragment
         android:id="@+id/storeVisibilityFragment"
-        android:name="com.woocommerce.android.ui.sitepicker.sitevisibility.WooSitesVisibilityFragment"
+        android:name="com.cataloghub.android.ui.sitepicker.sitevisibility.WooSitesVisibilityFragment"
         android:label="StoreVisibilityFragment" />
 </navigation>

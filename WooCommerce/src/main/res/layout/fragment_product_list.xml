@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.woocommerce.android.ui.products.list.ProductListFragment">
+    tools:context="com.cataloghub.android.ui.products.list.ProductListFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:title="@string/products" />
 
-    <com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout
+    <com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout
         android:id="@+id/productsRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -32,7 +32,7 @@
             android:layout_height="match_parent">
 
             <!-- Product search type view -->
-            <com.woocommerce.android.ui.products.WCProductSearchTabView
+            <com.cataloghub.android.ui.products.WCProductSearchTabView
                 android:id="@+id/productsSearchTabView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 tools:visibility="visible" />
 
             <!-- Products filter and sort view -->
-            <com.woocommerce.android.ui.products.ProductSortAndFiltersCard
+            <com.cataloghub.android.ui.products.ProductSortAndFiltersCard
                 android:id="@+id/products_sort_filter_card"
                 style="@style/Woo.Card"
                 android:layout_width="match_parent"
@@ -78,7 +78,7 @@
                 tools:itemCount="5"
                 tools:listitem="@layout/product_list_item" />
 
-            <com.woocommerce.android.widgets.WCEmptyView
+            <com.cataloghub.android.widgets.WCEmptyView
                 android:id="@+id/empty_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -115,7 +115,7 @@
                 tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.woocommerce.android.widgets.ScrollChildSwipeRefreshLayout>
+    </com.cataloghub.android.widgets.ScrollChildSwipeRefreshLayout>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/two_pane_layout_guideline"

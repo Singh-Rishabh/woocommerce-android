@@ -1,0 +1,117 @@
+package com.cataloghub.android.ui.products.variations
+
+import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import androidx.annotation.CallSuper
+import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
+import androidx.navigation.fragment.findNavController
+import com.cataloghub.android.R
+import com.cataloghub.android.ui.base.BaseFragment
+import com.cataloghub.android.ui.base.UIMessageResolver
+import com.cataloghub.android.ui.main.AppBarStatus
+import com.cataloghub.android.util.setupTabletSecondPaneToolbar
+import com.cataloghub.android.viewmodel.MultiLiveEvent
+import com.cataloghub.android.widgets.CustomProgressDialog
+import dagger.hilt.android.AndroidEntryPoint
+import org.wordpress.android.util.ActivityUtils
+import javax.inject.Inject
+
+/**
+ * Base class for all variations bulk update fragments.
+ */
+@AndroidEntryPoint
+abstract class VariationsBulkUpdateBaseFragment(@LayoutRes layoutId: Int) : BaseFragment(layoutId) {
+    @Inject
+    lateinit var uiMessageResolver: UIMessageResolver
+
+    override val activityAppBarStatus: AppBarStatus
+        get() = AppBarStatus.Hidden
+
+    private var doneMenuItem: MenuItem? = null
+    private var progressDialog: CustomProgressDialog? = null
+
+    /**
+     * The view model for this fragment. A subclass of [VariationsBulkUpdateBaseViewModel].
+     */
+    abstract val viewModel: VariationsBulkUpdateBaseViewModel
+
+    @CallSuper
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupTabletSecondPaneToolbar(
+            title = getFragmentTitle(),
+            onMenuItemSelected = ::onMenuItemSelected,
+            onCreateMenu = { toolbar ->
+                toolbar.inflateMenu(R.menu.menu_variations_bulk_update)
+                doneMenuItem = toolbar.menu.findItem(R.id.done)
+            }
+        )
+
+        observeEvents()
+    }
+
+    private fun observeEvents() {
+        viewModel.event.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                is MultiLiveEvent.Event.ShowSnackbar -> {
+                    ActivityUtils.hideKeyboard(requireActivity())
+                    uiMessageResolver.showSnack(event.message)
+                }
+
+                is MultiLiveEvent.Event.Exit -> findNavController().navigateUp()
+            }
+        }
+    }
+
+    private fun onMenuItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.done -> {
+                viewModel.onDoneClicked()
+                true
+            }
+
+            else -> false
+        }
+    }
+
+    /**
+     * Hides and shows progress dialog.
+     *
+     * @param visible true to show the dialog, false to hide it.
+     * @param title String resource id of the title to be shown in the dialog.
+     */
+    fun updateProgressbarDialogVisibility(visible: Boolean, @StringRes title: Int) {
+        if (visible) {
+            hideProgressDialog()
+            progressDialog = CustomProgressDialog.show(
+                getString(title),
+                getString(R.string.product_update_dialog_message)
+            ).also { it.show(parentFragmentManager, CustomProgressDialog.TAG) }
+            progressDialog?.isCancelable = false
+        } else {
+            hideProgressDialog()
+        }
+    }
+
+    private fun hideProgressDialog() {
+        progressDialog?.dismiss()
+        progressDialog = null
+    }
+
+    /**
+     * Enables and disables the "Done" menu item.
+     *
+     * @param enabled true to enable the menu item, false to disable it.
+     */
+    fun enableDoneButton(enabled: Boolean) {
+        doneMenuItem?.isEnabled = enabled
+    }
+
+    @CallSuper
+    override fun onPause() {
+        super.onPause()
+        hideProgressDialog()
+        ActivityUtils.hideKeyboard(requireActivity())
+    }
+}

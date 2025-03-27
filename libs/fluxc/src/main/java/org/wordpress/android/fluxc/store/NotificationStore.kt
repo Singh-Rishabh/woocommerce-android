@@ -55,7 +55,7 @@ class NotificationStore @Inject constructor(
 
     enum class NotificationAppKey(val value: String) {
         WORDPRESS("org.wordpress.android"),
-        WOOCOMMERCE("com.woocommerce.android")
+        WOOCOMMERCE("com.cataloghub.android")
     }
 
     class RegisterDeviceResponsePayload(

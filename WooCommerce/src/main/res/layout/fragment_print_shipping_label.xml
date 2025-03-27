@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:background="?attr/colorSurface">
 
-            <com.woocommerce.android.widgets.WCWarningBanner
+            <com.cataloghub.android.widgets.WCWarningBanner
                 android:id="@+id/expiration_warning_banner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="label_purchased_img,shippingLabelPrint_disclaimer" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                 android:id="@+id/shippingLabelPrint_paperSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

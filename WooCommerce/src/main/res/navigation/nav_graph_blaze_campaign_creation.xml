@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/blazeCampaignCreationIntroFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.intro.BlazeCampaignCreationIntroFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.intro.BlazeCampaignCreationIntroFragment"
         android:label="BlazeCampaignCreationIntroFragment">
         <argument
             android:name="productId"
@@ -16,17 +16,17 @@
             app:argType="long" />
         <argument
             android:name="source"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeUrlsHelper$BlazeFlowSource"
+            app:argType="com.cataloghub.android.ui.blaze.BlazeUrlsHelper$BlazeFlowSource"
             app:nullable="false" />
         <action
             android:id="@+id/action_blazeCampaignCreationIntroFragment_to_nav_graph_product_selector"
             app:destination="@id/nav_graph_product_selector">
             <argument
                 android:name="selectionMode"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$SelectionMode" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$SelectionMode" />
             <argument
                 android:name="selectionHandling"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$SelectionHandling" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$SelectionHandling" />
             <argument
                 android:name="screenTitleOverride"
                 app:argType="string" />
@@ -35,7 +35,7 @@
                 app:argType="string" />
             <argument
                 android:name="productSelectorFlow"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
         </action>
         <action
             android:id="@+id/action_blazeCampaignCreationIntroFragment_to_blazeCampaignCreationPreviewFragment"
@@ -59,7 +59,7 @@
             <argument
                 android:name="source"
                 android:defaultValue="BLAZE_CAMPAIGN_CREATION"
-                app:argType="com.woocommerce.android.ui.products.AddProductSource" />
+                app:argType="com.cataloghub.android.ui.products.AddProductSource" />
         </action>
         <action
             android:id="@+id/action_blazeCampaignCreationIntroFragment_to_addProductWithAIBottomSheet"
@@ -67,7 +67,7 @@
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignCreationPreviewFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.preview.BlazeCampaignCreationPreviewFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.preview.BlazeCampaignCreationPreviewFragment"
         android:label="BlazeCampaignCreationPreviewFragment">
         <argument
             android:name="productId"
@@ -75,7 +75,7 @@
             app:argType="long" />
         <argument
             android:name="source"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeUrlsHelper$BlazeFlowSource"
+            app:argType="com.cataloghub.android.ui.blaze.BlazeUrlsHelper$BlazeFlowSource"
             app:nullable="false" />
         <action
             android:id="@+id/action_blazeCampaignCreationPreviewFragment_to_blazeCampaignCreationEditAdFragment"
@@ -101,7 +101,7 @@
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignCreationEditAdFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.ad.BlazeCampaignCreationEditAdFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.ad.BlazeCampaignCreationEditAdFragment"
         android:label="BlazeCampaignCreationEditAdFragment">
         <argument
             android:name="productId"
@@ -120,17 +120,17 @@
             app:argType="string" />
         <argument
             android:name="adImage"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$BlazeCampaignImage" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$BlazeCampaignImage" />
         <argument
             android:name="aiSuggestionsForAd"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$AiSuggestionForAd[]" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$AiSuggestionForAd[]" />
         <action
             android:id="@+id/action_blazeCampaignCreationEditAdFragment_to_productImagePickerFragment"
             app:destination="@id/productImagePickerFragment" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignObjectiveFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.objective.BlazeCampaignObjectiveFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.objective.BlazeCampaignObjectiveFragment"
         android:label="BlazeCampaignObjectiveFragment">
         <argument
             android:name="selectedObjectiveId"
@@ -139,63 +139,63 @@
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignBudgetFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.budget.BlazeCampaignBudgetFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.budget.BlazeCampaignBudgetFragment"
         android:label="BlazeCampaignBudgetFragment">
         <argument
             android:name="budget"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$Budget" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$Budget" />
         <argument
             android:name="targetingParameters"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$TargetingParameters" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$TargetingParameters" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignTargetSelectionFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.targets.BlazeCampaignTargetSelectionFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.targets.BlazeCampaignTargetSelectionFragment"
         android:label="BlazeCampaignTargetSelectionFragment">
         <argument
             android:name="targetType"
-            app:argType="com.woocommerce.android.ui.blaze.creation.targets.BlazeTargetType" />
+            app:argType="com.cataloghub.android.ui.blaze.creation.targets.BlazeTargetType" />
         <argument
             android:name="selectedIds"
             app:argType="string[]" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignTargetLocationSelectionFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.targets.BlazeCampaignTargetLocationSelectionFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.targets.BlazeCampaignTargetLocationSelectionFragment"
         android:label="BlazeCampaignTargetLocationSelectionFragment">
         <argument
             android:name="locations"
-            app:argType="com.woocommerce.android.ui.blaze.Location[]" />
+            app:argType="com.cataloghub.android.ui.blaze.Location[]" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignCreationAdDestinationFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.destination.BlazeCampaignCreationAdDestinationFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.destination.BlazeCampaignCreationAdDestinationFragment"
         android:label="BlazeCampaignCreationAdDestinationFragment">
         <argument
             android:name="productId"
             app:argType="long" />
         <argument
             android:name="destinationParameters"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$DestinationParameters" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$DestinationParameters" />
         <action
             android:id="@+id/action_adDestinationFragment_to_adDestinationParametersFragment"
             app:destination="@id/blazeCampaignCreationAdDestinationParametersFragment" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignCreationAdDestinationParametersFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.destination.BlazeCampaignCreationAdDestinationParametersFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.destination.BlazeCampaignCreationAdDestinationParametersFragment"
         android:label="BlazeCampaignCreationAdDestinationParametersFragment">
         <argument
             android:name="destinationParameters"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$DestinationParameters" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$DestinationParameters" />
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignPaymentSummaryFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.payment.BlazeCampaignPaymentSummaryFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.payment.BlazeCampaignPaymentSummaryFragment"
         android:label="BlazeCampaignPaymentSummaryFragment">
         <argument
             android:name="campaignDetails"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$CampaignDetails" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$CampaignDetails" />
         <action
             android:id="@+id/action_blazeCampaignPaymentSummaryFragment_to_blazeCampaignPaymentMethodsListFragment"
             app:destination="@id/blazeCampaignPaymentMethodsListFragment" />
@@ -207,11 +207,11 @@
     </fragment>
     <fragment
         android:id="@+id/blazeCampaignPaymentMethodsListFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.payment.BlazeCampaignPaymentMethodsListFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.payment.BlazeCampaignPaymentMethodsListFragment"
         android:label="BlazeCampaignPaymentMethodsListFragment">
         <argument
             android:name="paymentMethodsData"
-            app:argType="com.woocommerce.android.ui.blaze.BlazeRepository$PaymentMethodsData" />
+            app:argType="com.cataloghub.android.ui.blaze.BlazeRepository$PaymentMethodsData" />
         <argument
             android:name="selectedPaymentMethodId"
             app:argType="string"
@@ -219,11 +219,11 @@
     </fragment>
     <dialog
         android:id="@+id/blazeCampaignSuccessBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.success.BlazeCampaignSuccessBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.success.BlazeCampaignSuccessBottomSheetFragment"
         android:label="BlazeCampaignSuccessBottomSheetFragment" />
     <fragment
         android:id="@+id/productImagePickerFragment"
-        android:name="com.woocommerce.android.ui.blaze.creation.ad.ProductImagePickerFragment"
+        android:name="com.cataloghub.android.ui.blaze.creation.ad.ProductImagePickerFragment"
         android:label="ProductImagePickerFragment">
         <argument
             android:name="productId"

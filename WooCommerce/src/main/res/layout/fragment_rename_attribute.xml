@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/color_surface"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.products.variations.attributes.RenameAttributeFragment">
+    tools:context="com.cataloghub.android.ui.products.variations.attributes.RenameAttributeFragment">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -16,7 +16,7 @@
         android:elevation="@dimen/appbar_elevation"
         tools:title="@string/app_name" />
 
-    <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+    <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
         android:id="@+id/attributeName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

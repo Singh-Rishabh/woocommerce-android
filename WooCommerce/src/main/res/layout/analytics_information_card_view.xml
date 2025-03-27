@@ -39,7 +39,7 @@
             tools:text="Sales"
             tools:visibility="visible" />
 
-        <com.woocommerce.android.ui.analytics.hub.informationcard.AnalyticsHubInformationSectionView
+        <com.cataloghub.android.ui.analytics.hub.informationcard.AnalyticsHubInformationSectionView
             android:id="@+id/leftAnalyticsSection"
             style="@style/Woo.Card.WithoutPadding"
             android:layout_width="0dp"
@@ -52,7 +52,7 @@
             app:layout_constraintWidth_percent="0.5"
             tools:visibility="visible" />
 
-        <com.woocommerce.android.ui.analytics.hub.informationcard.AnalyticsHubInformationSectionView
+        <com.cataloghub.android.ui.analytics.hub.informationcard.AnalyticsHubInformationSectionView
             android:id="@+id/rightAnalyticsSection"
             style="@style/Woo.Card.WithoutPadding"
             android:layout_width="0dp"

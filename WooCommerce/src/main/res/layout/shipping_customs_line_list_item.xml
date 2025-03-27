@@ -71,7 +71,7 @@
         android:visibility="gone"
         tools:visibility="visible">
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/item_description_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +80,7 @@
             app:errorEnabled="true"
             android:inputType="text" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/hs_tariff_number_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
             android:textAppearance="?attr/textAppearanceBody2"
             tools:text="Learn more about HS Tariff number" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/weight_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
             android:inputType="numberDecimal"
             tools:hint="Weight (oz per unit)" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
             android:id="@+id/value_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
             android:inputType="numberDecimal"
             tools:hint="Value ($ per unit)" />
 
-        <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+        <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
             android:id="@+id/country_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

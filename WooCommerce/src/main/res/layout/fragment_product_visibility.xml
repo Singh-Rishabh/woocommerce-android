@@ -14,7 +14,7 @@
         android:elevation="@dimen/appbar_elevation"
         tools:title="@string/app_name" />
 
-        <com.woocommerce.android.widgets.WCElevatedLinearLayout
+        <com.cataloghub.android.widgets.WCElevatedLinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -35,7 +35,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/product_visibility_password_protected" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/editPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,5 +57,5 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/product_visibility_private" />
-        </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+        </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 </LinearLayout>

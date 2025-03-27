@@ -6,7 +6,7 @@
     app:startDestination="@id/productImagesFragment">
     <fragment
         android:id="@+id/productImagesFragment"
-        android:name="com.woocommerce.android.ui.products.images.ProductImagesFragment"
+        android:name="com.cataloghub.android.ui.products.images.ProductImagesFragment"
         android:label="ProductImagesFragment"
         tools:layout="@layout/fragment_product_images">
         <argument
@@ -15,11 +15,11 @@
             app:argType="long" />
         <argument
             android:name="images"
-            app:argType="com.woocommerce.android.model.Product$Image[]" />
+            app:argType="com.cataloghub.android.model.Product$Image[]" />
         <argument
             android:name="selectedImage"
             android:defaultValue="@null"
-            app:argType="com.woocommerce.android.model.Product$Image"
+            app:argType="com.cataloghub.android.model.Product$Image"
             app:nullable="true" />
         <argument
             android:name="showChooser"
@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/productImageViewerFragment"
-        android:name="com.woocommerce.android.ui.products.images.ProductImageViewerFragment"
+        android:name="com.cataloghub.android.ui.products.images.ProductImageViewerFragment"
         android:label="ProductImageViewerFragment"
         tools:layout="@layout/fragment_image_viewer">
         <argument
@@ -46,11 +46,11 @@
             app:argType="long" />
         <argument
             android:name="images"
-            app:argType="com.woocommerce.android.model.Product$Image[]" />
+            app:argType="com.cataloghub.android.model.Product$Image[]" />
         <argument
             android:name="selectedImage"
             android:defaultValue="@null"
-            app:argType="com.woocommerce.android.model.Product$Image"
+            app:argType="com.cataloghub.android.model.Product$Image"
             app:nullable="true" />
         <argument
             android:name="showChooser"

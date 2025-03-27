@@ -6,19 +6,19 @@
 
     <fragment
         android:id="@+id/domainDashboardFragment"
-        android:name="com.woocommerce.android.ui.prefs.domain.DomainDashboardFragment"
+        android:name="com.cataloghub.android.ui.prefs.domain.DomainDashboardFragment"
         android:label="CurrentDomainFragment">
         <argument
             android:name="source"
             android:defaultValue="SETTINGS"
-            app:argType="com.woocommerce.android.ui.prefs.domain.DomainFlowSource" />
+            app:argType="com.cataloghub.android.ui.prefs.domain.DomainFlowSource" />
         <action
             android:id="@+id/action_domainDashboardFragment_to_domainSearchFragment"
             app:destination="@id/domainSearchFragment" />
     </fragment>
     <fragment
         android:id="@+id/domainSearchFragment"
-        android:name="com.woocommerce.android.ui.prefs.domain.DomainSearchFragment"
+        android:name="com.cataloghub.android.ui.prefs.domain.DomainSearchFragment"
         android:label="DomainSearchFragment">
         <argument
             android:name="isFreeCreditAvailable"
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/purchaseSuccessfulFragment"
-        android:name="com.woocommerce.android.ui.prefs.domain.PurchaseSuccessfulFragment"
+        android:name="com.cataloghub.android.ui.prefs.domain.PurchaseSuccessfulFragment"
         android:label="PurchaseSuccessfulFragment">
         <argument
             android:name="domain"
@@ -48,26 +48,26 @@
     </fragment>
     <fragment
         android:id="@+id/domainRegistrationDetailsFragment"
-        android:name="com.woocommerce.android.ui.prefs.domain.FreeDomainRegistrationFragment"
+        android:name="com.cataloghub.android.ui.prefs.domain.FreeDomainRegistrationFragment"
         android:label="DomainRegistrationDetailsFragment">
         <action
             android:id="@+id/action_domainRegistrationDetailsFragment_to_purchaseSuccessfulFragment"
             app:destination="@id/purchaseSuccessfulFragment" />
         <argument
             android:name="domainProductDetails"
-            app:argType="com.woocommerce.android.ui.prefs.domain.DomainProductDetails" />
+            app:argType="com.cataloghub.android.ui.prefs.domain.DomainProductDetails" />
         <action
             android:id="@+id/action_domainRegistrationDetailsFragment_to_domainDashboardFragment"
             app:destination="@id/domainDashboardFragment"
             app:popUpTo="@id/nav_graph_domain_change">
             <argument
                 android:name="source"
-                app:argType="com.woocommerce.android.ui.prefs.domain.DomainFlowSource" />
+                app:argType="com.cataloghub.android.ui.prefs.domain.DomainFlowSource" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/domainRegistrationCheckoutFragment"
-        android:name="com.woocommerce.android.ui.prefs.domain.DomainPurchaseFragment"
+        android:name="com.cataloghub.android.ui.prefs.domain.DomainPurchaseFragment"
         android:label="DomainRegistrationCheckoutFragment">
         <argument
             android:name="domain"

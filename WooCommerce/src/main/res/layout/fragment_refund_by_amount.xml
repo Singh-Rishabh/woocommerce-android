@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        tools:context="com.woocommerce.android.ui.payments.refunds.RefundByAmountFragment">
+        tools:context="com.cataloghub.android.ui.payments.refunds.RefundByAmountFragment">
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <com.woocommerce.android.widgets.WCMaterialOutlinedCurrencyEditTextView
+                <com.cataloghub.android.widgets.WCMaterialOutlinedCurrencyEditTextView
                     android:id="@+id/issueRefund_refundAmount"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

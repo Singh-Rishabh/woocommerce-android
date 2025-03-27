@@ -1,0 +1,26 @@
+package com.cataloghub.android.ui.orders.creation
+
+import com.cataloghub.android.model.Order
+import com.cataloghub.android.ui.orders.CustomAmountUIModel
+import com.cataloghub.android.ui.payments.customamounts.CustomAmountsFragment.Companion.CUSTOM_AMOUNT
+import com.cataloghub.android.ui.payments.customamounts.CustomAmountsViewModel
+import com.cataloghub.android.ui.payments.customamounts.CustomAmountsViewModel.TaxStatus
+import javax.inject.Inject
+
+class MapFeeLineToCustomAmountUiModel @Inject constructor() {
+
+    operator fun invoke(feeLine: Order.FeeLine, orderCurrency: String): CustomAmountUIModel {
+        return CustomAmountUIModel(
+            id = feeLine.id,
+            amount = feeLine.total,
+            name = feeLine.name ?: CUSTOM_AMOUNT,
+            taxStatus = when (feeLine.taxStatus) {
+                Order.FeeLine.FeeLineTaxStatus.TAXABLE -> TaxStatus(isTaxable = true)
+                Order.FeeLine.FeeLineTaxStatus.NONE -> TaxStatus(isTaxable = false)
+                Order.FeeLine.FeeLineTaxStatus.UNKNOWN -> TaxStatus(isTaxable = false)
+            },
+            type = CustomAmountsViewModel.CustomAmountType.FIXED_CUSTOM_AMOUNT,
+            currency = orderCurrency
+        )
+    }
+}

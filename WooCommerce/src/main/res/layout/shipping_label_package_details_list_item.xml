@@ -107,7 +107,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/details_section_title" />
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedSpinnerView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedSpinnerView
                 android:id="@+id/selected_package_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -177,7 +177,7 @@
                     app:drawableTint="@color/color_error" />
             </LinearLayout>
 
-            <com.woocommerce.android.widgets.WCMaterialOutlinedEditTextView
+            <com.cataloghub.android.widgets.WCMaterialOutlinedEditTextView
                 android:id="@+id/weight_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

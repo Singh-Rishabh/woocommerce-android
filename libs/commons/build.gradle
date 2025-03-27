@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.woocommerce.commons'
+    namespace 'com.cataloghub.commons'
     compileSdk gradle.ext.compileSdkVersion
 
     defaultConfig {

@@ -24,7 +24,7 @@ ext {
     secretProperties = loadPropertiesWithFallback(
             logger,
             file("${rootDir}/defaults.properties"),
-            file("${System.getProperty("user.home")}/.configure/woocommerce-android/secrets/secrets.properties")
+            file("${System.getProperty("user.home")}/.configure/cataloghub-android/secrets/secrets.properties")
     )
     developerProperties = loadPropertiesWithFallback(
             logger,

@@ -76,7 +76,7 @@ data class WCRevenueStatsModel(@PrimaryKey @Column private var id: Int = 0) : Id
      * The [total] param by default is a map which is parsed into [Total].
      *
      * There are some instances where the [total] param can be an empty list
-     * https://github.com/woocommerce/woocommerce-android/issues/2154
+     * https://github.com/cataloghub/cataloghub-android/issues/2154
      *
      * To address this issue, we check if the [total] param is a JsonArray
      * and return a null response, if that's the case.

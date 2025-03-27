@@ -6,7 +6,7 @@
     app:startDestination="@id/orderCreationFragment">
     <fragment
         android:id="@+id/orderCreationFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.OrderCreateEditFormFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.OrderCreateEditFormFragment"
         android:label="orderCreationFragment"
         tools:layout="@layout/fragment_order_create_edit_form">
         <action
@@ -46,10 +46,10 @@
             app:destination="@id/nav_graph_product_selector">
             <argument
                 android:name="selectedItems"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$SelectedItem[]" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$SelectedItem[]" />
             <argument
                 android:name="productSelectorFlow"
-                app:argType="com.woocommerce.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
+                app:argType="com.cataloghub.android.ui.products.selector.ProductSelectorViewModel$ProductSelectorFlow" />
             <argument
                 android:name="orderCurrency"
                 android:defaultValue="@null"
@@ -114,7 +114,7 @@
             app:popUpToInclusive="true">
             <argument
                 android:name="couponLines"
-                app:argType="com.woocommerce.android.model.Order$CouponLine[]" />
+                app:argType="com.cataloghub.android.model.Order$CouponLine[]" />
         </action>
         <action
             android:id="@+id/action_orderCreationFragment_to_orderCreationCouponEditFragment"
@@ -133,7 +133,7 @@
         </action>
         <argument
             android:name="mode"
-            app:argType="com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
+            app:argType="com.cataloghub.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
         <argument
             android:name="sku"
             app:argType="string"
@@ -141,13 +141,13 @@
             app:nullable="true" />
         <argument
             android:name="barcodeFormat"
-            app:argType="com.woocommerce.android.ui.orders.creation.GoogleBarcodeFormatMapper$BarcodeFormat"
+            app:argType="com.cataloghub.android.ui.orders.creation.GoogleBarcodeFormatMapper$BarcodeFormat"
             android:defaultValue="@null"
             app:nullable="true" />
         <argument
             android:name="couponEditResult"
             android:defaultValue="@null"
-            app:argType="com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel$CouponEditResult"
+            app:argType="com.cataloghub.android.ui.orders.creation.coupon.edit.OrderCreateCouponDetailsViewModel$CouponEditResult"
             app:nullable="true" />
         <argument
             android:name="giftCardCode"
@@ -192,30 +192,30 @@
     </fragment>
     <fragment
         android:id="@+id/barcodeScanningFragment"
-        android:name="com.woocommerce.android.ui.barcodescanner.BarcodeScanningFragment"
+        android:name="com.cataloghub.android.ui.barcodescanner.BarcodeScanningFragment"
         android:label="BarcodeScanningFragment"
         tools:layout="@layout/fragment_barcode_scanning" />
     <dialog
         android:id="@+id/orderStatusSelectorDialog"
-        android:name="com.woocommerce.android.ui.orders.details.OrderStatusSelectorDialog">
+        android:name="com.cataloghub.android.ui.orders.details.OrderStatusSelectorDialog">
         <argument
             android:name="currentStatus"
             app:argType="string"
             app:nullable="false" />
         <argument
             android:name="orderStatusList"
-            app:argType="com.woocommerce.android.model.Order$OrderStatus[]" />
+            app:argType="com.cataloghub.android.model.Order$OrderStatus[]" />
         <argument
             android:name="positiveButtonLabel"
             app:argType="integer" />
     </dialog>
     <fragment
         android:id="@+id/customAmountsDialog"
-        android:name="com.woocommerce.android.ui.payments.customamounts.CustomAmountsFragment"
+        android:name="com.cataloghub.android.ui.payments.customamounts.CustomAmountsFragment"
         android:label="CustomAmountsDialog">
         <argument
             android:name="customAmountUIModel"
-            app:argType="com.woocommerce.android.ui.orders.CustomAmountUIModel" />
+            app:argType="com.cataloghub.android.ui.orders.CustomAmountUIModel" />
         <argument
             android:name="orderTotal"
             android:defaultValue="@null"
@@ -224,12 +224,12 @@
     </fragment>
     <fragment
         android:id="@+id/orderCreationCustomerNoteFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.notes.OrderCreateEditCustomerNoteFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.notes.OrderCreateEditCustomerNoteFragment"
         android:label="OrderCreationCustomerNoteFragment"
         tools:layout="@layout/fragment_order_create_edit_customer_note" />
     <fragment
         android:id="@+id/orderCreationCustomerFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.OrderCreateEditCustomerAddFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.OrderCreateEditCustomerAddFragment"
         android:label="OrderCreationCustomerFragment"
         tools:layout="@layout/fragment_base_edit_address">
         <argument
@@ -246,7 +246,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchFilterFragment"
-        android:name="com.woocommerce.android.ui.searchfilter.SearchFilterFragment"
+        android:name="com.cataloghub.android.ui.searchfilter.SearchFilterFragment"
         android:label="searchFilterFragment"
         tools:layout="@layout/fragment_search_filter">
         <argument
@@ -259,25 +259,25 @@
             app:argType="string" />
         <argument
             android:name="items"
-            app:argType="com.woocommerce.android.ui.searchfilter.SearchFilterItem[]" />
+            app:argType="com.cataloghub.android.ui.searchfilter.SearchFilterItem[]" />
         <argument
             android:name="requestKey"
             app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/orderCreationProductDiscountFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.product.discount.OrderCreateEditProductDiscountFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.product.discount.OrderCreateEditProductDiscountFragment"
         android:label="OrderCreateEditProductDiscountFragment">
         <argument
             android:name="item"
-            app:argType="com.woocommerce.android.ui.orders.creation.OrderCreationProduct" />
+            app:argType="com.cataloghub.android.ui.orders.creation.OrderCreationProduct" />
         <argument
             android:name="currency"
             app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/orderCreationFeeFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.fees.OrderCreateEditFeeFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.fees.OrderCreateEditFeeFragment"
         android:label="OrderCreationFeeFragment"
         tools:layout="@layout/fragment_order_create_edit_fee">
         <argument
@@ -291,14 +291,14 @@
     </fragment>
     <fragment
         android:id="@+id/orderCreationCouponListFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.coupon.list.OrderCreateCouponListFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.coupon.list.OrderCreateCouponListFragment"
         android:label="OrderCreationCouponListFragment">
         <argument
             android:name="couponLines"
-            app:argType="com.woocommerce.android.model.Order$CouponLine[]" />
+            app:argType="com.cataloghub.android.model.Order$CouponLine[]" />
         <argument
             android:name="orderCreationMode"
-            app:argType="com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
+            app:argType="com.cataloghub.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
         <action
             android:id="@+id/action_orderCreationCouponListFragment_to_orderCreationCouponEditFragment"
             app:destination="@id/orderCreationCouponEditFragment"
@@ -311,7 +311,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderCreationCouponEditFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.coupon.edit.OrderCreateCouponEditFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.coupon.edit.OrderCreateCouponEditFragment"
         android:label="OrderCreationCouponEditFragment">
         <argument
             android:name="couponCode"
@@ -320,11 +320,11 @@
             app:nullable="true" />
         <argument
             android:name="orderCreationMode"
-            app:argType="com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
+            app:argType="com.cataloghub.android.ui.orders.creation.OrderCreateEditViewModel$Mode" />
     </fragment>
     <fragment
         android:id="@+id/customerListFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.customerlist.OrderCustomerListFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.customerlist.OrderCustomerListFragment"
         android:label="customerListFragment" >
         <argument
             android:name="allowCustomerCreation"
@@ -338,15 +338,15 @@
     </fragment>
     <dialog
         android:id="@+id/taxRatesInfoDialogFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.taxes.TaxRatesInfoDialogFragment">
+        android:name="com.cataloghub.android.ui.orders.creation.taxes.TaxRatesInfoDialogFragment">
         <argument
             android:name="dialogState"
-            app:argType="com.woocommerce.android.ui.orders.creation.taxes.TaxRatesInfoDialogViewState" />
+            app:argType="com.cataloghub.android.ui.orders.creation.taxes.TaxRatesInfoDialogViewState" />
     </dialog>
     <include app:graph="@navigation/nav_graph_product_selector" />
     <fragment
         android:id="@+id/couponSelectorFragment"
-        android:name="com.woocommerce.android.ui.coupons.selector.CouponSelectorFragment"
+        android:name="com.cataloghub.android.ui.coupons.selector.CouponSelectorFragment"
         android:label="CouponSelectorFragment">
         <action
             android:id="@+id/action_couponSelectorFragment_to_couponListFragment"
@@ -355,41 +355,41 @@
     <include app:graph="@navigation/nav_graph_coupons" />
     <fragment
         android:id="@+id/taxRateSelectorFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.taxes.rates.TaxRateSelectorFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.taxes.rates.TaxRateSelectorFragment"
         android:label="TaxRateSelectorFragment">
         <argument
             android:name="dialogState"
-            app:argType="com.woocommerce.android.ui.orders.creation.taxes.TaxRatesInfoDialogViewState" />
+            app:argType="com.cataloghub.android.ui.orders.creation.taxes.TaxRatesInfoDialogViewState" />
         <action
             android:id="@+id/action_taxRateSelectorFragment_to_taxRatesInfoDialogFragment"
             app:destination="@id/taxRatesInfoDialogFragment" />
     </fragment>
     <dialog
         android:id="@+id/autoTaxRateDetailsFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.taxes.rates.setting.AutoTaxRateSettingBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.taxes.rates.setting.AutoTaxRateSettingBottomSheetFragment"
         android:label="AutoTaxRateSettingBottomSheetFragment">
         <argument
             android:name="autoTaxRateSettingState"
-            app:argType="com.woocommerce.android.ui.orders.creation.OrderCreateEditViewModel$AutoTaxRateSettingState" />
+            app:argType="com.cataloghub.android.ui.orders.creation.OrderCreateEditViewModel$AutoTaxRateSettingState" />
     </dialog>
     <dialog
         android:id="@+id/simplePaymentsMigrationBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.simplepaymentsmigration.OrderCreateEditSimplePaymentsMigrationBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.simplepaymentsmigration.OrderCreateEditSimplePaymentsMigrationBottomSheetFragment"
         android:label="SimplePaymentsMigrationBottomSheetFragment"/>
     <fragment
         android:id="@+id/productConfigurationFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.configuration.ProductConfigurationFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.configuration.ProductConfigurationFragment"
         android:label="ProductConfigurationFragment">
         <argument
             android:name="flow"
-            app:argType="com.woocommerce.android.ui.orders.creation.configuration.Flow" />
+            app:argType="com.cataloghub.android.ui.orders.creation.configuration.Flow" />
         <action
             android:id="@+id/action_productConfigurationFragment_to_variationPickerFragment"
             app:destination="@id/variationPickerFragment" />
     </fragment>
     <fragment
         android:id="@+id/variationPickerFragment"
-        android:name="com.woocommerce.android.ui.products.variations.picker.VariationPickerFragment"
+        android:name="com.cataloghub.android.ui.products.variations.picker.VariationPickerFragment"
         android:label="VariationPickerFragment">
         <argument
             android:name="productId"
@@ -406,7 +406,7 @@
     </fragment>
     <fragment
         android:id="@+id/giftCardFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.giftcards.OrderCreateEditGiftCardFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.giftcards.OrderCreateEditGiftCardFragment"
         android:label="OrderCreateEditGiftCardFragment">
         <argument
             android:name="giftCard"
@@ -416,11 +416,11 @@
     </fragment>
     <fragment
         android:id="@+id/orderShippingFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.shipping.OrderShippingFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.shipping.OrderShippingFragment"
         android:label="OrderCreateEditUpdateShippingFragment" >
         <argument
             android:name="currentShippingLine"
-            app:argType="com.woocommerce.android.model.Order$ShippingLine"
+            app:argType="com.cataloghub.android.model.Order$ShippingLine"
             app:nullable="true" />
         <argument
             android:name="orderCurrency"
@@ -433,7 +433,7 @@
     </fragment>
     <fragment
         android:id="@+id/orderShippingMethodsFragment"
-        android:name="com.woocommerce.android.ui.orders.creation.shipping.OrderShippingMethodsFragment"
+        android:name="com.cataloghub.android.ui.orders.creation.shipping.OrderShippingMethodsFragment"
         android:label="OrderShippingMethodsFragment" >
         <argument
             android:name="selectedMethodId"

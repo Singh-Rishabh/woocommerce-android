@@ -38,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:visibility="visible" />
 
-    <com.woocommerce.android.widgets.WCElevatedLinearLayout
+    <com.cataloghub.android.widgets.WCElevatedLinearLayout
         android:id="@+id/filterOptionList_btnFrame"
         style="@style/Woo.Card.WithoutPadding"
         android:layout_width="0dp"
@@ -58,6 +58,6 @@
             android:layout_marginBottom="@dimen/minor_100"
             android:text="@string/product_list_filters_show_products" />
 
-    </com.woocommerce.android.widgets.WCElevatedLinearLayout>
+    </com.cataloghub.android.widgets.WCElevatedLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

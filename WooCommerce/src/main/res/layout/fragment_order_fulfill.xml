@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.woocommerce.android.ui.orders.fulfill.OrderFulfillFragment">
+    tools:context="com.cataloghub.android.ui.orders.fulfill.OrderFulfillFragment">
 
     <LinearLayout
         android:id="@+id/orderDetail_container"
@@ -15,7 +15,7 @@
         tools:ignore="UselessParent">
 
         <!-- Product List -->
-        <com.woocommerce.android.ui.orders.details.views.OrderDetailProductListView
+        <com.cataloghub.android.ui.orders.details.views.OrderDetailProductListView
             android:id="@+id/orderDetail_productList"
             style="@style/Woo.Card"
             android:layout_width="match_parent"
@@ -25,14 +25,14 @@
             android:contentDescription="@string/products" />
 
         <!-- Customer Info -->
-        <com.woocommerce.android.ui.orders.details.views.OrderDetailCustomerInfoView
+        <com.cataloghub.android.ui.orders.details.views.OrderDetailCustomerInfoView
             android:id="@+id/orderDetail_customerInfo"
             style="@style/Woo.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <!-- Shipment Tracking -->
-        <com.woocommerce.android.ui.orders.details.views.OrderDetailShipmentTrackingListView
+        <com.cataloghub.android.ui.orders.details.views.OrderDetailShipmentTrackingListView
             android:id="@+id/orderDetail_shipmentList"
             style="@style/Woo.Card"
             android:layout_width="match_parent"

@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             tools:text="USPS" />
 
-        <com.woocommerce.android.widgets.WCSelectableTextView
+        <com.cataloghub.android.widgets.WCSelectableTextView
             android:id="@+id/tracking_number"
             style="@style/Woo.Card.Body.Bold"
             android:layout_width="match_parent"

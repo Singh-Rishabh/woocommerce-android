@@ -98,7 +98,7 @@ class WooCommerceStoreTest {
     private val response = WCSystemPluginResponse(
         listOf(
             SystemPluginModel(
-                plugin = "woocommerce-services/woocommerce-services",
+                plugin = "cataloghub-services/cataloghub-services",
                 name = "WooCommerce Shipping &amp; Tax",
                 version = "1.0",
                 url = "url"

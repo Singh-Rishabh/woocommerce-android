@@ -1,0 +1,212 @@
+package com.cataloghub.android.ui.products.addons
+
+import com.cataloghub.android.model.AmbiguousLocation
+import com.cataloghub.android.model.Location
+import com.cataloghub.android.model.Order
+import com.cataloghub.android.model.OrderMapper
+import com.cataloghub.android.tools.SelectedSite
+import com.cataloghub.android.ui.products.addons.AddonTestFixtures.defaultAddonsList
+import com.cataloghub.android.ui.products.addons.AddonTestFixtures.defaultOrderAttributes
+import com.cataloghub.android.ui.products.addons.AddonTestFixtures.defaultOrderModel
+import com.cataloghub.android.ui.products.addons.AddonTestFixtures.defaultWCOrderItemList
+import com.cataloghub.android.ui.products.addons.AddonTestFixtures.defaultWCProductModel
+import com.cataloghub.android.viewmodel.BaseUnitTest
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mockito.times
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import org.wordpress.android.fluxc.model.OrderEntity
+import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.store.WCAddonsStore
+import org.wordpress.android.fluxc.store.WCOrderStore
+import org.wordpress.android.fluxc.store.WCProductStore
+import kotlin.test.fail
+
+@ExperimentalCoroutinesApi
+class AddonRepositoryTest : BaseUnitTest() {
+    private lateinit var repositoryUnderTest: AddonRepository
+
+    private lateinit var orderStoreMock: WCOrderStore
+    private lateinit var productStoreMock: WCProductStore
+    private lateinit var addonStoreMock: WCAddonsStore
+    private lateinit var selectedSiteMock: SelectedSite
+    private lateinit var testSite: SiteModel
+
+    private val remoteOrderID = 123L
+    private val remoteProductID = 333L
+
+    private val orderMapper = OrderMapper(
+        getLocations = mock {
+            on { invoke(any(), any()) } doReturn (Location.EMPTY to AmbiguousLocation.EMPTY)
+        },
+        mock()
+    )
+
+    @Before
+    fun setUp() {
+        testSite = SiteModel()
+        selectedSiteMock = mock {
+            on { get() }.doReturn(testSite)
+        }
+        orderStoreMock = mock()
+        productStoreMock = mock()
+        addonStoreMock = mock()
+
+        repositoryUnderTest = AddonRepository(
+            orderStoreMock,
+            productStoreMock,
+            addonStoreMock,
+            selectedSiteMock
+        )
+    }
+
+    @Test
+    fun `fetchOrderAddonsData should return both order addons and product addons data`() = testBlocking {
+        configureSuccessfulOrderResponse()
+        configureSuccessfulAddonResponse()
+
+        repositoryUnderTest.getOrderAddonsData(123, 999, 333)
+            ?.let { (productAddons, orderAddons) ->
+
+                verify(orderStoreMock, times(1))
+                    .getOrderByIdAndSite(123L, testSite)
+
+                verify(productStoreMock, times(1))
+                    .getProductByRemoteId(testSite, 333)
+
+                assertThat(productAddons).isNotEmpty
+                assertThat(orderAddons).isNotEmpty
+            } ?: fail("non-null Pair with valid data was expected")
+    }
+
+    @Test
+    fun `fetchOrderAddonsData should map and filter orderAddons keys as List correctly`() = testBlocking {
+        configureSuccessfulOrderResponse()
+        configureSuccessfulAddonResponse()
+
+        val expectedAddons = defaultOrderAttributes
+
+        repositoryUnderTest.getOrderAddonsData(123, 999, 333)
+            ?.let { (_, orderAddons) ->
+
+                verify(orderStoreMock, times(1))
+                    .getOrderByIdAndSite(123L, testSite)
+
+                verify(productStoreMock, times(1))
+                    .getProductByRemoteId(testSite, 333)
+
+                assertThat(orderAddons).isEqualTo(expectedAddons)
+            } ?: fail("non-null Pair with valid data was expected")
+    }
+
+    @Test
+    fun `fetchOrderAddonsData should map productAddons correctly`() = testBlocking {
+        configureSuccessfulOrderResponse()
+        configureSuccessfulAddonResponse()
+
+        val expectedAddons = defaultAddonsList
+
+        repositoryUnderTest.getOrderAddonsData(123, 999, 333)
+            ?.let { (productAddons, _) ->
+
+                verify(productStoreMock, times(1))
+                    .getProductByRemoteId(testSite, 333)
+
+                verify(addonStoreMock, times(1))
+                    .observeAllAddonsForProduct(testSite, defaultWCProductModel)
+
+                assertThat(productAddons).isEqualTo(expectedAddons)
+            } ?: fail("non-null Pair with valid data was expected")
+    }
+
+    @Test
+    fun `containsAddonsFrom should return true for valid OrderItem`() = testBlocking {
+        configureSuccessfulAddonResponse()
+
+        val orderItem = defaultOrderModel.let { orderMapper.toAppModel(it) }.items.first()
+
+        assertThat(repositoryUnderTest.containsAddonsFrom(orderItem)).isTrue
+    }
+
+    @Test
+    fun `containsAddonsFrom should return false when requested with invalid OrderItem`() = testBlocking {
+        configureSuccessfulAddonResponse()
+
+        val orderItem = defaultOrderModel.let { orderMapper.toAppModel(it) }.items.first()
+            .copy(
+                attributesList = listOf(
+                    Order.Item.Attribute("Invalid", "Invalid"),
+                    Order.Item.Attribute("Invalid", "Invalid")
+                )
+            )
+
+        assertThat(repositoryUnderTest.containsAddonsFrom(orderItem)).isFalse
+    }
+
+    @Test
+    fun `fetchOrderAddonsData should return null if product addon data fails`() = testBlocking {
+        configureSuccessfulOrderResponse()
+        val response = repositoryUnderTest.getOrderAddonsData(123, 999, 333)
+        assertThat(response).isNull()
+    }
+
+    @Test
+    fun `fetchOrderAddonsData should return null if order addon data fails`() = testBlocking {
+        configureSuccessfulAddonResponse()
+        val response = repositoryUnderTest.getOrderAddonsData(123, 999, 333)
+        assertThat(response).isNull()
+    }
+
+    @Test
+    fun `fetchOrderAddonsData should return null if order item ID is incorrect`() = testBlocking {
+        configureSuccessfulAddonResponse()
+        val response = repositoryUnderTest.getOrderAddonsData(123, 0, 333)
+        assertThat(response).isNull()
+    }
+
+    @Test
+    fun `hasAddons should return false if there's no add-ons for given product`() = testBlocking {
+        whenever(addonStoreMock.observeProductSpecificAddons(any(), any())).thenReturn(emptyFlow())
+
+        assertThat(repositoryUnderTest.hasAnyProductSpecificAddons(remoteProductID)).isEqualTo(false)
+    }
+
+    @Test
+    fun `hasAddons should return true if there are add-ons for given product`() = testBlocking {
+        whenever(addonStoreMock.observeProductSpecificAddons(any(), any())).thenReturn(flowOf(defaultAddonsList))
+
+        assertThat(repositoryUnderTest.hasAnyProductSpecificAddons(remoteProductID)).isEqualTo(true)
+    }
+
+    private suspend fun configureSuccessfulOrderResponse() {
+        mock<OrderEntity>().apply {
+            whenever(getLineItemList()).thenReturn(defaultWCOrderItemList)
+        }.let {
+            whenever(
+                orderStoreMock.getOrderByIdAndSite(remoteOrderID, testSite)
+            ).thenReturn(it)
+        }
+    }
+
+    private fun configureSuccessfulAddonResponse() {
+        whenever(
+            productStoreMock.getProductByRemoteId(
+                testSite,
+                remoteProductID
+            )
+        ).thenReturn(defaultWCProductModel)
+
+        whenever(
+            addonStoreMock.observeAllAddonsForProduct(testSite, defaultWCProductModel)
+        ).thenReturn(MutableStateFlow(defaultAddonsList))
+    }
+}

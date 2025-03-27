@@ -13,11 +13,11 @@
 
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.woocommerce.android.ui.products.details.ProductDetailFragment"
+        android:name="com.cataloghub.android.ui.products.details.ProductDetailFragment"
         tools:layout="@layout/fragment_product_detail">
         <argument
             android:name="mode"
-            app:argType="com.woocommerce.android.ui.products.details.ProductDetailFragment$Mode" />
+            app:argType="com.cataloghub.android.ui.products.details.ProductDetailFragment$Mode" />
         <argument
             android:name="isTrashEnabled"
             android:defaultValue="false"
@@ -30,7 +30,7 @@
         <argument
             android:name="source"
             android:defaultValue="PRODUCT_TAB"
-            app:argType="com.woocommerce.android.ui.products.AddProductSource" />
+            app:argType="com.cataloghub.android.ui.products.AddProductSource" />
         <argument
             android:name="isAIContent"
             android:defaultValue="false"
@@ -70,10 +70,10 @@
                 app:argType="long" />
             <argument
                 android:name="images"
-                app:argType="com.woocommerce.android.model.Product$Image[]" />
+                app:argType="com.cataloghub.android.model.Product$Image[]" />
             <argument
                 android:name="selectedImage"
-                app:argType="com.woocommerce.android.model.Product$Image"
+                app:argType="com.cataloghub.android.model.Product$Image"
                 app:nullable="true" />
             <argument
                 android:name="showChooser"
@@ -105,7 +105,7 @@
             app:destination="@id/productSubscriptionExpirationFragment">
             <argument
                 android:name="subscription"
-                app:argType="com.woocommerce.android.model.SubscriptionDetails" />
+                app:argType="com.cataloghub.android.model.SubscriptionDetails" />
         </action>
         <action
             android:id="@+id/action_productDetailFragment_to_productQuantityRulesFragment"
@@ -153,7 +153,7 @@
     </fragment>
     <fragment
         android:id="@+id/variationListFragment"
-        android:name="com.woocommerce.android.ui.products.variations.VariationListFragment"
+        android:name="com.cataloghub.android.ui.products.variations.VariationListFragment"
         android:label="variationListFragment"
         tools:layout="@layout/fragment_variation_list">
         <argument
@@ -177,7 +177,7 @@
             app:destination="@id/variationsBulkUpdateAttrPickerFragment">
             <argument
                 android:name="variationsToUpdate"
-                app:argType="com.woocommerce.android.model.ProductVariation[]" />
+                app:argType="com.cataloghub.android.model.ProductVariation[]" />
         </action>
         <argument
             android:name="isReadOnlyMode"
@@ -190,45 +190,45 @@
     </fragment>
     <dialog
         android:id="@+id/variationsBulkUpdateAttrPickerFragment"
-        android:name="com.woocommerce.android.ui.products.variations.VariationsBulkUpdateAttrPickerDialog"
+        android:name="com.cataloghub.android.ui.products.variations.VariationsBulkUpdateAttrPickerDialog"
         android:label="variationsBulkUpdateAttrPickerFragment">
         <argument
             android:name="variationsToUpdate"
-            app:argType="com.woocommerce.android.model.ProductVariation[]" />
+            app:argType="com.cataloghub.android.model.ProductVariation[]" />
         <action
             android:id="@+id/action_variationsBulkUpdateAttrPickerFragment_to_variationsBulkUpdatePriceFragment"
             app:destination="@id/variationsBulkUpdatePriceFragment">
             <argument
                 android:name="priceUpdateData"
-                app:argType="com.woocommerce.android.ui.products.variations.VariationsBulkUpdatePriceViewModel$PriceUpdateData" />
+                app:argType="com.cataloghub.android.ui.products.variations.VariationsBulkUpdatePriceViewModel$PriceUpdateData" />
         </action>
         <action
             android:id="@+id/action_variationsBulkUpdateAttrPickerFragment_to_variationsBulkUpdateInventoryFragment"
             app:destination="@id/variationsBulkUpdateInventoryFragment">
             <argument
                 android:name="inventoryUpdateData"
-                app:argType="com.woocommerce.android.ui.products.variations.VariationsBulkUpdateInventoryViewModel$InventoryUpdateData" />
+                app:argType="com.cataloghub.android.ui.products.variations.VariationsBulkUpdateInventoryViewModel$InventoryUpdateData" />
         </action>
     </dialog>
     <fragment
         android:id="@+id/variationsBulkUpdatePriceFragment"
-        android:name="com.woocommerce.android.ui.products.variations.VariationsBulkUpdatePriceFragment"
+        android:name="com.cataloghub.android.ui.products.variations.VariationsBulkUpdatePriceFragment"
         android:label="variationsBulkUpdatePriceFragment">
         <argument
             android:name="priceUpdateData"
-            app:argType="com.woocommerce.android.ui.products.variations.VariationsBulkUpdatePriceViewModel$PriceUpdateData" />
+            app:argType="com.cataloghub.android.ui.products.variations.VariationsBulkUpdatePriceViewModel$PriceUpdateData" />
     </fragment>
     <fragment
         android:id="@+id/variationsBulkUpdateInventoryFragment"
-        android:name="com.woocommerce.android.ui.products.variations.VariationsBulkUpdateInventoryFragment"
+        android:name="com.cataloghub.android.ui.products.variations.VariationsBulkUpdateInventoryFragment"
         android:label="variationsBulkUpdateInventoryFragment">
         <argument
             android:name="inventoryUpdateData"
-            app:argType="com.woocommerce.android.ui.products.variations.VariationsBulkUpdateInventoryViewModel$InventoryUpdateData" />
+            app:argType="com.cataloghub.android.ui.products.variations.VariationsBulkUpdateInventoryViewModel$InventoryUpdateData" />
     </fragment>
     <fragment
         android:id="@+id/attributeListFragment"
-        android:name="com.woocommerce.android.ui.products.variations.attributes.AttributeListFragment"
+        android:name="com.cataloghub.android.ui.products.variations.attributes.AttributeListFragment"
         android:label="attributeListFragment">
         <argument
             android:name="isVariationCreation"
@@ -259,7 +259,7 @@
     </fragment>
     <fragment
         android:id="@+id/addAttributeFragment"
-        android:name="com.woocommerce.android.ui.products.variations.attributes.AddAttributeFragment"
+        android:name="com.cataloghub.android.ui.products.variations.attributes.AddAttributeFragment"
         android:label="addAttributeFragment">
         <argument
             android:name="isVariationCreation"
@@ -278,7 +278,7 @@
     </fragment>
     <fragment
         android:id="@+id/renameAttributeFragment"
-        android:name="com.woocommerce.android.ui.products.variations.attributes.RenameAttributeFragment"
+        android:name="com.cataloghub.android.ui.products.variations.attributes.RenameAttributeFragment"
         android:label="renameAttributeFragment">
         <argument
             android:name="attributeName"
@@ -287,7 +287,7 @@
     </fragment>
     <fragment
         android:id="@+id/addAttributeTermsFragment"
-        android:name="com.woocommerce.android.ui.products.variations.attributes.AddAttributeTermsFragment"
+        android:name="com.cataloghub.android.ui.products.variations.attributes.AddAttributeTermsFragment"
         android:label="addAttributeTermsFragment">
         <argument
             android:name="attributeId"
@@ -319,7 +319,7 @@
     </fragment>
     <fragment
         android:id="@+id/attributesAddedFragment"
-        android:name="com.woocommerce.android.ui.products.variations.attributes.AttributesAddedFragment"
+        android:name="com.cataloghub.android.ui.products.variations.attributes.AttributesAddedFragment"
         android:label="attributesAddedFragment"
         tools:layout="@layout/fragment_attributes_added">
         <action
@@ -336,7 +336,7 @@
     </fragment>
     <fragment
         android:id="@+id/aztecEditorFragment"
-        android:name="com.woocommerce.android.ui.aztec.AztecEditorFragment"
+        android:name="com.cataloghub.android.ui.aztec.AztecEditorFragment"
         tools:layout="@layout/fragment_aztec_editor">
         <argument
             android:name="aztecText"
@@ -366,25 +366,25 @@
     </fragment>
     <fragment
         android:id="@+id/productInventoryFragment"
-        android:name="com.woocommerce.android.ui.products.ProductInventoryFragment"
+        android:name="com.cataloghub.android.ui.products.ProductInventoryFragment"
         tools:layout="@layout/fragment_product_inventory">
         <argument
             android:name="requestCode"
             app:argType="integer" />
         <argument
             android:name="inventoryData"
-            app:argType="com.woocommerce.android.ui.products.ProductInventoryViewModel$InventoryData" />
+            app:argType="com.cataloghub.android.ui.products.ProductInventoryViewModel$InventoryData" />
         <argument
             android:name="sku"
             app:argType="string" />
         <argument
             android:name="productType"
             android:defaultValue="SIMPLE"
-            app:argType="com.woocommerce.android.ui.products.ProductType" />
+            app:argType="com.cataloghub.android.ui.products.ProductType" />
     </fragment>
     <fragment
         android:id="@+id/editVariationAttributesFragment"
-        android:name="com.woocommerce.android.ui.products.variations.attributes.edit.EditVariationAttributesFragment"
+        android:name="com.cataloghub.android.ui.products.variations.attributes.edit.EditVariationAttributesFragment"
         tools:layout="@layout/fragment_edit_variation_attributes">
         <argument
             android:name="remoteProductId"
@@ -397,7 +397,7 @@
     </fragment>
     <fragment
         android:id="@+id/productShippingFragment"
-        android:name="com.woocommerce.android.ui.products.shipping.ProductShippingFragment"
+        android:name="com.cataloghub.android.ui.products.shipping.ProductShippingFragment"
         tools:layout="@layout/fragment_product_shipping">
         <action
             android:id="@+id/action_productShippingFragment_to_productShippingClassFragment"
@@ -407,11 +407,11 @@
             app:argType="integer" />
         <argument
             android:name="shippingData"
-            app:argType="com.woocommerce.android.ui.products.shipping.ProductShippingViewModel$ShippingData" />
+            app:argType="com.cataloghub.android.ui.products.shipping.ProductShippingViewModel$ShippingData" />
     </fragment>
     <fragment
         android:id="@+id/productShippingClassFragment"
-        android:name="com.woocommerce.android.ui.products.shipping.ProductShippingClassFragment"
+        android:name="com.cataloghub.android.ui.products.shipping.ProductShippingClassFragment"
         android:label="ProductShippingClassFragment">
         <argument
             android:name="productShippingClassId"
@@ -419,18 +419,18 @@
     </fragment>
     <fragment
         android:id="@+id/productPricingFragment"
-        android:name="com.woocommerce.android.ui.products.price.ProductPricingFragment"
+        android:name="com.cataloghub.android.ui.products.price.ProductPricingFragment"
         tools:layout="@layout/fragment_product_pricing">
         <argument
             android:name="requestCode"
             app:argType="integer" />
         <argument
             android:name="pricingData"
-            app:argType="com.woocommerce.android.ui.products.price.ProductPricingViewModel$PricingData" />
+            app:argType="com.cataloghub.android.ui.products.price.ProductPricingViewModel$PricingData" />
     </fragment>
     <fragment
         android:id="@+id/productDownloadsFragment"
-        android:name="com.woocommerce.android.ui.products.downloads.ProductDownloadsFragment"
+        android:name="com.cataloghub.android.ui.products.downloads.ProductDownloadsFragment"
         tools:layout="@layout/fragment_product_downloads_list">
         <action
             android:id="@+id/action_productDownloadsFragment_to_productDownloadsSettingsFragment"
@@ -443,7 +443,7 @@
 
     <fragment
         android:id="@+id/productExternalLinkFragment"
-        android:name="com.woocommerce.android.ui.products.ProductExternalLinkFragment"
+        android:name="com.cataloghub.android.ui.products.ProductExternalLinkFragment"
         android:label="ProductExternalLinkFragment"
         tools:layout="@layout/fragment_product_external_link">
         <argument
@@ -452,7 +452,7 @@
     </fragment>
     <fragment
         android:id="@+id/productCategoriesFragment"
-        android:name="com.woocommerce.android.ui.products.categories.ProductCategoriesFragment"
+        android:name="com.cataloghub.android.ui.products.categories.ProductCategoriesFragment"
         tools:layout="@layout/fragment_product_categories_list">
         <argument
             android:name="remoteProductId"
@@ -461,7 +461,7 @@
     </fragment>
     <fragment
         android:id="@+id/productTagsFragment"
-        android:name="com.woocommerce.android.ui.products.tags.ProductTagsFragment"
+        android:name="com.cataloghub.android.ui.products.tags.ProductTagsFragment"
         tools:layout="@layout/fragment_product_tags">
         <argument
             android:name="remoteProductId"
@@ -470,15 +470,15 @@
     </fragment>
     <dialog
         android:id="@+id/productDetailBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.products.details.ProductDetailBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.products.details.ProductDetailBottomSheetFragment"
         tools:layout="@layout/dialog_product_detail_bottom_sheet_list">
         <argument
             android:name="productType"
-            app:argType="com.woocommerce.android.ui.products.ProductType" />
+            app:argType="com.cataloghub.android.ui.products.ProductType" />
     </dialog>
     <dialog
         android:id="@+id/productTypesBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.products.typesbottomsheet.ProductTypesBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.products.typesbottomsheet.ProductTypesBottomSheetFragment"
         tools:layout="@layout/dialog_product_detail_bottom_sheet_list">
         <argument
             android:name="remoteProductId"
@@ -500,11 +500,11 @@
         <argument
             android:name="source"
             android:defaultValue="PRODUCT_TAB"
-            app:argType="com.woocommerce.android.ui.products.AddProductSource" />
+            app:argType="com.cataloghub.android.ui.products.AddProductSource" />
     </dialog>
     <fragment
         android:id="@+id/productReviewsFragment"
-        android:name="com.woocommerce.android.ui.products.reviews.ProductReviewsFragment"
+        android:name="com.cataloghub.android.ui.products.reviews.ProductReviewsFragment"
         tools:layout="@layout/fragment_product_reviews_list">
         <argument
             android:name="remoteProductId"
@@ -513,7 +513,7 @@
     </fragment>
     <fragment
         android:id="@+id/groupedProductListFragment"
-        android:name="com.woocommerce.android.ui.products.grouped.GroupedProductListFragment"
+        android:name="com.cataloghub.android.ui.products.grouped.GroupedProductListFragment"
         tools:layout="@layout/fragment_product_list">
         <argument
             android:name="remoteProductId"
@@ -524,11 +524,11 @@
             app:argType="long[]" />
         <argument
             android:name="groupedProductListType"
-            app:argType="com.woocommerce.android.ui.products.grouped.GroupedProductListType" />
+            app:argType="com.cataloghub.android.ui.products.grouped.GroupedProductListType" />
     </fragment>
     <fragment
         android:id="@+id/productSelectionListFragment"
-        android:name="com.woocommerce.android.ui.products.ProductSelectionListFragment"
+        android:name="com.cataloghub.android.ui.products.ProductSelectionListFragment"
         tools:layout="@layout/fragment_product_list">
         <argument
             android:name="remoteProductId"
@@ -536,14 +536,14 @@
             app:argType="long" />
         <argument
             android:name="groupedProductListType"
-            app:argType="com.woocommerce.android.ui.products.grouped.GroupedProductListType" />
+            app:argType="com.cataloghub.android.ui.products.grouped.GroupedProductListType" />
         <argument
             android:name="excludedProductIds"
             app:argType="long[]" />
     </fragment>
     <fragment
         android:id="@+id/linkedProductsFragment"
-        android:name="com.woocommerce.android.ui.products.LinkedProductsFragment"
+        android:name="com.cataloghub.android.ui.products.LinkedProductsFragment"
         tools:layout="@layout/fragment_linked_products">
         <argument
             android:name="remoteId"
@@ -563,7 +563,7 @@
         app:destination="@id/nav_graph_add_product_category">
         <argument
             android:name="productCategory"
-            app:argType="com.woocommerce.android.model.ProductCategory"
+            app:argType="com.cataloghub.android.model.ProductCategory"
             app:nullable="false" />
     </action>
     <action
@@ -600,7 +600,7 @@
         app:destination="@id/addProductDownloadBottomSheetFragment" />
     <fragment
         android:id="@+id/variationDetailFragment"
-        android:name="com.woocommerce.android.ui.products.variations.VariationDetailFragment"
+        android:name="com.cataloghub.android.ui.products.variations.VariationDetailFragment"
         android:label="variationDetailFragment">
         <argument
             android:name="remoteProductId"
@@ -629,10 +629,10 @@
                 app:argType="long" />
             <argument
                 android:name="images"
-                app:argType="com.woocommerce.android.model.Product$Image[]" />
+                app:argType="com.cataloghub.android.model.Product$Image[]" />
             <argument
                 android:name="selectedImage"
-                app:argType="com.woocommerce.android.model.Product$Image"
+                app:argType="com.cataloghub.android.model.Product$Image"
                 app:nullable="true" />
             <argument
                 android:name="showChooser"
@@ -647,7 +647,7 @@
             app:destination="@id/productSubscriptionExpirationFragment">
             <argument
                 android:name="subscription"
-                app:argType="com.woocommerce.android.model.SubscriptionDetails" />
+                app:argType="com.cataloghub.android.model.SubscriptionDetails" />
         </action>
         <action
             android:id="@+id/action_variationDetailFragment_to_productQuantityRulesFragment"
@@ -658,26 +658,26 @@
     </fragment>
     <fragment
         android:id="@+id/productAddonsFragment"
-        android:name="com.woocommerce.android.ui.products.addons.product.ProductAddonsFragment"
+        android:name="com.cataloghub.android.ui.products.addons.product.ProductAddonsFragment"
         android:label="ProductAddonsFragment" />
     <fragment
         android:id="@+id/productDownloadDetailsFragment"
-        android:name="com.woocommerce.android.ui.products.downloads.ProductDownloadDetailsFragment"
+        android:name="com.cataloghub.android.ui.products.downloads.ProductDownloadDetailsFragment"
         android:label="ProductDownloadDetailsFragment">
         <argument
             android:name="isEditing"
             app:argType="boolean" />
         <argument
             android:name="productFile"
-            app:argType="com.woocommerce.android.model.ProductFile" />
+            app:argType="com.cataloghub.android.model.ProductFile" />
     </fragment>
     <fragment
         android:id="@+id/productDownloadsSettingsFragment"
-        android:name="com.woocommerce.android.ui.products.downloads.ProductDownloadsSettingsFragment"
+        android:name="com.cataloghub.android.ui.products.downloads.ProductDownloadsSettingsFragment"
         android:label="ProductDownloadsSettingsFragment" />
     <fragment
         android:id="@+id/mediaUploadErrorsFragment"
-        android:name="com.woocommerce.android.ui.media.MediaUploadErrorListFragment"
+        android:name="com.cataloghub.android.ui.media.MediaUploadErrorListFragment"
         android:label="MediaUploadErrorsFragment">
         <argument
             android:name="remoteProductId"
@@ -686,12 +686,12 @@
         <argument
             android:name="errorList"
             android:defaultValue="@null"
-            app:argType="com.woocommerce.android.ui.media.MediaFileUploadHandler$ProductImageUploadData[]"
+            app:argType="com.cataloghub.android.ui.media.MediaFileUploadHandler$ProductImageUploadData[]"
             app:nullable="true" />
     </fragment>
     <dialog
         android:id="@+id/addProductDownloadBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.products.downloads.AddProductDownloadBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.products.downloads.AddProductDownloadBottomSheetFragment"
         android:label="AddProductDownloadBottomSheetFragment"
         tools:layout="@layout/dialog_product_add_downloadable_file" />
     <action
@@ -705,26 +705,26 @@
         app:destination="@id/addAttributeTermsFragment" />
     <fragment
         android:id="@+id/productSubscriptionExpirationFragment"
-        android:name="com.woocommerce.android.ui.products.subscriptions.ProductSubscriptionExpirationFragment"
+        android:name="com.cataloghub.android.ui.products.subscriptions.ProductSubscriptionExpirationFragment"
         android:label="ProductSubscriptionExpirationFragment">
         <argument
             android:name="subscription"
-            app:argType="com.woocommerce.android.model.SubscriptionDetails" />
+            app:argType="com.cataloghub.android.model.SubscriptionDetails" />
     </fragment>
     <fragment
         android:id="@+id/productQuantityRulesFragment"
-        android:name="com.woocommerce.android.ui.products.quantityRules.ProductQuantityRulesFragment"
+        android:name="com.cataloghub.android.ui.products.quantityRules.ProductQuantityRulesFragment"
         android:label="ProductQuantityRulesFragment">
         <argument
             android:name="quantityRules"
-            app:argType="com.woocommerce.android.ui.products.models.QuantityRules" />
+            app:argType="com.cataloghub.android.ui.products.models.QuantityRules" />
         <argument
             android:name="exitAnalyticsEvent"
-            app:argType="com.woocommerce.android.analytics.AnalyticsEvent" />
+            app:argType="com.cataloghub.android.analytics.AnalyticsEvent" />
     </fragment>
     <fragment
         android:id="@+id/productBundleFragment"
-        android:name="com.woocommerce.android.ui.products.ProductBundleFragment"
+        android:name="com.cataloghub.android.ui.products.ProductBundleFragment"
         android:label="ProductBundleFragment">
         <argument
             android:name="productId"
@@ -732,30 +732,30 @@
     </fragment>
     <fragment
         android:id="@+id/compositeProductFragment"
-        android:name="com.woocommerce.android.ui.products.components.ComponentListFragment"
+        android:name="com.cataloghub.android.ui.products.components.ComponentListFragment"
         android:label="CompositeProductFragment">
         <argument
             android:name="components"
-            app:argType="com.woocommerce.android.model.Component[]" />
+            app:argType="com.cataloghub.android.model.Component[]" />
         <action
             android:id="@+id/action_compositeProductFragment_to_componentDetailsFragment"
             app:destination="@id/componentDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/componentDetailsFragment"
-        android:name="com.woocommerce.android.ui.products.components.ComponentDetailsFragment"
+        android:name="com.cataloghub.android.ui.products.components.ComponentDetailsFragment"
         android:label="ComponentDetailsFragment">
         <argument
             android:name="component"
-            app:argType="com.woocommerce.android.model.Component" />
+            app:argType="com.cataloghub.android.model.Component" />
     </fragment>
     <dialog
         android:id="@+id/generateVariationBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.products.variations.GenerateVariationBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.products.variations.GenerateVariationBottomSheetFragment"
         android:label="GenerateVariationBottomSheetFragment" />
     <dialog
         android:id="@+id/firstProductCelebrationDialog"
-        android:name="com.woocommerce.android.ui.products.FirstProductCelebrationDialog"
+        android:name="com.cataloghub.android.ui.products.FirstProductCelebrationDialog"
         android:label="FirstProductCelebrationDialog">
         <argument
             android:name="permalink"
@@ -766,7 +766,7 @@
     </dialog>
     <dialog
         android:id="@+id/productSharingFragment"
-        android:name="com.woocommerce.android.ui.products.ProductSharingDialog"
+        android:name="com.cataloghub.android.ui.products.ProductSharingDialog"
         android:label="ProductSharingFragment">
         <argument
             android:name="permalink"
@@ -782,7 +782,7 @@
     </dialog>
     <dialog
         android:id="@+id/AIProductDescriptionBottomSheetFragment"
-        android:name="com.woocommerce.android.ui.products.ai.description.AIProductDescriptionBottomSheetFragment"
+        android:name="com.cataloghub.android.ui.products.ai.description.AIProductDescriptionBottomSheetFragment"
         android:label="AIProductDescriptionBottomSheetFragment">
         <argument
             android:name="productTitle"
@@ -794,14 +794,14 @@
     </dialog>
     <fragment
         android:id="@+id/productSubscriptionFreeTrialFragment"
-        android:name="com.woocommerce.android.ui.products.subscriptions.ProductSubscriptionFreeTrialFragment"
+        android:name="com.cataloghub.android.ui.products.subscriptions.ProductSubscriptionFreeTrialFragment"
         android:label="ProductSubscriptionFreeTrialFragment">
         <argument
             android:name="subscription"
-            app:argType="com.woocommerce.android.model.SubscriptionDetails" />
+            app:argType="com.cataloghub.android.model.SubscriptionDetails" />
     </fragment>
     <dialog
         android:id="@+id/AIProductCreationSurveyBottomSheet"
-        android:name="com.woocommerce.android.ui.products.ai.AIProductCreationSurveyBottomSheet"
+        android:name="com.cataloghub.android.ui.products.ai.AIProductCreationSurveyBottomSheet"
         android:label="AIProductCreationSurveyBottomSheet" />
 </navigation>

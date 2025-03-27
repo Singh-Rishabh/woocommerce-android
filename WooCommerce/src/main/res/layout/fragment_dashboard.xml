@@ -9,7 +9,7 @@
     android:background="@color/color_surface"
     android:descendantFocusability="blocksDescendants"
     android:orientation="vertical"
-    tools:context="com.woocommerce.android.ui.dashboard.DashboardFragment">
+    tools:context="com.cataloghub.android.ui.dashboard.DashboardFragment">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/jitmFragment"
