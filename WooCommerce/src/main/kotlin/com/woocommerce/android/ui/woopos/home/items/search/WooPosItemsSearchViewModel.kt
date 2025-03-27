@@ -41,11 +41,20 @@ class WooPosItemsSearchViewModel @Inject constructor(
         )
 
     private var searchJob: Job? = null
+    private var loadMoreJob: Job? = null
 
     init {
         viewModelScope.launch { setEmptySearchQueryState() }
 
         listenEventsFromParent()
+    }
+
+    fun onUIEvent(event: WooPosItemsSearchUiEvent) {
+        when (event) {
+            WooPosItemsSearchUiEvent.OnNextPageRequested -> onEndOfListReached()
+            is WooPosItemsSearchUiEvent.ItemClicked -> TODO()
+            WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> TODO()
+        }
     }
 
     private fun listenEventsFromParent() {
@@ -76,39 +85,73 @@ class WooPosItemsSearchViewModel @Inject constructor(
             searchJob = viewModelScope.launch {
                 delay(SEARCH_DEBOUNCING_TIME)
 
-                childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
+                loadContent(event.query)
+            }
+        }
+    }
 
-                dataSource.searchProducts(event.query).collect { result ->
-                    when (result) {
-                        is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
-                            if (result.products.isEmpty()) {
-                                _viewState.value = WooPosItemsSearchViewState.Empty
-                            } else {
-                                _viewState.value = result.products.toContentState()
-                            }
-                        }
+    private suspend fun loadContent(searchQuery: String) {
+        childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Started)
 
-                        is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
-                            if (result.productsResult.isSuccess) {
-                                val products = result.productsResult.getOrThrow()
-                                if (products.isEmpty()) {
-                                    _viewState.value = WooPosItemsSearchViewState.Empty
-                                } else {
-                                    _viewState.value = products.toContentState()
-                                }
-                            } else {
-                                _viewState.value = WooPosItemsSearchViewState.Error
-                            }
-                            childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
-                        }
+        dataSource.searchProducts(searchQuery).collect { result ->
+            when (result) {
+                is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
+                    if (result.products.isEmpty()) {
+                        _viewState.value = WooPosItemsSearchViewState.Loading
+                    } else {
+                        _viewState.value = result.products.toContentState(
+                            searchQuery = searchQuery,
+                        )
                     }
+                }
+
+                is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
+                    if (result.productsResult.isSuccess) {
+                        val products = result.productsResult.getOrThrow()
+                        if (products.isEmpty()) {
+                            _viewState.value = WooPosItemsSearchViewState.Empty
+                        } else {
+                            _viewState.value = products.toContentState(
+                                searchQuery = searchQuery,
+                            )
+                        }
+                    } else {
+                        _viewState.value = WooPosItemsSearchViewState.Error
+                    }
+                    childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
                 }
             }
         }
     }
 
+    private fun onEndOfListReached() {
+        val currentState = _viewState.value
+        if (currentState !is WooPosItemsSearchViewState.Content) {
+            return
+        }
+
+        if (!dataSource.hasMorePages) {
+            return
+        }
+
+        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
+
+        loadMoreJob?.cancel()
+        loadMoreJob = viewModelScope.launch {
+            val result = dataSource.loadMore(query = currentState.searchQuery)
+            _viewState.value = if (result.isSuccess) {
+                result.getOrThrow().toContentState(
+                    searchQuery = currentState.searchQuery,
+                )
+            } else {
+                currentState.copy(paginationState = PaginationState.Error)
+            }
+        }
+    }
+
     private suspend fun List<Product>.toContentState(
-        paginationState: PaginationState = PaginationState.None
+        searchQuery: String,
+        paginationState: PaginationState = PaginationState.None,
     ) = WooPosItemsSearchViewState.Content(
         items = map { product ->
             if (product.productType == ProductType.VARIABLE) {
@@ -129,8 +172,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
                 )
             }
         },
+        searchQuery = searchQuery,
         paginationState = paginationState,
-        reloadingProductsWithPullToRefresh = false
     )
 
     private suspend fun CoroutineScope.setEmptySearchQueryState() {

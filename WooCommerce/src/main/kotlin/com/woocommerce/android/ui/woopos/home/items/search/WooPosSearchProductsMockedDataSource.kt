@@ -58,62 +58,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }.flowOn(Dispatchers.IO).take(2)
 
-    fun loadSimpleProducts(forceRefreshProducts: Boolean): Flow<ProductsResult> = flow {
-        if (forceRefreshProducts) {
-            updateProductCache(emptyList())
-        }
-
-        emit(ProductsResult.Cached(productCache))
-
-        delay(1000)
-
-        try {
-            val remoteProducts = if (forceRefreshProducts) {
-                generateSampleProducts()
-            } else {
-                productCache
-            }
-            updateProductCache(remoteProducts)
-            canLoadMore.set(remoteProducts.size >= PAGE_SIZE)
-            emit(ProductsResult.Remote(Result.success(productCache)))
-        } catch (e: Exception) {
-            WooLog.e(WooLog.T.POS, "Loading products failed - ${e.message}", e)
-            emit(
-                ProductsResult.Remote(
-                    Result.failure(e)
-                )
-            )
-        }
-    }.flowOn(Dispatchers.IO).take(2)
-
-    suspend fun loadMore(query: String? = null): Result<List<Product>> = withContext(Dispatchers.IO) {
-        try {
-            delay(1500)
-
-            if (query != null) {
-                val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
-                val moreResults = performSearch(query, true, currentResults.size)
-                val combinedResults = currentResults + moreResults
-                updateFilteredProductCache(query, combinedResults)
-
-                canLoadMore.set(moreResults.size >= PAGE_SIZE)
-
-                Result.success(combinedResults)
-            } else {
-                val moreProducts = generateMoreSampleProducts(productCache.size)
-                val updatedList = productCache + moreProducts
-                updateProductCache(updatedList)
-
-                canLoadMore.set(moreProducts.size >= PAGE_SIZE)
-
-                Result.success(productCache)
-            }
-        } catch (e: Exception) {
-            WooLog.e(WooLog.T.POS, "Loading more products failed - ${e.message}", e)
-            Result.failure(e)
-        }
-    }
-
     private fun getCachedSearchResults(query: String): List<Product> {
         return filteredProductCache[query.lowercase()] ?: run {
             val results = performSearch(query, false)
@@ -122,53 +66,52 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
+    suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
+        try {
+            delay(1500)
+
+            val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
+            val moreResults = performSearch(query, true, currentResults.size)
+            val combinedResults = currentResults + moreResults
+            updateFilteredProductCache(query, combinedResults)
+
+            canLoadMore.set(moreResults.size >= PAGE_SIZE)
+
+            Result.success(combinedResults)
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.POS, "Loading more products failed - ${e.message}", e)
+            Result.failure(e)
+        }
+    }
+
     private fun performSearch(query: String, isRemote: Boolean = false, offset: Int = 0): List<Product> {
         val searchTerm = query.trim().lowercase()
         if (searchTerm.isEmpty()) return productCache
 
-        val sourceList = if (isRemote) {
-            val fullList = productCache.toMutableList()
+        val sourceList = productCache
 
-            if (Random.nextBoolean()) {
-                val newProducts = generateMoreSampleProducts(fullList.size, 3)
-                fullList.addAll(0, newProducts)
-            }
-
-            val removeCount = Random.nextInt(0, 2)
-            if (removeCount > 0 && fullList.size > removeCount) {
-                repeat(removeCount) {
-                    val indexToRemove = Random.nextInt(0, fullList.size)
-                    fullList.removeAt(indexToRemove)
-                }
-            }
-
-            fullList
-        } else {
-            productCache
-        }
-
-        // Apply the same search logic for both local and remote
-        val results = sourceList.filter { product ->
+        val filteredResults = sourceList.filter { product ->
             product.name.lowercase().contains(searchTerm) ||
                 product.sku.lowercase().contains(searchTerm) ||
                 product.description.lowercase().contains(searchTerm)
         }
 
-        // Apply pagination for remote search
-        return if (isRemote && offset > 0) {
-            val endIndex = minOf(offset + PAGE_SIZE, results.size)
-            if (offset < results.size) {
-                results.subList(offset, endIndex)
+        return if (isRemote) {
+            if (offset == 0) {
+                filteredResults.take(PAGE_SIZE)
             } else {
-                emptyList()
+                val startIndex = offset
+                val endIndex = minOf(startIndex + PAGE_SIZE, filteredResults.size)
+
+                if (startIndex < filteredResults.size) {
+                    filteredResults.subList(startIndex, endIndex)
+                } else {
+                    emptyList()
+                }
             }
         } else {
-            results
+            filteredResults
         }
-    }
-
-    private fun updateProductCache(newList: List<Product>) {
-        productCache = newList
     }
 
     private fun updateFilteredProductCache(query: String, results: List<Product>) {
@@ -176,13 +119,7 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
     }
 
     private fun generateSampleProducts(): List<Product> {
-        return List(20) { index -> createSampleProduct(index.toLong() + 1) }
-    }
-
-    private fun generateMoreSampleProducts(offset: Int, count: Int = 10): List<Product> {
-        return List(count) { index ->
-            createSampleProduct((offset + index + 1).toLong())
-        }
+        return List(1000) { index -> createSampleProduct(index.toLong() + 1) }
     }
 
     @Suppress("LongMethod")
@@ -342,6 +279,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
     }
 
     companion object {
-        private const val PAGE_SIZE = 10
+        private const val PAGE_SIZE = 20
     }
 }
