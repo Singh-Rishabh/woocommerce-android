@@ -55,11 +55,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
@@ -80,10 +75,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
-    private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val addressValidationHelper: AddressValidationHelper,
     private val verifyDestinationAddress: VerifyDestinationAddress,
     private val observeShippingLabelNotice: ObserveShippingLabelNotice,
+    private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val shouldRequireITN: ShouldRequireITN
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
@@ -215,16 +210,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelected,
             shippingAddresses,
             packageWeight,
+            customsState,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, addresses, packageWeight, _ ->
-            if (selectedPackage != null && addresses != null) {
+        ) { selectedPackage, addresses, packageWeight, customState, _ ->
+            val customsFulfilled = customState is CustomsState.DataAvailable || customState is NotRequired
+            if (selectedPackage != null && addresses != null && customsFulfilled) {
                 ShippingRatesInfo(
                     orderId = navArgs.orderId,
                     packageSelected = selectedPackage,
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo.address,
                     weight = packageWeight?.totalWeight,
-                    currencyCode = order.value.currency
+                    currencyCode = order.value.currency,
+                    customsData = customsFormData.value
                 )
             } else {
                 null
@@ -296,7 +294,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     // This logic will be updated later once the Customs data state is available
-    private fun observeCustomsDataChanges() {
+    private suspend fun observeCustomsDataChanges() {
         combine(
             shippingAddresses,
             customsFormData,
@@ -311,25 +309,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 customsRequired -> Unavailable
                 else -> NotRequired
             }
-        }.onEach {
+        }.collectLatest {
             customsState.value = it
-        }.launchIn(viewModelScope)
-
-        combine(
-            packageSelected.filterNotNull(),
-            customsState.filter { it is CustomsState.DataAvailable }
-        ) { packageSelected, customState ->
-            val customData = customState
-                .run { this as? CustomsState.DataAvailable }
-                ?.customsData?.copy(
-                    packageId = packageSelected.id,
-                    packageName = packageSelected.name
-                )
-
-            packageSelected.copy(customsData = customData)
-        }.onEach {
-            packageSelected.value = it
-        }.launchIn(viewModelScope)
+        }
     }
 
     private suspend fun getShippingAddresses() {
@@ -373,7 +355,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shippingRatesInfo.shipTo,
                     shippingRatesInfo.shipFrom,
                     shippingRatesInfo.weight,
-                    shippingRatesInfo.currencyCode
+                    shippingRatesInfo.currencyCode,
+                    shippingRatesInfo.customsData
                 )
 
                 if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
@@ -535,6 +518,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
 
+        val customsData = customsFormData.value?.let { listOf(it) }
+
         launch {
             val result = purchaseShippingLabel(
                 orderId,
@@ -544,8 +529,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses.shipFrom,
                 shippingRate,
                 weight,
-                lastOrderComplete
+                lastOrderComplete,
+                customsData
             )
+
             if (result.isSuccess) {
                 purchaseState.value = PurchaseState.Success
                 result.getOrNull()
@@ -787,7 +774,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val shipFrom: OriginShippingAddress,
         val shipTo: Address?,
         val weight: Float?,
-        val currencyCode: String?
+        val currencyCode: String?,
+        val customsData: CustomsData?
     )
 
     // This will be extended later introducing the state with data coming from the Customs form
