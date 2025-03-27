@@ -192,7 +192,7 @@ class WooPosTotalsViewModelTest {
             .thenReturn("No internet")
 
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             )
         )
@@ -223,7 +223,7 @@ class WooPosTotalsViewModelTest {
         )
 
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(Result.success(order))
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(Result.success(order))
         }
 
         val priceFormat: WooPosFormatPrice = mock {
@@ -247,7 +247,7 @@ class WooPosTotalsViewModelTest {
         assertThat(castedTotals.orderTotalText).isEqualTo("$5.00")
         assertThat(castedTotals.orderTaxText).isEqualTo("$2.00")
         assertThat(castedTotals.orderSubtotalText).isEqualTo("$3.00")
-        verify(totalsRepository).createOrderWithProducts(itemClickedData)
+        verify(totalsRepository).createOrderFromCartItems(itemClickedData)
     }
 
     @Test
@@ -261,7 +261,7 @@ class WooPosTotalsViewModelTest {
             whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
                 .thenReturn("No internet")
             val itemClickedData = listOf(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
             )
             val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -287,7 +287,7 @@ class WooPosTotalsViewModelTest {
                 productsTotal = BigDecimal("3.00"),
             )
             val totalsRepository: WooPosTotalsRepository = mock {
-                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                     Result.success(order)
                 )
             }
@@ -365,7 +365,7 @@ class WooPosTotalsViewModelTest {
         whenever(resourceProvider.getString(R.string.woopos_totals_reader_checking_order))
             .thenReturn("Checking order")
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
         )
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -373,7 +373,7 @@ class WooPosTotalsViewModelTest {
         }
         val errorMessage = "Order creation failed"
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.failure(Exception(errorMessage))
             )
         }
@@ -403,7 +403,7 @@ class WooPosTotalsViewModelTest {
     fun `when RetryClicked event is triggered, should retry creating order and show loading state`() = runTest {
         // GIVEN
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
         )
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -411,7 +411,7 @@ class WooPosTotalsViewModelTest {
         }
         val errorMessage = "Order creation failed"
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.failure(Exception(errorMessage))
             )
         }
@@ -457,7 +457,7 @@ class WooPosTotalsViewModelTest {
             productsTotal = BigDecimal("3.00"),
         )
 
-        whenever(totalsRepository.createOrderWithProducts(itemClickedData)).thenReturn(
+        whenever(totalsRepository.createOrderFromCartItems(itemClickedData)).thenReturn(
             Result.success(order)
         )
 
@@ -482,7 +482,7 @@ class WooPosTotalsViewModelTest {
         whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
             .thenReturn("No internet")
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
         )
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -511,7 +511,7 @@ class WooPosTotalsViewModelTest {
         )
 
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(Result.success(order))
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(Result.success(order))
         }
 
         val priceFormat: WooPosFormatPrice = mock {
@@ -533,13 +533,13 @@ class WooPosTotalsViewModelTest {
         assertThat(castedTotals.orderSubtotalText).isEqualTo("3.00$")
         assertThat(castedTotals.orderTaxText).isEqualTo("2.00$")
         assertThat(castedTotals.orderTotalText).isEqualTo("5.00$")
-        verify(totalsRepository).createOrderWithProducts(itemClickedData)
+        verify(totalsRepository).createOrderFromCartItems(itemClickedData)
     }
 
     @Test
     fun `when fails to create order, then should track order creation failure`() = runTest {
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
         )
         val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
         val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -547,7 +547,7 @@ class WooPosTotalsViewModelTest {
         }
         val errorMessage = "Order creation failed"
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.failure(Exception(errorMessage))
             )
         }
@@ -617,7 +617,7 @@ class WooPosTotalsViewModelTest {
         whenever(resourceProvider.getString(R.string.woopos_no_internet_message)).thenReturn("No internet")
         whenever(networkStatus.isConnected()).thenReturn(false)
         val itemClickedData = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             )
         )
@@ -627,7 +627,7 @@ class WooPosTotalsViewModelTest {
         }
         val order = createNonEmptyOrder()
         val totalsRepository: WooPosTotalsRepository = mock {
-            onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+            onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                 Result.success(order)
             )
         }
@@ -1067,13 +1067,13 @@ class WooPosTotalsViewModelTest {
             val parentToChildrenEventFlow = MutableStateFlow<ParentToChildrenEvent>(
                 ParentToChildrenEvent.CheckoutClicked(
                     listOf(
-                        WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        WooPosItemsViewModel.ItemClickedData.Product.Simple(
                             id = 1L
                         ),
-                        WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        WooPosItemsViewModel.ItemClickedData.Product.Simple(
                             id = 2L
                         ),
-                        WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        WooPosItemsViewModel.ItemClickedData.Product.Simple(
                             id = 3L
                         ),
                     )
@@ -1100,13 +1100,13 @@ class WooPosTotalsViewModelTest {
             val parentToChildrenEventFlow = MutableStateFlow<ParentToChildrenEvent>(
                 ParentToChildrenEvent.CheckoutClicked(
                     listOf(
-                        WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        WooPosItemsViewModel.ItemClickedData.Product.Simple(
                             id = 1L
                         ),
-                        WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        WooPosItemsViewModel.ItemClickedData.Product.Simple(
                             id = 2L
                         ),
-                        WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                        WooPosItemsViewModel.ItemClickedData.Product.Simple(
                             id = 3L
                         ),
                     )
@@ -1135,7 +1135,7 @@ class WooPosTotalsViewModelTest {
             whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
                 .thenReturn("No internet")
             val itemClickedData = listOf(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
             )
             val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -1161,7 +1161,7 @@ class WooPosTotalsViewModelTest {
                 productsTotal = BigDecimal("0.00"),
             )
             val totalsRepository: WooPosTotalsRepository = mock {
-                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                     Result.success(order)
                 )
             }
@@ -1194,7 +1194,7 @@ class WooPosTotalsViewModelTest {
             whenever(resourceProvider.getString(R.string.woopos_no_internet_message))
                 .thenReturn("No internet")
             val itemClickedData = listOf(
-                WooPosItemsViewModel.ItemClickedData.SimpleProduct(id = 1L)
+                WooPosItemsViewModel.ItemClickedData.Product.Simple(id = 1L)
             )
             val parentToChildrenEventFlow = MutableStateFlow(ParentToChildrenEvent.CheckoutClicked(itemClickedData))
             val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock {
@@ -1220,7 +1220,7 @@ class WooPosTotalsViewModelTest {
                 productsTotal = BigDecimal("3.00"),
             )
             val totalsRepository: WooPosTotalsRepository = mock {
-                onBlocking { createOrderWithProducts(itemClickedData) }.thenReturn(
+                onBlocking { createOrderFromCartItems(itemClickedData) }.thenReturn(
                     Result.success(order)
                 )
             }
@@ -1388,13 +1388,13 @@ class WooPosTotalsViewModelTest {
     private suspend fun createViewModelAndSetupForSuccessfulOrderCreation(
         controllerFactory: WooPosCardReaderPaymentControllerFactory = paymentControllerFactory,
         itemClickedData: List<WooPosItemsViewModel.ItemClickedData> = listOf(
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 1L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 2L
             ),
-            WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+            WooPosItemsViewModel.ItemClickedData.Product.Simple(
                 id = 3L
             ),
         ),
@@ -1448,7 +1448,7 @@ class WooPosTotalsViewModelTest {
         )
         val totalsRepository: WooPosTotalsRepository = mock {
             onBlocking {
-                createOrderWithProducts(itemClickedData)
+                createOrderFromCartItems(itemClickedData)
             }.thenReturn(Result.success(order))
         }
         val priceFormat: WooPosFormatPrice = mock {

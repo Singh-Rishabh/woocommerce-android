@@ -3,6 +3,8 @@
 *** For entries which are touching the Android Wear app's, start entry with `[WEAR]` too.
 22.1
 -----
+- [*] The order count badge is now fully visible for counts higher than 99 [https://github.com/woocommerce/woocommerce-android/pull/13825]
+- [*] Fix rare crash in the POS upon adding an item to the cart [https://github.com/woocommerce/woocommerce-android/pull/13838]
 
 22.0.2
 -----

@@ -278,7 +278,10 @@ class WooPosTotalsViewModel @Inject constructor(
                         showSuccessfulPaymentState(event.paymentMethod)
                     }
 
-                    is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
+                    is ParentToChildrenEvent.ItemClickedInProductSelector,
+                    is ParentToChildrenEvent.SearchEvent.ChangedQuery,
+                    ParentToChildrenEvent.SearchEvent.Finished,
+                    ParentToChildrenEvent.SearchEvent.Started -> Unit
                 }
             }
         }
@@ -409,7 +412,7 @@ class WooPosTotalsViewModel @Inject constructor(
         viewModelScope.launch {
             uiState.value = WooPosTotalsViewState.Loading
 
-            totalsRepository.createOrderWithProducts(itemClickedDataList = itemClickedDataList)
+            totalsRepository.createOrderFromCartItems(itemClickedDataList = itemClickedDataList)
                 .fold(
                     onSuccess = { order ->
                         dataState.value = dataState.value.copy(

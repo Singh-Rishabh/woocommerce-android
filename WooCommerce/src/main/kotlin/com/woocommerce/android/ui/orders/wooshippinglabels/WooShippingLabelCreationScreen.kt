@@ -123,9 +123,8 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 onEditDestinationAddress = viewModel::onEditDestinationAddress,
                 destinationStatus = viewState.destinationStatus,
                 actionSnackbar = viewModel.actionSnackbar,
-                onDismissAddressNotification = viewModel::onDismissAddressNotification,
                 onSplitShipment = viewModel::onSplitShipment,
-                onDismissItnNotice = viewModel::onDismissItnNotice
+                onHazmatNoticeClick = viewModel::onHazmatNoticeClick,
             )
         }
 
@@ -165,12 +164,11 @@ fun WooShippingLabelCreationScreen(
     onEditCustomsClick: () -> Unit,
     onNavigateBack: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
-    onDismissItnNotice: () -> Unit,
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null,
-    onDismissAddressNotification: () -> Unit = {},
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
@@ -232,11 +230,10 @@ fun WooShippingLabelCreationScreen(
             onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
             onEditCustomsClick = onEditCustomsClick,
             onEditDestinationAddress = onEditDestinationAddress,
-            onDismissItnNotice = onDismissItnNotice,
-            onDismissAddressNotification = onDismissAddressNotification,
             destinationStatus = destinationStatus,
             actionSnackbar = actionSnackbar,
-            onSplitShipment = onSplitShipment
+            onSplitShipment = onSplitShipment,
+            onHazmatNoticeClick = onHazmatNoticeClick
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -312,18 +309,16 @@ private fun LabelCreationScreenWithBottomSheet(
     onShipmentDetailsExpandedChange: (Boolean) -> Boolean,
     onEditCustomsClick: () -> Unit,
     onEditDestinationAddress: (DestinationShippingAddress) -> Unit,
-    onDismissItnNotice: () -> Unit,
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
-    onDismissAddressNotification: () -> Unit = {},
     actionSnackbar: ActionSnackbar? = null,
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val isItnMissing = customsState is ItnMissing
     val isPurchaseButtonDisplayed = shippingRatesState is WooShippingLabelCreationViewModel.ShippingRatesState.DataState
-    val requiresLargePeekHeight = isPurchaseButtonDisplayed || uiState.addressNotification != null || isItnMissing
+    val requiresLargePeekHeight = isPurchaseButtonDisplayed || uiState.noticeBannerUiState != null
 
     val bottomSheetPeekHeight = when {
         requiresLargePeekHeight -> 128.dp
@@ -371,15 +366,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     onShipmentDetailsExpandedChange = onShipmentDetailsExpandedChange,
                     onEditDestinationAddress = onEditDestinationAddress,
                     destinationStatus = destinationStatus,
-                    addressNotification = uiState.addressNotification,
-                    onDismissAddressNotification = onDismissAddressNotification,
-                    onEditOriginAddress = onEditOriginAddress,
-                    itnNotification = takeIf { isItnMissing }?.let {
-                        ItnMissingNotification(
-                            errorMessage = stringResource(R.string.woo_shipping_labels_customs_itn_required_error),
-                            onErrorDismissed = onDismissItnNotice
-                        )
-                    }
+                    noticeBannerUiState = uiState.noticeBannerUiState
                 )
             }
         },
@@ -435,6 +422,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     onExpand = { isExpanded.value = it }
                 )
                 HazmatCard(
+                    onClick = onHazmatNoticeClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)
@@ -894,7 +882,6 @@ private fun WooShippingLabelCreationScreenPreview() {
             onSelectAddressExpandedChange = { true },
             onEditCustomsClick = {},
             onEditDestinationAddress = {},
-            onDismissItnNotice = {},
             destinationStatus = AddressStatus.VERIFIED
         )
     }

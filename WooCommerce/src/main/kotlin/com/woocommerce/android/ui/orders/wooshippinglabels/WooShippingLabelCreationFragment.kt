@@ -17,6 +17,7 @@ import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.main.AppBarStatus
 import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartCustomsFormEdit
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartHazmatFormEdit
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartPackageSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.EditAddressFlow
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.WooShippingEditAddressFragment.Companion.DESTINATION_ADDRESS_UPDATE_RESULT
@@ -92,6 +93,7 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                     WooShippingLabelCreationFragmentDirections
                         .actionWooShippingLabelCreationFragmentToWooShippingLabelCustomsFormFragment(
                             shippableItems = event.shippableItems.toTypedArray(),
+                            destinationCountryCode = event.destinationCountryCode,
                             customsData = event.customData
                         ).let { findNavController().navigateSafely(it) }
                 }
@@ -107,6 +109,12 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
                         .actionWooShippingLabelCreationFragmentToWooShippingSplitShipmentFragment().let {
                             findNavController().navigateSafely(it)
                         }
+                }
+
+                is StartHazmatFormEdit -> {
+                    WooShippingLabelCreationFragmentDirections
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelHazmatFormFragment()
+                        .let { findNavController().navigateSafely(it) }
                 }
             }
         }

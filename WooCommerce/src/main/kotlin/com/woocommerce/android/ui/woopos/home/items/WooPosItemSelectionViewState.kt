@@ -1,6 +1,6 @@
 package com.woocommerce.android.ui.woopos.home.items
 
-sealed class WooPosItem(
+sealed class WooPosItemSelectionViewState(
     open val id: Long,
     open val name: String
 ) {
@@ -8,7 +8,7 @@ sealed class WooPosItem(
         override val id: Long,
         override val name: String,
         open val price: String,
-    ) : WooPosItem(id, name) {
+    ) : WooPosItemSelectionViewState(id, name) {
         data class Simple(
             override val id: Long,
             override val name: String,
@@ -32,5 +32,5 @@ sealed class WooPosItem(
         val productId: Long,
         val price: String,
         val imageUrl: String?,
-    ) : WooPosItem(id, name)
+    ) : WooPosItemSelectionViewState(id, name)
 }

@@ -59,8 +59,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpa
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Product
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Variation
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Variation
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState.Content.BannerState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -70,7 +70,7 @@ import kotlinx.coroutines.flow.filter
 fun WooPosItemList(
     state: ContentViewState,
     listState: LazyListState,
-    onItemClicked: (item: WooPosItem) -> Unit,
+    onItemClicked: (item: WooPosItemSelectionViewState) -> Unit,
     onEndOfProductsListReached: () -> Unit,
     onErrorWhilePaginating: @Composable () -> Unit,
 ) {
@@ -141,7 +141,7 @@ fun WooPosItemList(
 private fun ProductItem(
     modifier: Modifier = Modifier,
     item: Product.Simple,
-    onItemClicked: (item: WooPosItem) -> Unit
+    onItemClicked: (item: WooPosItemSelectionViewState) -> Unit
 ) {
     val itemContentDescription = stringResource(
         id = R.string.woopos_product_item_content_description,
@@ -155,7 +155,7 @@ private fun ProductItem(
 private fun VariableProductItem(
     modifier: Modifier = Modifier,
     item: Product.Variable,
-    onItemClicked: (item: WooPosItem) -> Unit
+    onItemClicked: (item: WooPosItemSelectionViewState) -> Unit
 ) {
     val itemContentDescription = stringResource(
         id = R.string.woopos_variable_product_item_content_description,
@@ -169,7 +169,7 @@ private fun VariableProductItem(
 private fun VariationItem(
     modifier: Modifier = Modifier,
     item: Variation,
-    onItemClicked: (item: WooPosItem) -> Unit
+    onItemClicked: (item: WooPosItemSelectionViewState) -> Unit
 ) {
     val itemContentDescription = stringResource(
         id = R.string.woopos_variation_item_content_description,
@@ -183,8 +183,8 @@ private fun VariationItem(
 fun WooPosItemCard(
     modifier: Modifier,
     itemContentDescription: String,
-    onItemClicked: (item: WooPosItem) -> Unit,
-    item: WooPosItem
+    onItemClicked: (item: WooPosItemSelectionViewState) -> Unit,
+    item: WooPosItemSelectionViewState
 ) {
     WooPosCard(
         modifier = modifier
@@ -211,7 +211,7 @@ fun WooPosItemCard(
 }
 
 @Composable
-private fun ProductInfo(item: WooPosItem) {
+private fun ProductInfo(item: WooPosItemSelectionViewState) {
     Column(
         modifier = Modifier
             .fillMaxHeight()
@@ -239,7 +239,7 @@ private fun ProductInfo(item: WooPosItem) {
 }
 
 @Composable
-private fun ProductImage(item: WooPosItem) {
+private fun ProductImage(item: WooPosItemSelectionViewState) {
     val imageUrl = when (item) {
         is Product.Simple -> item.imageUrl
         is Product.Variable -> item.imageUrl
@@ -422,7 +422,7 @@ private fun InfiniteListHandler(
         }
     }
 
-    LaunchedEffect(state.reloadingProductsWithPullToRefresh) {
+    LaunchedEffect(state.reloadingWithPullToRefresh) {
         snapshotFlow { loadMore.value }
             .distinctUntilChanged()
             .filter { it }
