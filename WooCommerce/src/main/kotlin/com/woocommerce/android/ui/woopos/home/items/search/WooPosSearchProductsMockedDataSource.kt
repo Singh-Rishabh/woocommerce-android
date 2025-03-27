@@ -88,7 +88,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
-
     private fun performSearch(query: String, isRemote: Boolean = false, offset: Int = 0): List<Product> {
         val searchTerm = query.trim().lowercase()
         if (searchTerm.isEmpty()) return productCache
