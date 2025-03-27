@@ -67,7 +67,7 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
     suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
         delay(1500)
 
-        if (Random.nextInt(100) <= 15) {
+        if (Random.nextInt(100) <= 30) {
             return@withContext Result.failure(Exception("Failed to load more products"))
         }
 
