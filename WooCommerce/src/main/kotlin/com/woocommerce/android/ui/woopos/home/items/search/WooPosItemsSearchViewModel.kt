@@ -158,7 +158,11 @@ class WooPosItemsSearchViewModel @Inject constructor(
         when (item) {
             is WooPosItemSelectionViewState.Product.Simple -> {
                 viewModelScope.launch {
-                    ItemClickedData.Product.Simple(id = item.id)
+                    childToParentEventSender.sendToParent(
+                        ChildToParentEvent.ItemClickedInProductSelector(
+                            ItemClickedData.Product.Simple(id = item.id)
+                        )
+                    )
                 }
             }
 
