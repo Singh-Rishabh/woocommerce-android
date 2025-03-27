@@ -29,6 +29,7 @@ enum class FeatureFlag {
             BETTER_CUSTOMER_SEARCH_M2,
             ORDER_CREATION_AUTO_TAX_RATE,
             POS_PRODUCTS_SEARCH,
+            POS_COUPONS,
             REVAMP_WOO_SHIPPING -> PackageUtils.isDebugBuild()
 
             NEW_SHIPPING_SUPPORT,
@@ -36,7 +37,6 @@ enum class FeatureFlag {
             OBJECTIVE_SECTION,
             BULK_UPDATE_ORDERS_STATUS,
             HIDE_SITES_FROM_SITE_PICKER -> true
-            POS_COUPONS -> false
         }
     }
 }
