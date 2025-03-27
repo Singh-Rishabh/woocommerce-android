@@ -180,8 +180,8 @@ class WooPosTotalsRepositoryTest {
 
         // THEN
         assertThat(result.isFailure).isTrue()
-        assertThat(result.exceptionOrNull()).isInstanceOf(IllegalArgumentException::class.java)
-        assertThat(result.exceptionOrNull()?.message).isEqualTo("Invalid product ID: -1")
+        assertThat(result.exceptionOrNull()).isInstanceOf(IllegalStateException::class.java)
+        assertThat(result.exceptionOrNull()?.message).isEqualTo("Invalid item ID")
         verify(orderCreateEditRepository, never()).createOrUpdateOrder(any(), eq(""))
     }
 
