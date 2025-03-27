@@ -236,6 +236,13 @@ private fun CartBodyWithItems(
                     canRemoveItems = areItemsRemovable,
                     onUIEvent = onUIEvent,
                 )
+
+                is WooPosCartItemViewState.Coupon -> CouponItem(
+                    modifier = Modifier.animateItem(),
+                    item = item,
+                    canRemoveItems = areItemsRemovable,
+                    onUIEvent = onUIEvent,
+                )
             }
         }
         item {
@@ -375,7 +382,7 @@ private fun ProductItem(
     onUIEvent: (WooPosCartUIEvent) -> Unit,
 ) {
     val itemContentDescription = stringResource(
-        id = R.string.woopos_cart_item_content_description,
+        id = R.string.woopos_cart_item_product_content_description,
         item.name,
         item.price
     )
@@ -474,6 +481,85 @@ private fun ProductItem(
 }
 
 @Composable
+private fun CouponItem(
+    modifier: Modifier = Modifier,
+    item: WooPosCartItemViewState.Coupon,
+    canRemoveItems: Boolean,
+    onUIEvent: (WooPosCartUIEvent) -> Unit,
+) {
+    val itemContentDescription = stringResource(
+        id = R.string.woopos_cart_item_coupon_content_description,
+        item.name
+    )
+
+    WooPosCard(
+        modifier = modifier
+            .height(96.dp)
+            .semantics { contentDescription = itemContentDescription },
+        backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+        elevation = WooPosElevation.Medium,
+        shadowType = ShadowType.Soft,
+        shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surfaceDim),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_more_menu_coupons),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(WooPosTheme.colors.onSurfaceVariantLowest),
+                    modifier = Modifier.size(38.dp, 32.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                WooPosText(
+                    text = item.name,
+                    maxLines = 1,
+                    style = WooPosTypography.BodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.clearAndSetSemantics { }
+                )
+                Spacer(modifier = Modifier.height(WooPosSpacing.XSmall.value.toAdaptivePadding()))
+            }
+
+            if (canRemoveItems) {
+                Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
+
+                val removeButtonContentDescription = stringResource(
+                    id = R.string.woopos_remove_item_button_from_cart_content_description,
+                    item.name
+                )
+                IconButton(
+                    onClick = { onUIEvent(WooPosCartUIEvent.ItemRemovedFromCart(item)) },
+                    modifier = Modifier
+                        .size(32.dp)
+                        .semantics { contentDescription = removeButtonContentDescription }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_pos_remove_cart_item),
+                        tint = WooPosTheme.colors.onSurfaceVariantLowest,
+                        contentDescription = null,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(WooPosSpacing.Medium.value.toAdaptivePadding()))
+        }
+    }
+}
+
+@Composable
 @WooPosPreview
 fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
     WooPosTheme {
@@ -487,8 +573,13 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                 ),
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
-                        WooPosCartItemViewState.Product.Simple(
+                        WooPosCartItemViewState.Coupon(
                             itemNumber = 1,
+                            name = "Test Coupon",
+                            id = 1L
+                        ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 2,
                             id = 1L,
                             imageUrl = "",
                             name = "VW California, VW California VW California, VW California VW California, " +
@@ -497,7 +588,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             price = "€50,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
-                            itemNumber = 2,
+                            itemNumber = 3,
                             id = 2L,
                             imageUrl = "",
                             name = "VW California",
@@ -506,7 +597,7 @@ fun WooPosCartScreenProductsPreview(modifier: Modifier = Modifier) {
                             price = "$150,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
-                            itemNumber = 3,
+                            itemNumber = 4,
                             id = 3L,
                             imageUrl = "",
                             name = "VW California",
@@ -536,8 +627,13 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                 ),
                 body = WooPosCartState.Body.WithItems(
                     itemsInCart = listOf(
-                        WooPosCartItemViewState.Product.Simple(
+                        WooPosCartItemViewState.Coupon(
                             itemNumber = 1,
+                            name = "Test Coupon",
+                            id = 1L
+                        ),
+                        WooPosCartItemViewState.Product.Simple(
+                            itemNumber = 2,
                             id = 1L,
                             imageUrl = "",
                             name = "VW California",
@@ -545,7 +641,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             price = "€50,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
-                            itemNumber = 2,
+                            itemNumber = 3,
                             id = 2L,
                             imageUrl = "",
                             name = "VW California",
@@ -553,7 +649,7 @@ fun WooPosCartScreenCheckoutPreview(modifier: Modifier = Modifier) {
                             price = "$150,000",
                         ),
                         WooPosCartItemViewState.Product.Simple(
-                            itemNumber = 3,
+                            itemNumber = 4,
                             id = 3L,
                             imageUrl = "",
                             name = "VW California",
