@@ -41,7 +41,7 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpa
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
-import com.woocommerce.android.ui.woopos.home.items.ItemsEmptyList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsEmptyList
 import com.woocommerce.android.ui.woopos.home.items.ItemsLoadingIndicator
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
@@ -161,7 +161,7 @@ private fun WooPosVariationsScreens(
                 }
 
                 is WooPosVariationsViewState.Empty -> {
-                    ItemsEmptyList(
+                    WooPosItemsEmptyList(
                         title = stringResource(id = R.string.woopos_variations_empty_list_title),
                         message = stringResource(id = R.string.woopos_variations_empty_list_message),
                         contentDescription = stringResource(

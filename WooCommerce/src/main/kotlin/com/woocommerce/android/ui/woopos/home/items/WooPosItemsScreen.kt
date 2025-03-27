@@ -211,7 +211,7 @@ private fun MainItemsList(
 
                 is WooPosItemsViewState.Loading -> ItemsLoadingIndicator()
 
-                is WooPosItemsViewState.Empty -> ItemsEmptyList(
+                is WooPosItemsViewState.Empty -> WooPosItemsEmptyList(
                     title = stringResource(id = R.string.woopos_products_empty_list_title),
                     message = stringResource(id = R.string.woopos_products_empty_list_message),
                     contentDescription = stringResource(id = R.string.woopos_products_empty_list_image_description),

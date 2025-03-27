@@ -362,7 +362,7 @@ fun ItemsLoadingItem() {
 }
 
 @Composable
-fun ItemsEmptyList(
+fun WooPosItemsEmptyList(
     title: String,
     message: String,
     contentDescription: String,
@@ -469,7 +469,7 @@ fun ItemListPreview() {
 @Composable
 fun EmptyListPreview() {
     WooPosTheme {
-        ItemsEmptyList("Empty List", "This list is empty", "")
+        WooPosItemsEmptyList("Empty List", "This list is empty", "")
     }
 }
 
