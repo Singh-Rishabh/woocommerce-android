@@ -898,7 +898,8 @@ class WooPosTotalsViewModelTest {
             val vm = createViewModelAndSetupForSuccessfulOrderCreation(discountTotal = discountTotal)
 
             // THEN
-            assertThat(((vm.state.value as WooPosTotalsViewState.Checkout).totals as Visible).orderDiscountText).isNotNull()
+            assertThat(((vm.state.value as WooPosTotalsViewState.Checkout).totals as Visible).orderDiscountText)
+                .isNotNull()
         }
 
     @Test
