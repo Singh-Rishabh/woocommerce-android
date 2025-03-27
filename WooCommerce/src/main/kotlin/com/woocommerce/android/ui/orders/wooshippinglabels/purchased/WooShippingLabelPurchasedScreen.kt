@@ -51,6 +51,7 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.ProgressDialog
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.HazmatCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.RoundedCornerBoxWithBorder
 import com.woocommerce.android.ui.orders.wooshippinglabels.ShipmentDetails
@@ -221,6 +222,7 @@ internal fun WooShippingLabelPurchasedScreen(
     onRefundClicked: () -> Unit,
     onLearnMoreClicked: () -> Unit,
     modifier: Modifier = Modifier,
+    selectedHazmatCategory: ShippingLabelHazmatCategory? = null,
 ) {
     Column(
         modifier = modifier
@@ -288,6 +290,7 @@ internal fun WooShippingLabelPurchasedScreen(
         }
         Spacer(modifier = Modifier.padding(top = 16.dp))
         HazmatCard(
+            selectedCategory = selectedHazmatCategory,
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
@@ -493,6 +496,7 @@ internal fun WooShippingLabelPurchasedScreenPreview() {
                     formattedTotalPrice = "$92.78"
                 ),
                 selectedLabelPaperSizeOption = selectedLabelPaperSizeOption.value,
+                selectedHazmatCategory = ShippingLabelHazmatCategory.CLASS_1,
                 onLabelPaperSizeOptionSelected = { selectedLabelPaperSizeOption.value = it },
                 onPrintShippingLabelClicked = {},
                 onTrackShipmentClicked = {},
