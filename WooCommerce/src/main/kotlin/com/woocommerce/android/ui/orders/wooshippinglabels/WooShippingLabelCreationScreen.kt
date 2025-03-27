@@ -124,6 +124,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 destinationStatus = viewState.destinationStatus,
                 actionSnackbar = viewModel.actionSnackbar,
                 onSplitShipment = viewModel::onSplitShipment,
+                onHazmatNoticeClick = viewModel::onHazmatNoticeClick,
             )
         }
 
@@ -166,7 +167,8 @@ fun WooShippingLabelCreationScreen(
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null,
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
@@ -230,7 +232,8 @@ fun WooShippingLabelCreationScreen(
             onEditDestinationAddress = onEditDestinationAddress,
             destinationStatus = destinationStatus,
             actionSnackbar = actionSnackbar,
-            onSplitShipment = onSplitShipment
+            onSplitShipment = onSplitShipment,
+            onHazmatNoticeClick = onHazmatNoticeClick
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -309,7 +312,8 @@ private fun LabelCreationScreenWithBottomSheet(
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null,
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -418,6 +422,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     onExpand = { isExpanded.value = it }
                 )
                 HazmatCard(
+                    onClick = onHazmatNoticeClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)

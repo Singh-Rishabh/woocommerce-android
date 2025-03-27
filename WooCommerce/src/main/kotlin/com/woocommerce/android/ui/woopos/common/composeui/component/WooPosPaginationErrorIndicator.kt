@@ -30,8 +30,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosThe
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Product
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
 
 @Composable

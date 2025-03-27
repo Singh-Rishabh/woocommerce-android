@@ -15,6 +15,7 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
+import com.woocommerce.android.ui.woopos.home.cart.WooPosCartState.Body.WithItems
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.CHECKOUT
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EDITABLE
 import com.woocommerce.android.ui.woopos.home.cart.WooPosCartStatus.EMPTY
@@ -35,6 +36,7 @@ import com.woocommerce.android.viewmodel.getStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,6 +62,8 @@ class WooPosCartViewModel @Inject constructor(
         .map { updateCartStatusDependingOnItems(it).also { newState -> updateAnalyticsData(newState) } }
         .map { updateToolbarState(it) }
         .map { updateStateDependingOnCartStatus(it) }
+
+    private val itemNumberProvider = AtomicInteger(getInitialValueOrHighestUsedItemNumberAfterProcessDeath())
 
     init {
         listenEventsFromParent()
@@ -112,13 +116,12 @@ class WooPosCartViewModel @Inject constructor(
 
     private fun goToTotals() {
         val itemClickedDataList = (_state.value.body as WooPosCartState.Body.WithItems).itemsInCart.map {
-            when (it.productType) {
-                ProductType.Simple -> WooPosItemsViewModel.ItemClickedData.SimpleProduct(it.id.productId)
-                ProductType.Variation -> WooPosItemsViewModel.ItemClickedData.Variation(
-                    productId = it.id.productId,
-                    id = it.id.variationId
+            when (it) {
+                is WooPosCartItemViewState.Product.Simple -> WooPosItemsViewModel.ItemClickedData.SimpleProduct(it.id)
+                is WooPosCartItemViewState.Product.Variation -> WooPosItemsViewModel.ItemClickedData.Variation(
+                    productId = it.id,
+                    id = it.variationId
                 )
-                ProductType.Coupon -> throw NotImplementedError("Coupons are not supported yet")
             }
         }
         sendEventToParent(ChildToParentEvent.CheckoutClicked(itemClickedDataList))
@@ -142,7 +145,10 @@ class WooPosCartViewModel @Inject constructor(
 
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> clearCart()
 
-                    is ParentToChildrenEvent.CheckoutClicked -> Unit
+                    is ParentToChildrenEvent.CheckoutClicked,
+                    is ParentToChildrenEvent.SearchEvent.ChangedQuery,
+                    ParentToChildrenEvent.SearchEvent.Finished,
+                    ParentToChildrenEvent.SearchEvent.Started -> Unit
                 }
             }
         }
@@ -169,8 +175,8 @@ class WooPosCartViewModel @Inject constructor(
                         product.toCartListItem(itemNumber)
                     }
                     is WooPosItemsViewModel.ItemClickedData.Variation -> {
-                        val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
                         val itemNumber = getItemNumber()
+                        val productVariation = getVariationsById(event.itemData.productId, event.itemData.id)!!
                         productVariation.toCartListItem(itemNumber, product)
                     }
                     is WooPosItemsViewModel.ItemClickedData.Coupon ->
@@ -183,7 +189,7 @@ class WooPosCartViewModel @Inject constructor(
             _state.value = updateStateWithNewItem(itemClicked.await())
             WooPosAnalyticsEvent.Event.ItemAddedToCart.addProperties(
                 mapOf(
-                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.productTypeForAnalytics()
+                    WooPosAnalyticsEventConstant.PRODUCT_TYPE to event.itemData.posItemNameForAnalytics()
                 )
             )
             analyticsTracker.track(WooPosAnalyticsEvent.Event.ItemAddedToCart)
@@ -195,13 +201,13 @@ class WooPosCartViewModel @Inject constructor(
     }
 
     private fun getItemNumber(): Int {
-        return when (val currentState = _state.value.body) {
+        return when (_state.value.body) {
             is WooPosCartState.Body.Empty -> 1
-            is WooPosCartState.Body.WithItems -> (currentState.itemsInCart.maxOfOrNull { it.id.itemNumber } ?: 0) + 1
+            is WooPosCartState.Body.WithItems -> itemNumberProvider.incrementAndGet()
         }
     }
 
-    private fun updateStateWithNewItem(newItem: WooPosCartState.Body.WithItems.Item): WooPosCartState {
+    private fun updateStateWithNewItem(newItem: WooPosCartItemViewState): WooPosCartState {
         return when (val currentState = _state.value.body) {
             is WooPosCartState.Body.Empty -> _state.value.copy(body = WooPosCartState.Body.WithItems(listOf(newItem)))
             is WooPosCartState.Body.WithItems -> _state.value.copy(
@@ -281,42 +287,35 @@ class WooPosCartViewModel @Inject constructor(
         }
     }
 
-    private suspend fun Product.toCartListItem(itemNumber: Int): WooPosCartState.Body.WithItems.Item =
-        WooPosCartState.Body.WithItems.Item(
-            id = WooPosCartState.Body.WithItems.Item.Id(
-                productId = remoteId,
-                variationId = 0L,
-                itemNumber = itemNumber
-            ),
+    private suspend fun Product.toCartListItem(itemNumber: Int): WooPosCartItemViewState.Product.Simple =
+        WooPosCartItemViewState.Product.Simple(
+            itemNumber = itemNumber,
+            id = this.remoteId,
             name = name,
             description = null,
             price = formatPrice(price),
             imageUrl = firstImageUrl,
-            productType = ProductType.Simple,
         )
 
     private suspend fun ProductVariation.toCartListItem(
         itemNumber: Int,
         product: Product
-    ): WooPosCartState.Body.WithItems.Item =
-        WooPosCartState.Body.WithItems.Item(
-            id = WooPosCartState.Body.WithItems.Item.Id(
-                productId = product.remoteId,
-                variationId = remoteVariationId,
-                itemNumber = itemNumber
-            ),
+    ): WooPosCartItemViewState.Product.Variation =
+        WooPosCartItemViewState.Product.Variation(
+            itemNumber = itemNumber,
+            id = product.remoteId,
+            variationId = this.remoteVariationId,
             name = product.name,
             description = getNameForPOS(product, resourceProvider),
             price = formatPrice(price),
             imageUrl = image?.source,
-            productType = ProductType.Variation,
         )
+
+    private fun getInitialValueOrHighestUsedItemNumberAfterProcessDeath() = (_state.value.body as? WithItems)
+        ?.itemsInCart?.maxOfOrNull { it.itemNumber } ?: 1
 }
 
-/**
- * CouponsProject: Needs to be renamed in order to support non-product types
- */
-private fun WooPosItemsViewModel.ItemClickedData.productTypeForAnalytics(): String {
+private fun WooPosItemsViewModel.ItemClickedData.posItemNameForAnalytics(): String {
     return when (this) {
         is WooPosItemsViewModel.ItemClickedData.SimpleProduct -> "simple"
         is WooPosItemsViewModel.ItemClickedData.Variation -> "variation"
