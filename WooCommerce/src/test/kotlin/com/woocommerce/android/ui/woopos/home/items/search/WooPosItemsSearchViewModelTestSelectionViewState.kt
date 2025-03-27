@@ -123,7 +123,10 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             Product.Simple(id = 4, name = "Popular Item 4", price = "$25.0", imageUrl = null)
         )
         val recentSearches = listOf(
-            "Recent Search 1", "Recent Search 2", "Recent Search 3", "Recent Search 4"
+            "Recent Search 1",
+            "Recent Search 2",
+            "Recent Search 3",
+            "Recent Search 4",
         )
         whenever(mockEmptyStateProvider.getPopularItems()).thenReturn(popularItems)
         whenever(mockEmptyStateProvider.getLastSearches()).thenReturn(recentSearches)
@@ -140,7 +143,9 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             assertThat(emptySearchQuery.popularItems.map { it.id }).containsExactly(1, 2, 3)
             assertThat(emptySearchQuery.recentSearches).hasSize(3)
             assertThat(emptySearchQuery.recentSearches).containsExactly(
-                "Recent Search 1", "Recent Search 2", "Recent Search 3"
+                "Recent Search 1",
+                "Recent Search 2",
+                "Recent Search 3"
             )
         }
     }
