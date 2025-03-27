@@ -58,14 +58,6 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }.flowOn(Dispatchers.IO).take(2)
 
-    private fun getCachedSearchResults(query: String): List<Product> {
-        return filteredProductCache[query.lowercase()] ?: run {
-            val results = performSearch(query, false)
-            updateFilteredProductCache(query, results)
-            results
-        }
-    }
-
     suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
         try {
             delay(1500)
@@ -83,6 +75,19 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
             Result.failure(e)
         }
     }
+
+    fun getProductById(productId: Long): Product? {
+        return productCache.find { it.remoteId == productId }
+    }
+
+    private fun getCachedSearchResults(query: String): List<Product> {
+        return filteredProductCache[query.lowercase()] ?: run {
+            val results = performSearch(query, false)
+            updateFilteredProductCache(query, results)
+            results
+        }
+    }
+
 
     private fun performSearch(query: String, isRemote: Boolean = false, offset: Int = 0): List<Product> {
         val searchTerm = query.trim().lowercase()
