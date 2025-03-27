@@ -61,7 +61,7 @@ private fun WooPosItemsSearchScreen(
                 )
             }
 
-            WooPosItemsSearchViewState.Error -> {
+            is WooPosItemsSearchViewState.Error -> {
                 WooPosErrorScreen(
                     message = stringResource(id = R.string.woopos_search_items_error_title),
                     reason = stringResource(id = R.string.woopos_search_items_error_description),
@@ -195,7 +195,7 @@ fun WooPosItemsSearchErrorPreview() {
                 .padding(WooPosSpacing.Medium.value)
         ) {
             WooPosItemsSearchScreen(
-                state = WooPosItemsSearchViewState.Error,
+                state = WooPosItemsSearchViewState.Error(searchQuery = ""),
                 onUIEvent = {}
             )
         }

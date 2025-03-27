@@ -53,7 +53,12 @@ class WooPosItemsSearchViewModel @Inject constructor(
         when (event) {
             WooPosItemsSearchUiEvent.EndOfItemsListReached -> onEndOfListReached()
             is WooPosItemsSearchUiEvent.ItemClicked -> TODO()
-            WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> TODO()
+            WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> {
+                val currentState = _viewState.value as? WooPosItemsSearchViewState.Error ?: return
+                viewModelScope.launch {
+                    loadContent(currentState.searchQuery)
+                }
+            }
         }
     }
 
@@ -116,7 +121,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
                             )
                         }
                     } else {
-                        _viewState.value = WooPosItemsSearchViewState.Error
+                        _viewState.value = WooPosItemsSearchViewState.Error(searchQuery = searchQuery)
                     }
                     childToParentEventSender.sendToParent(ChildToParentEvent.SearchEvent.Finished)
                 }
