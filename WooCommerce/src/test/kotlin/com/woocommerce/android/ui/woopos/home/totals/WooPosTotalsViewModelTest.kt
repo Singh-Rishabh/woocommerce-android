@@ -30,6 +30,7 @@ import com.woocommerce.android.ui.payments.receipt.PaymentReceiptShare
 import com.woocommerce.android.ui.payments.tracking.CardReaderTrackingInfoKeeper
 import com.woocommerce.android.ui.payments.tracking.PaymentsFlowTracker
 import com.woocommerce.android.ui.woopos.cardreader.WooPosCardReaderFacade
+import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.BackFromCheckoutToCartClicked
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent.ReturnedFromCardReaderPaymentToCheckout
@@ -107,6 +108,7 @@ class WooPosTotalsViewModelTest {
     private val cardReaderOnboardingChecker: CardReaderOnboardingChecker = mock()
     private val paymentReceiptShare: PaymentReceiptShare = mock()
     private val uiStringParser: UiStringParser = mock()
+    private val isCouponsEnabled: WooPosIsCouponsEnabled = mock()
     private val paymentControllerFactory = WooPosCardReaderPaymentControllerFactory(
         cardReaderManager = cardReaderManager,
         orderRepository = orderRepository,
@@ -159,6 +161,7 @@ class WooPosTotalsViewModelTest {
             flow<BluetoothCardReaderMessages> {}
         }
         whenever(cardReaderFacade.readerStatus).thenAnswer { cardReaderManager.readerStatus }
+        whenever(isCouponsEnabled()).thenAnswer { false }
     }
 
     @Test
@@ -889,10 +892,11 @@ class WooPosTotalsViewModelTest {
         }
 
     @Test
-    fun `given order contains discount, when order draft created, should propagate discount to UI`() =
+    fun `given FF enabled and order contains discount, when order draft created, should propagate discount`() =
         runTest {
             // GIVEN
             val discountTotal = BigDecimal("1.00")
+            whenever(isCouponsEnabled()).thenReturn(true)
 
             // WHEN
             val vm = createViewModelAndSetupForSuccessfulOrderCreation(discountTotal = discountTotal)
@@ -900,6 +904,21 @@ class WooPosTotalsViewModelTest {
             // THEN
             assertThat(((vm.state.value as WooPosTotalsViewState.Checkout).totals as Visible).orderDiscountText)
                 .isNotNull()
+        }
+
+    @Test
+    fun `given FF disabled and order contains discount, when order draft created, should not propagate discount`() =
+        runTest {
+            // GIVEN
+            val discountTotal = BigDecimal("1.00")
+            whenever(isCouponsEnabled()).thenReturn(false)
+
+            // WHEN
+            val vm = createViewModelAndSetupForSuccessfulOrderCreation(discountTotal = discountTotal)
+
+            // THEN
+            assertThat(((vm.state.value as WooPosTotalsViewState.Checkout).totals as Visible).orderDiscountText)
+                .isNull()
         }
 
     @Test
@@ -1509,5 +1528,6 @@ class WooPosTotalsViewModelTest {
             analyticsTracker = analyticsTracker,
             analyticsData = WooPosAnalyticsTrackingDataKeeper()
         ),
+        isCouponsEnabled = isCouponsEnabled,
     )
 }

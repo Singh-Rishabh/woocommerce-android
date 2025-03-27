@@ -60,7 +60,6 @@ import com.woocommerce.android.ui.woopos.home.totals.payment.failed.WooPosPaymen
 import com.woocommerce.android.ui.woopos.home.totals.payment.inprogress.WooPosPaymentInProgressScreen
 import com.woocommerce.android.ui.woopos.home.totals.payment.success.WooPosPaymentSuccessScreen
 import com.woocommerce.android.ui.woopos.util.ext.announceForAccessibility
-import com.woocommerce.android.util.FeatureFlag
 
 @Composable
 fun WooPosTotalsScreen(modifier: Modifier = Modifier) {
@@ -325,7 +324,7 @@ private fun TotalsGrid(totals: Totals.Visible) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (FeatureFlag.POS_COUPONS.isEnabled() && totals.orderDiscountText != null) {
+        totals.orderDiscountText?.let {
             TotalsGridRow(
                 textOne = stringResource(R.string.woopos_payment_discount_label),
                 textTwo = totals.orderDiscountText,
