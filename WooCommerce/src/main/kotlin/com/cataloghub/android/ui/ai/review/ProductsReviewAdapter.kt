@@ -36,15 +36,21 @@ class ProductsReviewAdapter(
 
         fun bind(product: ProductReviewResponse) {
             binding.apply {
-                textName.text = product.name
-                textPrice.text = product.price?.let { formatPrice(it) } ?: "N/A"
-                textConfidence.text = "Confidence: ${(product.confidenceScore * 100).toInt()}%"
-
-                Glide.with(imageProduct)
+                textViewProductTitle.text = product.name
+                textViewProductDescription.text = product.description ?: ""
+                textViewProductPrice.text = product.price?.let { formatPrice(it) } ?: "N/A"
+                // Confidence score display can be added somewhere if needed
+                
+                // Load product image
+                Glide.with(imageViewProduct.context)
                     .load(product.thumbnailUrl)
                     .centerCrop()
-                    .into(imageProduct)
+                    .into(imageViewProduct)
+                
+                // Video details
+                textViewVideoTitle.text = product.videoClipUrl ?: "YouTube Video"
 
+                // Set button click listeners
                 buttonApprove.setOnClickListener { onApproveClick(product) }
                 buttonReject.setOnClickListener { onRejectClick(product) }
                 buttonEdit.setOnClickListener { onEditClick(product) }

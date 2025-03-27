@@ -901,18 +901,6 @@
             app:argType="integer" />
     </dialog>
     <fragment
-        android:id="@+id/ai"
-        android:name="com.cataloghub.android.ui.ai.AIFragment"
-        android:label="@string/ai_screen_title">
-        <action
-            android:id="@+id/action_ai_to_process"
-            app:destination="@id/aiProcessFragment" />
-        <action
-            android:id="@+id/action_ai_to_review"
-            app:destination="@id/aiReviewFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/aiProcessFragment"
         android:name="com.cataloghub.android.ui.ai.process.AIProcessFragment"
         android:label="@string/ai_process_title" />
@@ -921,4 +909,78 @@
         android:id="@+id/aiReviewFragment"
         android:name="com.cataloghub.android.ui.ai.review.AIReviewFragment"
         android:label="@string/ai_review_title" />
+
+    <!-- AI Fragment -->
+    <fragment
+        android:id="@+id/ai"
+        android:name="com.cataloghub.android.ui.ai.AIFragment"
+        android:label="@string/ai_screen_title"
+        tools:layout="@layout/fragment_ai">
+        <action
+            android:id="@+id/action_ai_to_process"
+            app:destination="@id/aiProcessFragment" />
+        <action
+            android:id="@+id/action_ai_to_review"
+            app:destination="@id/aiReviewFragment" />
+        <action
+            android:id="@+id/action_ai_to_youtube_videos"
+            app:destination="@id/youTubeVideosFragment"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@anim/activity_fade_out"
+            app:popEnterAnim="@anim/activity_fade_in"
+            app:popExitAnim="@anim/activity_fade_out" />
+            
+        <action
+            android:id="@+id/action_ai_to_webView"
+            app:destination="@id/webViewFragment"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@anim/activity_fade_out"
+            app:popEnterAnim="@anim/activity_fade_in"
+            app:popExitAnim="@anim/activity_fade_out" />
+    </fragment>
+    
+    <!-- YouTube Videos Fragment -->
+    <fragment
+        android:id="@+id/youTubeVideosFragment"
+        android:name="com.cataloghub.android.ui.ai.youtube.YouTubeVideosFragment"
+        android:label="YouTube Videos"
+        tools:layout="@layout/fragment_youtube_videos">
+        
+        <action
+            android:id="@+id/action_youtube_videos_to_video_detail"
+            app:destination="@id/videoDetailFragment"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@anim/activity_fade_out"
+            app:popEnterAnim="@anim/activity_fade_in"
+            app:popExitAnim="@anim/activity_fade_out" />
+    </fragment>
+    
+    <!-- Video Detail Fragment -->
+    <fragment
+        android:id="@+id/videoDetailFragment"
+        android:name="com.cataloghub.android.ui.ai.youtube.VideoDetailFragment"
+        android:label="Video Details"
+        tools:layout="@layout/fragment_video_detail">
+        
+        <argument
+            android:name="videoId"
+            app:argType="string" />
+    </fragment>
+    
+    <!-- WebView Fragment for OAuth -->
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.cataloghub.android.ui.WebViewFragment"
+        android:label="OAuth">
+        
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_webViewFragment"
+        app:destination="@id/webViewFragment"
+        app:popUpTo="@id/nav_graph_main"
+        app:popUpToInclusive="false" />
 </navigation>

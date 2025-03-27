@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- Add these color resources for product status indicators -->
+    <color name="status_approved">#4CAF50</color>
+    <color name="status_rejected">#F44336</color>
+    <color name="status_pending">#FFC107</color>
+    <color name="product_status_pending">#FF9800</color>
+    <color name="product_status_approved">#4CAF50</color>
+    <color name="product_status_rejected">#F44336</color>
+    <color name="colorPrimary">#96588A</color>
+</resources> 

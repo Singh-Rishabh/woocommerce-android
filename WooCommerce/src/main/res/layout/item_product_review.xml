@@ -4,68 +4,139 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="2dp">
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="16dp">
 
+        <!-- Product Image -->
         <ImageView
-            android:id="@+id/imageProduct"
+            android:id="@+id/imageViewProduct"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:contentDescription="@string/product_image"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            tools:src="@drawable/ic_product_placeholder" />
 
+        <!-- Product Title -->
         <TextView
-            android:id="@+id/textName"
+            android:id="@+id/textViewProductTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageViewProduct"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Product Title" />
+
+        <!-- Product Price -->
+        <TextView
+            android:id="@+id/textViewProductPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBody1"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/imageViewProduct"
+            app:layout_constraintTop_toBottomOf="@id/textViewProductTitle"
+            tools:text="$19.99" />
+
+        <!-- Product Description -->
+        <TextView
+            android:id="@+id/textViewProductDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/imageViewProduct"
+            app:layout_constraintTop_toBottomOf="@id/textViewProductPrice"
+            tools:text="Product description goes here. This is a sample description for the product." />
+
+        <!-- Video Section -->
+        <TextView
+            android:id="@+id/textViewVideoLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/generated_from_video"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewProduct" />
+
+        <!-- Video Thumbnail -->
+        <ImageView
+            android:id="@+id/imageViewVideoThumbnail"
+            android:layout_width="80dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/video_thumbnail"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textViewVideoLabel"
+            tools:src="@drawable/ic_video_placeholder" />
+
+        <!-- Video Title -->
+        <TextView
+            android:id="@+id/textViewVideoTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintBottom_toBottomOf="@id/imageViewVideoThumbnail"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/imageProduct"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Product Name" />
+            app:layout_constraintStart_toEndOf="@id/imageViewVideoThumbnail"
+            app:layout_constraintTop_toTopOf="@id/imageViewVideoThumbnail"
+            tools:text="YouTube Video Title" />
 
+        <!-- Status Text -->
         <TextView
-            android:id="@+id/textPrice"
+            android:id="@+id/textViewStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBody1"
-            app:layout_constraintStart_toEndOf="@id/imageProduct"
-            app:layout_constraintTop_toBottomOf="@id/textName"
-            tools:text="$99.99" />
+            android:layout_marginTop="16dp"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageViewVideoThumbnail"
+            tools:text="Approved"
+            tools:textColor="@color/status_approved"
+            tools:visibility="visible" />
 
-        <TextView
-            android:id="@+id/textConfidence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceCaption"
-            app:layout_constraintStart_toEndOf="@id/imageProduct"
-            app:layout_constraintTop_toBottomOf="@id/textPrice"
-            tools:text="Confidence: 95%" />
-
+        <!-- Action Buttons -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonApprove"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/ai_review_approve"
+            android:layout_marginTop="16dp"
+            android:text="@string/approve"
+            android:textColor="@color/status_approved"
             app:layout_constraintEnd_toStartOf="@id/buttonReject"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageProduct" />
+            app:layout_constraintTop_toBottomOf="@id/imageViewVideoThumbnail"
+            app:strokeColor="@color/status_approved" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonReject"
@@ -73,10 +144,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/ai_review_reject"
+            android:text="@string/reject"
+            android:textColor="@color/status_rejected"
             app:layout_constraintEnd_toStartOf="@id/buttonEdit"
             app:layout_constraintStart_toEndOf="@id/buttonApprove"
-            app:layout_constraintTop_toTopOf="@id/buttonApprove" />
+            app:layout_constraintTop_toTopOf="@id/buttonApprove"
+            app:strokeColor="@color/status_rejected" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonEdit"
@@ -84,11 +157,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/ai_review_edit"
+            android:text="@string/edit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/buttonReject"
             app:layout_constraintTop_toTopOf="@id/buttonApprove" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </com.google.android.material.card.MaterialCardView> 

@@ -1,12 +1,9 @@
-import io.sentry.android.gradle.extensions.InstrumentationFeature
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.dagger.hilt)
-    alias(libs.plugins.sentry)
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
@@ -29,34 +26,6 @@ fladle {
     maxTestShards = 50
     shardTime = 120
     smartFlankGcsPath = "gs://fladle/cataloghub-android/smart-flank/JUnitReport.xml"
-}
-
-sentry {
-    includeSourceContext = true
-    autoUploadSourceContext = true
-    tracingInstrumentation {
-        enabled = true
-        features = [InstrumentationFeature.DATABASE]
-        logcat {
-            enabled = false
-        }
-    }
-    autoInstallation {
-        enabled = false
-    }
-    includeDependenciesReport = false
-    /* Sentry won't send source context or add performance instrumentations for debug builds
-    so we can save build times. Sending events will still work in debug builds
-    (if enabled in WCCrashLoggingDataProvider).
-    */
-    ignoredBuildTypes = ["debug"]
-
-    /* Additional source directories to be included in the source context. For now, manually:
-    https://github.com/getsentry/sentry-android-gradle-plugin/issues/685
-     */
-    additionalSourceDirsForSourceContext = [
-            '../libs/cardreader/src/main/java',
-    ]
 }
 
 def versionProperties = loadPropertiesFromFile(file("${rootDir}/version.properties"))
@@ -437,9 +406,6 @@ dependencies {
     implementation(libs.google.protobuf.javalite)
 
     lintChecks(libs.android.security.lint)
-
-    // Google Sign-In for authentication
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }
 
 protobuf {
@@ -521,16 +487,3 @@ def isLeakCanaryEnabled() {
 }
 
 apply from: '../config/gradle/build_optimization.gradle'
-
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = libs.versions.java.get()
-        // Temporarily disable treating warnings as errors
-        allWarningsAsErrors = false
-        // Suppress specific deprecation warnings for the YouTube OAuth implementation
-        freeCompilerArgs += [
-            "-Xsuppressw:deprecation",
-            "-Xopt-in=kotlin.RequiresOptIn"
-        ]
-    }
-}
