@@ -635,6 +635,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
+        val previousSelection = hazmatState.value
+
         when {
             selectedCategory != null -> Declared(selectedCategory)
             else -> NoSelection
@@ -646,7 +648,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             R.string.woo_shipping_labels_hazmat_selection_removed
         }
 
-        actionSnackbar = ActionSnackbar(snackbarMessage, R.string.undo) {}
+        actionSnackbar = ActionSnackbar(snackbarMessage, R.string.undo) {
+            hazmatState.value = previousSelection
+        }
     }
 
     fun allowBackNavigation(): Boolean {
