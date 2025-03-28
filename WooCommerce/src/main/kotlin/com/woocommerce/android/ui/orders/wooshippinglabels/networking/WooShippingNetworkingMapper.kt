@@ -264,14 +264,13 @@ class WooShippingNetworkingMapper @Inject constructor(
         )
     }
 
-    fun toHazmatDTO(hazmatSelection: ShippingLabelHazmatCategory?) {
+    fun toHazmatDTO(hazmatSelection: ShippingLabelHazmatCategory?) =
         hazmatSelection?.let {
             HazmatDTO(
                 isHazmat = true,
                 category = hazmatSelection.requestFieldValue
             )
         } ?: HazmatDTO()
-    }
 
     companion object {
         private const val PURCHASE_IN_PROGRESS_KEY = "PURCHASE_IN_PROGRESS"
