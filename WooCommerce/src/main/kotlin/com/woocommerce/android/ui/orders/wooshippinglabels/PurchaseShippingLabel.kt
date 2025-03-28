@@ -2,6 +2,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels
 
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.WooShippingLabelRepository
@@ -23,6 +24,7 @@ class PurchaseShippingLabel @Inject constructor(
         shippingRate: WooShippingRateModel,
         weight: Float,
         lastOrderComplete: Boolean,
+        hazmatSelection: ShippingLabelHazmatCategory? = null
     ): Result<PurchasedLabelData> {
         return selectedSite.getOrNull()?.let {
             val response = wooShippingLabelRepository.purchaseShippingLabel(
@@ -34,6 +36,7 @@ class PurchaseShippingLabel @Inject constructor(
                 selectedRate = shippingRate,
                 weight = weight,
                 lastOrderComplete = lastOrderComplete,
+                hazmatSelection = hazmatSelection,
                 site = it
             )
             val result = response.model

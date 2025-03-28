@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 
 import com.woocommerce.android.model.Address
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingAddressDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.datasource.WooShippingConfigurationDataStore
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
@@ -79,6 +80,7 @@ class WooShippingLabelRepository @Inject constructor(
         selectedRate: WooShippingRateModel,
         weight: Float,
         lastOrderComplete: Boolean,
+        hazmatSelection: ShippingLabelHazmatCategory? = null
     ): WooResult<PurchasedLabelData> {
         val origin = mapper.toOriginAddressPurchaseDTO(shipFrom)
         val destination = mapper.toDestinationAddressDTO(shipTo)

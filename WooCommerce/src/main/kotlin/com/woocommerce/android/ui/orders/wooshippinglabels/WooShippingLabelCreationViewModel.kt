@@ -538,6 +538,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId = navArgs.orderId
         val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
+        val hazmatSelection = hazmatState.value
+            .run { this as? Declared }
+            ?.hazmatCategory
 
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
@@ -551,7 +554,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses.shipFrom,
                 shippingRate,
                 weight,
-                lastOrderComplete
+                lastOrderComplete,
+                hazmatSelection
             )
             if (result.isSuccess) {
                 purchaseState.value = PurchaseState.Success
