@@ -639,6 +639,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             selectedCategory != null -> Declared(selectedCategory)
             else -> NoSelection
         }.let { hazmatState.value = it }
+
+        val snackbarMessage = if (selectedCategory != null) {
+            R.string.woo_shipping_labels_hazmat_selection_set
+        } else {
+            R.string.woo_shipping_labels_hazmat_selection_removed
+        }
+
+        actionSnackbar = ActionSnackbar(snackbarMessage, R.string.undo) {}
     }
 
     fun allowBackNavigation(): Boolean {
