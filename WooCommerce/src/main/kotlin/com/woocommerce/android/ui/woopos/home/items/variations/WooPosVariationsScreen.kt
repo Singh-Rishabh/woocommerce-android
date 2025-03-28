@@ -105,7 +105,7 @@ private fun WooPosVariationsScreens(
 ) {
     val itemState = state.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(
-        itemState.value.reloadingProductsWithPullToRefresh,
+        itemState.value.reloadingWithPullToRefresh,
         onPullToRefresh
     )
     val listState = rememberLazyListState()
@@ -173,7 +173,7 @@ private fun WooPosVariationsScreens(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = itemState.value.reloadingProductsWithPullToRefresh,
+            refreshing = itemState.value.reloadingWithPullToRefresh,
             state = pullToRefreshState
         )
     }
@@ -278,7 +278,7 @@ fun WooPosVariationsScreenPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
         )
     )
     WooPosTheme {

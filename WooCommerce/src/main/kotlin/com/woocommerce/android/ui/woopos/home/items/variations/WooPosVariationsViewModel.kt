@@ -138,10 +138,10 @@ class WooPosVariationsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosVariationsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosVariationsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosVariationsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosVariationsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosVariationsViewState.Content -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosVariationsViewState.Loading -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosVariationsViewState.Error -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosVariationsViewState.Empty -> state.copy(reloadingWithPullToRefresh = true)
         }
 
     private fun loadMore(productId: Long, numOfVariations: Int) {
@@ -201,7 +201,7 @@ class WooPosVariationsViewModel @Inject constructor(
     private fun onVariationClicked(productId: Long, variationId: Long) {
         sendEventToParent(
             ChildToParentEvent.ItemClickedInProductSelector(
-                WooPosItemsViewModel.ItemClickedData.Variation(productId, variationId)
+                WooPosItemsViewModel.ItemClickedData.Product.Variation(productId, variationId)
             )
         )
     }

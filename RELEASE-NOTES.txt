@@ -4,6 +4,12 @@
 22.1
 -----
 - [*] The order count badge is now fully visible for counts higher than 99 [https://github.com/woocommerce/woocommerce-android/pull/13825]
+- [*] Fix rare crash in the POS upon adding an item to the cart [https://github.com/woocommerce/woocommerce-android/pull/13838]
+- [*] Updated the Woo upgrade dialog to resolve layout issues and align it with the current app design [https://github.com/woocommerce/woocommerce-android/pull/13851]
+
+22.0.2
+-----
+- [**] Fixed crash during order creation when currency symbol instead of currency code provided in an order [https://github.com/woocommerce/woocommerce-android/pull/13844]
 
 22.0.1
 -----

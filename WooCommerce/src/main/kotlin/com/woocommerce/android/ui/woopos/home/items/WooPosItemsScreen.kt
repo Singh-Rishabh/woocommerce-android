@@ -51,7 +51,6 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.EndOfItemsListReached
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.ProductsLoadingErrorRetryButtonClicked
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.PullToRefreshTriggered
-import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchAnimationCompleted
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsUIEvent.SearchChanged
 import com.woocommerce.android.ui.woopos.home.items.search.WooPosItemsSearchScreen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,7 +82,7 @@ private fun WooPosItemsScreen(
 ) {
     val state = itemsStateFlow.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(
-        state.value.reloadingProductsWithPullToRefresh,
+        state.value.reloadingWithPullToRefresh,
         onRefresh = { onUIEvent(PullToRefreshTriggered) },
     )
 
@@ -111,7 +110,6 @@ private fun WooPosItemsScreen(
                 WooPosSearchUIEvent.Clear -> onUIEvent(WooPosItemsUIEvent.ClearSearchClicked)
                 WooPosSearchUIEvent.Close -> onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
                 is WooPosSearchUIEvent.Search -> onUIEvent(SearchChanged(it.query))
-                WooPosSearchUIEvent.AnimationComplete -> onUIEvent(SearchAnimationCompleted)
             }
         },
         onCouponsButtonClicked = { onUIEvent(WooPosItemsUIEvent.CouponsButtonClicked) },
@@ -224,7 +222,7 @@ private fun MainItemsList(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = state.value.reloadingProductsWithPullToRefresh,
+            refreshing = state.value.reloadingWithPullToRefresh,
             state = pullToRefreshState
         )
     }
@@ -382,7 +380,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                 ),
             ),
             paginationState = PaginationState.Loading,
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -438,7 +436,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                 ),
             ),
             paginationState = PaginationState.Error,
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -464,7 +462,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
 fun WooPosItemsScreenLoadingPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Loading(
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             withCart = false
         )
     )
@@ -533,7 +531,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = false,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -585,7 +583,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingProductsWithPullToRefresh = false,
+            reloadingWithPullToRefresh = false,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
