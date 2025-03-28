@@ -16,24 +16,22 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
-import com.woocommerce.android.viewmodel.ResourceProvider
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
+import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
-import kotlin.test.Test
 import kotlin.test.assertTrue
 
 @ExperimentalCoroutinesApi
 class WooPosItemsViewModelTestSelectionViewState {
-
     @Rule
     @JvmField
     val coroutinesTestRule = WooPosCoroutineTestRule()
@@ -47,9 +45,9 @@ class WooPosItemsViewModelTestSelectionViewState {
         onBlocking { invoke(BigDecimal("20.0")) }.thenReturn("$20.0")
     }
     private val analyticsTracker: WooPosAnalyticsTracker = mock()
-    private val resourceProvider: ResourceProvider = mock()
     private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled = mock()
     private val isCouponsEnabled: WooPosIsCouponsEnabled = mock()
+    private val searchHelper: WooPosItemsSearchHelper = mock()
 
     @Before
     fun setup() {
@@ -72,6 +70,12 @@ class WooPosItemsViewModelTestSelectionViewState {
                 WooPosProductsDataSource.ProductsResult.Remote(
                     Result.success(products)
                 )
+            )
+        )
+
+        whenever(searchHelper.getInitialSearchState(any())).thenReturn(
+            WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Closed
             )
         )
     }
@@ -195,7 +199,7 @@ class WooPosItemsViewModelTestSelectionViewState {
     }
 
     @Test
-    fun `when item clicked, then send event to parent`() = runTest {
+    fun `when product clicked, then send event to parent`() = runTest {
         // GIVEN
         val product = Product.Simple(id = 1, name = "", price = "", imageUrl = null)
         val viewModel = createViewModel()
@@ -207,7 +211,7 @@ class WooPosItemsViewModelTestSelectionViewState {
         viewModel.viewState.test {
             verify(fromChildToParentEventSender).sendToParent(
                 ChildToParentEvent.ItemClickedInProductSelector(
-                    WooPosItemsViewModel.ItemClickedData.SimpleProduct(
+                    WooPosItemsViewModel.ItemClickedData.Product.Simple(
                         id = product.id
                     )
                 )
@@ -656,6 +660,11 @@ class WooPosItemsViewModelTestSelectionViewState {
             )
         )
         whenever(isProductsSearchEnabled()).thenReturn(true)
+        whenever(searchHelper.getInitialSearchState(true)).thenReturn(
+            WooPosItemsViewState.Content.SearchState.Visible(
+                state = WooPosSearchInputState.Closed
+            )
+        )
 
         // WHEN
         val viewModel = createViewModel()
@@ -689,6 +698,9 @@ class WooPosItemsViewModelTestSelectionViewState {
             )
         )
         whenever(isProductsSearchEnabled()).thenReturn(false)
+        whenever(searchHelper.getInitialSearchState(false)).thenReturn(
+            WooPosItemsViewState.Content.SearchState.Hidden
+        )
 
         // WHEN
         val viewModel = createViewModel()
@@ -726,11 +738,52 @@ class WooPosItemsViewModelTestSelectionViewState {
         viewModel.onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
 
         // THEN
-        viewModel.viewState.test {
-            val contentState = awaitItem() as WooPosItemsViewState.Content
-            val searchState = contentState.search as WooPosItemsViewState.Content.SearchState.Visible
-            assertThat(searchState.state).isEqualTo(WooPosSearchInputState.Closed)
-        }
+        verify(searchHelper).onCloseSearchClicked()
+    }
+
+    @Test
+    fun `given search visible, when search text changed, then search helper is called`() = runTest {
+        val query = "test query"
+        val viewModel = createViewModel()
+
+        viewModel.onUIEvent(WooPosItemsUIEvent.SearchChanged(query))
+
+        verify(searchHelper).onSearchChanged(query)
+    }
+
+    @Test
+    fun `given search visible, when clear search clicked, then search helper is called`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onUIEvent(WooPosItemsUIEvent.ClearSearchClicked)
+
+        verify(searchHelper).onClearSearchClicked()
+    }
+
+    @Test
+    fun `given search visible, when close search clicked, then search helper is called`() = runTest {
+        val products = listOf(
+            ProductTestUtils.generateProduct(
+                productId = 1,
+                productName = "Product 1",
+                amount = "10.0",
+                productType = "simple"
+            )
+        )
+
+        whenever(productsDataSource.loadSimpleProducts(any())).thenReturn(
+            flowOf(
+                WooPosProductsDataSource.ProductsResult.Remote(
+                    Result.success(products)
+                )
+            )
+        )
+        whenever(isProductsSearchEnabled()).thenReturn(true)
+
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
+
+        verify(searchHelper).onCloseSearchClicked()
     }
 
     private fun createViewModel() =
@@ -741,7 +794,7 @@ class WooPosItemsViewModelTestSelectionViewState {
             posPreferencesRepository,
             wooPosItemsNavigator,
             analyticsTracker,
-            resourceProvider,
+            searchHelper,
             isProductsSearchEnabled,
             isCouponsEnabled,
         )
