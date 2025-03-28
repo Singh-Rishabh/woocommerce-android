@@ -35,6 +35,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.Should
 import com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain.ShouldRequireITN
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
+import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.ShippableItemModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.StoreOptionsModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.ui.PackageData
@@ -546,28 +547,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             )
 
             if (result.isSuccess) {
-                purchaseState.value = PurchaseState.Success
-                result.getOrNull()
-                    ?.labels
-                    ?.firstOrNull()
-                    ?.let { purchasedLabel ->
-                        val currentViewState = (viewState.value as? WooShippingViewState.DataState)
-                        val selectedRate = selectedRate.value
-                        if (currentViewState != null && selectedRate != null) {
-                            PurchasedShippingLabelData(
-                                labelId = purchasedLabel.labelId,
-                                orderId = navArgs.orderId,
-                                carrierId = purchasedLabel.carrierId,
-                                trackingNumber = purchasedLabel.tracking,
-                                addresses = currentViewState.shippingAddresses,
-                                items = currentViewState.shippableItems,
-                                rateSummary = selectedRate.summary,
-                                shippingLines = currentViewState.shippingLines
-                            )
-                        } else {
-                            null
-                        }
-                    }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
+                handlePurchaseSuccess(result)
             } else {
                 purchaseState.value = backupPurchaseState
                 actionSnackbar = ActionSnackbar(
@@ -576,6 +556,31 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 ) { onPurchaseShippingLabel() }
             }
         }
+    }
+
+    private fun handlePurchaseSuccess(result: Result<PurchasedLabelData>) {
+        purchaseState.value = PurchaseState.Success
+        result.getOrNull()
+            ?.labels
+            ?.firstOrNull()
+            ?.let { purchasedLabel ->
+                val currentViewState = (viewState.value as? WooShippingViewState.DataState)
+                val selectedRate = selectedRate.value
+                if (currentViewState != null && selectedRate != null) {
+                    PurchasedShippingLabelData(
+                        labelId = purchasedLabel.labelId,
+                        orderId = navArgs.orderId,
+                        carrierId = purchasedLabel.carrierId,
+                        trackingNumber = purchasedLabel.tracking,
+                        addresses = currentViewState.shippingAddresses,
+                        items = currentViewState.shippableItems,
+                        rateSummary = selectedRate.summary,
+                        shippingLines = currentViewState.shippingLines
+                    )
+                } else {
+                    null
+                }
+            }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
     }
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
