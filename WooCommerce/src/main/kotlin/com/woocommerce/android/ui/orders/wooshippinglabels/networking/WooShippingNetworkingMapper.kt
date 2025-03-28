@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.networking
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.AmbiguousLocation
 import com.woocommerce.android.model.Location
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.AddressNormalizationModel
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.PurchasedLabelData
@@ -261,6 +262,15 @@ class WooShippingNetworkingMapper @Inject constructor(
             phone = address.phone,
             email = address.email
         )
+    }
+
+    fun toHazmatDTO(hazmatSelection: ShippingLabelHazmatCategory?) {
+        hazmatSelection?.let {
+            HazmatDTO(
+                isHazmat = true,
+                category = hazmatSelection.requestFieldValue
+            )
+        } ?: HazmatDTO()
     }
 
     companion object {
