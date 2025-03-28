@@ -422,7 +422,7 @@ private fun InfiniteListHandler(
         }
     }
 
-    LaunchedEffect(state.reloadingProductsWithPullToRefresh) {
+    LaunchedEffect(state.reloadingWithPullToRefresh) {
         snapshotFlow { loadMore.value }
             .distinctUntilChanged()
             .filter { it }
