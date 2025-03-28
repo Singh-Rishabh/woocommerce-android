@@ -43,6 +43,7 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
         _viewState.update { viewState ->
             viewState.copy(currentHazmatSelection = selectedCategory)
         }
+        triggerEvent(OnHazmatCategorySelected(selectedCategory))
     }
 
     fun onUrlSelected(url: String) {
@@ -58,8 +59,10 @@ class WooShippingLabelHazmatFormViewModel @Inject constructor(
     data object OnSelectCategoryClicked : Event()
 
     data class OnUrlSelected(val url: String) : Event()
+    data class OnHazmatCategorySelected(val selectedCategory: ShippingLabelHazmatCategory) : Event()
 
     companion object {
         const val KEY_HAZMAT_CATEGORY_SELECTOR_RESULT = "hazmat_category_selector_result"
+        const val HAZMAT_CATEGORY_RESULT = "hazmat_category_result"
     }
 }

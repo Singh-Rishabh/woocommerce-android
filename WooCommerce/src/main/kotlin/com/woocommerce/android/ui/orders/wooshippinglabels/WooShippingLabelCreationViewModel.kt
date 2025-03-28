@@ -14,9 +14,12 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Declared
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NoSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
@@ -99,6 +102,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
+    private val hazmatState = MutableStateFlow<HazmatState>(NoSelection)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -380,8 +384,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             uiState,
             purchaseState,
             customsState,
-            loadTrigger.onStart { emit(Unit) }
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, _ ->
+            hazmatState
+        ) { storeOptions, order, addresses, shippingRates,
+            packageSelection, uiState, purchaseState, customsState, hazmatState ->
             if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -418,8 +423,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 uiState = uiState,
                 purchaseState = purchaseState,
                 customsState = customsState,
+                hazmatState = hazmatState,
                 destinationStatus = destinationStatus
             )
+        }.combine(loadTrigger.onStart { emit(Unit) }) { viewState, _ ->
+            viewState
         }.collectLatest {
             viewState.value = it
         }
@@ -622,6 +630,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(StartHazmatFormEdit)
     }
 
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
+        hazmatState.value = Declared(selectedCategory)
+    }
+
     fun allowBackNavigation(): Boolean {
         val state = uiState.value
         return when {
@@ -704,6 +716,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val uiState: UIControlsState,
             val purchaseState: PurchaseState,
             val customsState: CustomsState,
+            val hazmatState: HazmatState,
             val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
@@ -778,12 +791,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val customsData: CustomsData?
     )
 
-    // This will be extended later introducing the state with data coming from the Customs form
     sealed class CustomsState {
         data object NotRequired : CustomsState()
         data object ItnMissing : CustomsState()
         data object Unavailable : CustomsState()
         data class DataAvailable(val customsData: CustomsData) : CustomsState()
+    }
+
+    sealed class HazmatState {
+        data object NoSelection : HazmatState()
+        data class Declared(val hazmatCategory: ShippingLabelHazmatCategory) : HazmatState()
     }
 
     companion object {

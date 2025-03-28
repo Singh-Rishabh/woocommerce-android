@@ -11,11 +11,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.handleDialogResult
+import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.Companion.HAZMAT_CATEGORY_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.Companion.KEY_HAZMAT_CATEGORY_SELECTOR_RESULT
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnHazmatCategorySelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnSelectCategoryClicked
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.OnUrlSelected
 import com.woocommerce.android.ui.searchfilter.SearchFilterItem
@@ -60,6 +63,7 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
             when (event) {
                 is OnUrlSelected -> ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
                 is OnSelectCategoryClicked -> showHazmatCategoryPicker()
+                is OnHazmatCategorySelected -> navigateBackWithResult(HAZMAT_CATEGORY_RESULT, event.selectedCategory)
             }
         }
     }
