@@ -108,6 +108,7 @@ import com.cataloghub.android.util.ChromeCustomTabUtils
 import com.cataloghub.android.util.PackageUtils
 import com.cataloghub.android.util.WooAnimUtils.Duration
 import com.cataloghub.android.util.WooAnimUtils.animateBottomBar
+import com.cataloghub.android.util.WooLog
 import com.cataloghub.android.util.WooPermissionUtils
 import com.cataloghub.android.viewmodel.MultiLiveEvent
 import com.cataloghub.android.widgets.AppRatingDialog
@@ -473,6 +474,7 @@ class MainActivity :
             currentDestinationId == R.id.dashboard ||
                 currentDestinationId == R.id.orders ||
                 currentDestinationId == R.id.products ||
+                currentDestinationId == R.id.categories ||
                 currentDestinationId == R.id.moreMenu ||
                 currentDestinationId == R.id.analytics
         } else {
@@ -1344,6 +1346,21 @@ class MainActivity :
             R.id.categories -> CATEGORIES
             R.id.moreMenu -> MORE
             else -> MY_STORE
+        }
+    }
+
+    /**
+     * Public method to set the current navigation position
+     * This can be called from fragments to update the bottom navigation
+     */
+    fun setCurrentNavigationPosition(position: BottomNavigationPosition) {
+        try {
+            if (::binding.isInitialized && binding.bottomNav != null) {
+                binding.bottomNav.currentPosition = position
+                updateActiveNavigationPosition(position)
+            }
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.DASHBOARD, "Error setting navigation position: ${e.message}", e)
         }
     }
 }

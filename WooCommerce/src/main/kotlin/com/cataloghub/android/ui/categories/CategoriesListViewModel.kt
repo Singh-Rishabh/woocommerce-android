@@ -33,6 +33,9 @@ class CategoriesListViewModel @Inject constructor(
     private val _categoriesViewState = MutableLiveData<UiState<List<ProductCategoryItemUiModel>>>()
     val categoriesViewState: LiveData<UiState<List<ProductCategoryItemUiModel>>> = _categoriesViewState
     
+    private val _isBottomNavBarVisible = MutableLiveData<Boolean>(true)
+    val isBottomNavBarVisible: LiveData<Boolean> = _isBottomNavBarVisible
+    
     fun loadCategories(forceRefresh: Boolean = false) {
         if (_categoriesViewState.value is UiState.Loading) return
         
@@ -99,7 +102,7 @@ class CategoriesListViewModel @Inject constructor(
     }
     
     fun searchCategories(query: String) {
-        currentSearchQuery = query
+        this.currentSearchQuery = query
         
         viewModelScope.launch {
             if (query.isEmpty()) {
@@ -137,6 +140,10 @@ class CategoriesListViewModel @Inject constructor(
         }
         
         _categoriesViewState.value = UiState.Content(sortedList)
+    }
+    
+    fun toggleBottomNavVisibility(isVisible: Boolean) {
+        _isBottomNavBarVisible.value = isVisible
     }
     
     override fun onCleared() {

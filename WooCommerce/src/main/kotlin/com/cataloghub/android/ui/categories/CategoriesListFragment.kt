@@ -21,6 +21,9 @@ import com.cataloghub.android.databinding.FragmentCategoriesListBinding
 import com.cataloghub.android.model.UiState
 import com.cataloghub.android.ui.base.BaseFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
+import com.cataloghub.android.ui.main.AppBarStatus
+import com.cataloghub.android.ui.main.BottomNavigationPosition
+import com.cataloghub.android.ui.main.MainActivity
 import com.cataloghub.android.ui.main.MainNavigationRouter
 import com.cataloghub.android.ui.products.categories.ProductCategoryItemUiModel
 import com.cataloghub.android.util.ChromeCustomTabUtils
@@ -44,6 +47,9 @@ class CategoriesListFragment : BaseFragment() {
         private const val STATE_SEARCH_QUERY = "search-query"
         private const val SEARCH_DEBOUNCE_MS = 300L
     }
+
+    // Ensure the app bar and bottom navigation remain visible
+    override val activityAppBarStatus: AppBarStatus = AppBarStatus.Visible()
 
     @Inject lateinit var uiMessageResolver: UIMessageResolver
 
@@ -83,15 +89,35 @@ class CategoriesListFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupObservers()
-        setupRecyclerView()
-        setupFilters()
-        setupSearchListener()
-        setupRefresh()
-        setupChips()
+        try {
+            // The bottom nav visibility is now handled by the ViewModel and observer
+            
+            setupObservers()
+            setupRecyclerView()
+            setupFilters()
+            setupSearchListener()
+            setupRefresh()
+            setupChips()
 
-        // Load the categories
-        viewModel.loadCategories()
+            // Load the categories
+            viewModel.loadCategories()
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error in Categories onViewCreated: ${e.message}", e)
+            uiMessageResolver.showSnack(getString(R.string.error_generic))
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        
+        try {
+            // Ensure Categories tab is selected in the bottom navigation
+            (activity as? MainActivity)?.let { mainActivity ->
+                mainActivity.setCurrentNavigationPosition(BottomNavigationPosition.CATEGORIES)
+            }
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error in Categories onResume: ${e.message}", e)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -215,6 +241,10 @@ class CategoriesListFragment : BaseFragment() {
                 }
             }
         })
+        
+        viewModel.isBottomNavBarVisible.observe(viewLifecycleOwner) { isVisible ->
+            showBottomNavBar(isVisible)
+        }
     }
 
     private fun showLoadingView() {
@@ -250,16 +280,34 @@ class CategoriesListFragment : BaseFragment() {
         binding.errorView.text = message
     }
 
-    private fun setupRecyclerView() {
-        categoriesAdapter = CategoriesListAdapter { categoryId ->
-            // Handle category click - can be implemented later to show category details
-            AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
+    private fun showBottomNavBar(isVisible: Boolean) {
+        try {
+            if (isVisible) {
+                (activity as? MainActivity)?.showBottomNav()
+            } else {
+                (activity as? MainActivity)?.hideBottomNav()
+            }
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error showing/hiding bottom nav bar: ${e.message}", e)
         }
+    }
 
-        binding.categoriesList.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = categoriesAdapter
-            addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+    private fun setupRecyclerView() {
+        try {
+            WooLog.d(WooLog.T.PRODUCTS, "Setting up Categories RecyclerView")
+            categoriesAdapter = CategoriesListAdapter { categoryId ->
+                // Handle category click - can be implemented later to show category details
+                AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
+            }
+
+            binding.categoriesList.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = categoriesAdapter
+                addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
+            }
+            WooLog.d(WooLog.T.PRODUCTS, "Categories RecyclerView setup complete")
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error setting up Categories RecyclerView: ${e.message}", e)
         }
     }
 
