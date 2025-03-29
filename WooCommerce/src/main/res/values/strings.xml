@@ -4547,4 +4547,11 @@
     <string name="error_user_username_instead_of_email">Please log in using your WordPress.com username instead of your email address.</string>
     <string name="about_automattic_x_item_title">X</string>
     <string name="default_web_client_id" a8c-src-lib="module:login">placeholder</string>
+
+    <!-- Categories feature strings -->
+    <string name="categories">Categories</string>
+    <string name="product_list_sort_and_filter_button">Sort &amp; Filter</string>
+    <string name="product_filter_by_sort">Sort by</string>
+    <string name="product_list_newest_first">Newest First</string>
+    <string name="product_list_oldest_first">Oldest First</string>
 </resources>

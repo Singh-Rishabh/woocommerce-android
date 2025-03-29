@@ -983,4 +983,26 @@
         app:destination="@id/webViewFragment"
         app:popUpTo="@id/nav_graph_main"
         app:popUpToInclusive="false" />
+
+    <fragment
+        android:id="@+id/categories"
+        android:name="com.cataloghub.android.ui.categories.CategoriesListFragment"
+        android:label="fragment_categories_list"
+        tools:layout="@layout/fragment_categories_list">
+        <action
+            android:id="@+id/action_categories_to_productCategoriesFragment"
+            app:destination="@id/productCategoriesFragment"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@null"
+            app:popEnterAnim="@null"
+            app:popExitAnim="@anim/activity_fade_out" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_categories"
+        app:destination="@id/categories"
+        app:enterAnim="@anim/activity_fade_in"
+        app:exitAnim="@null"
+        app:popEnterAnim="@null"
+        app:popExitAnim="@anim/activity_fade_out" />
 </navigation>

@@ -1126,7 +1126,13 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     ORDER_VIEW_CUSTOM_FIELDS_TAPPED,
 
     // Black-flagged sites
-    BLACK_FLAGGED_WEBSITE_DETECTED;
+    BLACK_FLAGGED_WEBSITE_DETECTED,
+
+    // New events for categories
+    CATEGORIES_LOADED,
+    CATEGORIES_LOAD_FAILED,
+    CATEGORIES_LOAD_MORE_FAILED,
+    CATEGORY_TAPPED;
 
     override val isPosEvent: Boolean = false
 }

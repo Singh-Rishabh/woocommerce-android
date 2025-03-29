@@ -69,7 +69,7 @@ import com.cataloghub.android.ui.main.BottomNavigationPosition.MORE
 import com.cataloghub.android.ui.main.BottomNavigationPosition.MY_STORE
 import com.cataloghub.android.ui.main.BottomNavigationPosition.ORDERS
 import com.cataloghub.android.ui.main.BottomNavigationPosition.PRODUCTS
-import com.cataloghub.android.ui.main.BottomNavigationPosition.AI
+import com.cataloghub.android.ui.main.BottomNavigationPosition.CATEGORIES
 import com.cataloghub.android.ui.main.MainActivityViewModel.BottomBarState
 import com.cataloghub.android.ui.main.MainActivityViewModel.MoreMenuBadgeState.Hidden
 import com.cataloghub.android.ui.main.MainActivityViewModel.MoreMenuBadgeState.NewFeature
@@ -742,8 +742,8 @@ class MainActivity :
             MY_STORE -> AnalyticsEvent.MAIN_TAB_DASHBOARD_SELECTED
             ORDERS -> AnalyticsEvent.MAIN_TAB_ORDERS_SELECTED
             PRODUCTS -> AnalyticsEvent.MAIN_TAB_PRODUCTS_SELECTED
+            CATEGORIES -> AnalyticsEvent.MAIN_TAB_PRODUCTS_SELECTED
             MORE -> AnalyticsEvent.MAIN_TAB_HUB_MENU_SELECTED
-            AI -> AnalyticsEvent.MAIN_TAB_AI_SELECTED
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
 
@@ -757,8 +757,8 @@ class MainActivity :
             MY_STORE -> AnalyticsEvent.MAIN_TAB_DASHBOARD_RESELECTED
             ORDERS -> AnalyticsEvent.MAIN_TAB_ORDERS_RESELECTED
             PRODUCTS -> AnalyticsEvent.MAIN_TAB_PRODUCTS_RESELECTED
+            CATEGORIES -> AnalyticsEvent.MAIN_TAB_PRODUCTS_RESELECTED
             MORE -> AnalyticsEvent.MAIN_TAB_HUB_MENU_RESELECTED
-            AI -> AnalyticsEvent.MAIN_TAB_AI_RESELECTED
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
 
@@ -1320,8 +1320,8 @@ class MainActivity :
             MY_STORE -> binding.bottomNav.active(R.id.dashboard)
             ORDERS -> binding.bottomNav.active(R.id.orders)
             PRODUCTS -> binding.bottomNav.active(R.id.products)
+            CATEGORIES -> binding.bottomNav.active(R.id.categories)
             MORE -> binding.bottomNav.active(R.id.moreMenu)
-            AI -> binding.bottomNav.active(R.id.ai)
         }
     }
 
@@ -1330,8 +1330,8 @@ class MainActivity :
             R.id.dashboard -> BottomNavigationPosition.MY_STORE
             R.id.orders -> BottomNavigationPosition.ORDERS
             R.id.products -> BottomNavigationPosition.PRODUCTS
+            R.id.categories -> BottomNavigationPosition.CATEGORIES
             R.id.moreMenu -> BottomNavigationPosition.MORE
-            R.id.ai -> BottomNavigationPosition.AI
             else -> BottomNavigationPosition.MY_STORE
         }
     }
@@ -1341,8 +1341,8 @@ class MainActivity :
             R.id.dashboard -> MY_STORE
             R.id.orders -> ORDERS
             R.id.products -> PRODUCTS
+            R.id.categories -> CATEGORIES
             R.id.moreMenu -> MORE
-            R.id.ai -> AI
             else -> MY_STORE
         }
     }

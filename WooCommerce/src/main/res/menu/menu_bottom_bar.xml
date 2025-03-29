@@ -11,14 +11,14 @@
         android:title="@string/orders" />
 
     <item
+        android:id="@+id/categories"
+        android:icon="@drawable/as_menu_categories_list"
+        android:title="@string/categories" />
+
+    <item
         android:id="@+id/products"
         android:icon="@drawable/as_menu_products_list"
         android:title="@string/products" />
-
-    <item
-        android:id="@+id/ai"
-        android:icon="@drawable/ic_ai"
-        android:title="@string/ai_screen_title" />
 
     <item
         android:id="@+id/moreMenu"
