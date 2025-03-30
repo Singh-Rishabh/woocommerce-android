@@ -54,15 +54,18 @@ class CategoriesListAdapter(
                 params.marginStart = categoryUiModel.margin
                 categoryName.layoutParams = params
 
-                // Simulating product count and creation date for visualization
-                // In a real implementation, you'd get these from the API
-                val productCount = (category.remoteCategoryId % 100).toInt() + 1
-                categoryProductCount.text = "$productCount products"
+                // Display the actual product count from the category model
+                // val productCount = category.count
+                categoryProductCount.visibility = android.view.View.GONE
+                // categoryProductCount.text = if (productCount == 1) {
+                //     "1 product" 
+                // } else {
+                //     "$productCount products"
+                // }
                 
-                // Using the ID to simulate creation date - higher ID = newer
-                val fakeDate = System.currentTimeMillis() - (1000000 * (100 - category.remoteCategoryId % 100))
-                categoryCreationDate.text = getDateTimeString(fakeDate)
+                // Remove fake creation date display
+                categoryCreationDate.visibility = android.view.View.GONE
             }
         }
     }
-} 
+}
