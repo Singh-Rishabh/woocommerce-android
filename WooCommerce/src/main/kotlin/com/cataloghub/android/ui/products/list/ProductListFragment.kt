@@ -172,6 +172,24 @@ class ProductListFragment :
         _binding = FragmentProductListBinding.bind(view)
 
         view.doOnPreDraw { startPostponedEnterTransition() }
+        
+        // Handle category filter arguments
+        arguments?.let { args ->
+            val categoryId = args.getString("categoryId")
+            val categoryName = args.getString("categoryName")
+            
+            if (!categoryId.isNullOrEmpty() && !categoryName.isNullOrEmpty()) {
+                // We're viewing products from a specific category
+                binding.toolbar.title = categoryName
+                productListViewModel.onFiltersChanged(
+                    stockStatus = null,
+                    productStatus = null,
+                    productType = null,
+                    productCategory = categoryId,
+                    productCategoryName = categoryName
+                )
+            }
+        }
 
         setupObservers(productListViewModel)
         setupResultHandlers()

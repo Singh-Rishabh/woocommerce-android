@@ -8,7 +8,7 @@ import com.cataloghub.android.ui.products.categories.ProductCategoryItemUiModel
 import com.cataloghub.android.util.getDateTimeString
 
 class CategoriesListAdapter(
-    private val onCategoryClick: (Long) -> Unit
+    private val onCategoryClick: (categoryId: Long, categoryName: String) -> Unit
 ) : RecyclerView.Adapter<CategoriesListAdapter.CategoryViewHolder>() {
 
     private var categories: List<ProductCategoryItemUiModel> = emptyList()
@@ -37,7 +37,9 @@ class CategoriesListAdapter(
             binding.root.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    onCategoryClick(categories[position].category.remoteCategoryId)
+                    val categoryId = categories[position].category.remoteCategoryId
+                    val categoryName = categories[position].category.name
+                    onCategoryClick(categoryId, categoryName)
                 }
             }
         }

@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cataloghub.android.R
@@ -295,8 +296,10 @@ class CategoriesListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         try {
             WooLog.d(WooLog.T.PRODUCTS, "Setting up Categories RecyclerView")
-            categoriesAdapter = CategoriesListAdapter { categoryId ->
-                // Handle category click - can be implemented later to show category details
+            categoriesAdapter = CategoriesListAdapter { categoryId, categoryName ->
+                // Navigate to ProductListFragment with category filter
+                navigateToProductsForCategory(categoryId, categoryName)
+                // Track analytics
                 AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
             }
 
@@ -308,6 +311,25 @@ class CategoriesListFragment : BaseFragment() {
             WooLog.d(WooLog.T.PRODUCTS, "Categories RecyclerView setup complete")
         } catch (e: Exception) {
             WooLog.e(WooLog.T.PRODUCTS, "Error setting up Categories RecyclerView: ${e.message}", e)
+        }
+    }
+
+    /**
+     * Navigate to the Products list screen filtered by the selected category
+     */
+    private fun navigateToProductsForCategory(categoryId: Long, categoryName: String) {
+        try {
+            WooLog.d(WooLog.T.PRODUCTS, "Navigating to products for category: $categoryName (ID: $categoryId)")
+            
+            // Use direct navigation to avoid NavGraphMainDirections dependency
+            val bundle = Bundle().apply {
+                putString("categoryId", categoryId.toString())
+                putString("categoryName", categoryName)
+            }
+            findNavController().navigate(R.id.action_global_productsFragment, bundle)
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error navigating to products for category: ${e.message}", e)
+            uiMessageResolver.showSnack(getString(R.string.error_generic))
         }
     }
 
