@@ -146,8 +146,23 @@ class CategoriesListViewModel @Inject constructor(
         _isBottomNavBarVisible.value = isVisible
     }
     
+    fun onCleanup() {
+        // Clear any references and cancel any ongoing operations
+        viewModelScope.launch {
+            try {
+                categoriesRepository.onCleanup()
+            } catch (e: Exception) {
+                // Log but don't crash
+                AnalyticsTracker.track(
+                    AnalyticsEvent.CATEGORIES_CLEANUP_FAILED,
+                    mapOf("error" to (e.message ?: "Unknown error"))
+                )
+            }
+        }
+    }
+    
     override fun onCleared() {
         super.onCleared()
-        categoriesRepository.onCleanup()
+        onCleanup()
     }
 } 

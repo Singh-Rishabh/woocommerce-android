@@ -751,6 +751,12 @@ class MainActivity :
 
         // Handle special cases
         when (navPos) {
+            MY_STORE -> {
+                // Explicitly navigate to dashboard if needed
+                if (navController.currentDestination?.id != R.id.dashboard) {
+                    navController.navigate(R.id.dashboard)
+                }
+            }
             ORDERS -> {
                 viewModel.removeOrderNotifications()
             }
@@ -1330,11 +1336,11 @@ class MainActivity :
 
     private fun updateActiveNavigationPosition(navPos: BottomNavigationPosition) {
         when (navPos) {
-            MY_STORE -> binding.bottomNav.active(R.id.dashboard)
-            ORDERS -> binding.bottomNav.active(R.id.orders)
-            PRODUCTS -> binding.bottomNav.active(R.id.products)
-            CATEGORIES -> binding.bottomNav.active(R.id.categories)
-            MORE -> binding.bottomNav.active(R.id.moreMenu)
+            MY_STORE -> binding.bottomNav.active(MY_STORE.position)
+            ORDERS -> binding.bottomNav.active(ORDERS.position)
+            PRODUCTS -> binding.bottomNav.active(PRODUCTS.position)
+            CATEGORIES -> binding.bottomNav.active(CATEGORIES.position)
+            MORE -> binding.bottomNav.active(MORE.position)
         }
     }
 

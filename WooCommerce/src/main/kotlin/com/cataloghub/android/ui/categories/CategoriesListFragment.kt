@@ -47,6 +47,9 @@ class CategoriesListFragment : BaseFragment() {
         private const val STATE_ACTIVE_FILTER_SORT = "active-filter-sort"
         private const val STATE_SEARCH_QUERY = "search-query"
         private const val SEARCH_DEBOUNCE_MS = 300L
+        
+        // Static cache for categories to improve performance
+        private var cachedCategories: List<ProductCategoryItemUiModel>? = null
     }
 
     // Ensure the app bar and bottom navigation remain visible
@@ -100,8 +103,17 @@ class CategoriesListFragment : BaseFragment() {
             setupRefresh()
             setupChips()
 
-            // Load the categories
-            viewModel.loadCategories()
+            // Load categories - use cache if available
+            cachedCategories?.let {
+                categoriesAdapter.setCategories(it)
+                binding.progressBar.isVisible = false
+                binding.categoriesList.isVisible = true
+                binding.emptyView.isVisible = false
+                binding.errorView.isVisible = false
+            } ?: run {
+                // Load the categories
+                viewModel.loadCategories()
+            }
         } catch (e: Exception) {
             WooLog.e(WooLog.T.PRODUCTS, "Error in Categories onViewCreated: ${e.message}", e)
             uiMessageResolver.showSnack(getString(R.string.error_generic))
@@ -170,6 +182,8 @@ class CategoriesListFragment : BaseFragment() {
 
     private fun setupRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
+            // Clear cache to force complete refresh
+            cachedCategories = null
             viewModel.loadCategories(forceRefresh = true)
         }
     }
@@ -220,14 +234,17 @@ class CategoriesListFragment : BaseFragment() {
     }
 
     private fun setupObservers() {
-        viewModel.categoriesViewState.observe(viewLifecycleOwner, Observer { state ->
+        viewModel.categoriesViewState.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is UiState.Content -> {
                     binding.swipeRefresh.isRefreshing = false
+                    // Save to cache
+                    cachedCategories = state.data
                     showCategories(state.data)
                 }
                 is UiState.Empty -> {
                     binding.swipeRefresh.isRefreshing = false
+                    cachedCategories = emptyList()
                     showEmptyView()
                 }
                 is UiState.Error -> {
@@ -235,13 +252,16 @@ class CategoriesListFragment : BaseFragment() {
                     showErrorView(state.message)
                 }
                 is UiState.Loading -> {
-                    showLoadingView()
+                    // Only show loading if cache is empty
+                    if (cachedCategories == null) {
+                        showLoadingView()
+                    }
                 }
                 else -> {
                     WooLog.d(WooLog.T.PRODUCTS, "Categories view state: $state")
                 }
             }
-        })
+        }
         
         viewModel.isBottomNavBarVisible.observe(viewLifecycleOwner) { isVisible ->
             showBottomNavBar(isVisible)
@@ -342,6 +362,17 @@ class CategoriesListFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         searchJob?.cancel()
+        searchJob = null
         _binding = null
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clear any references in fragment lifecycle callbacks
+        if (!requireActivity().isChangingConfigurations) {
+            // Clear category data if app is fully closing the fragment
+            // but keep it if just rotating/changing config
+            viewModel.onCleanup()
+        }
     }
 } 

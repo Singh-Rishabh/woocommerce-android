@@ -139,16 +139,45 @@ class MainBottomNavigationView @JvmOverloads constructor(
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         navController?.let { navController ->
-            // Special handling for Categories tab
-            if (item.itemId == R.id.categories) {
-                listener.onNavItemSelected(findNavigationPositionById(item.itemId))
-                return true
-            }
-            
-            val navSuccess = NavigationUI.onNavDestinationSelected(item, navController)
-            if (navSuccess) {
-                listener.onNavItemSelected(findNavigationPositionById(item.itemId))
-                return true
+            // Special handling for all main tabs to ensure proper navigation
+            when (item.itemId) {
+                R.id.dashboard -> {
+                    // Navigate to My Store (Dashboard) tab
+                    if (navController.currentDestination?.id != R.id.dashboard) {
+                        navController.navigate(R.id.dashboard)
+                    }
+                    listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                    return true
+                }
+                R.id.categories -> {
+                    // Navigate to Categories tab
+                    listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                    return true
+                }
+                R.id.orders -> {
+                    // Navigate to Orders tab
+                    if (navController.currentDestination?.id != R.id.orders) {
+                        navController.navigate(R.id.orders)
+                    }
+                    listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                    return true
+                }
+                R.id.products -> {
+                    // Navigate to Products tab
+                    if (navController.currentDestination?.id != R.id.products) {
+                        navController.navigate(R.id.products)
+                    }
+                    listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                    return true
+                }
+                else -> {
+                    // Default behavior for other tabs (like More)
+                    val navSuccess = NavigationUI.onNavDestinationSelected(item, navController)
+                    if (navSuccess) {
+                        listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                        return true
+                    }
+                }
             }
         }
         return false
