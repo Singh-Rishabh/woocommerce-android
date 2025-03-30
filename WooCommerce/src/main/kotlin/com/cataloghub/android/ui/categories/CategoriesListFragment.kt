@@ -112,7 +112,7 @@ class CategoriesListFragment : BaseFragment() {
         super.onResume()
         
         try {
-            // Ensure Categories tab is selected in the bottom navigation
+            // Always ensure Categories tab is selected in the bottom navigation
             (activity as? MainActivity)?.let { mainActivity ->
                 mainActivity.setCurrentNavigationPosition(BottomNavigationPosition.CATEGORIES)
             }

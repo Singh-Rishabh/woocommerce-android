@@ -139,6 +139,12 @@ class MainBottomNavigationView @JvmOverloads constructor(
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         navController?.let { navController ->
+            // Special handling for Categories tab
+            if (item.itemId == R.id.categories) {
+                listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                return true
+            }
+            
             val navSuccess = NavigationUI.onNavDestinationSelected(item, navController)
             if (navSuccess) {
                 listener.onNavItemSelected(findNavigationPositionById(item.itemId))

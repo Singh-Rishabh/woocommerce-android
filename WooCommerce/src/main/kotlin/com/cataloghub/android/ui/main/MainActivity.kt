@@ -749,8 +749,19 @@ class MainActivity :
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
 
-        if (navPos == ORDERS) {
-            viewModel.removeOrderNotifications()
+        // Handle special cases
+        when (navPos) {
+            ORDERS -> {
+                viewModel.removeOrderNotifications()
+            }
+            CATEGORIES -> {
+                // Always go to the root Categories fragment when the tab is clicked
+                // First clear any existing backstack to avoid navigating back to a filtered product list
+                navController.popBackStack(R.id.categories, false)
+                // Then navigate to the categories fragment
+                navController.navigate(R.id.action_global_categories)
+            }
+            else -> {}
         }
     }
 
