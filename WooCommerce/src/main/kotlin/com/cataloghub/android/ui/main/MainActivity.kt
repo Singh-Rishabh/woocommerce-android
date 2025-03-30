@@ -744,7 +744,7 @@ class MainActivity :
             MY_STORE -> AnalyticsEvent.MAIN_TAB_DASHBOARD_SELECTED
             ORDERS -> AnalyticsEvent.MAIN_TAB_ORDERS_SELECTED
             PRODUCTS -> AnalyticsEvent.MAIN_TAB_PRODUCTS_SELECTED
-            CATEGORIES -> AnalyticsEvent.MAIN_TAB_PRODUCTS_SELECTED
+            CATEGORIES -> AnalyticsEvent.MAIN_TAB_CATEGORIES_SELECTED
             MORE -> AnalyticsEvent.MAIN_TAB_HUB_MENU_SELECTED
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
@@ -776,7 +776,7 @@ class MainActivity :
             MY_STORE -> AnalyticsEvent.MAIN_TAB_DASHBOARD_RESELECTED
             ORDERS -> AnalyticsEvent.MAIN_TAB_ORDERS_RESELECTED
             PRODUCTS -> AnalyticsEvent.MAIN_TAB_PRODUCTS_RESELECTED
-            CATEGORIES -> AnalyticsEvent.MAIN_TAB_PRODUCTS_RESELECTED
+            CATEGORIES -> AnalyticsEvent.MAIN_TAB_CATEGORIES_RESELECTED
             MORE -> AnalyticsEvent.MAIN_TAB_HUB_MENU_RESELECTED
         }
         AnalyticsTracker.track(stat, mapOf(KEY_HORIZONTAL_SIZE_CLASS to deviceTypeToAnalyticsString))
