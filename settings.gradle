@@ -1,18 +1,14 @@
 pluginManagement {
     repositories {
         google()
-        exclusiveContent {
-            forRepository {
-                maven {
-                    url = uri("https://a8c-libs.s3.amazonaws.com/android")
-                }
-            }
-            filter {
+        gradlePluginPortal()
+        maven {
+            url = uri("https://a8c-libs.s3.amazonaws.com/android")
+            content {
                 includeGroup "com.automattic.android"
                 includeGroup "com.automattic.android.measure-builds"
             }
         }
-        gradlePluginPortal()
     }
 }
 

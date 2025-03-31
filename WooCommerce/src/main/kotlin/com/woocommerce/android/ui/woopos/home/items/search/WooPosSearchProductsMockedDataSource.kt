@@ -9,7 +9,6 @@ import com.woocommerce.android.ui.products.ProductStockStatus
 import com.woocommerce.android.ui.products.ProductTaxStatus
 import com.woocommerce.android.ui.products.ProductType
 import com.woocommerce.android.ui.products.settings.ProductCatalogVisibility
-import com.woocommerce.android.util.WooLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -45,35 +44,33 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
 
         delay(1500)
 
-        try {
+        if (Random.nextInt(3) == 0) {
+            emit(ProductsResult.Remote(Result.failure(Exception("Failed to search products"))))
+        } else {
             val remoteResults = performSearch(query, true)
             updateFilteredProductCache(query, remoteResults)
 
             canLoadMore.set(remoteResults.size >= PAGE_SIZE)
 
             emit(ProductsResult.Remote(Result.success(remoteResults)))
-        } catch (e: Exception) {
-            WooLog.e(WooLog.T.POS, "Search products failed - ${e.message}", e)
-            emit(ProductsResult.Remote(Result.failure(e)))
         }
     }.flowOn(Dispatchers.IO).take(2)
 
     suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
-        try {
-            delay(1500)
+        delay(1500)
 
-            val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
-            val moreResults = performSearch(query, true, currentResults.size)
-            val combinedResults = currentResults + moreResults
-            updateFilteredProductCache(query, combinedResults)
-
-            canLoadMore.set(moreResults.size >= PAGE_SIZE)
-
-            Result.success(combinedResults)
-        } catch (e: Exception) {
-            WooLog.e(WooLog.T.POS, "Loading more products failed - ${e.message}", e)
-            Result.failure(e)
+        if (Random.nextInt(100) <= 30) {
+            return@withContext Result.failure(Exception("Failed to load more products"))
         }
+
+        val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
+        val moreResults = performSearch(query, true, currentResults.size)
+        val combinedResults = currentResults + moreResults
+        updateFilteredProductCache(query, combinedResults)
+
+        canLoadMore.set(moreResults.size >= PAGE_SIZE)
+
+        Result.success(combinedResults)
     }
 
     fun getProductById(productId: Long): Product? {
