@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -85,6 +83,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelect
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatSelectionCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.ErrorMessageWithButton
@@ -533,22 +532,10 @@ internal fun HazmatCard(
     }
 
     if (selectedCategory != null) {
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = colorResource(R.color.light_colored_button_background),
-                        shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                    )
-                    .padding(16.dp)
-            ) {
-                Text(
-                    text = stringResource(selectedCategory.stringResourceID)
-                )
-            }
-        }
+        HazmatSelectionCard(
+            selectedCategory = selectedCategory,
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.major_100))
+        )
     }
 }
 

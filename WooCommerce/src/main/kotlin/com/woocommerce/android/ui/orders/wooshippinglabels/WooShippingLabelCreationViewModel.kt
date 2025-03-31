@@ -627,11 +627,18 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatNoticeClick() {
-        triggerEvent(StartHazmatFormEdit)
+        val selectedCategory = hazmatState.value
+            .run { this as? Declared }
+            ?.hazmatCategory
+
+        triggerEvent(StartHazmatFormEdit(selectedCategory))
     }
 
-    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory) {
-        hazmatState.value = Declared(selectedCategory)
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
+        when {
+            selectedCategory != null -> Declared(selectedCategory)
+            else -> NoSelection
+        }.let { hazmatState.value = it }
     }
 
     fun allowBackNavigation(): Boolean {
@@ -702,7 +709,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val customData: CustomsData?
     ) : Event()
 
-    data object StartHazmatFormEdit : Event()
+    data class StartHazmatFormEdit(val selectedCategory: ShippingLabelHazmatCategory?) : Event()
 
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()

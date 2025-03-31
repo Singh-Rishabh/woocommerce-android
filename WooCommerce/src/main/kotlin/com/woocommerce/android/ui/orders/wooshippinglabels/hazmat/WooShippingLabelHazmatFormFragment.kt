@@ -15,6 +15,7 @@ import com.woocommerce.android.extensions.navigateBackWithResult
 import com.woocommerce.android.extensions.navigateSafely
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.main.MainActivity.Companion.BackPressListener
 import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.Companion.HAZMAT_CATEGORY_RESULT
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormViewModel.Companion.KEY_HAZMAT_CATEGORY_SELECTOR_RESULT
@@ -26,7 +27,7 @@ import com.woocommerce.android.util.ChromeCustomTabUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class WooShippingLabelHazmatFormFragment : BaseFragment() {
+class WooShippingLabelHazmatFormFragment : BaseFragment(), BackPressListener {
     private val viewModel: WooShippingLabelHazmatFormViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -48,6 +49,11 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
         bindEventListener()
     }
 
+    override fun onRequestAllowBackPress(): Boolean {
+        viewModel.onBackPressed()
+        return false
+    }
+
     private fun bindResultHandlers() {
         handleDialogResult<String>(
             key = KEY_HAZMAT_CATEGORY_SELECTOR_RESULT,
@@ -63,7 +69,10 @@ class WooShippingLabelHazmatFormFragment : BaseFragment() {
             when (event) {
                 is OnUrlSelected -> ChromeCustomTabUtils.launchUrl(requireContext(), event.url)
                 is OnSelectCategoryClicked -> showHazmatCategoryPicker()
-                is OnHazmatCategorySelected -> navigateBackWithResult(HAZMAT_CATEGORY_RESULT, event.selectedCategory)
+                is OnHazmatCategorySelected -> navigateBackWithResult(
+                    key = HAZMAT_CATEGORY_RESULT,
+                    result = event.selectedCategory?.name.orEmpty()
+                )
             }
         }
     }

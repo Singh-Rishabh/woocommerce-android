@@ -115,8 +115,9 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
 
                 is StartHazmatFormEdit -> {
                     WooShippingLabelCreationFragmentDirections
-                        .actionWooShippingLabelCreationFragmentToWooShippingLabelHazmatFormFragment()
-                        .let { findNavController().navigateSafely(it) }
+                        .actionWooShippingLabelCreationFragmentToWooShippingLabelHazmatFormFragment(
+                            event.selectedCategory?.name
+                        ).let { findNavController().navigateSafely(it) }
                 }
             }
         }
@@ -134,8 +135,9 @@ class WooShippingLabelCreationFragment : BaseFragment(), BackPressListener {
             viewModel.onCustomsDataAvailable(it)
         }
 
-        handleResult<ShippingLabelHazmatCategory>(HAZMAT_CATEGORY_RESULT) {
-            viewModel.onHazmatCategorySelected(it)
+        handleResult<String>(HAZMAT_CATEGORY_RESULT) {
+            val selectedCategory = runCatching { ShippingLabelHazmatCategory.valueOf(it) }.getOrNull()
+            viewModel.onHazmatCategorySelected(selectedCategory)
         }
     }
 
