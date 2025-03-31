@@ -9,10 +9,13 @@ import com.woocommerce.android.model.Location
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.OrderTestUtils
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.LabelPurchased
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PurchaseState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.StartHazmatFormEdit
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.WooShippingViewState.DataState
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressValidationHelper
@@ -51,6 +54,7 @@ import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -375,11 +379,12 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
-            getShippingRates(any(), any(), any(), any(), any(), any())
+            getShippingRates(any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.success(defaultShippingRates)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
@@ -409,6 +414,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(addressValidationHelper.canFetchShippingRates(any())) doReturn false
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData)
@@ -434,6 +440,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(getShippableItems(any())) doReturn defaultShippableItems.map { it.copy(weight = 0f) }
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
 
         createViewModel()
         sut.onPackageSelected(defaultPackageData.copy(weight = "0"))
@@ -455,11 +462,12 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(getShippableItems(any())) doReturn defaultShippableItems
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
-            getShippingRates(any(), any(), any(), any(), any(), any())
+            getShippingRates(any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.failure(Exception("Random error"))
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
 
@@ -483,10 +491,11 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
-            getShippingRates(any(), any(), any(), any(), any(), any())
+            getShippingRates(any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
@@ -499,7 +508,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        verify(getShippingRates, times(2)).invoke(any(), any(), any(), any(), any(), any())
+        verify(getShippingRates, times(2))
+            .invoke(any(), any(), any(), any(), any(), any(), isNull())
     }
 
     @Test
@@ -511,10 +521,11 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
-            getShippingRates(any(), any(), any(), any(), any(), any())
+            getShippingRates(any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
@@ -527,7 +538,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any(), any())
+        verify(getShippingRates, times(1))
+            .invoke(any(), any(), any(), any(), any(), any(), isNull())
     }
 
     @Test
@@ -539,10 +551,11 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
                 shippingAddress = defaultShipToAddress
             )
         )
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
         whenever(orderDetailRepository.getOrderById(any())) doReturn order
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(
-            getShippingRates(any(), any(), any(), any(), any(), any())
+            getShippingRates(any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.success(defaultShippingRates)
 
         createViewModel()
@@ -555,7 +568,8 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
 
         advanceUntilIdle()
 
-        verify(getShippingRates, times(1)).invoke(any(), any(), any(), any(), any(), any())
+        verify(getShippingRates, times(1))
+            .invoke(any(), any(), any(), any(), any(), any(), isNull())
     }
 
     @Test
@@ -741,7 +755,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(
-            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
+            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.success(defaultPurchasedLabelData)
 
         val label = defaultPurchasedLabelData.labels.first()
@@ -793,7 +807,7 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
         whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
         whenever(
-            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any())
+            purchaseShippingLabel(any(), any(), any(), any(), any(), any(), any(), any(), isNull())
         ) doReturn Result.failure(Exception("Random error"))
 
         createViewModel()
@@ -1033,5 +1047,73 @@ class WooShippingLabelCreationViewModelTest : BaseUnitTest() {
         advanceUntilIdle()
 
         verify(verifyDestinationAddress).invoke(orderId)
+    }
+
+    @Test
+    fun `HazmatState is NoSelection when no selection happens`() = testBlocking {
+        var currentViewState: WooShippingViewState? = null
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
+
+        createViewModel()
+
+        advanceUntilIdle()
+
+        sut.viewState.asLiveData().observeForever {
+            currentViewState = it
+        }
+
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        val dataState = currentViewState as DataState
+
+        assertThat(dataState.hazmatState).isEqualTo(HazmatState.NoSelection)
+    }
+
+    @Test
+    fun `HazmatState is Declared when onHazmatCategorySelected is called`() = testBlocking {
+        var currentViewState: WooShippingViewState? = null
+        val order = OrderTestUtils.generateTestOrder(orderId = orderId).copy(
+            shippingLines = defaultShippingLines
+        )
+        whenever(orderDetailRepository.getOrderById(any())) doReturn order
+        whenever(getShippableItems(any())) doReturn defaultShippableItems
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+        whenever(shouldRequireCustomsForm.invoke(any())) doReturn false
+
+        createViewModel()
+        sut.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
+
+        sut.viewState.asLiveData().observeForever {
+            currentViewState = it
+        }
+
+        assertThat(currentViewState).isInstanceOf(DataState::class.java)
+        val dataState = currentViewState as DataState
+
+        assertThat(dataState.hazmatState).isEqualTo(HazmatState.Declared(ShippingLabelHazmatCategory.CLASS_1))
+    }
+
+    @Test
+    fun `when StartHazmatFormEdit is triggered with a selected category, the event contains the expected category value`() = testBlocking {
+        var event: MultiLiveEvent.Event? = null
+        whenever(orderDetailRepository.getOrderById(any())) doReturn null
+        whenever(observeOriginAddresses()) doReturn flowOf(defaultOriginAddresses)
+        whenever(observeStoreOptions()) doReturn flowOf(defaultStoreOptions)
+
+        createViewModel()
+
+        sut.onHazmatCategorySelected(ShippingLabelHazmatCategory.CLASS_1)
+        sut.onHazmatNoticeClick()
+
+        sut.event.observeForever { event = it }
+
+        assertThat(event).isEqualTo(StartHazmatFormEdit(ShippingLabelHazmatCategory.CLASS_1))
     }
 }

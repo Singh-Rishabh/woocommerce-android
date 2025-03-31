@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -29,12 +33,14 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.annotatedStringRes
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 
 @Composable
 fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewModel) {
     val viewState by viewModel.viewState.observeAsState()
     WooShippingLabelHazmatFormScreen(
         containsHazmatChecked = viewState?.containsHazmatChecked == true,
+        selectedHazmatCategory = viewState?.currentHazmatSelection,
         onContainsHazmatChanged = viewModel::onContainsHazmatChanged,
         onSelectCategoryClick = viewModel::onSelectCategoryClick,
         onUrlSelected = viewModel::onUrlSelected
@@ -44,6 +50,7 @@ fun WooShippingLabelHazmatFormScreen(viewModel: WooShippingLabelHazmatFormViewMo
 @Composable
 fun WooShippingLabelHazmatFormScreen(
     containsHazmatChecked: Boolean,
+    selectedHazmatCategory: ShippingLabelHazmatCategory?,
     onContainsHazmatChanged: (Boolean) -> Unit,
     onSelectCategoryClick: () -> Unit,
     onUrlSelected: (url: String) -> Unit,
@@ -85,12 +92,20 @@ fun WooShippingLabelHazmatFormScreen(
                 )
             )
         }
-        WCColoredButton(
-            text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
-            onClick = onSelectCategoryClick,
-            enabled = containsHazmatChecked,
-            modifier = modifier.fillMaxWidth()
-        )
+
+        if (selectedHazmatCategory != null) {
+            HazmatCategoryEditingSection(
+                selectedHazmatCategory = selectedHazmatCategory,
+                onSelectCategoryClick = onSelectCategoryClick
+            )
+        } else {
+            WCColoredButton(
+                text = stringResource(R.string.woo_shipping_labels_hazmat_info_select_category),
+                onClick = onSelectCategoryClick,
+                enabled = containsHazmatChecked,
+                modifier = modifier.fillMaxWidth()
+            )
+        }
 
         HorizontalDivider(modifier = modifier.padding(vertical = 8.dp))
 
@@ -125,6 +140,37 @@ fun WooShippingLabelHazmatFormScreen(
     }
 }
 
+@Composable
+fun HazmatCategoryEditingSection(
+    selectedHazmatCategory: ShippingLabelHazmatCategory,
+    onSelectCategoryClick: () -> Unit
+) {
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.product_category),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.bodyLarge,
+                color = colorResource(id = R.color.color_on_surface),
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(
+                onClick = onSelectCategoryClick,
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    tint = colorResource(id = R.color.color_icon_menu),
+                    contentDescription = stringResource(id = R.string.shipping_label_package_selected_description)
+                )
+            }
+        }
+        HazmatSelectionCard(selectedHazmatCategory)
+    }
+}
+
 @Preview
 @Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -132,6 +178,22 @@ fun WooShippingLabelHazmatFormScreenPreview() {
     WooThemeWithBackground {
         WooShippingLabelHazmatFormScreen(
             containsHazmatChecked = false,
+            selectedHazmatCategory = null,
+            onContainsHazmatChanged = {},
+            onSelectCategoryClick = {},
+            onUrlSelected = {}
+        )
+    }
+}
+
+@Preview
+@Preview("Dark Theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun WooShippingLabelHazmatFormScreenWithSelectionPreview() {
+    WooThemeWithBackground {
+        WooShippingLabelHazmatFormScreen(
+            containsHazmatChecked = true,
+            selectedHazmatCategory = ShippingLabelHazmatCategory.CLASS_1,
             onContainsHazmatChanged = {},
             onSelectCategoryClick = {},
             onUrlSelected = {}
