@@ -155,9 +155,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
     fun `given search query and search results, when view model created, then view state updated accordingly`() =
         runTest {
             // GIVEN
-            mockSuccessfulSearch(defaultQuery, listOf(
-                defaultProduct
-            ))
+            mockSuccessfulSearch(defaultQuery, listOf(defaultProduct))
 
             // WHEN
             val viewModel = createViewModel()
@@ -173,8 +171,8 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                 val content = contentState as WooPosItemsSearchViewState.Content
                 assertThat(content.items).hasSize(1)
                 assertThat((content.items[0] as Product.Simple).name).isEqualTo(
-                    "Test Product")
-
+                    "Test Product"
+                )
             }
 
             verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Started)
@@ -289,9 +287,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                     variationIds = "[101,102,103]"
                 )
 
-
-            mockSuccessfulSearch(defaultQuery, listOf(variableProduct
-            ))
+            mockSuccessfulSearch(defaultQuery, listOf(variableProduct))
 
             // WHEN
             val viewModel = createViewModel()
@@ -406,7 +402,6 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Started)
         verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Finished)
     }
-
 
     @Test
     fun `given multiple search queries in quick succession, when typing, then only last query is executed`() = runTest {
