@@ -30,6 +30,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class WooShippingLabelHazmatFormFragment : BaseFragment(), BackPressListener {
     private val viewModel: WooShippingLabelHazmatFormViewModel by viewModels()
 
+    override fun getFragmentTitle() = ""
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
