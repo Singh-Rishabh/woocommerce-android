@@ -1282,6 +1282,7 @@
     <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
     <string name="shipping_label_package_details_items_expand_content_description">Collapse/expand items card</string>
     <string name="shipping_label_hazmat_title">Are you shipping dangerous goods or hazardous materials?</string>
+    <string name="shipping_label_package_title">Select a Package</string>
     <string name="shipping_label_select_package_button">Select a Package</string>
     <string name="shipping_label_select_package_title">Select a package to get shipping rates</string>
     <string name="shipping_label_package_default_name">Custom Package</string>
