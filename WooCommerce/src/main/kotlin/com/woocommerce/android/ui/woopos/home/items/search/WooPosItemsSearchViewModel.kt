@@ -65,7 +65,15 @@ class WooPosItemsSearchViewModel @Inject constructor(
                 }
             }
 
-            is WooPosItemsSearchUiEvent.OnRecentSearchClicked -> TODO()
+            is WooPosItemsSearchUiEvent.OnRecentSearchClicked -> {
+                viewModelScope.launch {
+                    childToParentEventSender.sendToParent(
+                        ChildToParentEvent.SearchEvent.RecentSearchSelected(
+                            event.recentSearch
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -81,6 +89,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> Unit
                     is ParentToChildrenEvent.CheckoutClicked -> Unit
+                    is ParentToChildrenEvent.SearchEvent.RecentSearchSelected -> Unit
                 }
             }
         }
