@@ -89,14 +89,14 @@ private fun WooPosItemsSearchContent(
         state = state,
         listState = listState,
         onItemClicked = { onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(it)) },
-        onEndOfProductsListReached = { onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached) },
+        onEndOfProductsListReached = { onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested) },
         onErrorWhilePaginating = {
             WooPosPaginationErrorIndicator(
                 message = stringResource(id = R.string.woopos_items_pagination_error_title),
                 description = stringResource(id = R.string.woopos_items_pagination_error_description),
                 primaryButton = Button(
                     text = stringResource(id = R.string.woopos_items_pagination_try_again_label),
-                    click = { onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached) }
+                    click = { onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested) }
                 ),
             )
         }

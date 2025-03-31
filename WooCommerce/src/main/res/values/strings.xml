@@ -4277,7 +4277,8 @@
     <string name="woopos_product_item_content_description">Product %s, Price %s</string>
     <string name="woopos_variable_product_item_content_description">Variable Product %s, Price %s</string>
     <string name="woopos_variation_item_content_description">Variation %s, Price %s</string>
-    <string name="woopos_cart_item_content_description">Product in cart %s, Price %s</string>
+    <string name="woopos_cart_item_product_content_description">Product in cart %s, Price %s</string>
+    <string name="woopos_cart_item_coupon_content_description">Coupon in cart %s</string>
     <string name="woopos_cart_title">Cart</string>
     <string name="woopos_clear_cart_button">Clear</string>
 
@@ -4319,6 +4320,7 @@
     <string name="woopos_payment_successful_checkmark_icon_content_description">Payment successful checkmark icon</string>
     <string name="woopos_new_order_button">New order</string>
     <string name="woopos_receipt_button">Email receipt</string>
+    <string name="woopos_payment_discount_label">Discount</string>
     <string name="woopos_payment_subtotal_label">Subtotal</string>
     <string name="woopos_payment_tax_label">Taxes</string>
     <string name="woopos_payment_total_label">Total</string>

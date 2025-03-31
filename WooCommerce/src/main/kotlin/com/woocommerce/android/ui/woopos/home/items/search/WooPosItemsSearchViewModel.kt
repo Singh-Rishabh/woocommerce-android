@@ -51,7 +51,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
 
     fun onUIEvent(event: WooPosItemsSearchUiEvent) {
         when (event) {
-            WooPosItemsSearchUiEvent.EndOfItemsListReached -> onEndOfListReached()
+            WooPosItemsSearchUiEvent.OnNextPageRequested -> onEndOfListReached()
             is WooPosItemsSearchUiEvent.ItemClicked -> TODO()
             WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> {
                 val currentState = _viewState.value as? WooPosItemsSearchViewState.Error ?: return

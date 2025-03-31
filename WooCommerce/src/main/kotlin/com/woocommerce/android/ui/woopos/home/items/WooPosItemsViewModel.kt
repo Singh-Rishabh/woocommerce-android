@@ -138,7 +138,7 @@ class WooPosItemsViewModel @Inject constructor(
         when (event.item) {
             is WooPosItemSelectionViewState.Product.Simple -> {
                 onItemClicked(
-                    ItemClickedData.SimpleProduct(
+                    ItemClickedData.Product.Simple(
                         id = event.item.id
                     )
                 )
@@ -332,8 +332,16 @@ class WooPosItemsViewModel @Inject constructor(
 
     @Parcelize
     sealed class ItemClickedData(open val id: Long) : Parcelable {
-        data class SimpleProduct(override val id: Long) : ItemClickedData(id)
-        data class Variation(val productId: Long, override val id: Long) : ItemClickedData(id)
-        data class Coupon(override val id: Long, val couponCode: String) : ItemClickedData(id)
+        @Parcelize
+        sealed class Product(override val id: Long) : ItemClickedData(id), Parcelable {
+            @Parcelize
+            data class Simple(override val id: Long) : Product(id), Parcelable
+
+            @Parcelize
+            data class Variation(val productId: Long, override val id: Long) : Product(id), Parcelable
+        }
+
+        @Parcelize
+        data class Coupon(override val id: Long, val couponCode: String) : ItemClickedData(id), Parcelable
     }
 }
