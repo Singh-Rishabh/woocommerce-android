@@ -5,7 +5,7 @@ import com.woocommerce.android.extensions.fastStripHtml
 import com.woocommerce.android.model.Order.Item
 import com.woocommerce.android.util.DateUtils
 import com.woocommerce.android.util.StringUtils
-import org.wordpress.android.fluxc.model.OrderEntity
+import org.wordpress.android.fluxc.persistence.entity.OrderEntity
 import org.wordpress.android.fluxc.model.metadata.WCMetaData
 import org.wordpress.android.fluxc.model.metadata.get
 import org.wordpress.android.fluxc.model.order.FeeLineTaxStatus

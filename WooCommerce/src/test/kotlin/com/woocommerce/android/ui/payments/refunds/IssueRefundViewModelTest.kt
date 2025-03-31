@@ -27,7 +27,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.wordpress.android.fluxc.model.OrderEntity
+import org.wordpress.android.fluxc.persistence.entity.OrderEntity
 import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.model.metadata.WCMetaData
 import org.wordpress.android.fluxc.model.refunds.WCRefundModel

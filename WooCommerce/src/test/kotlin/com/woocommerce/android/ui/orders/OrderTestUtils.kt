@@ -9,7 +9,7 @@ import com.woocommerce.android.model.Refund
 import com.woocommerce.android.model.ShippingLabel
 import com.woocommerce.android.model.toAppModel
 import org.wordpress.android.fluxc.model.LocalOrRemoteId
-import org.wordpress.android.fluxc.model.OrderEntity
+import org.wordpress.android.fluxc.persistence.entity.OrderEntity
 import org.wordpress.android.fluxc.model.WCOrderShipmentProviderModel
 import org.wordpress.android.fluxc.model.WCOrderShipmentTrackingModel
 import org.wordpress.android.fluxc.model.WCOrderStatusModel

@@ -7,7 +7,7 @@ import com.woocommerce.android.util.UnitTestUtils.jsonFileAs
 import com.woocommerce.android.util.UnitTestUtils.jsonFileToString
 import org.wordpress.android.fluxc.domain.Addon
 import org.wordpress.android.fluxc.domain.Addon.HasAdjustablePrice.Price.Adjusted.*
-import org.wordpress.android.fluxc.model.OrderEntity
+import org.wordpress.android.fluxc.persistence.entity.OrderEntity
 import org.wordpress.android.fluxc.model.WCProductModel
 import org.wordpress.android.fluxc.model.addons.RemoteAddonDto
 import org.wordpress.android.fluxc.model.metadata.WCMetaData
