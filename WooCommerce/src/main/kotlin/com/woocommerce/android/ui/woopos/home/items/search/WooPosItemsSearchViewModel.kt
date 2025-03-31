@@ -64,6 +64,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
                     loadContent(currentState.searchQuery)
                 }
             }
+
+            is WooPosItemsSearchUiEvent.OnRecentSearchClicked -> TODO()
         }
     }
 

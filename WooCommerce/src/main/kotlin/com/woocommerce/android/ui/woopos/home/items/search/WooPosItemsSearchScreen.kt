@@ -46,7 +46,7 @@ private fun WooPosItemsSearchScreen(
     ) {
         when (state) {
             is WooPosItemsSearchViewState.EmptySearchQuery -> {
-                WooPosItemsEmptySearchQueryState(state)
+                WooPosItemsEmptySearchQueryState(state, onUIEvent)
             }
 
             is WooPosItemsSearchViewState.Content -> {
@@ -127,7 +127,8 @@ fun WooPosItemsSearchScreenPreview() {
                         "Recent Search 2",
                         "Recent Search 3",
                     )
-                )
+                ),
+                onUIEvent = { }
             )
         }
     }
