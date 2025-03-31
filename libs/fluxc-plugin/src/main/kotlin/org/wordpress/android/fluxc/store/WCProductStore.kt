@@ -826,7 +826,7 @@ class WCProductStore @Inject constructor(
     /**
      * returns true if the product exists with this [sku] in the database
      */
-    fun geProductExistsBySku(site: SiteModel, sku: String) =
+    fun getProductExistsBySku(site: SiteModel, sku: String) =
         ProductSqlUtils.getProductExistsBySku(site, sku)
 
     /**
