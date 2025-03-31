@@ -268,7 +268,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
         // THEN
         viewModel.viewState.test {
-            assertThat(awaitItem()).isEqualTo(WooPosItemsSearchViewState.Error(query))
+            assertThat(awaitItem()).isEqualTo(WooPosItemsSearchViewState.Error(defaultQuery))
         }
 
         verify(mockChildToParentEventSender).sendToParent(ChildToParentEvent.SearchEvent.Started)
@@ -550,7 +550,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             viewModel.viewState.test {
                 awaitItem() as WooPosItemsSearchViewState.Content
 
-                viewModel.onUIEvent(WooPosItemsSearchUiEvent.EndOfItemsListReached)
+                viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
                 expectNoEvents()
             }
