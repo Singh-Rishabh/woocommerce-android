@@ -820,7 +820,7 @@ class WCProductStore @Inject constructor(
     /**
      * returns true if the corresponding product exists in the database
      */
-    fun geProductExistsByRemoteId(site: SiteModel, remoteProductId: Long) =
+    fun getProductExistsByRemoteId(site: SiteModel, remoteProductId: Long) =
         ProductSqlUtils.getProductExistsByRemoteId(site, remoteProductId)
 
     /**
