@@ -12,11 +12,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.woocommerce.android.R
 import com.woocommerce.android.ui.woopos.common.composeui.WooPosPreview
 import com.woocommerce.android.ui.woopos.common.composeui.component.Button
+import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosErrorScreen
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosPaginationErrorIndicator
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosSpacing
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTheme
+import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsEmptyList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsLoadingIndicator
 
 @Composable
 fun WooPosItemsSearchScreen(
@@ -50,12 +54,26 @@ private fun WooPosItemsSearchScreen(
             }
 
             WooPosItemsSearchViewState.Empty -> {
+                WooPosItemsEmptyList(
+                    title = stringResource(id = R.string.woopos_search_items_empty_title),
+                    message = stringResource(id = R.string.woopos_search_empty_description),
+                    contentDescription = stringResource(id = R.string.woopos_search_empty_image_content_description),
+                )
             }
 
-            WooPosItemsSearchViewState.Error -> {
+            is WooPosItemsSearchViewState.Error -> {
+                WooPosErrorScreen(
+                    message = stringResource(id = R.string.woopos_search_items_error_title),
+                    reason = stringResource(id = R.string.woopos_search_items_error_description),
+                    primaryButton = Button(
+                        text = stringResource(id = R.string.woopos_products_loading_error_retry_button),
+                        click = { onUIEvent(WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked) }
+                    )
+                )
             }
 
             WooPosItemsSearchViewState.Loading -> {
+                WooPosItemsLoadingIndicator(itemsCount = 5)
             }
         }
     }
@@ -110,6 +128,92 @@ fun WooPosItemsSearchScreenPreview() {
                         "Recent Search 3",
                     )
                 )
+            )
+        }
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosItemsSearchContentPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WooPosSpacing.Medium.value)
+        ) {
+            WooPosItemsSearchContent(
+                state = WooPosItemsSearchViewState.Content(
+                    searchQuery = "item",
+                    items = listOf(
+                        WooPosItemSelectionViewState.Product.Simple(
+                            id = 1,
+                            name = "Item 1",
+                            price = "10.0$",
+                            imageUrl = "https://example.com/image1.jpg",
+                        ),
+                        WooPosItemSelectionViewState.Product.Simple(
+                            id = 2,
+                            name = "Item 2",
+                            price = "20.0$",
+                            imageUrl = "https://example.com/image2.jpg",
+                        ),
+                    ),
+                    reloadingWithPullToRefresh = false,
+                    paginationState = PaginationState.None
+                ),
+                onUIEvent = {}
+            )
+        }
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosItemsSearchEmptyPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WooPosSpacing.Medium.value)
+        ) {
+            WooPosItemsSearchScreen(
+                state = WooPosItemsSearchViewState.Empty,
+                onUIEvent = {}
+            )
+        }
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosItemsSearchErrorPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WooPosSpacing.Medium.value)
+        ) {
+            WooPosItemsSearchScreen(
+                state = WooPosItemsSearchViewState.Error(searchQuery = ""),
+                onUIEvent = {}
+            )
+        }
+    }
+}
+
+@Composable
+@WooPosPreview
+fun WooPosItemsSearchLoadingPreview() {
+    WooPosTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(WooPosSpacing.Medium.value)
+        ) {
+            WooPosItemsSearchScreen(
+                state = WooPosItemsSearchViewState.Loading,
+                onUIEvent = {}
             )
         }
     }
