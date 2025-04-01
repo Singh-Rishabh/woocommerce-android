@@ -83,6 +83,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelect
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
+import com.woocommerce.android.ui.orders.wooshippinglabels.components.SuccessSnackbarHost
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatSelectionCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -347,7 +348,7 @@ private fun LabelCreationScreenWithBottomSheet(
 
     BottomSheetScaffold(
         snackbarHost = {
-            SnackbarHost(
+            SuccessSnackbarHost(
                 snackbarHostState,
                 modifier = Modifier.padding(bottom = snackbarPaddingBottom)
             )
