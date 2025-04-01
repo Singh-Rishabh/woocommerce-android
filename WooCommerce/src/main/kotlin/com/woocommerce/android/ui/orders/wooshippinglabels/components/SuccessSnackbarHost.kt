@@ -36,7 +36,7 @@ fun SuccessSnackbarHost(
             SuccessSnackbar(
                 content = snackbarData.visuals.message,
                 actionLabel = actionLabel,
-                action =  { snackbarData.performAction() }
+                action = { snackbarData.performAction() }
             )
         }
     )
