@@ -631,6 +631,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             .run { this as? Declared }
             ?.hazmatCategory
 
+        // Disables the current Snackbar before navigation
+        // to avoid presentation conflict with the Hazmat selection result
+        actionSnackbar = null
         triggerEvent(StartHazmatFormEdit(selectedCategory))
     }
 

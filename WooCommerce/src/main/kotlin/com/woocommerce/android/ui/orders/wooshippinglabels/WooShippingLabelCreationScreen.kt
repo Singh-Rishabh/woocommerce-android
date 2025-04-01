@@ -465,14 +465,15 @@ private fun LabelCreationScreenWithBottomSheet(
 
             LaunchedEffect(actionSnackbar) {
                 if (actionSnackbar != null) {
-                    val snackBarResult = snackbarHostState.showSnackbar(
+                    snackbarHostState.showSnackbar(
                         message = actionSnackbarMessage ?: "",
                         actionLabel = actionSnackbarActionLabel,
                         duration = SnackbarDuration.Short
-                    )
-                    if (snackBarResult == ActionPerformed) {
+                    ).takeIf { it == ActionPerformed }?.let {
                         actionSnackbar.action()
                     }
+                } else {
+                    snackbarHostState.currentSnackbarData?.dismiss()
                 }
             }
         }
