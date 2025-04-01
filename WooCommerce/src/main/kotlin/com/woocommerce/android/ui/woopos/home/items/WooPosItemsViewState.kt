@@ -33,7 +33,8 @@ sealed class WooPosItemsViewState(
     data class Loading(
         override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
             isRefreshing = false
-        ), val withCart: Boolean
+        ),
+        val withCart: Boolean
     ) : WooPosItemsViewState(pullToRefreshState)
 
     data class Error(
