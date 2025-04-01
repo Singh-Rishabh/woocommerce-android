@@ -211,23 +211,20 @@ class WooPosItemsViewModel @Inject constructor(
                                 val products = result.productsResult.getOrThrow()
                                 if (products.isNotEmpty()) {
                                     val currentState = _viewState.value
+                                    var paginationState = if (loadMoreProductsJob?.isActive == true) {
+                                        PaginationState.Loading
+                                    } else {
+                                        PaginationState.None
+                                    }
                                     if (currentState is WooPosItemsViewState.Content) {
                                         currentState.copy(
                                             items = products.map { it.toItemSelectionViewState() },
-                                            paginationState = if (loadMoreProductsJob?.isActive == true) {
-                                                PaginationState.Loading
-                                            } else {
-                                                PaginationState.None
-                                            },
+                                            paginationState = paginationState,
                                             reloadingWithPullToRefresh = false
                                         )
                                     } else {
                                         products.toContentState(
-                                            paginationState = if (loadMoreProductsJob?.isActive == true) {
-                                                PaginationState.Loading
-                                            } else {
-                                                PaginationState.None
-                                            }
+                                            paginationState = paginationState
                                         )
                                     }
                                 } else {
