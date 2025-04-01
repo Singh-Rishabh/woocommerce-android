@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -17,13 +18,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import com.woocommerce.android.R
 
 @Composable
 fun SuccessSnackbarHost(
     hostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
-    snackbarPadding: PaddingValues = PaddingValues(0.dp)
+    modifier: Modifier = Modifier
 ) {
     SnackbarHost(
         hostState = hostState,
@@ -32,18 +34,18 @@ fun SuccessSnackbarHost(
             val actionLabel = snackbarData.visuals.actionLabel
 
             Surface(
-                color = MaterialTheme.colorScheme.surfaceVariant,
+                color = SnackbarDefaults.color,
                 shape = RoundedCornerShape(4.dp),
-                modifier = Modifier.padding(snackbarPadding)
+                modifier = Modifier.padding(12.dp)
             ) {
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = Icons.Filled.CheckCircle,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = colorResource(R.color.woo_green_20),
                         modifier = Modifier.padding(end = 16.dp)
                     )
 
@@ -51,14 +53,14 @@ fun SuccessSnackbarHost(
                         text = snackbarData.visuals.message,
                         modifier = Modifier.weight(1f),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = SnackbarDefaults.contentColor
                     )
 
                     if (actionLabel != null) {
                         TextButton(
                             onClick = { snackbarData.performAction() },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.primary
+                                contentColor = SnackbarDefaults.actionContentColor
                             )
                         ) {
                             Text(text = actionLabel)
