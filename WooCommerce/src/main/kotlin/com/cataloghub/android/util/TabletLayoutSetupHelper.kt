@@ -23,49 +23,56 @@ class TabletLayoutSetupHelper @Inject constructor(private val context: Context) 
     DefaultLifecycleObserver {
     private var screen: Screen? = null
     private var navHostFragment: NavHostFragment? = null
+    private var fragmentLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks? = null
+    private var childFragmentLifecycleCallbacks: FragmentManager.FragmentLifecycleCallbacks? = null
 
     fun onRootFragmentCreated(screen: Screen) {
         this.screen = screen
         initNavFragment(screen)
 
-        screen.listFragment.parentFragmentManager.registerFragmentLifecycleCallbacks(
-            object : FragmentManager.FragmentLifecycleCallbacks() {
-                override fun onFragmentViewCreated(
-                    fm: FragmentManager,
-                    f: Fragment,
-                    v: View,
-                    savedInstanceState: Bundle?
-                ) {
-                    if (f == screen.listFragment) {
-                        adjustUIForScreenSize(screen)
-                    }
+        // Store callbacks reference so we can unregister it later
+        fragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(
+                fm: FragmentManager,
+                f: Fragment,
+                v: View,
+                savedInstanceState: Bundle?
+            ) {
+                if (f == screen.listFragment) {
+                    adjustUIForScreenSize(screen)
                 }
+            }
 
-                override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
-                    if (f == screen.listFragment) {
-                        this@TabletLayoutSetupHelper.screen = null
-                        navHostFragment = null
-                    }
+            override fun onFragmentDestroyed(fm: FragmentManager, f: Fragment) {
+                if (f == screen.listFragment) {
+                    cleanup()
                 }
-            },
-            false
-        )
+            }
+        }.also { callbacks ->
+            screen.listFragment.parentFragmentManager.registerFragmentLifecycleCallbacks(
+                callbacks,
+                false
+            )
+        }
 
-        screen.listFragment.childFragmentManager.registerFragmentLifecycleCallbacks(
-            object : FragmentManager.FragmentLifecycleCallbacks() {
-                override fun onFragmentViewCreated(
-                    fm: FragmentManager,
-                    f: Fragment,
-                    v: View,
-                    savedInstanceState: Bundle?
-                ) {
-                    if (f != navHostFragment && f !is BottomSheetDialogFragment) {
-                        setDetailsMargins(v)
-                    }
+        // Store child callbacks reference so we can unregister it later
+        childFragmentLifecycleCallbacks = object : FragmentManager.FragmentLifecycleCallbacks() {
+            override fun onFragmentViewCreated(
+                fm: FragmentManager,
+                f: Fragment,
+                v: View,
+                savedInstanceState: Bundle?
+            ) {
+                if (f != navHostFragment && f !is BottomSheetDialogFragment) {
+                    setDetailsMargins(v)
                 }
-            },
-            true
-        )
+            }
+        }.also { callbacks ->
+            screen.listFragment.childFragmentManager.registerFragmentLifecycleCallbacks(
+                callbacks,
+                true
+            )
+        }
     }
 
     fun openItemDetails(
@@ -173,6 +180,35 @@ class TabletLayoutSetupHelper @Inject constructor(private val context: Context) 
         screen.detailPaneContainer.visibility = View.GONE
         screen.listPaneContainer.visibility = View.VISIBLE
         screen.twoPaneLayoutGuideline.setGuidelinePercent(1f)
+    }
+
+    /**
+     * Cleans up all references to prevent memory leaks
+     */
+    fun cleanup() {
+        // Unregister callbacks to prevent memory leaks
+        screen?.listFragment?.let { fragment ->
+            fragmentLifecycleCallbacks?.let { callbacks ->
+                try {
+                    fragment.parentFragmentManager.unregisterFragmentLifecycleCallbacks(callbacks)
+                } catch (e: Exception) {
+                    // Ignore, fragment manager might be destroyed
+                }
+            }
+            childFragmentLifecycleCallbacks?.let { callbacks ->
+                try {
+                    fragment.childFragmentManager.unregisterFragmentLifecycleCallbacks(callbacks)
+                } catch (e: Exception) {
+                    // Ignore, fragment manager might be destroyed
+                }
+            }
+        }
+        
+        // Clear all references
+        fragmentLifecycleCallbacks = null
+        childFragmentLifecycleCallbacks = null
+        this.screen = null
+        navHostFragment = null
     }
 
     private companion object {

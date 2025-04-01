@@ -360,10 +360,39 @@ class CategoriesListFragment : BaseFragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        // Clear all observers to prevent memory leaks
+        viewModel.categoriesViewState.removeObservers(viewLifecycleOwner)
+        viewModel.isBottomNavBarVisible.removeObservers(viewLifecycleOwner)
+        
+        // Clear adapter and RecyclerView references to prevent memory leaks
+        if (::categoriesAdapter.isInitialized && _binding != null) {
+            // First clear the adapter data
+            categoriesAdapter.cleanup()
+            
+            // Then remove the adapter from the RecyclerView
+            binding.categoriesList.adapter = null
+            
+            // Remove any item decorations
+            val decorCount = binding.categoriesList.itemDecorationCount
+            for (i in 0 until decorCount) {
+                binding.categoriesList.removeItemDecorationAt(0)
+            }
+            
+            // Clear any listeners
+            binding.categoriesList.clearOnScrollListeners()
+            binding.swipeRefresh.setOnRefreshListener(null)
+            binding.sortAndFilterCard.setOnClickListener(null)
+            binding.chipGroupSortBy.setOnCheckedStateChangeListener(null)
+        }
+        
+        // Cancel any ongoing jobs
         searchJob?.cancel()
         searchJob = null
+        
+        // Clear binding reference
         _binding = null
+        
+        super.onDestroyView()
     }
     
     override fun onDestroy() {

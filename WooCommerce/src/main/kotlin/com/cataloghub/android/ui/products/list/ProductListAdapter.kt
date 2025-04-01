@@ -13,6 +13,7 @@ import com.cataloghub.android.ui.products.ProductItemDiffCallback
 import com.cataloghub.android.ui.products.ProductItemViewHolder
 import com.cataloghub.android.util.CurrencyFormatter
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 typealias OnProductClickListener = (remoteProductId: Long, sharedView: View?) -> Unit
@@ -28,11 +29,12 @@ class ProductListAdapter(
     // allow the selection library to track the selections of the user
     var tracker: SelectionTracker<Long>? = null
     private var activeUploadIds = setOf<Long>()
+    private var uploadCollectionJob: Job? = null
 
     init {
         setHasStableIds(true)
         if (coroutineScope != null && mediaFileUploadHandler != null) {
-            coroutineScope.launch {
+            uploadCollectionJob = coroutineScope.launch {
                 mediaFileUploadHandler.activeUploadProductIds.collect { newIds ->
                     val oldIds = activeUploadIds
                     activeUploadIds = newIds
@@ -78,5 +80,15 @@ class ProductListAdapter(
         if (position == itemCount - 1) {
             loadMoreListener.onRequestLoadMore()
         }
+    }
+
+    /**
+     * Cleanup all references and cancel the flow collection job
+     */
+    fun cleanup() {
+        uploadCollectionJob?.cancel()
+        uploadCollectionJob = null
+        tracker = null
+        activeUploadIds = emptySet()
     }
 }

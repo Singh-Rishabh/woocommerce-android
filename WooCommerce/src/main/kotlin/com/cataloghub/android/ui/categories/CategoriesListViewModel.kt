@@ -10,6 +10,7 @@ import com.cataloghub.android.model.UiState
 import com.cataloghub.android.model.sortCategories
 import com.cataloghub.android.ui.products.categories.ProductCategoriesRepository
 import com.cataloghub.android.ui.products.categories.ProductCategoryItemUiModel
+import com.cataloghub.android.util.WooLog
 import com.cataloghub.android.viewmodel.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -150,9 +151,15 @@ class CategoriesListViewModel @Inject constructor(
         // Clear any references and cancel any ongoing operations
         viewModelScope.launch {
             try {
+                // Clear local data
+                allCategories = emptyList()
+                currentSearchQuery = ""
+                
+                // Clean up repository resources
                 categoriesRepository.onCleanup()
             } catch (e: Exception) {
                 // Log but don't crash
+                WooLog.e(WooLog.T.PRODUCTS, "Error cleaning up CategoriesListViewModel: ${e.message}", e)
                 AnalyticsTracker.track(
                     AnalyticsEvent.CATEGORIES_CLEANUP_FAILED,
                     mapOf("error" to (e.message ?: "Unknown error"))

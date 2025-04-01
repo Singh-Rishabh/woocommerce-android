@@ -201,6 +201,10 @@ class ProductDetailFragment :
     override fun onDestroyView() {
         skeletonView.hide()
         imageUploadErrorsSnackbar?.dismiss()
+        
+        // Clean up toolbar helper references to prevent memory leaks
+        toolbarHelper.onDestroyView()
+        
         super.onDestroyView()
         _binding = null
     }

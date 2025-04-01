@@ -60,6 +60,15 @@ class ProductDetailsToolbarHelper @Inject constructor(
         menu = null
     }
 
+    /**
+     * Cleans up references when the fragment's view is destroyed to prevent memory leaks
+     */
+    fun onDestroyView() {
+        // Clear binding reference when view is destroyed but fragment still exists
+        binding = null
+        menu = null
+    }
+
     fun setupToolbar() {
         val toolbar = binding?.productDetailToolbar ?: return
 

@@ -30,6 +30,14 @@ class CategoriesListAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * Clears all category data to prevent memory leaks
+     */
+    fun cleanup() {
+        categories = emptyList()
+        notifyDataSetChanged()
+    }
+
     inner class CategoryViewHolder(private val binding: ItemCategoryBinding) : 
         RecyclerView.ViewHolder(binding.root) {
         

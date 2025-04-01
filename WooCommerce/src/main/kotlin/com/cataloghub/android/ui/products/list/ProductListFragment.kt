@@ -263,12 +263,19 @@ class ProductListFragment :
 
     override fun onDestroyView() {
         skeletonView.hide()
+        _productAdapter?.cleanup()
         _productAdapter = null
         actionMode = null
         tracker = null
         binding.productsSearchTabView.hide()
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDestroy() {
+        // Explicitly call cleanup on TabletLayoutSetupHelper to prevent memory leaks
+        tabletLayoutSetupHelper.cleanup()
+        super.onDestroy()
     }
 
     override fun onResume() {
