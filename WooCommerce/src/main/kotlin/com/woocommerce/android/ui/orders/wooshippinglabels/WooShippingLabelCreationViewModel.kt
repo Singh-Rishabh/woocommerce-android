@@ -9,7 +9,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.extensions.combine
-import com.woocommerce.android.extensions.formatToString
 import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
@@ -63,6 +62,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 import java.util.Date
 import javax.inject.Inject
 
@@ -404,18 +404,16 @@ class WooShippingLabelCreationViewModel @Inject constructor(
 
             shippableItems.value = items
 
-            val shippableItemsUI = items.map { item -> item.toUIModel(currencyFormatter, storeOptions) }
-            val formattedTotalPrice = getTotalPrice(items)
-            val formattedTotalWeight = getTotalWeight(items, storeOptions)
+            val shippingLineSummary = order.getShippingLinesSummary(currencyFormatter)
+            val shippableItemsUI = items.toUIModel(
+                currencyFormatter,
+                storeOptions.dimensionUnit,
+                storeOptions.weightUnit
 
-            val shippingLineSummary = getShippingLinesSummary(order)
+            )
 
             return@combine WooShippingViewState.DataState(
-                shippableItems = ShippableItemsUI(
-                    shippableItems = shippableItemsUI,
-                    formattedTotalWeight = formattedTotalWeight,
-                    formattedTotalPrice = formattedTotalPrice
-                ),
+                shippableItems = shippableItemsUI,
                 shippingLines = shippingLineSummary,
                 shippingAddresses = addresses,
                 shippingRates = shippingRates,
@@ -484,26 +482,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         return true
     }
 
-    private fun getTotalPrice(items: List<ShippableItemModel>): String {
-        val totalPrice = items.sumOf { it.price }
-        val formattedTotalPrice = items.firstOrNull()?.currency?.let {
-            currencyFormatter.formatCurrency(totalPrice, it)
-        } ?: currencyFormatter.formatCurrency(totalPrice)
-        return formattedTotalPrice
-    }
-
-    private fun getTotalWeight(items: List<ShippableItemModel>, storeOptions: StoreOptionsModel): String {
-        val totalWeight = items.sumByFloat { it.weight * it.quantity }
-        return "${totalWeight.formatToString()} ${storeOptions.weightUnit}"
-    }
-
-    private fun getShippingLinesSummary(order: Order): List<ShippingLineSummaryUI> {
-        return order.shippingLines.map {
-            ShippingLineSummaryUI(
-                title = it.methodTitle,
-                amount = currencyFormatter.formatCurrency(it.total, order.currency)
-            )
-        }
+    fun onDismissItnNotice() {
+        customsState.value = Unavailable
     }
 
     fun onSelectPackageClicked() {
@@ -583,7 +563,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onSplitShipment() {
-        triggerEvent(StartSplitShipment)
+        val currentStoreOptions = storeOptions.value
+        val currentShippableItems = shippableItems.value
+        if (currentStoreOptions != null && currentShippableItems.isNotEmpty()) {
+            triggerEvent(
+                StartSplitShipment(
+                    SplitShipmentArgs(
+                        orderId = navArgs.orderId,
+                        storeOptions = currentStoreOptions,
+                        shipments = mapOf(0 to currentShippableItems)
+                    )
+                )
+            )
+        }
     }
 
     private fun sortShippingRates(
@@ -685,7 +677,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val totalShippingValue = map { it.shippingTotalValue }
             .takeIf { it.isNotEmpty() }
             ?.reduce { acc, current -> acc + current }
-            ?: 0f
+            ?: BigDecimal.ZERO
 
         val destinationCountryCode = shippingAddresses.value
             ?.shipTo?.address?.country?.code.orEmpty()
@@ -701,7 +693,14 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId: Long
     ) : Event()
 
-    data object StartSplitShipment : Event()
+    data class StartSplitShipment(val shipmentArgs: SplitShipmentArgs) : Event()
+
+    @Parcelize
+    data class SplitShipmentArgs(
+        val orderId: Long,
+        val shipments: Map<Int, List<ShippableItemModel>>,
+        val storeOptions: StoreOptionsModel
+    ) : Parcelable
 
     data class StartCustomsFormEdit(
         val shippableItems: List<ShippableItemModel>,
