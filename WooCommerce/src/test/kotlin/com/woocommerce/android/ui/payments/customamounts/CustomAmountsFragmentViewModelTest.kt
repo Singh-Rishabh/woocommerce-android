@@ -13,8 +13,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import org.wordpress.android.fluxc.model.SiteModel
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import kotlin.test.assertFalse
@@ -296,6 +299,31 @@ class CustomAmountsFragmentViewModelTest : BaseUnitTest() {
         viewModel.getCurrencySymbol("USD")
 
         verify(currencySymbolFinder).findCurrencySymbol("USD")
+    }
+
+    @Test
+    fun `when currency code is null, then return site currency symbol`() {
+        viewModel = CustomAmountsViewModel(
+            CustomAmountsFragmentArgs(
+                customAmountUIModel = CustomAmountUIModel(
+                    id = 0L,
+                    amount = BigDecimal.TEN,
+                    name = "",
+                    type = PERCENTAGE_CUSTOM_AMOUNT
+                ),
+                orderTotal = null
+            ).toSavedStateHandle(),
+            tracker,
+            currencySymbolFinder,
+            store,
+            selectedSite
+        )
+        val siteModel = SiteModel()
+        whenever(selectedSite.get()).thenReturn(siteModel)
+
+        viewModel.getCurrencySymbol(null)
+
+        verify(store).getSiteSettings(siteModel)
     }
     //endregion
 }
