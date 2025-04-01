@@ -210,18 +210,30 @@ class WooPosItemsViewModel @Inject constructor(
                             result.productsResult.isSuccess -> {
                                 val products = result.productsResult.getOrThrow()
                                 if (products.isNotEmpty()) {
-                                    products.toContentState(
-                                        paginationState = if (loadMoreProductsJob?.isActive == true) {
-                                            PaginationState.Loading
-                                        } else {
-                                            PaginationState.None
-                                        }
-                                    )
+                                    val currentState = _viewState.value
+                                    if (currentState is WooPosItemsViewState.Content) {
+                                        currentState.copy(
+                                            items = products.map { it.toItemSelectionViewState() },
+                                            paginationState = if (loadMoreProductsJob?.isActive == true) {
+                                                PaginationState.Loading
+                                            } else {
+                                                PaginationState.None
+                                            },
+                                            reloadingWithPullToRefresh = false
+                                        )
+                                    } else {
+                                        products.toContentState(
+                                            paginationState = if (loadMoreProductsJob?.isActive == true) {
+                                                PaginationState.Loading
+                                            } else {
+                                                PaginationState.None
+                                            }
+                                        )
+                                    }
                                 } else {
                                     WooPosItemsViewState.Empty()
                                 }
                             }
-
                             else -> WooPosItemsViewState.Error()
                         }
                     }
@@ -229,6 +241,7 @@ class WooPosItemsViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
@@ -241,25 +254,7 @@ class WooPosItemsViewModel @Inject constructor(
     private suspend fun List<Product>.toContentState(
         paginationState: PaginationState = PaginationState.None
     ) = WooPosItemsViewState.Content(
-        items = map { product ->
-            if (product.isVariable()) {
-                WooPosItemSelectionViewState.Product.Variable(
-                    id = product.remoteId,
-                    name = product.name,
-                    price = priceFormat(product.price),
-                    imageUrl = product.firstImageUrl,
-                    numOfVariations = product.numVariations,
-                    variationIds = product.variationIds
-                )
-            } else {
-                WooPosItemSelectionViewState.Product.Simple(
-                    id = product.remoteId,
-                    name = product.name,
-                    price = priceFormat(product.price),
-                    imageUrl = product.firstImageUrl,
-                )
-            }
-        },
+        items = map { it.toItemSelectionViewState() },
         paginationState = paginationState,
         reloadingWithPullToRefresh = false,
         couponsEnabled = isCouponsEnabled.invoke(),
@@ -271,6 +266,26 @@ class WooPosItemsViewModel @Inject constructor(
         ),
         search = searchHelper.getInitialSearchState(isProductsSearchEnabled())
     )
+
+    private suspend fun Product.toItemSelectionViewState(): WooPosItemSelectionViewState {
+        return if (this.isVariable()) {
+            WooPosItemSelectionViewState.Product.Variable(
+                id = this.remoteId,
+                name = this.name,
+                price = priceFormat(this.price),
+                imageUrl = this.firstImageUrl,
+                numOfVariations = this.numVariations,
+                variationIds = this.variationIds
+            )
+        } else {
+            WooPosItemSelectionViewState.Product.Simple(
+                id = this.remoteId,
+                name = this.name,
+                price = priceFormat(this.price),
+                imageUrl = this.firstImageUrl,
+            )
+        }
+    }
 
     private fun onEndOfProductsListReached() {
         val currentState = _viewState.value
