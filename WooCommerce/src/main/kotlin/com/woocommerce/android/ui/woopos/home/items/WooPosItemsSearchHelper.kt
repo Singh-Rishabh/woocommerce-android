@@ -96,6 +96,11 @@ class WooPosItemsSearchHelper @Inject constructor(
         updateToInitialOpenState()
     }
 
+    fun isSearchOpen(): Boolean {
+        val searchState = getCurrentSearchVisibleState() ?: return false
+        return searchState.state is WooPosSearchInputState.Open
+    }
+
     private fun updateToInitialOpenState() {
         val currentState = getCurrentContentState() ?: return
         updateSearchState(

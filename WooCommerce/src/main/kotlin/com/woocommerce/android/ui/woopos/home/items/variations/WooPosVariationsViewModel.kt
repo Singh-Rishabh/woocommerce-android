@@ -12,6 +12,7 @@ import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
+import com.woocommerce.android.ui.woopos.home.items.WooPosPullToRefreshState
 import com.woocommerce.android.ui.woopos.home.items.WooPosVariationsViewState
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Event.VariationsPullToRefreshTriggered
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
@@ -138,10 +139,18 @@ class WooPosVariationsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosVariationsViewState.Content -> state.copy(reloadingWithPullToRefresh = true)
-            is WooPosVariationsViewState.Loading -> state.copy(reloadingWithPullToRefresh = true)
-            is WooPosVariationsViewState.Error -> state.copy(reloadingWithPullToRefresh = true)
-            is WooPosVariationsViewState.Empty -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosVariationsViewState.Content -> state.copy(
+                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+            )
+            is WooPosVariationsViewState.Loading -> state.copy(
+                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+            )
+            is WooPosVariationsViewState.Error -> state.copy(
+                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+            )
+            is WooPosVariationsViewState.Empty -> state.copy(
+                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+            )
         }
 
     private fun loadMore(productId: Long, numOfVariations: Int) {

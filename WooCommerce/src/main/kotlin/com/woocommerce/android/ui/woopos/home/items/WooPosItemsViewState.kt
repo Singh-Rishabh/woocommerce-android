@@ -5,16 +5,18 @@ import androidx.annotation.StringRes
 import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
 
 sealed class WooPosItemsViewState(
-    override val reloadingWithPullToRefresh: Boolean,
-) : WooPosBaseViewState(reloadingWithPullToRefresh) {
+    override val pullToRefreshState: WooPosPullToRefreshState,
+) : WooPosBaseViewState(pullToRefreshState) {
     data class Content(
         val search: SearchState,
         override val items: List<WooPosItemSelectionViewState>,
         val bannerState: BannerState,
         override val paginationState: PaginationState = PaginationState.None,
-        override val reloadingWithPullToRefresh: Boolean = false,
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
+            isRefreshing = false
+        ),
         val couponsEnabled: Boolean = false,
-    ) : WooPosItemsViewState(reloadingWithPullToRefresh), ContentViewState {
+    ) : WooPosItemsViewState(pullToRefreshState), ContentViewState {
         data class BannerState(
             val isBannerHiddenByUser: Boolean,
             @StringRes val title: Int,
@@ -29,15 +31,20 @@ sealed class WooPosItemsViewState(
     }
 
     data class Loading(
-        override val reloadingWithPullToRefresh: Boolean = false,
-        val withCart: Boolean
-    ) : WooPosItemsViewState(reloadingWithPullToRefresh)
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
+            isRefreshing = false
+        ), val withCart: Boolean
+    ) : WooPosItemsViewState(pullToRefreshState)
 
     data class Error(
-        override val reloadingWithPullToRefresh: Boolean = false
-    ) : WooPosItemsViewState(reloadingWithPullToRefresh)
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
+            isRefreshing = false
+        ),
+    ) : WooPosItemsViewState(pullToRefreshState)
 
     data class Empty(
-        override val reloadingWithPullToRefresh: Boolean = false
-    ) : WooPosItemsViewState(reloadingWithPullToRefresh)
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
+            isRefreshing = false
+        ),
+    ) : WooPosItemsViewState(pullToRefreshState)
 }

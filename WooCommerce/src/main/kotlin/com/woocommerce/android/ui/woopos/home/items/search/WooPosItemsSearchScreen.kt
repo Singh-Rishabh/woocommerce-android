@@ -21,6 +21,7 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsEmptyList
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsLoadingIndicator
+import com.woocommerce.android.ui.woopos.home.items.WooPosPullToRefreshState
 
 @Composable
 fun WooPosItemsSearchScreen(
@@ -159,7 +160,7 @@ fun WooPosItemsSearchContentPreview() {
                             imageUrl = "https://example.com/image2.jpg",
                         ),
                     ),
-                    reloadingWithPullToRefresh = false,
+                    pullToRefreshState = WooPosPullToRefreshState.Enabled(false),
                     paginationState = PaginationState.None
                 ),
                 onUIEvent = {}

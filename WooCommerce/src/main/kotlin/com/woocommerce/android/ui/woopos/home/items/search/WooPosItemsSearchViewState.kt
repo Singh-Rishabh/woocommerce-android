@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.woopos.home.items.search
 import com.woocommerce.android.ui.woopos.home.items.ContentViewState
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
+import com.woocommerce.android.ui.woopos.home.items.WooPosPullToRefreshState
 
 sealed class WooPosItemsSearchViewState {
     data class EmptySearchQuery(
@@ -13,7 +14,9 @@ sealed class WooPosItemsSearchViewState {
     data class Content(
         val searchQuery: String,
         override val items: List<WooPosItemSelectionViewState>,
-        override val reloadingWithPullToRefresh: Boolean = false,
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
+            isRefreshing = false
+        ),
         override val paginationState: PaginationState = PaginationState.None,
     ) : WooPosItemsSearchViewState(), ContentViewState
 
