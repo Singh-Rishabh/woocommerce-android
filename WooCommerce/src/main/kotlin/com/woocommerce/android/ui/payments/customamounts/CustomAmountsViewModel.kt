@@ -7,13 +7,16 @@ import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_ADD_CUSTO
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.Order
+import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.orders.CustomAmountUIModel
+import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.viewmodel.LiveDataDelegate
 import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.parcelize.Parcelize
+import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
@@ -23,6 +26,9 @@ import kotlin.math.roundToInt
 class CustomAmountsViewModel @Inject constructor(
     savedState: SavedStateHandle,
     tracker: AnalyticsTrackerWrapper,
+    private val currencySymbolFinder: CurrencySymbolFinder,
+    private val store: WooCommerceStore,
+    private val selectedSite: SelectedSite,
 ) : ScopedViewModel(savedState) {
     /**
      * Saving more data than necessary into the SavedState has associated risks which were not known at the time this
@@ -105,6 +111,14 @@ class CustomAmountsViewModel @Inject constructor(
             tracker.track(ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED)
         }
         updateCustomAmountType()
+    }
+
+    fun getCurrencySymbol(currencyCode: String?): String? {
+        currencyCode?.let { code ->
+            return currencySymbolFinder.findCurrencySymbol(code)
+        } ?: run {
+            return store.getSiteSettings(selectedSite.get())?.currencyCode
+        }
     }
 
     private fun updateCustomAmountType() {
