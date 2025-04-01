@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.model.Product
 import com.woocommerce.android.ui.products.ProductType
-import com.woocommerce.android.ui.woopos.common.composeui.component.WooPosSearchInputState
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsCouponsEnabled
 import com.woocommerce.android.ui.woopos.featureflags.WooPosIsProductsSearchEnabled
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
@@ -20,21 +19,17 @@ import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsEvent.Eve
 import com.woocommerce.android.ui.woopos.util.analytics.WooPosAnalyticsTracker
 import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
-import com.woocommerce.android.viewmodel.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
-import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class WooPosItemsViewModel @Inject constructor(
@@ -44,12 +39,11 @@ class WooPosItemsViewModel @Inject constructor(
     private val preferencesRepository: WooPosPreferencesRepository,
     private val navigator: WooPosItemsNavigator,
     private val analyticsTracker: WooPosAnalyticsTracker,
-    private val resourceProvider: ResourceProvider,
+    private val searchHelper: WooPosItemsSearchHelper,
     private val isProductsSearchEnabled: WooPosIsProductsSearchEnabled,
     private val isCouponsEnabled: WooPosIsCouponsEnabled,
 ) : ViewModel() {
     private var loadMoreProductsJob: Job? = null
-    private var searchJob: Job? = null
 
     private val _viewState =
         MutableStateFlow<WooPosItemsViewState>(WooPosItemsViewState.Loading(withCart = true))
@@ -62,6 +56,11 @@ class WooPosItemsViewModel @Inject constructor(
         )
 
     init {
+        searchHelper.initialize(
+            coroutineScope = viewModelScope,
+            viewStateFlow = _viewState
+        )
+
         loadProducts(
             forceRefreshProducts = false,
             withPullToRefresh = false,
@@ -112,10 +111,10 @@ class WooPosItemsViewModel @Inject constructor(
                 navigateBackToItemListScreen()
             }
 
-            WooPosItemsUIEvent.ClearSearchClicked -> onClearSearchClicked()
-            WooPosItemsUIEvent.CloseSearchClicked -> onCloseSearchClicked()
-            is WooPosItemsUIEvent.SearchChanged -> onSearchChanged(event.query)
-            WooPosItemsUIEvent.SearchAnimationCompleted -> onSearchAnimationCompleted()
+            WooPosItemsUIEvent.ClearSearchClicked -> searchHelper.onClearSearchClicked()
+            WooPosItemsUIEvent.CloseSearchClicked -> searchHelper.onCloseSearchClicked()
+            is WooPosItemsUIEvent.SearchChanged -> searchHelper.onSearchChanged(event.query)
+
             WooPosItemsUIEvent.CouponsButtonClicked -> {
                 sendEventToParent(
                     ChildToParentEvent.ItemClickedInProductSelector(
@@ -125,122 +124,6 @@ class WooPosItemsViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    private fun onSearchAnimationCompleted() {
-        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
-        val currentSearch = currentState.search
-
-        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
-            val searchState = currentSearch.state
-            if (searchState is WooPosSearchInputState.Open &&
-                searchState.animationState == WooPosSearchInputState.Open.AnimationState.InProgress
-            ) {
-                _viewState.value = currentState.copy(
-                    search = WooPosItemsViewState.Content.SearchState.Visible(
-                        state = searchState.copy(
-                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                        )
-                    )
-                )
-            }
-        }
-    }
-
-    private fun onSearchChanged(newQuery: String) {
-        searchJob?.cancel()
-
-        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
-
-        if (newQuery.isEmpty()) {
-            _viewState.value = currentState.copy(
-                search = WooPosItemsViewState.Content.SearchState.Visible(
-                    state = WooPosSearchInputState.Open(
-                        input = WooPosSearchInputState.Open.Input.Hint(
-                            resourceProvider.getString(R.string.woopos_search_products)
-                        ),
-                        isLoading = false,
-                        animationState = WooPosSearchInputState.Open.AnimationState.InProgress
-                    )
-                )
-            )
-            return
-        }
-
-        _viewState.value = currentState.copy(
-            search = WooPosItemsViewState.Content.SearchState.Visible(
-                state = WooPosSearchInputState.Open(
-                    input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                    isLoading = false,
-                    animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                )
-            )
-        )
-
-        @Suppress("MagicNumber")
-        searchJob = viewModelScope.launch {
-            try {
-                delay(500)
-
-                _viewState.value = currentState.copy(
-                    search = WooPosItemsViewState.Content.SearchState.Visible(
-                        state = WooPosSearchInputState.Open(
-                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                            isLoading = true,
-                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                        )
-                    )
-                )
-
-                delay(2000)
-
-                if (!isActive) return@launch
-                _viewState.value = currentState.copy(
-                    search = WooPosItemsViewState.Content.SearchState.Visible(
-                        state = WooPosSearchInputState.Open(
-                            input = WooPosSearchInputState.Open.Input.Query(newQuery),
-                            isLoading = false,
-                            animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                        )
-                    )
-                )
-            } catch (_: CancellationException) {
-            }
-        }
-    }
-
-    private fun onCloseSearchClicked() {
-        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
-        _viewState.value = currentState.copy(
-            search = WooPosItemsViewState.Content.SearchState.Visible(
-                state = WooPosSearchInputState.Closed
-            )
-        )
-    }
-
-    private fun onClearSearchClicked() {
-        val currentState = _viewState.value as? WooPosItemsViewState.Content ?: return
-        val currentSearch = currentState.search
-        if (currentSearch is WooPosItemsViewState.Content.SearchState.Visible) {
-            val currentInput = currentSearch.state
-            if (currentInput is WooPosSearchInputState.Open &&
-                currentInput.input is WooPosSearchInputState.Open.Input.Hint
-            ) {
-                return
-            }
-        }
-
-        _viewState.value = currentState.copy(
-            search = WooPosItemsViewState.Content.SearchState.Visible(
-                state = WooPosSearchInputState.Open(
-                    input = WooPosSearchInputState.Open.Input.Hint(
-                        resourceProvider.getString(R.string.woopos_search_products)
-                    ),
-                    isLoading = false,
-                    animationState = WooPosSearchInputState.Open.AnimationState.Complete
-                )
-            )
-        )
     }
 
     private fun navigateBackToItemListScreen() {
@@ -253,15 +136,15 @@ class WooPosItemsViewModel @Inject constructor(
 
     private fun handleItemClick(event: WooPosItemsUIEvent.ItemClicked) {
         when (event.item) {
-            is WooPosItem.Product.Simple -> {
+            is WooPosItemSelectionViewState.Product.Simple -> {
                 onItemClicked(
-                    ItemClickedData.SimpleProduct(
+                    ItemClickedData.Product.Simple(
                         id = event.item.id
                     )
                 )
             }
 
-            is WooPosItem.Product.Variable -> {
+            is WooPosItemSelectionViewState.Product.Variable -> {
                 viewModelScope.launch {
                     navigator.sendNavigationEvent(
                         NavigateToVariationsScreen(
@@ -275,7 +158,7 @@ class WooPosItemsViewModel @Inject constructor(
                 }
             }
 
-            is WooPosItem.Variation -> {
+            is WooPosItemSelectionViewState.Variation -> {
             }
         }
     }
@@ -349,10 +232,10 @@ class WooPosItemsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosItemsViewState.Content -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosItemsViewState.Loading -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosItemsViewState.Error -> state.copy(reloadingProductsWithPullToRefresh = true)
-            is WooPosItemsViewState.Empty -> state.copy(reloadingProductsWithPullToRefresh = true)
+            is WooPosItemsViewState.Content -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosItemsViewState.Loading -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosItemsViewState.Error -> state.copy(reloadingWithPullToRefresh = true)
+            is WooPosItemsViewState.Empty -> state.copy(reloadingWithPullToRefresh = true)
         }
 
     private suspend fun List<Product>.toContentState(
@@ -360,7 +243,7 @@ class WooPosItemsViewModel @Inject constructor(
     ) = WooPosItemsViewState.Content(
         items = map { product ->
             if (product.isVariable()) {
-                WooPosItem.Product.Variable(
+                WooPosItemSelectionViewState.Product.Variable(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),
@@ -369,7 +252,7 @@ class WooPosItemsViewModel @Inject constructor(
                     variationIds = product.variationIds
                 )
             } else {
-                WooPosItem.Product.Simple(
+                WooPosItemSelectionViewState.Product.Simple(
                     id = product.remoteId,
                     name = product.name,
                     price = priceFormat(product.price),
@@ -378,7 +261,7 @@ class WooPosItemsViewModel @Inject constructor(
             }
         },
         paginationState = paginationState,
-        reloadingProductsWithPullToRefresh = false,
+        reloadingWithPullToRefresh = false,
         couponsEnabled = isCouponsEnabled.invoke(),
         bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),
@@ -386,13 +269,7 @@ class WooPosItemsViewModel @Inject constructor(
             message = R.string.woopos_banner_simple_products_only_message,
             icon = R.drawable.info,
         ),
-        search = when (isProductsSearchEnabled()) {
-            true -> WooPosItemsViewState.Content.SearchState.Visible(
-                state = WooPosSearchInputState.Closed
-            )
-
-            false -> WooPosItemsViewState.Content.SearchState.Hidden
-        }
+        search = searchHelper.getInitialSearchState(isProductsSearchEnabled())
     )
 
     private fun onEndOfProductsListReached() {
@@ -455,8 +332,16 @@ class WooPosItemsViewModel @Inject constructor(
 
     @Parcelize
     sealed class ItemClickedData(open val id: Long) : Parcelable {
-        data class SimpleProduct(override val id: Long) : ItemClickedData(id)
-        data class Variation(val productId: Long, override val id: Long) : ItemClickedData(id)
-        data class Coupon(override val id: Long, val couponCode: String) : ItemClickedData(id)
+        @Parcelize
+        sealed class Product(override val id: Long) : ItemClickedData(id), Parcelable {
+            @Parcelize
+            data class Simple(override val id: Long) : Product(id), Parcelable
+
+            @Parcelize
+            data class Variation(val productId: Long, override val id: Long) : Product(id), Parcelable
+        }
+
+        @Parcelize
+        data class Coupon(override val id: Long, val couponCode: String) : ItemClickedData(id), Parcelable
     }
 }

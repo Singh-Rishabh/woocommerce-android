@@ -68,11 +68,14 @@ import com.woocommerce.android.R
 import com.woocommerce.android.ui.compose.component.WCColoredButton
 import com.woocommerce.android.ui.compose.modifiers.dashedBorder
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.ActionSnackbar
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Declared
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
@@ -80,6 +83,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelect
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatSelectionCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.ErrorMessageWithButton
@@ -106,6 +110,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 shippingRatesState = viewState.shippingRates,
                 packageSelectionState = viewState.packageSelection,
                 customsState = viewState.customsState,
+                hazmatState = viewState.hazmatState,
                 onShippingFromAddressChange = viewModel::onShippingFromAddressChange,
                 onEditOriginAddress = viewModel::onEditOriginAddress,
                 onSelectedRateSortOrderChanged = viewModel::onSelectedRateSortOrderChanged,
@@ -124,6 +129,7 @@ fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel)
                 destinationStatus = viewState.destinationStatus,
                 actionSnackbar = viewModel.actionSnackbar,
                 onSplitShipment = viewModel::onSplitShipment,
+                onHazmatNoticeClick = viewModel::onHazmatNoticeClick,
             )
         }
 
@@ -146,6 +152,7 @@ fun WooShippingLabelCreationScreen(
     packageSelectionState: PackageSelectionState,
     shippingAddresses: WooShippingAddresses,
     customsState: CustomsState,
+    hazmatState: HazmatState,
     onShippingFromAddressChange: (OriginShippingAddress) -> Unit,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
     onSelectPackageClick: () -> Unit,
@@ -166,7 +173,8 @@ fun WooShippingLabelCreationScreen(
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null,
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val shipmentDetailsValue = if (uiState.isShipmentDetailsExpanded) {
         BottomSheetValue.Expanded
@@ -212,6 +220,7 @@ fun WooShippingLabelCreationScreen(
             shippingLines = shippingLines,
             shippingAddresses = shippingAddresses,
             customsState = customsState,
+            hazmatState = hazmatState,
             shippingRatesState = shippingRatesState,
             packageSelectionState = packageSelectionState,
             onShippingFromAddressChange = onShippingFromAddressChange,
@@ -230,7 +239,8 @@ fun WooShippingLabelCreationScreen(
             onEditDestinationAddress = onEditDestinationAddress,
             destinationStatus = destinationStatus,
             actionSnackbar = actionSnackbar,
-            onSplitShipment = onSplitShipment
+            onSplitShipment = onSplitShipment,
+            onHazmatNoticeClick = onHazmatNoticeClick
         )
         val isDarkTheme = isSystemInDarkTheme()
         val isCollapsed = scaffoldState.bottomSheetState.isCollapsed
@@ -289,6 +299,7 @@ private fun LabelCreationScreenWithBottomSheet(
     shippingRatesState: WooShippingLabelCreationViewModel.ShippingRatesState,
     packageSelectionState: PackageSelectionState,
     customsState: CustomsState,
+    hazmatState: HazmatState,
     onSelectPackageClick: () -> Unit,
     shippingAddresses: WooShippingAddresses,
     onEditOriginAddress: (OriginShippingAddress) -> Unit,
@@ -309,7 +320,8 @@ private fun LabelCreationScreenWithBottomSheet(
     destinationStatus: AddressStatus,
     modifier: Modifier = Modifier,
     actionSnackbar: ActionSnackbar? = null,
-    onSplitShipment: () -> Unit = {}
+    onSplitShipment: () -> Unit = {},
+    onHazmatNoticeClick: () -> Unit = {}
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -418,6 +430,10 @@ private fun LabelCreationScreenWithBottomSheet(
                     onExpand = { isExpanded.value = it }
                 )
                 HazmatCard(
+                    onClick = onHazmatNoticeClick,
+                    selectedCategory = hazmatState
+                        .run { this as? Declared }
+                        ?.hazmatCategory,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 4.dp, end = 8.dp)
@@ -481,6 +497,7 @@ private fun TopBar(onNavigateBack: () -> Unit) = TopAppBar(
 @Composable
 internal fun HazmatCard(
     modifier: Modifier = Modifier,
+    selectedCategory: ShippingLabelHazmatCategory? = null,
     onClick: () -> Unit = {}
 ) {
     Row(modifier = modifier.clickable { onClick() }) {
@@ -495,7 +512,7 @@ internal fun HazmatCard(
         )
 
         Text(
-            text = stringResource(R.string.no),
+            text = if (selectedCategory == null) stringResource(R.string.no) else stringResource(R.string.yes),
             style = MaterialTheme.typography.subtitle1,
             color = colorResource(id = R.color.color_on_surface_medium),
             modifier = Modifier
@@ -511,6 +528,13 @@ internal fun HazmatCard(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(end = dimensionResource(R.dimen.minor_50))
+        )
+    }
+
+    if (selectedCategory != null) {
+        HazmatSelectionCard(
+            selectedCategory = selectedCategory,
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.major_100))
         )
     }
 }
@@ -858,6 +882,7 @@ private fun WooShippingLabelCreationScreenPreview() {
             shippingRatesState = WooShippingLabelCreationViewModel.ShippingRatesState.NoAvailable,
             packageSelectionState = NotSelected,
             customsState = Unavailable,
+            hazmatState = Declared(ShippingLabelHazmatCategory.CLASS_1),
             onShippingFromAddressChange = {},
             onRefreshShippingRates = {},
             onSelectedRateSortOrderChanged = {},
