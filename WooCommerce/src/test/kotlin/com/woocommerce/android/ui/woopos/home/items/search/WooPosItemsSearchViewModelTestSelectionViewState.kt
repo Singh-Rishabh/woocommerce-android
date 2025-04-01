@@ -44,7 +44,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
     private val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
     private val mockPriceFormat: WooPosFormatPrice = mock()
-    private val mockDataSource: WooPosSearchProductsMockedDataSource = mock()
+    private val mockDataSource: WooPosSearchProductsDataSource = mock()
     private val mockChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val mockParentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock()
     private val mockNavigator: WooPosItemsNavigator = mock()
@@ -431,7 +431,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
         whenever(mockDataSource.searchProducts(query1)).thenReturn(
             flowOf(
-                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                WooPosSearchProductsDataSource.ProductsResult.Remote(
                     Result.success(emptyList())
                 )
             )
@@ -439,7 +439,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
         whenever(mockDataSource.searchProducts(query2)).thenReturn(
             flowOf(
-                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                WooPosSearchProductsDataSource.ProductsResult.Remote(
                     Result.success(products)
                 )
             )
@@ -487,10 +487,10 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
         whenever(mockDataSource.searchProducts(query)).thenReturn(
             flow {
-                emit(WooPosSearchProductsMockedDataSource.ProductsResult.Cached(emptyList()))
+                emit(WooPosSearchProductsDataSource.ProductsResult.Cached(emptyList()))
                 delay(100)
-                emit(WooPosSearchProductsMockedDataSource.ProductsResult.Remote(Result.success(products)))
-            }.flowOn(UnconfinedTestDispatcher(testScheduler))
+                emit(WooPosSearchProductsDataSource.ProductsResult.Remote(Result.success(products)))
+            }.flowOn(UnconfinedTestDispatcher())
         )
 
         whenever(mockPriceFormat(BigDecimal("10.0"))).thenReturn("$10.0")
@@ -532,7 +532,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
             whenever(mockDataSource.searchProducts(query)).thenReturn(
                 flowOf(
-                    WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                    WooPosSearchProductsDataSource.ProductsResult.Remote(
                         Result.success(products)
                     )
                 )
@@ -578,17 +578,17 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         var searchAttempt = 0
         whenever(mockDataSource.searchProducts(query)).thenAnswer {
             if (searchAttempt++ == 0) {
-                flowOf(
-                    WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                flow {
+                    emit(WooPosSearchProductsDataSource.ProductsResult.Remote(
                         Result.failure(Exception("Search failed"))
-                    )
-                )
+                    ))
+                }.flowOn(UnconfinedTestDispatcher())
             } else {
-                flowOf(
-                    WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
+                flow {
+                    emit(WooPosSearchProductsDataSource.ProductsResult.Remote(
                         Result.success(products)
-                    )
-                )
+                    ))
+                }.flowOn(UnconfinedTestDispatcher())
             }
         }
 
@@ -683,11 +683,14 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
     private fun mockSuccessfulSearch(query: String, products: List<com.woocommerce.android.model.Product>) {
         whenever(mockDataSource.searchProducts(query)).thenReturn(
-            flowOf(
-                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
-                    Result.success(products)
+            flow {
+                emit(WooPosSearchProductsDataSource.ProductsResult.Cached(emptyList()))
+                emit(
+                    WooPosSearchProductsDataSource.ProductsResult.Remote(
+                        Result.success(products)
+                    )
                 )
-            )
+            }.flowOn(UnconfinedTestDispatcher())
         )
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
             flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
@@ -696,28 +699,32 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
 
     private fun mockFailedSearch(query: String, error: Exception) {
         whenever(mockDataSource.searchProducts(query)).thenReturn(
-            flowOf(
-                WooPosSearchProductsMockedDataSource.ProductsResult.Remote(
-                    Result.failure(error)
+            flow {
+                emit(WooPosSearchProductsDataSource.ProductsResult.Cached(emptyList()))
+                emit(
+                    WooPosSearchProductsDataSource.ProductsResult.Remote(
+                        Result.failure(error)
+                    )
                 )
-            )
+            }.flowOn(UnconfinedTestDispatcher())
         )
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
             flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
         )
     }
 
-    private fun mockSuccessfulPagination(
-        query: String,
-        products: List<com.woocommerce.android.model.Product>
-    ) = runTest {
+    private suspend fun mockSuccessfulPagination(query: String, products: List<com.woocommerce.android.model.Product>) {
         whenever(mockDataSource.hasMorePages).thenReturn(true)
-        whenever(mockDataSource.loadMore(query)).thenReturn(Result.success(products))
+        whenever(mockDataSource.loadMore(query)).thenReturn(
+            Result.success(products)
+        )
     }
 
-    private fun mockFailedPagination(query: String, error: Exception) = runTest {
+    private suspend fun mockFailedPagination(query: String, error: Exception) {
         whenever(mockDataSource.hasMorePages).thenReturn(true)
-        whenever(mockDataSource.loadMore(query)).thenReturn(Result.failure(error))
+        whenever(mockDataSource.loadMore(query)).thenReturn(
+            Result.failure(error)
+        )
     }
 
     private fun mockCachedThenRemoteSearch(
@@ -727,9 +734,8 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
     ) {
         whenever(mockDataSource.searchProducts(query)).thenReturn(
             flow {
-                emit(WooPosSearchProductsMockedDataSource.ProductsResult.Cached(listOf(cachedProduct)))
-                delay(1)
-                emit(WooPosSearchProductsMockedDataSource.ProductsResult.Remote(Result.success(listOf(remoteProduct))))
+                emit(WooPosSearchProductsDataSource.ProductsResult.Cached(listOf(cachedProduct)))
+                emit(WooPosSearchProductsDataSource.ProductsResult.Remote(Result.success(listOf(remoteProduct))))
             }.flowOn(coroutinesTestRule.testDispatcher)
         )
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
