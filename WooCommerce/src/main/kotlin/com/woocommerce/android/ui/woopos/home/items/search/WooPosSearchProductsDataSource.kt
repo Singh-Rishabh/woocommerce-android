@@ -22,10 +22,15 @@ class WooPosSearchProductsDataSource @Inject constructor(
 ) {
     companion object {
         private const val PAGE_SIZE = 20
+        private const val MAX_CACHE_SIZE = 1000
     }
 
     private val canLoadMore = AtomicBoolean(true)
-    private val filteredProductCache: MutableMap<String, List<Product>> = mutableMapOf()
+    private val filteredProductCache = object : LinkedHashMap<String, List<Product>>(16, 0.75f, true) {
+        override fun removeEldestEntry(eldest: Map.Entry<String, List<Product>>): Boolean {
+            return size > MAX_CACHE_SIZE
+        }
+    }
 
     val hasMorePages: Boolean
         get() = canLoadMore.get()
