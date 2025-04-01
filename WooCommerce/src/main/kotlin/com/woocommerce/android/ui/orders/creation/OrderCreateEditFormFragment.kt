@@ -51,6 +51,7 @@ import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.barcodescanner.BarcodeScanningFragment
 import com.woocommerce.android.ui.base.BaseFragment
 import com.woocommerce.android.ui.base.UIMessageResolver
+import com.woocommerce.android.ui.common.CurrencyCode
 import com.woocommerce.android.ui.compose.component.FeedbackDialog
 import com.woocommerce.android.ui.compose.theme.WooTheme
 import com.woocommerce.android.ui.compose.theme.WooThemeWithBackground
@@ -729,12 +730,13 @@ class OrderCreateEditFormFragment :
         if (viewModel.orderContainsProductsOrCustomAmounts()) {
             displayCustomAmountTypeBottomSheet()
         } else {
+            val currencyCode = viewModel.currencyCodeLiveData.value?.value?.let { CurrencyCode(it) }
             OrderCreateEditNavigator.navigate(
                 this,
                 OrderCreateEditNavigationTarget.CustomAmountDialog(
                     customAmountUIModel.copy(
                         type = FIXED_CUSTOM_AMOUNT,
-                        currency = viewModel.orderDraft.value?.currency
+                        currencyCode = currencyCode
                     ),
                     orderTotal
                 )
@@ -1218,15 +1220,16 @@ class OrderCreateEditFormFragment :
     }
 
     private fun handleCustomAmountSelection(event: OnCustomAmountTypeSelected) {
+        val currencyCode = viewModel.currencyCodeLiveData.value?.value?.let { CurrencyCode(it) }
         OrderCreateEditNavigator.navigate(
             this,
             OrderCreateEditNavigationTarget.CustomAmountDialog(
                 customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
                     type = event.type,
-                    currency = viewModel.orderDraft.value?.currency
+                    currencyCode = currencyCode
                 ) ?: CustomAmountUIModel.EMPTY.copy(
                     type = event.type,
-                    currency = viewModel.orderDraft.value?.currency
+                    currencyCode = currencyCode
                 ),
                 orderTotal = viewModel.orderDraft.value?.total.toString(),
             )

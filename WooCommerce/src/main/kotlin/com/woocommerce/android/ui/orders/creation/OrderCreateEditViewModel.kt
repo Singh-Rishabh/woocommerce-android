@@ -91,6 +91,7 @@ import com.woocommerce.android.model.Order.ShippingLine
 import com.woocommerce.android.model.WooPlugin
 import com.woocommerce.android.tracker.OrderDurationRecorder
 import com.woocommerce.android.ui.barcodescanner.BarcodeScanningTracker
+import com.woocommerce.android.ui.common.CurrencyCode
 import com.woocommerce.android.ui.feedback.FeedbackRepository
 import com.woocommerce.android.ui.orders.CustomAmountUIModel
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.ViewOrderStatusSelector
@@ -315,6 +316,9 @@ class OrderCreateEditViewModel @Inject constructor(
 
     val selectedItems: StateFlow<List<SelectedItem>> =
         _orderDraft.map { order -> order.selectedItems() }.toStateFlow(emptyList())
+
+    val currencyCodeLiveData: LiveData<CurrencyCode?> =
+        _orderDraft.map { CurrencyCode(it.currency) }.asLiveData()
 
     fun Order.selectedItems(): List<SelectedItem> = items.map { item ->
         if (item.isVariation) {

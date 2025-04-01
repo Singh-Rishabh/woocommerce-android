@@ -69,9 +69,6 @@ class CustomAmountsFragment : BaseFragment(R.layout.dialog_custom_amounts) {
     ) {
         when (arguments.customAmountUIModel.type) {
             FIXED_CUSTOM_AMOUNT -> {
-                binding.editPrice.orderCurrency = viewModel.getCurrencySymbol(
-                    arguments.customAmountUIModel.currency,
-                )
                 if (!isLandscape && binding.editPrice.editText.requestFocus()) {
                     binding.editPrice.postDelayed(
                         {
@@ -211,6 +208,12 @@ class CustomAmountsFragment : BaseFragment(R.layout.dialog_custom_amounts) {
     private fun setupObservers(binding: DialogCustomAmountsBinding) {
         observePercentageView(binding)
         observeCustomAmountNameView(binding)
+
+        if (arguments.customAmountUIModel.type == FIXED_CUSTOM_AMOUNT) {
+            viewModel.currencySymbolLiveData.observe(viewLifecycleOwner) { symbol ->
+                binding.editPrice.orderCurrency = symbol?.value
+            }
+        }
 
         viewModel.viewStateLiveData.observe(viewLifecycleOwner) { old, new ->
             new.isDoneButtonEnabled.takeIfNotEqualTo(old?.isDoneButtonEnabled) { isEnabled ->

@@ -1,13 +1,16 @@
 package com.woocommerce.android.ui.payments.customamounts
 
 import android.os.Parcelable
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.liveData
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_ADD_CUSTOM_AMOUNT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.tools.SelectedSite
+import com.woocommerce.android.ui.common.CurrencySymbol
 import com.woocommerce.android.ui.orders.CustomAmountUIModel
 import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.viewmodel.LiveDataDelegate
@@ -100,6 +103,14 @@ class CustomAmountsViewModel @Inject constructor(
             )
         }
 
+    val currencySymbolLiveData: LiveData<CurrencySymbol?> = liveData {
+        val code = args.customAmountUIModel.currencyCode?.value
+            ?: store.getSiteSettings(selectedSite.get())?.currencyCode
+
+        val symbol = code?.let { currencySymbolFinder.findCurrencySymbol(it) }
+        emit(symbol?.let { CurrencySymbol(it) })
+    }
+
     private val args: CustomAmountsFragmentArgs by savedState.navArgs()
 
     init {
@@ -111,14 +122,6 @@ class CustomAmountsViewModel @Inject constructor(
             tracker.track(ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED)
         }
         updateCustomAmountType()
-    }
-
-    fun getCurrencySymbol(currencyCode: String?): String? {
-        val code = currencyCode
-            ?: store.getSiteSettings(selectedSite.get())?.currencyCode
-            ?: return null
-
-        return currencySymbolFinder.findCurrencySymbol(code)
     }
 
     private fun updateCustomAmountType() {
