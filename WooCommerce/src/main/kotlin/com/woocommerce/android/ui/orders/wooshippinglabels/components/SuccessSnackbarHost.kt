@@ -54,7 +54,7 @@ private fun SuccessSnackbar(
         modifier = Modifier.padding(12.dp)
     ) {
         Row(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
