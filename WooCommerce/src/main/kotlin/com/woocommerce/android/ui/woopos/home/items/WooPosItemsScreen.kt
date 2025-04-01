@@ -129,7 +129,7 @@ private fun MainItemsList(
 ) {
     val pullToRefreshState = rememberPullRefreshState(
         refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Enabled(true),
-        onRefresh = { onPullToRefreshTriggered },
+        onRefresh = onPullToRefreshTriggered,
     )
 
     Box(
