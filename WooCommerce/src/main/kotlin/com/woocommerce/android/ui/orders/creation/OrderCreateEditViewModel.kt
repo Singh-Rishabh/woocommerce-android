@@ -332,9 +332,11 @@ class OrderCreateEditViewModel @Inject constructor(
     val pendingSelectedItems: StateFlow<List<SelectedItem>> = _pendingSelectedItems
 
     val customAmounts: LiveData<List<CustomAmountUIModel>> = _orderDraft
-        .map { order -> order.feesLines }
-        .map { feeLines ->
-            feeLines.map { feeLine -> mapFeeLineToCustomAmountUiModel(feeLine, getCurrencySymbol()) }
+        .map { order ->
+            val currency = order.currency
+            order.feesLines.map { feeLine ->
+                mapFeeLineToCustomAmountUiModel(feeLine, currency)
+            }
         }
         .asLiveData()
 

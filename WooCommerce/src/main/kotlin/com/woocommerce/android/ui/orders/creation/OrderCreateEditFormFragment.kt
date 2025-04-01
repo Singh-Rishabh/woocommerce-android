@@ -734,7 +734,7 @@ class OrderCreateEditFormFragment :
                 OrderCreateEditNavigationTarget.CustomAmountDialog(
                     customAmountUIModel.copy(
                         type = FIXED_CUSTOM_AMOUNT,
-                        currency = viewModel.getCurrencySymbol()
+                        currency = viewModel.orderDraft.value?.currency
                     ),
                     orderTotal
                 )
@@ -1223,10 +1223,10 @@ class OrderCreateEditFormFragment :
             OrderCreateEditNavigationTarget.CustomAmountDialog(
                 customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
                     type = event.type,
-                    currency = viewModel.getCurrencySymbol()
+                    currency = viewModel.orderDraft.value?.currency
                 ) ?: CustomAmountUIModel.EMPTY.copy(
                     type = event.type,
-                    currency = viewModel.getCurrencySymbol()
+                    currency = viewModel.orderDraft.value?.currency
                 ),
                 orderTotal = viewModel.orderDraft.value?.total.toString(),
             )
