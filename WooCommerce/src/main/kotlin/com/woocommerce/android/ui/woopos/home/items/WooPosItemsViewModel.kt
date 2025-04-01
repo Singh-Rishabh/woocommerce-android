@@ -239,7 +239,6 @@ class WooPosItemsViewModel @Inject constructor(
         }
     }
 
-
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
             is WooPosItemsViewState.Content -> state.copy(reloadingWithPullToRefresh = true)
