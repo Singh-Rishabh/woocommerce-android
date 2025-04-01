@@ -735,6 +735,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         whenever(mockDataSource.searchProducts(query)).thenReturn(
             flow {
                 emit(WooPosSearchProductsDataSource.ProductsResult.Cached(listOf(cachedProduct)))
+                delay(1)
                 emit(WooPosSearchProductsDataSource.ProductsResult.Remote(Result.success(listOf(remoteProduct))))
             }.flowOn(coroutinesTestRule.testDispatcher)
         )
