@@ -1282,6 +1282,7 @@
     <string name="shipping_label_package_details_items_weight_price">%1$s  ·  %2$s</string>
     <string name="shipping_label_package_details_items_expand_content_description">Collapse/expand items card</string>
     <string name="shipping_label_hazmat_title">Are you shipping dangerous goods or hazardous materials?</string>
+    <string name="shipping_label_package_title">Select a Package</string>
     <string name="shipping_label_select_package_button">Select a Package</string>
     <string name="shipping_label_select_package_title">Select a package to get shipping rates</string>
     <string name="shipping_label_package_default_name">Custom Package</string>
@@ -4402,7 +4403,11 @@
     <string name="woopos_search_products">Search products…</string>
     <string name="woopos_search_popular_items_title">Popular items</string>
     <string name="woopos_search_recent_searches_title">Recent searches</string>
-
+    <string name="woopos_search_items_empty_title">Nothing found</string>
+    <string name="woopos_search_empty_description">We couldn\'t find anything matching your search.</string>
+    <string name="woopos_search_empty_image_content_description">No items found</string>
+    <string name="woopos_search_items_error_title">We couldn\'t load your items</string>
+    <string name="woopos_search_items_error_description">Give it another go?</string>
 
     <string name="customers_details_customer_section">Customer</string>
     <string name="customers_details_orders_section">Orders</string>

@@ -18,6 +18,6 @@ sealed class WooPosItemsSearchViewState {
     ) : WooPosItemsSearchViewState(), ContentViewState
 
     data object Empty : WooPosItemsSearchViewState()
-    data object Error : WooPosItemsSearchViewState()
+    data class Error(val searchQuery: String) : WooPosItemsSearchViewState()
     data object Loading : WooPosItemsSearchViewState()
 }
