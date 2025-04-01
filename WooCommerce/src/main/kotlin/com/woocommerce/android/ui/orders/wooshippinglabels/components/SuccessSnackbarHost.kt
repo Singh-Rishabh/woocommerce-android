@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.components
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.woocommerce.android.R
 
@@ -33,41 +33,64 @@ fun SuccessSnackbarHost(
         snackbar = { snackbarData ->
             val actionLabel = snackbarData.visuals.actionLabel
 
-            Surface(
-                color = SnackbarDefaults.color,
-                shape = RoundedCornerShape(4.dp),
-                modifier = Modifier.padding(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            SuccessSnackbar(
+                content = snackbarData.visuals.message,
+                actionLabel = actionLabel,
+                action =  { snackbarData.performAction() }
+            )
+        }
+    )
+}
+
+@Composable
+private fun SuccessSnackbar(
+    content: String,
+    actionLabel: String?,
+    action: () -> Unit
+) {
+    Surface(
+        color = SnackbarDefaults.color,
+        shape = RoundedCornerShape(4.dp),
+        modifier = Modifier.padding(12.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.CheckCircle,
+                contentDescription = null,
+                tint = colorResource(R.color.woo_green_20),
+                modifier = Modifier.padding(end = 16.dp)
+            )
+
+            Text(
+                text = content,
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.bodyMedium,
+                color = SnackbarDefaults.contentColor
+            )
+
+            if (actionLabel != null) {
+                TextButton(
+                    onClick = action,
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = SnackbarDefaults.actionContentColor
+                    )
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = null,
-                        tint = colorResource(R.color.woo_green_20),
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
-
-                    Text(
-                        text = snackbarData.visuals.message,
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = SnackbarDefaults.contentColor
-                    )
-
-                    if (actionLabel != null) {
-                        TextButton(
-                            onClick = { snackbarData.performAction() },
-                            colors = ButtonDefaults.textButtonColors(
-                                contentColor = SnackbarDefaults.actionContentColor
-                            )
-                        ) {
-                            Text(text = actionLabel)
-                        }
-                    }
+                    Text(text = actionLabel)
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun SuccessSnackbarHostPreview() {
+    SuccessSnackbar(
+        content = "Shipping label created successfully",
+        actionLabel = "View",
+        action = {}
     )
 }
