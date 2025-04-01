@@ -114,11 +114,11 @@ class CustomAmountsViewModel @Inject constructor(
     }
 
     fun getCurrencySymbol(currencyCode: String?): String? {
-        currencyCode?.let { code ->
-            return currencySymbolFinder.findCurrencySymbol(code)
-        } ?: run {
-            return store.getSiteSettings(selectedSite.get())?.currencyCode
-        }
+        val code = currencyCode
+            ?: store.getSiteSettings(selectedSite.get())?.currencyCode
+            ?: return null
+
+        return currencySymbolFinder.findCurrencySymbol(code)
     }
 
     private fun updateCustomAmountType() {
