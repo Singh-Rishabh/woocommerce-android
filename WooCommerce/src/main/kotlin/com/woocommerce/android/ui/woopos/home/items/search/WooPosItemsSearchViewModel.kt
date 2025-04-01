@@ -31,7 +31,7 @@ import javax.inject.Inject
 class WooPosItemsSearchViewModel @Inject constructor(
     val emptyStateProvider: WooPosItemsSearchEmptyStateProvider,
     private val priceFormat: WooPosFormatPrice,
-    private val dataSource: WooPosSearchProductsMockedDataSource,
+    private val dataSource: WooPosSearchProductsDataSource,
     private val childToParentEventSender: WooPosChildrenToParentEventSender,
     private val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver,
     private val navigator: WooPosItemsNavigator,
@@ -105,7 +105,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
 
         dataSource.searchProducts(searchQuery).collect { result ->
             when (result) {
-                is WooPosSearchProductsMockedDataSource.ProductsResult.Cached -> {
+                is WooPosSearchProductsDataSource.ProductsResult.Cached -> {
                     if (result.products.isEmpty()) {
                         _viewState.value = WooPosItemsSearchViewState.Loading
                     } else {
@@ -115,7 +115,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
                     }
                 }
 
-                is WooPosSearchProductsMockedDataSource.ProductsResult.Remote -> {
+                is WooPosSearchProductsDataSource.ProductsResult.Remote -> {
                     if (result.productsResult.isSuccess) {
                         val products = result.productsResult.getOrThrow()
                         if (products.isEmpty()) {
