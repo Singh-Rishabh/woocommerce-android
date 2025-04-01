@@ -85,11 +85,21 @@ private fun SuccessSnackbar(
     }
 }
 
-@Preview
+@Preview(name = "Standard snackbar")
 @Composable
 fun SuccessSnackbarHostPreview() {
     SuccessSnackbar(
         content = "Shipping label created successfully",
+        actionLabel = "View",
+        action = {}
+    )
+}
+
+@Preview(name = "Snackbar with long message")
+@Composable
+fun SuccessSnackbarHostWithLongMessagePreview() {
+    SuccessSnackbar(
+        content = "Shipping label created successfully in a long long long long long message",
         actionLabel = "View",
         action = {}
     )
