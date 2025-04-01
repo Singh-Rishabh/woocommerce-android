@@ -9,7 +9,11 @@ import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel.ItemClickedData
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +34,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
     private val dataSource: WooPosSearchProductsMockedDataSource,
     private val childToParentEventSender: WooPosChildrenToParentEventSender,
     private val parentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver,
+    private val navigator: WooPosItemsNavigator,
 ) : ViewModel() {
     private val _viewState =
         MutableStateFlow<WooPosItemsSearchViewState>(WooPosItemsSearchViewState.Empty)
@@ -52,7 +57,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
     fun onUIEvent(event: WooPosItemsSearchUiEvent) {
         when (event) {
             WooPosItemsSearchUiEvent.OnNextPageRequested -> onEndOfListReached()
-            is WooPosItemsSearchUiEvent.ItemClicked -> TODO()
+            is WooPosItemsSearchUiEvent.ItemClicked -> handleItemClicked(event.item)
             WooPosItemsSearchUiEvent.LoadingErrorRetryButtonClicked -> {
                 val currentState = _viewState.value as? WooPosItemsSearchViewState.Error ?: return
                 viewModelScope.launch {
@@ -150,6 +155,38 @@ class WooPosItemsSearchViewModel @Inject constructor(
                 )
             } else {
                 currentState.copy(paginationState = PaginationState.Error)
+            }
+        }
+    }
+
+    private fun handleItemClicked(item: WooPosItemSelectionViewState) {
+        when (item) {
+            is WooPosItemSelectionViewState.Product.Simple -> {
+                viewModelScope.launch {
+                    childToParentEventSender.sendToParent(
+                        ChildToParentEvent.ItemClickedInProductSelector(
+                            ItemClickedData.Product.Simple(id = item.id)
+                        )
+                    )
+                }
+            }
+
+            is WooPosItemSelectionViewState.Product.Variable -> {
+                viewModelScope.launch {
+                    navigator.sendNavigationEvent(
+                        NavigateToVariationsScreen(
+                            VariableProductData(
+                                id = item.id,
+                                name = item.name,
+                                numOfVariations = item.numOfVariations,
+                            )
+                        )
+                    )
+                }
+            }
+
+            is WooPosItemSelectionViewState.Variation -> {
+                error("Variation item click is not supported")
             }
         }
     }
