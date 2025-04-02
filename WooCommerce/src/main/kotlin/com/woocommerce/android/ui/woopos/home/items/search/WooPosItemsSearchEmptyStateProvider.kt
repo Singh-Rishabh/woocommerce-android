@@ -1,11 +1,15 @@
 package com.woocommerce.android.ui.woopos.home.items.search
 
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
+import com.woocommerce.android.ui.woopos.util.datastore.WooPosPreferencesRepository
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @Suppress("MagicNumber")
-class WooPosItemsSearchEmptyStateProvider @Inject constructor() {
+class WooPosItemsSearchEmptyStateProvider @Inject constructor(
+    private val preferencesRepository: WooPosPreferencesRepository
+) {
     suspend fun getPopularItems(): List<WooPosItemSelectionViewState.Product> {
         delay(50)
         return listOf(
@@ -32,12 +36,5 @@ class WooPosItemsSearchEmptyStateProvider @Inject constructor() {
         )
     }
 
-    suspend fun getLastSearches(): List<String> {
-        delay(70)
-        return listOf(
-            "T-shirt",
-            "Jeans",
-            "Shoes",
-        )
-    }
+    suspend fun getLastSearches(): List<String> = preferencesRepository.recentProductSearches.first()
 }
