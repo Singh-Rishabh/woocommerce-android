@@ -51,7 +51,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             val totalShippingValue = mapNotNull { it.shippingTotalValue }
                 .takeIf { it.isNotEmpty() }
                 ?.reduce { acc, current -> acc + current }
-                ?: 0f
+                ?: BigDecimal.ZERO
 
             return shouldRequireITN(destinationCountryCode, totalShippingValue)
         }
@@ -84,7 +84,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 restrictionType = customData.restrictionType,
                 otherRestrictionInput = InputValue.Data(customData.restrictionDescription),
                 itnValue = InputValue.Data(customData.itn),
-                returnToSenderChecked = customData.noDeliveryOption,
+                returnToSenderChecked = customData.isReturnToSender,
                 shippingProducts = customData.items.map { item ->
                     WooShippingCustomsProductUIModel(
                         productId = item.productID,
@@ -94,6 +94,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                         valuePerUnit = InputValue.Data(item.value.toString()),
                         weightPerUnit = InputValue.Data(item.weight.toString()),
                         originCountry = item.originCountry,
+                        originCountryCode = item.originCountryCode,
                         quantity = item.quantity,
                         isExpanded = false
                     )
@@ -246,8 +247,10 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             ?: AmbiguousLocation.Raw(newValue).asLocation()
 
         _viewState.update { state ->
-            val updatedItem = state.shippingProducts[itemIndex]
-                .copy(originCountry = selectedLocation.name)
+            val updatedItem = state.shippingProducts[itemIndex].copy(
+                originCountry = selectedLocation.name,
+                originCountryCode = selectedLocation.code
+            )
 
             state.shippingProducts.toMutableList().apply {
                 set(itemIndex, updatedItem)
@@ -287,6 +290,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
         tariffNumber = "".asInputValueError,
         quantity = quantity,
         originCountry = "",
+        originCountryCode = "",
         isExpanded = false,
         valuePerUnit = when {
             price == BigDecimal.ZERO -> InputValue.Error(
@@ -341,7 +345,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
                 restrictionType = restrictionType,
                 restrictionDescription = otherRestrictionInput.currentInput,
                 itn = itnValue.currentInput,
-                noDeliveryOption = returnToSenderChecked,
+                isReturnToSender = returnToSenderChecked,
                 items = shippingProducts.map { it.asCustomItem }
             )
     }

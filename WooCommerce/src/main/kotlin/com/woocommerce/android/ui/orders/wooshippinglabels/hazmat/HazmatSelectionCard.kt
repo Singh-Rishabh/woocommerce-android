@@ -1,7 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.hazmat
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,25 +23,20 @@ fun HazmatSelectionCard(
     selectedCategory: ShippingLabelHazmatCategory,
     modifier: Modifier = Modifier
 ) {
-    val backgroundColor = if (isSystemInDarkTheme()) {
-        colorResource(id = R.color.woo_gray_50)
-    } else {
-        colorResource(id = R.color.woo_gray_5)
-    }
     Spacer(modifier = Modifier.height(4.dp))
     Box(modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = backgroundColor,
+                    color = colorResource(R.color.light_colored_button_background),
                     shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
                 )
                 .padding(16.dp)
         ) {
             Text(
                 text = stringResource(selectedCategory.stringResourceID),
-                color = colorResource(id = R.color.color_on_surface),
+                color = colorResource(id = R.color.color_on_surface)
             )
         }
     }

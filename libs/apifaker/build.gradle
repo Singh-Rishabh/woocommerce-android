@@ -8,23 +8,23 @@ plugins {
 }
 
 android {
-    namespace 'com.woocommerce.android.apifaker'
+    namespace = 'com.woocommerce.android.apifaker'
 
     defaultConfig {
         minSdkVersion gradle.ext.minSdkVersion
-        targetSdk gradle.ext.targetSdkVersion
-        compileSdk gradle.ext.compileSdkVersion
+        targetSdk = gradle.ext.targetSdkVersion
+        compileSdk = gradle.ext.compileSdkVersion
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildFeatures {
-        compose true
+        compose = true
     }
 
     compileOptions {
-        sourceCompatibility libs.versions.java.get()
-        targetCompatibility libs.versions.java.get()
+        sourceCompatibility = libs.versions.java.get()
+        targetCompatibility = libs.versions.java.get()
     }
 }
 

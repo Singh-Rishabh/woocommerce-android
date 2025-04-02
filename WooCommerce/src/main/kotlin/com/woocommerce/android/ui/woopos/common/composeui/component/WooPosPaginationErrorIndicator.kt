@@ -148,7 +148,7 @@ fun WooPosPaginationErrorScreenPreview() {
                 ),
             ),
             paginationState = PaginationState.Error,
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,

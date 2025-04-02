@@ -14,5 +14,4 @@ sealed class WooPosItemsUIEvent {
     data object ClearSearchClicked : WooPosItemsUIEvent()
     data class SearchChanged(val query: String) : WooPosItemsUIEvent()
     data object CloseSearchClicked : WooPosItemsUIEvent()
-    object SearchAnimationCompleted : WooPosItemsUIEvent()
 }

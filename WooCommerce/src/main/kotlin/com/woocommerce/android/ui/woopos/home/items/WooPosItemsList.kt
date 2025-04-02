@@ -297,7 +297,7 @@ fun VariationProductDetails(item: Variation) {
 }
 
 @Composable
-fun ItemsLoadingIndicator(itemsCount: Int = 10) {
+fun WooPosItemsLoadingIndicator(itemsCount: Int = 10) {
     WooPosLazyColumn(
         verticalArrangement = Arrangement.spacedBy(WooPosSpacing.Small.value),
         contentPadding = PaddingValues(2.dp),
@@ -313,7 +313,7 @@ fun ItemsLoadingIndicator(itemsCount: Int = 10) {
 }
 
 @Composable
-fun ItemsLoadingItem() {
+private fun ItemsLoadingItem() {
     WooPosCard(
         shape = RoundedCornerShape(WooPosCornerRadius.Medium.value),
         backgroundColor = MaterialTheme.colorScheme.surfaceContainerLowest,
@@ -362,7 +362,7 @@ fun ItemsLoadingItem() {
 }
 
 @Composable
-fun ItemsEmptyList(
+fun WooPosItemsEmptyList(
     title: String,
     message: String,
     contentDescription: String,
@@ -422,7 +422,7 @@ private fun InfiniteListHandler(
         }
     }
 
-    LaunchedEffect(state.reloadingProductsWithPullToRefresh) {
+    LaunchedEffect(state.reloadingWithPullToRefresh) {
         snapshotFlow { loadMore.value }
             .distinctUntilChanged()
             .filter { it }
@@ -469,7 +469,7 @@ fun ItemListPreview() {
 @Composable
 fun EmptyListPreview() {
     WooPosTheme {
-        ItemsEmptyList("Empty List", "This list is empty", "")
+        WooPosItemsEmptyList("Empty List", "This list is empty", "")
     }
 }
 
@@ -477,6 +477,6 @@ fun EmptyListPreview() {
 @Composable
 fun LoadingListPreview() {
     WooPosTheme {
-        ItemsLoadingIndicator(10)
+        WooPosItemsLoadingIndicator(10)
     }
 }
