@@ -67,7 +67,7 @@ fun WooShippingCustomsProductListItem(
             .fillMaxWidth()
             .animateContentSize()
             .background(
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = colorResource(R.color.color_surface),
                 shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
             )
             .border(
@@ -83,6 +83,7 @@ fun WooShippingCustomsProductListItem(
                 text = itemData.name,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.color_on_surface),
                 modifier = modifier.weight(1f)
             )
 
@@ -141,12 +142,14 @@ fun WooShippingCustomsProductCollapsedListItem(
             Text(
                 style = MaterialTheme.typography.bodySmall,
                 modifier = modifier.weight(1f),
+                color = colorResource(id = R.color.color_on_surface),
                 text = itemData.description.currentInput
                     .takeIf { it.isNotBlank() }
                     ?: stringResource(id = R.string.woo_shipping_labels_customs_product_details_description_missing)
             )
             Text(
                 style = MaterialTheme.typography.bodySmall,
+                color = colorResource(id = R.color.color_on_surface),
                 text = itemData.tariffNumber.currentInput
                     .takeIf { it.isNotBlank() }
                     ?: stringResource(id = R.string.woo_shipping_labels_customs_product_details_tariff_missing)
@@ -156,12 +159,14 @@ fun WooShippingCustomsProductCollapsedListItem(
             Text(
                 style = MaterialTheme.typography.bodySmall,
                 modifier = modifier.weight(1f),
+                color = colorResource(id = R.color.color_on_surface),
                 text = itemData.originCountry
                     .takeIf { it.isNotBlank() }
                     ?: stringResource(id = R.string.woo_shipping_labels_customs_product_details_origin_country_missing)
             )
             Text(
                 text = itemData.valueAndWeightForDisplay,
+                color = colorResource(id = R.color.color_on_surface),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
