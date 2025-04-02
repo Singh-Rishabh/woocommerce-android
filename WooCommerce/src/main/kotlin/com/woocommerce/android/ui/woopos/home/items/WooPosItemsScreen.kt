@@ -128,7 +128,7 @@ private fun MainItemsList(
     onPullToRefreshTriggered: () -> Unit,
 ) {
     val pullToRefreshState = rememberPullRefreshState(
-        refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Enabled(true),
+        refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Refreshing,
         onRefresh = onPullToRefreshTriggered,
     )
 
@@ -137,7 +137,7 @@ private fun MainItemsList(
             .fillMaxSize()
             .pullRefresh(
                 state = pullToRefreshState,
-                enabled = state.value.pullToRefreshState is WooPosPullToRefreshState.Enabled,
+                enabled = state.value.pullToRefreshState ==  WooPosPullToRefreshState.Enabled,
             )
             .padding(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
@@ -225,7 +225,7 @@ private fun MainItemsList(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Enabled(true),
+            refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Refreshing,
             state = pullToRefreshState
         )
     }
@@ -383,7 +383,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                 ),
             ),
             paginationState = PaginationState.Loading,
-            pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true),
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -439,7 +439,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                 ),
             ),
             paginationState = PaginationState.Error,
-            pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true),
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -465,7 +465,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
 fun WooPosItemsScreenLoadingPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Loading(
-            pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true),
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             withCart = false
         )
     )
@@ -484,7 +484,7 @@ fun WooPosItemsScreenLoadingPreview() {
 fun WooPosProductsScreenEmptyListPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Empty(
-            WooPosPullToRefreshState.Enabled(isRefreshing = true)
+            WooPosPullToRefreshState.Refreshing,
         )
     )
     WooPosTheme {
@@ -538,7 +538,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                     imageUrl = null,
                 ),
             ),
-            pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true),
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = false,
                 title = R.string.woopos_banner_simple_products_only_title,

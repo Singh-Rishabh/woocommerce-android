@@ -16,7 +16,6 @@ sealed class PaginationState {
     data object Error : PaginationState()
 }
 
-sealed class WooPosPullToRefreshState {
-    object Disabled : WooPosPullToRefreshState()
-    data class Enabled(val isRefreshing: Boolean = false) : WooPosPullToRefreshState()
+enum class WooPosPullToRefreshState {
+    Disabled, Enabled, Refreshing,
 }

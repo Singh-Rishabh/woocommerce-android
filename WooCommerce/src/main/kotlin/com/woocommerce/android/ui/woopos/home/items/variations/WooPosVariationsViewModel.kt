@@ -140,16 +140,16 @@ class WooPosVariationsViewModel @Inject constructor(
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
             is WooPosVariationsViewState.Content -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+                pullToRefreshState = WooPosPullToRefreshState.Refreshing
             )
             is WooPosVariationsViewState.Loading -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+                pullToRefreshState = WooPosPullToRefreshState.Refreshing
             )
             is WooPosVariationsViewState.Error -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+                pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             )
             is WooPosVariationsViewState.Empty -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+                pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             )
         }
 

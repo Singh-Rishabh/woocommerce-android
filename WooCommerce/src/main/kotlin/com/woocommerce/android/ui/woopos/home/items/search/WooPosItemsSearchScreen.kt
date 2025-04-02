@@ -160,7 +160,7 @@ fun WooPosItemsSearchContentPreview() {
                             imageUrl = "https://example.com/image2.jpg",
                         ),
                     ),
-                    pullToRefreshState = WooPosPullToRefreshState.Enabled(false),
+                    pullToRefreshState = WooPosPullToRefreshState.Enabled,
                     paginationState = PaginationState.None
                 ),
                 onUIEvent = {}

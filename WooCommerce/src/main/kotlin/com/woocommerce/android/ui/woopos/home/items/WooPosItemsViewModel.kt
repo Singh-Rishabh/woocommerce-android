@@ -223,7 +223,7 @@ class WooPosItemsViewModel @Inject constructor(
                                             pullToRefreshState = if (searchHelper.isSearchOpen()) {
                                                 WooPosPullToRefreshState.Disabled
                                             } else {
-                                                WooPosPullToRefreshState.Enabled()
+                                                WooPosPullToRefreshState.Enabled
                                             },
                                         )
                                     } else {
@@ -245,18 +245,10 @@ class WooPosItemsViewModel @Inject constructor(
 
     private fun buildProductsReloadingState() =
         when (val state = viewState.value) {
-            is WooPosItemsViewState.Content -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true)
-            )
-            is WooPosItemsViewState.Loading -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true)
-            )
-            is WooPosItemsViewState.Error -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true)
-            )
-            is WooPosItemsViewState.Empty -> state.copy(
-                pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true)
-            )
+            is WooPosItemsViewState.Content -> state.copy(pullToRefreshState = WooPosPullToRefreshState.Refreshing)
+            is WooPosItemsViewState.Loading -> state.copy(pullToRefreshState = WooPosPullToRefreshState.Refreshing)
+            is WooPosItemsViewState.Error -> state.copy(pullToRefreshState = WooPosPullToRefreshState.Refreshing)
+            is WooPosItemsViewState.Empty -> state.copy(pullToRefreshState = WooPosPullToRefreshState.Refreshing)
         }
 
     private suspend fun List<Product>.toContentState(
@@ -264,7 +256,7 @@ class WooPosItemsViewModel @Inject constructor(
     ) = WooPosItemsViewState.Content(
         items = map { it.toItemSelectionViewState() },
         paginationState = paginationState,
-        pullToRefreshState = WooPosPullToRefreshState.Enabled(),
+        pullToRefreshState = WooPosPullToRefreshState.Enabled,
         couponsEnabled = isCouponsEnabled.invoke(),
         bannerState = WooPosItemsViewState.Content.BannerState(
             isBannerHiddenByUser = isBannerHiddenByUser(),

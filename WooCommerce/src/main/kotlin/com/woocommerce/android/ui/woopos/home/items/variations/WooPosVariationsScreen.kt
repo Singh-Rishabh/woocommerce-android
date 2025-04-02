@@ -106,7 +106,7 @@ private fun WooPosVariationsScreens(
 ) {
     val itemState = state.collectAsState()
     val pullToRefreshState = rememberPullRefreshState(
-        refreshing = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Enabled(true),
+        refreshing = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Refreshing,
         onRefresh = onPullToRefresh
     )
     val listState = rememberLazyListState()
@@ -115,7 +115,7 @@ private fun WooPosVariationsScreens(
             .fillMaxSize()
             .pullRefresh(
                 state = pullToRefreshState,
-                enabled = itemState.value.pullToRefreshState is WooPosPullToRefreshState.Enabled
+                enabled = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Enabled
             )
             .padding(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
@@ -177,7 +177,7 @@ private fun WooPosVariationsScreens(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Enabled(true),
+            refreshing = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Enabled,
             state = pullToRefreshState
         )
     }
@@ -282,7 +282,7 @@ fun WooPosVariationsScreenPreview() {
                     imageUrl = null,
                 ),
             ),
-            pullToRefreshState = WooPosPullToRefreshState.Enabled(true),
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
         )
     )
     WooPosTheme {

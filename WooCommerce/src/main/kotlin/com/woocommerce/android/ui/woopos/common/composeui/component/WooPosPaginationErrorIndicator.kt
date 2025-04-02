@@ -149,7 +149,7 @@ fun WooPosPaginationErrorScreenPreview() {
                 ),
             ),
             paginationState = PaginationState.Error,
-            pullToRefreshState = WooPosPullToRefreshState.Enabled(isRefreshing = true),
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,

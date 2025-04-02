@@ -12,9 +12,7 @@ sealed class WooPosItemsViewState(
         override val items: List<WooPosItemSelectionViewState>,
         val bannerState: BannerState,
         override val paginationState: PaginationState = PaginationState.None,
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
         val couponsEnabled: Boolean = false,
     ) : WooPosItemsViewState(pullToRefreshState), ContentViewState {
         data class BannerState(
@@ -31,21 +29,15 @@ sealed class WooPosItemsViewState(
     }
 
     data class Loading(
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
         val withCart: Boolean
     ) : WooPosItemsViewState(pullToRefreshState)
 
     data class Error(
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
     ) : WooPosItemsViewState(pullToRefreshState)
 
     data class Empty(
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
     ) : WooPosItemsViewState(pullToRefreshState)
 }

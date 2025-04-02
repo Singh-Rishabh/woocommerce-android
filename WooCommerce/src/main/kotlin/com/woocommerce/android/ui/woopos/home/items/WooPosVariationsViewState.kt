@@ -6,28 +6,20 @@ sealed class WooPosVariationsViewState(
 
     data class Content(
         override val items: List<WooPosItemSelectionViewState.Variation>,
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
         override val paginationState: PaginationState = PaginationState.None,
     ) : WooPosVariationsViewState(pullToRefreshState), ContentViewState
 
     data class Loading(
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
         val withCart: Boolean
     ) : WooPosVariationsViewState(pullToRefreshState)
 
     data class Error(
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
     ) : WooPosVariationsViewState(pullToRefreshState)
 
     data class Empty(
-        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled(
-            isRefreshing = false
-        ),
+        override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
     ) : WooPosVariationsViewState(pullToRefreshState)
 }
