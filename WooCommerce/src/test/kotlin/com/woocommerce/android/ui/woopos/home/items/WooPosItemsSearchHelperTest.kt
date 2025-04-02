@@ -206,7 +206,7 @@ class WooPosItemsSearchHelperTest {
                 icon = R.drawable.ic_woo
             ),
             paginationState = WooPosPaginationState.None,
-            pullToRefreshState = false,
+            pullToRefreshState = WooPosPullToRefreshState.Enabled,
             couponsEnabled = false
         )
     }
