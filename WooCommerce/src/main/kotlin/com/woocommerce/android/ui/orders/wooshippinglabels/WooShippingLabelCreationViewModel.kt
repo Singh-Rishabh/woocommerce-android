@@ -526,9 +526,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val orderId = navArgs.orderId
         val lastOrderComplete = uiState.value.markOrderComplete
         val shippableItemsIdList = shippableItems.value.map { it.productId }
-        val hazmatSelection = hazmatState.value
-            .run { this as? Declared }
-            ?.hazmatCategory
+        val hazmatSelection = hazmatState.value.hazmatSelection
 
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
@@ -639,11 +637,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatNoticeClick() {
-        val selectedCategory = hazmatState.value
-            .run { this as? Declared }
-            ?.hazmatCategory
-
-        triggerEvent(StartHazmatFormEdit(selectedCategory))
+        triggerEvent(StartHazmatFormEdit(hazmatState.value.hazmatSelection))
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
@@ -821,6 +815,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     sealed class HazmatState {
         data object NoSelection : HazmatState()
         data class Declared(val hazmatCategory: ShippingLabelHazmatCategory) : HazmatState()
+
+        val hazmatSelection: ShippingLabelHazmatCategory?
+            get() = (this as? Declared)?.hazmatCategory
     }
 
     companion object {
