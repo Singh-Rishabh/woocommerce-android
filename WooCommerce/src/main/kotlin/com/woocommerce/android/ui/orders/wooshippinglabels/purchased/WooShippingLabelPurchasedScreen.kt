@@ -196,7 +196,7 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
                 selectedCategory = shippingData?.hazmatSelection,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = dimensionResource(R.dimen.minor_100)),
+                    .padding(end = dimensionResource(R.dimen.major_125)),
             )
 
             if (isLoading) {
@@ -297,7 +297,7 @@ internal fun WooShippingLabelPurchasedScreen(
             selectedCategory = selectedHazmatCategory,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(end = dimensionResource(R.dimen.minor_100)),
+                .padding(end = dimensionResource(R.dimen.major_125)),
         )
 
         if (isLoading) {
