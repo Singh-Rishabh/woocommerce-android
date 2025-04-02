@@ -137,7 +137,7 @@ private fun MainItemsList(
             .fillMaxSize()
             .pullRefresh(
                 state = pullToRefreshState,
-                enabled = state.value.pullToRefreshState ==  WooPosPullToRefreshState.Enabled,
+                enabled = state.value.pullToRefreshState == WooPosPullToRefreshState.Enabled,
             )
             .padding(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
