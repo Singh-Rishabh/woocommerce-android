@@ -391,3 +391,21 @@ fun WooShippingCarrierPackageScreenPreview() {
         )
     }
 }
+
+@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+fun WooShippingCarrierPackageEmptyScreenPreview() {
+    WooThemeWithBackground {
+        WooShippingCarrierPackageScreen(
+            packageState = PredefinedPackagesState.Data(
+                storeOptions = StoreOptionsForPackages.DEFAULT,
+                savedPackages = emptyList(),
+                carrierPackages = emptyMap()
+            ),
+            onPackageSelected = { _, _ -> },
+            onRetryClick = {},
+            onTabChange = {}
+        )
+    }
+}
