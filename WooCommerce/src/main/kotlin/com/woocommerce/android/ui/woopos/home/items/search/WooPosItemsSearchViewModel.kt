@@ -29,7 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WooPosItemsSearchViewModel @Inject constructor(
-    val emptyStateProvider: WooPosItemsSearchEmptyStateProvider,
+    private val emptyStateRepository: WooPosItemsSearchEmptyStateRepository,
     private val priceFormat: WooPosFormatPrice,
     private val dataSource: WooPosSearchProductsMockedDataSource,
     private val childToParentEventSender: WooPosChildrenToParentEventSender,
@@ -169,6 +169,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
                         )
                     )
                 }
+
+                storeRecentSearch()
             }
 
             is WooPosItemSelectionViewState.Product.Variable -> {
@@ -187,6 +189,14 @@ class WooPosItemsSearchViewModel @Inject constructor(
 
             is WooPosItemSelectionViewState.Variation -> {
                 error("Variation item click is not supported")
+            }
+        }
+    }
+
+    private fun storeRecentSearch() {
+        (viewState.value as? WooPosItemsSearchViewState.Content)?.let {
+            viewModelScope.launch {
+                emptyStateRepository.addRecentSearch(it.searchQuery)
             }
         }
     }
@@ -219,8 +229,8 @@ class WooPosItemsSearchViewModel @Inject constructor(
     )
 
     private suspend fun CoroutineScope.setEmptySearchQueryState() {
-        val lastSearchesDeferred = async { emptyStateProvider.getLastSearches() }
-        val popularItemsDeferred = async { emptyStateProvider.getPopularItems() }
+        val lastSearchesDeferred = async { emptyStateRepository.getLastSearches() }
+        val popularItemsDeferred = async { emptyStateRepository.getPopularItems() }
 
         _viewState.value = WooPosItemsSearchViewState.EmptySearchQuery(
             popularItems = popularItemsDeferred.await().let { it.take(minOf(MAX_ITEMS_COUNT, it.size)) },

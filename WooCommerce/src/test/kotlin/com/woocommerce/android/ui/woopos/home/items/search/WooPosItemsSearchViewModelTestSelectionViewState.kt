@@ -42,7 +42,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
     @JvmField
     val coroutinesTestRule = WooPosCoroutineTestRule()
 
-    private val mockEmptyStateProvider: WooPosItemsSearchEmptyStateProvider = mock()
+    private val mockEmptyStateProvider: WooPosItemsSearchEmptyStateRepository = mock()
     private val mockPriceFormat: WooPosFormatPrice = mock()
     private val mockDataSource: WooPosSearchProductsMockedDataSource = mock()
     private val mockChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
@@ -738,7 +738,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
     }
 
     private fun createViewModel() = WooPosItemsSearchViewModel(
-        emptyStateProvider = mockEmptyStateProvider,
+        emptyStateRepository = mockEmptyStateProvider,
         priceFormat = mockPriceFormat,
         dataSource = mockDataSource,
         childToParentEventSender = mockChildToParentEventSender,

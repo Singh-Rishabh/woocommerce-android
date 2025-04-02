@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @Suppress("MagicNumber")
-class WooPosItemsSearchEmptyStateProvider @Inject constructor(
+class WooPosItemsSearchEmptyStateRepository @Inject constructor(
     private val preferencesRepository: WooPosPreferencesRepository
 ) {
     suspend fun getPopularItems(): List<WooPosItemSelectionViewState.Product> {
@@ -37,4 +37,8 @@ class WooPosItemsSearchEmptyStateProvider @Inject constructor(
     }
 
     suspend fun getLastSearches(): List<String> = preferencesRepository.recentProductSearches.first()
+
+    suspend fun addRecentSearch(search: String) {
+        preferencesRepository.addRecentProductSearch(search)
+    }
 }
