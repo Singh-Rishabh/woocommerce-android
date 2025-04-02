@@ -511,10 +511,6 @@ class OrderCreateEditViewModel @Inject constructor(
         _selectedCustomAmount.value = null
     }
 
-    fun onCustomAmountTypeSelected(type: CustomAmountType) {
-        triggerEvent(OnCustomAmountTypeSelected(type = type))
-    }
-
     private suspend fun updateAutoTaxRateSettingState() {
         val rate = getAutoTaxRateSetting()
         viewState = if (rate != null) {
@@ -2011,6 +2007,38 @@ class OrderCreateEditViewModel @Inject constructor(
         )
     }
 
+    fun onCustomAmountTapped(customAmountUIModel: CustomAmountUIModel = CustomAmountUIModel.EMPTY) {
+        val orderTotal = _orderDraft.value.total.toString()
+        val currencyCode = _orderDraft.value.currency.let { CurrencyCode(it) }
+
+        if (orderContainsProductsOrCustomAmounts()) {
+            triggerEvent(ShowCustomAmountBottomSheet)
+        } else {
+            triggerEvent(
+                ShowCustomAmountDialog(
+                    customAmountUIModel.copy(
+                        type = CustomAmountType.FIXED_CUSTOM_AMOUNT,
+                        currencyCode = currencyCode
+                    ),
+                    orderTotal = orderTotal
+                )
+            )
+        }
+    }
+
+    fun onCustomAmountTypeSelected(type: CustomAmountType) {
+        val selected = selectedCustomAmount.value ?: CustomAmountUIModel.EMPTY
+        val currencyCode = _orderDraft.value.currency.let { CurrencyCode(it) }
+        val orderTotal = _orderDraft.value.total.toString()
+
+        triggerEvent(
+            ShowCustomAmountDialog(
+                customAmountUIModel = selected.copy(type = type, currencyCode = currencyCode),
+                orderTotal = orderTotal
+            )
+        )
+    }
+
     @Parcelize
     data class ViewState(
         val isProgressDialogShown: Boolean = false,
@@ -2099,9 +2127,12 @@ data class OnTotalsSectionHeightChanged(
     val newHeight: Int
 ) : Event()
 
-data class OnCustomAmountTypeSelected(
-    val type: CustomAmountType
+data class ShowCustomAmountDialog(
+    val customAmountUIModel: CustomAmountUIModel,
+    val orderTotal: String
 ) : Event()
+
+object ShowCustomAmountBottomSheet : Event()
 
 object OnSelectedProductsSyncRequested : Event()
 

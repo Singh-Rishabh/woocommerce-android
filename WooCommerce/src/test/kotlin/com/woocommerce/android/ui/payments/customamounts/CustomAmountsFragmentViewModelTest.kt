@@ -1,12 +1,10 @@
 package com.woocommerce.android.ui.payments.customamounts
 
-import androidx.lifecycle.Observer
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_ADD_CUSTOM_AMOUNT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsTrackerWrapper
 import com.woocommerce.android.tools.SelectedSite
 import com.woocommerce.android.ui.common.CurrencyCode
-import com.woocommerce.android.ui.common.CurrencySymbol
 import com.woocommerce.android.ui.orders.CustomAmountUIModel
 import com.woocommerce.android.ui.orders.creation.product.discount.CurrencySymbolFinder
 import com.woocommerce.android.ui.payments.customamounts.CustomAmountsViewModel.CustomAmountType.FIXED_CUSTOM_AMOUNT
@@ -20,6 +18,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.wordpress.android.fluxc.model.SiteModel
+import org.wordpress.android.fluxc.model.WCSettingsModel
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import kotlin.test.assertFalse
@@ -32,6 +31,7 @@ class CustomAmountsFragmentViewModelTest : BaseUnitTest() {
     private val currencySymbolFinder: CurrencySymbolFinder = mock()
     private val store: WooCommerceStore = mock()
     private val selectedSite: SelectedSite = mock()
+    private val siteSettings: WCSettingsModel = mock()
     private lateinit var viewModel: CustomAmountsViewModel
 
     @Before
@@ -283,7 +283,6 @@ class CustomAmountsFragmentViewModelTest : BaseUnitTest() {
     @Test
     fun `when currency code is not null, then return order currency symbol`() {
         whenever(currencySymbolFinder.findCurrencySymbol("USD")).thenReturn("$")
-        val observer = mock<Observer<CurrencySymbol?>>()
 
         viewModel = CustomAmountsViewModel(
             CustomAmountsFragmentArgs(
@@ -301,16 +300,16 @@ class CustomAmountsFragmentViewModelTest : BaseUnitTest() {
             store,
             selectedSite
         )
-        viewModel.currencySymbolLiveData.observeForever(observer)
-
-        verify(observer).onChanged(CurrencySymbol("$"))
+        assertThat(viewModel.viewState.currencySymbol?.value).isEqualTo("$")
     }
 
     @Test
     fun `when currency code is null, then return site currency symbol`() {
-        val siteModel = SiteModel()
-        whenever(selectedSite.get()).thenReturn(siteModel)
-        val observer = mock<Observer<CurrencySymbol?>>()
+        val site: SiteModel = mock()
+        whenever(selectedSite.get()).thenReturn(site)
+        whenever(store.getSiteSettings(site)).thenReturn(siteSettings)
+        whenever(siteSettings.currencyCode).thenReturn("INR")
+        whenever(currencySymbolFinder.findCurrencySymbol("INR")).thenReturn("₹")
 
         viewModel = CustomAmountsViewModel(
             CustomAmountsFragmentArgs(
@@ -327,9 +326,8 @@ class CustomAmountsFragmentViewModelTest : BaseUnitTest() {
             store,
             selectedSite
         )
-        viewModel.currencySymbolLiveData.observeForever(observer)
 
-        verify(store).getSiteSettings(siteModel)
+        assertThat(viewModel.viewState.currencySymbol?.value).isEqualTo("₹")
     }
     //endregion
 }

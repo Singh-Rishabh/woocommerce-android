@@ -1,9 +1,8 @@
 package com.woocommerce.android.ui.payments.customamounts
 
 import android.os.Parcelable
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.liveData
+import androidx.lifecycle.viewModelScope
 import com.woocommerce.android.R
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_ADD_CUSTOM_AMOUNT_TAPPED
 import com.woocommerce.android.analytics.AnalyticsEvent.ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED
@@ -18,7 +17,9 @@ import com.woocommerce.android.viewmodel.MultiLiveEvent.Event
 import com.woocommerce.android.viewmodel.ScopedViewModel
 import com.woocommerce.android.viewmodel.navArgs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import org.wordpress.android.fluxc.store.WooCommerceStore
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -103,17 +104,10 @@ class CustomAmountsViewModel @Inject constructor(
             )
         }
 
-    val currencySymbolLiveData: LiveData<CurrencySymbol?> = liveData {
-        val code = args.customAmountUIModel.currencyCode?.value
-            ?: store.getSiteSettings(selectedSite.get())?.currencyCode
-
-        val symbol = code?.let { currencySymbolFinder.findCurrencySymbol(it) }
-        emit(symbol?.let { CurrencySymbol(it) })
-    }
-
     private val args: CustomAmountsFragmentArgs by savedState.navArgs()
 
     init {
+        setCurrencySymbol()
         if (isInCreateMode()) {
             tracker.track(ORDER_CREATION_ADD_CUSTOM_AMOUNT_TAPPED)
         } else {
@@ -122,6 +116,18 @@ class CustomAmountsViewModel @Inject constructor(
             tracker.track(ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED)
         }
         updateCustomAmountType()
+    }
+
+    private fun setCurrencySymbol() {
+        viewModelScope.launch {
+            val code = args.customAmountUIModel.currencyCode?.value
+                ?: store.getSiteSettings(selectedSite.get())?.currencyCode
+
+            val symbol = code?.let { currencySymbolFinder.findCurrencySymbol(it) }
+            viewState = viewState.copy(
+                currencySymbol = symbol?.let { CurrencySymbol(it) }
+            )
+        }
     }
 
     private fun updateCustomAmountType() {
@@ -170,6 +176,7 @@ class CustomAmountsViewModel @Inject constructor(
     @Parcelize
     data class ViewState(
         val customAmountUIModel: CustomAmountUIState = CustomAmountUIState(),
+        val currencySymbol: @RawValue CurrencySymbol? = null,
         val isDoneButtonEnabled: Boolean = false,
         val isProgressShowing: Boolean = false,
         val createdOrder: Order? = null,
