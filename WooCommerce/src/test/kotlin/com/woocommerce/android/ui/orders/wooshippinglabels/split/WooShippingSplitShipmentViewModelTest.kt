@@ -150,6 +150,88 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
         assertThat(expandableProducts.size).isEqualTo(1)
     }
 
+    @Test
+    fun `when moving a shippable item to a new shipment, then a new shipment is created`() = testBlocking {
+        val shipmentArgs = SplitShipmentArgs(
+            orderId = 1L,
+            storeOptions = StoreOptionsModel.EMPTY,
+            shipments = defaultShipment
+        )
+        val updatedCurrentShipmentItems = defaultShipment.getValue(1).subList(fromIndex = 1, toIndex = 3)
+        val updatedShipmentItems = defaultShipment.getValue(1).subList(fromIndex = 0, toIndex = 1)
+
+        val movement = SplitMovement(
+            currentShipment = 1,
+            updatedCurrentShipmentItems = updatedCurrentShipmentItems,
+            updatedShipment = 2,
+            updatedShipmentItems = updatedShipmentItems
+        )
+
+        createViewModel(shipmentArgs)
+
+        sut.onUpdateShipment(movement)
+
+        sut.viewState.observeForTesting { }
+
+        val state = sut.viewState.value!!
+
+        val selectableItems = state.selectableItems
+        assertThat(selectableItems.size).isEqualTo(2)
+        assertThat(selectableItems.getValue(1).shippableItems.size).isEqualTo(updatedCurrentShipmentItems.size)
+        assertThat(selectableItems.getValue(2).shippableItems.size).isEqualTo(updatedShipmentItems.size)
+    }
+
+    @Test
+    fun `when moving a shippable item to a shipment that already has the items, then the items are combined`() =
+        testBlocking {
+            val shipmentArgs = SplitShipmentArgs(
+                orderId = 1L,
+                storeOptions = StoreOptionsModel.EMPTY,
+                shipments = twoShipment
+            )
+            val updatedCurrentShipmentItems = defaultShipment.getValue(1)
+            val updatedShipmentItems = listOf(
+                ShippableItemModel(
+                    itemId = 3L,
+                    productId = 3L,
+                    title = "Another product with quantity 3",
+                    price = BigDecimal(10),
+                    quantity = 3f,
+                    imageUrl = null,
+                    currency = "USD",
+                    length = 3f,
+                    width = 3f,
+                    height = 3f,
+                    weight = 8f
+                )
+            )
+
+            val movement = SplitMovement(
+                currentShipment = 1,
+                updatedCurrentShipmentItems = updatedCurrentShipmentItems,
+                updatedShipment = 2,
+                updatedShipmentItems = updatedShipmentItems
+            )
+
+            createViewModel(shipmentArgs)
+
+            sut.onUpdateShipment(movement)
+
+            sut.viewState.observeForTesting { }
+
+            val state = sut.viewState.value!!
+
+            val selectableItems = state.selectableItems
+            assertThat(selectableItems.size).isEqualTo(2)
+            assertThat(selectableItems.getValue(2).shippableItems.size).isEqualTo(1)
+            val item = selectableItems
+                .getValue(2)
+                .shippableItems
+                .first() as SelectableShippableItemUI.ExpandableSelectableShippableItemUI
+            // Assert that quantity is combined 3f + 3f
+            assertThat(item.shippableItem.quantity).isEqualTo(6f)
+        }
+
     private val defaultShipment = mapOf(
         1 to listOf(
             ShippableItemModel(
@@ -178,6 +260,51 @@ class WooShippingSplitShipmentViewModelTest : BaseUnitTest() {
                 height = 3f,
                 weight = 8f
             ),
+            ShippableItemModel(
+                itemId = 3L,
+                productId = 3L,
+                title = "Another product with quantity 3",
+                price = BigDecimal(10),
+                quantity = 3f,
+                imageUrl = null,
+                currency = "USD",
+                length = 3f,
+                width = 3f,
+                height = 3f,
+                weight = 8f
+            )
+        )
+    )
+    private val twoShipment = mapOf(
+        1 to listOf(
+            ShippableItemModel(
+                itemId = 1L,
+                productId = 1L,
+                title = "A product with quantity 1",
+                price = BigDecimal(30),
+                quantity = 1f,
+                imageUrl = null,
+                currency = "USD",
+                length = 3f,
+                width = 3f,
+                height = 3f,
+                weight = 8f
+            ),
+            ShippableItemModel(
+                itemId = 2L,
+                productId = 2L,
+                title = "A product with quantity 5",
+                price = BigDecimal(10),
+                quantity = 5f,
+                imageUrl = null,
+                currency = "USD",
+                length = 3f,
+                width = 3f,
+                height = 3f,
+                weight = 8f
+            )
+        ),
+        2 to listOf(
             ShippableItemModel(
                 itemId = 3L,
                 productId = 3L,
