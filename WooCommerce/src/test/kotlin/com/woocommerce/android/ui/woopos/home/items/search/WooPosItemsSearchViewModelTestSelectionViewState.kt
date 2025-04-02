@@ -579,15 +579,19 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         whenever(mockDataSource.searchProducts(query)).thenAnswer {
             if (searchAttempt++ == 0) {
                 flow {
-                    emit(WooPosSearchProductsDataSource.ProductsResult.Remote(
-                        Result.failure(Exception("Search failed"))
-                    ))
+                    emit(
+                        WooPosSearchProductsDataSource.ProductsResult.Remote(
+                            Result.failure(Exception("Search failed"))
+                        )
+                    )
                 }.flowOn(UnconfinedTestDispatcher())
             } else {
                 flow {
-                    emit(WooPosSearchProductsDataSource.ProductsResult.Remote(
-                        Result.success(products)
-                    ))
+                    emit(
+                        WooPosSearchProductsDataSource.ProductsResult.Remote(
+                            Result.success(products)
+                        )
+                    )
                 }.flowOn(UnconfinedTestDispatcher())
             }
         }
