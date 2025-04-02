@@ -185,7 +185,8 @@ fun WooShippingCustomsFormScreen(
 
             Text(
                 text = stringResource(R.string.woo_shipping_labels_customs_product_details_title),
-                style = MaterialTheme.typography.titleMedium,
+                color = colorResource(id = R.color.color_on_surface),
+                style = MaterialTheme.typography.titleMedium
             )
 
             shippingProducts.forEachIndexed { index, product ->
