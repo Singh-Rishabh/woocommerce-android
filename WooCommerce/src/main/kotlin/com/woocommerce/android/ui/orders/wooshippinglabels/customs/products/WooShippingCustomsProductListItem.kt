@@ -57,7 +57,7 @@ fun WooShippingCustomsProductListItem(
         .let { animateFloatAsState(targetValue = it, label = "rotationAnimation") }
 
     val borderColor = when {
-        itemData.isExpanded -> colorResource(R.color.woo_black)
+        itemData.isExpanded -> colorResource(R.color.color_on_surface)
         itemData.isValid.not() -> colorResource(R.color.color_error)
         else -> colorResource(R.color.divider_color)
     }
