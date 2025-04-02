@@ -227,78 +227,78 @@ internal fun WooShippingLabelPurchasedScreen(
 ) {
     Column(
         modifier = modifier
-            .padding(16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        val (titleResId, messageResId) = when (isPurchaseFinished) {
-            true -> Pair(
-                R.string.shipping_label_purchased_success_title,
-                R.string.shipping_label_purchased_success_message
+        Column(
+            modifier = modifier.padding(16.dp)
+        ) {
+            val (titleResId, messageResId) = when (isPurchaseFinished) {
+                true -> Pair(
+                    R.string.shipping_label_purchased_success_title,
+                    R.string.shipping_label_purchased_success_message
+                )
+
+                false -> Pair(
+                    R.string.shipping_label_purchased_in_progress_title,
+                    R.string.shipping_label_purchased_in_progress_message
+                )
+
+                null -> Pair(
+                    R.string.shipping_label_purchased_failure_title,
+                    R.string.shipping_label_purchased_failure_message
+                )
+            }
+
+            Text(
+                text = stringResource(id = titleResId),
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = stringResource(id = messageResId),
+                modifier = Modifier.padding(top = 8.dp),
+                style = MaterialTheme.typography.subtitle1,
+            )
+            Spacer(modifier = Modifier.padding(top = 16.dp))
+            PrintShippingLabelCard(
+                isPrintButtonEnabled = isPurchaseFinished == true,
+                selectedLabelPaperSizeOption = selectedLabelPaperSizeOption,
+                onLabelPaperSizeOptionSelected = onLabelPaperSizeOptionSelected,
+                onPrintShippingLabelClicked = onPrintShippingLabelClicked,
+                onTrackShipmentClicked = onTrackShipmentClicked,
+                onSchedulePickUpClicked = onSchedulePickUpClicked,
+                onRefundClicked = onRefundClicked,
+                onLearnMoreClicked = onLearnMoreClicked,
+            )
+            Text(
+                text = stringResource(id = R.string.shipping_label_purchased_note),
+                style = MaterialTheme.typography.caption,
+                color = colorResource(id = R.color.color_on_surface_medium),
+                modifier = Modifier.padding(top = 8.dp),
             )
 
-            false -> Pair(
-                R.string.shipping_label_purchased_in_progress_title,
-                R.string.shipping_label_purchased_in_progress_message
-            )
-
-            null -> Pair(
-                R.string.shipping_label_purchased_failure_title,
-                R.string.shipping_label_purchased_failure_message
-            )
+            shippingData?.let { shippingData ->
+                val isExpanded = remember { mutableStateOf(false) }
+                ShippingProductsCard(
+                    shippableItems = ShippableItemsUI(
+                        shippableItems = shippingData.shippableItems,
+                        formattedTotalWeight = shippingData.formattedTotalWeight,
+                        formattedTotalPrice = shippingData.formattedTotalPrice
+                    ),
+                    isExpanded = isExpanded.value,
+                    onExpand = { isExpanded.value = it },
+                    iconColor = MaterialTheme.colors.onSurface,
+                    modifier = Modifier.padding(top = 24.dp)
+                )
+            }
+            Spacer(modifier = Modifier.padding(top = 16.dp))
         }
 
-        Text(
-            text = stringResource(id = titleResId),
-            style = MaterialTheme.typography.subtitle1,
-            fontWeight = FontWeight.Bold,
-        )
-        Text(
-            text = stringResource(id = messageResId),
-            modifier = Modifier.padding(top = 8.dp),
-            style = MaterialTheme.typography.subtitle1,
-        )
-        Spacer(modifier = Modifier.padding(top = 16.dp))
-        PrintShippingLabelCard(
-            isPrintButtonEnabled = isPurchaseFinished == true,
-            selectedLabelPaperSizeOption = selectedLabelPaperSizeOption,
-            onLabelPaperSizeOptionSelected = onLabelPaperSizeOptionSelected,
-            onPrintShippingLabelClicked = onPrintShippingLabelClicked,
-            onTrackShipmentClicked = onTrackShipmentClicked,
-            onSchedulePickUpClicked = onSchedulePickUpClicked,
-            onRefundClicked = onRefundClicked,
-            onLearnMoreClicked = onLearnMoreClicked,
-        )
-        Text(
-            text = stringResource(id = R.string.shipping_label_purchased_note),
-            style = MaterialTheme.typography.caption,
-            color = colorResource(id = R.color.color_on_surface_medium),
-            modifier = Modifier.padding(top = 8.dp),
-        )
-
-        shippingData?.let { shippingData ->
-            val isExpanded = remember { mutableStateOf(false) }
-            ShippingProductsCard(
-                shippableItems = ShippableItemsUI(
-                    shippableItems = shippingData.shippableItems,
-                    formattedTotalWeight = shippingData.formattedTotalWeight,
-                    formattedTotalPrice = shippingData.formattedTotalPrice
-                ),
-                isExpanded = isExpanded.value,
-                onExpand = { isExpanded.value = it },
-                iconColor = MaterialTheme.colors.onSurface,
-                modifier = Modifier.padding(top = 24.dp)
-            )
-        }
-        Spacer(modifier = Modifier.padding(top = 16.dp))
         HazmatCard(
             selectedCategory = selectedHazmatCategory,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colors.background,
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))
-                )
-                .clip(RoundedCornerShape(dimensionResource(R.dimen.corner_radius_large))),
+                .padding(end = dimensionResource(R.dimen.minor_100)),
         )
 
         if (isLoading) {
