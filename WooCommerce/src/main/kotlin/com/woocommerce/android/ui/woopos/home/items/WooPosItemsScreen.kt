@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -243,17 +245,22 @@ private fun ItemsToolbar(
     onCouponsButtonClicked: () -> Unit,
     onSearchEvent: (WooPosSearchUIEvent) -> Unit,
 ) {
+    val isSearchExpanded = state is WooPosItemsViewState.Content &&
+        state.search is WooPosItemsViewState.Content.SearchState.Visible &&
+        state.search.state is WooPosSearchInputState.Open
+
+    val toolbarHeight by animateDpAsState(
+        targetValue = if (isSearchExpanded) 64.dp else 40.dp,
+        animationSpec = tween(150),
+        label = "toolbarHeight"
+    )
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp),
+            .height(toolbarHeight),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        val isSearchExpanded = state is WooPosItemsViewState.Content &&
-            state.search is WooPosItemsViewState.Content.SearchState.Visible &&
-            state.search.state is WooPosSearchInputState.Open
-
         AnimatedVisibility(
             visible = !isSearchExpanded,
             enter = fadeIn(animationSpec = tween(150)),
