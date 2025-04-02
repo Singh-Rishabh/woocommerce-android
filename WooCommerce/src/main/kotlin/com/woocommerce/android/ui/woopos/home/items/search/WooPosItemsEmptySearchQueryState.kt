@@ -50,12 +50,7 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
         Modifier
             .fillMaxHeight()
             .verticalScroll(scrollState)
-            .padding(
-                start = WooPosSpacing.None.value.toAdaptivePadding(),
-                end = WooPosSpacing.None.value.toAdaptivePadding(),
-                top = WooPosSpacing.Small.value.toAdaptivePadding(),
-                bottom = WooPosSpacing.None.value.toAdaptivePadding(),
-            )
+            .padding(WooPosSpacing.None.value.toAdaptivePadding())
     ) {
         if (state.popularItems.isNotEmpty() || state.recentSearches.isNotEmpty()) {
             Row(

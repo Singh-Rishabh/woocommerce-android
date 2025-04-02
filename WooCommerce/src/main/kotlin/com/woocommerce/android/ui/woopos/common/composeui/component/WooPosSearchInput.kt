@@ -101,7 +101,7 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
             contentDescription = stringResource(
                 R.string.woopos_search_products
             ),
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier.size(32.dp)
         )
     }
 }
