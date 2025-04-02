@@ -30,7 +30,9 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
@@ -686,6 +688,37 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         verify(mockChildToParentEventSender).sendToParent(
             ChildToParentEvent.SearchEvent.RecentSearchSelected(recentSearch)
         )
+    }
+
+    @Test
+    fun `given search query in content state, when simple product clicked, then search is stored as recent`() =
+        runTest {
+            // GIVEN
+            val query = "test query"
+            val simpleProduct = Product.Simple(id = 1, name = "Test Product", price = "$10.0", imageUrl = null)
+
+            mockSuccessfulSearch(query, listOf(defaultProduct))
+
+            // WHEN
+            val viewModel = createViewModel()
+            advanceTimeBy(600)
+            viewModel.onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(simpleProduct))
+
+            // THEN
+            verify(mockEmptyStateProvider).addRecentSearch(query)
+        }
+
+    @Test
+    fun `given non-content state, when simple product clicked, then no recent search is stored`() = runTest {
+        // GIVEN
+        val simpleProduct = Product.Simple(id = 1, name = "Test Product", price = "$10.0", imageUrl = null)
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(simpleProduct))
+
+        // THEN
+        verify(mockEmptyStateProvider, never()).addRecentSearch(any())
     }
 
     private fun mockSuccessfulSearch(query: String, products: List<com.woocommerce.android.model.Product>) {

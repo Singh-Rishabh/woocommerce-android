@@ -205,7 +205,7 @@ class WooPosItemsSearchViewModel @Inject constructor(
     }
 
     private fun storeRecentSearch() {
-        (viewState.value as? WooPosItemsSearchViewState.Content)?.let {
+        (_viewState.value as? WooPosItemsSearchViewState.Content)?.let {
             viewModelScope.launch {
                 emptyStateRepository.addRecentSearch(it.searchQuery)
             }
