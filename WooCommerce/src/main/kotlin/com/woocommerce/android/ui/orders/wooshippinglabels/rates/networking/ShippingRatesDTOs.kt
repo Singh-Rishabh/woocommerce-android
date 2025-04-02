@@ -1,10 +1,9 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.rates.networking
 
 import com.google.gson.annotations.SerializedName
-import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsItemDTO
-import java.math.BigDecimal
 import org.wordpress.android.fluxc.model.shippinglabels.WCShippingLabelModel.HazmatCategory
+import java.math.BigDecimal
 
 sealed class PackageDTO {
     data class CommonPackageDTO(
