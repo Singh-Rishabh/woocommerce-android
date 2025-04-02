@@ -584,7 +584,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                             Result.failure(Exception("Search failed"))
                         )
                     )
-                }.flowOn(UnconfinedTestDispatcher())
+                }
             } else {
                 flow {
                     emit(
@@ -592,7 +592,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                             Result.success(products)
                         )
                     )
-                }.flowOn(UnconfinedTestDispatcher())
+                }
             }
         }
 
@@ -694,7 +694,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                         Result.success(products)
                     )
                 )
-            }.flowOn(UnconfinedTestDispatcher())
+            }
         )
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
             flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
@@ -710,7 +710,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
                         Result.failure(error)
                     )
                 )
-            }.flowOn(UnconfinedTestDispatcher())
+            }
         )
         whenever(mockParentToChildrenEventReceiver.events).thenReturn(
             flowOf(ParentToChildrenEvent.SearchEvent.ChangedQuery(query))
