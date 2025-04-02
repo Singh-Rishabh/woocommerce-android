@@ -6,11 +6,11 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
-import com.woocommerce.android.ui.woopos.home.items.PaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel.ItemClickedData
+import com.woocommerce.android.ui.woopos.home.items.WooPosPaginationState
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
 import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
@@ -340,11 +340,11 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
             val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
+            assertThat(loadingState.paginationState).isEqualTo(WooPosPaginationState.Loading)
 
             val finalState = awaitItem() as WooPosItemsSearchViewState.Content
             assertThat(finalState.items).hasSize(1)
-            assertThat(finalState.paginationState).isEqualTo(PaginationState.None)
+            assertThat(finalState.paginationState).isEqualTo(WooPosPaginationState.None)
         }
     }
 
@@ -365,10 +365,10 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
             val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
+            assertThat(loadingState.paginationState).isEqualTo(WooPosPaginationState.Loading)
 
             val errorState = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(errorState.paginationState).isEqualTo(PaginationState.Error)
+            assertThat(errorState.paginationState).isEqualTo(WooPosPaginationState.Error)
         }
     }
 
