@@ -75,3 +75,47 @@ internal fun HazmatCard(
         }
     }
 }
+
+@Preview("Hazmat non-clickable without selection")
+@Composable
+private fun NonClickableWithoutSelectionPreview() {
+    Surface {
+        HazmatCard(modifier = Modifier.padding(16.dp))
+    }
+}
+
+@Preview("Hazmat non-clickable with selection")
+@Composable
+private fun NonClickableWithSelectionPreview() {
+    Surface {
+        HazmatCard(
+            modifier = Modifier
+                .padding(16.dp),
+            selectedCategory = ShippingLabelHazmatCategory.CLASS_1
+        )
+    }
+}
+
+@Preview("Hazmat clickable without selection")
+@Composable
+private fun ClickableWithoutSelectionPreview() {
+    Surface {
+        HazmatCard(
+            modifier = Modifier.padding(16.dp),
+            onClick = {}
+        )
+    }
+}
+
+@Preview("Hazmat clickable with selection")
+@Composable
+private fun ClickableWithSelectionPreview() {
+    Surface {
+        HazmatCard(
+            modifier = Modifier
+                .padding(16.dp),
+            selectedCategory = ShippingLabelHazmatCategory.CLASS_1,
+            onClick = {}
+        )
+    }
+}
