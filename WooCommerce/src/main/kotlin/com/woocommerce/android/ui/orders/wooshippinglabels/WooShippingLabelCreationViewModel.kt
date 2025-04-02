@@ -577,11 +577,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                         items = currentViewState.shippableItems,
                         rateSummary = selectedRate.summary,
                         shippingLines = currentViewState.shippingLines
-                    )
-                } else {
-                    null
+                    ).let { triggerEvent(LabelPurchased(purchaseData = it)) }
                 }
-            }?.let { triggerEvent(LabelPurchased(purchaseData = it)) }
+            }
     }
 
     fun onSelectedRateSortOrderChanged(option: ShippingSortOption) {
