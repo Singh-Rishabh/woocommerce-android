@@ -18,9 +18,10 @@ class WooPosGetProductById @Inject constructor(
     private val isWooPosSearchEnabled: WooPosIsProductsSearchEnabled,
     private val searchProductsDataSource: WooPosSearchProductsDataSource,
 ) {
+    @Suppress("ForbiddenComment")
     suspend operator fun invoke(productId: Long): Product? = withContext(IO) {
-        // TODO: the call to local DB should be replaced by querying POS-specific Product table, once it's implemented.
         var result = store.getProductByRemoteId(site.get(), productId)?.toAppModel()
+        // TODO: the call to local DB should be replaced by querying POS-specific Product table, once it's implemented.
 
         if (result == null && isWooPosSearchEnabled()) {
             result = searchProductsDataSource.getProductById(productId)
