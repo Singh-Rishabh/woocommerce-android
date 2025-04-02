@@ -1,5 +1,6 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs.products
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -250,6 +251,7 @@ fun WooShippingCustomsProductExpandedListItem(
 }
 
 @Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WooShippingCustomsProductListCollapsedItemPreview() {
     WooThemeWithBackground {
@@ -279,6 +281,7 @@ fun WooShippingCustomsProductListCollapsedItemPreview() {
 }
 
 @Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WooShippingCustomsProductListCollapsedItemErrorPreview() {
     WooThemeWithBackground {
@@ -308,6 +311,7 @@ fun WooShippingCustomsProductListCollapsedItemErrorPreview() {
 }
 
 @Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WooShippingCustomsProductListExpandedItemPreview() {
     WooThemeWithBackground {
@@ -337,6 +341,7 @@ fun WooShippingCustomsProductListExpandedItemPreview() {
 }
 
 @Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun WooShippingCustomsProductListExpandedItemErrorPreview() {
     WooThemeWithBackground {
