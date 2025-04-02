@@ -44,7 +44,10 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemCard
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 
 @Composable
-fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySearchQuery) {
+fun WooPosItemsEmptySearchQueryState(
+    state: WooPosItemsSearchViewState.EmptySearchQuery,
+    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit
+) {
     val scrollState = rememberScrollState()
     Column(
         Modifier
@@ -65,7 +68,7 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        PopularItemsSection(state.popularItems)
+                        PopularItemsSection(state.popularItems, onUIEvent)
                     }
                 }
 
@@ -77,7 +80,7 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        RecentSearchesSection(state)
+                        RecentSearchesSection(state, onUIEvent)
                     }
                 }
             }
@@ -89,7 +92,10 @@ fun WooPosItemsEmptySearchQueryState(state: WooPosItemsSearchViewState.EmptySear
 }
 
 @Composable
-private fun PopularItemsSection(popularItems: List<WooPosItemSelectionViewState.Product>) {
+private fun PopularItemsSection(
+    popularItems: List<WooPosItemSelectionViewState.Product>,
+    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit,
+) {
     SectionHeader(
         icon = Icons.AutoMirrored.Outlined.TrendingUp,
         title = stringResource(R.string.woopos_search_popular_items_title)
@@ -107,7 +113,7 @@ private fun PopularItemsSection(popularItems: List<WooPosItemSelectionViewState.
         WooPosItemCard(
             modifier = Modifier,
             itemContentDescription = itemContentDescription,
-            onItemClicked = { },
+            onItemClicked = { onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(popularItem)) },
             item = popularItem,
         )
 
@@ -116,7 +122,10 @@ private fun PopularItemsSection(popularItems: List<WooPosItemSelectionViewState.
 }
 
 @Composable
-private fun RecentSearchesSection(state: WooPosItemsSearchViewState.EmptySearchQuery) {
+private fun RecentSearchesSection(
+    state: WooPosItemsSearchViewState.EmptySearchQuery,
+    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit
+) {
     SectionHeader(
         icon = Icons.Filled.History,
         title = stringResource(R.string.woopos_search_recent_searches_title)
@@ -132,7 +141,7 @@ private fun RecentSearchesSection(state: WooPosItemsSearchViewState.EmptySearchQ
         ) {
             Row(
                 modifier = Modifier
-                    .clickable { }
+                    .clickable { onUIEvent(WooPosItemsSearchUiEvent.OnRecentSearchClicked(recentSearch)) }
                     .height(112.dp)
                     .fillMaxWidth()
                     .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
@@ -232,7 +241,8 @@ fun WooPosItemsEmptySearchQueryStatePreview() {
                         ),
                     ),
                     recentSearches = listOf("T-shirt", "Jeans", "Shoes"),
-                )
+                ),
+                onUIEvent = { },
             )
         }
     }
@@ -272,7 +282,8 @@ fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
                         ),
                     ),
                     recentSearches = emptyList()
-                )
+                ),
+                onUIEvent = { },
             )
         }
     }

@@ -274,6 +274,8 @@ class WooPosSearchProductsMockedDataSource @Inject constructor() {
         }
     }
 
+    fun getPopularProducts() = productCache.shuffled()
+
     sealed class ProductsResult {
         data class Cached(val products: List<Product>) : ProductsResult()
         data class Remote(val productsResult: Result<List<Product>>) : ProductsResult()
