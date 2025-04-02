@@ -216,8 +216,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             shippingAddresses,
             packageWeight,
             customsState,
+            hazmatState,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, addresses, packageWeight, customState, _ ->
+        ) { selectedPackage, addresses, packageWeight, customState, hazmatState, _ ->
             val customsFulfilled = customState is CustomsState.DataAvailable || customState is NotRequired
             if (selectedPackage != null && addresses != null && customsFulfilled) {
                 ShippingRatesInfo(
@@ -227,7 +228,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shipTo = addresses.shipTo.address,
                     weight = packageWeight?.totalWeight,
                     currencyCode = order.value.currency,
-                    customsData = customsFormData.value
+                    customsData = customsFormData.value,
+                    hazmatSelection = (hazmatState as? Declared)?.hazmatCategory
                 )
             } else {
                 null
@@ -804,7 +806,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val shipTo: Address?,
         val weight: Float?,
         val currencyCode: String?,
-        val customsData: CustomsData?
+        val customsData: CustomsData?,
+        val hazmatSelection: ShippingLabelHazmatCategory?
     )
 
     sealed class CustomsState {
