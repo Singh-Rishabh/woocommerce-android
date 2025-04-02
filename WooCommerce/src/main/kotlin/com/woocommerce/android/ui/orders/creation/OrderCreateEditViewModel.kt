@@ -317,9 +317,6 @@ class OrderCreateEditViewModel @Inject constructor(
     val selectedItems: StateFlow<List<SelectedItem>> =
         _orderDraft.map { order -> order.selectedItems() }.toStateFlow(emptyList())
 
-    val currencyCodeLiveData: LiveData<CurrencyCode?> =
-        _orderDraft.map { CurrencyCode(it.currency) }.asLiveData()
-
     fun Order.selectedItems(): List<SelectedItem> = items.map { item ->
         if (item.isVariation) {
             SelectedItem.ProductVariation(item.productId, item.variationId)

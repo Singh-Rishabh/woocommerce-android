@@ -107,7 +107,6 @@ class CustomAmountsViewModel @Inject constructor(
     private val args: CustomAmountsFragmentArgs by savedState.navArgs()
 
     init {
-        setCurrencySymbol()
         if (isInCreateMode()) {
             tracker.track(ORDER_CREATION_ADD_CUSTOM_AMOUNT_TAPPED)
         } else {
@@ -115,27 +114,22 @@ class CustomAmountsViewModel @Inject constructor(
             populateUIWithExistingData()
             tracker.track(ORDER_CREATION_EDIT_CUSTOM_AMOUNT_TAPPED)
         }
-        updateCustomAmountType()
+        updateCustomAmountTypeAndSetCurrencySymbol()
     }
 
-    private fun setCurrencySymbol() {
+    private fun updateCustomAmountTypeAndSetCurrencySymbol() {
         viewModelScope.launch {
             val code = args.customAmountUIModel.currencyCode?.value
                 ?: store.getSiteSettings(selectedSite.get())?.currencyCode
 
             val symbol = code?.let { currencySymbolFinder.findCurrencySymbol(it) }
             viewState = viewState.copy(
+                customAmountUIModel = viewState.customAmountUIModel.copy(
+                    type = args.customAmountUIModel.type
+                ),
                 currencySymbol = symbol?.let { CurrencySymbol(it) }
             )
         }
-    }
-
-    private fun updateCustomAmountType() {
-        viewState = viewState.copy(
-            customAmountUIModel = viewState.customAmountUIModel.copy(
-                type = args.customAmountUIModel.type
-            )
-        )
     }
 
     private fun populateUIWithExistingData() {
