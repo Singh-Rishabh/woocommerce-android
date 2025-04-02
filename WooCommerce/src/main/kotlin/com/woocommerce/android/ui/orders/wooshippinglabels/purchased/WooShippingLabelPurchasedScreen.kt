@@ -193,9 +193,7 @@ internal fun WooShippingLabelPurchasedWithBottomSheetScreen(
             }
 
             HazmatCard(
-                selectedCategory = shippingData?.hazmatSelection,
-                modifier = Modifier
-                    .padding(horizontal = dimensionResource(R.dimen.major_125))
+                selectedCategory = shippingData?.hazmatSelection
             )
 
             if (isLoading) {
@@ -293,9 +291,7 @@ internal fun WooShippingLabelPurchasedScreen(
         }
 
         HazmatCard(
-            selectedCategory = selectedHazmatCategory,
-            modifier = Modifier
-                .padding(horizontal = dimensionResource(R.dimen.major_125)),
+            selectedCategory = selectedHazmatCategory
         )
 
         if (isLoading) {

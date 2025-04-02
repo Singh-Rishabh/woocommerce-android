@@ -432,9 +432,7 @@ private fun LabelCreationScreenWithBottomSheet(
                     onClick = onHazmatNoticeClick,
                     selectedCategory = hazmatState
                         .run { this as? Declared }
-                        ?.hazmatCategory,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                        ?.hazmatCategory
                 )
                 CustomsCard(
                     customsState = customsState,

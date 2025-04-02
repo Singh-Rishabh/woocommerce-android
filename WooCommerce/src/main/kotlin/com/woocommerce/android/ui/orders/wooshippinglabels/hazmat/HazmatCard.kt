@@ -3,6 +3,7 @@ package com.woocommerce.android.ui.orders.wooshippinglabels.hazmat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -28,14 +29,16 @@ internal fun HazmatCard(
     selectedCategory: ShippingLabelHazmatCategory? = null,
     onClick: OnClick? = null
 ) {
-    Column {
-        val mainRowModifier = if (onClick != null) {
-            Modifier.then(modifier.clickable { onClick() })
-        } else {
-            modifier
+    Column(modifier = Modifier.fillMaxWidth()) {
+        val mainRowModifier = when {
+            onClick != null ->
+                modifier
+                    .clickable { onClick() }
+                    .padding(vertical = 16.dp)
+            else -> modifier
         }
 
-        Row(modifier = mainRowModifier) {
+        Row(modifier = mainRowModifier.padding(horizontal = 16.dp)) {
             Text(
                 text = stringResource(R.string.shipping_label_hazmat_title),
                 style = MaterialTheme.typography.subtitle1,
@@ -78,7 +81,7 @@ internal fun HazmatCard(
 @Composable
 private fun NonClickableWithoutSelectionPreview() {
     Surface {
-        HazmatCard(modifier = Modifier.padding(16.dp))
+        HazmatCard()
     }
 }
 
@@ -87,7 +90,6 @@ private fun NonClickableWithoutSelectionPreview() {
 private fun NonClickableWithSelectionPreview() {
     Surface {
         HazmatCard(
-            modifier = Modifier.padding(16.dp),
             selectedCategory = ShippingLabelHazmatCategory.CLASS_1
         )
     }
@@ -98,7 +100,6 @@ private fun NonClickableWithSelectionPreview() {
 private fun ClickableWithoutSelectionPreview() {
     Surface {
         HazmatCard(
-            modifier = Modifier.padding(16.dp),
             onClick = {}
         )
     }
@@ -109,7 +110,6 @@ private fun ClickableWithoutSelectionPreview() {
 private fun ClickableWithSelectionPreview() {
     Surface {
         HazmatCard(
-            modifier = Modifier.padding(16.dp),
             selectedCategory = ShippingLabelHazmatCategory.CLASS_1,
             onClick = {}
         )
