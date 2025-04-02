@@ -26,7 +26,11 @@ class WooPosSearchProductsDataSource @Inject constructor(
     }
 
     private val canLoadMore = AtomicBoolean(true)
-    private val filteredProductCache = object : LinkedHashMap<String, List<Product>>(16, 0.75f, true) {
+    private val searchResultsCache = object : LinkedHashMap<String, List<Product>>(
+        initialCapacity = 16,
+        loadFactor = 0.75f,
+        accessOrder = true
+    ) {
         override fun removeEldestEntry(eldest: Map.Entry<String, List<Product>>): Boolean {
             return size > MAX_CACHE_SIZE
         }
@@ -57,7 +61,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     private fun getCachedSearchResults(query: String): List<Product> {
-        return filteredProductCache[query.lowercase()] ?: emptyList()
+        return searchResultsCache[query.lowercase()] ?: emptyList()
     }
 
     suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
@@ -65,7 +69,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
             return@withContext Result.success(getCachedSearchResults(query))
         }
 
-        val currentResults = filteredProductCache[query.lowercase()] ?: emptyList()
+        val currentResults = searchResultsCache[query.lowercase()] ?: emptyList()
         val offset = currentResults.size
 
         remoteSearch(query, offset).fold(
@@ -110,7 +114,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
     }
 
     private fun updateFilteredProductCache(query: String, results: List<Product>) {
-        filteredProductCache[query.lowercase()] = results
+        searchResultsCache[query.lowercase()] = results
     }
 
     sealed class ProductsResult {
