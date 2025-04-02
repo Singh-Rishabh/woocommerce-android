@@ -82,6 +82,10 @@ class WooPosSearchProductsDataSource @Inject constructor(
         )
     }
 
+    suspend fun getProductById(productId: Long): Product? = withContext(Dispatchers.IO) {
+        searchResultsCache.values.flatten().find { it.remoteId == productId }
+    }
+
     private suspend fun remoteSearch(
         searchQuery: String,
         offset: Int = 0
