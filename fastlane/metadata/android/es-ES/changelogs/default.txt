@@ -1,2 +1,0 @@
-21.9:
-Hemos solucionado un molesto error que podía provocar un fallo al añadir una nueva tarjeta de pago en el formulario de campaña de Blaze. Esta actualización garantiza una experiencia más fluida y fiable: disfruta de pagos sin complicaciones con WooCommerce. 🚀
