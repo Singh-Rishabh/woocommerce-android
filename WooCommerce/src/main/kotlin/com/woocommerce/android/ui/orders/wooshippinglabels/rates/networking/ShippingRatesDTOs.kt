@@ -15,8 +15,7 @@ sealed class PackageDTO {
         val height: Double,
         @SerializedName("is_letter") val isLetter: Boolean,
         val weight: Double,
-        @SerializedName("hazmat") val hazmatCategory: HazmatCategory,
-        val customs: CustomsDTO? = null
+        @SerializedName("hazmat") val hazmatCategory: HazmatCategory? = null
     ) : PackageDTO()
 
     data class PackageWithCustomsDTO(
@@ -27,14 +26,14 @@ sealed class PackageDTO {
         val height: Double,
         @SerializedName("is_letter") val isLetter: Boolean,
         val weight: Double,
-        @SerializedName("hazmat") val hazmatCategory: HazmatCategory,
         @SerializedName("contents_type") val contentsType: String,
         @SerializedName("contents_explanation") val contentExplanation: String,
         @SerializedName("restriction_type") val restrictionType: String,
         @SerializedName("restriction_comments") val restrictionComments: String,
         @SerializedName("non_delivery_option") val isReturnToSender: String,
         val itn: String,
-        val items: List<CustomsItemDTO>
+        val items: List<CustomsItemDTO>,
+        @SerializedName("hazmat") val hazmatCategory: HazmatCategory? = null,
     ) : PackageDTO()
 }
 
