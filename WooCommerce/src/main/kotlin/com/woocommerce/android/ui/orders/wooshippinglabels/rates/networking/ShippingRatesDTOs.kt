@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsDTO
 import com.woocommerce.android.ui.orders.wooshippinglabels.networking.CustomsItemDTO
 import java.math.BigDecimal
+import org.wordpress.android.fluxc.model.shippinglabels.WCShippingLabelModel.HazmatCategory
 
 sealed class PackageDTO {
     data class CommonPackageDTO(
@@ -14,6 +15,7 @@ sealed class PackageDTO {
         val height: Double,
         @SerializedName("is_letter") val isLetter: Boolean,
         val weight: Double,
+        @SerializedName("hazmat") val hazmatCategory: HazmatCategory,
         val customs: CustomsDTO? = null
     ) : PackageDTO()
 
@@ -25,6 +27,7 @@ sealed class PackageDTO {
         val height: Double,
         @SerializedName("is_letter") val isLetter: Boolean,
         val weight: Double,
+        @SerializedName("hazmat") val hazmatCategory: HazmatCategory,
         @SerializedName("contents_type") val contentsType: String,
         @SerializedName("contents_explanation") val contentExplanation: String,
         @SerializedName("restriction_type") val restrictionType: String,
