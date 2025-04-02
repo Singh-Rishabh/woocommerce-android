@@ -222,14 +222,6 @@ fun WooShippingSplitShipmentScreen(
                             .align(Alignment.BottomCenter)
                     )
                 } else {
-                    val onUpdateShipmentAndChangeSelection: (splitMovement: SplitMovement) -> Unit = { splitMovement ->
-                        if (splitMovement.isRemoveMovement) {
-                            onUpdateSelectedShipment(splitMovement.updatedShipment)
-                            onUpdateShipment(splitMovement)
-                        } else {
-                            onUpdateShipment(splitMovement)
-                        }
-                    }
                     SelectableProductsSection(
                         shipmentKey = viewState.selectableItems.keys.first(),
                         shipment = viewState.selectableItems.values.first(),
@@ -242,7 +234,7 @@ fun WooShippingSplitShipmentScreen(
                         splitMessage = viewState.splitMessage,
                         splitMovements = viewState.splitMovements,
                         onDismissInstructions = onDismissInstructions,
-                        onUpdateShipment = onUpdateShipmentAndChangeSelection,
+                        onUpdateShipment = onUpdateShipment,
                         modifier = modifier
                             .padding(16.dp)
                             .align(Alignment.BottomCenter)
@@ -351,7 +343,8 @@ private fun SplitMovements(
                     modifier = Modifier.weight(1f)
                 )
 
-                if (movements.size == 1) {
+                val containsOnlyANewKey = movements.size == 1 && (movements.first().updatedShipment in shipments).not()
+                if (containsOnlyANewKey) {
                     Text(
                         text = stringResource(R.string.woo_shipping_split_move_to_new).uppercase(),
                         style = MaterialTheme.typography.subtitle2,

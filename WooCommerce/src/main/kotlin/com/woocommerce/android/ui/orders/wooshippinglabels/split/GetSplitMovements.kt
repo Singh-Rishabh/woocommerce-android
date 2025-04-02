@@ -46,7 +46,8 @@ class GetSplitMovements @Inject constructor() {
         return if (nextShipmentItems.isNotEmpty()) {
             getPossibleKeys(
                 currentShipment = currentShipment,
-                items = shipments
+                items = shipments,
+                isRemoveMovement = currentShipmentItems.isEmpty()
             ).map { key ->
                 SplitMovement(
                     currentShipment = currentShipment,
@@ -63,8 +64,11 @@ class GetSplitMovements @Inject constructor() {
     private fun getPossibleKeys(
         currentShipment: Int,
         items: Map<Int, List<ShippableItemModel>>,
+        isRemoveMovement: Boolean
     ): List<Int> {
         val otherKeys = items.keys.filter { it != currentShipment }
+        if (isRemoveMovement) return otherKeys
+
         var nextKey = (otherKeys.maxOrNull() ?: currentShipment) + 1
         if (nextKey == currentShipment) nextKey++
         return otherKeys + nextKey
