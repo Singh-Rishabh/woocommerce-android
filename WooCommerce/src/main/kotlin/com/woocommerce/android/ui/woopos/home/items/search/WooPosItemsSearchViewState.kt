@@ -1,8 +1,8 @@
 package com.woocommerce.android.ui.woopos.home.items.search
 
 import com.woocommerce.android.ui.woopos.home.items.WooPosContentViewState
-import com.woocommerce.android.ui.woopos.home.items.WooPosPaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
+import com.woocommerce.android.ui.woopos.home.items.WooPosPaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosPullToRefreshState
 
 sealed class WooPosItemsSearchViewState {
