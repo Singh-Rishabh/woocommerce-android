@@ -434,8 +434,7 @@ private fun LabelCreationScreenWithBottomSheet(
                         .run { this as? Declared }
                         ?.hazmatCategory,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 4.dp, end = 8.dp)
+                        .padding(horizontal = 16.dp)
                 )
                 CustomsCard(
                     customsState = customsState,
@@ -858,14 +857,6 @@ private fun WooShippingLabelCreationScreenPreview() {
             onEditDestinationAddress = {},
             destinationStatus = AddressStatus.VERIFIED
         )
-    }
-}
-
-@Preview
-@Composable
-private fun HazmatCardPreview() {
-    WooThemeWithBackground {
-        HazmatCard(modifier = Modifier.padding(16.dp))
     }
 }
 
