@@ -7,7 +7,7 @@ sealed class WooPosVariationsViewState(
     data class Content(
         override val items: List<WooPosItemSelectionViewState.Variation>,
         override val pullToRefreshState: WooPosPullToRefreshState = WooPosPullToRefreshState.Enabled,
-        override val paginationState: PaginationState = PaginationState.None,
+        override val paginationState: WooPosPaginationState = WooPosPaginationState.None,
     ) : WooPosVariationsViewState(pullToRefreshState), ContentViewState
 
     data class Loading(

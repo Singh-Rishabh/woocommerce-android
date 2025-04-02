@@ -9,7 +9,7 @@ import com.woocommerce.android.model.ProductVariation
 import com.woocommerce.android.ui.woopos.common.data.WooPosGetProductById
 import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
-import com.woocommerce.android.ui.woopos.home.items.PaginationState
+import com.woocommerce.android.ui.woopos.home.items.WooPosPaginationState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel
 import com.woocommerce.android.ui.woopos.home.items.WooPosPullToRefreshState
@@ -101,9 +101,9 @@ class WooPosVariationsViewModel @Inject constructor(
                                             )
                                         },
                                         paginationState = if (loadMoreJob?.isActive == true) {
-                                            PaginationState.Loading
+                                            WooPosPaginationState.Loading
                                         } else {
-                                            PaginationState.None
+                                            WooPosPaginationState.None
                                         }
                                     )
                                 } else {
@@ -163,7 +163,7 @@ class WooPosVariationsViewModel @Inject constructor(
             return
         }
 
-        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
+        _viewState.value = currentState.copy(paginationState = WooPosPaginationState.Loading)
 
         loadMoreJob?.cancel()
         loadMoreJob = viewModelScope.launch {
@@ -181,7 +181,7 @@ class WooPosVariationsViewModel @Inject constructor(
                     }
                 )
             } else {
-                currentState.copy(paginationState = PaginationState.Error)
+                currentState.copy(paginationState = WooPosPaginationState.Error)
             }
         }
     }

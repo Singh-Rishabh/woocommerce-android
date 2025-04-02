@@ -212,9 +212,9 @@ class WooPosItemsViewModel @Inject constructor(
                                 if (products.isNotEmpty()) {
                                     val currentState = _viewState.value
                                     var paginationState = if (loadMoreProductsJob?.isActive == true) {
-                                        PaginationState.Loading
+                                        WooPosPaginationState.Loading
                                     } else {
-                                        PaginationState.None
+                                        WooPosPaginationState.None
                                     }
                                     if (currentState is WooPosItemsViewState.Content) {
                                         currentState.copy(
@@ -252,7 +252,7 @@ class WooPosItemsViewModel @Inject constructor(
         }
 
     private suspend fun List<Product>.toContentState(
-        paginationState: PaginationState = PaginationState.None
+        paginationState: WooPosPaginationState = WooPosPaginationState.None
     ) = WooPosItemsViewState.Content(
         items = map { it.toItemSelectionViewState() },
         paginationState = paginationState,
@@ -297,7 +297,7 @@ class WooPosItemsViewModel @Inject constructor(
             return
         }
 
-        _viewState.value = currentState.copy(paginationState = PaginationState.Loading)
+        _viewState.value = currentState.copy(paginationState = WooPosPaginationState.Loading)
 
         loadMoreProductsJob?.cancel()
         loadMoreProductsJob = viewModelScope.launch {
@@ -305,7 +305,7 @@ class WooPosItemsViewModel @Inject constructor(
             _viewState.value = if (result.isSuccess) {
                 result.getOrThrow().toContentState()
             } else {
-                currentState.copy(paginationState = PaginationState.Error)
+                currentState.copy(paginationState = WooPosPaginationState.Error)
             }
         }
     }

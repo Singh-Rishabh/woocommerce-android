@@ -111,19 +111,19 @@ fun WooPosItemList(
         }
 
         when (state.paginationState) {
-            PaginationState.Error -> {
+            WooPosPaginationState.Error -> {
                 item {
                     onErrorWhilePaginating()
                 }
             }
 
-            PaginationState.Loading -> {
+            WooPosPaginationState.Loading -> {
                 item {
                     ItemsLoadingItem()
                 }
             }
 
-            PaginationState.None -> {
+            WooPosPaginationState.None -> {
             }
         }
 

@@ -194,7 +194,7 @@ class WooPosItemsViewModelTestSelectionViewState {
         // THEN
         viewModel.viewState.test {
             val value = awaitItem() as WooPosItemsViewState.Content
-            assertThat(value.paginationState).isEqualTo(PaginationState.None)
+            assertThat(value.paginationState).isEqualTo(WooPosPaginationState.None)
         }
     }
 
@@ -232,7 +232,7 @@ class WooPosItemsViewModelTestSelectionViewState {
             // THEN
             viewModel.viewState.test {
                 val value = awaitItem() as WooPosItemsViewState.Content
-                assertThat(value.paginationState).isEqualTo(PaginationState.None)
+                assertThat(value.paginationState).isEqualTo(WooPosPaginationState.None)
             }
         }
 
@@ -270,7 +270,7 @@ class WooPosItemsViewModelTestSelectionViewState {
         // THEN
         viewModel.viewState.test {
             val value = awaitItem() as ContentViewState
-            assertThat(value.paginationState).isInstanceOf(PaginationState.Error::class.java)
+            assertThat(value.paginationState).isInstanceOf(WooPosPaginationState.Error::class.java)
         }
     }
 

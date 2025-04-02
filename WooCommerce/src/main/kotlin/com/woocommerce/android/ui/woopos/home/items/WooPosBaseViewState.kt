@@ -7,13 +7,13 @@ sealed class WooPosBaseViewState(
 interface ContentViewState {
     val items: List<WooPosItemSelectionViewState>
     val pullToRefreshState: WooPosPullToRefreshState
-    val paginationState: PaginationState
+    val paginationState: WooPosPaginationState
 }
 
-sealed class PaginationState {
-    data object None : PaginationState()
-    data object Loading : PaginationState()
-    data object Error : PaginationState()
+sealed class WooPosPaginationState {
+    data object None : WooPosPaginationState()
+    data object Loading : WooPosPaginationState()
+    data object Error : WooPosPaginationState()
 }
 
 enum class WooPosPullToRefreshState {

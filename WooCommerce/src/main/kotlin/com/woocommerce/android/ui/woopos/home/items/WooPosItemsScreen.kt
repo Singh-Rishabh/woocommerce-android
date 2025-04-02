@@ -382,7 +382,7 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     imageUrl = null,
                 ),
             ),
-            paginationState = PaginationState.Loading,
+            paginationState = WooPosPaginationState.Loading,
             pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
@@ -438,7 +438,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                     variationIds = listOf()
                 ),
             ),
-            paginationState = PaginationState.Error,
+            paginationState = WooPosPaginationState.Error,
             pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
