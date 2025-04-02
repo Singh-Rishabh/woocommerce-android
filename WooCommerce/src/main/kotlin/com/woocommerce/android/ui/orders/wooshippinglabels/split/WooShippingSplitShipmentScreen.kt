@@ -201,7 +201,8 @@ fun WooShippingSplitShipmentScreen(
                         if (splitMovement.isRemoveMovement) {
                             scope.launch {
                                 val nextPage = shipments.indexOfFirst { it == splitMovement.updatedShipment }
-                                    .takeIf { it != -1 } ?: shipments.first { it != splitMovement.currentShipment }
+                                    .takeIf { it != -1 && it < shipments.lastIndex }
+                                    ?: shipments.first { it != splitMovement.currentShipment }
                                 pagerState.animateScrollToPage(nextPage)
                                 onUpdateShipment(splitMovement)
                             }
