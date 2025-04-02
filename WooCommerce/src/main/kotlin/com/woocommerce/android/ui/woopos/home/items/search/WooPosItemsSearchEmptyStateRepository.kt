@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 @Suppress("MagicNumber")
-class WooPosItemsSearchEmptyStateProvider @Inject constructor(
+class WooPosItemsSearchEmptyStateRepository @Inject constructor(
     private val productsMockedDataSource: WooPosSearchProductsMockedDataSource,
     private val preferencesRepository: WooPosPreferencesRepository
 ) {
