@@ -24,7 +24,7 @@ class GetShippingRates @Inject constructor(
         weight: Float,
         currencyCode: String?,
         customsData: CustomsData?,
-        hazmatSelection: ShippingLabelHazmatCategory?
+        hazmatSelection: ShippingLabelHazmatCategory? = null
     ): Result<Map<CarrierUI, List<ShippingRateUI>>> {
         val result = repository.getShippingRates(
             orderId = orderId,
