@@ -88,7 +88,6 @@ import com.woocommerce.android.ui.orders.creation.views.OrderCreateEditSectionVi
 import com.woocommerce.android.ui.orders.creation.views.OrderCreateEditSectionView.AddButton
 import com.woocommerce.android.ui.orders.details.OrderStatusSelectorDialog.Companion.KEY_ORDER_STATUS_RESULT
 import com.woocommerce.android.ui.orders.details.views.OrderDetailOrderStatusView
-import com.woocommerce.android.ui.payments.customamounts.CustomAmountsViewModel.CustomAmountType.FIXED_CUSTOM_AMOUNT
 import com.woocommerce.android.ui.products.selector.ProductSelectorFragment
 import com.woocommerce.android.ui.products.selector.ProductSelectorFragmentArgs
 import com.woocommerce.android.ui.products.selector.ProductSelectorSharedViewModel
@@ -650,7 +649,7 @@ class OrderCreateEditFormFragment :
         binding.customAmountsSection.setCustomAmountsSectionButtons(
             addCustomAmountsButton = AddButton(
                 text = getString(R.string.order_creation_add_custom_amounts),
-                onClickListener = { navigateToCustomAmountsDialog() }
+                onClickListener = { viewModel.onCustomAmountTapped() }
             )
         )
         binding.customAmountsSection.isEachAddButtonEnabled = isEditable
@@ -700,7 +699,7 @@ class OrderCreateEditFormFragment :
                 addCustomAmountsButton = AddButton(
                     text = getString(R.string.order_creation_add_custom_amounts),
                     onClickListener = {
-                        navigateToCustomAmountsDialog()
+                        viewModel.onCustomAmountTapped()
                     }
                 )
             )
@@ -713,7 +712,7 @@ class OrderCreateEditFormFragment :
                 addCustomAmountsButton = AddButton(
                     text = getString(R.string.order_creation_add_custom_amounts),
                     onClickListener = {
-                        navigateToCustomAmountsDialog()
+                        viewModel.onCustomAmountTapped()
                     }
                 )
             )
@@ -721,23 +720,16 @@ class OrderCreateEditFormFragment :
     }
 
     private fun navigateToCustomAmountsDialog(
-        customAmountUIModel: CustomAmountUIModel = CustomAmountUIModel.EMPTY,
-        orderTotal: String = viewModel.orderDraft.value?.total.toString(),
+        customAmountUIModel: CustomAmountUIModel,
+        orderTotal: String,
     ) {
-        if (viewModel.orderContainsProductsOrCustomAmounts()) {
-            displayCustomAmountTypeBottomSheet()
-        } else {
-            OrderCreateEditNavigator.navigate(
-                this,
-                OrderCreateEditNavigationTarget.CustomAmountDialog(
-                    customAmountUIModel.copy(
-                        type = FIXED_CUSTOM_AMOUNT,
-                        currency = viewModel.getCurrencySymbol()
-                    ),
-                    orderTotal
-                )
+        OrderCreateEditNavigator.navigate(
+            this,
+            OrderCreateEditNavigationTarget.CustomAmountDialog(
+                customAmountUIModel,
+                orderTotal
             )
-        }
+        )
     }
 
     private fun displayCustomAmountTypeBottomSheet() {
@@ -857,9 +849,7 @@ class OrderCreateEditFormFragment :
                         currencyFormatter,
                         onCustomAmountClick = {
                             viewModel.selectCustomAmount(it)
-                            navigateToCustomAmountsDialog(
-                                customAmountUIModel = it,
-                            )
+                            viewModel.onCustomAmountTapped(it)
                         }
                     )
                     itemAnimator = animator
@@ -870,7 +860,7 @@ class OrderCreateEditFormFragment :
                 submitList(customAmounts)
             }
             customAmountsSection.addIcon.setOnClickListener {
-                navigateToCustomAmountsDialog()
+                viewModel.onCustomAmountTapped()
             }
         }
     }
@@ -1174,9 +1164,10 @@ class OrderCreateEditFormFragment :
             is OpenBarcodeScanningFragment -> navigateToBarcodeScanning()
             is VMKilledWhenScanningInProgress -> ToastUtils.showToast(context, event.message)
             is OnCouponRejectedByBackend -> uiMessageResolver.getSnack(stringResId = event.message).show()
-            is OnCustomAmountTypeSelected -> handleCustomAmountSelection(event)
             is OnTotalsSectionHeightChanged -> updateScrollViewPadding(binding, event.newHeight)
             is OnSelectedProductsSyncRequested -> syncSelectedProducts()
+            is ShowCustomAmountBottomSheet -> displayCustomAmountTypeBottomSheet()
+            is ShowCustomAmountDialog -> navigateToCustomAmountsDialog(event.customAmountUIModel, event.orderTotal)
             is Exit -> findNavController().navigateUp()
             is ShippingLinesFeedback -> sendShippingLinesFeedback()
         }
@@ -1206,22 +1197,6 @@ class OrderCreateEditFormFragment :
     private fun navigateToBarcodeScanning() {
         findNavController().navigateSafely(
             OrderCreateEditFormFragmentDirections.actionOrderCreationFragmentToBarcodeScanningFragment()
-        )
-    }
-
-    private fun handleCustomAmountSelection(event: OnCustomAmountTypeSelected) {
-        OrderCreateEditNavigator.navigate(
-            this,
-            OrderCreateEditNavigationTarget.CustomAmountDialog(
-                customAmountUIModel = viewModel.selectedCustomAmount.value?.copy(
-                    type = event.type,
-                    currency = viewModel.getCurrencySymbol()
-                ) ?: CustomAmountUIModel.EMPTY.copy(
-                    type = event.type,
-                    currency = viewModel.getCurrencySymbol()
-                ),
-                orderTotal = viewModel.orderDraft.value?.total.toString(),
-            )
         )
     }
 
