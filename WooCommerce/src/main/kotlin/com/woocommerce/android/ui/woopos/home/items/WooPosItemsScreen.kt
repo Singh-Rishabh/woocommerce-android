@@ -1,6 +1,9 @@
 package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -190,6 +193,7 @@ private fun MainItemsList(
                                             )
                                         }
                                     }
+
                                     is WooPosSearchInputState.Open -> WooPosItemsSearchScreen()
                                 }
                             }
@@ -230,6 +234,7 @@ private fun MainItemsList(
         )
     }
 }
+
 @Composable
 private fun ItemsToolbar(
     state: WooPosItemsViewState,
@@ -245,12 +250,22 @@ private fun ItemsToolbar(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        WooPosText(
-            text = stringResource(id = R.string.woopos_products_screen_title),
-            style = WooPosTypography.Heading,
-            fontWeight = FontWeight.Bold,
-            color = titleColor,
-        )
+        val isSearchExpanded = state is WooPosItemsViewState.Content &&
+            state.search is WooPosItemsViewState.Content.SearchState.Visible &&
+            state.search.state is WooPosSearchInputState.Open
+
+        AnimatedVisibility(
+            visible = !isSearchExpanded,
+            enter = fadeIn(animationSpec = tween(150)),
+            exit = fadeOut(animationSpec = tween(150)),
+        ) {
+            WooPosText(
+                text = stringResource(id = R.string.woopos_products_screen_title),
+                style = WooPosTypography.Heading,
+                fontWeight = FontWeight.Bold,
+                color = titleColor,
+            )
+        }
 
         Row(
             horizontalArrangement = Arrangement.End,
