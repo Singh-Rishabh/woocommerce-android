@@ -25,10 +25,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -500,6 +498,8 @@ fun ExpandableSelectableShippingProduct(
     quantity: Float,
     isSelected: Boolean,
     onSelectionChange: (Boolean) -> Unit,
+    onInnerSelectionChange: (Boolean, Int) -> Unit,
+    selectedIndexes: Set<Int>,
     isExpanded: Boolean,
     onExpand: (Boolean) -> Unit,
     singleWeight: String,
@@ -566,22 +566,22 @@ fun ExpandableSelectableShippingProduct(
                 }
             }
             if (isExpanded) {
-                repeat(quantity.toInt()) {
-                    var selection by remember { mutableStateOf(false) }
+                for (index in 0 until quantity.toInt()) {
                     Divider()
+                    val isInnerItemSelected = index in selectedIndexes
                     SelectableShippingProductDetails(
                         title = title,
                         description = description,
                         weight = singleWeight,
                         price = singlePrice,
                         quantity = quantity,
-                        isSelected = selection,
+                        isSelected = isInnerItemSelected,
                         onSelectionChange = {
-                            selection = !selection
+                            onInnerSelectionChange(isInnerItemSelected, index)
                         },
                         imageUrl = imageUrl,
                         modifier = Modifier
-                            .clickable { selection = !selection }
+                            .clickable { onInnerSelectionChange(isInnerItemSelected, index) }
                             .padding(start = 24.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
                         imageSize = dimensionResource(R.dimen.image_minor_100),
                         displayQuantity = false
@@ -670,7 +670,9 @@ fun ExpandableSelectableShippingProductPreview(@PreviewParameter(IsExpandedProvi
                 isExpanded = isExpanded,
                 onExpand = {},
                 singleWeight = "0.6kg",
-                singlePrice = "$12.99"
+                singlePrice = "$12.99",
+                selectedIndexes = setOf(0, 1),
+                onInnerSelectionChange = { _, _ -> }
             )
         }
     }
