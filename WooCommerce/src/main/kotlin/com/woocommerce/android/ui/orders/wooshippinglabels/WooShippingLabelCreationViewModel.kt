@@ -13,9 +13,12 @@ import com.woocommerce.android.extensions.sumByFloat
 import com.woocommerce.android.model.Address
 import com.woocommerce.android.model.Order
 import com.woocommerce.android.ui.orders.details.OrderDetailRepository
+import com.woocommerce.android.ui.orders.shippinglabels.creation.ShippingLabelHazmatCategory
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.ItnMissing
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.NotRequired
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.CustomsState.Unavailable
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.Declared
+import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.HazmatState.NoSelection
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.DataAvailable
 import com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel.PackageSelectionState.NotSelected
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
@@ -54,10 +57,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
@@ -79,10 +78,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val purchaseShippingLabel: PurchaseShippingLabel,
     private val observeStoreOptions: ObserveStoreOptions,
     private val fetchAccountSettings: FetchAccountSettings,
-    private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val addressValidationHelper: AddressValidationHelper,
     private val verifyDestinationAddress: VerifyDestinationAddress,
     private val observeShippingLabelNotice: ObserveShippingLabelNotice,
+    private val shouldRequireCustoms: ShouldRequireCustomsForm,
     private val shouldRequireITN: ShouldRequireITN
 ) : ScopedViewModel(savedState) {
     private val navArgs: WooShippingLabelCreationFragmentArgs by savedState.navArgs()
@@ -103,6 +102,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     private val packageWeight = MutableStateFlow<PackageWeight?>(null)
     private val packageSelection = MutableStateFlow<PackageSelectionState>(NotSelected)
     private val customsState = MutableStateFlow<CustomsState>(NotRequired)
+    private val hazmatState = MutableStateFlow<HazmatState>(NoSelection)
 
     private val uiState = MutableStateFlow(
         UIControlsState(
@@ -214,16 +214,19 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             packageSelected,
             shippingAddresses,
             packageWeight,
+            customsState,
             refreshShippingRates.onStart { emit(Unit) }
-        ) { selectedPackage, addresses, packageWeight, _ ->
-            if (selectedPackage != null && addresses != null) {
+        ) { selectedPackage, addresses, packageWeight, customState, _ ->
+            val customsFulfilled = customState is CustomsState.DataAvailable || customState is NotRequired
+            if (selectedPackage != null && addresses != null && customsFulfilled) {
                 ShippingRatesInfo(
                     orderId = navArgs.orderId,
                     packageSelected = selectedPackage,
                     shipFrom = addresses.shipFrom,
                     shipTo = addresses.shipTo.address,
                     weight = packageWeight?.totalWeight,
-                    currencyCode = order.value.currency
+                    currencyCode = order.value.currency,
+                    customsData = customsFormData.value
                 )
             } else {
                 null
@@ -295,7 +298,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     // This logic will be updated later once the Customs data state is available
-    private fun observeCustomsDataChanges() {
+    private suspend fun observeCustomsDataChanges() {
         combine(
             shippingAddresses,
             customsFormData,
@@ -310,25 +313,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 customsRequired -> Unavailable
                 else -> NotRequired
             }
-        }.onEach {
+        }.collectLatest {
             customsState.value = it
-        }.launchIn(viewModelScope)
-
-        combine(
-            packageSelected.filterNotNull(),
-            customsState.filter { it is CustomsState.DataAvailable }
-        ) { packageSelected, customState ->
-            val customData = customState
-                .run { this as? CustomsState.DataAvailable }
-                ?.customsData?.copy(
-                    packageId = packageSelected.id,
-                    packageName = packageSelected.name
-                )
-
-            packageSelected.copy(customsData = customData)
-        }.onEach {
-            packageSelected.value = it
-        }.launchIn(viewModelScope)
+        }
     }
 
     private suspend fun getShippingAddresses() {
@@ -372,7 +359,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                     shippingRatesInfo.shipTo,
                     shippingRatesInfo.shipFrom,
                     shippingRatesInfo.weight,
-                    shippingRatesInfo.currencyCode
+                    shippingRatesInfo.currencyCode,
+                    shippingRatesInfo.customsData
                 )
 
                 if (shippingRatesResult.isSuccess && shippingRatesResult.getOrThrow().isNotEmpty()) {
@@ -396,8 +384,9 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             uiState,
             purchaseState,
             customsState,
-            loadTrigger.onStart { emit(Unit) }
-        ) { storeOptions, order, addresses, shippingRates, packageSelection, uiState, purchaseState, customsState, _ ->
+            hazmatState
+        ) { storeOptions, order, addresses, shippingRates,
+            packageSelection, uiState, purchaseState, customsState, hazmatState ->
             if (storeOptions == null || addresses == null || purchaseState is PurchaseState.Error) {
                 return@combine WooShippingViewState.Error
             }
@@ -432,8 +421,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 uiState = uiState,
                 purchaseState = purchaseState,
                 customsState = customsState,
+                hazmatState = hazmatState,
                 destinationStatus = destinationStatus
             )
+        }.combine(loadTrigger.onStart { emit(Unit) }) { viewState, _ ->
+            viewState
         }.collectLatest {
             viewState.value = it
         }
@@ -514,6 +506,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val backupPurchaseState = purchaseState.value
         purchaseState.value = PurchaseState.InProgress
 
+        val customsData = customsFormData.value?.let { listOf(it) }
+
         launch {
             val result = purchaseShippingLabel(
                 orderId,
@@ -523,8 +517,10 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 addresses.shipFrom,
                 shippingRate,
                 weight,
-                lastOrderComplete
+                lastOrderComplete,
+                customsData
             )
+
             if (result.isSuccess) {
                 purchaseState.value = PurchaseState.Success
                 result.getOrNull()
@@ -622,6 +618,21 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         triggerEvent(event)
     }
 
+    fun onHazmatNoticeClick() {
+        val selectedCategory = hazmatState.value
+            .run { this as? Declared }
+            ?.hazmatCategory
+
+        triggerEvent(StartHazmatFormEdit(selectedCategory))
+    }
+
+    fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
+        when {
+            selectedCategory != null -> Declared(selectedCategory)
+            else -> NoSelection
+        }.let { hazmatState.value = it }
+    }
+
     fun allowBackNavigation(): Boolean {
         val state = uiState.value
         return when {
@@ -697,6 +708,8 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val customData: CustomsData?
     ) : Event()
 
+    data class StartHazmatFormEdit(val selectedCategory: ShippingLabelHazmatCategory?) : Event()
+
     sealed class WooShippingViewState {
         data object Error : WooShippingViewState()
         data object Loading : WooShippingViewState()
@@ -709,6 +722,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             val uiState: UIControlsState,
             val purchaseState: PurchaseState,
             val customsState: CustomsState,
+            val hazmatState: HazmatState,
             val destinationStatus: AddressStatus
         ) : WooShippingViewState()
     }
@@ -779,15 +793,20 @@ class WooShippingLabelCreationViewModel @Inject constructor(
         val shipFrom: OriginShippingAddress,
         val shipTo: Address?,
         val weight: Float?,
-        val currencyCode: String?
+        val currencyCode: String?,
+        val customsData: CustomsData?
     )
 
-    // This will be extended later introducing the state with data coming from the Customs form
     sealed class CustomsState {
         data object NotRequired : CustomsState()
         data object ItnMissing : CustomsState()
         data object Unavailable : CustomsState()
         data class DataAvailable(val customsData: CustomsData) : CustomsState()
+    }
+
+    sealed class HazmatState {
+        data object NoSelection : HazmatState()
+        data class Declared(val hazmatCategory: ShippingLabelHazmatCategory) : HazmatState()
     }
 
     companion object {

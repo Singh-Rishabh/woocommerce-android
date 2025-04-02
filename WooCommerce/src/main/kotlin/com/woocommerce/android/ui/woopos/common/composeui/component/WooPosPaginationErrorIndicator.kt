@@ -30,8 +30,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosThe
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.toAdaptivePadding
 import com.woocommerce.android.ui.woopos.home.items.PaginationState
-import com.woocommerce.android.ui.woopos.home.items.WooPosItem.Product
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemList
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewState
 
 @Composable
@@ -148,7 +148,7 @@ fun WooPosPaginationErrorScreenPreview() {
                 ),
             ),
             paginationState = PaginationState.Error,
-            reloadingProductsWithPullToRefresh = true,
+            reloadingWithPullToRefresh = true,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,

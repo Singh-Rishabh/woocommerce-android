@@ -716,6 +716,9 @@
         <action
             android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingSplitShipmentFragment"
             app:destination="@id/wooShippingSplitShipmentFragment" />
+        <action
+            android:id="@+id/action_wooShippingLabelCreationFragment_to_wooShippingLabelHazmatFormFragment"
+            app:destination="@id/wooShippingLabelHazmatFormFragment" />
     </fragment>
     <fragment
         android:id="@+id/wooShippingLabelPackageCreationFragment"
@@ -782,5 +785,18 @@
         <argument
             android:name="shipmentArgs"
             app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel$SplitShipmentArgs" />
+    </fragment>
+    <fragment
+        android:id="@+id/wooShippingLabelHazmatFormFragment"
+        android:name="com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormFragment"
+        android:label="WooShippingLabelHazmatFormFragment" >
+        <argument
+            android:name="selectedCategoryName"
+            app:argType="string"
+            app:nullable="true" />
+
+        <action
+            android:id="@+id/action_wooShippingLabelHazmatFormFragment_to_hazmatCategorySelector"
+            app:destination="@id/searchFilterFragment" />
     </fragment>
 </navigation>
