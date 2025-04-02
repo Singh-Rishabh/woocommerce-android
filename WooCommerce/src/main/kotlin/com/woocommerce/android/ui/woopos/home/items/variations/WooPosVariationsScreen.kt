@@ -177,7 +177,7 @@ private fun WooPosVariationsScreens(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Enabled,
+            refreshing = itemState.value.pullToRefreshState == WooPosPullToRefreshState.Refreshing,
             state = pullToRefreshState
         )
     }
