@@ -50,8 +50,7 @@ internal fun HazmatCard(
                 text = if (selectedCategory == null) stringResource(R.string.no) else stringResource(R.string.yes),
                 style = MaterialTheme.typography.subtitle1,
                 color = colorResource(id = R.color.color_on_surface_medium),
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
+                modifier = Modifier.align(Alignment.CenterVertically)
             )
 
             if (onClick != null) {
@@ -61,8 +60,7 @@ internal fun HazmatCard(
                     contentDescription = stringResource(
                         id = R.string.shipping_label_package_details_items_expand_content_description
                     ),
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
         }
@@ -89,8 +87,7 @@ private fun NonClickableWithoutSelectionPreview() {
 private fun NonClickableWithSelectionPreview() {
     Surface {
         HazmatCard(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             selectedCategory = ShippingLabelHazmatCategory.CLASS_1
         )
     }
@@ -112,8 +109,7 @@ private fun ClickableWithoutSelectionPreview() {
 private fun ClickableWithSelectionPreview() {
     Surface {
         HazmatCard(
-            modifier = Modifier
-                .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             selectedCategory = ShippingLabelHazmatCategory.CLASS_1,
             onClick = {}
         )
