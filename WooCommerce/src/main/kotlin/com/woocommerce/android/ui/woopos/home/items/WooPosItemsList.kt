@@ -68,7 +68,7 @@ import kotlinx.coroutines.flow.filter
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WooPosItemList(
-    state: ContentViewState,
+    state: WooPosContentViewState,
     listState: LazyListState,
     onItemClicked: (item: WooPosItemSelectionViewState) -> Unit,
     onEndOfProductsListReached: () -> Unit,
@@ -408,7 +408,7 @@ fun WooPosItemsEmptyList(
 @Composable
 private fun InfiniteListHandler(
     listState: LazyListState,
-    state: ContentViewState,
+    state: WooPosContentViewState,
     onEndOfProductsListReached: () -> Unit
 ) {
     val buffer = 5

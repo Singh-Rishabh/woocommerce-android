@@ -4,7 +4,7 @@ sealed class WooPosBaseViewState(
     open val pullToRefreshState: WooPosPullToRefreshState
 )
 
-interface ContentViewState {
+interface WooPosContentViewState {
     val items: List<WooPosItemSelectionViewState>
     val pullToRefreshState: WooPosPullToRefreshState
     val paginationState: WooPosPaginationState

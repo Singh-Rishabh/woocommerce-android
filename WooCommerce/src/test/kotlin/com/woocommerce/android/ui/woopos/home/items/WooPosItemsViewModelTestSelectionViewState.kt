@@ -269,7 +269,7 @@ class WooPosItemsViewModelTestSelectionViewState {
 
         // THEN
         viewModel.viewState.test {
-            val value = awaitItem() as ContentViewState
+            val value = awaitItem() as WooPosContentViewState
             assertThat(value.paginationState).isInstanceOf(WooPosPaginationState.Error::class.java)
         }
     }
