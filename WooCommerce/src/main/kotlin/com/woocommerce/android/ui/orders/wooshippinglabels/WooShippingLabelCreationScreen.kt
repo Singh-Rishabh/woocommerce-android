@@ -93,6 +93,8 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRate
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import kotlinx.parcelize.Parcelize
 
+typealias OnClick = () -> Unit
+
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
     when (val viewState = viewModel.viewState.collectAsState().value) {
@@ -498,9 +500,14 @@ private fun TopBar(onNavigateBack: () -> Unit) = TopAppBar(
 internal fun HazmatCard(
     modifier: Modifier = Modifier,
     selectedCategory: ShippingLabelHazmatCategory? = null,
-    onClick: () -> Unit = {}
+    onClick: OnClick? = null
 ) {
-    Row(modifier = modifier.clickable { onClick() }) {
+    var hazmatCardModifier = modifier
+    if (onClick != null) {
+        hazmatCardModifier = modifier.then(modifier.clickable { onClick() })
+    }
+
+    Row(modifier = hazmatCardModifier) {
         Text(
             text = stringResource(R.string.shipping_label_hazmat_title),
             style = MaterialTheme.typography.subtitle1,
@@ -519,16 +526,18 @@ internal fun HazmatCard(
                 .align(Alignment.CenterVertically)
         )
 
-        Icon(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            tint = colorResource(id = R.color.color_on_surface_medium),
-            contentDescription = stringResource(
-                id = R.string.shipping_label_package_details_items_expand_content_description
-            ),
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(end = dimensionResource(R.dimen.minor_50))
-        )
+        if (onClick != null) {
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow_right),
+                tint = colorResource(id = R.color.color_on_surface_medium),
+                contentDescription = stringResource(
+                    id = R.string.shipping_label_package_details_items_expand_content_description
+                ),
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(end = dimensionResource(R.dimen.minor_50))
+            )
+        }
     }
 
     if (selectedCategory != null) {
