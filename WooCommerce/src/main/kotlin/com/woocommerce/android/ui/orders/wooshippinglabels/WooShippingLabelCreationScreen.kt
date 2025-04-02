@@ -56,7 +56,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -83,7 +82,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelect
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
-import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatSelectionCard
+import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.packages.components.ErrorMessageWithButton
@@ -92,8 +91,6 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRate
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingRatesSection
 import com.woocommerce.android.ui.orders.wooshippinglabels.rates.ui.ShippingSortOption
 import kotlinx.parcelize.Parcelize
-
-typealias OnClick = () -> Unit
 
 @Composable
 fun WooShippingLabelCreationScreen(viewModel: WooShippingLabelCreationViewModel) {
@@ -495,58 +492,6 @@ private fun TopBar(onNavigateBack: () -> Unit) = TopAppBar(
     backgroundColor = colorResource(id = R.color.color_toolbar),
     elevation = 0.dp,
 )
-
-@Composable
-internal fun HazmatCard(
-    modifier: Modifier = Modifier,
-    selectedCategory: ShippingLabelHazmatCategory? = null,
-    onClick: OnClick? = null
-) {
-    var hazmatCardModifier = modifier
-    if (onClick != null) {
-        hazmatCardModifier = modifier.then(modifier.clickable { onClick() })
-    }
-
-    Row(modifier = hazmatCardModifier) {
-        Text(
-            text = stringResource(R.string.shipping_label_hazmat_title),
-            style = MaterialTheme.typography.subtitle1,
-            color = MaterialTheme.colors.onSurface,
-            modifier = Modifier
-                .weight(1f)
-                .padding(dimensionResource(id = R.dimen.major_100))
-                .align(Alignment.CenterVertically)
-        )
-
-        Text(
-            text = if (selectedCategory == null) stringResource(R.string.no) else stringResource(R.string.yes),
-            style = MaterialTheme.typography.subtitle1,
-            color = colorResource(id = R.color.color_on_surface_medium),
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-        )
-
-        if (onClick != null) {
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_right),
-                tint = colorResource(id = R.color.color_on_surface_medium),
-                contentDescription = stringResource(
-                    id = R.string.shipping_label_package_details_items_expand_content_description
-                ),
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(end = dimensionResource(R.dimen.minor_50))
-            )
-        }
-    }
-
-    if (selectedCategory != null) {
-        HazmatSelectionCard(
-            selectedCategory = selectedCategory,
-            modifier = Modifier.padding(dimensionResource(id = R.dimen.major_100))
-        )
-    }
-}
 
 @Composable
 private fun CustomsCard(
