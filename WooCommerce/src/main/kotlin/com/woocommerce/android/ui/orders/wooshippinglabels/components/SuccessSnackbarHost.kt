@@ -1,8 +1,8 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.ButtonDefaults
@@ -50,35 +50,35 @@ private fun SuccessSnackbar(
 ) {
     Surface(
         color = SnackbarDefaults.color,
-        shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.padding(12.dp)
+        shape = SnackbarDefaults.shape,
+        modifier = Modifier.padding(16.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Icon(
                 imageVector = Icons.Filled.CheckCircle,
                 contentDescription = null,
                 tint = colorResource(R.color.woo_green_20),
-                modifier = Modifier.padding(end = 16.dp)
             )
 
             Text(
                 text = content,
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 16.dp),
+                style = MaterialTheme.typography.titleMedium,
                 color = SnackbarDefaults.contentColor
             )
 
-            if (actionLabel != null) {
+            actionLabel?.let { label ->
                 TextButton(
                     onClick = action,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = SnackbarDefaults.actionContentColor
-                    )
+                    colors = ButtonDefaults.textButtonColors(contentColor = SnackbarDefaults.actionContentColor)
                 ) {
-                    Text(text = actionLabel)
+                    Text(text = label)
                 }
             }
         }
