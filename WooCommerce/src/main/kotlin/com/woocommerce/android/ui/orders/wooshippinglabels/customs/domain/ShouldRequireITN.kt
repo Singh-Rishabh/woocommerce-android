@@ -1,11 +1,12 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.customs.domain
 
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class ShouldRequireITN @Inject constructor() {
     operator fun invoke(
         destinationCountryCode: String,
-        totalShippingItemValue: Float
+        totalShippingItemValue: BigDecimal
     ) = when (destinationCountryCode) {
         in itnExemptCountries -> false
         in itnRequiredCountries -> true
@@ -16,6 +17,6 @@ class ShouldRequireITN @Inject constructor() {
     private val itnRequiredCountries = listOf("IR", "KP", "SY", "CU", "SD")
 
     companion object {
-        private const val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = 2500f
+        private val MAX_SHIPPING_ITEM_VALUE_FOR_CUSTOMS = BigDecimal.valueOf(2500)
     }
 }

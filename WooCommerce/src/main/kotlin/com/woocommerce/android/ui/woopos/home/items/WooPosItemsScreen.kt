@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
@@ -81,14 +80,9 @@ private fun WooPosItemsScreen(
     onUIEvent: (WooPosItemsUIEvent) -> Unit,
 ) {
     val state = itemsStateFlow.collectAsState()
-    val pullToRefreshState = rememberPullRefreshState(
-        state.value.reloadingWithPullToRefresh,
-        onRefresh = { onUIEvent(PullToRefreshTriggered) },
-    )
 
     MainItemsList(
         modifier = modifier,
-        pullToRefreshState = pullToRefreshState,
         state = state,
         listState = listState,
         onToolbarInfoIconClicked = {
@@ -113,6 +107,7 @@ private fun WooPosItemsScreen(
             }
         },
         onCouponsButtonClicked = { onUIEvent(WooPosItemsUIEvent.CouponsButtonClicked) },
+        onPullToRefreshTriggered = { onUIEvent(PullToRefreshTriggered) },
     )
 }
 
@@ -120,7 +115,6 @@ private fun WooPosItemsScreen(
 @Composable
 private fun MainItemsList(
     modifier: Modifier,
-    pullToRefreshState: PullRefreshState,
     state: State<WooPosItemsViewState>,
     listState: LazyListState,
     onToolbarInfoIconClicked: () -> Unit,
@@ -131,11 +125,20 @@ private fun MainItemsList(
     onRetryClicked: () -> Unit,
     onSearchEvent: (WooPosSearchUIEvent) -> Unit,
     onCouponsButtonClicked: () -> Unit,
+    onPullToRefreshTriggered: () -> Unit,
 ) {
+    val pullToRefreshState = rememberPullRefreshState(
+        refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Refreshing,
+        onRefresh = onPullToRefreshTriggered,
+    )
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pullRefresh(pullToRefreshState)
+            .pullRefresh(
+                state = pullToRefreshState,
+                enabled = state.value.pullToRefreshState == WooPosPullToRefreshState.Enabled,
+            )
             .padding(
                 start = WooPosSpacing.Medium.value.toAdaptivePadding(),
                 end = WooPosSpacing.Medium.value.toAdaptivePadding(),
@@ -222,7 +225,7 @@ private fun MainItemsList(
         }
         PullRefreshIndicator(
             modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = state.value.reloadingWithPullToRefresh,
+            refreshing = state.value.pullToRefreshState == WooPosPullToRefreshState.Refreshing,
             state = pullToRefreshState
         )
     }
@@ -379,8 +382,8 @@ fun WooPosItemsScreenPreview(modifier: Modifier = Modifier) {
                     imageUrl = null,
                 ),
             ),
-            paginationState = PaginationState.Loading,
-            reloadingWithPullToRefresh = true,
+            paginationState = WooPosPaginationState.Loading,
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -435,8 +438,8 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
                     variationIds = listOf()
                 ),
             ),
-            paginationState = PaginationState.Error,
-            reloadingWithPullToRefresh = true,
+            paginationState = WooPosPaginationState.Error,
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -462,7 +465,7 @@ fun WooPosItemsScreenPaginationErrorPreview(modifier: Modifier = Modifier) {
 fun WooPosItemsScreenLoadingPreview() {
     val productState = MutableStateFlow(
         WooPosItemsViewState.Loading(
-            reloadingWithPullToRefresh = true,
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             withCart = false
         )
     )
@@ -479,7 +482,11 @@ fun WooPosItemsScreenLoadingPreview() {
 @Composable
 @WooPosPreview
 fun WooPosProductsScreenEmptyListPreview() {
-    val productState = MutableStateFlow(WooPosItemsViewState.Empty(true))
+    val productState = MutableStateFlow(
+        WooPosItemsViewState.Empty(
+            WooPosPullToRefreshState.Refreshing,
+        )
+    )
     WooPosTheme {
         WooPosItemsScreen(
             itemsStateFlow = productState,
@@ -531,7 +538,7 @@ fun WooPosHomeScreenItemsWithSimpleProductsOnlyBannerPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingWithPullToRefresh = true,
+            pullToRefreshState = WooPosPullToRefreshState.Refreshing,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = false,
                 title = R.string.woopos_banner_simple_products_only_title,
@@ -583,7 +590,7 @@ fun WooPosHomeScreenItemsWithInfoIconInToolbarPreview() {
                     imageUrl = null,
                 ),
             ),
-            reloadingWithPullToRefresh = false,
+            pullToRefreshState = WooPosPullToRefreshState.Disabled,
             bannerState = WooPosItemsViewState.Content.BannerState(
                 isBannerHiddenByUser = true,
                 title = R.string.woopos_banner_simple_products_only_title,

@@ -781,7 +781,11 @@
     <fragment
         android:id="@+id/wooShippingSplitShipmentFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.split.WooShippingSplitShipmentFragment"
-        android:label="WooShippingSplitShipmentFragment" />
+        android:label="WooShippingSplitShipmentFragment" >
+        <argument
+            android:name="shipmentArgs"
+            app:argType="com.woocommerce.android.ui.orders.wooshippinglabels.WooShippingLabelCreationViewModel$SplitShipmentArgs" />
+    </fragment>
     <fragment
         android:id="@+id/wooShippingLabelHazmatFormFragment"
         android:name="com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.WooShippingLabelHazmatFormFragment"
