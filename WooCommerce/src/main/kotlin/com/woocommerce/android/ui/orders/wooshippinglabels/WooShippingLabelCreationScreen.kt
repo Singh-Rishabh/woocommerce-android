@@ -43,7 +43,7 @@ import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult.ActionPerformed
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -464,17 +464,17 @@ private fun LabelCreationScreenWithBottomSheet(
             val actionSnackbarActionLabel = actionSnackbar?.let { stringResource(it.actionLabel) }
 
             LaunchedEffect(actionSnackbar) {
-                if (actionSnackbar != null) {
-                    snackbarHostState.showSnackbar(
+                actionSnackbar?.let {
+                    val result = snackbarHostState.showSnackbar(
                         message = actionSnackbarMessage ?: "",
                         actionLabel = actionSnackbarActionLabel,
-                        duration = SnackbarDuration.Short
-                    ).takeIf { it == ActionPerformed }?.let {
-                        actionSnackbar.action()
+                        duration = SnackbarDuration.Short,
+                    )
+                    when (result) {
+                        SnackbarResult.ActionPerformed -> actionSnackbar.action()
+                        SnackbarResult.Dismissed -> actionSnackbar.onDismissed()
                     }
-                } else {
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                }
+                } ?: snackbarHostState.currentSnackbarData?.dismiss()
             }
         }
     }

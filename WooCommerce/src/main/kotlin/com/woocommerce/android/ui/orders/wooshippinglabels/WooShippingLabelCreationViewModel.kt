@@ -568,7 +568,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 purchaseState.value = backupPurchaseState
                 actionSnackbar = ActionSnackbar(
                     R.string.woo_shipping_labels_purchase_error,
-                    R.string.retry
+                    R.string.retry,
                 ) { onPurchaseShippingLabel() }
             }
         }
@@ -653,7 +653,11 @@ class WooShippingLabelCreationViewModel @Inject constructor(
             R.string.woo_shipping_labels_hazmat_selection_removed
         }
 
-        actionSnackbar = ActionSnackbar(snackbarMessage, R.string.undo) {
+        actionSnackbar = ActionSnackbar(
+            message = snackbarMessage,
+            actionLabel = R.string.undo,
+            onDismissed = { actionSnackbar = null }
+        ) {
             hazmatState.value = previousState
         }
     }
@@ -748,6 +752,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data class ActionSnackbar(
         val message: Int,
         val actionLabel: Int,
+        val onDismissed: () -> Unit = {},
         val action: () -> Unit
     )
 
