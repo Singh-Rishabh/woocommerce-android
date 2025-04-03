@@ -21,8 +21,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Discount
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -304,7 +304,7 @@ private fun ItemsToolbar(
                             }
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.Discount,
+                                imageVector = Icons.Outlined.LocalOffer,
                                 contentDescription = stringResource(
                                     id = R.string.coupons
                                 ),
