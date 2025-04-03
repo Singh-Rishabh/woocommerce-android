@@ -29,13 +29,13 @@ data class WooShippingCustomsProductUIModel(
             weightPerUnit is InputValue.Data &&
             originCountry.isNotBlank()
 
-    val shippingTotalValue: Float?
+    val shippingTotalValue: BigDecimal?
         get() = valuePerUnit
             .takeIf { valuePerUnit is InputValue.Data && quantity > 0 }
             ?.run { this as? InputValue.Data }
             ?.currentInput
-            ?.toFloatOrNull()
-            ?.let { it * quantity }
+            ?.toBigDecimalOrNull()
+            ?.let { it * quantity.toBigDecimal() }
 
     val asCustomItem: CustomsItem
         get() = CustomsItem(

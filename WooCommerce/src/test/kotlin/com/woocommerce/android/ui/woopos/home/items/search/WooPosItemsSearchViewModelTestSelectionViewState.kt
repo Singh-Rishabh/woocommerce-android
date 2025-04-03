@@ -6,8 +6,13 @@ import com.woocommerce.android.ui.woopos.home.ChildToParentEvent
 import com.woocommerce.android.ui.woopos.home.ParentToChildrenEvent
 import com.woocommerce.android.ui.woopos.home.WooPosChildrenToParentEventSender
 import com.woocommerce.android.ui.woopos.home.WooPosParentToChildrenEventReceiver
-import com.woocommerce.android.ui.woopos.home.items.PaginationState
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemNavigationData.VariableProductData
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState.Product
+import com.woocommerce.android.ui.woopos.home.items.WooPosItemsViewModel.ItemClickedData
+import com.woocommerce.android.ui.woopos.home.items.WooPosPaginationState
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator
+import com.woocommerce.android.ui.woopos.home.items.navigation.WooPosItemsNavigator.WooPosItemsScreenNavigationEvent.NavigateToVariationsScreen
 import com.woocommerce.android.ui.woopos.util.WooPosCoroutineTestRule
 import com.woocommerce.android.ui.woopos.util.format.WooPosFormatPrice
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,8 +23,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +47,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
     private val mockDataSource: WooPosSearchProductsMockedDataSource = mock()
     private val mockChildToParentEventSender: WooPosChildrenToParentEventSender = mock()
     private val mockParentToChildrenEventReceiver: WooPosParentToChildrenEventReceiver = mock()
+    private val mockNavigator: WooPosItemsNavigator = mock()
 
     private val defaultQuery = "test query"
     private val defaultProduct = ProductTestUtils.generateProduct(
@@ -332,11 +340,11 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
             val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
+            assertThat(loadingState.paginationState).isEqualTo(WooPosPaginationState.Loading)
 
             val finalState = awaitItem() as WooPosItemsSearchViewState.Content
             assertThat(finalState.items).hasSize(1)
-            assertThat(finalState.paginationState).isEqualTo(PaginationState.None)
+            assertThat(finalState.paginationState).isEqualTo(WooPosPaginationState.None)
         }
     }
 
@@ -357,10 +365,10 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
             viewModel.onUIEvent(WooPosItemsSearchUiEvent.OnNextPageRequested)
 
             val loadingState = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(loadingState.paginationState).isEqualTo(PaginationState.Loading)
+            assertThat(loadingState.paginationState).isEqualTo(WooPosPaginationState.Loading)
 
             val errorState = awaitItem() as WooPosItemsSearchViewState.Content
-            assertThat(errorState.paginationState).isEqualTo(PaginationState.Error)
+            assertThat(errorState.paginationState).isEqualTo(WooPosPaginationState.Error)
         }
     }
 
@@ -607,6 +615,72 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         }
     }
 
+    @Test
+    fun `given simple product, when item clicked, then send product click event to parent`() = runTest {
+        // GIVEN
+        val simpleProduct = Product.Simple(id = 1, name = "Test Product", price = "$10.0", imageUrl = null)
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(simpleProduct))
+
+        // THEN
+        verify(mockChildToParentEventSender).sendToParent(
+            ChildToParentEvent.ItemClickedInProductSelector(
+                ItemClickedData.Product.Simple(id = 1)
+            )
+        )
+    }
+
+    @Test
+    fun `given variable product, when item clicked, then navigate to variations screen`() = runTest {
+        // GIVEN
+        val variableProduct = Product.Variable(
+            id = 1,
+            name = "Variable Product",
+            price = "$10.0",
+            imageUrl = null,
+            numOfVariations = 3,
+            variationIds = listOf(101L, 102L, 103L)
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+        viewModel.onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(variableProduct))
+        advanceUntilIdle()
+
+        // THEN
+        verify(mockNavigator).sendNavigationEvent(
+            NavigateToVariationsScreen(
+                VariableProductData(
+                    id = 1,
+                    name = "Variable Product",
+                    numOfVariations = 3
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `given variation, when item clicked, then throw error`() = runTest {
+        // GIVEN
+        val variation = WooPosItemSelectionViewState.Variation(
+            id = 1,
+            name = "Test Variation",
+            price = "$10.0",
+            productId = 1L,
+            imageUrl = null,
+        )
+
+        // WHEN
+        val viewModel = createViewModel()
+
+        // THEN
+        assertThrows(IllegalStateException::class.java) {
+            viewModel.onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(variation))
+        }
+    }
+
     private fun mockSuccessfulSearch(query: String, products: List<com.woocommerce.android.model.Product>) {
         whenever(mockDataSource.searchProducts(query)).thenReturn(
             flowOf(
@@ -668,6 +742,7 @@ class WooPosItemsSearchViewModelTestSelectionViewState {
         priceFormat = mockPriceFormat,
         dataSource = mockDataSource,
         childToParentEventSender = mockChildToParentEventSender,
-        parentToChildrenEventReceiver = mockParentToChildrenEventReceiver
+        parentToChildrenEventReceiver = mockParentToChildrenEventReceiver,
+        navigator = mockNavigator,
     )
 }

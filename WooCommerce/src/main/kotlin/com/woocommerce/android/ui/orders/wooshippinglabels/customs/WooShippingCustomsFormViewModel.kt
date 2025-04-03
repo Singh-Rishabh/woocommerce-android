@@ -51,7 +51,7 @@ class WooShippingCustomsFormViewModel @Inject constructor(
             val totalShippingValue = mapNotNull { it.shippingTotalValue }
                 .takeIf { it.isNotEmpty() }
                 ?.reduce { acc, current -> acc + current }
-                ?: 0f
+                ?: BigDecimal.ZERO
 
             return shouldRequireITN(destinationCountryCode, totalShippingValue)
         }
