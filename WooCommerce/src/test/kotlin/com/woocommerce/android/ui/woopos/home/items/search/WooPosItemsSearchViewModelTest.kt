@@ -36,7 +36,7 @@ import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 
 @ExperimentalCoroutinesApi
-class WooPosItemsSearchViewModelTestSelectionViewState {
+class WooPosItemsSearchViewModelTest {
 
     @Rule
     @JvmField
