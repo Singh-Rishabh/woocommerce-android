@@ -288,8 +288,8 @@ private fun ItemsToolbar(
                             Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
 
                             VerticalDivider(
-                                modifier = Modifier.padding(vertical = WooPosSpacing.Medium.value),
-                                thickness = 2.dp,
+                                modifier = Modifier.padding(vertical = WooPosSpacing.Small.value),
+                                thickness = 1.dp,
                             )
 
                             Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
@@ -312,6 +312,13 @@ private fun ItemsToolbar(
                                 modifier = Modifier.size(32.dp)
                             )
                         }
+                        Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
+
+                        VerticalDivider(
+                            modifier = Modifier.padding(vertical = WooPosSpacing.Small.value),
+                            thickness = 1.dp,
+                        )
+
                         Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
                     }
 
