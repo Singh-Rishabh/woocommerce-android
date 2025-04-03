@@ -254,7 +254,7 @@ private fun ItemsToolbar(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         AnimatedVisibility(
@@ -272,7 +272,7 @@ private fun ItemsToolbar(
 
         Row(
             horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             when (state) {
                 is WooPosItemsViewState.Content -> {

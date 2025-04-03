@@ -101,6 +101,7 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
             contentDescription = stringResource(
                 R.string.woopos_search_products
             ),
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
             modifier = Modifier.size(32.dp)
         )
     }
