@@ -98,6 +98,7 @@ class WooPosItemsSearchHelper @Inject constructor(
         updateToInitialOpenState()
     }
 
+    @Suppress("ReturnCount")
     fun onAnimationComplete() {
         val currentState = getCurrentContentState() ?: return
         val searchState = getCurrentSearchVisibleState() ?: return

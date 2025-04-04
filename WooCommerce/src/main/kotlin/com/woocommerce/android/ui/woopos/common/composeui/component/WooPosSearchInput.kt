@@ -110,6 +110,7 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
         )
     }
 }
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun AnimatedSearchInput(
