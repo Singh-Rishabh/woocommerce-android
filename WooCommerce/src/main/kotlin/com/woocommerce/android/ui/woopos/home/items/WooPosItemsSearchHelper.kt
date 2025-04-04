@@ -96,6 +96,11 @@ class WooPosItemsSearchHelper @Inject constructor(
         updateToInitialOpenState()
     }
 
+    fun isSearchOpen(): Boolean {
+        val searchState = getCurrentSearchVisibleState() ?: return false
+        return searchState.state is WooPosSearchInputState.Open
+    }
+
     private fun updateToInitialOpenState() {
         val currentState = getCurrentContentState() ?: return
         updateSearchState(
@@ -140,7 +145,18 @@ class WooPosItemsSearchHelper @Inject constructor(
     }
 
     private fun updateSearchState(newState: WooPosItemsViewState.Content) {
-        viewStateFlow.value = newState
+        var pullToRefreshState = when (val searchState = newState.search) {
+            WooPosItemsViewState.Content.SearchState.Hidden -> WooPosPullToRefreshState.Enabled
+
+            is WooPosItemsViewState.Content.SearchState.Visible -> {
+                when (searchState.state) {
+                    WooPosSearchInputState.Closed -> WooPosPullToRefreshState.Enabled
+
+                    is WooPosSearchInputState.Open -> WooPosPullToRefreshState.Disabled
+                }
+            }
+        }
+        viewStateFlow.value = newState.copy(pullToRefreshState = pullToRefreshState)
     }
 
     private fun getCurrentContentState(): WooPosItemsViewState.Content? {
