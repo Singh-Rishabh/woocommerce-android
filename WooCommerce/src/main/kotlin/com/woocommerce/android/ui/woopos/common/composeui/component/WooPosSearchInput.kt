@@ -123,9 +123,9 @@ private fun AnimatedSearchInput(
     ) {
         val maxWidthPx = maxWidth
         val focusRequester = remember { FocusRequester() }
+
         var isExpanded by remember { mutableStateOf(state.hasAnimationPlayed) }
         var isClosing by remember { mutableStateOf(false) }
-        var isAnimationComplete by remember { mutableStateOf(state.hasAnimationPlayed) }
 
         val transition = updateTransition(
             targetState = if (isClosing) false else isExpanded,
@@ -144,9 +144,7 @@ private fun AnimatedSearchInput(
         OutlinedTextField(
             value = query,
             onValueChange = {
-                if (isAnimationComplete) {
-                    onEvent(WooPosSearchUIEvent.Search(it))
-                }
+                onEvent(WooPosSearchUIEvent.Search(it))
             },
             modifier = Modifier
                 .width(width)
@@ -164,9 +162,7 @@ private fun AnimatedSearchInput(
             shape = RoundedCornerShape(cornerRadius),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    if (isAnimationComplete) {
-                        onEvent(WooPosSearchUIEvent.Search(query))
-                    }
+                    onEvent(WooPosSearchUIEvent.Search(query))
                 }
             ),
             colors = OutlinedTextFieldDefaults.colors(
@@ -198,11 +194,7 @@ private fun AnimatedSearchInput(
                     }
                     query.isNotEmpty() -> {
                         IconButton(
-                            onClick = {
-                                if (isAnimationComplete) {
-                                    onEvent(WooPosSearchUIEvent.Clear)
-                                }
-                            },
+                            onClick = { onEvent(WooPosSearchUIEvent.Clear) },
                             modifier = Modifier.alpha(iconAlpha)
                         ) {
                             Icon(
@@ -221,18 +213,13 @@ private fun AnimatedSearchInput(
             if (!state.hasAnimationPlayed) {
                 isExpanded = true
                 delay(ANIMATION_TIME)
-                isAnimationComplete = true
                 focusRequester.requestFocus()
                 onEvent(WooPosSearchUIEvent.AnimationComplete)
-            } else if (!isAnimationComplete) {
-                isExpanded = true
-                isAnimationComplete = true
             }
         }
 
         LaunchedEffect(isClosing) {
             if (isClosing) {
-                isAnimationComplete = false
                 delay(ANIMATION_TIME)
                 onEvent(WooPosSearchUIEvent.Close)
             }
