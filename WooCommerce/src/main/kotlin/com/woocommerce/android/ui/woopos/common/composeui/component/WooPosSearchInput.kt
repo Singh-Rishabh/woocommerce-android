@@ -110,7 +110,6 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
         )
     }
 }
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 private fun AnimatedSearchInput(
@@ -123,9 +122,9 @@ private fun AnimatedSearchInput(
     ) {
         val maxWidthPx = maxWidth
         val focusRequester = remember { FocusRequester() }
-        var isExpanded by remember { mutableStateOf(false) }
+        var isExpanded by remember { mutableStateOf(state.hasAnimationPlayed) }
         var isClosing by remember { mutableStateOf(false) }
-        var isAnimationComplete by remember { mutableStateOf(false) }
+        var isAnimationComplete by remember { mutableStateOf(state.hasAnimationPlayed) }
 
         val transition = updateTransition(
             targetState = if (isClosing) false else isExpanded,
@@ -218,10 +217,16 @@ private fun AnimatedSearchInput(
         )
 
         LaunchedEffect(Unit) {
-            isExpanded = true
-            delay(ANIMATION_TIME)
-            isAnimationComplete = true
-            focusRequester.requestFocus()
+            if (!state.hasAnimationPlayed) {
+                isExpanded = true
+                delay(ANIMATION_TIME)
+                isAnimationComplete = true
+                focusRequester.requestFocus()
+                onEvent(WooPosSearchUIEvent.AnimationComplete)
+            } else if (!isAnimationComplete) {
+                isExpanded = true
+                isAnimationComplete = true
+            }
         }
 
         LaunchedEffect(isClosing) {
@@ -308,7 +313,8 @@ private fun animateIconAlpha(
 sealed class WooPosSearchInputState {
     data class Open(
         val input: Input,
-        val isLoading: Boolean
+        val isLoading: Boolean,
+        val hasAnimationPlayed: Boolean = false,
     ) : WooPosSearchInputState() {
         sealed class Input(val text: String) {
             data class Query(val query: String) : Input(query)
@@ -322,6 +328,7 @@ sealed class WooPosSearchUIEvent {
     object Clear : WooPosSearchUIEvent()
     data class Search(val query: String) : WooPosSearchUIEvent()
     object Close : WooPosSearchUIEvent()
+    object AnimationComplete : WooPosSearchUIEvent()
 }
 
 @WooPosPreview

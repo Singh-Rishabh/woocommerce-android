@@ -104,6 +104,9 @@ private fun WooPosItemsScreen(
                 WooPosSearchUIEvent.Clear -> onUIEvent(WooPosItemsUIEvent.ClearSearchClicked)
                 WooPosSearchUIEvent.Close -> onUIEvent(WooPosItemsUIEvent.CloseSearchClicked)
                 is WooPosSearchUIEvent.Search -> onUIEvent(SearchChanged(it.query))
+                is WooPosSearchUIEvent.AnimationComplete -> {
+                    onUIEvent(WooPosItemsUIEvent.SearchAnimationComplete)
+                }
             }
         },
         onCouponsButtonClicked = { onUIEvent(WooPosItemsUIEvent.CouponsButtonClicked) },

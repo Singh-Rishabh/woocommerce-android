@@ -63,12 +63,14 @@ class WooPosItemsSearchHelper @Inject constructor(
         if (newQuery.isEmpty()) {
             updateToInitialOpenState()
         } else {
+            val currentOpenState = getCurrentSearchOpenState() ?: return
             updateSearchState(
                 currentState.copy(
                     search = WooPosItemsViewState.Content.SearchState.Visible(
                         state = WooPosSearchInputState.Open(
                             input = WooPosSearchInputState.Open.Input.Query(newQuery),
                             isLoading = false,
+                            hasAnimationPlayed = currentOpenState.hasAnimationPlayed
                         )
                     )
                 )
@@ -96,6 +98,22 @@ class WooPosItemsSearchHelper @Inject constructor(
         updateToInitialOpenState()
     }
 
+    fun onAnimationComplete() {
+        val currentState = getCurrentContentState() ?: return
+        val searchState = getCurrentSearchVisibleState() ?: return
+        val openState = getCurrentSearchOpenState() ?: return
+
+        updateSearchState(
+            currentState.copy(
+                search = searchState.copy(
+                    state = openState.copy(
+                        hasAnimationPlayed = true
+                    )
+                )
+            )
+        )
+    }
+
     fun isSearchOpen(): Boolean {
         val searchState = getCurrentSearchVisibleState() ?: return false
         return searchState.state is WooPosSearchInputState.Open
@@ -111,6 +129,7 @@ class WooPosItemsSearchHelper @Inject constructor(
                             resourceProvider.getString(R.string.woopos_search_products)
                         ),
                         isLoading = false,
+                        hasAnimationPlayed = false
                     )
                 )
             )
@@ -137,7 +156,7 @@ class WooPosItemsSearchHelper @Inject constructor(
             currentState.copy(
                 search = searchState.copy(
                     state = searchStateValue.copy(
-                        isLoading = isLoading,
+                        isLoading = isLoading
                     )
                 )
             )
