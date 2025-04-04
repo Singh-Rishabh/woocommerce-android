@@ -8,7 +8,6 @@ import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -57,7 +54,8 @@ import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosThe
 import com.woocommerce.android.ui.woopos.common.composeui.designsystem.WooPosTypography
 import kotlinx.coroutines.delay
 
-private val BUTTON_SIZE = 48.dp
+private val BUTTON_SIZE = 40.dp
+private val INPUT_FIELD_HEIGHT = 56.dp
 private const val ANIMATION_TIME = 300L
 
 @Composable
@@ -69,8 +67,7 @@ fun WooPosSearchInput(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = WooPosSpacing.XSmall.value)
-            .height(BUTTON_SIZE + WooPosSpacing.XSmall.value * 2),
+            .height(INPUT_FIELD_HEIGHT),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
@@ -91,11 +88,9 @@ fun WooPosSearchInput(
 
 @Composable
 fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
-    OutlinedIconButton(
-        onClick = { onEvent(WooPosSearchUIEvent.Search("")) },
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
+    IconButton(
         modifier = Modifier.size(BUTTON_SIZE),
-        shape = CircleShape,
+        onClick = { onEvent(WooPosSearchUIEvent.Search("")) },
         colors = IconButtonDefaults.outlinedIconButtonColors(
             containerColor = WooPosTheme.colors.transparent,
             contentColor = MaterialTheme.colorScheme.onSurface
@@ -106,7 +101,8 @@ fun SearchButton(onEvent: (WooPosSearchUIEvent) -> Unit) {
             contentDescription = stringResource(
                 R.string.woopos_search_products
             ),
-            modifier = Modifier.size(32.dp),
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+            modifier = Modifier.size(32.dp)
         )
     }
 }
@@ -264,7 +260,7 @@ private fun animateSearchHeight(transition: Transition<Boolean>): Dp {
             )
         }
     ) { expanded ->
-        if (expanded) 56.dp else BUTTON_SIZE
+        if (expanded) INPUT_FIELD_HEIGHT else BUTTON_SIZE
     }
     return height
 }

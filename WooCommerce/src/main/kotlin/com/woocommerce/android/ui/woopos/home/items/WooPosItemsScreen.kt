@@ -1,6 +1,9 @@
 package com.woocommerce.android.ui.woopos.home.items
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,22 +16,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocalOffer
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -156,7 +163,13 @@ private fun MainItemsList(
 
                 is WooPosItemsViewState.Content -> MaterialTheme.colorScheme.onSurface
             }
-            ItemsToolbar(state.value, titleColor, onToolbarInfoIconClicked, onCouponsButtonClicked)
+            ItemsToolbar(
+                state = state.value,
+                titleColor = titleColor,
+                onToolbarInfoIconClicked = onToolbarInfoIconClicked,
+                onCouponsButtonClicked = onCouponsButtonClicked,
+                onSearchEvent = onSearchEvent,
+            )
 
             Spacer(modifier = Modifier.height(WooPosSpacing.Large.value))
 
@@ -171,10 +184,6 @@ private fun MainItemsList(
 
                         when (itemsState.search) {
                             is WooPosItemsViewState.Content.SearchState.Visible -> {
-                                WooPosSearchInput(
-                                    state = itemsState.search.state,
-                                    onEvent = onSearchEvent,
-                                )
                                 when (itemsState.search.state) {
                                     WooPosSearchInputState.Closed -> {
                                         WooPosItemList(
@@ -190,6 +199,7 @@ private fun MainItemsList(
                                             )
                                         }
                                     }
+
                                     is WooPosSearchInputState.Open -> WooPosItemsSearchScreen()
                                 }
                             }
@@ -233,61 +243,110 @@ private fun MainItemsList(
 
 @Composable
 private fun ItemsToolbar(
-    productViewState: WooPosItemsViewState,
+    state: WooPosItemsViewState,
     titleColor: Color,
     onToolbarInfoIconClicked: () -> Unit,
     onCouponsButtonClicked: () -> Unit,
+    onSearchEvent: (WooPosSearchUIEvent) -> Unit,
 ) {
+    val isSearchExpanded = state is WooPosItemsViewState.Content &&
+        state.search is WooPosItemsViewState.Content.SearchState.Visible &&
+        state.search.state is WooPosSearchInputState.Open
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(40.dp),
+            .height(56.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.Top,
     ) {
-        WooPosText(
-            text = stringResource(id = R.string.woopos_products_screen_title),
-            style = WooPosTypography.Heading,
-            fontWeight = FontWeight.Bold,
-            color = titleColor,
-        )
-        when (productViewState) {
-            is WooPosItemsViewState.Content -> {
-                if (productViewState.couponsEnabled) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    IconButton(
-                        modifier = Modifier.size(40.dp),
-                        onClick = {
-                            onCouponsButtonClicked()
+        AnimatedVisibility(
+            visible = !isSearchExpanded,
+            enter = fadeIn(animationSpec = tween(200)),
+            exit = fadeOut(animationSpec = tween(200)),
+        ) {
+            WooPosText(
+                text = stringResource(id = R.string.woopos_products_screen_title),
+                style = WooPosTypography.Heading,
+                fontWeight = FontWeight.Bold,
+                color = titleColor,
+            )
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            when (state) {
+                is WooPosItemsViewState.Content -> {
+                    when (val searchState = state.search) {
+                        WooPosItemsViewState.Content.SearchState.Hidden -> Unit
+                        is WooPosItemsViewState.Content.SearchState.Visible -> {
+                            WooPosSearchInput(
+                                state = searchState.state,
+                                onEvent = onSearchEvent,
+                                modifier = Modifier.weight(1f)
+                            )
+
+                            Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
+
+                            VerticalDivider(
+                                modifier = Modifier.padding(vertical = WooPosSpacing.Small.value),
+                                thickness = 1.dp,
+                            )
+
+                            Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
                         }
-                    ) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_more_menu_coupons),
-                            contentDescription = stringResource(
-                                id = R.string.coupons
-                            ),
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                    }
+
+                    if (state.couponsEnabled) {
+                        IconButton(
+                            modifier = Modifier.size(40.dp),
+                            onClick = {
+                                onCouponsButtonClicked()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.LocalOffer,
+                                contentDescription = stringResource(
+                                    id = R.string.coupons
+                                ),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
+
+                        VerticalDivider(
+                            modifier = Modifier.padding(vertical = WooPosSpacing.Small.value),
+                            thickness = 1.dp,
                         )
+
+                        Spacer(modifier = Modifier.width(WooPosSpacing.Small.value))
+                    }
+
+                    if (state.bannerState.isBannerHiddenByUser) {
+                        IconButton(
+                            modifier = Modifier.size(40.dp),
+                            onClick = {
+                                onToolbarInfoIconClicked()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Info,
+                                contentDescription = stringResource(
+                                    id = R.string.woopos_banner_simple_products_info_content_description
+                                ),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                     }
                 }
-                if (productViewState.bannerState.isBannerHiddenByUser) {
-                    IconButton(
-                        modifier = Modifier.size(40.dp),
-                        onClick = {
-                            onToolbarInfoIconClicked()
-                        }
-                    ) {
-                        Icon(
-                            painterResource(id = R.drawable.info),
-                            contentDescription = stringResource(
-                                id = R.string.woopos_banner_simple_products_info_content_description
-                            ),
-                            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.87f),
-                        )
-                    }
-                }
-            }
-            else -> {
+
+                is WooPosItemsViewState.Empty,
+                is WooPosItemsViewState.Error,
+                is WooPosItemsViewState.Loading -> Unit
             }
         }
     }
