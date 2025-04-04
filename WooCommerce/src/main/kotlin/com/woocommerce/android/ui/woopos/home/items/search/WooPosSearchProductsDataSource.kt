@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import org.wordpress.android.fluxc.store.WCProductStore
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -36,11 +35,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
     val hasMorePages: Boolean
         get() = canLoadMore.get()
 
-    fun searchProducts(query: String, forceRefresh: Boolean = false): Flow<ProductsResult> = flow {
-        if (forceRefresh) {
-            updateFilteredProductCache(query, emptyList())
-        }
-
+    fun searchProducts(query: String): Flow<ProductsResult> = flow {
         val cachedResults = getCachedSearchResults(query)
         emit(ProductsResult.Cached(cachedResults))
 
@@ -48,7 +43,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
         remoteResults.fold(
             onSuccess = { result ->
                 canLoadMore.set(result.canLoadMore)
-                updateFilteredProductCache(query, result.products)
+                updateSearchResultsCache(query, result.products)
                 emit(ProductsResult.Remote(Result.success(result.products)))
             },
             onFailure = { error ->
@@ -61,19 +56,19 @@ class WooPosSearchProductsDataSource @Inject constructor(
         return searchResultsCache[query.lowercase()] ?: emptyList()
     }
 
-    suspend fun loadMore(query: String): Result<List<Product>> = withContext(Dispatchers.IO) {
+    suspend fun loadMore(query: String): Result<List<Product>> {
         if (!canLoadMore.get()) {
-            return@withContext Result.success(getCachedSearchResults(query))
+            return Result.success(getCachedSearchResults(query))
         }
 
         val currentResults = searchResultsCache[query.lowercase()] ?: emptyList()
         val offset = currentResults.size
 
-        remoteSearch(query, offset).fold(
+        return remoteSearch(query, offset).fold(
             onSuccess = { result ->
                 canLoadMore.set(result.canLoadMore)
                 val combinedResults = currentResults + result.products
-                updateFilteredProductCache(query, combinedResults)
+                updateSearchResultsCache(query, combinedResults)
                 Result.success(combinedResults)
             },
             onFailure = { error ->
@@ -82,9 +77,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
         )
     }
 
-    suspend fun getProductById(productId: Long): Product? = withContext(Dispatchers.IO) {
-        searchResultsCache.values.flatten().find { it.remoteId == productId }
-    }
+    fun getProductById(productId: Long): Product? = searchResultsCache.values.flatten().find { it.remoteId == productId }
 
     private suspend fun remoteSearch(
         searchQuery: String,
@@ -114,7 +107,7 @@ class WooPosSearchProductsDataSource @Inject constructor(
         }
     }
 
-    private fun updateFilteredProductCache(query: String, results: List<Product>) {
+    private fun updateSearchResultsCache(query: String, results: List<Product>) {
         searchResultsCache[query.lowercase()] = results
     }
 
