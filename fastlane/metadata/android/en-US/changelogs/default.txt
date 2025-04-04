@@ -1,1 +1,10 @@
-We've streamlined your experience with improved Jetpack integration for easier setup. Payment processing now includes low battery alerts and better handling of minimum transaction amounts. We've enhanced order management by fixing redundant network requests and improving printing instructions visibility. Dark mode icon colors on notification banners are fixed, and payment status accessibility in POS is boosted. Tablet users will enjoy smoother animations during payment collection.
+- [*] Payments: Collect payment flow has been removed from the Payments Hub screen, as order creation flow with custom amount has replaced it [https://github.com/woocommerce/woocommerce-android/pull/13814]
+- [*] Visually improved the disabled products selection in the completed order [https://github.com/woocommerce/woocommerce-android/pull/13782]
+
+-----
+- [*] The order count badge is now fully visible for counts higher than 99 [https://github.com/woocommerce/woocommerce-android/pull/13825]
+- [*] Fix rare crash in the POS upon adding an item to the cart [https://github.com/woocommerce/woocommerce-android/pull/13838]
+- [**] Fixed a crash in the custom amount dialog on Android version 12 and older.
+- [*] Updated the Woo upgrade dialog to resolve layout issues and align it with the current app design [https://github.com/woocommerce/woocommerce-android/pull/13851]
+- [*] Fix: Use currency code instead of symbol in Custom Amounts screen [https://github.com/woocommerce/woocommerce-android/pull/13875]
+
