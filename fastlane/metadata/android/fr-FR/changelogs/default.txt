@@ -1,0 +1,2 @@
+22.0 :
+Expérience rationalisée : Jetpack mieux intégrée pour une configuration fluide. Paiements : alertes de batterie faible affichées et montants minimaux de transaction mieux gérés. Gestion des commandes : résolution des requêtes redondantes du réseau et instructions d’impression plus visibles. Couleurs des icônes en mode sombre corrigées sur les bannières de notification et états de paiement dans le PDV plus accessibles. Animations fluidifiées lors de la collecte de paiements sur tablette.
