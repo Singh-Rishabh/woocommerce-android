@@ -1,4 +1,4 @@
-import io.sentry.android.gradle.extensions.InstrumentationFeature
+// import io.sentry.android.gradle.extensions.InstrumentationFeature
 
 plugins {
     alias(libs.plugins.android.application)
@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.dagger.hilt)
-    alias(libs.plugins.sentry)
+    // alias(libs.plugins.sentry)
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
@@ -31,33 +31,33 @@ fladle {
     smartFlankGcsPath = "gs://fladle/cataloghub-android/smart-flank/JUnitReport.xml"
 }
 
-sentry {
-    includeSourceContext = true
-    autoUploadSourceContext = true
-    tracingInstrumentation {
-        enabled = true
-        features = [InstrumentationFeature.DATABASE]
-        logcat {
-            enabled = false
-        }
-    }
-    autoInstallation {
-        enabled = false
-    }
-    includeDependenciesReport = false
-    /* Sentry won't send source context or add performance instrumentations for debug builds
-    so we can save build times. Sending events will still work in debug builds
-    (if enabled in WCCrashLoggingDataProvider).
-    */
-    ignoredBuildTypes = ["debug"]
-
-    /* Additional source directories to be included in the source context. For now, manually:
-    https://github.com/getsentry/sentry-android-gradle-plugin/issues/685
-     */
-    additionalSourceDirsForSourceContext = [
-            '../libs/cardreader/src/main/java',
-    ]
-}
+//sentry {
+//    includeSourceContext = true
+//    autoUploadSourceContext = true
+//    tracingInstrumentation {
+//        enabled = true
+//        features = [InstrumentationFeature.DATABASE]
+//        logcat {
+//            enabled = false
+//        }
+//    }
+//    autoInstallation {
+//        enabled = false
+//    }
+//    includeDependenciesReport = false
+//    /* Sentry won't send source context or add performance instrumentations for debug builds
+//    so we can save build times. Sending events will still work in debug builds
+//    (if enabled in WCCrashLoggingDataProvider).
+//    */
+//    ignoredBuildTypes = ["debug"]
+//
+//    /* Additional source directories to be included in the source context. For now, manually:
+//    https://github.com/getsentry/sentry-android-gradle-plugin/issues/685
+//     */
+//    additionalSourceDirsForSourceContext = [
+//            '../libs/cardreader/src/main/java',
+//    ]
+//}
 
 def versionProperties = loadPropertiesFromFile(file("${rootDir}/version.properties"))
 

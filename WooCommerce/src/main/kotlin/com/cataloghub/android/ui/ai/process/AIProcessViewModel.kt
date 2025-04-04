@@ -183,7 +183,7 @@ class AIProcessViewModel @Inject constructor(
     fun resetError() {
         AINetworkLogger.logRequest("Reset Error", "Clearing error state")
         WooLog.d(WooLog.T.AI, "Error state reset")
-        _error.value = null
+        _error.value = ""
     }
 
     private fun isValidYoutubeUrl(url: String): Boolean {

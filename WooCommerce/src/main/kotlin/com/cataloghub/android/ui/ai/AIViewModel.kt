@@ -194,11 +194,11 @@ class AIViewModel @Inject constructor(
     }
 
     fun errorMessageShown() {
-        _errorMessage.value = null
+        _errorMessage.value = ""
     }
 
     fun authUrlOpened() {
-        _authUrl.value = null
+        _authUrl.value = ""
     }
 
     // Social Media Connection Methods
