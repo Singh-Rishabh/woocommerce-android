@@ -533,7 +533,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
                 purchaseState.value = backupPurchaseState
                 actionSnackbar = ActionSnackbar(
                     R.string.woo_shipping_labels_purchase_error,
-                    R.string.retry
+                    R.string.retry,
                 ) { onPurchaseShippingLabel() }
             }
         }
@@ -627,14 +627,39 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     }
 
     fun onHazmatNoticeClick() {
-        triggerEvent(StartHazmatFormEdit(hazmatState.value.hazmatSelection))
+        val selectedCategory = hazmatState.value
+            .run { this as? Declared }
+            ?.hazmatCategory
+
+        // Disables the current Snackbar before navigation
+        // to avoid presentation conflict with the Hazmat selection result
+        actionSnackbar = null
+        triggerEvent(StartHazmatFormEdit(selectedCategory))
     }
 
     fun onHazmatCategorySelected(selectedCategory: ShippingLabelHazmatCategory?) {
-        when {
-            selectedCategory != null -> Declared(selectedCategory)
-            else -> NoSelection
-        }.let { hazmatState.value = it }
+        val previousState = hazmatState.value
+        val newState = when (selectedCategory) {
+            null -> NoSelection
+            else -> Declared(selectedCategory)
+        }
+        if (newState == previousState) return
+
+        hazmatState.value = newState
+
+        val snackbarMessage = if (selectedCategory != null) {
+            R.string.woo_shipping_labels_hazmat_selection_set
+        } else {
+            R.string.woo_shipping_labels_hazmat_selection_removed
+        }
+
+        actionSnackbar = ActionSnackbar(
+            message = snackbarMessage,
+            actionLabel = R.string.undo,
+            onDismissed = { actionSnackbar = null }
+        ) {
+            hazmatState.value = previousState
+        }
     }
 
     fun allowBackNavigation(): Boolean {
@@ -734,6 +759,7 @@ class WooShippingLabelCreationViewModel @Inject constructor(
     data class ActionSnackbar(
         val message: Int,
         val actionLabel: Int,
+        val onDismissed: () -> Unit = {},
         val action: () -> Unit
     )
 

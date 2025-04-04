@@ -42,9 +42,8 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult.ActionPerformed
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -83,6 +82,7 @@ import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressSelect
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.AddressStatus
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipFrom
 import com.woocommerce.android.ui.orders.wooshippinglabels.address.getShipTo
+import com.woocommerce.android.ui.orders.wooshippinglabels.components.SuccessSnackbarHost
 import com.woocommerce.android.ui.orders.wooshippinglabels.hazmat.HazmatSelectionCard
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.DestinationShippingAddress
 import com.woocommerce.android.ui.orders.wooshippinglabels.models.OriginShippingAddress
@@ -347,7 +347,7 @@ private fun LabelCreationScreenWithBottomSheet(
 
     BottomSheetScaffold(
         snackbarHost = {
-            SnackbarHost(
+            SuccessSnackbarHost(
                 snackbarHostState,
                 modifier = Modifier.padding(bottom = snackbarPaddingBottom)
             )
@@ -462,16 +462,17 @@ private fun LabelCreationScreenWithBottomSheet(
             val actionSnackbarActionLabel = actionSnackbar?.let { stringResource(it.actionLabel) }
 
             LaunchedEffect(actionSnackbar) {
-                if (actionSnackbar != null) {
-                    val snackBarResult = snackbarHostState.showSnackbar(
+                actionSnackbar?.let {
+                    val result = snackbarHostState.showSnackbar(
                         message = actionSnackbarMessage ?: "",
                         actionLabel = actionSnackbarActionLabel,
-                        duration = SnackbarDuration.Short
+                        duration = SnackbarDuration.Short,
                     )
-                    if (snackBarResult == ActionPerformed) {
-                        actionSnackbar.action()
+                    when (result) {
+                        SnackbarResult.ActionPerformed -> actionSnackbar.action()
+                        SnackbarResult.Dismissed -> actionSnackbar.onDismissed()
                     }
-                }
+                } ?: snackbarHostState.currentSnackbarData?.dismiss()
             }
         }
     }
