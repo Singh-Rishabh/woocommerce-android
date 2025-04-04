@@ -77,7 +77,8 @@ class WooPosSearchProductsDataSource @Inject constructor(
         )
     }
 
-    fun getProductById(productId: Long): Product? = searchResultsCache.values.flatten().find { it.remoteId == productId }
+    fun getProductById(productId: Long): Product? =
+        searchResultsCache.values.flatten().find { it.remoteId == productId }
 
     private suspend fun remoteSearch(
         searchQuery: String,
