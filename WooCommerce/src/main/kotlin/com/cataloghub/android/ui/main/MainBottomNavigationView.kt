@@ -170,6 +170,14 @@ class MainBottomNavigationView @JvmOverloads constructor(
                     listener.onNavItemSelected(findNavigationPositionById(item.itemId))
                     return true
                 }
+                R.id.moreMenu -> {
+                    // Navigate to More Menu tab
+                    if (navController.currentDestination?.id != R.id.moreMenu) {
+                        navController.navigate(R.id.moreMenu)
+                    }
+                    listener.onNavItemSelected(findNavigationPositionById(item.itemId))
+                    return true
+                }
                 else -> {
                     // Default behavior for other tabs (like More)
                     val navSuccess = NavigationUI.onNavDestinationSelected(item, navController)
