@@ -7,11 +7,10 @@ import com.cataloghub.android.support.help.HelpOrigin.LOGIN_USERNAME_PASSWORD
 object AppUrls {
     const val APP_HELP_CENTER = "https://woocommerce.com/document/android/"
 
-    const val AUTOMATTIC_TOS = "https://wordpress.com/tos/"
-    const val AUTOMATTIC_PRIVACY_POLICY = "https://www.automattic.com/privacy"
-    const val AUTOMATTIC_PRIVACY_POLICY_CA = "https://automattic.com/privacy/#california-consumer-privacy-act-ccpa"
+    const val AUTOMATTIC_TOS = "https://www.cataloghub.in/terms-and-conditions.html"
+    const val AUTOMATTIC_PRIVACY_POLICY = "https://www.cataloghub.in/privacy-policy.html"
     const val AUTOMATTIC_COOKIE_POLICY = "https://www.automattic.com/cookies"
-    const val AUTOMATTIC_HIRING = "https://automattic.com/work-with-us"
+    const val AUTOMATTIC_HIRING = "https://www.cataloghub.in/#contact"
     const val AUTOMATTIC_AI_GUIDELINES = "https://automattic.com/ai-guidelines/"
 
     const val WOOCOMMERCE_UPGRADE = "https://woocommerce.com/document/how-to-update-woocommerce/"

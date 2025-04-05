@@ -29,14 +29,12 @@ class AboutConfigBuilder @Inject constructor(
             shareConfigFactory = { createShareConfig(activity) },
             socialsConfig = SocialsConfig(
                 instagramUsername = AppConstants.INSTAGRAM_USERNAME,
-                xUsername = AppConstants.X_USERNAME,
             ),
             legalConfig = LegalConfig(
                 tosUrl = AppUrls.AUTOMATTIC_TOS,
                 privacyPolicyUrl = AppUrls.AUTOMATTIC_PRIVACY_POLICY,
-                californiaPrivacyNoticeUrl = AppUrls.AUTOMATTIC_PRIVACY_POLICY_CA,
             ),
-            automatticConfig = AutomatticConfig(true),
+            automatticConfig = AutomatticConfig(false),
             workWithUsConfig = WorkWithUsConfig(
                 title = activity.getString(R.string.about_automattic_work_with_us_item_title),
                 subtitle = activity.getString(R.string.about_automattic_work_with_us_item_subtitle),
