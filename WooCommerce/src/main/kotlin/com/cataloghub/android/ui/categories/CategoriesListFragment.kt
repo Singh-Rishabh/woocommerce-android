@@ -69,7 +69,7 @@ class CategoriesListFragment : BaseFragment() {
     private var searchJob: Job? = null
     private val searchQueryFlow = MutableStateFlow("")
     private var searchQuery: String = ""
-    private var activeFilterSort: CategoriesListViewModel.SortBy = CategoriesListViewModel.SortBy.ALPHABETICAL_ASC
+    private var activeFilterSort: CategoriesListViewModel.SortBy = CategoriesListViewModel.SortBy.DATE_DESC
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,8 +78,11 @@ class CategoriesListFragment : BaseFragment() {
         if (savedInstanceState != null) {
             savedInstanceState.getString(STATE_SEARCH_QUERY)?.let { searchQuery = it }
             activeFilterSort = savedInstanceState.getSerializable(STATE_ACTIVE_FILTER_SORT) as? CategoriesListViewModel.SortBy
-                ?: CategoriesListViewModel.SortBy.ALPHABETICAL_ASC
+                ?: CategoriesListViewModel.SortBy.DATE_DESC
             viewModel.sortCategories(activeFilterSort)
+        } else {
+            // If there's no saved state, explicitly set to newest first
+            viewModel.sortCategories(CategoriesListViewModel.SortBy.DATE_DESC)
         }
     }
 
