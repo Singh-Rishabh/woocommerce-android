@@ -30,6 +30,7 @@
     <string name="ai_error_invalid_url">AIInvalidURL</string>
     <string name="ai_success_processing">AISuccessProcessing</string>
     <string name="ai_not_eligible">AI Not Eligible</string>
+    <string name="add_category_button">Add category from YouTube</string>
     <!--
         General Strings
     -->

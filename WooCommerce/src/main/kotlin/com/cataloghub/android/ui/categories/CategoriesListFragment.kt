@@ -19,6 +19,7 @@ import com.cataloghub.android.R
 import com.cataloghub.android.analytics.AnalyticsEvent
 import com.cataloghub.android.analytics.AnalyticsTracker
 import com.cataloghub.android.databinding.FragmentCategoriesListBinding
+import com.cataloghub.android.extensions.pinFabAboveBottomNavigationBar
 import com.cataloghub.android.model.UiState
 import com.cataloghub.android.ui.base.BaseFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
@@ -102,6 +103,7 @@ class CategoriesListFragment : BaseFragment() {
             setupSearchListener()
             setupRefresh()
             setupChips()
+            setupAddCategoryButton()
 
             // Load categories - use cache if available
             cachedCategories?.let {
@@ -356,6 +358,27 @@ class CategoriesListFragment : BaseFragment() {
     private fun setupFilters() {
         binding.sortAndFilterCard.setOnClickListener {
             binding.filtersContainer.isVisible = !binding.filtersContainer.isVisible
+        }
+    }
+
+    private fun setupAddCategoryButton() {
+        // Position the FAB above the bottom navigation bar
+        pinFabAboveBottomNavigationBar(binding.addCategoryButton)
+        
+        binding.addCategoryButton.setOnClickListener {
+            try {
+                // Navigate to AI Process screen to process YouTube video
+                findNavController().navigate(R.id.action_categories_to_aiProcessFragment)
+                
+                // Track analytics event
+                AnalyticsTracker.track(
+                    AnalyticsEvent.CATEGORY_ADD_BUTTON_TAPPED,
+                    mapOf("source" to "youtube")
+                )
+            } catch (e: Exception) {
+                WooLog.e(WooLog.T.PRODUCTS, "Error navigating to AI Process: ${e.message}", e)
+                uiMessageResolver.showSnack(getString(R.string.error_generic))
+            }
         }
     }
 
