@@ -1,5 +1,6 @@
 package com.cataloghub.android.ui.categories
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -19,7 +20,9 @@ import com.cataloghub.android.R
 import com.cataloghub.android.analytics.AnalyticsEvent
 import com.cataloghub.android.analytics.AnalyticsTracker
 import com.cataloghub.android.databinding.FragmentCategoriesListBinding
+import com.cataloghub.android.extensions.pinFabAboveBottomNavigationBar
 import com.cataloghub.android.model.UiState
+import com.cataloghub.android.tools.SelectedSite
 import com.cataloghub.android.ui.base.BaseFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
 import com.cataloghub.android.ui.main.AppBarStatus
@@ -56,6 +59,7 @@ class CategoriesListFragment : BaseFragment() {
     override val activityAppBarStatus: AppBarStatus = AppBarStatus.Visible()
 
     @Inject lateinit var uiMessageResolver: UIMessageResolver
+    @Inject lateinit var selectedSite: SelectedSite
 
     private val viewModel: CategoriesListViewModel by viewModels()
     private var _binding: FragmentCategoriesListBinding? = null
@@ -65,7 +69,7 @@ class CategoriesListFragment : BaseFragment() {
     private var searchJob: Job? = null
     private val searchQueryFlow = MutableStateFlow("")
     private var searchQuery: String = ""
-    private var activeFilterSort: CategoriesListViewModel.SortBy = CategoriesListViewModel.SortBy.ALPHABETICAL_ASC
+    private var activeFilterSort: CategoriesListViewModel.SortBy = CategoriesListViewModel.SortBy.DATE_DESC
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,8 +78,11 @@ class CategoriesListFragment : BaseFragment() {
         if (savedInstanceState != null) {
             savedInstanceState.getString(STATE_SEARCH_QUERY)?.let { searchQuery = it }
             activeFilterSort = savedInstanceState.getSerializable(STATE_ACTIVE_FILTER_SORT) as? CategoriesListViewModel.SortBy
-                ?: CategoriesListViewModel.SortBy.ALPHABETICAL_ASC
+                ?: CategoriesListViewModel.SortBy.DATE_DESC
             viewModel.sortCategories(activeFilterSort)
+        } else {
+            // If there's no saved state, explicitly set to newest first
+            viewModel.sortCategories(CategoriesListViewModel.SortBy.DATE_DESC)
         }
     }
 
@@ -102,6 +109,7 @@ class CategoriesListFragment : BaseFragment() {
             setupSearchListener()
             setupRefresh()
             setupChips()
+            setupAddCategoryButton()
 
             // Load categories - use cache if available
             cachedCategories?.let {
@@ -316,12 +324,23 @@ class CategoriesListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         try {
             WooLog.d(WooLog.T.PRODUCTS, "Setting up Categories RecyclerView")
-            categoriesAdapter = CategoriesListAdapter { categoryId, categoryName ->
-                // Navigate to ProductListFragment with category filter
-                navigateToProductsForCategory(categoryId, categoryName)
-                // Track analytics
-                AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
-            }
+            
+            // Get the site URL from the selected site
+            val selectedSiteUrl = selectedSite.get().url
+            
+            categoriesAdapter = CategoriesListAdapter(
+                onCategoryClick = { categoryId, categoryName ->
+                    // Navigate to ProductListFragment with category filter
+                    navigateToProductsForCategory(categoryId, categoryName)
+                    // Track analytics
+                    AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
+                },
+                onShareClick = { categoryId, permalink, categoryName ->
+                    // Handle share action
+                    shareCategory(categoryId, permalink, categoryName)
+                },
+                siteUrl = selectedSiteUrl
+            )
 
             binding.categoriesList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -353,9 +372,54 @@ class CategoriesListFragment : BaseFragment() {
         }
     }
 
+    /**
+     * Share a category using Android's built-in share functionality
+     */
+    private fun shareCategory(categoryId: Long, permalink: String, categoryName: String) {
+        try {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "Browse our $categoryName category")
+                putExtra(Intent.EXTRA_TEXT, permalink)
+            }
+            
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
+            
+            // Track analytics
+            AnalyticsTracker.track(AnalyticsEvent.CATEGORY_SHARE_BUTTON_TAPPED, mapOf(
+                "category_id" to categoryId.toString(),
+                "category_name" to categoryName
+            ))
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error sharing category: ${e.message}", e)
+            uiMessageResolver.showSnack(getString(R.string.error_generic))
+        }
+    }
+
     private fun setupFilters() {
         binding.sortAndFilterCard.setOnClickListener {
             binding.filtersContainer.isVisible = !binding.filtersContainer.isVisible
+        }
+    }
+
+    private fun setupAddCategoryButton() {
+        // Position the FAB above the bottom navigation bar
+        pinFabAboveBottomNavigationBar(binding.addCategoryButton)
+        
+        binding.addCategoryButton.setOnClickListener {
+            try {
+                // Navigate to AI Process screen to process YouTube video
+                findNavController().navigate(R.id.action_categories_to_aiProcessFragment)
+                
+                // Track analytics event
+                AnalyticsTracker.track(
+                    AnalyticsEvent.CATEGORY_ADD_BUTTON_TAPPED,
+                    mapOf("source" to "youtube")
+                )
+            } catch (e: Exception) {
+                WooLog.e(WooLog.T.PRODUCTS, "Error navigating to AI Process: ${e.message}", e)
+                uiMessageResolver.showSnack(getString(R.string.error_generic))
+            }
         }
     }
 

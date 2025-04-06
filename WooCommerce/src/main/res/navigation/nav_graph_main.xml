@@ -996,6 +996,13 @@
             app:exitAnim="@null"
             app:popEnterAnim="@null"
             app:popExitAnim="@anim/activity_fade_out" />
+        <action
+            android:id="@+id/action_categories_to_aiProcessFragment"
+            app:destination="@id/aiProcessFragment"
+            app:enterAnim="@anim/activity_fade_in"
+            app:exitAnim="@null"
+            app:popEnterAnim="@null"
+            app:popExitAnim="@anim/activity_fade_out" />
     </fragment>
 
     <action

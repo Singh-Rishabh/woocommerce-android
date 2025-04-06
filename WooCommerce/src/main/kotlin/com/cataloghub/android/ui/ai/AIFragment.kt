@@ -20,6 +20,7 @@ import com.cataloghub.android.ui.base.TopLevelFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
 import com.cataloghub.android.tools.SelectedSite
 import com.cataloghub.android.ui.ai.youtube.YouTubeAuthManager
+import com.cataloghub.android.extensions.pinFabAboveBottomNavigationBar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -106,6 +107,11 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
         setupClickListeners()
         setupObservers()
         
+        // Position the FAB above the bottom navigation bar
+        binding.addCategoryButton?.let { fabButton ->
+            pinFabAboveBottomNavigationBar(fabButton)
+        }
+        
         // Check if YouTube is already connected
         selectedSite.get()?.let { site ->
             viewModel.checkYouTubeConnectionStatus(site.url)
@@ -131,6 +137,12 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
                 // Start YouTube connection flow
                 connectYouTube()
             }
+        }
+        
+        // Set up the add category button
+        binding.addCategoryButton.setOnClickListener {
+            // Navigate to the process fragment to handle YouTube URL input
+            findNavController().navigate(R.id.action_ai_to_process)
         }
 
         // Facebook and Instagram are disabled (coming soon)

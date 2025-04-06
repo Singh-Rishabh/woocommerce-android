@@ -29,7 +29,7 @@ class CategoriesListViewModel @Inject constructor(
     
     private var allCategories: List<ProductCategoryItemUiModel> = emptyList()
     private var currentSearchQuery: String = ""
-    private var currentSortBy: SortBy = SortBy.ALPHABETICAL_ASC
+    private var currentSortBy: SortBy = SortBy.DATE_DESC
     
     private val _categoriesViewState = MutableLiveData<UiState<List<ProductCategoryItemUiModel>>>()
     val categoriesViewState: LiveData<UiState<List<ProductCategoryItemUiModel>>> = _categoriesViewState

@@ -1135,7 +1135,9 @@ enum class AnalyticsEvent(override val siteless: Boolean = false) : IAnalyticsEv
     CATEGORIES_LOAD_FAILED,
     CATEGORIES_LOAD_MORE_FAILED,
     CATEGORIES_CLEANUP_FAILED,
-    CATEGORY_TAPPED;
+    CATEGORY_TAPPED,
+    CATEGORY_ADD_BUTTON_TAPPED,
+    CATEGORY_SHARE_BUTTON_TAPPED;
 
     override val isPosEvent: Boolean = false
 }
