@@ -4555,4 +4555,5 @@
     <string name="product_filter_by_sort">Sort by</string>
     <string name="product_list_newest_first">Newest First</string>
     <string name="product_list_oldest_first">Oldest First</string>
+    <string name="category_share_subject">Browse our %s category</string>
 </resources>

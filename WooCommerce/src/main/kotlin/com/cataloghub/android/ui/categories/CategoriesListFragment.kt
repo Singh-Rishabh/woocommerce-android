@@ -1,5 +1,6 @@
 package com.cataloghub.android.ui.categories
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -21,6 +22,7 @@ import com.cataloghub.android.analytics.AnalyticsTracker
 import com.cataloghub.android.databinding.FragmentCategoriesListBinding
 import com.cataloghub.android.extensions.pinFabAboveBottomNavigationBar
 import com.cataloghub.android.model.UiState
+import com.cataloghub.android.tools.SelectedSite
 import com.cataloghub.android.ui.base.BaseFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
 import com.cataloghub.android.ui.main.AppBarStatus
@@ -57,6 +59,7 @@ class CategoriesListFragment : BaseFragment() {
     override val activityAppBarStatus: AppBarStatus = AppBarStatus.Visible()
 
     @Inject lateinit var uiMessageResolver: UIMessageResolver
+    @Inject lateinit var selectedSite: SelectedSite
 
     private val viewModel: CategoriesListViewModel by viewModels()
     private var _binding: FragmentCategoriesListBinding? = null
@@ -318,12 +321,23 @@ class CategoriesListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         try {
             WooLog.d(WooLog.T.PRODUCTS, "Setting up Categories RecyclerView")
-            categoriesAdapter = CategoriesListAdapter { categoryId, categoryName ->
-                // Navigate to ProductListFragment with category filter
-                navigateToProductsForCategory(categoryId, categoryName)
-                // Track analytics
-                AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
-            }
+            
+            // Get the site URL from the selected site
+            val selectedSiteUrl = selectedSite.get().url
+            
+            categoriesAdapter = CategoriesListAdapter(
+                onCategoryClick = { categoryId, categoryName ->
+                    // Navigate to ProductListFragment with category filter
+                    navigateToProductsForCategory(categoryId, categoryName)
+                    // Track analytics
+                    AnalyticsTracker.track(AnalyticsEvent.CATEGORY_TAPPED)
+                },
+                onShareClick = { categoryId, permalink, categoryName ->
+                    // Handle share action
+                    shareCategory(categoryId, permalink, categoryName)
+                },
+                siteUrl = selectedSiteUrl
+            )
 
             binding.categoriesList.apply {
                 layoutManager = LinearLayoutManager(requireContext())
@@ -351,6 +365,30 @@ class CategoriesListFragment : BaseFragment() {
             findNavController().navigate(R.id.action_global_productsFragment, bundle)
         } catch (e: Exception) {
             WooLog.e(WooLog.T.PRODUCTS, "Error navigating to products for category: ${e.message}", e)
+            uiMessageResolver.showSnack(getString(R.string.error_generic))
+        }
+    }
+
+    /**
+     * Share a category using Android's built-in share functionality
+     */
+    private fun shareCategory(categoryId: Long, permalink: String, categoryName: String) {
+        try {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_SUBJECT, "Browse our $categoryName category")
+                putExtra(Intent.EXTRA_TEXT, permalink)
+            }
+            
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.share)))
+            
+            // Track analytics
+            AnalyticsTracker.track(AnalyticsEvent.CATEGORY_SHARE_BUTTON_TAPPED, mapOf(
+                "category_id" to categoryId.toString(),
+                "category_name" to categoryName
+            ))
+        } catch (e: Exception) {
+            WooLog.e(WooLog.T.PRODUCTS, "Error sharing category: ${e.message}", e)
             uiMessageResolver.showSnack(getString(R.string.error_generic))
         }
     }
