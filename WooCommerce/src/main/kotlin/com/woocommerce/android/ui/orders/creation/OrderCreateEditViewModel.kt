@@ -91,6 +91,7 @@ import com.woocommerce.android.model.Order.ShippingLine
 import com.woocommerce.android.model.WooPlugin
 import com.woocommerce.android.tracker.OrderDurationRecorder
 import com.woocommerce.android.ui.barcodescanner.BarcodeScanningTracker
+import com.woocommerce.android.ui.common.CurrencyCode
 import com.woocommerce.android.ui.feedback.FeedbackRepository
 import com.woocommerce.android.ui.orders.CustomAmountUIModel
 import com.woocommerce.android.ui.orders.OrderNavigationTarget.ViewOrderStatusSelector
@@ -218,7 +219,6 @@ class OrderCreateEditViewModel @Inject constructor(
     companion object {
         val EMPTY_BIG_DECIMAL = -Double.MAX_VALUE.toBigDecimal()
         const val MAX_PRODUCT_QUANTITY = 100_000
-        const val DELAY_BEFORE_SHOWING_SIMPLE_PAYMENTS_MIGRATION_BOTTOM_SHEET = 500L
         private const val PARAMETERS_KEY = "parameters_key"
         private const val ORDER_CUSTOM_FEE_NAME = "order_custom_fee"
         const val DELAY_BEFORE_SHOWING_SHIPPING_FEEDBACK = 1000L
@@ -332,9 +332,11 @@ class OrderCreateEditViewModel @Inject constructor(
     val pendingSelectedItems: StateFlow<List<SelectedItem>> = _pendingSelectedItems
 
     val customAmounts: LiveData<List<CustomAmountUIModel>> = _orderDraft
-        .map { order -> order.feesLines }
-        .map { feeLines ->
-            feeLines.map { feeLine -> mapFeeLineToCustomAmountUiModel(feeLine, getCurrencySymbol()) }
+        .map { order ->
+            val currency = order.currency
+            order.feesLines.map { feeLine ->
+                mapFeeLineToCustomAmountUiModel(feeLine, currency)
+            }
         }
         .asLiveData()
 
@@ -436,13 +438,6 @@ class OrderCreateEditViewModel @Inject constructor(
                         onTaxRateSelected(it)
                     }
                 }
-
-                if (mode.indicateSimplePaymentsMigration) {
-                    triggerEventWithDelay(
-                        OrderCreateEditNavigationTarget.SimplePaymentsMigrationBottomSheet,
-                        delay = DELAY_BEFORE_SHOWING_SIMPLE_PAYMENTS_MIGRATION_BOTTOM_SHEET,
-                    )
-                }
             }
 
             is Mode.Edit -> {
@@ -503,10 +498,6 @@ class OrderCreateEditViewModel @Inject constructor(
 
     fun clearSelectedCustomAmount() {
         _selectedCustomAmount.value = null
-    }
-
-    fun onCustomAmountTypeSelected(type: CustomAmountType) {
-        triggerEvent(OnCustomAmountTypeSelected(type = type))
     }
 
     private suspend fun updateAutoTaxRateSettingState() {
@@ -2005,6 +1996,38 @@ class OrderCreateEditViewModel @Inject constructor(
         )
     }
 
+    fun onCustomAmountTapped(customAmountUIModel: CustomAmountUIModel = CustomAmountUIModel.EMPTY) {
+        val orderTotal = _orderDraft.value.total.toString()
+        val currencyCode = _orderDraft.value.currency.let { CurrencyCode(it) }
+
+        if (orderContainsProductsOrCustomAmounts()) {
+            triggerEvent(ShowCustomAmountBottomSheet)
+        } else {
+            triggerEvent(
+                ShowCustomAmountDialog(
+                    customAmountUIModel.copy(
+                        type = CustomAmountType.FIXED_CUSTOM_AMOUNT,
+                        currencyCode = currencyCode
+                    ),
+                    orderTotal = orderTotal
+                )
+            )
+        }
+    }
+
+    fun onCustomAmountTypeSelected(type: CustomAmountType) {
+        val selected = selectedCustomAmount.value ?: CustomAmountUIModel.EMPTY
+        val currencyCode = _orderDraft.value.currency.let { CurrencyCode(it) }
+        val orderTotal = _orderDraft.value.total.toString()
+
+        triggerEvent(
+            ShowCustomAmountDialog(
+                customAmountUIModel = selected.copy(type = type, currencyCode = currencyCode),
+                orderTotal = orderTotal
+            )
+        )
+    }
+
     @Parcelize
     data class ViewState(
         val isProgressDialogShown: Boolean = false,
@@ -2066,7 +2089,7 @@ class OrderCreateEditViewModel @Inject constructor(
 
     sealed class Mode : Parcelable {
         @Parcelize
-        data class Creation(val indicateSimplePaymentsMigration: Boolean = false) : Mode()
+        object Creation : Mode()
 
         @Parcelize
         data class Edit(val orderId: Long) : Mode()
@@ -2093,9 +2116,12 @@ data class OnTotalsSectionHeightChanged(
     val newHeight: Int
 ) : Event()
 
-data class OnCustomAmountTypeSelected(
-    val type: CustomAmountType
+data class ShowCustomAmountDialog(
+    val customAmountUIModel: CustomAmountUIModel,
+    val orderTotal: String
 ) : Event()
+
+object ShowCustomAmountBottomSheet : Event()
 
 object OnSelectedProductsSyncRequested : Event()
 

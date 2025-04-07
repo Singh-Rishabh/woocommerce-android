@@ -9,11 +9,11 @@ class GetSplitMovements @Inject constructor() {
         currentShipment: Int,
         shipments: Map<Int, List<ShippableItemModel>>,
         selection: Map<Int, SelectableShippableItemsUI>
-    ): List<SplitMovements> {
+    ): List<SplitMovement> {
         val currentShipmentItems = mutableListOf<ShippableItemModel>()
         val nextShipmentItems = mutableListOf<ShippableItemModel>()
 
-        selection.getValue(currentShipment).shippableItems.forEachIndexed { index, item ->
+        selection[currentShipment]?.shippableItems?.forEachIndexed { index, item ->
             when {
                 item is SelectableShippableItemUI.SingleSelectableShippableItemUI && item.isSelected -> {
                     nextShipmentItems.add(shipments.getValue(currentShipment)[index])
@@ -46,9 +46,10 @@ class GetSplitMovements @Inject constructor() {
         return if (nextShipmentItems.isNotEmpty()) {
             getPossibleKeys(
                 currentShipment = currentShipment,
-                items = shipments
+                items = shipments,
+                isRemoveMovement = currentShipmentItems.isEmpty()
             ).map { key ->
-                SplitMovements(
+                SplitMovement(
                     currentShipment = currentShipment,
                     updatedCurrentShipmentItems = currentShipmentItems,
                     updatedShipment = key,
@@ -63,15 +64,18 @@ class GetSplitMovements @Inject constructor() {
     private fun getPossibleKeys(
         currentShipment: Int,
         items: Map<Int, List<ShippableItemModel>>,
+        isRemoveMovement: Boolean
     ): List<Int> {
         val otherKeys = items.keys.filter { it != currentShipment }
+        if (isRemoveMovement) return otherKeys
+
         var nextKey = (otherKeys.maxOrNull() ?: currentShipment) + 1
         if (nextKey == currentShipment) nextKey++
         return otherKeys + nextKey
     }
 }
 
-data class SplitMovements(
+data class SplitMovement(
     val currentShipment: Int,
     val updatedCurrentShipmentItems: List<ShippableItemModel>,
     val updatedShipment: Int,
@@ -79,4 +83,6 @@ data class SplitMovements(
 ) {
     val totalItemsToMove: Int
         get() = updatedShipmentItems.sumByFloat { it.quantity }.toInt()
+    val isRemoveMovement: Boolean
+        get() = updatedCurrentShipmentItems.isEmpty()
 }

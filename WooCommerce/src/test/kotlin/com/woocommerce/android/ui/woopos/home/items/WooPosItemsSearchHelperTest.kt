@@ -86,7 +86,7 @@ class WooPosItemsSearchHelperTest {
 
         // THEN
         verify(mockChildToParentEventSender).sendToParent(
-            ChildToParentEvent.SearchEvent.ChangedQuery(searchQuery)
+            ChildToParentEvent.SearchEvent.QueryChanged(searchQuery)
         )
     }
 
@@ -205,9 +205,51 @@ class WooPosItemsSearchHelperTest {
                 message = R.string.app_name,
                 icon = R.drawable.ic_woo
             ),
-            paginationState = PaginationState.None,
-            reloadingWithPullToRefresh = false,
+            paginationState = WooPosPaginationState.None,
+            pullToRefreshState = WooPosPullToRefreshState.Enabled,
             couponsEnabled = false
         )
+    }
+
+    @Test
+    fun `when closed search, then pull to refresh is enabled`() = runTest {
+        // GIVEN
+        searchHelper.initialize(this, viewStateFlow)
+
+        // WHEN
+        searchHelper.onCloseSearchClicked()
+
+        // THEN
+        val currentState = viewStateFlow.value as WooPosItemsViewState.Content
+        assertThat(currentState.pullToRefreshState).isEqualTo(WooPosPullToRefreshState.Enabled)
+    }
+
+    @Test
+    fun `when search changed, then pull to refresh is disabled`() = runTest {
+        // GIVEN
+        searchHelper.initialize(this, viewStateFlow)
+
+        // WHEN
+        searchHelper.onSearchChanged("test query")
+
+        // THEN
+        val currentState = viewStateFlow.value as WooPosItemsViewState.Content
+        assertThat(currentState.pullToRefreshState).isEqualTo(WooPosPullToRefreshState.Disabled)
+    }
+
+    @Test
+    fun `when hidden search state, then pull to refresh is enabled`() = runTest {
+        // GIVEN
+        searchHelper.initialize(this, viewStateFlow)
+        val contentState = createContentState().copy(
+            search = WooPosItemsViewState.Content.SearchState.Hidden
+        )
+
+        // WHEN
+        viewStateFlow.value = contentState
+
+        // THEN
+        val currentState = viewStateFlow.value as WooPosItemsViewState.Content
+        assertThat(currentState.pullToRefreshState).isEqualTo(WooPosPullToRefreshState.Enabled)
     }
 }

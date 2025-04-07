@@ -41,6 +41,10 @@ class WooPosItemsSearchHelper @Inject constructor(
                         updateLoadingState(isLoading = false)
                     }
 
+                    is ParentToChildrenEvent.SearchEvent.RecentSearchSelected -> {
+                        onSearchChanged(event.query)
+                    }
+
                     is ParentToChildrenEvent.BackFromCheckoutToCartClicked -> Unit
                     is ParentToChildrenEvent.ItemClickedInProductSelector -> Unit
                     is ParentToChildrenEvent.OrderSuccessfullyPaid -> Unit
@@ -54,7 +58,7 @@ class WooPosItemsSearchHelper @Inject constructor(
     fun onSearchChanged(newQuery: String) {
         coroutineScope.launch {
             childToParentEventSender.sendToParent(
-                ChildToParentEvent.SearchEvent.ChangedQuery(query = newQuery)
+                ChildToParentEvent.SearchEvent.QueryChanged(query = newQuery)
             )
         }
 
@@ -90,10 +94,15 @@ class WooPosItemsSearchHelper @Inject constructor(
     fun onClearSearchClicked() {
         coroutineScope.launch {
             childToParentEventSender.sendToParent(
-                ChildToParentEvent.SearchEvent.ChangedQuery(query = "")
+                ChildToParentEvent.SearchEvent.QueryChanged(query = "")
             )
         }
         updateToInitialOpenState()
+    }
+
+    fun isSearchOpen(): Boolean {
+        val searchState = getCurrentSearchVisibleState() ?: return false
+        return searchState.state is WooPosSearchInputState.Open
     }
 
     private fun updateToInitialOpenState() {
@@ -140,7 +149,18 @@ class WooPosItemsSearchHelper @Inject constructor(
     }
 
     private fun updateSearchState(newState: WooPosItemsViewState.Content) {
-        viewStateFlow.value = newState
+        var pullToRefreshState = when (val searchState = newState.search) {
+            WooPosItemsViewState.Content.SearchState.Hidden -> WooPosPullToRefreshState.Enabled
+
+            is WooPosItemsViewState.Content.SearchState.Visible -> {
+                when (searchState.state) {
+                    WooPosSearchInputState.Closed -> WooPosPullToRefreshState.Enabled
+
+                    is WooPosSearchInputState.Open -> WooPosPullToRefreshState.Disabled
+                }
+            }
+        }
+        viewStateFlow.value = newState.copy(pullToRefreshState = pullToRefreshState)
     }
 
     private fun getCurrentContentState(): WooPosItemsViewState.Content? {
