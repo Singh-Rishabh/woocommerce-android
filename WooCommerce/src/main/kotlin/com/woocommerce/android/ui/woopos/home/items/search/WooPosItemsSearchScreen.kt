@@ -47,7 +47,7 @@ private fun WooPosItemsSearchScreen(
     ) {
         when (state) {
             is WooPosItemsSearchViewState.EmptySearchQuery -> {
-                WooPosItemsEmptySearchQueryState(state, onUIEvent)
+                WooPosItemsEmptySearchQueryStateScreen(state, onUIEvent)
             }
 
             is WooPosItemsSearchViewState.Content -> {
@@ -113,7 +113,7 @@ fun WooPosItemsSearchScreenPreview() {
                 .fillMaxSize()
                 .padding(WooPosSpacing.Medium.value)
         ) {
-            WooPosItemsEmptySearchQueryState(
+            WooPosItemsEmptySearchQueryStateScreen(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
                     popularItems = listOf<WooPosItemSelectionViewState.Product>(
                         WooPosItemSelectionViewState.Product.Simple(

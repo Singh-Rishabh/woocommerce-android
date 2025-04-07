@@ -44,7 +44,7 @@ import com.woocommerce.android.ui.woopos.home.items.WooPosItemCard
 import com.woocommerce.android.ui.woopos.home.items.WooPosItemSelectionViewState
 
 @Composable
-fun WooPosItemsEmptySearchQueryState(
+fun WooPosItemsEmptySearchQueryStateScreen(
     state: WooPosItemsSearchViewState.EmptySearchQuery,
     onUIEvent: (WooPosItemsSearchUiEvent) -> Unit
 ) {
@@ -211,7 +211,7 @@ fun WooPosItemsEmptySearchQueryStatePreview() {
                 .fillMaxSize()
                 .padding(WooPosSpacing.Medium.value)
         ) {
-            WooPosItemsEmptySearchQueryState(
+            WooPosItemsEmptySearchQueryStateScreen(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
                     popularItems = listOf(
                         WooPosItemSelectionViewState.Product.Simple(
@@ -252,7 +252,7 @@ fun WooPosItemsEmptySearchQueryStateOnyItemsPreview() {
                 .fillMaxSize()
                 .padding(WooPosSpacing.Medium.value)
         ) {
-            WooPosItemsEmptySearchQueryState(
+            WooPosItemsEmptySearchQueryStateScreen(
                 state = WooPosItemsSearchViewState.EmptySearchQuery(
                     popularItems = listOf(
                         WooPosItemSelectionViewState.Product.Simple(
