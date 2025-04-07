@@ -1,6 +1,5 @@
 package com.woocommerce.android.ui.orders.wooshippinglabels.packages
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -48,7 +47,6 @@ fun WooShippingLabelPackageCreationScreen(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WooShippingLabelPackageCreationScreen(
     modifier: Modifier = Modifier,
@@ -62,10 +60,8 @@ fun WooShippingLabelPackageCreationScreen(
     LaunchedEffect(tabIndex) {
         pagerState.animateScrollToPage(tabIndex)
     }
-    LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
-        if (!pagerState.isScrollInProgress) {
-            tabIndex = pagerState.currentPage
-        }
+    LaunchedEffect(pagerState.targetPage) {
+        tabIndex = pagerState.targetPage
     }
 
     fun findIndex(type: PageType) = tabs.indexOfFirst { it.type == type }
