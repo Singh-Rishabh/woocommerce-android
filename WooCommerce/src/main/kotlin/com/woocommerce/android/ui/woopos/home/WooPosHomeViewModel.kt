@@ -180,7 +180,7 @@ class WooPosHomeViewModel @Inject constructor(
                     }
 
                     is NavigationEvent -> viewModelScope.launch { _navigationEvent.emit(event) }
-                    is ChildToParentEvent.SearchEvent.ChangedQuery -> {
+                    is ChildToParentEvent.SearchEvent.QueryChanged -> {
                         sendEventToChildren(ChangedQuery(event.query))
                     }
                     ChildToParentEvent.SearchEvent.Finished -> {
