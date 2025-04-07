@@ -8,12 +8,12 @@ import javax.inject.Inject
 
 @Suppress("MagicNumber")
 class WooPosItemsSearchEmptyStateRepository @Inject constructor(
-    private val productsMockedDataSource: WooPosSearchProductsMockedDataSource,
+    private val productsDataSource: WooPosSearchProductsDataSource,
     private val preferencesRepository: WooPosPreferencesRepository
 ) {
     suspend fun getPopularItems(): List<Product> {
         delay(50)
-        return productsMockedDataSource.getPopularProducts()
+        return productsDataSource.getPopularProducts()
     }
 
     suspend fun getLastSearches(): List<String> = preferencesRepository.recentProductSearches.first()
