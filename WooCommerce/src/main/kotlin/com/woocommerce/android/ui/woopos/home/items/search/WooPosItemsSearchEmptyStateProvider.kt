@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 @Suppress("MagicNumber")
 class WooPosItemsSearchEmptyStateProvider @Inject constructor(
-    private val productsMockedDataSource: WooPosSearchProductsMockedDataSource,
+    private val productsMockedDataSource: WooPosSearchProductsDataSource,
 ) {
     suspend fun getPopularItems(): List<Product> {
         delay(50)
