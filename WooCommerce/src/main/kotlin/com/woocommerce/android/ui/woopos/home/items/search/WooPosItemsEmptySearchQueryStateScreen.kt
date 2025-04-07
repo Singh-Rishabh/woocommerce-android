@@ -63,7 +63,12 @@ fun WooPosItemsEmptySearchQueryStateScreen(
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        PopularItemsSection(state.popularItems, onUIEvent)
+                        PopularItemsSection(
+                            popularItems = state.popularItems,
+                            onPopularItemClicked = { popularItem ->
+                                onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(popularItem))
+                            }
+                        )
                     }
                 }
 
@@ -75,7 +80,12 @@ fun WooPosItemsEmptySearchQueryStateScreen(
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        RecentSearchesSection(state, onUIEvent)
+                        RecentSearchesSection(
+                            state = state,
+                            onRecentSearchClicked = { recentSearch ->
+                                onUIEvent(WooPosItemsSearchUiEvent.OnRecentSearchClicked(recentSearch))
+                            }
+                        )
                     }
                 }
             }
@@ -89,7 +99,7 @@ fun WooPosItemsEmptySearchQueryStateScreen(
 @Composable
 private fun PopularItemsSection(
     popularItems: List<WooPosItemSelectionViewState.Product>,
-    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit,
+    onPopularItemClicked: (WooPosItemSelectionViewState.Product) -> Unit,
 ) {
     SectionHeader(
         icon = Icons.AutoMirrored.Outlined.TrendingUp,
@@ -108,7 +118,7 @@ private fun PopularItemsSection(
         WooPosItemCard(
             modifier = Modifier,
             itemContentDescription = itemContentDescription,
-            onItemClicked = { onUIEvent(WooPosItemsSearchUiEvent.ItemClicked(popularItem)) },
+            onItemClicked = { onPopularItemClicked(popularItem) },
             item = popularItem,
         )
 
@@ -119,7 +129,7 @@ private fun PopularItemsSection(
 @Composable
 private fun RecentSearchesSection(
     state: WooPosItemsSearchViewState.EmptySearchQuery,
-    onUIEvent: (WooPosItemsSearchUiEvent) -> Unit
+    onRecentSearchClicked: (String) -> Unit,
 ) {
     SectionHeader(
         icon = Icons.Filled.History,
@@ -136,7 +146,7 @@ private fun RecentSearchesSection(
         ) {
             Row(
                 modifier = Modifier
-                    .clickable { onUIEvent(WooPosItemsSearchUiEvent.OnRecentSearchClicked(recentSearch)) }
+                    .clickable { onRecentSearchClicked(recentSearch) }
                     .height(112.dp)
                     .fillMaxWidth()
                     .padding(horizontal = WooPosSpacing.Medium.value.toAdaptivePadding()),
