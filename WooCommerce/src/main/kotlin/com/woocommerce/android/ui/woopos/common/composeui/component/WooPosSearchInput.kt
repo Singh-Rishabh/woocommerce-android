@@ -1,6 +1,7 @@
 package com.woocommerce.android.ui.woopos.common.composeui.component
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Transition
@@ -64,6 +65,11 @@ fun WooPosSearchInput(
     state: WooPosSearchInputState = WooPosSearchInputState.Closed,
     onEvent: (WooPosSearchUIEvent) -> Unit = {},
 ) {
+    BackHandler(
+        enabled = state is WooPosSearchInputState.Open,
+        onBack = { onEvent(WooPosSearchUIEvent.Close) }
+    )
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -192,6 +198,7 @@ private fun AnimatedSearchInput(
                                 .alpha(iconAlpha)
                         )
                     }
+
                     query.isNotEmpty() -> {
                         IconButton(
                             onClick = {
@@ -311,6 +318,7 @@ sealed class WooPosSearchInputState {
             data class Hint(val hint: String) : Input(hint)
         }
     }
+
     object Closed : WooPosSearchInputState()
 }
 
