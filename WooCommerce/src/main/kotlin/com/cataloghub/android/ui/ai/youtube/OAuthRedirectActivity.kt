@@ -58,9 +58,17 @@ class OAuthRedirectActivity : ComponentActivity() {
                     Log.d(TAG, "Authorization code: $code")
                     AINetworkLogger.logResponse(TAG, "Authorization code received")
                     
-                    // Pass the code to the ViewModel
-                    viewModel.completeYouTubeAuth(code)
-                    Log.d(TAG, "Auth code passed to ViewModel")
+                    // Get current store URL
+                    val storeUrl = viewModel.getCurrentStoreUrl() 
+                    
+                    if (storeUrl.isNotBlank()) {
+                        // Use the save token endpoint instead of complete auth
+                        viewModel.saveYouTubeToken(code, storeUrl)
+                        Log.d(TAG, "Auth code passed to ViewModel for token saving")
+                    } else {
+                        Log.e(TAG, "Missing store URL for YouTube token saving")
+                        AINetworkLogger.logError(TAG, Exception("Missing store URL"))
+                    }
                 } else {
                     // Handle error
                     Log.e(TAG, "Authorization error: $error")

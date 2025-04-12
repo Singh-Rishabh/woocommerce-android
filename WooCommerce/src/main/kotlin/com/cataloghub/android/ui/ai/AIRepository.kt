@@ -339,7 +339,11 @@ class AIRepository @Inject constructor(
     suspend fun completeYouTubeAuth(authCode: String): Boolean {
         Log.d(TAG, "Completing YouTube authentication with auth code")
         try {
-            val response = aiService.completeYouTubeAuth(CompleteYouTubeAuthRequest(authCode))
+            // Get the store URL from the selected site
+            val storeUrl = selectedSite.get()?.url ?: throw Exception("Store URL not available")
+            Log.d(TAG, "Using store URL for auth completion: $storeUrl")
+            
+            val response = aiService.completeYouTubeAuth(CompleteYouTubeAuthRequest(authCode), storeUrl)
             val success = response.isSuccess
             Log.d(TAG, "YouTube auth completion ${if (success) "successful" else "failed"}")
             AINetworkLogger.logResponse("YouTube Auth Completion", "Auth ${if (success) "successful" else "failed"}")

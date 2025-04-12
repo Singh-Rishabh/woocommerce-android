@@ -178,7 +178,7 @@ interface AIService {
      * Complete YouTube authorization with auth code
      */
     @POST("ai/youtube/complete-auth")
-    suspend fun completeYouTubeAuth(@Body request: CompleteYouTubeAuthRequest): YouTubeAuthResponse
+    suspend fun completeYouTubeAuth(@Body request: CompleteYouTubeAuthRequest, @Query("store_url") storeUrl: String): YouTubeAuthResponse
 
     /**
      * Disconnect YouTube
