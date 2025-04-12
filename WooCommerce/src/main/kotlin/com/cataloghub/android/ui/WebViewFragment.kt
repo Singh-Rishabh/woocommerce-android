@@ -22,6 +22,7 @@ import com.cataloghub.android.ui.ai.AINetworkLogger
 import com.cataloghub.android.ui.ai.AIViewModel
 import com.cataloghub.android.ui.base.BaseFragment
 import com.cataloghub.android.ui.base.UIMessageResolver
+import com.cataloghub.android.ui.ai.youtube.OAuthRedirectActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -125,21 +126,44 @@ class WebViewFragment : BaseFragment(R.layout.fragment_web_view) {
                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                     val url = request?.url?.toString() ?: return false
                     Log.d(TAG, "URL loading: $url")
-                    
+
                     if (shouldIntercept(url)) {
-                        Log.d(TAG, "Intercepted URL in shouldOverrideUrlLoading: $url")
-                        return handleCallbackUrl(url)
+                        Log.d(TAG, "Intercepting custom scheme URL: $url")
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            // Ensure the intent stays within our app
+                            context?.packageName?.let { intent.setPackage(it) }
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            startActivity(intent)
+                            Log.d(TAG, "Launched intent for custom scheme.")
+                            
+                            // Optionally finish the WebView activity if you want to return immediately
+                            // findNavController().popBackStack()
+                            
+                            return true // We've handled the URL
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Could not launch intent for custom scheme: $url", e)
+                            uiMessageResolver.showSnack("Error handling redirect: ${e.localizedMessage}")
+                            // Fallback or error handling here
+                            return true // Still return true to prevent WebView from loading the error page
+                        }
                     }
-                    
+
+                    // Let the WebView handle standard URLs (http, https)
+                    Log.d(TAG, "Letting WebView handle URL: $url")
                     return false
                 }
                 
                 private fun shouldIntercept(url: String): Boolean {
-                    // Only intercept the specific callback URI defined for the app
+                    // Check for the custom scheme
                     val callbackScheme = "com.cataloghub.android://oauth2callback"
-                    // Also handle the older woocommerce:// scheme if still used
-                    val oldCallbackScheme = "woocommerce://"
-                    return url.startsWith(callbackScheme) || url.startsWith(oldCallbackScheme)
+                    val oldCallbackScheme = "woocommerce://" // Keep old one just in case?
+                    val isCustomScheme = url.startsWith(callbackScheme.substringBefore("://")) 
+                    // Check scheme part only, as WebView seems to decode it as ':/' sometimes
+                    if (isCustomScheme) {
+                        Log.d(TAG, "URL matches custom scheme prefix.")
+                    }
+                    return isCustomScheme
                 }
                 
                 private fun logErrorDetails(url: String) {
@@ -169,79 +193,6 @@ class WebViewFragment : BaseFragment(R.layout.fragment_web_view) {
             
             // Load the URL provided in arguments
             loadUrl(urlToLoad)
-        }
-    }
-    
-    /**
-     * Handle callback URL from OAuth process
-     */
-    private fun handleCallbackUrl(url: String): Boolean {
-        Log.d(TAG, "Handling callback URL: $url")
-        
-        try {
-            val uri = Uri.parse(url)
-            val code = uri.getQueryParameter("code")
-            val error = uri.getQueryParameter("error")
-            
-            // First check for OAuth errors
-            if (error != null) {
-                Log.e(TAG, "OAuth error: $error")
-                val errorDescription = uri.getQueryParameter("error_description")
-                val errorMessage = if (errorDescription != null) "$error: $errorDescription" else error
-                
-                findNavController().navigateUp()
-                uiMessageResolver.showSnack("Authorization failed: $errorMessage")
-                return true
-            }
-            
-            // If we have a valid auth code, process it
-            if (code != null) {
-                Log.d(TAG, "Authorization code found: $code")
-                
-                when {
-                    url.contains("youtube") -> {
-                        Log.d(TAG, "Processing YouTube auth callback")
-                        aiViewModel.handleYouTubeAuthCallback(code)
-                        findNavController().navigateUp()
-                        uiMessageResolver.showSnack("YouTube authorization successful")
-                    }
-                    url.contains("facebook") -> {
-                        aiViewModel.handleFacebookAuthCallback(code)
-                        findNavController().navigateUp()
-                        uiMessageResolver.showSnack("Facebook authorization successful")
-                    }
-                    url.contains("instagram") -> {
-                        aiViewModel.handleInstagramAuthCallback(code)
-                        findNavController().navigateUp()
-                        uiMessageResolver.showSnack("Instagram authorization successful")
-                    }
-                    else -> {
-                        Log.d(TAG, "Unrecognized OAuth provider in callback URL")
-                        findNavController().navigateUp()
-                        uiMessageResolver.showSnack("Authorization successful")
-                    }
-                }
-                return true
-            } else {
-                // No auth code found, check if it's a cancellation
-                if (url.contains("denied") || url.contains("cancel")) {
-                    Log.d(TAG, "User cancelled the authorization")
-                    findNavController().navigateUp()
-                    uiMessageResolver.showSnack("Authorization cancelled")
-                    return true
-                }
-                
-                // Otherwise, it's some other error
-                Log.e(TAG, "No authorization code found in callback URL")
-                findNavController().navigateUp()
-                uiMessageResolver.showSnack("Authorization failed: No code provided")
-                return true
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "Error handling callback URL: ${e.message}", e)
-            findNavController().navigateUp()
-            uiMessageResolver.showSnack("Error processing authorization")
-            return false
         }
     }
     
