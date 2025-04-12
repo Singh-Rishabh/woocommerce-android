@@ -22,10 +22,10 @@
     <string name="ai_review_edit">Edit</string>
     <string name="ai_review_approve">Approve</string>
     <string name="ai_review_submit">ReviewSubmit</string>
-    <string name="ai_process_button">Process</string>
+    <string name="ai_process_button">Generate Products</string>
     <string name="ai_auto_approve">AutoApprove</string>
     <string name="ai_no_products">NoProducts</string>
-    <string name="ai_process_hint">ProcessHint</string>
+    <string name="ai_process_hint">Youtube Product Video Link</string>
     <string name="ai_error_processing">AIProcessingError</string>
     <string name="ai_error_invalid_url">AIInvalidURL</string>
     <string name="ai_success_processing">AISuccessProcessing</string>
