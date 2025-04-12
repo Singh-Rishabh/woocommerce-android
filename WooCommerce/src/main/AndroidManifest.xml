@@ -55,7 +55,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="woocommerce" android:host="youtube_callback" />
+                <data android:scheme="com.cataloghub.android" android:pathPrefix="/oauth2callback" />
             </intent-filter>
         </activity>
 

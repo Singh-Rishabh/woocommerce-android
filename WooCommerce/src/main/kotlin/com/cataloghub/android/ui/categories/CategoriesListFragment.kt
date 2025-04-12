@@ -408,9 +408,9 @@ class CategoriesListFragment : BaseFragment() {
         
         binding.addCategoryButton.setOnClickListener {
             try {
-                // Navigate to AI Process screen to process YouTube video
+                // Navigate back to the AI Process screen
                 findNavController().navigate(R.id.action_categories_to_aiProcessFragment)
-                
+
                 // Track analytics event
                 AnalyticsTracker.track(
                     AnalyticsEvent.CATEGORY_ADD_BUTTON_TAPPED,

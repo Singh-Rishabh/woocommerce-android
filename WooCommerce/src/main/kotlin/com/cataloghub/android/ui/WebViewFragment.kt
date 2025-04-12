@@ -97,14 +97,6 @@ class WebViewFragment : BaseFragment(R.layout.fragment_web_view) {
                     super.onPageStarted(view, url, favicon)
                     Log.d(TAG, "Page load started: $url")
                     binding.progressBar.isVisible = true
-                    
-                    // Check for OAuth callback URLs as early as possible
-                    url?.let { currentUrl ->
-                        if (shouldIntercept(currentUrl)) {
-                            Log.d(TAG, "Intercepted OAuth callback URL during page start: $currentUrl")
-                            handleCallbackUrl(currentUrl)
-                        }
-                    }
                 }
                 
                 override fun onPageFinished(view: WebView?, url: String?) {
@@ -143,11 +135,11 @@ class WebViewFragment : BaseFragment(R.layout.fragment_web_view) {
                 }
                 
                 private fun shouldIntercept(url: String): Boolean {
-                    return url.startsWith("woocommerce://") ||
-                           url.contains("youtube_callback") ||
-                           url.contains("oauth2/callback") ||
-                           url.contains("oauth2callback") ||
-                           (url.contains("callback") && url.contains("code="))
+                    // Only intercept the specific callback URI defined for the app
+                    val callbackScheme = "com.cataloghub.android://oauth2callback"
+                    // Also handle the older woocommerce:// scheme if still used
+                    val oldCallbackScheme = "woocommerce://"
+                    return url.startsWith(callbackScheme) || url.startsWith(oldCallbackScheme)
                 }
                 
                 private fun logErrorDetails(url: String) {

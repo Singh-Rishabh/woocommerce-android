@@ -11,7 +11,7 @@
     <string name="sort_oldest_first">Oldest First</string>
     <string name="sort_most_views">Most Views</string>
     <string name="sort_title">Title</string>
-
+    <string name="youtube_icon_description">Youtube</string>
     <!-- Status colors -->
     <string name="ai_product_status_pending">Pending</string>
     <string name="ai_product_status_approved">Approved</string>

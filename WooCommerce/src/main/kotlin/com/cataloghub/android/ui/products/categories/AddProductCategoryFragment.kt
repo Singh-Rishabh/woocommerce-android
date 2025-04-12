@@ -142,6 +142,8 @@ class AddProductCategoryFragment :
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        progressDialog?.dismiss()
+        progressDialog = null
     }
 
     override fun onRequestAllowBackPress(): Boolean {
