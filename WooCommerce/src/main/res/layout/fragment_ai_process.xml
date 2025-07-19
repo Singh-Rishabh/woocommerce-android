@@ -106,6 +106,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/switchAutoApprove" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonUploadVideo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/ai_upload_video_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonProcess" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"

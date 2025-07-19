@@ -185,6 +185,20 @@ interface AIService {
      */
     @POST("ai/youtube/disconnect")
     suspend fun disconnectYouTube(@Query("store_url") storeUrl: String): YouTubeDisconnectResponse
+
+    /**
+     * Process an Azure blob video/audio file to extract products and create them in WooCommerce.
+     * OpenAPI path: /azure-videos/process
+     */
+    @POST("azure-videos/process")
+    suspend fun processAzureVideo(@Body request: ProcessAzureRequest): ProcessingResult
+
+    /**
+     * Generate a SAS upload URL for Azure Blob Storage
+     * POST /azure-videos/generate-upload-url
+     */
+    @POST("azure-videos/generate-upload-url")
+    suspend fun generateAzureUploadUrl(@Body request: GenerateUploadUrlRequest): GenerateUploadUrlResponse
 }
 
 // Add these data classes for the new API endpoints
@@ -296,4 +310,25 @@ data class YouTubeTokenStatusResponse(
     val scopes: List<String>?,
     @SerializedName("valid_for_android")
     val validForAndroid: Boolean?
+)
+
+data class ProcessAzureRequest(
+    @SerializedName("azure_url")
+    val azureUrl: String,
+    @SerializedName("store_url")
+    val storeUrl: String,
+    @SerializedName("auto_approve")
+    val autoApprove: Boolean = false
+)
+
+// Top-level data classes for Azure upload URL generation
+
+data class GenerateUploadUrlRequest(
+    @SerializedName("filename") val filename: String,
+    @SerializedName("container") val container: String
+)
+
+data class GenerateUploadUrlResponse(
+    @SerializedName("upload_url") val uploadUrl: String,
+    @SerializedName("blob_name") val blobName: String
 )

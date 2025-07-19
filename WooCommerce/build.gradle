@@ -89,6 +89,9 @@ android {
             exclude("META-INF/*.kotlin_module")
             pickFirst 'META-INF/AL2.0'
             pickFirst 'META-INF/LGPL2.1'
+            pickFirst 'META-INF/io.netty.versions.properties'
+            pickFirst 'META-INF/INDEX.LIST'
+            pickFirst 'META-INF/io.netty.modules'
         }
 
         resConfigs(
@@ -440,6 +443,7 @@ dependencies {
 
     // Google Sign-In for authentication
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation 'com.azure:azure-storage-blob:12.24.0'
 }
 
 protobuf {

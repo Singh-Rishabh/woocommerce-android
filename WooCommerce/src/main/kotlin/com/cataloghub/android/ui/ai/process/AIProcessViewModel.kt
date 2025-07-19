@@ -17,6 +17,7 @@ import com.cataloghub.android.viewmodel.MultiLiveEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.cataloghub.android.ui.ai.GenerateUploadUrlResponse
 
 @HiltViewModel
 class AIProcessViewModel @Inject constructor(
@@ -105,6 +106,61 @@ class AIProcessViewModel @Inject constructor(
         }
     }
 
+    fun processAzureVideo(azureUrl: String, autoApprove: Boolean = false) {
+        AINetworkLogger.logRequest(
+            "Process Azure Video Request",
+            "Azure URL: $azureUrl, AutoApprove: $autoApprove, Store URL: ${selectedSite.get().url}"
+        )
+        WooLog.d(WooLog.T.AI, "Processing Azure video: $azureUrl (autoApprove: $autoApprove), store URL: ${selectedSite.get().url}")
+
+        viewModelScope.launch {
+            _viewState.value = ViewState(isLoading = true)
+
+            try {
+                _processingState.value = ProcessingState.PROCESSING
+                AINetworkLogger.logRequest("Processing State", "PROCESSING (Azure)")
+                WooLog.d(WooLog.T.AI, "Processing state changed to PROCESSING (Azure)")
+
+                val result = aiRepository.processAzureVideo(
+                    azureUrl = azureUrl,
+                    storeUrl = selectedSite.get().url,
+                    autoApprove = autoApprove
+                )
+
+                val responseLog = """
+                    Success: ${result.success}
+                    Collection ID: ${result.collectionId}
+                    Total Products: ${result.totalProducts}
+                    Status: ${result.status}
+                    Products Count: ${result.products.size}
+                    """.trimIndent()
+
+                AINetworkLogger.logResponse("Process Azure Video Response", responseLog)
+                WooLog.d(WooLog.T.AI, "Process Azure Video Response: $responseLog")
+
+                if (result.success) {
+                    _products.value = result.products
+                    _processingState.value = ProcessingState.COMPLETED
+                    AINetworkLogger.logResponse("Processing State", "COMPLETED (Azure)")
+                    WooLog.d(WooLog.T.AI, "Processing completed successfully (Azure)")
+                    _event.value = Event.NavigateToReview
+                } else {
+                    _error.value = "Processing failed: ${result.status}"
+                    _processingState.value = ProcessingState.ERROR
+                    AINetworkLogger.logError("Processing failed (Azure)", Exception(result.status))
+                    WooLog.e(WooLog.T.AI, "Azure video processing failed: ${result.status}")
+                }
+            } catch (e: Exception) {
+                AINetworkLogger.logError("Process Azure Video Error", e)
+                _error.value = e.message ?: "Unknown error occurred"
+                _processingState.value = ProcessingState.ERROR
+                WooLog.e(WooLog.T.AI, "Process Azure Video Error", e)
+            } finally {
+                _viewState.value = ViewState(isLoading = false)
+            }
+        }
+    }
+
     fun getProducts(youtubeUrl: String) {
         AINetworkLogger.logRequest("Get Products Request", "URL: $youtubeUrl")
         WooLog.d(WooLog.T.AI, "Getting products for URL: $youtubeUrl")
@@ -178,6 +234,10 @@ class AIProcessViewModel @Inject constructor(
                 WooLog.e(WooLog.T.AI, "Edit Products Error", e)
             }
         }
+    }
+
+    suspend fun generateAzureUploadUrl(filename: String, container: String): GenerateUploadUrlResponse {
+        return aiRepository.generateAzureUploadUrl(filename, container)
     }
 
     fun resetError() {

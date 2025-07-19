@@ -88,6 +88,51 @@ class AIRepository @Inject constructor(
     }
 
     /**
+     * Process an Azure blob video/audio file to extract products and create them in WooCommerce.
+     */
+    suspend fun processAzureVideo(
+        azureUrl: String,
+        storeUrl: String,
+        autoApprove: Boolean = false
+    ): ProcessingResult = withContext(Dispatchers.IO) {
+        try {
+            Log.d(TAG, "Processing Azure video with URL: $azureUrl, Store URL: $storeUrl, Auto-approve: $autoApprove")
+
+            val request = ProcessAzureRequest(
+                azureUrl = azureUrl,
+                storeUrl = storeUrl,
+                autoApprove = autoApprove
+            )
+
+            Log.d(TAG, "Sending request to API endpoint: /azure-videos/process")
+            Log.d(TAG, "Request payload: { \"azure_url\": \"$azureUrl\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
+
+            val result = aiService.processAzureVideo(request)
+            Log.d(TAG, "Azure video processing successful. CollectionId: ${result.collectionId}, Products: ${result.products.size}")
+            Log.d(TAG, "Processing result: success=${result.success}, status=${result.status}, totalProducts=${result.totalProducts}")
+            if (result.products.isNotEmpty()) {
+                Log.d(TAG, "First product: id=${result.products.first().id}, name=${result.products.first().name}")
+            }
+            return@withContext result
+        } catch (e: retrofit2.HttpException) {
+            val responseCode = e.code()
+            val responseMessage = e.message()
+            val errorBody = e.response()?.errorBody()?.string() ?: "No error body"
+            Log.e(TAG, "HTTP error during Azure video processing: code=$responseCode, message=$responseMessage")
+            Log.e(TAG, "HTTP error details: $errorBody")
+            Log.e(TAG, "Failed request details: endpoint=/azure-videos/process, method=POST")
+            Log.e(TAG, "Failed request payload: { \"azure_url\": \"$azureUrl\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
+            AINetworkLogger.logApiError("HTTP $responseCode Error", Exception("API error: $errorBody"))
+            throw e
+        } catch (e: Exception) {
+            Log.e(TAG, "Error processing Azure video: ${e.message}", e)
+            Log.e(TAG, "Error details: ${e.stackTraceToString()}")
+            AINetworkLogger.logApiError("Azure Video Processing Error", e)
+            throw e
+        }
+    }
+
+    /**
      * Extract video ID from YouTube URL
      */
     private fun extractVideoId(youtubeUrl: String): String? {
@@ -514,6 +559,12 @@ class AIRepository @Inject constructor(
             throw e
         }
     }
+
+    /**
+     * Generate a SAS upload URL for Azure Blob Storage
+     */
+    suspend fun generateAzureUploadUrl(filename: String, container: String): GenerateUploadUrlResponse =
+        aiService.generateAzureUploadUrl(GenerateUploadUrlRequest(filename, container))
 }
 
 data class ProcessVideoRequest(

@@ -27,6 +27,7 @@
     <string name="reprocess_video">Reprocess Video</string>
     <string name="view_videos">View Videos</string>
     <string name="connect">Connect</string>
+    <string name="ai_upload_video_button">Upload Video (Azure)</string>
 
     <!-- Status messages -->
     <string name="youtube_connected">YouTube Connected</string>
