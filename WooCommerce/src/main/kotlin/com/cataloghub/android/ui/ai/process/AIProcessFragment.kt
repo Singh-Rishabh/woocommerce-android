@@ -81,7 +81,13 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 }
                 is AIProcessViewModel.Event.NavigateToCollection -> {
                     uiMessageResolver.showSnack(event.message)
-                    Log.d(TAG, "NavigateToCollection: collectionId=${event.collectionId}")
+                    // Navigate to ProductListFragment filtered by the new collection
+                    val bundle = android.os.Bundle().apply {
+                        putString("categoryId", event.collectionId)
+                        putString("categoryName", event.collectionName)
+                    }
+                    findNavController().navigate(R.id.action_global_productsFragment, bundle)
+                    Log.d(TAG, "NavigateToCollection: collectionId=${event.collectionId}, collectionName=${event.collectionName}")
                 }
             }
         }
