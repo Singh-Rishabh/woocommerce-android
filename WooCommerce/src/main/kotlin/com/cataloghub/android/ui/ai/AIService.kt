@@ -318,7 +318,9 @@ data class ProcessAzureRequest(
     @SerializedName("store_url")
     val storeUrl: String,
     @SerializedName("auto_approve")
-    val autoApprove: Boolean = false
+    val autoApprove: Boolean = false,
+    @SerializedName("collection_name")
+    val collectionName: String
 )
 
 // Top-level data classes for Azure upload URL generation

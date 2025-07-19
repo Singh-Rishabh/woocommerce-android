@@ -60,26 +60,15 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
         _binding = FragmentAiProcessBinding.bind(view)
 
         setupProcessObservers()
-        setupYouTubeObservers()
-
-        setupProcessClickListeners()
-        setupYouTubeConnectButton()
-
-        checkYouTubeStatus()
-    }
-
-    private fun checkYouTubeStatus() {
-        selectedSite.get()?.let {
-            aiViewModel.checkYouTubeConnectionStatus(it.url)
-        } ?: Log.w(TAG, "Cannot check YouTube status: No site selected.")
+        // Remove YouTube and URL related observers and setup
+        setupUploadClickListener()
     }
 
     private fun setupProcessObservers() {
         viewModel.viewState.observe(viewLifecycleOwner) { state ->
-            binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
-            binding.buttonProcess.isEnabled = !state.isLoading
-            binding.switchAutoApprove.isEnabled = !state.isLoading
-            binding.editTextUrl.isEnabled = !state.isLoading
+            binding.uploadCard.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+            binding.buttonUploadVideo.isEnabled = !state.isLoading
+            binding.textInputLayoutCollectionName.isEnabled = !state.isLoading
         }
 
         viewModel.event.observe(viewLifecycleOwner) { event ->
@@ -88,114 +77,30 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                     uiMessageResolver.showSnack(event.message)
                 }
                 is AIProcessViewModel.Event.NavigateToReview -> {
-                    findNavController().navigate(R.id.action_ai_to_review)
+                    // No-op for now
                 }
                 is AIProcessViewModel.Event.NavigateToCollection -> {
                     uiMessageResolver.showSnack(event.message)
-                    // TODO: Replace with your actual navigation action to the collection screen
-                    // Example: findNavController().navigate(AIProcessFragmentDirections.actionAiProcessToCollection(event.collectionId))
                     Log.d(TAG, "NavigateToCollection: collectionId=${event.collectionId}")
                 }
             }
         }
     }
 
-    private fun setupProcessClickListeners() {
-        binding.buttonProcess.setOnClickListener {
-            val url = binding.editTextUrl.text.toString()
-            val autoApprove = binding.switchAutoApprove.isChecked
-            viewModel.processVideo(url, autoApprove)
-        }
-
+    private fun setupUploadClickListener() {
         binding.buttonUploadVideo.setOnClickListener {
+            val collectionName = binding.editTextCollectionName.text?.toString()?.trim()
+            if (collectionName.isNullOrEmpty()) {
+                uiMessageResolver.showSnack("Please enter a collection name.")
+                return@setOnClickListener
+            }
             // Launch file picker for videos
             mediaPickerHelper.showMediaPicker(
                 org.wordpress.android.mediapicker.api.MediaPickerSetup.DataSource.DEVICE,
                 allowMultiSelect = false,
-                mediaTypes = org.wordpress.android.mediapicker.model.MediaTypes.IMAGES_AND_VIDEOS // fallback if VIDEOS not available
+                mediaTypes = org.wordpress.android.mediapicker.model.MediaTypes.IMAGES_AND_VIDEOS
             )
         }
-    }
-
-    private fun setupYouTubeObservers() {
-        aiViewModel.isYouTubeConnected.observe(viewLifecycleOwner) { isConnected ->
-            isConnected?.let { updateYouTubeConnectionUI(it) }
-        }
-
-        aiViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.youtubeConnectButton.isEnabled = !(isLoading ?: false)
-        }
-
-        aiViewModel.event.observe(viewLifecycleOwner) { event ->
-            handleAIEvent(event)
-        }
-
-        aiViewModel.authUrl.observe(viewLifecycleOwner) { url ->
-            handleAuthUrl(url)
-        }
-
-        aiViewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
-            if (!errorMessage.isNullOrBlank()) {
-                uiMessageResolver.showSnack(errorMessage)
-                aiViewModel.errorMessageShown()
-            }
-        }
-    }
-
-    private fun setupYouTubeConnectButton() {
-        binding.youtubeConnectButton.setOnClickListener {
-            val isConnected = aiViewModel.isYouTubeConnected.value ?: false
-            if (isConnected) {
-                try {
-                    findNavController().navigate(R.id.youTubeVideosFragment)
-                } catch (e: Exception) {
-                    Log.e(TAG, "Navigation to YouTube Videos failed", e)
-                    uiMessageResolver.showSnack("Could not navigate to YouTube videos.")
-                }
-            } else {
-                selectedSite.get()?.let {
-                    aiViewModel.connectYouTube()
-                } ?: uiMessageResolver.showSnack("Please select a store first.")
-            }
-        }
-    }
-
-    private fun updateYouTubeConnectionUI(isConnected: Boolean) {
-        if (isConnected) {
-            binding.youtubeConnectButton.text = "View Videos"
-            binding.youtubeSubtitle.text = "YouTube connected"
-        } else {
-            binding.youtubeConnectButton.text = "Connect"
-            binding.youtubeSubtitle.text = "Connect YouTube to generate products from videos"
-        }
-    }
-
-    private fun handleAIEvent(event: AIViewModel.Event?) {
-        when (event) {
-            is AIViewModel.Event.ShowSnackbar -> {
-                uiMessageResolver.showSnack(event.message)
-            }
-            else -> {}
-        }
-    }
-
-    private fun handleAuthUrl(url: String?) {
-        if (!url.isNullOrBlank()) {
-            Log.d(TAG, "Received YouTube auth URL: $url")
-            try {
-                val directions = WebViewFragmentDirections.actionGlobalWebViewFragment(url)
-                findNavController().navigate(directions)
-                aiViewModel.authUrlOpened()
-            } catch (e: Exception) {
-                Log.e(TAG, "Navigation to WebView failed", e)
-                uiMessageResolver.showSnack("Error opening authentication page.")
-            }
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     // MediaPickerResultHandler implementation
@@ -204,7 +109,8 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
         if (imageUris.isNotEmpty()) {
             val videoUri = imageUris.first()
             Log.d(TAG, "onDeviceMediaSelected: Selected videoUri=$videoUri")
-            uploadVideoToAzure(videoUri)
+            val collectionName = binding.editTextCollectionName.text?.toString()?.trim() ?: ""
+            uploadVideoToAzure(videoUri, collectionName)
         } else {
             Log.w(TAG, "onDeviceMediaSelected: No imageUris selected")
         }
@@ -213,11 +119,13 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
         Log.d(TAG, "onWPMediaSelected: images=$images")
     }
 
-    private fun uploadVideoToAzure(videoUri: Uri) {
+    // Update uploadVideoToAzure to accept collectionName and update UI to use uploadCard
+    private var uploadCall: okhttp3.Call? = null
+    private fun uploadVideoToAzure(videoUri: Uri, collectionName: String) {
         Log.d(TAG, "uploadVideoToAzure: ENTRY")
         val context = requireContext().applicationContext
         val site = selectedSite.getOrNull()
-        Log.d(TAG, "uploadVideoToAzure: called with videoUri=$videoUri, site=$site")
+        Log.d(TAG, "uploadVideoToAzure: called with videoUri=$videoUri, site=$site, collectionName=$collectionName")
         if (site == null) {
             uiMessageResolver.showSnack("No site selected.")
             Log.e(TAG, "uploadVideoToAzure: No site selected.")
@@ -231,14 +139,16 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
         val container = "productvideos/$storeName"
         Log.d(TAG, "uploadVideoToAzure: storeName=$storeName, fileName=$fileName, container=$container")
 
-        binding.progressBar.visibility = View.VISIBLE
-        binding.progressBar.isIndeterminate = false
-        binding.progressBar.progress = 0
-        Log.d(TAG, "uploadVideoToAzure: Progress bar set to visible and determinate")
-        binding.textUploadProgress.visibility = View.VISIBLE
-        binding.textUploadProgress.text = "0%"
+        // Show upload card
+        requireActivity().runOnUiThread {
+            binding.uploadCard.visibility = View.VISIBLE
+            binding.textUploadStatus.text = "Preparing upload..."
+            binding.textUploadFileName.text = fileName
+            binding.progressBar.progress = 0
+            binding.textUploadProgress.text = "0%"
+            binding.buttonCancelUpload.isEnabled = true
+        }
         CoroutineScope(Dispatchers.IO).launch {
-            Log.d(TAG, "uploadVideoToAzure: CoroutineScope(Dispatchers.IO) launched")
             try {
                 Log.d(TAG, "uploadVideoToAzure: Requesting SAS upload URL from backend...")
                 val uploadUrlResponse = viewModel.generateAzureUploadUrl(fileName, container)
@@ -250,20 +160,15 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 Log.d(TAG, "uploadVideoToAzure: Opening inputStream for videoUri=$videoUri")
                 val inputStream = context.contentResolver.openInputStream(videoUri)
                 if (inputStream == null) {
-                    Log.e(TAG, "uploadVideoToAzure: Failed to open video file for uri=$videoUri")
                     launch(Dispatchers.Main) {
-                        Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show error UI")
-                        binding.progressBar.visibility = View.GONE
-                        binding.textUploadProgress.visibility = View.GONE
+                        binding.uploadCard.visibility = View.GONE
                         uiMessageResolver.showSnack("Failed to open video file.")
                     }
                     Log.d(TAG, "uploadVideoToAzure: EXIT (failed to open video file)")
                     return@launch
                 }
                 val tempFile = File.createTempFile("upload", ".mp4", context.cacheDir)
-                Log.d(TAG, "uploadVideoToAzure: Created tempFile at ${tempFile.absolutePath}")
                 FileOutputStream(tempFile).use { output ->
-                    Log.d(TAG, "uploadVideoToAzure: Copying inputStream to tempFile...")
                     inputStream.copyTo(output)
                 }
                 inputStream.close()
@@ -271,7 +176,6 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
 
                 // 3. Upload to Azure using OkHttp with progress
                 val totalBytes = tempFile.length()
-                Log.d(TAG, "uploadVideoToAzure: Preparing progressRequestBody, totalBytes=$totalBytes")
                 val progressRequestBody = object : RequestBody() {
                     override fun contentType() = "video/mp4".toMediaTypeOrNull()
                     override fun contentLength() = totalBytes
@@ -288,7 +192,7 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                                 requireActivity().runOnUiThread {
                                     binding.progressBar.progress = progress
                                     binding.textUploadProgress.text = "$progress%"
-                                    Log.d(TAG, "progressRequestBody.writeTo: UI progress updated to $progress% ($bytesWritten/$totalBytes bytes)")
+                                    binding.textUploadStatus.text = "Uploading... ($progress%)"
                                 }
                                 if (bytesWritten % (1024 * 1024) == 0L) {
                                     Log.d(TAG, "progressRequestBody.writeTo: Uploaded $bytesWritten/$totalBytes bytes ($progress%)")
@@ -311,15 +215,22 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                     .addHeader("Content-Type", "video/mp4")
                     .build()
                 Log.d(TAG, "uploadVideoToAzure: OkHttp Request built, starting upload to Azure...")
-                val response = client.newCall(request).execute()
+                uploadCall = client.newCall(request)
+                requireActivity().runOnUiThread {
+                    binding.textUploadStatus.text = "Uploading... (0%)"
+                    binding.buttonCancelUpload.setOnClickListener {
+                        uploadCall?.cancel()
+                        binding.textUploadStatus.text = "Upload cancelled."
+                        binding.buttonCancelUpload.isEnabled = false
+                    }
+                }
+                val response = uploadCall!!.execute()
                 Log.d(TAG, "uploadVideoToAzure: Upload response code=${response.code}, message=${response.message}")
                 if (!response.isSuccessful) {
                     val errorBody = response.body?.string()
                     Log.e(TAG, "uploadVideoToAzure: Upload failed. Code=${response.code}, Message=${response.message}, Body=$errorBody")
                     launch(Dispatchers.Main) {
-                        Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show upload error UI")
-                        binding.progressBar.visibility = View.GONE
-                        binding.textUploadProgress.visibility = View.GONE
+                        binding.uploadCard.visibility = View.GONE
                         uiMessageResolver.showSnack("Upload failed: ${response.code}")
                     }
                     tempFile.delete()
@@ -335,20 +246,19 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 Log.d(TAG, "uploadVideoToAzure: Blob uploaded. blobUrl=$blobUrl. Now calling processAzureVideo...")
 
                 launch(Dispatchers.Main) {
-                    Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show success UI and process video")
-                    binding.progressBar.visibility = View.GONE
-                    binding.textUploadProgress.visibility = View.GONE
-                    uiMessageResolver.showSnack("Upload successful. Processing video...")
-                    Log.d(TAG, "uploadVideoToAzure: Calling viewModel.processAzureVideo(blobUrl, true)")
-                    viewModel.processAzureVideo(blobUrl, true)
+                    binding.textUploadStatus.text = "Processing video..."
+                    binding.buttonCancelUpload.isEnabled = false
+                }
+                // Call processAzureVideo with collectionName
+                viewModel.processAzureVideoWithCollection(blobUrl, collectionName, true)
+                launch(Dispatchers.Main) {
+                    binding.uploadCard.visibility = View.GONE
                 }
                 Log.d(TAG, "uploadVideoToAzure: EXIT (success)")
             } catch (e: Exception) {
                 Log.e(TAG, "uploadVideoToAzure: Exception during upload/process", e)
                 launch(Dispatchers.Main) {
-                    Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show exception UI")
-                    binding.progressBar.visibility = View.GONE
-                    binding.textUploadProgress.visibility = View.GONE
+                    binding.uploadCard.visibility = View.GONE
                     uiMessageResolver.showSnack("Upload failed: ${e.message}")
                 }
                 Log.d(TAG, "uploadVideoToAzure: EXIT (exception)")

@@ -5,136 +5,95 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <!-- YouTube Connection Card - now at the top -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/youtubeCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <ImageView
-                android:id="@+id/youtubeIcon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_youtube"
-                android:contentDescription="@string/youtube_icon_description" 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/youtubeTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="YouTube"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                app:layout_constraintEnd_toStartOf="@+id/youtubeConnectButton"
-                app:layout_constraintStart_toEndOf="@+id/youtubeIcon"
-                app:layout_constraintTop_toTopOf="@+id/youtubeIcon" />
-
-            <TextView
-                android:id="@+id/youtubeSubtitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="Generate products from your YouTube videos" 
-                android:textAppearance="?attr/textAppearanceBody2"
-                app:layout_constraintEnd_toStartOf="@+id/youtubeConnectButton"
-                app:layout_constraintStart_toEndOf="@+id/youtubeIcon"
-                app:layout_constraintTop_toBottomOf="@+id/youtubeTitle" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/youtubeConnectButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Connect" 
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Process hint input box - now below YouTube card -->
+    <!-- Collection Name Input -->
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/textInputLayoutCollectionName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/ai_process_hint"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:hint="Collection Name"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/youtubeCard">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextUrl"
+            android:id="@+id/editTextCollectionName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textUri"
             android:maxLines="1" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchAutoApprove"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/ai_auto_approve"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textInputLayout" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonProcess"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/ai_process_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/switchAutoApprove" />
-
+    <!-- Upload Video Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonUploadVideo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/ai_upload_video_button"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp"
+        android:text="Upload Video"
+        app:layout_constraintTop_toBottomOf="@id/textInputLayoutCollectionName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonProcess" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
+    <!-- Upload Dialog/Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/uploadCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/buttonUploadVideo"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginTop="32dp">
 
-    <TextView
-        android:id="@+id/textUploadProgress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0%"
-        android:layout_marginTop="8dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:id="@+id/textUploadStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Uploading..."
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/textUploadFileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center_horizontal" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:max="100"
+                android:progress="0" />
+
+            <TextView
+                android:id="@+id/textUploadProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:layout_marginTop="8dp"
+                android:layout_gravity="center_horizontal" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonCancelUpload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout> 

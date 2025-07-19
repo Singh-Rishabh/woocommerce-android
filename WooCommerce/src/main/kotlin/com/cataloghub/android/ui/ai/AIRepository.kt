@@ -90,22 +90,24 @@ class AIRepository @Inject constructor(
     /**
      * Process an Azure blob video/audio file to extract products and create them in WooCommerce.
      */
-    suspend fun processAzureVideo(
+    suspend fun processAzureVideoWithCollection(
         azureUrl: String,
         storeUrl: String,
+        collectionName: String,
         autoApprove: Boolean = false
     ): ProcessingResult = withContext(Dispatchers.IO) {
         try {
-            Log.d(TAG, "Processing Azure video with URL: $azureUrl, Store URL: $storeUrl, Auto-approve: $autoApprove")
+            Log.d(TAG, "Processing Azure video with URL: $azureUrl, Store URL: $storeUrl, Collection Name: $collectionName, Auto-approve: $autoApprove")
 
             val request = ProcessAzureRequest(
                 azureUrl = azureUrl,
                 storeUrl = storeUrl,
-                autoApprove = autoApprove
+                autoApprove = autoApprove,
+                collectionName = collectionName
             )
 
             Log.d(TAG, "Sending request to API endpoint: /azure-videos/process")
-            Log.d(TAG, "Request payload: { \"azure_url\": \"$azureUrl\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
+            Log.d(TAG, "Request payload: { \"azure_url\": \"$azureUrl\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove, \"collection_name\": \"$collectionName\" }")
 
             val result = aiService.processAzureVideo(request)
             Log.d(TAG, "Azure video processing successful. CollectionId: ${result.collectionId}, Products: ${result.products.size}")
@@ -121,7 +123,7 @@ class AIRepository @Inject constructor(
             Log.e(TAG, "HTTP error during Azure video processing: code=$responseCode, message=$responseMessage")
             Log.e(TAG, "HTTP error details: $errorBody")
             Log.e(TAG, "Failed request details: endpoint=/azure-videos/process, method=POST")
-            Log.e(TAG, "Failed request payload: { \"azure_url\": \"$azureUrl\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove }")
+            Log.e(TAG, "Failed request payload: { \"azure_url\": \"$azureUrl\", \"store_url\": \"$storeUrl\", \"auto_approve\": $autoApprove, \"collection_name\": \"$collectionName\" }")
             AINetworkLogger.logApiError("HTTP $responseCode Error", Exception("API error: $errorBody"))
             throw e
         } catch (e: Exception) {

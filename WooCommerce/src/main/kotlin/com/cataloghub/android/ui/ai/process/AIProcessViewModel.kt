@@ -106,12 +106,12 @@ class AIProcessViewModel @Inject constructor(
         }
     }
 
-    fun processAzureVideo(azureUrl: String, autoApprove: Boolean = false) {
+    fun processAzureVideoWithCollection(azureUrl: String, collectionName: String, autoApprove: Boolean = false) {
         AINetworkLogger.logRequest(
             "Process Azure Video Request",
-            "Azure URL: $azureUrl, AutoApprove: $autoApprove, Store URL: ${selectedSite.get().url}"
+            "Azure URL: $azureUrl, Collection Name: $collectionName, AutoApprove: $autoApprove, Store URL: ${selectedSite.get().url}"
         )
-        WooLog.d(WooLog.T.AI, "Processing Azure video: $azureUrl (autoApprove: $autoApprove), store URL: ${selectedSite.get().url}")
+        WooLog.d(WooLog.T.AI, "Processing Azure video: $azureUrl (autoApprove: $autoApprove, collectionName: $collectionName), store URL: ${selectedSite.get().url}")
 
         viewModelScope.launch {
             _viewState.value = ViewState(isLoading = true)
@@ -121,9 +121,10 @@ class AIProcessViewModel @Inject constructor(
                 AINetworkLogger.logRequest("Processing State", "PROCESSING (Azure)")
                 WooLog.d(WooLog.T.AI, "Processing state changed to PROCESSING (Azure)")
 
-                val result = aiRepository.processAzureVideo(
+                val result = aiRepository.processAzureVideoWithCollection(
                     azureUrl = azureUrl,
                     storeUrl = selectedSite.get().url,
+                    collectionName = collectionName,
                     autoApprove = autoApprove
                 )
 
