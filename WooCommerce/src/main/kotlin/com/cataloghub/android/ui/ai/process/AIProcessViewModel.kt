@@ -138,6 +138,14 @@ class AIProcessViewModel @Inject constructor(
                 AINetworkLogger.logResponse("Process Azure Video Response", responseLog)
                 WooLog.d(WooLog.T.AI, "Process Azure Video Response: $responseLog")
 
+                if (result.status == "processing_started" && result.collectionId.isNotEmpty()) {
+                    _event.value = Event.NavigateToCollection(
+                        result.collectionId,
+                        "Your video is being processed. Products will appear in this collection in about 2 minutes."
+                    )
+                    return@launch
+                }
+
                 if (result.success) {
                     _products.value = result.products
                     _processingState.value = ProcessingState.COMPLETED
@@ -260,6 +268,7 @@ class AIProcessViewModel @Inject constructor(
     sealed class Event : MultiLiveEvent.Event(false) {
         data class ShowError(@StringRes val message: Int) : Event()
         object NavigateToReview : Event()
+        data class NavigateToCollection(val collectionId: String, val message: String) : Event()
     }
 
     enum class ProcessingState {

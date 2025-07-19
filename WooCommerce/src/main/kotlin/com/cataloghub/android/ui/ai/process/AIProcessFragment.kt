@@ -90,6 +90,12 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 is AIProcessViewModel.Event.NavigateToReview -> {
                     findNavController().navigate(R.id.action_ai_to_review)
                 }
+                is AIProcessViewModel.Event.NavigateToCollection -> {
+                    uiMessageResolver.showSnack(event.message)
+                    // TODO: Replace with your actual navigation action to the collection screen
+                    // Example: findNavController().navigate(AIProcessFragmentDirections.actionAiProcessToCollection(event.collectionId))
+                    Log.d(TAG, "NavigateToCollection: collectionId=${event.collectionId}")
+                }
             }
         }
     }
@@ -229,6 +235,8 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
         binding.progressBar.isIndeterminate = false
         binding.progressBar.progress = 0
         Log.d(TAG, "uploadVideoToAzure: Progress bar set to visible and determinate")
+        binding.textUploadProgress.visibility = View.VISIBLE
+        binding.textUploadProgress.text = "0%"
         CoroutineScope(Dispatchers.IO).launch {
             Log.d(TAG, "uploadVideoToAzure: CoroutineScope(Dispatchers.IO) launched")
             try {
@@ -246,6 +254,7 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                     launch(Dispatchers.Main) {
                         Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show error UI")
                         binding.progressBar.visibility = View.GONE
+                        binding.textUploadProgress.visibility = View.GONE
                         uiMessageResolver.showSnack("Failed to open video file.")
                     }
                     Log.d(TAG, "uploadVideoToAzure: EXIT (failed to open video file)")
@@ -278,6 +287,7 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                                 val progress = (bytesWritten * 100 / totalBytes).toInt()
                                 requireActivity().runOnUiThread {
                                     binding.progressBar.progress = progress
+                                    binding.textUploadProgress.text = "$progress%"
                                     Log.d(TAG, "progressRequestBody.writeTo: UI progress updated to $progress% ($bytesWritten/$totalBytes bytes)")
                                 }
                                 if (bytesWritten % (1024 * 1024) == 0L) {
@@ -309,6 +319,7 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                     launch(Dispatchers.Main) {
                         Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show upload error UI")
                         binding.progressBar.visibility = View.GONE
+                        binding.textUploadProgress.visibility = View.GONE
                         uiMessageResolver.showSnack("Upload failed: ${response.code}")
                     }
                     tempFile.delete()
@@ -326,6 +337,7 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 launch(Dispatchers.Main) {
                     Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show success UI and process video")
                     binding.progressBar.visibility = View.GONE
+                    binding.textUploadProgress.visibility = View.GONE
                     uiMessageResolver.showSnack("Upload successful. Processing video...")
                     Log.d(TAG, "uploadVideoToAzure: Calling viewModel.processAzureVideo(blobUrl, true)")
                     viewModel.processAzureVideo(blobUrl, true)
@@ -336,6 +348,7 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 launch(Dispatchers.Main) {
                     Log.d(TAG, "uploadVideoToAzure: Switching to Main thread to show exception UI")
                     binding.progressBar.visibility = View.GONE
+                    binding.textUploadProgress.visibility = View.GONE
                     uiMessageResolver.showSnack("Upload failed: ${e.message}")
                 }
                 Log.d(TAG, "uploadVideoToAzure: EXIT (exception)")
