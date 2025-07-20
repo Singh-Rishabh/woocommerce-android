@@ -443,7 +443,26 @@ dependencies {
 
     // Google Sign-In for authentication
     implementation("com.google.android.gms:play-services-auth:20.7.0")
-    implementation 'com.azure:azure-storage-blob:12.24.0'
+    implementation('com.azure:azure-storage-blob:12.24.0') {
+        exclude group: 'io.micrometer', module: 'micrometer-core'
+        exclude group: 'io.micrometer', module: 'micrometer-registry-prometheus'
+        exclude group: 'io.netty', module: 'netty-incubator-transport-native-io_uring'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-core'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
+        exclude group: 'org.apache.log4j', module: 'log4j'
+        exclude group: 'reactor.blockhound', module: 'reactor-blockhound'
+        exclude group: 'com.aayushatharva.brotli4j', module: 'brotli4j'
+        exclude group: 'com.github.luben', module: 'zstd-jni'
+        exclude group: 'com.jcraft', module: 'jzlib'
+        exclude group: 'com.ning', module: 'compress-lzf'
+        exclude group: 'org.eclipse.jetty.alpn', module: 'alpn-api'
+        exclude group: 'org.eclipse.jetty.npn', module: 'npn-api'
+        exclude group: 'org.jboss.marshalling', module: 'jboss-marshalling'
+        exclude group: 'net.jpountz.lz4', module: 'lz4'
+        exclude group: 'net.jpountz.xxhash', module: 'xxhash'
+        exclude group: 'org.osgi', module: 'org.osgi.core'
+        exclude group: 'org.osgi', module: 'org.osgi.compendium'
+    }
 }
 
 protobuf {
