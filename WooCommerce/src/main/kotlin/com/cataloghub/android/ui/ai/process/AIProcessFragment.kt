@@ -55,12 +55,46 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
     private var _binding: FragmentAiProcessBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var youTubeAuthManager: com.cataloghub.android.ui.ai.youtube.YouTubeAuthManager
+    private lateinit var youTubeAuthLauncher: androidx.activity.result.ActivityResultLauncher<android.content.Intent>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Register activity result launcher for YouTube OAuth
+        youTubeAuthLauncher = registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val data = result.data
+            if (result.resultCode != android.app.Activity.RESULT_OK) {
+                uiMessageResolver.showSnack("YouTube connection failed. Please try again later.")
+                return@registerForActivityResult
+            }
+            youTubeAuthManager.handleAuthResult(result.resultCode, data) { authCode ->
+                if (authCode != null) {
+                    selectedSite.get()?.let { site ->
+                        aiViewModel.saveYouTubeToken(authCode, site.url)
+                    }
+                } else {
+                    uiMessageResolver.showSnack(R.string.error_youtube_connection_failed)
+                }
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentAiProcessBinding.bind(view)
 
+        // Initialize YouTube Auth Manager
+        youTubeAuthManager = com.cataloghub.android.ui.ai.youtube.YouTubeAuthManager(requireContext(), youTubeAuthLauncher)
+
+        setupYouTubeClickListeners()
+        setupYouTubeObservers()
+        selectedSite.get()?.let { site ->
+            aiViewModel.checkYouTubeConnectionStatus(site.url)
+        }
+
         setupProcessObservers()
-        // Remove YouTube and URL related observers and setup
         setupUploadClickListener()
     }
 
@@ -106,6 +140,100 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
                 allowMultiSelect = false,
                 mediaTypes = org.wordpress.android.mediapicker.model.MediaTypes.IMAGES_AND_VIDEOS
             )
+        }
+    }
+
+    private fun setupYouTubeClickListeners() {
+        binding.youtubeCard.setOnClickListener {
+            if (aiViewModel.isYouTubeConnected.value == true) {
+                findNavController().navigate(R.id.action_ai_to_youtube_videos)
+            } else {
+                connectYouTube()
+            }
+        }
+        binding.youtubeConnectButton.setOnClickListener {
+            if (aiViewModel.isYouTubeConnected.value == true) {
+                findNavController().navigate(R.id.action_ai_to_youtube_videos)
+            } else {
+                connectYouTube()
+            }
+        }
+    }
+
+    private fun setupYouTubeObservers() {
+        aiViewModel.isYouTubeConnected.observe(viewLifecycleOwner) { connected ->
+            updateYouTubeConnectionUI(connected)
+        }
+        aiViewModel.isLoading.observe(viewLifecycleOwner) { loading ->
+            binding.youtubeConnectButton.isEnabled = !loading
+            if (loading) {
+                binding.youtubeConnectButton.text = getString(R.string.loading)
+            } else {
+                updateYouTubeConnectionUI(aiViewModel.isYouTubeConnected.value ?: false)
+            }
+        }
+        aiViewModel.errorMessage.observe(viewLifecycleOwner) { msg ->
+            msg?.let {
+                uiMessageResolver.showSnack(it)
+                aiViewModel.errorMessageShown()
+            }
+        }
+        // Handle snackbar and WebView navigation events
+        aiViewModel.event.observe(viewLifecycleOwner) { event ->
+            when (event) {
+                is com.cataloghub.android.ui.ai.AIViewModel.Event.ShowSnackbar -> {
+                    uiMessageResolver.showSnack(event.message)
+                }
+                is com.cataloghub.android.ui.ai.AIViewModel.Event.NavigateToWebView -> {
+                    navigateToInAppBrowser(event.url)
+                }
+                else -> {}
+            }
+        }
+        // Observe direct auth URL updates
+        aiViewModel.authUrl.observe(viewLifecycleOwner) { url ->
+            if (!url.isNullOrBlank()) {
+                android.util.Log.d(TAG, "AIProcessFragment: Received auth URL -> $url, navigating to WebView")
+                navigateToInAppBrowser(url)
+                aiViewModel.authUrlOpened()
+            } else {
+                android.util.Log.d(TAG, "AIProcessFragment: Ignoring blank auth URL update")
+            }
+        }
+    }
+
+    private fun updateYouTubeConnectionUI(isConnected: Boolean) {
+        if (isConnected) {
+            binding.youtubeConnectButton.text = getString(R.string.view_videos)
+            binding.youtubeSubtitle.text = getString(R.string.youtube_connected)
+        } else {
+            binding.youtubeConnectButton.text = getString(R.string.connect)
+            binding.youtubeSubtitle.text = getString(R.string.youtube_not_connected)
+        }
+    }
+
+    private fun connectYouTube() {
+        if (selectedSite.get() == null) {
+            uiMessageResolver.showSnack(R.string.ai_error_no_site_selected)
+            return
+        }
+        binding.youtubeConnectButton.isEnabled = false
+        aiViewModel.setLoading(true)
+        aiViewModel.connectYouTube()
+    }
+
+    private fun navigateToInAppBrowser(url: String) {
+        android.util.Log.d(TAG, "AIProcessFragment: Navigating to WebView with URL: $url")
+        try {
+            val directions = com.cataloghub.android.ui.WebViewFragmentDirections.actionGlobalWebViewFragment(url)
+            findNavController().navigate(directions)
+            binding.youtubeConnectButton.isEnabled = true
+            aiViewModel.setLoading(false)
+        } catch (e: Exception) {
+            android.util.Log.e(TAG, "AIProcessFragment: Error navigating to WebView: ${e.message}", e)
+            uiMessageResolver.showSnack("Error opening authentication page. Please try again.")
+            binding.youtubeConnectButton.isEnabled = true
+            aiViewModel.setLoading(false)
         }
     }
 

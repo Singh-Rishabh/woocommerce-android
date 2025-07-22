@@ -121,20 +121,15 @@ class AIFragment : TopLevelFragment(R.layout.fragment_ai) {
     private fun setupClickListeners() {
         binding.youtubeCard.setOnClickListener {
             if (viewModel.isYouTubeConnected.value == true) {
-                // Navigate to YouTube videos list
                 findNavController().navigate(R.id.action_ai_to_youtube_videos)
             } else {
-                // Start YouTube connection flow
                 connectYouTube()
             }
         }
-
         binding.youtubeConnectButton.setOnClickListener {
             if (viewModel.isYouTubeConnected.value == true) {
-                // Navigate to YouTube videos list
                 findNavController().navigate(R.id.action_ai_to_youtube_videos)
             } else {
-                // Start YouTube connection flow
                 connectYouTube()
             }
         }
