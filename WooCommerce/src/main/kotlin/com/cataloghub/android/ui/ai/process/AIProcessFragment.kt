@@ -145,16 +145,12 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
 
     private fun setupYouTubeClickListeners() {
         binding.youtubeCard.setOnClickListener {
-            if (aiViewModel.isYouTubeConnected.value == true) {
-                findNavController().navigate(R.id.action_ai_to_youtube_videos)
-            } else {
+            if (aiViewModel.isYouTubeConnected.value != true) {
                 connectYouTube()
             }
         }
         binding.youtubeConnectButton.setOnClickListener {
-            if (aiViewModel.isYouTubeConnected.value == true) {
-                findNavController().navigate(R.id.action_ai_to_youtube_videos)
-            } else {
+            if (aiViewModel.isYouTubeConnected.value != true) {
                 connectYouTube()
             }
         }
@@ -204,10 +200,12 @@ class AIProcessFragment : BaseFragment(R.layout.fragment_ai_process), MediaPicke
 
     private fun updateYouTubeConnectionUI(isConnected: Boolean) {
         if (isConnected) {
-            binding.youtubeConnectButton.text = getString(R.string.view_videos)
+            binding.youtubeConnectButton.text = getString(R.string.youtube_connected)
+            binding.youtubeConnectButton.isEnabled = false
             binding.youtubeSubtitle.text = getString(R.string.youtube_connected)
         } else {
             binding.youtubeConnectButton.text = getString(R.string.connect)
+            binding.youtubeConnectButton.isEnabled = true
             binding.youtubeSubtitle.text = getString(R.string.youtube_not_connected)
         }
     }
