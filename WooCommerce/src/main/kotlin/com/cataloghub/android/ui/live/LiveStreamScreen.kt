@@ -15,7 +15,9 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import com.google.accompanist.permissions.*
 import androidx.compose.ui.Modifier
+import com.cataloghub.android.model.Product
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale

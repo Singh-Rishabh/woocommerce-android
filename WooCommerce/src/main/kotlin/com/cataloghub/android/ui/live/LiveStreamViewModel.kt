@@ -36,9 +36,9 @@ class LiveStreamViewModel @Inject constructor(
         if (productIds.isNotEmpty()) {
             viewModelScope.launch {
                 try {
-                    val products = productIds.mapNotNull { id ->
+                    val products = productIds.map { id ->
                         productRepository.getProduct(id)
-                    }
+                    }.filterNotNull()
                     _selectedProducts.value = products
                 } catch (e: Exception) {
                     _uiState.value = _uiState.value.copy(error = e.message)

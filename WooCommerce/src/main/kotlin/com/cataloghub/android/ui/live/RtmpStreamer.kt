@@ -3,7 +3,7 @@ package com.cataloghub.android.ui.live
 import android.content.Context
 import android.view.SurfaceView
 import com.pedro.rtplibrary.rtmp.RtmpCamera1
-import com.pedro.rtplibrary.view.ConnectCheckerRtmp
+import com.pedro.rtplibrary.utils.ConnectCheckerRtmp
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -48,34 +48,34 @@ class RtmpStreamer(
         rtmpCamera?.stopPreview()
     }
 
-    override fun onConnectionStartedRtmp(rtmpUrl: String) {
+    override fun onConnectionStarted(url: String) {
         _connectionState.value = StreamState.CONNECTING
     }
 
-    override fun onConnectionSuccessRtmp() {
+    override fun onConnectionSuccess() {
         _connectionState.value = StreamState.CONNECTED
     }
 
-    override fun onConnectionFailedRtmp(reason: String) {
+    override fun onConnectionFailed(reason: String) {
         _connectionState.value = StreamState.FAILED
         _streamingState.value = false
     }
 
-    override fun onNewBitrateRtmp(bitrate: Long) {
+    override fun onNewBitrate(bitrate: Long) {
         // Handle bitrate changes if needed
     }
 
-    override fun onDisconnectRtmp() {
+    override fun onDisconnect() {
         _connectionState.value = StreamState.DISCONNECTED
         _streamingState.value = false
     }
 
-    override fun onAuthErrorRtmp() {
+    override fun onAuthError() {
         _connectionState.value = StreamState.AUTH_ERROR
         _streamingState.value = false
     }
 
-    override fun onAuthSuccessRtmp() {
+    override fun onAuthSuccess() {
         _connectionState.value = StreamState.CONNECTED
     }
 

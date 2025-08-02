@@ -206,6 +206,7 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:1.2.3"
     implementation "androidx.camera:camera-view:1.2.3"
     implementation 'com.github.pedroSG94.rtmp-rtsp-stream-client-java:rtplibrary:2.1.9'
+    implementation "com.google.accompanist:accompanist-permissions:0.32.0"
     implementation(libs.wordpress.libaddressinput.common) {
         exclude group: "org.json", module: "json"
         exclude group: "com.google.guava", module: "guava"

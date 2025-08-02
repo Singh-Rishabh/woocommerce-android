@@ -10,7 +10,11 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.runtime.*
+import com.cataloghub.android.model.Product
+import com.cataloghub.android.ui.compose.dragContainerForDragHandle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -21,6 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.cataloghub.android.R
 import com.cataloghub.android.model.Product
+
+// Extension property for offsetEnd
+private val androidx.compose.foundation.lazy.LazyListItemInfo.offsetEnd: Int
+    get() = this.offset + this.size
 
 @Composable
 fun GoLiveScreen(
