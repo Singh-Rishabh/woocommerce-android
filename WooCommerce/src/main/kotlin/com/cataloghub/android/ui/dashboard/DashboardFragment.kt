@@ -180,6 +180,10 @@ class DashboardFragment :
 
                 is RefreshJitm -> refreshJitm()
 
+                is DashboardViewModel.DashboardEvent.GoLive -> findNavController().navigate(
+                    DashboardFragmentDirections.actionDashboardToGoLiveFragment()
+                )
+
                 else -> event.isHandled = false
             }
         }

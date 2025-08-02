@@ -93,6 +93,31 @@
         <action
             android:id="@+id/action_dashboard_to_inboxFragment"
             app:destination="@id/inboxFragment" />
+        <action
+            android:id="@+id/action_dashboard_to_go_live_fragment"
+            app:destination="@id/go_live_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/go_live_fragment"
+        android:name="com.cataloghub.android.ui.live.GoLiveFragment"
+        android:label="GoLiveFragment">
+        <action
+            android:id="@+id/action_go_live_to_live_stream_fragment"
+            app:destination="@id/live_stream_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/live_stream_fragment"
+        android:name="com.cataloghub.android.ui.live.LiveStreamFragment"
+        android:label="LiveStreamFragment">
+        <argument
+            android:name="sessionId"
+            app:argType="string" />
+        <argument
+            android:name="streamKey"
+            app:argType="string" />
+        <argument
+            android:name="selectedProductIds"
+            app:argType="long[]" />
     </fragment>
     <fragment
         android:id="@+id/orders"

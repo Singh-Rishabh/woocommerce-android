@@ -4556,4 +4556,21 @@
     <string name="product_list_newest_first">Newest First</string>
     <string name="product_list_oldest_first">Oldest First</string>
     <string name="category_share_subject">Browse our %s category</string>
+    <string name="go_live">Go Live</string>
+    <string name="go_live_and_sell">Go live and sell</string>
+    <string name="go_live_and_sell_message">Start a live video to sell your products to your customers.</string>
+    <string name="featured_products">Featured Products</string>
+    <string name="permissions_required_for_streaming">Permissions Required for Live Streaming</string>
+    <string name="camera_permission_required">Camera permission is required to show video</string>
+    <string name="microphone_permission_required">Microphone permission is required for audio</string>
+    <string name="grant_permissions">Grant Permissions</string>
+    <string name="select_products_to_showcase">Select products to showcase</string>
+    <string name="live_stream_title">Live Stream Title</string>
+    <string name="live_stream_description">Live Stream Description</string>
+    <string name="connect_youtube">Connect YouTube</string>
+    <string name="select_platforms">Select Platforms</string>
+    <string name="create_live_session">Create Live Session</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="youtube">YouTube</string>
+    <string name="facebook">Facebook</string>
 </resources>

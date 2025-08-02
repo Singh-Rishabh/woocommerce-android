@@ -23,6 +23,7 @@ import com.cataloghub.android.network.ConnectionChangeReceiver.ConnectionChangeE
 import com.cataloghub.android.tools.SelectedSite
 import com.cataloghub.android.tools.SiteConnectionType
 import com.cataloghub.android.tools.connectionType
+import com.cataloghub.android.util.FeatureFlag
 import com.cataloghub.android.ui.analytics.ranges.StatsTimeRangeSelection.SelectionType
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardEvent.OpenEditWidgets
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardEvent.RefreshJitm
@@ -224,6 +225,17 @@ class DashboardViewModel @Inject constructor(
         hasNewWidgets: Boolean,
         userFeedbackIsDue: Boolean
     ): List<DashboardWidgetUiModel> = buildList {
+        // Only show Go Live widget if feature flag is enabled
+        if (FeatureFlag.LIVE_SELLING.isEnabled()) {
+            add(
+                DashboardWidgetUiModel.GoLiveWidget(
+                    isVisible = true,
+                    onGoLiveClicked = {
+                        triggerEvent(DashboardEvent.GoLive)
+                    }
+                )
+            )
+        }
         addAll(
             widgets.map { DashboardWidgetUiModel.ConfigurableWidget(it) }
         )
@@ -331,6 +343,11 @@ class DashboardViewModel @Inject constructor(
             override val isVisible: Boolean,
             val onShowCardsClick: () -> Unit
         ) : DashboardWidgetUiModel
+
+        data class GoLiveWidget(
+            override val isVisible: Boolean,
+            val onGoLiveClicked: () -> Unit
+        ) : DashboardWidgetUiModel
     }
 
     data class AppbarState(
@@ -358,6 +375,8 @@ class DashboardViewModel @Inject constructor(
         data object FeedbackNegativeAction : DashboardEvent()
 
         data object RefreshJitm : DashboardEvent()
+
+        data object GoLive : DashboardEvent()
     }
 
     data class RefreshEvent(val isForced: Boolean = false)

@@ -15,7 +15,8 @@ enum class FeatureFlag {
     REVAMP_WOO_SHIPPING,
     OBJECTIVE_SECTION,
     BULK_UPDATE_ORDERS_STATUS,
-    HIDE_SITES_FROM_SITE_PICKER;
+    HIDE_SITES_FROM_SITE_PICKER,
+    LIVE_SELLING;
 
     fun isEnabled(context: Context? = null): Boolean {
         return when (this) {
@@ -33,6 +34,8 @@ enum class FeatureFlag {
             OBJECTIVE_SECTION,
             BULK_UPDATE_ORDERS_STATUS,
             HIDE_SITES_FROM_SITE_PICKER -> true
+
+            LIVE_SELLING -> PackageUtils.isDebugBuild()
         }
     }
 }

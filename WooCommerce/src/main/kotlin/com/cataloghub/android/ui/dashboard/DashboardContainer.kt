@@ -46,6 +46,7 @@ import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardEvent.Ope
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.ConfigurableWidget
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.FeedbackWidget
+import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.GoLiveWidget
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.NewWidgetsCard
 import com.cataloghub.android.ui.dashboard.DashboardViewModel.DashboardWidgetUiModel.ShareStoreWidget
 import com.cataloghub.android.ui.dashboard.blaze.DashboardBlazeCard
@@ -220,6 +221,12 @@ private fun DashboardWidgetCard(
                 modifier = widgetModifier
             )
         }
+        is GoLiveWidget -> {
+            GoLiveCard(
+                onGoLiveClicked = it.onGoLiveClicked,
+                modifier = widgetModifier
+            )
+        }
     }
 }
 
@@ -290,6 +297,44 @@ private fun ConfigurableWidgetCard(
                 modifier = modifier
             )
         }
+    }
+}
+
+@Composable
+private fun GoLiveCard(
+    onGoLiveClicked: () -> Unit,
+    modifier: Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = colorResource(id = R.color.woo_gray_5),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(16.dp)
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_go_live),
+            contentDescription = null
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = stringResource(id = R.string.go_live_and_sell),
+            style = MaterialTheme.typography.h6,
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = stringResource(id = R.string.go_live_and_sell_message),
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        WCColoredButton(
+            onClick = onGoLiveClicked,
+            text = stringResource(id = R.string.go_live)
+        )
     }
 }
 

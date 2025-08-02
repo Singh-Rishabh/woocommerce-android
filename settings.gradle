@@ -60,12 +60,6 @@ dependencyResolutionManagement {
         }
         maven {
             url "https://jitpack.io"
-            content {
-                includeModule("com.github.wordpress-mobile.WordPress-Aztec-Android", "aztec")
-                includeModule("com.github.wordpress-mobile.WordPress-Aztec-Android", "glide-loader")
-                includeModule("com.github.chrisbanes", "PhotoView")
-                includeModule("com.github.PhilJay", "MPAndroidChart")
-            }
         }
     }
 }
